@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "600076744637",
+    "project_id": "advmobiledev-studenthub-clc20",
+    "storage_bucket": "advmobiledev-studenthub-clc20.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:600076744637:android:20e3d62d250e6dc96c44d4",
+        "android_client_info": {
+          "package_name": "com.iotecksolutions.todoapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWzjVKqBHol3ejgxvcQY1Oc_nR1JIhycA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
