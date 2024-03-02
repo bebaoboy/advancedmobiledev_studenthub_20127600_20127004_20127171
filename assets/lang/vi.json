@@ -1,3 +1,18 @@
 {
-    
+  "login_start": "Below are list of strings for login",
+  "login_et_user_email": "Nhập Email",
+  "login_et_user_password": "Nhập mật khẩu",
+  "login_btn_forgot_password": "Quên mật khẩu?",
+  "login_btn_sign_in": "Đăng nhập",
+  "login_error_missing_fields": "Vui lòng điền đẩy đủ các ô trống!",
+  "login_end": "------------------------------------------------------------------------------------",
+  "exception_test": "Thử gửi Exception",
+
+  "home_start": "Below are list of strings for home",
+  "home_tv_posts": "Bài đăng",
+  "home_tv_error": "Lỗi",
+  "home_tv_no_post_found": "No posts found",
+  "home_tv_choose_language": "Chọn ngôn ngữ",
+  "home_end": "-------------------------------------------------------------------------------------"
+
 }

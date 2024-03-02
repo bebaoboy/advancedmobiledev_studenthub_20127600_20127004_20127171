@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
           DeviceUtils.hideKeyboard(context);
           _userStore.login(_userEmailController.text, _passwordController.text);
         } else {
-          _showErrorMessage('Please fill in all fields');
+          _showErrorMessage(AppLocalizations.of(context).translate('login_error_missing_fields'));
         }
       },
     );
