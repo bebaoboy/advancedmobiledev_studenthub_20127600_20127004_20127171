@@ -11,13 +11,23 @@ Vũ Huy Hoàng - 20127171
 ## How to Use 
 **Step 1:**
 Go to project root and execute the following command in console to get the required dependencies: 
-
 ```
 flutter pub get 
 ```
-**Step 2:**
 
-**Step 3:**
+**Step 2:**
+Execute the following command to generate files
+```
+flutter packages pub run build_runner build --delete-conflicting-outputs
+```
+
+## Hide Generated Files
+In Visual Studio Code, navigate to Preferences -> Settings and search for Files:Exclude. Add the following patterns:
+```
+**/*.inject.summary
+**/*.inject.dart
+**/*.g.dart
+```
 
 ### End of readme.
 ###########################################################################################################################
