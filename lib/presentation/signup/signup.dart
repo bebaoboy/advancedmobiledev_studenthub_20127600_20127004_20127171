@@ -11,7 +11,6 @@ import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/signup/signup.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -24,12 +23,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignUpScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpScreenState extends State<SignUpScreen> {
   //text controllers:-----------------------------------------------------------
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -129,12 +128,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Text(
                       AppLocalizations.of(context)
-                          .translate('login_main_text'),
+                          .translate('signup_main_text'),
                       style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                    ),
-                    Image.asset(
-                      'assets/images/img_login.png',
-                      scale: 1.2,
                     ),
                     SizedBox(height: 24.0),
                     _buildUserIdField(),
@@ -227,14 +222,14 @@ class _LoginScreenState extends State<LoginScreen> {
         textColor: Colors.white,
         onPressed: () async {
           loading = true;
-          if (_formStore.canLogin) {
-            DeviceUtils.hideKeyboard(context);
-            _userStore.login(
-                _userEmailController.text, _passwordController.text);
-          } else {
-            _showErrorMessage(AppLocalizations.of(context)
-                .translate('login_error_missing_fields'));
-          }
+          // if (_formStore.canSignUp) {
+          //   DeviceUtils.hideKeyboard(context);
+          //   _userStore.login(
+          //       _userEmailController.text, _passwordController.text);
+          // } else {
+          //   _showErrorMessage(AppLocalizations.of(context)
+          //       .translate('login_error_missing_fields'));
+          // }
         },
       ),
     );
@@ -279,9 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
           buttonColor: Colors.orangeAccent,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(child: SignUpScreen()));
-            // if (_formStore.canLogin) {
+            // if (_formStore.canSignUp) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);

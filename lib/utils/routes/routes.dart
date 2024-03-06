@@ -1,6 +1,8 @@
 import 'package:boilerplate/presentation/home/home.dart';
+import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:flutter/material.dart';
+
 
 class Routes {
   Routes._();
@@ -11,7 +13,8 @@ class Routes {
   static const String home = '/post';
 
   static final routes = <String, WidgetBuilder>{
-    login: (BuildContext context) => LoginScreen(),
+    splash: (BuildContext context) => SplashScreen(),
+    login: (BuildContext context) =>  LoginScreen(),
     home: (BuildContext context) => HomeScreen(),
   };
 }
