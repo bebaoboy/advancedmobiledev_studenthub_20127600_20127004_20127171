@@ -10,22 +10,21 @@ import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/signup/signup.dart';
-import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
-class LoginScreen extends StatefulWidget {
+class SignUpCompanyScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _SignUpCompanyScreenState createState() => _SignUpCompanyScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
   //text controllers:-----------------------------------------------------------
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -39,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late FocusNode _passwordFocusNode;
 
   bool loading = false;
+  bool checked = false;
 
   @override
   void initState() {
@@ -111,49 +111,124 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ConstrainedBox(
         constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height * (MediaQuery.of(context).orientation == Orientation.landscape ? 1.6 : 0.9)),
+            maxHeight: MediaQuery.of(context).size.height *
+                (MediaQuery.of(context).orientation == Orientation.landscape
+                    ? 1.2
+                    : 0.9)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Center(
+              child: AutoSizeText(
+                AppLocalizations.of(context)
+                    .translate('signup_company_main_text'),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                minFontSize: 10,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(height: 24.0),
             Expanded(
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 child: Column(
                   children: [
-                    AutoSizeText(
-                      AppLocalizations.of(context)
-                          .translate('login_main_text'),
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                      minFontSize: 10,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Image.asset(
-                      'assets/images/img_login.png',
-                      scale: 1.2,
-                    ),
-                    SizedBox(height: 24.0),
+                    _buildFullnameField(),
                     _buildUserIdField(),
                     _buildPasswordField(),
                     // _buildForgotPasswordButton(),
                     SizedBox(height: 24.0),
-                    _buildSignInButton(),
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 0),
+                      child: Transform.translate(
+                        offset: const Offset(-8, 0),
+                        child: CheckboxListTile(
+                          title: Transform.translate(
+                            offset: const Offset(-10, 0),
+                            child: AutoSizeText(
+                              AppLocalizations.of(context)
+                                  .translate('signup_company_policy_agree'),
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.w800),
+                              minFontSize: 10,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          value: checked,
+                          contentPadding: EdgeInsets.zero,
+                          onChanged: (newValue) {
+                            setState(() {
+                              checked = newValue ?? !checked;
+                            });
+                          },
+                          dense: true,
+                          controlAffinity: ListTileControlAffinity
+                              .leading, //  <-- leading Checkbox
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 24.0),
+
+                    _buildSignUpCompanyButton(),
+                    SizedBox(height: 24.0),
+                    RichText(
+                      text: TextSpan(
+                        text: AppLocalizations.of(context)
+                            .translate('signup_company_student_prompt'),
+                        style: TextStyle(fontSize: 18, color: Colors.black),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: " " +
+                                  AppLocalizations.of(context).translate(
+                                      'signup_company_student_prompt_action'),
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w600),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.of(context)
+                                    ..pop()
+                                    ..pop();
+                                }),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            _buildFooterText(),
-            SizedBox(
-              height: 14,
-            ),
-            _buildSignUpButton(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildFullnameField() {
+    return Observer(
+      builder: (context) {
+        return TextFieldWidget(
+          hint: AppLocalizations.of(context)
+              .translate('signup_company_et_fullname'),
+          inputType: TextInputType.emailAddress,
+          icon: Icons.person,
+          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          textController: _userEmailController,
+          inputAction: TextInputAction.next,
+          autoFocus: false,
+          onChanged: (value) {
+            _formStore.setUserId(_userEmailController.text);
+          },
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+          errorText: _formStore.formErrorStore.userEmail,
+        );
+      },
     );
   }
 
@@ -161,7 +236,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          hint:
+              AppLocalizations.of(context).translate('signup_company_et_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
@@ -184,10 +260,9 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
+          hint: AppLocalizations.of(context)
+              .translate('signup_company_et_password'),
           isObscure: true,
-          padding: EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
@@ -223,18 +298,18 @@ class _LoginScreenState extends State<LoginScreen> {
       margin: EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
         buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
-        buttonColor: Theme.of(context).colorScheme.primary,
+        buttonColor: Colors.orangeAccent,
         textColor: Colors.white,
         onPressed: () async {
           loading = true;
-          if (_formStore.canLogin) {
-            DeviceUtils.hideKeyboard(context);
-            _userStore.login(
-                _userEmailController.text, _passwordController.text);
-          } else {
-            _showErrorMessage(AppLocalizations.of(context)
-                .translate('login_error_missing_fields'));
-          }
+          // if (_formStore.canSignUpCompany) {
+          //   DeviceUtils.hideKeyboard(context);
+          //   _userStore.login(
+          //       _userEmailController.text, _passwordController.text);
+          // } else {
+          //   _showErrorMessage(AppLocalizations.of(context)
+          //       .translate('login_error_missing_fields'));
+          // }
         },
       ),
     );
@@ -268,29 +343,22 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
-        child: RoundedButtonWidget(
-          buttonText:
-              AppLocalizations.of(context).translate('login_btn_sign_up'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(child: SignUpScreen()));
-            // if (_formStore.canLogin) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
-            // }
-          },
-        ),
+  Widget _buildSignUpCompanyButton() {
+    return Container(
+      child: RoundedButtonWidget(
+        buttonText: AppLocalizations.of(context).translate('login_btn_sign_up'),
+        buttonColor: Theme.of(context).colorScheme.primary,
+        textColor: Colors.white,
+        onPressed: () async {
+          // if (_formStore.canSignUpCompany) {
+          //   DeviceUtils.hideKeyboard(context);
+          //   _userStore.login(
+          //       _userEmailController.text, _passwordController.text);
+          // } else {
+          //   _showErrorMessage(AppLocalizations.of(context)
+          //       .translate('login_error_missing_fields'));
+          // }
+        },
       ),
     );
   }

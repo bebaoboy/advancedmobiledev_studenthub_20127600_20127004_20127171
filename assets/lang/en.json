@@ -11,6 +11,20 @@
   "login_end": "------------------------------------------------------------------------------------",
   "signup_start": "Below are list of strings for signup",
   "signup_main_text": "Join as company or student",
+  "signup_student_role_text": "I am a student, looking for employment",
+  "signup_company_role_text": "I am a company representative, looking for employees",
+  "signup_company_main_text": "Sign up as company",
+  "signup_student_main_text": "Sign up as student",
+  "signup_btn_sign_up": "Create account",
+  "signup_sign_up_prompt": "Already have an account?",
+  "signup_sign_up_prompt_action": "Log in",
+  "signup_company_et_fullname": "Enter fullname",
+  "signup_company_et_email": "Enter work email address",
+  "signup_company_et_password": "Enter password (min 8 char)",
+  "signup_company_policy_agree": "Yes, I understand and agree to StudentHub",
+  "signup_company_sign_up": "Create my account",
+  "signup_company_student_prompt": "Looking for a project?",
+  "signup_company_student_prompt_action": "Apply as student",
   "signup_end": "-----------------------------------------------------------------------------------",
   "exception_test": "Throw Test Exception",
   "home_start": "Below are list of strings for home",
@@ -19,5 +33,4 @@
   "home_tv_no_post_found": "No posts found",
   "home_tv_choose_language": "Choose Language",
   "home_end": "-------------------------------------------------------------------------------------"
-
 }

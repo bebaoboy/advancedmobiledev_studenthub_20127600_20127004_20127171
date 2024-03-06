@@ -1,9 +1,8 @@
 import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/core/widgets/app_icon_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
@@ -11,17 +10,89 @@ import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/utils/device/device_utils.dart';
+import 'package:boilerplate/presentation/signup/signup_company.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
+
+class RadioModel {
+  bool isSelected;
+  final IconData icon;
+  final String text;
+  final Color selectedColor;
+  final Color defaultColor;
+
+  RadioModel(this.isSelected, this.icon, this.text, this.selectedColor,
+      this.defaultColor);
+}
+
+class RadioItem extends StatelessWidget {
+  final RadioModel _item;
+
+  RadioItem(this._item);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(5.0),
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              Container(
+                height: 50.0,
+                width: 50.0,
+                child: Center(
+                  child: Icon(
+                    _item.icon,
+                    color: _item.isSelected
+                        ? _item.selectedColor
+                        : _item.defaultColor,
+                  ),
+                ),
+              ),
+              Spacer(), // use Spacer
+              Checkbox(
+                checkColor: Colors.white,
+                // fillColor: MaterialStateProperty.resolveWith(getColor),
+                value: _item.isSelected,
+                shape: CircleBorder(),
+                onChanged: (bool? value) {
+                  // setState(() {
+                  //   _item.isSelected = value!;
+                  // });
+                },
+              ),
+            ],
+          ),
+          Container(
+            alignment: Alignment.centerLeft,
+            margin: EdgeInsets.only(left: 10.0),
+            child: AutoSizeText(
+              _item.text,
+              style: TextStyle(
+                fontSize: 17.0,
+                fontWeight:
+                    _item.isSelected ? FontWeight.bold : FontWeight.normal,
+                color:
+                    _item.isSelected ? _item.selectedColor : _item.defaultColor,
+              ),
+              minFontSize: 15,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
 
 class SignUpScreen extends StatefulWidget {
   @override
@@ -51,6 +122,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (sampleData.isEmpty) {
+      sampleData.add(RadioModel(
+          false,
+          Icons.account_box_outlined,
+          AppLocalizations.of(context).translate("signup_student_role_text"),
+          Colors.black,
+          Colors.black));
+      sampleData.add(RadioModel(
+          false,
+          Icons.business,
+          AppLocalizations.of(context).translate("signup_company_role_text"),
+          Colors.black,
+          Colors.black));
+    }
     return Scaffold(
       primary: true,
       appBar: EmptyAppBar(),
@@ -108,46 +193,99 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  List<RadioModel> sampleData = List.empty(growable: true);
+
   Widget _buildRightSide() {
     return SingleChildScrollView(
       physics: ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height * 0.9),
+            maxHeight: MediaQuery.of(context).size.height * (MediaQuery.of(context).orientation == Orientation.landscape ? 1.2 : 0.9)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Center(
+              child: AutoSizeText(
+                AppLocalizations.of(context).translate('signup_main_text'),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                minFontSize: 10,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            SizedBox(height: 24.0),
             Expanded(
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
                 child: Column(
                   children: [
-                    Text(
-                      AppLocalizations.of(context)
-                          .translate('signup_main_text'),
-                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                    ),
-                    SizedBox(height: 24.0),
-                    _buildUserIdField(),
-                    _buildPasswordField(),
+                    _buildAccountTypeRadioGroup(),
                     // _buildForgotPasswordButton(),
+                    _buildSignUpButton(),
                     SizedBox(height: 24.0),
-                    _buildSignInButton(),
+                    RichText(
+                      text: TextSpan(
+                        text: AppLocalizations.of(context)
+                            .translate('signup_sign_up_prompt'),
+                        style: TextStyle(fontSize: 18, color: Colors.black),
+                        children: <TextSpan>[
+                          TextSpan(
+                              text: " " +
+                                  AppLocalizations.of(context).translate(
+                                      'signup_sign_up_prompt_action'),
+                              style: TextStyle(
+                                  color: Theme.of(context).colorScheme.primary,
+                                  fontWeight: FontWeight.w600),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () {
+                                  Navigator.of(context)..pop();
+                                }),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
             ),
-            _buildFooterText(),
-            SizedBox(
-              height: 14,
-            ),
-            _buildSignUpButton(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildAccountTypeRadioGroup() {
+    return SizedBox(
+      height: 280,
+      child: ListView.builder(
+        itemCount: sampleData.length,
+        itemBuilder: (BuildContext context, int index) {
+          return Container(
+            margin: const EdgeInsets.only(top: 5, bottom: 5),
+            decoration: BoxDecoration(
+                color: sampleData[index].isSelected
+                    ? Color.fromARGB(53, 141, 141, 141)
+                    : Colors.white,
+                border: Border.all(color: Colors.black, width: 3),
+                borderRadius: BorderRadius.all(
+                    Radius.circular(10.0) //         <--- border radius here
+                    )),
+            child: InkWell(
+              //highlightColor: Colors.red,
+              splashColor: Theme.of(context).colorScheme.primary,
+              onTap: () {
+                setState(() {
+                  sampleData.forEach((element) => element.isSelected = false);
+                  sampleData[index].isSelected = true;
+                });
+              },
+              child: RadioItem(sampleData[index]),
+            ),
+          );
+        },
       ),
     );
   }
@@ -264,26 +402,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildSignUpButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
-        child: RoundedButtonWidget(
-          buttonText:
-              AppLocalizations.of(context).translate('login_btn_sign_up'),
-          buttonColor: Colors.orangeAccent,
-          textColor: Colors.white,
-          onPressed: () async {
-            // if (_formStore.canSignUp) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
-            // }
-          },
-        ),
+    return Container(
+      child: RoundedButtonWidget(
+        buttonText: AppLocalizations.of(context).translate('signup_btn_sign_up'),
+        buttonColor: Theme.of(context).colorScheme.primary,
+        textColor: Colors.white,
+        onPressed: () async {
+                      Navigator.of(context)
+              ..push(MaterialPageRoute2(child: SignUpCompanyScreen()));
+          // if (_formStore.canSignUp) {
+          //   DeviceUtils.hideKeyboard(context);
+          //   _userStore.login(
+          //       _userEmailController.text, _passwordController.text);
+          // } else {
+          //   _showErrorMessage(AppLocalizations.of(context)
+          //       .translate('login_error_missing_fields'));
+          // }
+        },
       ),
     );
   }
