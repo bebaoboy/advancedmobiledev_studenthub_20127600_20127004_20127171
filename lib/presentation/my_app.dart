@@ -23,6 +23,9 @@ class MyApp extends StatelessWidget {
     return Observer(
       builder: (context) {
         return MaterialApp(
+          builder: (context, child) => Container(
+              color: Theme.of(context).colorScheme.primary,
+              child: SafeArea(child: child ?? SizedBox())),
           debugShowCheckedModeBanner: false,
           title: Strings.appName,
           theme: _themeStore.darkMode

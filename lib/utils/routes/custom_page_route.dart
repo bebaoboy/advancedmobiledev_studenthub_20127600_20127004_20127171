@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 // class TransitionPageWrapper extends Page {
@@ -30,13 +31,13 @@ import 'package:flutter/material.dart';
 // }
 
 class MaterialPageRoute2 extends PageRouteBuilder {
-  final Widget child;
+  final String routeName;
 
   MaterialPageRoute2({
-    required this.child,
+    required this.routeName,
   }) : super(
           transitionDuration: Duration(milliseconds: 800),
-          pageBuilder: (context, animation, secondaryAnimation) => child,
+          pageBuilder: (context, animation, secondaryAnimation) => getRoute(routeName),
         );
 
   @override

@@ -6,14 +6,13 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/signup/signup.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -49,8 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      primary: true,
-      appBar: EmptyAppBar(),
       body: _buildBody(),
     );
   }
@@ -73,8 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 )
-              : Container(
-                  margin: EdgeInsets.only(top: 40), child: _buildRightSide()),
+              : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
               return _userStore.success
@@ -111,21 +107,24 @@ class _LoginScreenState extends State<LoginScreen> {
       child: ConstrainedBox(
         constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height * (MediaQuery.of(context).orientation == Orientation.landscape ? 1.6 : 0.9)),
+            maxHeight: MediaQuery.of(context).size.height *
+                (MediaQuery.of(context).orientation == Orientation.landscape
+                    ? 1.8
+                    : 0.9)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            EmptyAppBar(),
             Expanded(
               child: Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
                 child: Column(
                   children: [
                     AutoSizeText(
-                      AppLocalizations.of(context)
-                          .translate('login_main_text'),
+                      AppLocalizations.of(context).translate('login_main_text'),
                       style:
                           TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                       minFontSize: 10,
@@ -174,7 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail,
+          errorText: _formStore.formErrorStore.userEmail == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -192,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password,
+          errorText: _formStore.formErrorStore.password == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -280,7 +279,7 @@ class _LoginScreenState extends State<LoginScreen> {
           textColor: Colors.white,
           onPressed: () async {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(child: SignUpScreen()));
+              ..push(MaterialPageRoute2(routeName: Routes.signUp));
             // if (_formStore.canLogin) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -303,7 +302,7 @@ class _LoginScreenState extends State<LoginScreen> {
     Future.delayed(Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
+        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
     });
 

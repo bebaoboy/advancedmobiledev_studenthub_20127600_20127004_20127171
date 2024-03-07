@@ -19,12 +19,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
-class SignUpCompanyScreen extends StatefulWidget {
+class SignUpStudentScreen extends StatefulWidget {
   @override
-  _SignUpCompanyScreenState createState() => _SignUpCompanyScreenState();
+  _SignUpStudentScreenState createState() => _SignUpStudentScreenState();
 }
 
-class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
+class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   //text controllers:-----------------------------------------------------------
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _userFullnameController = TextEditingController();
@@ -113,7 +113,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
             minWidth: MediaQuery.of(context).size.width,
             maxHeight: MediaQuery.of(context).size.height *
                 (MediaQuery.of(context).orientation == Orientation.landscape
-                    ? 1.2
+                    ? 1.4
                     : 0.9)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
@@ -125,7 +125,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
             Center(
               child: AutoSizeText(
                 AppLocalizations.of(context)
-                    .translate('signup_company_main_text'),
+                    .translate('signup_student_main_text'),
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 minFontSize: 10,
                 maxLines: 1,
@@ -176,18 +176,18 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                     ),
                     SizedBox(height: 24.0),
 
-                    _buildSignUpCompanyButton(),
+                    _buildSignUpStudentButton(),
                     SizedBox(height: 24.0),
                     RichText(
                       text: TextSpan(
                         text: AppLocalizations.of(context)
-                            .translate('signup_company_student_prompt'),
+                            .translate('signup_student_company_prompt'),
                         style: TextStyle(fontSize: 18, color: _themeStore.darkMode ? Colors.white : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
                               text: " " +
                                   AppLocalizations.of(context).translate(
-                                      'signup_company_student_prompt_action'),
+                                      'signup_student_company_prompt_action'),
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
@@ -195,7 +195,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                                 ..onTap = () {
                                   Navigator.of(context).pushReplacement(
                                       MaterialPageRoute2(
-                                          routeName: Routes.signUpStudent));
+                                          routeName: Routes.signUpCompany));
                                 }),
                         ],
                       ),
@@ -301,7 +301,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
         textColor: Colors.white,
         onPressed: () async {
           loading = true;
-          // if (_formStore.canSignUpCompany) {
+          // if (_formStore.canSignUpStudent) {
           //   DeviceUtils.hideKeyboard(context);
           //   _userStore.login(
           //       _userEmailController.text, _passwordController.text);
@@ -342,15 +342,15 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     );
   }
 
-  Widget _buildSignUpCompanyButton() {
+  Widget _buildSignUpStudentButton() {
     return Container(
       child: RoundedButtonWidget(
         buttonText:
-            AppLocalizations.of(context).translate('signup_company_sign_up'),
+            AppLocalizations.of(context).translate('signup_student_sign_up'),
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          // if (_formStore.canSignUpCompany) {
+          // if (_formStore.canSignUpStudent) {
           //   DeviceUtils.hideKeyboard(context);
           //   _userStore.login(
           //       _userEmailController.text, _passwordController.text);

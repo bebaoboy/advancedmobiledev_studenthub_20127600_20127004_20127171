@@ -1,10 +1,10 @@
 import 'dart:async';
 
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/presentation/home/home.dart';
-import 'package:boilerplate/presentation/login/login.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -18,7 +18,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   final UserStore _userStore = getIt<UserStore>();
-
+  final ThemeStore _themeStore = getIt<ThemeStore>();
   late AnimationController _controller;
 
   @override
@@ -46,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen>
       Navigator.pushReplacement(
           context,
           MaterialPageRoute2(
-              child: _userStore.isLoggedIn ? HomeScreen() : LoginScreen()));
+              routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
     }
   }
 
@@ -59,7 +59,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

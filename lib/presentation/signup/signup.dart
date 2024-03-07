@@ -6,13 +6,12 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/signup/signup_company.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -23,7 +22,7 @@ import '../../di/service_locator.dart';
 class RadioModel {
   bool isSelected;
   final IconData icon;
-  final String text;
+  String text;
   final Color selectedColor;
   final Color defaultColor;
 
@@ -31,11 +30,16 @@ class RadioModel {
       this.defaultColor);
 }
 
-class RadioItem extends StatelessWidget {
+class RadioItem extends StatefulWidget {
   final RadioModel _item;
 
   RadioItem(this._item);
 
+  @override
+  State<RadioItem> createState() => _RadioItemState();
+}
+
+class _RadioItemState extends State<RadioItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,10 +54,10 @@ class RadioItem extends StatelessWidget {
                 width: 50.0,
                 child: Center(
                   child: Icon(
-                    _item.icon,
-                    color: _item.isSelected
-                        ? _item.selectedColor
-                        : _item.defaultColor,
+                    widget._item.icon,
+                    color: widget._item.isSelected
+                        ? widget._item.selectedColor
+                        : widget._item.defaultColor,
                   ),
                 ),
               ),
@@ -61,7 +65,7 @@ class RadioItem extends StatelessWidget {
               Checkbox(
                 checkColor: Colors.white,
                 // fillColor: MaterialStateProperty.resolveWith(getColor),
-                value: _item.isSelected,
+                value: widget._item.isSelected,
                 shape: CircleBorder(),
                 onChanged: (bool? value) {
                   // setState(() {
@@ -75,13 +79,15 @@ class RadioItem extends StatelessWidget {
             alignment: Alignment.centerLeft,
             margin: EdgeInsets.only(left: 10.0),
             child: AutoSizeText(
-              _item.text,
+              widget._item.text,
               style: TextStyle(
                 fontSize: 17.0,
-                fontWeight:
-                    _item.isSelected ? FontWeight.bold : FontWeight.normal,
-                color:
-                    _item.isSelected ? _item.selectedColor : _item.defaultColor,
+                fontWeight: widget._item.isSelected
+                    ? FontWeight.bold
+                    : FontWeight.normal,
+                color: widget._item.isSelected
+                    ? widget._item.selectedColor
+                    : widget._item.defaultColor,
               ),
               minFontSize: 15,
               maxLines: 2,
@@ -127,14 +133,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
           false,
           Icons.account_box_outlined,
           AppLocalizations.of(context).translate("signup_student_role_text"),
-          Colors.black,
+          Theme.of(context).colorScheme.primary,
           Colors.black));
       sampleData.add(RadioModel(
           false,
           Icons.business,
           AppLocalizations.of(context).translate("signup_company_role_text"),
-          Colors.black,
+          Theme.of(context).colorScheme.primary,
           Colors.black));
+    } else {
+      sampleData[0].text = AppLocalizations.of(context).translate("signup_student_role_text");
+      sampleData[1].text = AppLocalizations.of(context).translate("signup_company_role_text");
     }
     return Scaffold(
       primary: true,
@@ -161,8 +170,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ],
                 )
-              : Container(
-                  margin: EdgeInsets.only(top: 40), child: _buildRightSide()),
+              : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
               return _userStore.success
@@ -201,12 +209,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: ConstrainedBox(
         constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height * (MediaQuery.of(context).orientation == Orientation.landscape ? 1.2 : 0.9)),
+            maxHeight: MediaQuery.of(context).size.height *
+                (MediaQuery.of(context).orientation == Orientation.landscape
+                    ? 1.4
+                    : 0.9)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            EmptyAppBar(),
+            SizedBox(height: 24.0),
             Center(
               child: AutoSizeText(
                 AppLocalizations.of(context).translate('signup_main_text'),
@@ -231,7 +244,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       text: TextSpan(
                         text: AppLocalizations.of(context)
                             .translate('signup_sign_up_prompt'),
-                        style: TextStyle(fontSize: 18, color: Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: _themeStore.darkMode
+                                ? Colors.white
+                                : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
                               text: " " +
@@ -259,35 +276,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildAccountTypeRadioGroup() {
     return SizedBox(
-      height: 280,
-      child: ListView.builder(
-        itemCount: sampleData.length,
-        itemBuilder: (BuildContext context, int index) {
-          return Container(
-            margin: const EdgeInsets.only(top: 5, bottom: 5),
-            decoration: BoxDecoration(
-                color: sampleData[index].isSelected
-                    ? Color.fromARGB(53, 141, 141, 141)
-                    : Colors.white,
-                border: Border.all(color: Colors.black, width: 3),
-                borderRadius: BorderRadius.all(
-                    Radius.circular(10.0) //         <--- border radius here
-                    )),
-            child: InkWell(
-              //highlightColor: Colors.red,
-              splashColor: Theme.of(context).colorScheme.primary,
-              onTap: () {
-                setState(() {
-                  sampleData.forEach((element) => element.isSelected = false);
-                  sampleData[index].isSelected = true;
-                });
-              },
-              child: RadioItem(sampleData[index]),
+        height: 280,
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 5, bottom: 5),
+              decoration: BoxDecoration(
+                  color: sampleData[0].isSelected
+                      ? Color.fromARGB(53, 141, 141, 141)
+                      : _themeStore.darkMode
+                          ? Color.fromARGB(255, 233, 233, 233)
+                          : Colors.white,
+                  border: Border.all(color: Colors.black, width: 3),
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(10.0) //         <--- border radius here
+                      )),
+              child: InkWell(
+                //highlightColor: Colors.red,
+                splashColor: Theme.of(context).colorScheme.primary,
+                onTap: () {
+                  setState(() {
+                    sampleData[1].isSelected = false;
+                    sampleData[0].isSelected = true;
+                  });
+                },
+                child: RadioItem(sampleData[0]),
+              ),
             ),
-          );
-        },
-      ),
-    );
+            Container(
+              margin: const EdgeInsets.only(top: 5, bottom: 5),
+              decoration: BoxDecoration(
+                  color: sampleData[1].isSelected
+                      ? Color.fromARGB(53, 141, 141, 141)
+                      : _themeStore.darkMode
+                          ? Color.fromARGB(255, 233, 233, 233)
+                          : Colors.white,
+                  border: Border.all(color: Colors.black, width: 3),
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(10.0) //         <--- border radius here
+                      )),
+              child: InkWell(
+                //highlightColor: Colors.red,
+                splashColor: Theme.of(context).colorScheme.primary,
+                onTap: () {
+                  setState(() {
+                    sampleData[0].isSelected = false;
+                    sampleData[1].isSelected = true;
+                  });
+                },
+                child: RadioItem(sampleData[1]),
+              ),
+            )
+          ],
+        ));
   }
 
   Widget _buildUserIdField() {
@@ -307,7 +348,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail,
+          errorText:_formStore.formErrorStore.userEmail == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -325,7 +366,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password,
+          errorText:_formStore.formErrorStore.password == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -404,12 +445,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget _buildSignUpButton() {
     return Container(
       child: RoundedButtonWidget(
-        buttonText: AppLocalizations.of(context).translate('signup_btn_sign_up'),
+        buttonText:
+            AppLocalizations.of(context).translate('signup_btn_sign_up'),
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-                      Navigator.of(context)
-              ..push(MaterialPageRoute2(child: SignUpCompanyScreen()));
+          Navigator.of(context)
+            ..push(MaterialPageRoute2(
+                routeName: sampleData[0].isSelected
+                    ? Routes.signUpStudent
+                    : Routes.signUpCompany));
           // if (_formStore.canSignUp) {
           //   DeviceUtils.hideKeyboard(context);
           //   _userStore.login(
@@ -429,9 +474,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     Future.delayed(Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
       Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
+        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
     });
 

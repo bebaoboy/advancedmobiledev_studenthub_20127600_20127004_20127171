@@ -87,8 +87,8 @@ abstract class _FormStore with Store {
   void validatePassword(String value) {
     if (value.isEmpty) {
       formErrorStore.password = "Password can't be empty";
-    } else if (value.length < 6) {
-      formErrorStore.password = "Password must be at-least 6 characters long";
+    } else if (value.length < 8) {
+      formErrorStore.password = "Password must be at-least 8 characters long";
     } else {
       formErrorStore.password = null;
     }

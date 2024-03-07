@@ -1,3 +1,5 @@
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -9,6 +11,8 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
+    final ThemeStore _themeStore = getIt<ThemeStore>();
+
   @override
   void initState() {
     super.initState();
@@ -17,7 +21,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
