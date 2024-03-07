@@ -83,7 +83,13 @@ class _LoginScreenState extends State<LoginScreen> {
               return Visibility(
                 visible: _userStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
-                child: LoadingScreen(),
+                child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        loading = false;
+                      });
+                    },
+                    child: LoadingScreen()),
               );
             },
           )
@@ -173,7 +179,10 @@ class _LoginScreenState extends State<LoginScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.userEmail),
+          errorText: _formStore.formErrorStore.userEmail == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -191,7 +200,10 @@ class _LoginScreenState extends State<LoginScreen> {
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.password),
+          errorText: _formStore.formErrorStore.password == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
