@@ -212,7 +212,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             maxHeight: MediaQuery.of(context).size.height *
                 (MediaQuery.of(context).orientation == Orientation.landscape
                     ? 1.4
-                    : 0.9)),
+                    : 1)),
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
