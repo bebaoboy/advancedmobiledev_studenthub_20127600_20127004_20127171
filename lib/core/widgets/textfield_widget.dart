@@ -38,6 +38,9 @@ class TextFieldWidget extends StatelessWidget {
                 Theme.of(context).textTheme.bodyText1!.copyWith(color: hintColor),
             errorText: errorText,
             counterText: '',
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)
+            ),
             icon: this.isIcon ? Icon(this.icon, color: iconColor) : null),
       ),
     );
