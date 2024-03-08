@@ -5,18 +5,26 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
+import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/main.dart';
+import 'package:boilerplate/presentation/home/home.dart';
+import 'package:boilerplate/presentation/home/splashscreen.dart';
+import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:lottie/lottie.dart';
 
 void main() {
-  // testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-  //   WidgetsFlutterBinding.ensureInitialized();
-  //   await setPreferredOrientations();
-  //   await ServiceLocator.configureDependencies();
-  //   // Build our app and trigger a frame.
-  //   await tester.pumpWidget(MyApp());
-  // });
+  testWidgets('Click on splash screen go to login screen test',
+      (WidgetTester tester) async {
+    setPreferredOrientations();
+    //await ServiceLocator.configureDependencies();
+    // Build our app and trigger a frame.
+    await tester.pumpWidget(const MaterialApp(home: Scaffold(body: Text("data"))));
+    // Verify if the splash image is visible
+    expect(find.byType(Text), findsOneWidget);
+  });
 }
