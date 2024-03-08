@@ -46,6 +46,9 @@
   "profile_languages": "Languages",
   "profile_education": "Education",
   "profile_next": "Next",
+  "profile_language_proficiency": "Proficiency",
+  "profile_language": "Language name",
+  "profile_year": "Year",
   "profile_end": "-----------------------------------------------------------------------------------",
 
   "exception_test": "Throw Test Exception",

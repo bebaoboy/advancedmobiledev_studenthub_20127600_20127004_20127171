@@ -23,7 +23,7 @@ class Routes {
   static const String signUp = '/signup';
   static const String signUpCompany = '/signup-company';
   static const String signUpStudent = '/signup-student';
-  static const String profileCompany = '/profile-company';
+  static const String profileStudent = '/profile-student';
   static const String home = '/post';
   static const String profile = '/profile';
   static const String profileStep2 = '/profile-step2';
@@ -39,7 +39,7 @@ class Routes {
     signUpCompany: SignUpCompanyScreen(),
     signUpStudent: SignUpStudentScreen(),
     home: HomeScreen(),
-    profileCompany: ProfileStudentScreen(),
+    profileStudent: ProfileStudentScreen(),
   };
 
   static final routes = <String, WidgetBuilder>{};

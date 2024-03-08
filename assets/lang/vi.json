@@ -44,6 +44,10 @@
   "profile_languages": "Tài năng ngôn ngữ",
   "profile_education": "Trình độ học vấn",
   "profile_next": "Tiếp tục",
+  "profile_language_proficiency": "Thông thạo",
+  "profile_language": "Ngôn ngữ",
+  "profile_year": "Niên khoá",
+
   "profile_end": "-----------------------------------------------------------------------------------",
   "exception_test": "Thử gửi Exception",
   "home_start": "Below are list of strings for home",

@@ -15,8 +15,10 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -62,14 +64,14 @@ class SearchDropdown extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Icon(item.icon),
-              SizedBox(
+              const SizedBox(
                 width: 20,
               ),
               Text(
                 item.name,
                 textAlign: TextAlign.start,
               ),
-              Spacer(),
+              const Spacer(),
               Checkbox(
                 value: isSelected,
                 onChanged: (value) => value = isSelected,
@@ -89,52 +91,52 @@ class SearchDropdown extends StatelessWidget {
   }
 }
 
-const mockResults = <AppProfile>[
-  AppProfile('ManyMi', 'stock@man.com',
+const mockResults = <Skill>[
+  Skill('ManyMi', 'stock@man.com',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  AppProfile('Pension', 'paul@google.com',
+  Skill('Pension', 'paul@google.com',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('Cancelation', 'fred@google.com',
+  Skill('Cancelation', 'fred@google.com',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('Diantier', 'bera@flutter.io',
+  Skill('Diantier', 'bera@flutter.io',
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  AppProfile('MMMMM', 'john@flutter.io',
+  Skill('MMMMM', 'john@flutter.io',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('Tim', 'thomas@flutter.io',
+  Skill('Tim', 'thomas@flutter.io',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  AppProfile('Quan', 'norbert@flutter.io',
+  Skill('Quan', 'norbert@flutter.io',
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  AppProfile('Long', 'marina@flutter.io',
+  Skill('Long', 'marina@flutter.io',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('Stock Man', 'stock@man.com',
+  Skill('Stock Man', 'stock@man.com',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  AppProfile('Paul', 'paul@google.com',
+  Skill('Paul', 'paul@google.com',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('Fred', 'fred@google.com',
+  Skill('Fred', 'fred@google.com',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('Bera', 'bera@flutter.io',
+  Skill('Bera', 'bera@flutter.io',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  AppProfile('John', 'john@flutter.io',
+  Skill('John', 'john@flutter.io',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  AppProfile('Thomas', 'thomas@flutter.io',
+  Skill('Thomas', 'thomas@flutter.io',
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  AppProfile('Norbert', 'norbert@flutter.io',
+  Skill('Norbert', 'norbert@flutter.io',
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  AppProfile('Marina', 'marina@flutter.io',
+  Skill('Marina', 'marina@flutter.io',
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
 ];
 
-class AppProfile {
+class Skill {
   final String name;
   final String email;
   final String imageUrl;
 
-  const AppProfile(this.name, this.email, this.imageUrl);
+  const Skill(this.name, this.email, this.imageUrl);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is AppProfile &&
+      other is Skill &&
           runtimeType == other.runtimeType &&
           name == other.name;
 
@@ -185,7 +187,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   int _searchId = 0;
 
   FocusNode _focusNode = FocusNode();
-  TextEditingValue _value = TextEditingValue();
+  TextEditingValue _value = const TextEditingValue();
   TextInputConnection? _connection;
   ScrollController _scrollController = ScrollController();
 
@@ -251,7 +253,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
   void _openInputConnection() {
     if (!_hasInputConnection) {
-      _connection = TextInput.attach(this, TextInputConfiguration());
+      _connection = TextInput.attach(this, const TextInputConfiguration());
       _connection!.setEditingState(_value);
     }
     _connection!.show();
@@ -296,7 +298,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     );
 
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(15))),
       child: SizedBox(
@@ -319,7 +321,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                   isFocused: _focusNode.hasFocus,
                   isEmpty: _value.text.length == 0,
                   child: Container(
-                    constraints: BoxConstraints(maxHeight: 70),
+                    constraints: const BoxConstraints(maxHeight: 70),
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       reverse: true,
@@ -450,6 +452,25 @@ class _TextCursorState extends State<_TextCaret>
   }
 }
 
+class Language {
+  String name;
+  String proficiency;
+  bool readOnly = true;
+  bool enabled = true;
+
+  Language(this.name, this.proficiency,
+      {this.readOnly = true, this.enabled = true});
+}
+
+class Education {
+  String name;
+  String year;
+  bool readOnly = true;
+  bool enabled = true;
+
+  Education(this.name, this.year, {this.readOnly = true, this.enabled = true});
+}
+
 class ProfileStudentScreen extends StatefulWidget {
   @override
   _ProfileStudentScreenState createState() => _ProfileStudentScreenState();
@@ -469,11 +490,30 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   late FocusNode _passwordFocusNode;
 
   bool loading = false;
+  List<Language> _languages = List.empty(growable: true);
+  List<Education> _educations = List.empty(growable: true);
 
   @override
   void initState() {
     super.initState();
     _passwordFocusNode = FocusNode();
+    _languages.add(Language("English", "Native or Bilingual"));
+    _languages.add(Language("Spanish", "Beginner"));
+    _languages.add(Language("Cupkkake", "Intermediate"));
+    _languages.add(Language("VN", "Null"));
+    _languages.add(Language("Monkeyish", "Beginner"));
+    _languages.add(Language("Floptropican", "Intermediate"));
+    _languages.add(Language("Spanish 2.0", "Native"));
+    _languages.add(Language("AHHH", "Beginner"));
+    _languages.add(Language("Papi", "Native"));
+    _languages.add(Language("Egyptian", "Beginner"));
+    _languages.add(Language("Indian", "Native"));
+    _languages.add(Language("Nadir", "Beginner"));
+    _educations.add(Education("Le Hong Phong Highschool", "2007 - 2010"));
+    _educations
+        .add(Education("Ho Chi Minh University of Science", "2010 - 2014"));
+    _educations
+        .add(Education("Ho Chi Minh University of Science", "2014 - 2018"));
   }
 
   @override
@@ -520,7 +560,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         loading = false;
                       });
                     },
-                    child: LoadingScreen()),
+                    child: const LoadingScreen()),
               );
             },
           )
@@ -529,15 +569,15 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     );
   }
 
-  void _onChipTapped(AppProfile profile) {
+  void _onChipTapped(Skill profile) {
     print('$profile');
   }
 
-  void _onChanged(List<AppProfile> data) {
+  void _onChanged(List<Skill> data) {
     print('onChanged $data');
   }
 
-  Future<List<AppProfile>> _findSuggestions(String query) async {
+  Future<List<Skill>> _findSuggestions(String query) async {
     if (query.length != 0) {
       return mockResults.where((profile) {
         return profile.name.contains(query) || profile.email.contains(query);
@@ -558,7 +598,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -568,15 +608,14 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
               child: Column(
                 children: [
                   AutoSizeText(
                     AppLocalizations.of(context)
                         .translate('profile_welcome_text'),
-                    style:
-                        TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -584,7 +623,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   AutoSizeText(
                     AppLocalizations.of(context)
                         .translate('profile_welcome_text2'),
-                    style: TextStyle(fontSize: 13),
+                    style: const TextStyle(fontSize: 13),
                     minFontSize: 10,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -593,25 +632,25 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   //   'assets/images/img_login.png',
                   //   scale: 1.2,
                   // ),
-                  SizedBox(height: 34.0),
+                  const SizedBox(height: 34.0),
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AutoSizeText(
                       AppLocalizations.of(context)
                           .translate('profile_techstack'),
-                      style: TextStyle(
+                      style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  SizedBox(height: 14.0),
-                  SearchDropdown(),
+                  const SizedBox(height: 14.0),
+                  const SearchDropdown(),
                   // _buildUserIdField(),
                   // _buildPasswordField(),
                   // _buildForgotPasswordButton(),
-                  SizedBox(
+                  const SizedBox(
                     height: 24,
                   ),
                   SizedBox(
@@ -623,7 +662,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         AutoSizeText(
                           AppLocalizations.of(context)
                               .translate('profile_skillset'),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 13, fontWeight: FontWeight.w600),
                           minFontSize: 10,
                           maxLines: 2,
@@ -631,25 +670,23 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         ),
                         Align(
                           alignment: Alignment.centerRight,
-                          child: GestureDetector(
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                            child: Container(
-                                padding: EdgeInsets.zero,
-                                child: Icon(
-                                  Icons.check_circle_outline,
-                                )),
-                          ),
+                          child: Container(
+                              padding: EdgeInsets.zero,
+                              child: IconButton(
+                                onPressed: () => {
+                                  FocusManager.instance.primaryFocus?.unfocus()
+                                },
+                                icon: Icon(Icons.check_circle_outline),
+                              )),
                         ),
                       ],
                     ),
                   ),
-      
-                  SizedBox(height: 14.0),
-                  ChipsInput<AppProfile>(
+
+                  const SizedBox(height: 14.0),
+                  ChipsInput<Skill>(
                     onChipTapped: _onChipTapped,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                         prefixIconConstraints: BoxConstraints(),
                         // prefixIcon: Container(
                         //     margin: EdgeInsets.only(top: 13),
@@ -663,27 +700,24 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     findSuggestions: _findSuggestions,
                     onChanged: _onChanged,
                     chipBuilder: (BuildContext context,
-                        ChipsInputState<AppProfile> state,
-                        AppProfile profile) {
+                        ChipsInputState<Skill> state, Skill profile) {
                       return InputChip(
                         elevation: 8,
                         pressElevation: 9,
                         key: ObjectKey(profile),
                         label: Text(profile.name),
-                        labelStyle: TextStyle(fontSize: 10),
+                        labelStyle: const TextStyle(fontSize: 10),
                         visualDensity: VisualDensity.compact,
                         avatar: CircleAvatar(
                           backgroundImage: NetworkImage(profile.imageUrl),
                         ),
                         onDeleted: () => state.deleteChip(profile),
                         onSelected: (_) => _onChipTapped(profile),
-                        materialTapTargetSize:
-                            MaterialTapTargetSize.shrinkWrap,
+                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       );
                     },
                     suggestionBuilder: (BuildContext context,
-                        ChipsInputState<AppProfile> state,
-                        AppProfile profile) {
+                        ChipsInputState<Skill> state, Skill profile) {
                       return ListTile(
                         key: ObjectKey(profile),
                         leading: CircleAvatar(
@@ -695,100 +729,465 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                       );
                     },
                   ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
+                  SizedBox(
+                    height: 40,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AutoSizeText(
+                          "${AppLocalizations.of(context).translate('profile_languages')}: ${_languages.length}",
+                          style: const TextStyle(
+                              fontSize: 13, fontWeight: FontWeight.w600),
+                          minFontSize: 10,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Spacer(),
+                        Container(
+                            child: IconButton(
+                          onPressed: () => {
+                            setState(() {
+                              _languages.insert(
+                                  0, Language("Name", "...", readOnly: false));
+                            })
+                          },
+                          icon: Icon(Icons.add_circle_outline),
+                        )),
+                        // Container(
+                        //     padding: EdgeInsets.zero,
+                        //     child: IconButton(
+                        //       onPressed: () => {},
+                        //       icon: Icon(Icons.mode_edit_outline),
+                        //     )),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: _buildLanguageField(),
+                    decoration: BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(13))),
+                  ),
+                  const SizedBox(height: 24.0),
                   SizedBox(
                     height: 30,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         AutoSizeText(
-                          AppLocalizations.of(context)
-                              .translate('profile_languages'),
-                          style: TextStyle(
+                          "${AppLocalizations.of(context).translate('profile_education')}: ${_educations.length}",
+                          style: const TextStyle(
                               fontSize: 13, fontWeight: FontWeight.w600),
                           minFontSize: 10,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                         ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
+                        const Spacer(),
+                        Container(
+                            child: IconButton(
+                          onPressed: () => {
+                            setState(() {
+                              _educations.insert(
+                                  0,
+                                  Education("School Name", "2002-2002",
+                                      readOnly: false));
+                            })
                           },
-                          child: Container(
-                              padding: EdgeInsets.zero,
-                              child: Icon(
-                                Icons.add_circle_outline,
-                              )),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                          child: Container(
-                              padding: EdgeInsets.zero,
-                              child: Icon(
-                                Icons.mode_edit_outline,
-                              )),
-                        ),
+                          icon: Icon(Icons.add_circle_outline),
+                        )),
+                        // Container(
+                        //     padding: EdgeInsets.zero,
+                        //     child: IconButton(
+                        //       onPressed: () => {},
+                        //       icon: Icon(Icons.mode_edit_outline),
+                        //     )),
                       ],
                     ),
                   ),
-                  _buildUserIdField(),
-                  SizedBox(height: 24.0),
-      SizedBox(
-                    height: 30,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        AutoSizeText(
-                          AppLocalizations.of(context)
-                              .translate('profile_education'),
-                          style: TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w600),
-                          minFontSize: 10,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                          child: Container(
-                              padding: EdgeInsets.zero,
-                              child: Icon(
-                                Icons.add_circle_outline,
-                              )),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                          },
-                          child: Container(
-                              padding: EdgeInsets.zero,
-                              child: Icon(
-                                Icons.mode_edit_outline,
-                              )),
-                        ),
-                      ],
-                    ),
+                  Container(
+                    child: _buildEducationField(),
+                    decoration: BoxDecoration(
+                        color: Colors.white70,
+                        borderRadius: BorderRadius.all(Radius.circular(13))),
                   ),
-                  _buildUserIdField(),
-                  _buildUserIdField(),
-                  SizedBox(height: 34.0),
+                  // _buildUserIdField(),
+                  const SizedBox(height: 34.0),
                   _buildSignInButton(),
                 ],
               ),
             ),
           ),
           //_buildFooterText(),
-          SizedBox(
+          const SizedBox(
             height: 14,
           ),
           //_buildSignUpButton(),
         ],
       ),
+    );
+  }
+
+  Widget _buildLanguageField() {
+    return Observer(
+      builder: (context) {
+        return SizedBox(
+          height: 200,
+          child: Scrollbar(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: ListView.builder(
+                physics: BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: _languages.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    color: _languages[index].enabled ? null : Colors.grey,
+                    child: Row(
+                      key: ValueKey(_languages[index]),
+                      children: [
+                        Wrap(
+                          direction: Axis.vertical,
+                          spacing: 1,
+                          children: [
+                            GestureDetector(
+                              onDoubleTap: () {
+                                if (_languages[index].enabled)
+                                  setState(() {
+                                    _languages[index].readOnly = false;
+                                  });
+                              },
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: TextFieldWidget(
+                                  label: _languages[index].readOnly
+                                      ? null
+                                      : Text(
+                                          AppLocalizations.of(context)
+                                              .translate('profile_language'),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                        ),
+                                  enabled: _languages[index].enabled,
+                                  enableInteractiveSelection:
+                                      !_languages[index].readOnly,
+                                  canRequestFocus: !_languages[index].readOnly,
+                                  iconMargin: EdgeInsets.only(top: 30),
+                                  initialValue: _languages[index].name,
+                                  readOnly: _languages[index].readOnly,
+                                  hint: AppLocalizations.of(context)
+                                      .translate('login_et_user_email'),
+                                  inputType: TextInputType.emailAddress,
+                                  icon: Icons.language,
+                                  iconColor: _themeStore.darkMode
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                  textController: null,
+                                  inputAction: TextInputAction.next,
+                                  autoFocus: false,
+                                  onChanged: (value) {
+                                                                    _languages[index].name = value;
+
+                                    // _formStore
+                                    //     .setUserId(_userEmailController.text);
+                                  },
+                                  onFieldSubmitted: (value) {
+                                    // FocusScope.of(context)
+                                    //     .requestFocus(_passwordFocusNode);
+                                  },
+                                  errorText: null,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              height: _languages[index].readOnly ? 12 : null,
+                              child: TextFieldWidget(
+                                label: _languages[index].readOnly
+                                    ? null
+                                    : Text(
+                                        AppLocalizations.of(context).translate(
+                                            'profile_language_proficiency'),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                      ),
+                                enabled: _languages[index].enabled,
+                                enableInteractiveSelection:
+                                    !_languages[index].readOnly,
+                                canRequestFocus: !_languages[index].readOnly,
+                                readOnly: _languages[index].readOnly,
+                                initialValue: _languages[index].proficiency,
+                                fontSize: _languages[index].readOnly ? 10 : 15,
+                                hint: AppLocalizations.of(context)
+                                    .translate('login_et_user_email'),
+                                inputType: TextInputType.emailAddress,
+                                icon: null,
+                                textController: null,
+                                inputAction: TextInputAction.next,
+                                autoFocus: false,
+                                onChanged: (value) {
+                                                                    _languages[index].proficiency = value;
+
+                                  // _formStore
+                                  //     .setUserId(_userEmailController.text);
+                                },
+                                onFieldSubmitted: (value) {
+                                  // FocusScope.of(context)
+                                  //     .requestFocus(_passwordFocusNode);
+                                },
+                                errorText: null
+                                // _formStore
+                                //             .formErrorStore.userEmail ==
+                                //         null
+                                //     ? null
+                                //     : AppLocalizations.of(context).translate(
+                                //         _formStore.formErrorStore.userEmail),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Container(
+                            width: 20,
+                            margin: EdgeInsets.only(right: 10),
+                            child: IconButton(
+                              padding: EdgeInsets.only(right: 10),
+                              onPressed: () {
+                                if (_languages[index].enabled) {
+                                  setState(() {
+                                    _languages[index].readOnly = true;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.done,
+                                size: (_languages[index].enabled &&
+                                        !_languages[index].readOnly)
+                                    ? null
+                                    : 0,
+                              ),
+                            )),
+                        Container(
+                            width: 20,
+                            margin: EdgeInsets.only(right: 20),
+                            child: IconButton(
+                              padding: EdgeInsets.only(right: 10),
+                              onPressed: () {
+                                try {
+                                  if (_languages[index].enabled) {
+                                    setState(() {
+                                      _languages[index].enabled = false;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _languages[index].enabled = true;
+                                    });
+                                  }
+                                } catch (E) {
+                                  setState(() {});
+                                }
+                              },
+                              icon: _languages[index].enabled
+                                  ? Icon(_languages[index].readOnly == false
+                                      ? null
+                                      : Icons.remove_circle_outline)
+                                  : Icon(_languages[index].readOnly == false
+                                      ? null
+                                      : Icons.restore_rounded),
+                            )),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEducationField() {
+    return Observer(
+      builder: (context) {
+        return SizedBox(
+          height: 200,
+          child: Scrollbar(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: ListView.builder(
+                physics: BouncingScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: _educations.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Container(
+                    color: _educations[index].enabled ? null : Colors.grey,
+                    child: Row(
+                      key: ValueKey(_educations[index]),
+                      children: [
+                        Wrap(
+                          direction: Axis.vertical,
+                          spacing: 1,
+                          children: [
+                            GestureDetector(
+                              onDoubleTap: () {
+                                if (_educations[index].enabled)
+                                  setState(() {
+                                    _educations[index].readOnly = false;
+                                  });
+                              },
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                child: TextFieldWidget(
+                                  label: _educations[index].readOnly
+                                      ? null
+                                      : Text(
+                                          AppLocalizations.of(context)
+                                              .translate('profile_education'),
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary),
+                                        ),
+                                  enabled: _educations[index].enabled,
+                                  enableInteractiveSelection:
+                                      !_educations[index].readOnly,
+                                  canRequestFocus: !_educations[index].readOnly,
+                                  iconMargin: EdgeInsets.only(top: 30),
+                                  initialValue: _educations[index].name,
+                                  readOnly: _educations[index].readOnly,
+                                  hint: AppLocalizations.of(context)
+                                      .translate('login_et_user_email'),
+                                  inputType: TextInputType.emailAddress,
+                                  icon: Icons.language,
+                                  iconColor: _themeStore.darkMode
+                                      ? Colors.white70
+                                      : Colors.black54,
+                                  textController: null,
+                                  inputAction: TextInputAction.next,
+                                  autoFocus: false,
+                                  onChanged: (value) {
+                                                                      _educations[index].name = value;
+
+                                    // _formStore
+                                    //     .setUserId(_userEmailController.text);
+                                  },
+                                  onFieldSubmitted: (value) {
+                                    // FocusScope.of(context)
+                                    //     .requestFocus(_passwordFocusNode);
+                                  },
+                                  errorText: null,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              height: _educations[index].readOnly ? 12 : null,
+                              child: TextFieldWidget(
+                                label: _educations[index].readOnly
+                                    ? null
+                                    : Text(
+                                        AppLocalizations.of(context).translate(
+                                            'profile_year'),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary),
+                                      ),
+                                enabled: _educations[index].enabled,
+                                enableInteractiveSelection:
+                                    !_educations[index].readOnly,
+                                canRequestFocus: !_educations[index].readOnly,
+                                readOnly: _educations[index].readOnly,
+                                initialValue: _educations[index].year,
+                                fontSize: _educations[index].readOnly ? 10 : 15,
+                                hint: AppLocalizations.of(context)
+                                    .translate('login_et_user_email'),
+                                inputType: TextInputType.emailAddress,
+                                icon: null,
+                                textController: null,
+                                inputAction: TextInputAction.next,
+                                autoFocus: false,
+                                onChanged: (value) {
+                                  _educations[index].year = value;
+                                  // _formStore
+                                  //     .setUserId(_userEmailController.text);
+                                },
+                                onFieldSubmitted: (value) {
+                                  // FocusScope.of(context)
+                                  //     .requestFocus(_passwordFocusNode);
+                                },
+                                errorText: null,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Spacer(),
+                        Container(
+                            width: 20,
+                            margin: EdgeInsets.only(right: 10),
+                            child: IconButton(
+                              padding: EdgeInsets.only(right: 10),
+                              onPressed: () {
+                                if (_educations[index].enabled) {
+                                  setState(() {
+                                    _educations[index].readOnly = true;
+                                  });
+                                }
+                              },
+                              icon: Icon(
+                                Icons.done,
+                                size: (_educations[index].enabled &&
+                                        !_educations[index].readOnly)
+                                    ? null
+                                    : 0,
+                              ),
+                            )),
+                        Container(
+                            width: 20,
+                            margin: EdgeInsets.only(right: 20),
+                            child: IconButton(
+                              padding: EdgeInsets.only(right: 10),
+                              onPressed: () {
+                                try {
+                                  if (_educations[index].enabled) {
+                                    setState(() {
+                                      _educations[index].enabled = false;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      _educations[index].enabled = true;
+                                    });
+                                  }
+                                } catch (E) {
+                                  setState(() {});
+                                }
+                              },
+                              icon: _educations[index].enabled
+                                  ? Icon(_educations[index].readOnly == false
+                                      ? null
+                                      : Icons.remove_circle_outline)
+                                  : Icon(_educations[index].readOnly == false
+                                      ? null
+                                      : Icons.restore_rounded),
+                            )),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -825,7 +1224,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           hint:
               AppLocalizations.of(context).translate('login_et_user_password'),
           isObscure: true,
-          padding: EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
@@ -846,7 +1245,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     return Align(
       alignment: FractionalOffset.centerRight,
       child: MaterialButton(
-        padding: EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(0.0),
         child: Text(
           AppLocalizations.of(context).translate('login_btn_forgot_password'),
           style: Theme.of(context)
@@ -863,7 +1262,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     return Align(
       alignment: Alignment.centerRight,
       child: Container(
-width: 200,        child: RoundedButtonWidget(
+        width: 200,
+        child: RoundedButtonWidget(
           buttonText: AppLocalizations.of(context).translate('profile_next'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
@@ -884,24 +1284,24 @@ width: 200,        child: RoundedButtonWidget(
 
   Widget _buildFooterText() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(children: <Widget>[
         Expanded(
           child: new Container(
               margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
         ),
         Text(
           AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
         Expanded(
           child: new Container(
               margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
@@ -914,7 +1314,7 @@ width: 200,        child: RoundedButtonWidget(
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
+        margin: const EdgeInsets.fromLTRB(50, 0, 50, 20),
         child: RoundedButtonWidget(
           buttonText:
               AppLocalizations.of(context).translate('login_btn_sign_up'),
@@ -942,7 +1342,7 @@ width: 200,        child: RoundedButtonWidget(
       prefs.setBool(Preferences.is_logged_in, true);
     });
 
-    Future.delayed(Duration(milliseconds: 0), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       Navigator.of(context)
         ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
@@ -955,18 +1355,18 @@ width: 200,        child: RoundedButtonWidget(
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
-      Future.delayed(Duration(milliseconds: 0), () {
+      Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
             title: AppLocalizations.of(context).translate('home_tv_error'),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           )..show(context);
         }
       });
     }
 
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   // dispose:-------------------------------------------------------------------
