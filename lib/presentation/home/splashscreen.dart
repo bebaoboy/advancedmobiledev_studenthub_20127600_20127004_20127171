@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
     _controller = new AnimationController(
-        duration: const Duration(milliseconds: 1500), vsync: this);
+        duration: const Duration(milliseconds: 2500), vsync: this);
     _playAnimation(context);
     // Timer(
     //     Duration(seconds: 3),
@@ -60,57 +60,71 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Center(
-              child: Lottie.asset(
-                'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
-                fit: BoxFit.cover,
-                width:
-                    MediaQuery.of(context).orientation == Orientation.landscape
+      body: GestureDetector(
+        onTap: () {
+          _controller.stop();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute2(
+                  routeName:
+                      _userStore.isLoggedIn ? Routes.home : Routes.login));
+        },
+        child: Center(
+          child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Lottie.asset(
+                    'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
+                    fit: BoxFit.cover,
+                    width: MediaQuery.of(context).orientation ==
+                            Orientation.landscape
                         ? 200
                         : 400, // Adjust the width and height as needed
-                height:
-                    MediaQuery.of(context).orientation == Orientation.landscape
+                    height: MediaQuery.of(context).orientation ==
+                            Orientation.landscape
                         ? 200
                         : 400,
-                repeat: false, // Set to true if you want the animation to loop
-                controller: _controller,
-              ),
+                    repeat:
+                        false, // Set to true if you want the animation to loop
+                    controller: _controller,
+                  ),
+                ),
+                MediaQuery.of(context).orientation != Orientation.landscape
+                    ? Center(
+                        child: Text(
+                          "StudentHub",
+                          style: TextStyle(
+                            fontSize: 44,
+                            fontWeight: FontWeight.bold,
+                            // color: Colors.blueAccent,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        width: 0,
+                      ),
+                MediaQuery.of(context).orientation != Orientation.landscape
+                    ? Center(
+                        child: Text(
+                          // "20127600 - 20127004 - 20127171",
+                          "Copyright © 2024",
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                      )
+                    : SizedBox(
+                        width: 0,
+                      ),
+              ],
             ),
-            MediaQuery.of(context).orientation != Orientation.landscape
-                ? Center(
-                    child: Text(
-                      "StudentHub",
-                      style: TextStyle(
-                        fontSize: 44,
-                        fontWeight: FontWeight.bold,
-                        // color: Colors.blueAccent,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  )
-                : SizedBox(
-                    width: 0,
-                  ),
-            MediaQuery.of(context).orientation != Orientation.landscape
-                ? Center(
-                    child: Text(
-                      // "20127600 - 20127004 - 20127171",
-                      "Copyright © 2024",
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  )
-                : SizedBox(
-                    width: 0,
-                  ),
-          ],
+          ),
         ),
       ),
     );

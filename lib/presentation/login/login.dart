@@ -14,6 +14,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -110,54 +111,54 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildRightSide() {
     return SingleChildScrollView(
       physics: ClampingScrollPhysics(),
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-            maxHeight: MediaQuery.of(context).size.height *
-                (MediaQuery.of(context).orientation == Orientation.landscape
-                    ? 1.8
-                    : 1)),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            EmptyAppBar(),
-            Expanded(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-                child: Column(
-                  children: [
-                    AutoSizeText(
-                      AppLocalizations.of(context).translate('login_main_text'),
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
-                      minFontSize: 10,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Image.asset(
-                      'assets/images/img_login.png',
-                      scale: 1.2,
-                    ),
-                    SizedBox(height: 24.0),
-                    _buildUserIdField(),
-                    _buildPasswordField(),
-                    // _buildForgotPasswordButton(),
-                    SizedBox(height: 24.0),
-                    _buildSignInButton(),
-                  ],
-                ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          EmptyAppBar(),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+              child: Column(
+                children: [
+                  AutoSizeText(
+                    AppLocalizations.of(context).translate('login_main_text'),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    minFontSize: 10,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Image.asset(
+                    'assets/images/img_login.png',
+                    scale: 1.2,
+                  ),
+                  SizedBox(height: 24.0),
+                  _buildUserIdField(),
+                  _buildPasswordField(),
+                  // _buildForgotPasswordButton(),
+                  SizedBox(height: 24.0),
+                  _buildSignInButton(),
+                ],
               ),
             ),
-            _buildFooterText(),
-            SizedBox(
-              height: 14,
+          ),
+          Align(
+            heightFactor: 2,
+            alignment: Alignment.bottomCenter,
+            child: Column(
+              children: [
+                _buildFooterText(),
+                SizedBox(
+                  height: 14,
+                ),
+                _buildSignUpButton(),
+              ],
             ),
-            _buildSignUpButton(),
-          ],
-        ),
+          )
+        ],
       ),
     );
   }
@@ -253,7 +254,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildFooterText() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24),
+      margin: EdgeInsets.only(bottom: 3),
       child: Row(children: <Widget>[
         Expanded(
           child: new Container(
@@ -283,7 +284,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        margin: EdgeInsets.fromLTRB(50, 0, 50, 20),
+        margin: EdgeInsets.fromLTRB(50, 0, 50, 50),
         child: RoundedButtonWidget(
           buttonText:
               AppLocalizations.of(context).translate('login_btn_sign_up'),

@@ -21,6 +21,7 @@ dependencies:
 
   # A
   another_flushbar: ^1.12.29
+  animated_custom_dropdown: 
   # B
   # C
   cupertino_icons: ^1.0.5

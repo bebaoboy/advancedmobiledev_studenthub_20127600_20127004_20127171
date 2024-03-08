@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
             },
           );
 
-          throw Exception();
+          //throw Exception();
         },
         child:  Text(AppLocalizations.of(context).translate("exception_test")),
       ),

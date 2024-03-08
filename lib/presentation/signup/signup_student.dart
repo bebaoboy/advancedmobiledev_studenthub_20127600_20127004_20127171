@@ -358,6 +358,9 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           //   _showErrorMessage(AppLocalizations.of(context)
           //       .translate('login_error_missing_fields'));
           // }
+                    Navigator.of(context).push(
+                                      MaterialPageRoute2(
+                                          routeName: Routes.profileCompany));
         },
       ),
     );
