@@ -8,11 +8,11 @@ on:
       - sprint2
       - sprint3
       - sprint4
-      - sprintDev
+      - sprintdev
   push:
     branches:
       - test
-      - sprintDev
+      - sprintdev
 
 jobs:
   build:
