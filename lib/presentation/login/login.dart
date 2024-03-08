@@ -1,18 +1,20 @@
 import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/core/widgets/app_icon_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -36,6 +38,8 @@ class _LoginScreenState extends State<LoginScreen> {
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
 
+  bool loading = false;
+
   @override
   void initState() {
     super.initState();
@@ -45,8 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      primary: true,
-      appBar: EmptyAppBar(),
       body: _buildBody(),
     );
   }
@@ -69,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ],
                 )
-              : Center(child: _buildRightSide()),
+              : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
               return _userStore.success
@@ -80,8 +82,15 @@ class _LoginScreenState extends State<LoginScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading,
-                child: CustomProgressIndicatorWidget(),
+                visible: _userStore.isLoading || loading,
+                // child: CustomProgressIndicatorWidget(),
+                child: GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        loading = false;
+                      });
+                    },
+                    child: LoadingScreen()),
               );
             },
           )
@@ -101,21 +110,55 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            AppIconWidget(image: 'assets/icons/ic_appicon.png'),
-            SizedBox(height: 24.0),
-            _buildUserIdField(),
-            _buildPasswordField(),
-            _buildForgotPasswordButton(),
-            _buildSignInButton()
-          ],
-        ),
+      physics: ClampingScrollPhysics(),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          EmptyAppBar(),
+          Flexible(
+            flex: 1,
+            fit: FlexFit.loose,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
+              child: Column(
+                children: [
+                  AutoSizeText(
+                    AppLocalizations.of(context).translate('login_main_text'),
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    minFontSize: 10,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  Image.asset(
+                    'assets/images/img_login.png',
+                    scale: 1.2,
+                  ),
+                  SizedBox(height: 24.0),
+                  _buildUserIdField(),
+                  _buildPasswordField(),
+                  // _buildForgotPasswordButton(),
+                  SizedBox(height: 24.0),
+                  _buildSignInButton(),
+                ],
+              ),
+            ),
+          ),
+          Align(
+            heightFactor: 2,
+            alignment: Alignment.bottomCenter,
+            child: Column(
+              children: [
+                _buildFooterText(),
+                SizedBox(
+                  height: 14,
+                ),
+                _buildSignUpButton(),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
@@ -137,7 +180,10 @@ class _LoginScreenState extends State<LoginScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail,
+          errorText: _formStore.formErrorStore.userEmail == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -155,7 +201,10 @@ class _LoginScreenState extends State<LoginScreen> {
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password,
+          errorText: _formStore.formErrorStore.password == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -182,18 +231,79 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget _buildSignInButton() {
-    return RoundedButtonWidget(
-      buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
-      buttonColor: Colors.orangeAccent,
-      textColor: Colors.white,
-      onPressed: () async {
-        if (_formStore.canLogin) {
-          DeviceUtils.hideKeyboard(context);
-          _userStore.login(_userEmailController.text, _passwordController.text);
-        } else {
-          _showErrorMessage(AppLocalizations.of(context).translate('login_error_missing_fields'));
-        }
-      },
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 50),
+      child: RoundedButtonWidget(
+        buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
+        buttonColor: Theme.of(context).colorScheme.primary,
+        textColor: Colors.white,
+        onPressed: () async {
+          loading = true;
+          if (_formStore.canLogin) {
+            DeviceUtils.hideKeyboard(context);
+            _userStore.login(
+                _userEmailController.text, _passwordController.text);
+          } else {
+            _showErrorMessage(AppLocalizations.of(context)
+                .translate('login_error_missing_fields'));
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildFooterText() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 3),
+      child: Row(children: <Widget>[
+        Expanded(
+          child: new Container(
+              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
+              child: Divider(
+                color: Colors.black,
+                height: 36,
+              )),
+        ),
+        Text(
+          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
+          style: TextStyle(fontSize: 12),
+        ),
+        Expanded(
+          child: new Container(
+              margin: const EdgeInsets.only(left: 20.0, right: 10.0),
+              child: Divider(
+                color: Colors.black,
+                height: 36,
+              )),
+        ),
+      ]),
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24),
+      child: Container(
+        margin: EdgeInsets.fromLTRB(50, 0, 50, 50),
+        child: RoundedButtonWidget(
+          buttonText:
+              AppLocalizations.of(context).translate('login_btn_sign_up'),
+          buttonColor: Theme.of(context).colorScheme.primary,
+          textColor: Colors.white,
+          onPressed: () async {
+            Navigator.of(context)
+              ..push(MaterialPageRoute2(routeName: Routes.signUp));
+            // if (_formStore.canLogin) {
+            //   DeviceUtils.hideKeyboard(context);
+            //   _userStore.login(
+            //       _userEmailController.text, _passwordController.text);
+            // } else {
+            //   _showErrorMessage(AppLocalizations.of(context)
+            //       .translate('login_error_missing_fields'));
+            // }
+          },
+        ),
+      ),
     );
   }
 
@@ -203,8 +313,10 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     Future.delayed(Duration(milliseconds: 0), () {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.home, (Route<dynamic> route) => false);
+      print("LOADING = $loading");
+      Navigator.of(context)
+        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
+            (Route<dynamic> route) => false);
     });
 
     return Container();
