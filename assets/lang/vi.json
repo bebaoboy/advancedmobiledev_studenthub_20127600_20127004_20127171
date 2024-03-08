@@ -27,6 +27,10 @@
   "profile_question_title_2": "Tên công ty",
   "profile_question_title_3": "Website",
   "profile_question_title_4": "Mô tả",
-  "profile_continue": "Tiếp tục"
+  "profile_continue": "Tiếp tục",
+
+  "setting_text": "Cài đặt",
+  "logout_text": "Đăng xuất",
+  "profile_text": "Thông tin chung"
 
 }

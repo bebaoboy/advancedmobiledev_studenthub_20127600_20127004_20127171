@@ -93,11 +93,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildCompanySizeSelection(BuildContext context) {
+    int length = CompanySize.values.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        for (int i = 1; i <= 5; i++)
+        for (int i = 1; i <= length; i++)
           ListTile(
+            contentPadding: EdgeInsets.zero,
+            onTap: i > CompanySize.values.length + 1
+                ? null
+                : () {
+                    setState(() {
+                      _companySize = CompanySize.values[i - 1];
+                    });
+                  },
             title: Text(
                 AppLocalizations.of(context)
                     .translate('profile_question_1_choice_$i'),
@@ -105,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             leading: Radio<CompanySize>(
               value: CompanySize.values[i - 1],
               groupValue: _companySize,
-              onChanged: i == 5
+              onChanged: i > CompanySize.values.length + 1
                   ? null
                   : (CompanySize? value) => {
                         setState(() => _companySize = value!),
@@ -186,10 +196,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         TextField(
           decoration: const InputDecoration(
-            border: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.black)
-            )
-          ),
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black))),
           onChanged: (value) {
             _formStore.setDescription(_descriptionController.text);
           },
@@ -210,8 +218,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
+            const SizedBox(
+              height: 20,
+            ),
             Center(
               child: Text(
                 AppLocalizations.of(context).translate('profile_welcome_title'),
@@ -248,15 +259,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               height: 15,
             ),
             _buildDescriptionField(context),
+            const SizedBox(
+              height: 25,
+            ),
             Container(
               alignment: Alignment.centerRight,
               child: MaterialButton(
-                  onPressed: () => navigate(context),
-                  color: Colors.orange,
-                  child: Text(
-                    AppLocalizations.of(context).translate('profile_continue'),
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),),
+                onPressed: () => navigate(context),
+                color: Colors.orange,
+                child: Text(
+                  AppLocalizations.of(context).translate('profile_continue'),
+                  style: Theme.of(context).textTheme.bodyText1,
+                ),
+              ),
+            ),
+            const SizedBox(
+              height: 25,
             ),
           ],
         ),

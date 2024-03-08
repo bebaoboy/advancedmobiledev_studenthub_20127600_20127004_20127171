@@ -1,6 +1,7 @@
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
+import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -16,7 +17,7 @@ class Routes {
   static final routes = <String, WidgetBuilder>{
     login: (BuildContext context) => LoginScreen(),
     home: (BuildContext context) => HomeScreen(),
-    setting: (BuildContext context) => HomeScreen(),
+    setting: (BuildContext context) => SettingScreen(),
     profile: (BuildContext context) => ProfileScreen(),
   };
 }
