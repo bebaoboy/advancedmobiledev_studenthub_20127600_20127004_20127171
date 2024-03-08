@@ -37,7 +37,7 @@ class AppThemeData {
       colorScheme: colorScheme,
       textTheme: _textTheme,
       // Matches manifest.json colors and background color.
-      primaryColor: const Color(0xFF030303),
+      primaryColor: colorScheme.primary,
       appBarTheme: AppBarTheme(
         backgroundColor: colorScheme.background,
         elevation: 0,

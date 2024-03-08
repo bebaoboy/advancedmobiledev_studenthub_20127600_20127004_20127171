@@ -34,9 +34,14 @@ class TextFieldWidget extends StatelessWidget {
         style: Theme.of(context).textTheme.bodyText1,
         decoration: InputDecoration(
             hintText: this.hint,
-            hintStyle:
-                Theme.of(context).textTheme.bodyText1!.copyWith(color: hintColor),
+            hintStyle: Theme.of(context)
+                .textTheme
+                .bodyText1!
+                .copyWith(color: hintColor),
             errorText: errorText,
+            errorStyle: TextStyle(
+              fontSize: 12.0,
+            ),
             counterText: '',
             icon: this.isIcon ? Icon(this.icon, color: iconColor) : null),
       ),
@@ -61,5 +66,4 @@ class TextFieldWidget extends StatelessWidget {
     this.autoFocus = false,
     this.inputAction,
   }) : super(key: key);
-
 }
