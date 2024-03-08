@@ -43,6 +43,9 @@ class TextFieldWidget extends StatelessWidget {
               fontSize: 12.0,
             ),
             counterText: '',
+            border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black)
+            ),
             icon: this.isIcon ? Icon(this.icon, color: iconColor) : null),
       ),
     );

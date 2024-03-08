@@ -20,6 +20,8 @@ dependencies:
     sdk: flutter
 
   # A
+  animations: ^2.0.11
+  auto_size_text: ^3.0.0
   another_flushbar: ^1.12.29
   animated_custom_dropdown: 
   # B
@@ -45,6 +47,7 @@ dependencies:
   # M
   material_dialog: ^1.0.0-nullsafety.1
   mobx: ^2.1.4
+  mobx_codegen:
   # N
   # O
   # P
@@ -65,9 +68,9 @@ dependencies:
   firebase_core: ^2.24.2
   firebase_crashlytics: ^3.4.9
   firebase_analytics: ^10.8.0
+  tree_view_flutter: ^1.0.2
   lottie: ^3.0.0
-  animations: ^2.0.11
-  auto_size_text: ^3.0.0
+  
   # Y
   # Z
 
@@ -83,6 +86,7 @@ dev_dependencies:
   mobx_codegen: ^2.2.0
   build_runner: ^2.3.3
   analyzer: ^5.10.0
+  flutter_lints: ^3.0.1
 
 flutter_icons:
   image_path: "assets/icons/ic_launcher.png"

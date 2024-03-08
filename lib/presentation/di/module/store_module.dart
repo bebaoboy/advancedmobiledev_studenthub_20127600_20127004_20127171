@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/post/store/post_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_form_store.dart';
 
 import '../../../di/service_locator.dart';
 
@@ -22,6 +23,7 @@ mixin StoreModule {
     getIt.registerFactory(
       () => FormStore(getIt<FormErrorStore>(), getIt<ErrorStore>()),
     );
+    getIt.registerFactory(() => ProfileFormErrorStore(),);
 
     // stores:------------------------------------------------------------------
     getIt.registerSingleton<UserStore>(
@@ -33,6 +35,8 @@ mixin StoreModule {
         getIt<ErrorStore>(),
       ),
     );
+
+    getIt.registerFactory(() => ProfileFormStore(getIt<ProfileFormErrorStore>(), getIt<ErrorStore>()));
 
     getIt.registerSingleton<PostStore>(
       PostStore(
