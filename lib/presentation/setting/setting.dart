@@ -1,9 +1,12 @@
+import 'dart:math';
+
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
 import 'package:boilerplate/presentation/setting/widgets/student_account_widget.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:tree_view_flutter/tree_view_flutter.dart';
@@ -117,7 +120,11 @@ class _SettingScreenState extends State<SettingScreen> {
               height: 20,
             ),
             ListTile(
-                onTap: () => navigate(context, Routes.profile),
+                onTap: () {
+                  int n = Random().nextInt(3);
+                  navigate(
+                      context, n != 0 ? Routes.profileStep2 : Routes.profile);
+                },
                 leading: const Icon(Icons.person),
                 title: Text(
                   AppLocalizations.of(context).translate('profile_text'),
@@ -149,7 +156,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
       Navigator.of(context)
-          .pushNamed(route, arguments: (Route<dynamic> route) => false);
+        ..pushReplacement(MaterialPageRoute2(routeName: route));
     });
 
     return Container();
