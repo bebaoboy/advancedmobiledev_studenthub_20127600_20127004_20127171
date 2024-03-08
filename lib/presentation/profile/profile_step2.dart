@@ -18,18 +18,15 @@ import 'store/form/profile_form_store.dart';
 
 enum CompanySize {
   single, // 1
-  small, // 2-9
-  medium, // 10-100
-  large, // 100-1000
-  xLarge // 1000+
+
 }
 
-class ProfileScreen extends StatefulWidget {
+class ProfileStep2Screen extends StatefulWidget {
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileStep2ScreenState createState() => _ProfileStep2ScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final ProfileFormStore _formStore = getIt<ProfileFormStore>();
@@ -68,9 +65,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
       IconButton(onPressed: () => {
-        //TODO: đổi
-        Navigator.of(context)
-              ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false)
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false)
       }, icon: const Icon(Icons.person_rounded))
     ];
   }
@@ -79,7 +75,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildBody() {
     return Material(
       child: Stack(children: <Widget>[
-        Center(child: _buildRightSide()),
+        Container(child: _buildRightSide()),
         Observer(
           builder: (context) {
             return _userStore.success
@@ -248,23 +244,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(
-              height: 10,
+              height: 30,
             ),
-            Center(
-              child: Text(
-                AppLocalizations.of(context).translate('profile_common_body'),
-                style: Theme.of(context).textTheme.bodyText1,
-              ),
-            ),
+            
             const SizedBox(
               height: 10,
             ),
-            Text(
-              AppLocalizations.of(context)
-                  .translate('profile_question_title_1'),
-              style: Theme.of(context).textTheme.bodyText1,
-            ),
-            _buildCompanySizeSelection(context),
+            
             _buildCompanyNameField(context),
             const SizedBox(
               height: 15,
@@ -277,15 +263,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 25,
             ),
+                        _buildCompanySizeSelection(context),
+                        const SizedBox(
+              height: 30,
+            ),
             Container(
               alignment: Alignment.centerRight,
-              child: MaterialButton(
-                onPressed: () => navigate(context),
-                color: Colors.orange,
-                child: Text(
-                  AppLocalizations.of(context).translate('profile_continue'),
-                  style: Theme.of(context).textTheme.bodyText1,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MaterialButton(
+                    onPressed: () => navigate(context),
+                    color: Colors.orange,
+                    child: Text(
+                      AppLocalizations.of(context).translate('profile_edit'),
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  SizedBox(width: 15,),
+                  MaterialButton(
+                    onPressed: () => navigate(context),
+                    color: Colors.orange,
+                    child: Text(
+                      AppLocalizations.of(context).translate('profile_cancel'),
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(
@@ -299,8 +303,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          Routes.setting, (Route<dynamic> route) => false);
     });
 
     return Container();

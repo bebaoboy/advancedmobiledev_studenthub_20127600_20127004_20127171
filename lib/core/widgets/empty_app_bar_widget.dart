@@ -1,6 +1,8 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -10,14 +12,17 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 30,
       titleSpacing: 0,
       title: Container(
-          margin: EdgeInsets.only(left: 20),
+          margin: const EdgeInsets.only(left: 20),
           child: Text(AppLocalizations.of(context).translate('appbar_title'))),
       actions: [
         LanguageButton(),
         ThemeButton(),
         IconButton(
-          onPressed: () {},
-          icon: Icon(
+          onPressed: () {
+            Navigator.of(context)
+              ..push(MaterialPageRoute2(routeName: Routes.setting));
+          },
+          icon: const Icon(
             Icons.account_circle,
           ),
         ),
