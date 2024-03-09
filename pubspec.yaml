@@ -32,7 +32,9 @@ dependencies:
   # E
   event_bus: ^2.0.0
   # F
+  file_picker:
   flutter_mobx: ^2.0.6+5
+  file_previewer:
   # G
   get_it: ^7.2.0
   google_fonts: ^4.0.3

@@ -3,6 +3,8 @@ import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
+import 'package:boilerplate/presentation/profile/profile_student_step2.dart';
+import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/signup/signup.dart';
@@ -24,6 +26,8 @@ class Routes {
   static const String signUpCompany = '/signup-company';
   static const String signUpStudent = '/signup-student';
   static const String profileStudent = '/profile-student';
+  static const String profileStudentStep2 = '/profile-student-step2';
+  static const String profileStudentStep3 = '/profile-student-step3';
   static const String home = '/post';
   static const String profile = '/profile';
   static const String profileStep2 = '/profile-step2';
@@ -40,6 +44,8 @@ class Routes {
     signUpStudent: SignUpStudentScreen(),
     home: HomeScreen(),
     profileStudent: ProfileStudentScreen(),
+    profileStudentStep2: ProfileStudentStep2Screen(),
+    profileStudentStep3: ProfileStudentStep3Screen(),
   };
 
   static final routes = <String, WidgetBuilder>{};

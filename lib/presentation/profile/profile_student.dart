@@ -5,6 +5,7 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
+import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
@@ -12,12 +13,12 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/utils/classes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -91,385 +92,48 @@ class SearchDropdown extends StatelessWidget {
   }
 }
 
-const mockResults = <Skill>[
-  Skill('ManyMi', 'stock@man.com',
+const mockSkillsets = <Skill>[
+  Skill('JavaScript', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Pension', 'paul@google.com',
+  Skill('iOS Development', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Cancelation', 'fred@google.com',
+  Skill('C', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Diantier', 'bera@flutter.io',
+  Skill('Java', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('MMMMM', 'john@flutter.io',
+  Skill('C++', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Tim', 'thomas@flutter.io',
+  Skill('Kubernetes', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Quan', 'norbert@flutter.io',
+  Skill('PostgreSQL', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Long', 'marina@flutter.io',
+  Skill('Redis', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Stock Man', 'stock@man.com',
+  Skill('Android', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Paul', 'paul@google.com',
+  Skill('Node.js', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Fred', 'fred@google.com',
+  Skill('Objective-C', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Bera', 'bera@flutter.io',
+  Skill('React Native', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('John', 'john@flutter.io',
+  Skill('Video', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Thomas', 'thomas@flutter.io',
+  Skill('Microservices', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Norbert', 'norbert@flutter.io',
+  Skill('Socket', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Marina', 'marina@flutter.io',
+  Skill('AWS', "Fake description",
+      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('React', "Fake description",
+      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('Git', "Fake description",
+      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('SQL', "Fake description",
+      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('WebScrape', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
 ];
-
-class Skill {
-  final String name;
-  final String email;
-  final String imageUrl;
-
-  const Skill(this.name, this.email, this.imageUrl);
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Skill &&
-          runtimeType == other.runtimeType &&
-          name == other.name;
-
-  @override
-  int get hashCode => name.hashCode;
-
-  @override
-  String toString() {
-    return 'Profile{$name}';
-  }
-}
-
-// -------------------------------------------------
-
-typedef ChipsInputSuggestions<T> = Future<List<T>> Function(String query);
-typedef ChipSelected<T> = void Function(T data, bool selected);
-typedef ChipsBuilder<T> = Widget Function(
-    BuildContext context, ChipsInputState<T> state, T data);
-
-class ChipsInput<T> extends StatefulWidget {
-  const ChipsInput({
-    Key? key,
-    this.decoration = const InputDecoration(),
-    required this.chipBuilder,
-    required this.suggestionBuilder,
-    required this.findSuggestions,
-    required this.onChanged,
-    required this.onChipTapped,
-  }) : super(key: key);
-
-  final InputDecoration decoration;
-  final ChipsInputSuggestions<T> findSuggestions;
-  final ValueChanged<List<T>> onChanged;
-  final ValueChanged<T> onChipTapped;
-  final ChipsBuilder<T> chipBuilder;
-  final ChipsBuilder<T> suggestionBuilder;
-
-  @override
-  ChipsInputState<T> createState() => ChipsInputState<T>();
-}
-
-class ChipsInputState<T> extends State<ChipsInput<T>>
-    implements TextInputClient {
-  static const kObjectReplacementChar = 0xFFFC;
-
-  Set<T> _chips = Set<T>();
-  List<T> _suggestions = List.empty(growable: true);
-  int _searchId = 0;
-
-  FocusNode _focusNode = FocusNode();
-  TextEditingValue _value = const TextEditingValue();
-  TextInputConnection? _connection;
-  ScrollController _scrollController = ScrollController();
-
-  String get text => String.fromCharCodes(
-        _value.text.codeUnits.where((ch) => ch != kObjectReplacementChar),
-      );
-
-  bool get _hasInputConnection => _connection != null && _connection!.attached;
-
-  void requestKeyboard() {
-    if (_focusNode.hasFocus) {
-      _openInputConnection();
-    } else {
-      FocusScope.of(context).requestFocus(_focusNode);
-    }
-  }
-
-  void selectSuggestion(T data) {
-    setState(() {
-      _chips.add(data);
-      _updateTextInputState();
-      _suggestions.remove(data);
-      // _scrollController.animateTo(
-      //   _scrollController.position.maxScrollExtent,
-      //   duration: Duration(milliseconds: 10),
-      //   curve: Curves.ease,
-      // );
-    });
-    widget.onChanged(_chips.toList(growable: false));
-  }
-
-  void deleteChip(T data) {
-    setState(() {
-      _chips.remove(data);
-      _updateTextInputState();
-    });
-    widget.onChanged(_chips.toList(growable: false));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _focusNode.addListener(_onFocusChanged);
-  }
-
-  void _onFocusChanged() {
-    if (_focusNode.hasFocus) {
-      _openInputConnection();
-    } else {
-      _closeInputConnectionIfNeeded();
-    }
-    setState(() {
-      // rebuild so that _TextCursor is hidden.
-    });
-  }
-
-  @override
-  void dispose() {
-    _focusNode.dispose();
-    _closeInputConnectionIfNeeded();
-    super.dispose();
-  }
-
-  void _openInputConnection() {
-    if (!_hasInputConnection) {
-      _connection = TextInput.attach(this, const TextInputConfiguration());
-      _connection!.setEditingState(_value);
-    }
-    _connection!.show();
-    _onSearchChanged("");
-  }
-
-  void _closeInputConnectionIfNeeded() {
-    if (_hasInputConnection) {
-      _connection!.close();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var chipsChildren = _chips
-        .map<Widget>(
-          (data) => widget.chipBuilder(context, this, data),
-        )
-        .toList();
-
-    final theme = Theme.of(context);
-
-    chipsChildren.add(
-      Container(
-        height: 32.0,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Text(
-              text,
-              style: theme.textTheme.subtitle1?.copyWith(
-                height: 1.5,
-              ),
-            ),
-            _TextCaret(
-              resumed: _focusNode.hasFocus,
-            ),
-          ],
-        ),
-      ),
-    );
-
-    return Container(
-      decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(15))),
-      child: SizedBox(
-        height: _focusNode.hasFocus
-            ? 500
-            : _chips.length == 0
-                ? 65
-                : 102,
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            //mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: requestKeyboard,
-                child: InputDecorator(
-                  decoration: widget.decoration,
-                  isFocused: _focusNode.hasFocus,
-                  isEmpty: _value.text.length == 0,
-                  child: Container(
-                    constraints: const BoxConstraints(maxHeight: 70),
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      reverse: true,
-                      child: Wrap(
-                        children: chipsChildren,
-                        spacing: 2.0,
-                        runSpacing: 2.0,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _suggestions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return widget.suggestionBuilder(
-                        context, this, _suggestions[index]);
-                  },
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void updateEditingValue(TextEditingValue value) {
-    final oldCount = _countReplacements(_value);
-    final newCount = _countReplacements(value);
-    setState(() {
-      if (newCount < oldCount) {
-        _chips = Set.from(_chips.take(newCount));
-      }
-      _value = value;
-    });
-    _onSearchChanged(text);
-  }
-
-  int _countReplacements(TextEditingValue value) {
-    return value.text.codeUnits
-        .where((ch) => ch == kObjectReplacementChar)
-        .length;
-  }
-
-  @override
-  void performAction(TextInputAction action) {
-    _focusNode.unfocus();
-  }
-
-  void _updateTextInputState() {
-    final text =
-        String.fromCharCodes(_chips.map((_) => kObjectReplacementChar));
-    _value = TextEditingValue(
-      text: text,
-      selection: TextSelection.collapsed(offset: text.length),
-      composing: TextRange(start: 0, end: text.length),
-    );
-    _connection!.setEditingState(_value);
-  }
-
-  void _onSearchChanged(String value) async {
-    final localId = ++_searchId;
-    await widget.findSuggestions(value).then((value) {
-      if (_searchId == localId && mounted) {
-        setState(() {
-          _suggestions = value
-              .where((profile) => !_chips.contains(profile))
-              .toList(growable: true);
-        });
-      }
-    });
-  }
-
-  noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-class _TextCaret extends StatefulWidget {
-  const _TextCaret({
-    Key? key,
-    this.duration = const Duration(milliseconds: 500),
-    this.resumed = false,
-  }) : super(key: key);
-
-  final Duration duration;
-  final bool resumed;
-
-  @override
-  _TextCursorState createState() => _TextCursorState();
-}
-
-class _TextCursorState extends State<_TextCaret>
-    with SingleTickerProviderStateMixin {
-  bool _displayed = false;
-  late Timer _timer;
-
-  @override
-  void initState() {
-    super.initState();
-    _timer = Timer.periodic(widget.duration, _onTimer);
-  }
-
-  void _onTimer(Timer timer) {
-    setState(() => _displayed = !_displayed);
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return FractionallySizedBox(
-      heightFactor: 0.7,
-      child: Opacity(
-        opacity: _displayed && widget.resumed ? 1.0 : 0.0,
-        child: Container(
-          width: 2.0,
-          color: theme.primaryColor,
-        ),
-      ),
-    );
-  }
-}
-
-class Language {
-  String name;
-  String proficiency;
-  bool readOnly = true;
-  bool enabled = true;
-
-  Language(this.name, this.proficiency,
-      {this.readOnly = true, this.enabled = true});
-}
-
-class Education {
-  String name;
-  String year;
-  bool readOnly = true;
-  bool enabled = true;
-
-  Education(this.name, this.year, {this.readOnly = true, this.enabled = true});
-}
 
 class ProfileStudentScreen extends StatefulWidget {
   @override
@@ -531,10 +195,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           MediaQuery.of(context).orientation == Orientation.landscape
               ? Row(
                   children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: _buildLeftSide(),
-                    ),
+                    
                     Expanded(
                       flex: 1,
                       child: _buildRightSide(),
@@ -579,11 +240,12 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
 
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.length != 0) {
-      return mockResults.where((profile) {
-        return profile.name.contains(query) || profile.email.contains(query);
+      return mockSkillsets.where((profile) {
+        return profile.name.contains(query) ||
+            profile.description.contains(query);
       }).toList(growable: true);
     } else {
-      return mockResults;
+      return mockSkillsets;
     }
   }
 
@@ -654,23 +316,29 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     height: 24,
                   ),
                   SizedBox(
-                    height: 30,
+                    height: 40,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        AutoSizeText(
-                          AppLocalizations.of(context)
-                              .translate('profile_skillset'),
-                          style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w600),
-                          minFontSize: 10,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: AutoSizeText(
+                            AppLocalizations.of(context)
+                                .translate('profile_skillset'),
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600),
+                            minFontSize: 10,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         Align(
                           alignment: Alignment.centerRight,
                           child: Container(
+                              margin: EdgeInsets.only(
+                                right: 5,
+                              ),
                               padding: EdgeInsets.zero,
                               child: IconButton(
                                 onPressed: () => {
@@ -683,17 +351,18 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     ),
                   ),
 
-                  const SizedBox(height: 14.0),
                   ChipsInput<Skill>(
+                    initialChips: [],
                     onChipTapped: _onChipTapped,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         prefixIconConstraints: BoxConstraints(),
                         // prefixIcon: Container(
                         //     margin: EdgeInsets.only(top: 13),
                         //     child: Icon(
                         //       Icons.search,
                         //     )),
-                        hintText: 'Profile search',
+                        hintText: AppLocalizations.of(context)
+                            .translate('profile_choose_skillset'),
                         hintStyle: TextStyle(
                           color: Colors.grey,
                         )),
@@ -720,11 +389,12 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         ChipsInputState<Skill> state, Skill profile) {
                       return ListTile(
                         key: ObjectKey(profile),
-                        leading: CircleAvatar(
-                          backgroundImage: NetworkImage(profile.imageUrl),
-                        ),
+                        // leading: CircleAvatar(
+                        //   backgroundImage: NetworkImage(profile.imageUrl),
+                        // ),
+                        leading: Icon(Icons.developer_mode),
                         title: Text(profile.name),
-                        subtitle: Text(profile.email),
+                        subtitle: Text(profile.description),
                         onTap: () => state.selectSuggestion(profile),
                       );
                     },
@@ -735,25 +405,29 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        AutoSizeText(
-                          "${AppLocalizations.of(context).translate('profile_languages')}: ${_languages.length}",
-                          style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w600),
-                          minFontSize: 10,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: AutoSizeText(
+                            "${AppLocalizations.of(context).translate('profile_languages')}: ${_languages.length}",
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600),
+                            minFontSize: 10,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         const Spacer(),
                         Container(
+                            margin: EdgeInsets.only(right: 5),
                             child: IconButton(
-                          onPressed: () => {
-                            setState(() {
-                              _languages.insert(
-                                  0, Language("Name", "...", readOnly: false));
-                            })
-                          },
-                          icon: Icon(Icons.add_circle_outline),
-                        )),
+                              onPressed: () => {
+                                setState(() {
+                                  _languages.insert(0,
+                                      Language("Name", "...", readOnly: false));
+                                })
+                              },
+                              icon: Icon(Icons.add_circle_outline),
+                            )),
                         // Container(
                         //     padding: EdgeInsets.zero,
                         //     child: IconButton(
@@ -771,31 +445,35 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   ),
                   const SizedBox(height: 24.0),
                   SizedBox(
-                    height: 30,
+                    height: 40,
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        AutoSizeText(
-                          "${AppLocalizations.of(context).translate('profile_education')}: ${_educations.length}",
-                          style: const TextStyle(
-                              fontSize: 13, fontWeight: FontWeight.w600),
-                          minFontSize: 10,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: AutoSizeText(
+                            "${AppLocalizations.of(context).translate('profile_education')}: ${_educations.length}",
+                            style: const TextStyle(
+                                fontSize: 13, fontWeight: FontWeight.w600),
+                            minFontSize: 10,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                         const Spacer(),
                         Container(
+                            margin: EdgeInsets.only(right: 5),
                             child: IconButton(
-                          onPressed: () => {
-                            setState(() {
-                              _educations.insert(
-                                  0,
-                                  Education("School Name", "2002-2002",
-                                      readOnly: false));
-                            })
-                          },
-                          icon: Icon(Icons.add_circle_outline),
-                        )),
+                              onPressed: () => {
+                                setState(() {
+                                  _educations.insert(
+                                      0,
+                                      Education("School Name", "2002-2002",
+                                          readOnly: false));
+                                })
+                              },
+                              icon: Icon(Icons.add_circle_outline),
+                            )),
                         // Container(
                         //     padding: EdgeInsets.zero,
                         //     child: IconButton(
@@ -852,7 +530,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                           children: [
                             GestureDetector(
                               onDoubleTap: () {
-                                if (_languages[index].enabled)
+                                if (_languages[index].readOnly &&
+                                    _languages[index].enabled)
                                   setState(() {
                                     _languages[index].readOnly = false;
                                   });
@@ -860,6 +539,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.6,
                                 child: TextFieldWidget(
+                                  inputDecoration: InputDecoration(
+                                              border: _languages[index].readOnly
+                                                  ? InputBorder.none
+                                                  : null),
                                   label: _languages[index].readOnly
                                       ? null
                                       : Text(
@@ -889,7 +572,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   inputAction: TextInputAction.next,
                                   autoFocus: false,
                                   onChanged: (value) {
-                                                                    _languages[index].name = value;
+                                    _languages[index].name = value;
 
                                     // _formStore
                                     //     .setUserId(_userEmailController.text);
@@ -902,52 +585,67 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.6,
-                              height: _languages[index].readOnly ? 12 : null,
-                              child: TextFieldWidget(
-                                label: _languages[index].readOnly
-                                    ? null
-                                    : Text(
-                                        AppLocalizations.of(context).translate(
-                                            'profile_language_proficiency'),
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .primary),
-                                      ),
-                                enabled: _languages[index].enabled,
-                                enableInteractiveSelection:
-                                    !_languages[index].readOnly,
-                                canRequestFocus: !_languages[index].readOnly,
-                                readOnly: _languages[index].readOnly,
-                                initialValue: _languages[index].proficiency,
-                                fontSize: _languages[index].readOnly ? 10 : 15,
-                                hint: AppLocalizations.of(context)
-                                    .translate('login_et_user_email'),
-                                inputType: TextInputType.emailAddress,
-                                icon: null,
-                                textController: null,
-                                inputAction: TextInputAction.next,
-                                autoFocus: false,
-                                onChanged: (value) {
-                                                                    _languages[index].proficiency = value;
+                            GestureDetector(
+                              onDoubleTap: () {
+                                if (_languages[index].readOnly &&
+                                    _languages[index].enabled)
+                                  setState(() {
+                                    _languages[index].readOnly = false;
+                                  });
+                              },
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.6,
+                                height: _languages[index].readOnly ? 12 : null,
+                                child: TextFieldWidget(
+                                  inputDecoration: InputDecoration(
+                                              border: _languages[index].readOnly
+                                                  ? InputBorder.none
+                                                  : null),
+                                    label: _languages[index].readOnly
+                                        ? null
+                                        : Text(
+                                            AppLocalizations.of(context).translate(
+                                                'profile_language_proficiency'),
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .primary),
+                                          ),
+                                    enabled: _languages[index].enabled,
+                                    enableInteractiveSelection:
+                                        !_languages[index].readOnly,
+                                    canRequestFocus:
+                                        !_languages[index].readOnly,
+                                    readOnly: _languages[index].readOnly,
+                                    initialValue: _languages[index].proficiency,
+                                    fontSize:
+                                        _languages[index].readOnly ? 10 : 15,
+                                    hint: AppLocalizations.of(context)
+                                        .translate('login_et_user_email'),
+                                    inputType: TextInputType.emailAddress,
+                                    icon: null,
+                                    textController: null,
+                                    inputAction: TextInputAction.next,
+                                    autoFocus: false,
+                                    onChanged: (value) {
+                                      _languages[index].proficiency = value;
 
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
-                                },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
-                                errorText: null
-                                // _formStore
-                                //             .formErrorStore.userEmail ==
-                                //         null
-                                //     ? null
-                                //     : AppLocalizations.of(context).translate(
-                                //         _formStore.formErrorStore.userEmail),
+                                      // _formStore
+                                      //     .setUserId(_userEmailController.text);
+                                    },
+                                    onFieldSubmitted: (value) {
+                                      // FocusScope.of(context)
+                                      //     .requestFocus(_passwordFocusNode);
+                                    },
+                                    errorText: null
+                                    // _formStore
+                                    //             .formErrorStore.userEmail ==
+                                    //         null
+                                    //     ? null
+                                    //     : AppLocalizations.of(context).translate(
+                                    //         _formStore.formErrorStore.userEmail),
+                                    ),
                               ),
                             ),
                           ],
@@ -1045,6 +743,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.6,
                                 child: TextFieldWidget(
+                                  inputDecoration: InputDecoration(
+                                              border: _educations[index].readOnly
+                                                  ? InputBorder.none
+                                                  : null),
                                   label: _educations[index].readOnly
                                       ? null
                                       : Text(
@@ -1074,7 +776,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   inputAction: TextInputAction.next,
                                   autoFocus: false,
                                   onChanged: (value) {
-                                                                      _educations[index].name = value;
+                                    _educations[index].name = value;
 
                                     // _formStore
                                     //     .setUserId(_userEmailController.text);
@@ -1091,11 +793,15 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                               width: MediaQuery.of(context).size.width * 0.6,
                               height: _educations[index].readOnly ? 12 : null,
                               child: TextFieldWidget(
+                                inputDecoration: InputDecoration(
+                                              border: _educations[index].readOnly
+                                                  ? InputBorder.none
+                                                  : null),
                                 label: _educations[index].readOnly
                                     ? null
                                     : Text(
-                                        AppLocalizations.of(context).translate(
-                                            'profile_year'),
+                                        AppLocalizations.of(context)
+                                            .translate('profile_year'),
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Theme.of(context)
@@ -1268,6 +974,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
+            Navigator.of(context)
+              ..push(MaterialPageRoute2(routeName: Routes.profileStudentStep2));
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -1287,7 +995,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
       margin: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(children: <Widget>[
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 10.0, right: 20.0),
               child: const Divider(
                 color: Colors.black,
@@ -1299,7 +1007,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           style: const TextStyle(fontSize: 12),
         ),
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 20.0, right: 10.0),
               child: const Divider(
                 color: Colors.black,
@@ -1321,8 +1029,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.signUp));
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(

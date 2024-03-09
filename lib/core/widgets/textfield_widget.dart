@@ -25,12 +25,25 @@ class TextFieldWidget extends StatelessWidget {
   final bool? enableInteractiveSelection;
   final bool? enabled;
   final Widget? label;
+  final int? maxLength;
+  final int? minLines;
+  final int? maxLines;
+  final TextStyle? style;
+  final TextStyle? hintStyle;
+  final FloatingLabelBehavior? floatingLabelBehavior;
+  final InputBorder? border;
+  final TextAlign textAlign;
+  final TextAlignVertical? textAlignVertical;
+  final Function()? onTap;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: padding,
       child: TextFormField(
+        onTap: onTap,
+        textAlign: textAlign,
+        textAlignVertical: textAlignVertical,
         enabled: enabled,
         enableInteractiveSelection: enableInteractiveSelection,
         canRequestFocus: canRequestFocus ?? true,
@@ -43,31 +56,49 @@ class TextFieldWidget extends StatelessWidget {
         autofocus: autoFocus,
         textInputAction: inputAction,
         obscureText: this.isObscure,
-        maxLength: 250,
+        maxLength: maxLength,
+        maxLines: maxLines,
+        minLines: minLines,
         keyboardType: this.inputType,
         style: Theme.of(context).textTheme.bodyText1 == null
             ? TextStyle(fontSize: fontSize, overflow: TextOverflow.ellipsis)
+                .merge(style)
             : Theme.of(context)
                 .textTheme
                 .bodyText1!
-                .copyWith(fontSize: fontSize, overflow: TextOverflow.ellipsis),
+                .copyWith(fontSize: fontSize, overflow: TextOverflow.ellipsis)
+                .merge(style),
         magnifierConfiguration: TextMagnifierConfiguration.disabled,
         decoration: (inputDecoration ?? const InputDecoration()).copyWith(
+          floatingLabelBehavior: initialValue == null ||
+                  (initialValue != null && initialValue!.isEmpty)
+              ? FloatingLabelBehavior.always
+              : floatingLabelBehavior,
           label: label,
           hintText: this.hint,
-          hintStyle:
-              Theme.of(context).textTheme.bodyText1!.copyWith(color: hintColor),
+          hintStyle: Theme.of(context)
+              .textTheme
+              .bodyText1!
+              .copyWith(color: hintColor)
+              .merge(hintStyle),
           errorText: errorText,
-          errorStyle: TextStyle(
-            fontSize: 12.0,
-          ),
+          errorStyle: inputDecoration != null
+              ? inputDecoration!.errorStyle
+              : TextStyle(
+                  fontSize: 12.0,
+                ),
           counterText: '',
+          border: inputDecoration != null ? inputDecoration!.border : border,
           // border: const OutlineInputBorder(
           //   borderSide: BorderSide(color: Colors.black)
           // ),
-          icon: Container(
-              margin: iconMargin,
-              child: this.isIcon ? Icon(this.icon, color: iconColor) : null),
+          icon: inputDecoration != null
+              ? inputDecoration!.icon
+              : this.isIcon
+                  ? Container(
+                      margin: iconMargin,
+                      child: Icon(this.icon, color: iconColor))
+                  : null,
         ),
       ),
     );
@@ -97,7 +128,17 @@ class TextFieldWidget extends StatelessWidget {
       this.canRequestFocus,
       this.iconMargin,
       this.enableInteractiveSelection,
-      this.enabled, 
-      this.label})
+      this.enabled,
+      this.label,
+      this.maxLength,
+      this.minLines = 1,
+      this.maxLines = 1,
+      this.style,
+      this.floatingLabelBehavior,
+      this.hintStyle,
+      this.border,
+      this.textAlign = TextAlign.start,
+      this.textAlignVertical,
+      this.onTap})
       : super(key: key);
 }
