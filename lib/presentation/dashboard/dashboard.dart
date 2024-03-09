@@ -11,19 +11,26 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
+class DashBoardScreen extends StatefulWidget {
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashBoardScreen> createState() => _DashBoardScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashBoardScreenState extends State<DashBoardScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
+  int _selectedIndex = 1;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -32,41 +39,99 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(AppLocalizations.of(context).translate('home_title')),
-            SizedBox(height: 30),
-            Text(AppLocalizations.of(context).translate('home_intro')),
-            SizedBox(height: 25),
-            SizedBox(
-              width: 200,
-              height: 50,
-              child: FloatingActionButton(
-                onPressed: () {
-                  // Handle your action
-                },
-                child: Text(
-                    AppLocalizations.of(context).translate('Company_button')),
-              ),
-            ),
-            SizedBox(height: 10),
-            SizedBox(
-              width: 200,
-              height: 50,
-              child: FloatingActionButton(
-                onPressed: () {
-                  // Handle your action
-                },
-                child: Text(
-                    AppLocalizations.of(context).translate('Student_button')),
-              ),
-            ),
-            SizedBox(height: 25),
-            Text(AppLocalizations.of(context).translate('home_description')),
-          ],
-        ),
+        child: _selectedIndex == 0
+            ? _buildProjectContent()
+            : _selectedIndex == 1
+                ? _buildDashBoardContent()
+                : _selectedIndex == 2
+                    ? _buildMessageContent()
+                    : _buildAlertContent(),
       ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'Projects',
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Message',
+            backgroundColor: Colors.blue,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Alerts',
+            backgroundColor: Colors.blue,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.red,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  Widget _buildDashBoardContent() {
+    return Column(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+              AppLocalizations.of(context).translate('Dashboard_your_job')),
+        ),
+        Align(
+          alignment: Alignment.topRight,
+          child: SizedBox(
+            width: 200,
+            height: 50,
+            child: FloatingActionButton(
+              onPressed: () {},
+              child: Text(
+                  AppLocalizations.of(context).translate('Dashboard_post_job')),
+            ),
+          ),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child:
+              Text(AppLocalizations.of(context).translate('Dashboard_intro')),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child:
+              Text(AppLocalizations.of(context).translate('Dashboard_content')),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProjectContent() {
+    return Column(
+      children: <Widget>[
+        Text("This is project page"),
+      ],
+    );
+  }
+
+  Widget _buildMessageContent() {
+    return Column(
+      children: <Widget>[
+        Text("This is message page"),
+      ],
+    );
+  }
+
+  Widget _buildAlertContent() {
+    return Column(
+      children: <Widget>[
+        Text("This is alert page"),
+      ],
     );
   }
 
