@@ -4,6 +4,7 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -80,23 +81,33 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   Widget _buildDashBoardContent() {
     return Column(
       children: <Widget>[
-        Align(
+        Row(
+          children: [
+Align(
           alignment: Alignment.topLeft,
           child: Text(
               AppLocalizations.of(context).translate('Dashboard_your_job')),
         ),
+        Spacer(),
         Align(
           alignment: Alignment.topRight,
           child: SizedBox(
             width: 200,
             height: 50,
             child: FloatingActionButton(
+              heroTag: "F3",
               onPressed: () {},
               child: Text(
                   AppLocalizations.of(context).translate('Dashboard_post_job')),
             ),
           ),
         ),
+          ],
+        ),
+        SizedBox(
+          height: 34,
+        ),
+        
         Align(
           alignment: Alignment.center,
           child:
@@ -183,7 +194,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       onPressed: () {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
-          Navigator.of(context).pushReplacementNamed(Routes.login);
+          Navigator.of(context)
+        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
+            (Route<dynamic> route) => false);
         });
       },
       icon: Icon(
