@@ -44,8 +44,13 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 200,
               height: 50,
               child: FloatingActionButton(
+                heroTag: "F1",
                 onPressed: () {
                   // Handle your action
+                  Navigator.of(context)
+                    ..push(
+                      MaterialPageRoute2(routeName: Routes.welcome),
+                    );
                 },
                 child: Text(
                     AppLocalizations.of(context).translate('Company_button')),
@@ -56,6 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 200,
               height: 50,
               child: FloatingActionButton(
+                heroTag: "F2",
                 onPressed: () {
                   // Handle your action
                 },
@@ -81,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-
 //       TextButton(
 //         onPressed: () async {
 //           await FirebaseAnalytics.instance.logEvent(
@@ -134,7 +139,9 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
-          Navigator.of(context).pushReplacement(MaterialPageRoute2(routeName: Routes.login));
+                    Navigator.of(context)
+        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
+            (Route<dynamic> route) => false);
         });
       },
       icon: Icon(

@@ -4,6 +4,7 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               height: 50,
               child: FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacementNamed(Routes.dashboard);
+                  Navigator.of(context)
+                    ..pushAndRemoveUntil(
+                        MaterialPageRoute2(routeName: Routes.dashboard),
+                        (Route<dynamic> route) => false);
                 },
                 child: Text(
                     AppLocalizations.of(context).translate('Start_button')),
@@ -108,7 +112,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       onPressed: () {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
-          Navigator.of(context).pushReplacementNamed(Routes.login);
+          Navigator.of(context)
+            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
+                (Route<dynamic> route) => false);
         });
       },
       icon: Icon(
