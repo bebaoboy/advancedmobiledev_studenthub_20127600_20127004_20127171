@@ -4,6 +4,7 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -80,6 +81,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
+
+//       TextButton(
+//         onPressed: () async {
+//           await FirebaseAnalytics.instance.logEvent(
+//             name: "select_content",
+//             parameters: {
+//               "content_type": "image",
+//               "item_id": 1,
+//             },
+//           );
+
+//           //throw Exception();
+//         },
+//         child:  Text(AppLocalizations.of(context).translate("exception_test")),
+//       ),
       _buildLanguageButton(),
       _buildThemeButton(),
       _buildProfileButton(),
@@ -118,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
-          Navigator.of(context).pushReplacementNamed(Routes.login);
+          Navigator.of(context).pushReplacement(MaterialPageRoute2(routeName: Routes.login));
         });
       },
       icon: Icon(

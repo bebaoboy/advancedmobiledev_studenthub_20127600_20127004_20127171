@@ -16,6 +16,7 @@ class TextFieldWidget extends StatelessWidget {
   final ValueChanged? onChanged;
   final bool autoFocus;
   final TextInputAction? inputAction;
+  final InputDecoration? inputDecoration;
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +33,20 @@ class TextFieldWidget extends StatelessWidget {
         maxLength: 25,
         keyboardType: this.inputType,
         style: Theme.of(context).textTheme.bodyText1,
-        decoration: InputDecoration(
-            hintText: this.hint,
-            hintStyle:
-                Theme.of(context).textTheme.bodyText1!.copyWith(color: hintColor),
-            errorText: errorText,
-            counterText: '',
-            icon: this.isIcon ? Icon(this.icon, color: iconColor) : null),
+        decoration: (inputDecoration ?? const InputDecoration()).copyWith(
+          hintText: this.hint,
+          hintStyle:
+              Theme.of(context).textTheme.bodyText1!.copyWith(color: hintColor),
+          errorText: errorText,
+          errorStyle: TextStyle(
+            fontSize: 12.0,
+          ),
+          counterText: '',
+          // border: const OutlineInputBorder(
+          //   borderSide: BorderSide(color: Colors.black)
+          // ),
+          icon: this.isIcon ? Icon(this.icon, color: iconColor) : null,
+        ),
       ),
     );
   }
@@ -60,6 +68,6 @@ class TextFieldWidget extends StatelessWidget {
     this.onChanged,
     this.autoFocus = false,
     this.inputAction,
+    this.inputDecoration,
   }) : super(key: key);
-
 }
