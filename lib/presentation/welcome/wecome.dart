@@ -4,7 +4,6 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
@@ -12,12 +11,12 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
+class WelcomeScreen extends StatefulWidget {
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _WelcomeScreenState extends State<WelcomeScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
@@ -36,35 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text(AppLocalizations.of(context).translate('home_title')),
-            SizedBox(height: 30),
-            Text(AppLocalizations.of(context).translate('home_intro')),
-            SizedBox(height: 25),
+            Icon(
+              Icons.signpost_outlined,
+              size: 25,
+            ),
+            SizedBox(height: 20.0),
+            Text(AppLocalizations.of(context).translate('Welcome')),
+            Text(AppLocalizations.of(context).translate('Start')),
+            SizedBox(height: 20.0),
             SizedBox(
               width: 200,
               height: 50,
               child: FloatingActionButton(
                 onPressed: () {
-                  // Handle your action
+                  Navigator.of(context).pushReplacementNamed(Routes.dashboard);
                 },
                 child: Text(
-                    AppLocalizations.of(context).translate('Company_button')),
+                    AppLocalizations.of(context).translate('Start_button')),
               ),
             ),
-            SizedBox(height: 10),
-            SizedBox(
-              width: 200,
-              height: 50,
-              child: FloatingActionButton(
-                onPressed: () {
-                  // Handle your action
-                },
-                child: Text(
-                    AppLocalizations.of(context).translate('Student_button')),
-              ),
-            ),
-            SizedBox(height: 25),
-            Text(AppLocalizations.of(context).translate('home_description')),
           ],
         ),
       ),
@@ -81,21 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-
-//       TextButton(
-//         onPressed: () async {
-//           await FirebaseAnalytics.instance.logEvent(
-//             name: "select_content",
-//             parameters: {
-//               "content_type": "image",
-//               "item_id": 1,
-//             },
-//           );
-
-//           //throw Exception();
-//         },
-//         child:  Text(AppLocalizations.of(context).translate("exception_test")),
-//       ),
       _buildLanguageButton(),
       _buildThemeButton(),
       _buildProfileButton(),
@@ -134,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
-          Navigator.of(context).pushReplacement(MaterialPageRoute2(routeName: Routes.login));
+          Navigator.of(context).pushReplacementNamed(Routes.login);
         });
       },
       icon: Icon(

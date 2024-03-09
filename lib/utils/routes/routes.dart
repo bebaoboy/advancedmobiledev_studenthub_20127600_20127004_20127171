@@ -1,6 +1,8 @@
+import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
+import 'package:boilerplate/presentation/welcome/wecome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
 import 'package:boilerplate/presentation/profile/profile_student_step2.dart';
@@ -29,6 +31,8 @@ class Routes {
   static const String profileStudentStep2 = '/profile-student-step2';
   static const String profileStudentStep3 = '/profile-student-step3';
   static const String home = '/post';
+  static const String welcome = '/welcome';
+  static const String dashboard = '/dashboard';
   static const String profile = '/profile';
   static const String profileStep2 = '/profile-step2';
   static const String setting = '/settings';
@@ -43,6 +47,8 @@ class Routes {
     signUpCompany: SignUpCompanyScreen(),
     signUpStudent: SignUpStudentScreen(),
     home: HomeScreen(),
+    welcome: WelcomeScreen(),
+    dashboard: DashBoardScreen(),
     profileStudent: ProfileStudentScreen(),
     profileStudentStep2: ProfileStudentStep2Screen(),
     profileStudentStep3: ProfileStudentStep3Screen(),
