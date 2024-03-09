@@ -2,8 +2,14 @@
 
 ## Thông tin nhóm:
 Lưu Tuấn Quân - 20127600
+<br>
 Huỳnh Minh Bảo- 20127004
+<br>
 Vũ Huy Hoàng - 20127171
+<br>
+
+## Link Youtube Demo:
+[Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
 
 ## Link File đánh giá:
 [GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)

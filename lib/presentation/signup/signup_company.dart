@@ -182,7 +182,11 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                       text: TextSpan(
                         text: AppLocalizations.of(context)
                             .translate('signup_company_student_prompt'),
-                        style: TextStyle(fontSize: 18, color: _themeStore.darkMode ? Colors.white : Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: _themeStore.darkMode
+                                ? Colors.white
+                                : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
                               text: " " +
@@ -250,7 +254,10 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.userEmail),
+          errorText: _formStore.formErrorStore.userEmail == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -266,7 +273,10 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           icon: Icons.lock,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.password),
+          errorText: _formStore.formErrorStore.password == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -358,6 +368,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           //   _showErrorMessage(AppLocalizations.of(context)
           //       .translate('login_error_missing_fields'));
           // }
+          Navigator.of(context)
+              .push(MaterialPageRoute2(routeName: Routes.profile));
         },
       ),
     );

@@ -5,6 +5,8 @@ import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/welcome/wecome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
+import 'package:boilerplate/presentation/profile/profile_student_step2.dart';
+import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/signup/signup.dart';
@@ -25,7 +27,9 @@ class Routes {
   static const String signUp = '/signup';
   static const String signUpCompany = '/signup-company';
   static const String signUpStudent = '/signup-student';
-  static const String profileCompany = '/profile-company';
+  static const String profileStudent = '/profile-student';
+  static const String profileStudentStep2 = '/profile-student-step2';
+  static const String profileStudentStep3 = '/profile-student-step3';
   static const String home = '/post';
   static const String welcome = '/welcome';
   static const String dashboard = '/dashboard';
@@ -43,9 +47,11 @@ class Routes {
     signUpCompany: SignUpCompanyScreen(),
     signUpStudent: SignUpStudentScreen(),
     home: HomeScreen(),
-    profileCompany: ProfileStudentScreen(),
     welcome: WelcomeScreen(),
     dashboard: DashBoardScreen(),
+    profileStudent: ProfileStudentScreen(),
+    profileStudentStep2: ProfileStudentStep2Screen(),
+    profileStudentStep3: ProfileStudentStep3Screen(),
   };
 
   static final routes = <String, WidgetBuilder>{};
