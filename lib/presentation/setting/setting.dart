@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:another_flushbar/flushbar_helper.dart';
-import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
 import 'package:boilerplate/presentation/setting/widgets/student_account_widget.dart';
@@ -24,7 +21,7 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   //stores:---------------------------------------------------------------------
-  final ThemeStore _themeStore = getIt<ThemeStore>();
+  // final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
 
   List<Account> accountList = [
@@ -121,9 +118,9 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ListTile(
                 onTap: () {
-                  int n = Random().nextInt(3);
+                  //int n = Random().nextInt(3);
                   navigate(
-                      context, n != 0 ? Routes.profileStep2 : Routes.profile);
+                      context, Routes.profileStep2);
                 },
                 leading: const Icon(Icons.person),
                 title: Text(

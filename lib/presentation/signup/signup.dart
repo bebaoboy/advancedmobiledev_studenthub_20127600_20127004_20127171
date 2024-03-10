@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     if (sampleData.isEmpty) {
       sampleData.add(RadioModel(
-          false,
+          true,
           Icons.account_box_outlined,
           AppLocalizations.of(context).translate("signup_student_role_text"),
           Theme.of(context).colorScheme.primary,

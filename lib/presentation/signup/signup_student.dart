@@ -182,7 +182,11 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                       text: TextSpan(
                         text: AppLocalizations.of(context)
                             .translate('signup_student_company_prompt'),
-                        style: TextStyle(fontSize: 18, color: _themeStore.darkMode ? Colors.white : Colors.black),
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: _themeStore.darkMode
+                                ? Colors.white
+                                : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
                               text: " " +
@@ -250,7 +254,10 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.userEmail),
+          errorText: _formStore.formErrorStore.userEmail == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -266,7 +273,10 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           icon: Icons.lock,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.password),
+          errorText: _formStore.formErrorStore.password == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -358,9 +368,8 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           //   _showErrorMessage(AppLocalizations.of(context)
           //       .translate('login_error_missing_fields'));
           // }
-                    Navigator.of(context).push(
-                                      MaterialPageRoute2(
-                                          routeName: Routes.profileCompany));
+          Navigator.of(context)
+              .push(MaterialPageRoute2(routeName: Routes.profileStudent));
         },
       ),
     );

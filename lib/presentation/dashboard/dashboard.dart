@@ -10,19 +10,26 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomeScreen extends StatefulWidget {
+class DashBoardScreen extends StatefulWidget {
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DashBoardScreen> createState() => _DashBoardScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _DashBoardScreenState extends State<DashBoardScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
+  int _selectedIndex = 1;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -31,58 +38,113 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              Flexible(
-                  fit: FlexFit.loose,
-                  child: Column(
-                    children: [
-                      Text(
-                          AppLocalizations.of(context).translate('home_title')),
-                      SizedBox(height: 30),
-                      Text(
-                          AppLocalizations.of(context).translate('home_intro')),
-                      SizedBox(height: 25),
-                      SizedBox(
-                        width: 200,
-                        height: 50,
-                        child: FloatingActionButton(
-                          heroTag: "F1",
-                          onPressed: () {
-                            // Handle your action
-                            Navigator.of(context)
-                              ..push(
-                                MaterialPageRoute2(routeName: Routes.welcome),
-                              );
-                          },
-                          child: Text(AppLocalizations.of(context)
-                              .translate('Company_button')),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      SizedBox(
-                        width: 200,
-                        height: 50,
-                        child: FloatingActionButton(
-                          heroTag: "F2",
-                          onPressed: () {
-                            // Handle your action
-                          },
-                          child: Text(AppLocalizations.of(context)
-                              .translate('Student_button')),
-                        ),
-                      ),
-                      SizedBox(height: 25),
-                    ],
-                  )),
-              Text(AppLocalizations.of(context).translate('home_description')),
-            ],
+        child: _selectedIndex == 0
+            ? _buildProjectContent()
+            : _selectedIndex == 1
+                ? _buildDashBoardContent()
+                : _selectedIndex == 2
+                    ? _buildMessageContent()
+                    : _buildAlertContent(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        showUnselectedLabels: true,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w900),
+        unselectedLabelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 12, fontWeight: FontWeight.w200),
+        unselectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.business),
+            label: 'Projects',
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.dashboard),
+            label: 'Dashboard',
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: 'Message',
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications),
+            label: 'Alerts',
+            backgroundColor: Theme.of(context).colorScheme.primary,
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        unselectedItemColor: Theme.of(context).colorScheme.background,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  Widget _buildDashBoardContent() {
+    return Column(
+      children: <Widget>[
+        Row(
+          children: [
+Align(
+          alignment: Alignment.topLeft,
+          child: Text(
+              AppLocalizations.of(context).translate('Dashboard_your_job')),
+        ),
+        Spacer(),
+        Align(
+          alignment: Alignment.topRight,
+          child: SizedBox(
+            width: 100,
+            height: 30,
+            child: FloatingActionButton(
+              heroTag: "F3",
+              onPressed: () {},
+              child: Text(
+                  AppLocalizations.of(context).translate('Dashboard_post_job'), style: TextStyle(fontSize: 12),),
+            ),
           ),
         ),
-      ),
+          ],
+        ),
+        SizedBox(
+          height: 34,
+        ),
+        
+        Align(
+          alignment: Alignment.center,
+          child:
+              Text(AppLocalizations.of(context).translate('Dashboard_intro')),
+        ),
+        Align(
+          alignment: Alignment.center,
+          child:
+              Text(AppLocalizations.of(context).translate('Dashboard_content')),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProjectContent() {
+    return Column(
+      children: <Widget>[
+        Text("This is project page"),
+      ],
+    );
+  }
+
+  Widget _buildMessageContent() {
+    return Column(
+      children: <Widget>[
+        Text("This is message page"),
+      ],
+    );
+  }
+
+  Widget _buildAlertContent() {
+    return Column(
+      children: <Widget>[
+        Text("This is alert page"),
+      ],
     );
   }
 
@@ -96,20 +158,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-//       TextButton(
-//         onPressed: () async {
-//           await FirebaseAnalytics.instance.logEvent(
-//             name: "select_content",
-//             parameters: {
-//               "content_type": "image",
-//               "item_id": 1,
-//             },
-//           );
-
-//           //throw Exception();
-//         },
-//         child:  Text(AppLocalizations.of(context).translate("exception_test")),
-//       ),
       _buildLanguageButton(),
       _buildThemeButton(),
       _buildProfileButton(),
@@ -149,8 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
           Navigator.of(context)
-            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
-                (Route<dynamic> route) => false);
+        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
+            (Route<dynamic> route) => false);
         });
       },
       icon: Icon(
