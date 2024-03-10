@@ -2,11 +2,9 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
@@ -49,30 +47,34 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                     : _buildAlertContent(),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        showUnselectedLabels: true,
+        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w900),
+        unselectedLabelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 12, fontWeight: FontWeight.w200),
+        unselectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.business),
             label: 'Projects',
-            backgroundColor: Colors.blue,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Dashboard',
-            backgroundColor: Colors.blue,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
             label: 'Message',
-            backgroundColor: Colors.blue,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications),
             label: 'Alerts',
-            backgroundColor: Colors.blue,
+            backgroundColor: Theme.of(context).colorScheme.primary,
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.red,
+        unselectedItemColor: Theme.of(context).colorScheme.background,
         onTap: _onItemTapped,
       ),
     );
@@ -92,13 +94,13 @@ Align(
         Align(
           alignment: Alignment.topRight,
           child: SizedBox(
-            width: 200,
-            height: 50,
+            width: 100,
+            height: 30,
             child: FloatingActionButton(
               heroTag: "F3",
               onPressed: () {},
               child: Text(
-                  AppLocalizations.of(context).translate('Dashboard_post_job')),
+                  AppLocalizations.of(context).translate('Dashboard_post_job'), style: TextStyle(fontSize: 12),),
             ),
           ),
         ),

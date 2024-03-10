@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
@@ -14,15 +12,12 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/utils/classes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:file_previewer/file_previewer.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,8 +43,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   late FocusNode _passwordFocusNode;
 
   bool loading = false;
-  List<Language> _languages = List.empty(growable: true);
-  List<Education> _educations = List.empty(growable: true);
   Widget? _cvImage;
   Widget? _transcriptImage;
 
@@ -166,7 +159,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
-                      maxLines: 2,
+                      maxLines: 5,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -176,7 +169,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['jpg', 'pdf', 'doc'],
+                        allowedExtensions: ['jpg', 'pdf', 'doc', 'docx'],
                       );
 
                       if (result != null) {
@@ -195,11 +188,28 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                      child: _cvImage,
                       height: 200,
                       decoration: BoxDecoration(
                           color: Colors.white70,
                           borderRadius: BorderRadius.all(Radius.circular(13))),
+                      child: _cvImage ?? Align(
+                              alignment: Alignment.center,
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(bottom: 5),
+                                        child: Icon(
+                                          Icons.add_a_photo,
+                                        )),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(AppLocalizations.of(context)
+                              .translate('profile_cv_add'))
+                                  ]),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 34.0),
@@ -213,7 +223,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
-                      maxLines: 2,
+                      maxLines: 5,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -244,10 +254,27 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     },
                     child: Container(
                       height: 200,
-                      child: _transcriptImage,
                       decoration: BoxDecoration(
                           color: Colors.white70,
                           borderRadius: BorderRadius.all(Radius.circular(13))),
+                      child: _transcriptImage ?? Align(
+                              alignment: Alignment.center,
+                              child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                        margin: EdgeInsets.only(bottom: 5),
+                                        child: Icon(
+                                          Icons.add_a_photo,
+                                        )),
+                                    SizedBox(
+                                      width: 20,
+                                    ),
+                                    Text(AppLocalizations.of(context)
+                              .translate('profile_transcript_add'))
+                                  ]),
+                            ),
                     ),
                   ),
 

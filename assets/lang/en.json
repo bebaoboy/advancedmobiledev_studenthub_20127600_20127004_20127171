@@ -78,6 +78,8 @@
   "profile_project_link": "Link",
   "profile_cv": "Resume/CV (*)",
   "profile_transcript": "Transcript (*)",
+  "profile_transcript_add": "Add transcript",
+  "profile_cv_add": "Add CV",
   "profile_end": "-----------------------------------------------------------------------------------",
 
   "exception_test": "Throw Test Exception",

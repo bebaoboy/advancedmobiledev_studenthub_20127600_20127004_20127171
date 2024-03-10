@@ -2,11 +2,9 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
@@ -33,32 +31,35 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Icon(
-              Icons.signpost_outlined,
-              size: 25,
-            ),
-            SizedBox(height: 20.0),
-            Text(AppLocalizations.of(context).translate('Welcome')),
-            Text(AppLocalizations.of(context).translate('Start')),
-            SizedBox(height: 20.0),
-            SizedBox(
-              width: 200,
-              height: 50,
-              child: FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context)
-                    ..pushAndRemoveUntil(
-                        MaterialPageRoute2(routeName: Routes.dashboard),
-                        (Route<dynamic> route) => false);
-                },
-                child: Text(
-                    AppLocalizations.of(context).translate('Start_button')),
+        child: Align(
+          alignment: Alignment.topCenter,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Icon(
+                Icons.signpost_outlined,
+                size: 25,
               ),
-            ),
-          ],
+              SizedBox(height: 20.0),
+              Text(AppLocalizations.of(context).translate('Welcome')),
+              Text(AppLocalizations.of(context).translate('Start')),
+              SizedBox(height: 20.0),
+              SizedBox(
+                width: 200,
+                height: 50,
+                child: FloatingActionButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                      ..pushAndRemoveUntil(
+                          MaterialPageRoute2(routeName: Routes.dashboard),
+                          (Route<dynamic> route) => false);
+                  },
+                  child: Text(
+                      AppLocalizations.of(context).translate('Start_button')),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

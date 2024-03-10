@@ -77,7 +77,7 @@ class AppThemeData {
 
   static const ColorScheme darkColorScheme = ColorScheme(
     primary: Color(0xFFFF8383),
-    primaryContainer: Color(0xFF1CDEC9),
+    primaryContainer: Color.fromARGB(255, 222, 132, 28),
     secondary: Color(0xFF4D1F7C),
     secondaryContainer: Color(0xFF451B6F),
     background: Color(0xFF241E30),

@@ -11,16 +11,12 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
-import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/classes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -95,45 +91,45 @@ class SearchDropdown extends StatelessWidget {
 }
 
 const mockSkillsets = <Skill>[
-  Skill('JavaScript', '',
+  Skill('JavaScript', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('iOS Development', '',
+  Skill('iOS Development', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('C', '',
+  Skill('C', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Java', '',
+  Skill('Java', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('C++', '',
+  Skill('C++', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Kubernetes', '',
+  Skill('Kubernetes', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('PostgreSQL', '',
+  Skill('PostgreSQL', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Redis', '',
+  Skill('Redis', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Android', '',
+  Skill('Android', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Node.js', '',
+  Skill('Node.js', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Objective-C', '',
+  Skill('Objective-C', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('React Native', '',
+  Skill('React Native', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Video', '',
+  Skill('Video', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Microservices', '',
+  Skill('Microservices', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Socket', '',
+  Skill('Socket', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('AWS', '',
+  Skill('AWS', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('React', '',
+  Skill('React', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Git', '',
+  Skill('Git', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('SQL', '',
+  Skill('SQL', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('WebScrape', '',
+  Skill('WebScrape', "Fake description",
       'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
 ];
 
@@ -149,7 +145,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
   TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
-  final ThemeStore _themeStore = getIt<ThemeStore>();
+  // final ThemeStore _themeStore = getIt<ThemeStore>();
   final FormStore _formStore = getIt<FormStore>();
   final UserStore _userStore = getIt<UserStore>();
 
@@ -244,9 +240,22 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     print('$profile');
   }
 
-  void _onChanged(List<Skill> data) {
-    print('onChanged $data');
-  }
+  // void onChanged(List<Skill> data, {int? index}) {
+  //   print('onChanged $data');
+  //   if (index != null) {
+  //     try {
+  //       setState(() {
+  //         _projects[index!].skills =
+  //             data.map((e) => e.name).toList(growable: true);
+  //         print("data: " + data.toString());
+  //       });
+  //     } catch (e) {}
+  //   }
+  // }
+
+  // void _onChanged(List<Skill> data) {
+  //   print('onChanged $data');
+  // }
 
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.length != 0) {
@@ -310,87 +319,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                   const SizedBox(
                     height: 24,
                   ),
-                  SizedBox(
-                    height: 30,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: AutoSizeText(
-                            AppLocalizations.of(context)
-                                .translate('profile_projects'),
-                            style: const TextStyle(
-                                fontSize: 13, fontWeight: FontWeight.w600),
-                            minFontSize: 10,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                              padding: EdgeInsets.zero,
-                              child: IconButton(
-                                onPressed: () => {
-                                  FocusManager.instance.primaryFocus?.unfocus()
-                                },
-                                icon: Icon(Icons.check_circle_outline),
-                              )),
-                        ),
-                      ],
-                    ),
-                  ),
-                  ChipsInput<Skill>(
-                    initialChips: [],
-                    onChipTapped: _onChipTapped,
-                    decoration: InputDecoration(
-                        prefixIconConstraints: BoxConstraints(),
-                        // prefixIcon: Container(
-                        //     margin: EdgeInsets.only(top: 13),
-                        //     child: Icon(
-                        //       Icons.search,
-                        //     )),
-                        hintText: AppLocalizations.of(context)
-                            .translate('profile_choose_skillset'),
-                        hintStyle: TextStyle(
-                          color: Colors.grey,
-                        )),
-                    findSuggestions: _findSuggestions,
-                    onChanged: _onChanged,
-                    chipBuilder: (BuildContext context,
-                        ChipsInputState<Skill> state, Skill profile) {
-                      return InputChip(
-                        elevation: 8,
-                        pressElevation: 9,
-                        key: ObjectKey(profile),
-                        label: Text(profile.name),
-                        labelStyle: const TextStyle(fontSize: 10),
-                        visualDensity: VisualDensity.compact,
-                        avatar: CircleAvatar(
-                          backgroundImage: NetworkImage(profile.imageUrl),
-                        ),
-                        onDeleted: () => state.deleteChip(profile),
-                        onSelected: (_) => _onChipTapped(profile),
-                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      );
-                    },
-                    suggestionBuilder: (BuildContext context,
-                        ChipsInputState<Skill> state, Skill profile) {
-                      return ListTile(
-                        key: ObjectKey(profile),
-                        // leading: CircleAvatar(
-                        //   backgroundImage: NetworkImage(profile.imageUrl),
-                        // ),
-                        leading: Icon(Icons.developer_mode),
-                        title: Text(profile.name),
-                        subtitle: Text(profile.description),
-                        onTap: () => state.selectSuggestion(profile),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 24.0),
 
                   SizedBox(
                     height: 40,
@@ -417,7 +345,10 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                   0,
                                   ProjectExperience("Untitled Project",
                                       description: "No description",
-                                      readOnly: false));
+                                      readOnly: false,
+                                      startDate: DateTime.now(),
+                                      endDate: DateTime.now(),
+                                      skills: []));
                             })
                           },
                           icon: Icon(Icons.add_circle_outline),
@@ -1081,11 +1012,10 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                     Container(
                                       height: 30,
                                       width: w,
-                                      transform: _projects[index]
-                                                        .readOnly
-                                                    ? Matrix4.translationValues(
-                                                        0.0, -30.0, 0.0)
-                                                    : null,
+                                      transform: _projects[index].readOnly
+                                          ? Matrix4.translationValues(
+                                              0.0, -30.0, 0.0)
+                                          : null,
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
@@ -1102,7 +1032,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   fontSize: 11,
                                                   fontWeight: FontWeight.w600),
                                               minFontSize: 10,
-                                              maxLines: 2,
+                                              maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
@@ -1126,11 +1056,10 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                     _projects[index].readOnly
                                         ? Container(
                                             width: w,
-                                            transform: _projects[index]
-                                                        .readOnly
-                                                    ? Matrix4.translationValues(
-                                                        0.0, -40.0, 0.0)
-                                                    : null,
+                                            transform: _projects[index].readOnly
+                                                ? Matrix4.translationValues(
+                                                    0.0, -50.0, 0.0)
+                                                : null,
                                             child: GestureDetector(
                                               onDoubleTap: () {
                                                 if (_projects[index].readOnly &&
@@ -1141,6 +1070,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   });
                                               },
                                               child: TextFieldWidget(
+                                                fontSize: 12,
                                                 inputDecoration:
                                                     InputDecoration(
                                                         border: _projects[index]
@@ -1174,10 +1104,17 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                     !_projects[index].readOnly,
                                                 iconMargin:
                                                     EdgeInsets.only(top: 30),
-                                                initialValue: _projects[index].skills == null ? "" : _projects[index]
-                                                    .skills!.isNotEmpty ? _projects[index]
-                                                    .skills
-                                                    .toString() : "...",
+                                                initialValue:
+                                                    _projects[index].skills ==
+                                                            null
+                                                        ? ""
+                                                        : _projects[index]
+                                                                .skills!
+                                                                .isNotEmpty
+                                                            ? _projects[index]
+                                                                .skills
+                                                                .toString()
+                                                            : "...",
                                                 readOnly:
                                                     _projects[index].readOnly,
                                                 hint: AppLocalizations.of(
@@ -1217,6 +1154,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                         .size
                                                         .width *
                                                     0.84,
+                                            height: 300,
                                             child: ChipsInput<Skill>(
                                               initialChips:
                                                   _projects[index].skills !=
@@ -1244,7 +1182,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                     color: Colors.grey,
                                                   )),
                                               findSuggestions: _findSuggestions,
-                                              onChanged: _onChanged,
+                                              onChanged: (value) {
+                                                _projects[index].skills = value.map((e) => e.name).toList(growable: true);
+                                              },
                                               chipBuilder: (BuildContext
                                                       context,
                                                   ChipsInputState<Skill> state,

@@ -76,6 +76,8 @@
   "profile_project_link": "Link",
   "profile_cv": "Resume/CV (*)",
   "profile_transcript": "Bảng điểm (*)",
+  "profile_transcript_add": "Thêm bảng điểm",
+  "profile_cv_add": "Thêm CV",
   "profile_end": "-----------------------------------------------------------------------------------",
   "exception_test": "Thử gửi Exception",
   "home_start": "Below are list of strings for home",

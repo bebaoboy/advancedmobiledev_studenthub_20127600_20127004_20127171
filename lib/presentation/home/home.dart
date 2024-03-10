@@ -2,11 +2,9 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/post/post_list.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
@@ -33,45 +31,56 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(AppLocalizations.of(context).translate('home_title')),
-            SizedBox(height: 30),
-            Text(AppLocalizations.of(context).translate('home_intro')),
-            SizedBox(height: 25),
-            SizedBox(
-              width: 200,
-              height: 50,
-              child: FloatingActionButton(
-                heroTag: "F1",
-                onPressed: () {
-                  // Handle your action
-                  Navigator.of(context)
-                    ..push(
-                      MaterialPageRoute2(routeName: Routes.welcome),
-                    );
-                },
-                child: Text(
-                    AppLocalizations.of(context).translate('Company_button')),
-              ),
-            ),
-            SizedBox(height: 10),
-            SizedBox(
-              width: 200,
-              height: 50,
-              child: FloatingActionButton(
-                heroTag: "F2",
-                onPressed: () {
-                  // Handle your action
-                },
-                child: Text(
-                    AppLocalizations.of(context).translate('Student_button')),
-              ),
-            ),
-            SizedBox(height: 25),
-            Text(AppLocalizations.of(context).translate('home_description')),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Flexible(
+                  fit: FlexFit.loose,
+                  child: Column(
+                    children: [
+                      Text(
+                          AppLocalizations.of(context).translate('home_title')),
+                      SizedBox(height: 30),
+                      Text(
+                          AppLocalizations.of(context).translate('home_intro')),
+                      SizedBox(height: 25),
+                      SizedBox(
+                        width: 200,
+                        height: 50,
+                        child: FloatingActionButton(
+                          heroTag: "F1",
+                          onPressed: () {
+                            // Handle your action
+                            Navigator.of(context)
+                              ..push(
+                                MaterialPageRoute2(routeName: Routes.welcome),
+                              );
+                          },
+                          child: Text(AppLocalizations.of(context)
+                              .translate('Company_button')),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      SizedBox(
+                        width: 200,
+                        height: 50,
+                        child: FloatingActionButton(
+                          heroTag: "F2",
+                          onPressed: () {
+                            // Handle your action
+                          },
+                          child: Text(AppLocalizations.of(context)
+                              .translate('Student_button')),
+                        ),
+                      ),
+                      SizedBox(height: 25),
+                    ],
+                  )),
+              Text(AppLocalizations.of(context).translate('home_description')),
+            ],
+          ),
         ),
       ),
     );
@@ -139,9 +148,9 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
-                    Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
-            (Route<dynamic> route) => false);
+          Navigator.of(context)
+            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
+                (Route<dynamic> route) => false);
         });
       },
       icon: Icon(
