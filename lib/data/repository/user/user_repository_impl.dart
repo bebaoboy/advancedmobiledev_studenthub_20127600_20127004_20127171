@@ -16,7 +16,7 @@ class UserRepositoryImpl extends UserRepository {
   // Login:---------------------------------------------------------------------
   @override
   Future<User?> login(LoginParams params) async {
-    return await Future.delayed(Duration(seconds: 2), () => User());
+    return await Future.delayed(const Duration(seconds: 2), () => User());
   }
 
   @override

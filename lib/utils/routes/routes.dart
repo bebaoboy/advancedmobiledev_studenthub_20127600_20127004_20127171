@@ -2,7 +2,7 @@ import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
-import 'package:boilerplate/presentation/welcome/wecome.dart';
+import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
 import 'package:boilerplate/presentation/profile/profile_student_step2.dart';
@@ -38,25 +38,25 @@ class Routes {
   static const String setting = '/settings';
 
   static final _route = <String, Widget>{
-    splash: SplashScreen(),
-    login: LoginScreen(),
-    signUp: SignUpScreen(),
-    setting: SettingScreen(),
-    profile: ProfileScreen(),
+    splash: const SplashScreen(),
+    login: const LoginScreen(),
+    signUp: const SignUpScreen(),
+    setting: const SettingScreen(),
+    profile: const ProfileScreen(),
     profileStep2: ProfileStep2Screen(),
-    signUpCompany: SignUpCompanyScreen(),
-    signUpStudent: SignUpStudentScreen(),
-    home: HomeScreen(),
-    welcome: WelcomeScreen(),
-    dashboard: DashBoardScreen(),
+    signUpCompany: const SignUpCompanyScreen(),
+    signUpStudent: const SignUpStudentScreen(),
+    home: const HomeScreen(),
+    welcome: const WelcomeScreen(),
+    dashboard: const DashBoardScreen(),
     profileStudent: ProfileStudentScreen(),
-    profileStudentStep2: ProfileStudentStep2Screen(),
-    profileStudentStep3: ProfileStudentStep3Screen(),
+    profileStudentStep2: const ProfileStudentStep2Screen(),
+    profileStudentStep3: const ProfileStudentStep3Screen(),
   };
 
   static final routes = <String, WidgetBuilder>{};
 }
 
 getRoute(name) {
-  return Routes._route[name] ?? HomeScreen();
+  return Routes._route[name] ?? const HomeScreen();
 }

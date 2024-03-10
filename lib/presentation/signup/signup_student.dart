@@ -20,6 +20,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../di/service_locator.dart';
 
 class SignUpStudentScreen extends StatefulWidget {
+  const SignUpStudentScreen({super.key});
+
   @override
   _SignUpStudentScreenState createState() => _SignUpStudentScreenState();
 }
@@ -51,7 +53,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       primary: true,
-      appBar: EmptyAppBar(),
+      appBar: const EmptyAppBar(),
       body: _buildBody(),
     );
   }
@@ -87,7 +89,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
               return Visibility(
                 visible: _userStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
-                child: LoadingScreen(),
+                child: const LoadingScreen(),
               );
             },
           )
@@ -107,7 +109,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
@@ -120,19 +122,20 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            EmptyAppBar(),
-            SizedBox(height: 24.0),
+            const EmptyAppBar(),
+            const SizedBox(height: 24.0),
             Center(
               child: AutoSizeText(
                 AppLocalizations.of(context)
                     .translate('signup_student_main_text'),
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 minFontSize: 10,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             Expanded(
               child: Padding(
                 padding:
@@ -143,9 +146,9 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                     _buildUserIdField(),
                     _buildPasswordField(),
                     // _buildForgotPasswordButton(),
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
                     Container(
-                      margin: EdgeInsets.symmetric(horizontal: 0),
+                      margin: const EdgeInsets.symmetric(horizontal: 0),
                       child: Transform.translate(
                         offset: const Offset(-8, 0),
                         child: CheckboxListTile(
@@ -154,7 +157,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                             child: AutoSizeText(
                               AppLocalizations.of(context)
                                   .translate('signup_company_policy_agree'),
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.w800),
                               minFontSize: 10,
                               maxLines: 1,
@@ -174,10 +177,10 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
 
                     _buildSignUpStudentButton(),
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
                     RichText(
                       text: TextSpan(
                         text: AppLocalizations.of(context)
@@ -189,9 +192,8 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                                 : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
-                              text: " " +
-                                  AppLocalizations.of(context).translate(
-                                      'signup_student_company_prompt_action'),
+                              text:
+                                  " ${AppLocalizations.of(context).translate('signup_student_company_prompt_action')}",
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
@@ -289,7 +291,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     return Align(
       alignment: FractionalOffset.centerRight,
       child: MaterialButton(
-        padding: EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(0.0),
         child: Text(
           AppLocalizations.of(context).translate('login_btn_forgot_password'),
           style: Theme.of(context)
@@ -304,7 +306,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   Widget _buildSignInButton() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 50),
+      margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
         buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
         buttonColor: Colors.orangeAccent,
@@ -326,24 +328,24 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   Widget _buildFooterText() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(children: <Widget>[
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
         ),
         Text(
           AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
@@ -353,25 +355,23 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   }
 
   Widget _buildSignUpStudentButton() {
-    return Container(
-      child: RoundedButtonWidget(
-        buttonText:
-            AppLocalizations.of(context).translate('signup_student_sign_up'),
-        buttonColor: Theme.of(context).colorScheme.primary,
-        textColor: Colors.white,
-        onPressed: () async {
-          // if (_formStore.canSignUpStudent) {
-          //   DeviceUtils.hideKeyboard(context);
-          //   _userStore.login(
-          //       _userEmailController.text, _passwordController.text);
-          // } else {
-          //   _showErrorMessage(AppLocalizations.of(context)
-          //       .translate('login_error_missing_fields'));
-          // }
-          Navigator.of(context)
-              .push(MaterialPageRoute2(routeName: Routes.profileStudent));
-        },
-      ),
+    return RoundedButtonWidget(
+      buttonText:
+          AppLocalizations.of(context).translate('signup_student_sign_up'),
+      buttonColor: Theme.of(context).colorScheme.primary,
+      textColor: Colors.white,
+      onPressed: () async {
+        // if (_formStore.canSignUpStudent) {
+        //   DeviceUtils.hideKeyboard(context);
+        //   _userStore.login(
+        //       _userEmailController.text, _passwordController.text);
+        // } else {
+        //   _showErrorMessage(AppLocalizations.of(context)
+        //       .translate('login_error_missing_fields'));
+        // }
+        Navigator.of(context)
+            .push(MaterialPageRoute2(routeName: Routes.profileStudent));
+      },
     );
   }
 
@@ -380,7 +380,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
       prefs.setBool(Preferences.is_logged_in, true);
     });
 
-    Future.delayed(Duration(milliseconds: 0), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       // Navigator.of(context)
       //   ..pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
@@ -393,18 +393,18 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
-      Future.delayed(Duration(milliseconds: 0), () {
+      Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
             title: AppLocalizations.of(context).translate('home_tv_error'),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           )..show(context);
         }
       });
     }
 
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   // dispose:-------------------------------------------------------------------

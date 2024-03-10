@@ -24,7 +24,7 @@ abstract class _ErrorStore with Store {
   // actions:-------------------------------------------------------------------
   @action
   void setErrorMessage(String message) {
-    this.errorMessage = message;
+    errorMessage = message;
   }
 
   @action

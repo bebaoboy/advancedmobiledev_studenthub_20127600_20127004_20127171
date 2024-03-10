@@ -10,7 +10,7 @@ typedef ChipsBuilder<T> = Widget Function(
 
 class ChipsInput<T> extends StatefulWidget {
   const ChipsInput({
-    Key? key,
+    super.key,
     this.decoration = const InputDecoration(),
     required this.chipBuilder,
     required this.suggestionBuilder,
@@ -18,7 +18,7 @@ class ChipsInput<T> extends StatefulWidget {
     required this.onChanged,
     required this.onChipTapped,
     required this.initialChips,
-  }) : super(key: key);
+  });
 
   final InputDecoration decoration;
   final ChipsInputSuggestions<T> findSuggestions;
@@ -40,10 +40,10 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   List<T> _suggestions = List.empty(growable: true);
   int _searchId = 0;
 
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
   TextEditingValue _value = const TextEditingValue();
   TextInputConnection? _connection;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   String get text => String.fromCharCodes(
         _value.text.codeUnits.where((ch) => ch != kObjectReplacementChar),
@@ -140,7 +140,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     final theme = Theme.of(context);
 
     chipsChildren.add(
-      Container(
+      SizedBox(
         height: 32.0,
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -167,7 +167,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       child: SizedBox(
         height: _focusNode.hasFocus
             ? 500
-            : _chips.length == 0
+            : _chips.isEmpty
                 ? 65
                 : 102,
         child: Padding(
@@ -182,16 +182,16 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                 child: InputDecorator(
                   decoration: widget.decoration,
                   isFocused: _focusNode.hasFocus,
-                  isEmpty: _value.text.length == 0,
+                  isEmpty: _value.text.isEmpty,
                   child: Container(
                     constraints: const BoxConstraints(maxHeight: 70),
                     child: SingleChildScrollView(
                       controller: _scrollController,
                       reverse: true,
                       child: Wrap(
-                        children: chipsChildren,
                         spacing: 2.0,
                         runSpacing: 2.0,
+                        children: chipsChildren,
                       ),
                     ),
                   ),
@@ -267,10 +267,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
 class _TextCaret extends StatefulWidget {
   const _TextCaret({
-    Key? key,
     this.duration = const Duration(milliseconds: 500),
     this.resumed = false,
-  }) : super(key: key);
+  });
 
   final Duration duration;
   final bool resumed;

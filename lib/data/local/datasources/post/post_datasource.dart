@@ -61,7 +61,7 @@ class PostDataSource {
     );
 
     // Making a List<Post> out of List<RecordSnapshot>
-    if(recordSnapshots.length > 0) {
+    if(recordSnapshots.isNotEmpty) {
       postsList = PostList(
           posts: recordSnapshots.map((snapshot) {
             final post = Post.fromMap(snapshot.value);

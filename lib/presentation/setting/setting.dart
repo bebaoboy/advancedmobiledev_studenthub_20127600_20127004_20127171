@@ -15,6 +15,8 @@ import '../../domain/entity/account/account.dart';
 enum AccountType { company, student }
 
 class SettingScreen extends StatefulWidget {
+  const SettingScreen({super.key});
+
   @override
   _SettingScreenState createState() => _SettingScreenState();
 }

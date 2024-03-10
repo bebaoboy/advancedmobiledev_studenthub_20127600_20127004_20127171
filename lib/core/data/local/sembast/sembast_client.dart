@@ -23,7 +23,7 @@ class SembastClient {
     // Check to see if encryption is set, then provide codec
     // else init normal db with path
     // Database database;
-    final database;
+    final Database database;
     if (encryptionKey.isNotEmpty) {
       var codec = getXXTeaCodec(password: encryptionKey);
 

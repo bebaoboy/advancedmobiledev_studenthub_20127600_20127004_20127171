@@ -36,7 +36,7 @@ class MaterialPageRoute2 extends PageRouteBuilder {
   MaterialPageRoute2({
     required this.routeName,
   }) : super(
-          transitionDuration: Duration(milliseconds: 800),
+          transitionDuration: const Duration(milliseconds: 800),
           pageBuilder: (context, animation, secondaryAnimation) => getRoute(routeName),
         );
 

@@ -8,7 +8,6 @@ on:
       - sprint2
       - sprint3
       - sprint4
-      - sprintdev
   push:
     branches:
       - test
@@ -54,19 +53,22 @@ jobs:
       - name: Build APK
         run: flutter build apk --release
 
-        #7 build aab
-      - name: Build appBundle
-        run: flutter build appbundle
+      #   #7 build aab
+      # - name: Build appBundle
+      #   run: flutter build appbundle
 
-        #8 build ipa
-      - name: Build IPA
-        run:
-          flutter build ipa --no-codesign
-      - name: Compress Archives and IPAs
-        run: |
-          cd build
-          tar -czf ios_build.tar.gz ios
+      #   #8 build ipa
+      # - name: Build IPA
+      #   run:
+      #     flutter build ipa --no-codesign
+      # - name: Compress Archives and IPAs
+      #   run: |
+      #     cd build
+      #     tar -czf ios_build.tar.gz ios
 
+      # remember to add these back to path 
+      # build/app/outputs/bundle/release/app-release.aab
+      # build/ios_build.tar.gz
         #9 get those build to be available to download
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
@@ -74,13 +76,13 @@ jobs:
           name: Releases
           path: |
             build/app/outputs/flutter-apk/app-release.apk
-            build/app/outputs/bundle/release/app-release.aab
-            build/ios_build.tar.gz
+            
 
+      # remember to add these back to artifacts ,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz
         #10 create release with those builds 
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz"
+          artifacts: "build/app/outputs/flutter-apk/app-release.apk"
           tag: v1.0.${{ github.run_number }}
           token: ${{ secrets.TOKEN }}

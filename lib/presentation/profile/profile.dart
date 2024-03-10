@@ -22,6 +22,8 @@ enum CompanySize {
 }
 
 class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
+
   @override
   _ProfileScreenState createState() => _ProfileScreenState();
 }
@@ -64,11 +66,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(onPressed: () => {
-        //TODO: đổi
-        Navigator.of(context)
-              ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false)
-      }, icon: const Icon(Icons.person_rounded))
+      IconButton(
+          onPressed: () => {
+                //TODO: đổi
+                Navigator.of(context)
+                  ..pushAndRemoveUntil(
+                      MaterialPageRoute2(routeName: Routes.login),
+                      (Route<dynamic> route) => false)
+              },
+          icon: const Icon(Icons.person_rounded))
     ];
   }
 
@@ -88,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           builder: (context) {
             return Visibility(
               visible: _userStore.isLoading,
-              child: CustomProgressIndicatorWidget(),
+              child: const CustomProgressIndicatorWidget(),
             );
           },
         ),
@@ -142,8 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
-              inputDecoration: InputDecoration(
-                border: const OutlineInputBorder(
+              inputDecoration: const InputDecoration(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
               ),
               inputType: TextInputType.name,
@@ -175,8 +181,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
-              inputDecoration: InputDecoration(
-                border: const OutlineInputBorder(
+              inputDecoration: const InputDecoration(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
               ),
               inputType: TextInputType.url,
@@ -297,7 +303,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
       Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false);
+          MaterialPageRoute2(routeName: Routes.login),
+          (Route<dynamic> route) => false);
     });
 
     return Container();

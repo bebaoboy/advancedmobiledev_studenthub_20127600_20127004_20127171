@@ -47,7 +47,7 @@ class TextFieldWidget extends StatelessWidget {
         enabled: enabled,
         enableInteractiveSelection: enableInteractiveSelection,
         canRequestFocus: canRequestFocus ?? true,
-        initialValue: initialValue ?? null,
+        initialValue: initialValue,
         readOnly: readOnly ?? false,
         controller: textController,
         focusNode: focusNode,
@@ -55,11 +55,11 @@ class TextFieldWidget extends StatelessWidget {
         onChanged: onChanged,
         autofocus: autoFocus,
         textInputAction: inputAction,
-        obscureText: this.isObscure,
+        obscureText: isObscure,
         maxLength: maxLength,
         maxLines: maxLines,
         minLines: minLines,
-        keyboardType: this.inputType,
+        keyboardType: inputType,
         style: Theme.of(context).textTheme.bodyText1 == null
             ? TextStyle(fontSize: fontSize, overflow: TextOverflow.ellipsis)
                 .merge(style)
@@ -75,7 +75,7 @@ class TextFieldWidget extends StatelessWidget {
               ? FloatingLabelBehavior.always
               : floatingLabelBehavior,
           label: label,
-          hintText: this.hint,
+          hintText: hint,
           hintStyle: Theme.of(context)
               .textTheme
               .bodyText1!
@@ -84,7 +84,7 @@ class TextFieldWidget extends StatelessWidget {
           errorText: errorText,
           errorStyle: inputDecoration != null
               ? inputDecoration!.errorStyle
-              : TextStyle(
+              : const TextStyle(
                   fontSize: 12.0,
                 ),
           counterText: '',
@@ -94,10 +94,9 @@ class TextFieldWidget extends StatelessWidget {
           // ),
           icon: inputDecoration != null
               ? inputDecoration!.icon
-              : this.isIcon
+              : isIcon
                   ? Container(
-                      margin: iconMargin,
-                      child: Icon(this.icon, color: iconColor))
+                      margin: iconMargin, child: Icon(icon, color: iconColor))
                   : null,
         ),
       ),
@@ -105,7 +104,7 @@ class TextFieldWidget extends StatelessWidget {
   }
 
   const TextFieldWidget(
-      {Key? key,
+      {super.key,
       required this.icon,
       required this.errorText,
       required this.textController,
@@ -139,6 +138,5 @@ class TextFieldWidget extends StatelessWidget {
       this.border,
       this.textAlign = TextAlign.start,
       this.textAlignVertical,
-      this.onTap})
-      : super(key: key);
+      this.onTap});
 }

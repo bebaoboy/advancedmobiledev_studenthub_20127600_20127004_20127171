@@ -10,7 +10,7 @@ class RetryInterceptor extends Interceptor {
 
   RetryInterceptor(
       {required this.dio, RetryOptions? options, this.shouldLog = true})
-      : this.options = options ?? const RetryOptions();
+      : options = options ?? const RetryOptions();
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
@@ -30,9 +30,10 @@ class RetryInterceptor extends Interceptor {
     err.requestOptions.extra = err.requestOptions.extra
       ..addAll(extra.toExtra());
 
-    if (shouldLog)
+    if (shouldLog) {
       print(
           '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
+    }
     // We retry with the updated options
     await dio
         .request(
@@ -87,7 +88,7 @@ class RetryOptions {
   ///
   /// Defaults to [defaultRetryEvaluator].
   RetryEvaluator get retryEvaluator =>
-      this._retryEvaluator ?? defaultRetryEvaluator;
+      _retryEvaluator ?? defaultRetryEvaluator;
 
   final RetryEvaluator? _retryEvaluator;
 
@@ -95,10 +96,10 @@ class RetryOptions {
       {this.retries = 3,
         RetryEvaluator? retryEvaluator,
         this.retryInterval = const Duration(seconds: 1)})
-      : this._retryEvaluator = retryEvaluator;
+      : _retryEvaluator = retryEvaluator;
 
   factory RetryOptions.noRetry() {
-    return RetryOptions(
+    return const RetryOptions(
       retries: 0,
     );
   }
@@ -130,13 +131,13 @@ class RetryOptions {
 
   Map<String, dynamic> toExtra() => {extraKey: this};
 
-  Options toOptions() => Options(extra: this.toExtra());
+  Options toOptions() => Options(extra: toExtra());
 
   Options mergeIn(Options options) {
     return options.copyWith(
         extra: <String, dynamic>{}
           ..addAll(options.extra ?? {})
-          ..addAll(this.toExtra()));
+          ..addAll(toExtra()));
   }
 
   @override

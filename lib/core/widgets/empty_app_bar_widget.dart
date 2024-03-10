@@ -6,6 +6,8 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
+  const EmptyAppBar({super.key});
+
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -31,5 +33,5 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => Size(0.0, 0.0);
+  Size get preferredSize => const Size(0.0, 0.0);
 }

@@ -24,7 +24,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    _controller = new AnimationController(
+    _controller = AnimationController(
         duration: const Duration(milliseconds: 2500), vsync: this);
     _playAnimation(context);
     // Timer(
@@ -71,7 +71,7 @@ class _SplashScreenState extends State<SplashScreen>
         },
         child: Center(
           child: SingleChildScrollView(
-            physics: ClampingScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -104,7 +104,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ),
                       )
-                    : SizedBox(
+                    : const SizedBox(
                         width: 0,
                       ),
                 MediaQuery.of(context).orientation != Orientation.landscape
@@ -119,7 +119,7 @@ class _SplashScreenState extends State<SplashScreen>
                           ),
                         ),
                       )
-                    : SizedBox(
+                    : const SizedBox(
                         width: 0,
                       ),
               ],

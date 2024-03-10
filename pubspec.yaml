@@ -54,6 +54,7 @@ dependencies:
   # O
   # P
   path_provider: ^2.0.14
+  path:
   # Q
   # R
   # S
@@ -72,6 +73,7 @@ dependencies:
   firebase_analytics: ^10.8.0
   tree_view_flutter: ^1.0.2
   lottie: ^3.0.0
+  json_annotation: ^4.8.1
   
   # Y
   # Z

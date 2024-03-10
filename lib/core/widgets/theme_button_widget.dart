@@ -6,6 +6,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 class ThemeButton extends StatelessWidget {
     final ThemeStore _themeStore = getIt<ThemeStore>();
 
+  ThemeButton({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Observer(

@@ -17,9 +17,7 @@ import 'package:boilerplate/utils/classes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -49,7 +47,7 @@ const List<Job> _list = [
 ];
 
 class SearchDropdown extends StatelessWidget {
-  const SearchDropdown({Key? key}) : super(key: key);
+  const SearchDropdown({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -126,8 +124,6 @@ class ProfileStudentScreen extends StatefulWidget {
 
 class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -135,16 +131,14 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   final UserStore _userStore = getIt<UserStore>();
 
   //focus node:-----------------------------------------------------------------
-  late FocusNode _passwordFocusNode;
 
   bool loading = false;
-  List<Language> _languages = List.empty(growable: true);
-  List<Education> _educations = List.empty(growable: true);
+  final List<Language> _languages = List.empty(growable: true);
+  final List<Education> _educations = List.empty(growable: true);
 
   @override
   void initState() {
     super.initState();
-    _passwordFocusNode = FocusNode();
     _languages.add(Language("English", "Native or Bilingual"));
     _languages.add(Language("Spanish", "Beginner"));
     _languages.add(Language("Cupkkake", "Intermediate"));
@@ -222,7 +216,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   }
 
   Future<List<Skill>> _findSuggestions(String query) async {
-    if (query.length != 0) {
+    if (query.isNotEmpty) {
       return mockSkillsets.where((profile) {
         return profile.name.contains(query) ||
             profile.description.contains(query);
@@ -249,7 +243,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          EmptyAppBar(),
+          const EmptyAppBar(),
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
@@ -319,7 +313,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         Align(
                           alignment: Alignment.centerRight,
                           child: Container(
-                              margin: EdgeInsets.only(
+                              margin: const EdgeInsets.only(
                                 right: 5,
                               ),
                               padding: EdgeInsets.zero,
@@ -327,18 +321,19 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 onPressed: () => {
                                   FocusManager.instance.primaryFocus?.unfocus()
                                 },
-                                icon: Icon(Icons.check_circle_outline),
+                                icon: const Icon(Icons.check_circle_outline),
                               )),
                         ),
                       ],
                     ),
                   ),
 
+                  // Skillset
                   ChipsInput<Skill>(
-                    initialChips: [],
+                    initialChips: const [],
                     onChipTapped: _onChipTapped,
                     decoration: InputDecoration(
-                        prefixIconConstraints: BoxConstraints(),
+                        prefixIconConstraints: const BoxConstraints(),
                         // prefixIcon: Container(
                         //     margin: EdgeInsets.only(top: 13),
                         //     child: Icon(
@@ -346,7 +341,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         //     )),
                         hintText: AppLocalizations.of(context)
                             .translate('profile_choose_skillset'),
-                        hintStyle: TextStyle(
+                        hintStyle: const TextStyle(
                           color: Colors.grey,
                         )),
                     findSuggestions: _findSuggestions,
@@ -377,13 +372,14 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         // leading: CircleAvatar(
                         //   backgroundImage: NetworkImage(profile.imageUrl),
                         // ),
-                        leading: Icon(Icons.developer_mode),
+                        leading: const Icon(Icons.developer_mode),
                         title: Text(profile.name),
                         subtitle: Text(profile.description),
                         onTap: () => state.selectSuggestion(profile),
                       );
                     },
                   ),
+
                   const SizedBox(height: 24.0),
                   SizedBox(
                     height: 40,
@@ -403,7 +399,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         ),
                         const Spacer(),
                         Container(
-                            margin: EdgeInsets.only(right: 5),
+                            margin: const EdgeInsets.only(right: 5),
                             child: IconButton(
                               onPressed: () => {
                                 setState(() {
@@ -411,7 +407,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                       Language("Name", "...", readOnly: false));
                                 })
                               },
-                              icon: Icon(Icons.add_circle_outline),
+                              icon: const Icon(Icons.add_circle_outline),
                             )),
                         // Container(
                         //     padding: EdgeInsets.zero,
@@ -423,10 +419,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     ),
                   ),
                   Container(
-                    child: _buildLanguageField(),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: Colors.white70,
                         borderRadius: BorderRadius.all(Radius.circular(13))),
+                    child: _buildLanguageField(),
                   ),
                   const SizedBox(height: 24.0),
                   SizedBox(
@@ -447,7 +443,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         ),
                         const Spacer(),
                         Container(
-                            margin: EdgeInsets.only(right: 5),
+                            margin: const EdgeInsets.only(right: 5),
                             child: IconButton(
                               onPressed: () => {
                                 setState(() {
@@ -457,7 +453,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                           readOnly: false));
                                 })
                               },
-                              icon: Icon(Icons.add_circle_outline),
+                              icon: const Icon(Icons.add_circle_outline),
                             )),
                         // Container(
                         //     padding: EdgeInsets.zero,
@@ -469,10 +465,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     ),
                   ),
                   Container(
-                    child: _buildEducationField(),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                         color: Colors.white70,
                         borderRadius: BorderRadius.all(Radius.circular(13))),
+                    child: _buildEducationField(),
                   ),
                   // _buildUserIdField(),
                   const SizedBox(height: 34.0),
@@ -500,7 +496,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
             child: Padding(
               padding: const EdgeInsets.only(left: 10),
               child: ListView.builder(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _languages.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -516,10 +512,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                             GestureDetector(
                               onDoubleTap: () {
                                 if (_languages[index].readOnly &&
-                                    _languages[index].enabled)
+                                    _languages[index].enabled) {
                                   setState(() {
                                     _languages[index].readOnly = false;
                                   });
+                                }
                               },
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.6,
@@ -543,7 +540,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   enableInteractiveSelection:
                                       !_languages[index].readOnly,
                                   canRequestFocus: !_languages[index].readOnly,
-                                  iconMargin: EdgeInsets.only(top: 30),
+                                  iconMargin: const EdgeInsets.only(top: 30),
                                   initialValue: _languages[index].name,
                                   readOnly: _languages[index].readOnly,
                                   hint: AppLocalizations.of(context)
@@ -573,10 +570,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                             GestureDetector(
                               onDoubleTap: () {
                                 if (_languages[index].readOnly &&
-                                    _languages[index].enabled)
+                                    _languages[index].enabled) {
                                   setState(() {
                                     _languages[index].readOnly = false;
                                   });
+                                }
                               },
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.6,
@@ -635,12 +633,12 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                             ),
                           ],
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Container(
                             width: 20,
-                            margin: EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 10),
                             child: IconButton(
-                              padding: EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 10),
                               onPressed: () {
                                 if (_languages[index].enabled) {
                                   setState(() {
@@ -658,9 +656,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                             )),
                         Container(
                             width: 20,
-                            margin: EdgeInsets.only(right: 20),
+                            margin: const EdgeInsets.only(right: 20),
                             child: IconButton(
-                              padding: EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 10),
                               onPressed: () {
                                 try {
                                   if (_languages[index].enabled) {
@@ -705,7 +703,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
             child: Padding(
               padding: const EdgeInsets.only(left: 10),
               child: ListView.builder(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: _educations.length,
                 itemBuilder: (BuildContext context, int index) {
@@ -720,10 +718,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                           children: [
                             GestureDetector(
                               onDoubleTap: () {
-                                if (_educations[index].enabled)
+                                if (_educations[index].enabled) {
                                   setState(() {
                                     _educations[index].readOnly = false;
                                   });
+                                }
                               },
                               child: SizedBox(
                                 width: MediaQuery.of(context).size.width * 0.6,
@@ -747,7 +746,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   enableInteractiveSelection:
                                       !_educations[index].readOnly,
                                   canRequestFocus: !_educations[index].readOnly,
-                                  iconMargin: EdgeInsets.only(top: 30),
+                                  iconMargin: const EdgeInsets.only(top: 30),
                                   initialValue: _educations[index].name,
                                   readOnly: _educations[index].readOnly,
                                   hint: AppLocalizations.of(context)
@@ -821,12 +820,12 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                             ),
                           ],
                         ),
-                        Spacer(),
+                        const Spacer(),
                         Container(
                             width: 20,
-                            margin: EdgeInsets.only(right: 10),
+                            margin: const EdgeInsets.only(right: 10),
                             child: IconButton(
-                              padding: EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 10),
                               onPressed: () {
                                 if (_educations[index].enabled) {
                                   setState(() {
@@ -844,9 +843,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                             )),
                         Container(
                             width: 20,
-                            margin: EdgeInsets.only(right: 20),
+                            margin: const EdgeInsets.only(right: 20),
                             child: IconButton(
-                              padding: EdgeInsets.only(right: 10),
+                              padding: const EdgeInsets.only(right: 10),
                               onPressed: () {
                                 try {
                                   if (_educations[index].enabled) {
@@ -882,77 +881,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     );
   }
 
-  Widget _buildUserIdField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
-          inputType: TextInputType.emailAddress,
-          icon: Icons.person,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _userEmailController,
-          inputAction: TextInputAction.next,
-          autoFocus: false,
-          onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
-          },
-          onFieldSubmitted: (value) {
-            FocusScope.of(context).requestFocus(_passwordFocusNode);
-          },
-          errorText: _formStore.formErrorStore.userEmail == null
-              ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.userEmail),
-        );
-      },
-    );
-  }
-
-  Widget _buildPasswordField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
-          isObscure: true,
-          padding: const EdgeInsets.only(top: 16.0),
-          icon: Icons.lock,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordController,
-          focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null
-              ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.password),
-          onChanged: (value) {
-            _formStore.setPassword(_passwordController.text);
-          },
-        );
-      },
-    );
-  }
-
-  Widget _buildForgotPasswordButton() {
-    return Align(
-      alignment: FractionalOffset.centerRight,
-      child: MaterialButton(
-        padding: const EdgeInsets.all(0.0),
-        child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
-          style: Theme.of(context)
-              .textTheme
-              .caption
-              ?.copyWith(color: Colors.orangeAccent),
-        ),
-        onPressed: () {},
-      ),
-    );
-  }
-
   Widget _buildSignInButton() {
     return Align(
       alignment: Alignment.centerRight,
-      child: Container(
+      child: SizedBox(
         width: 200,
         child: RoundedButtonWidget(
           buttonText: AppLocalizations.of(context).translate('profile_next'),
@@ -961,59 +893,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           onPressed: () async {
             Navigator.of(context)
               ..push(MaterialPageRoute2(routeName: Routes.profileStudentStep2));
-            // if (_formStore.canProfileStudent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFooterText() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(children: <Widget>[
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-        Text(
-          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: const TextStyle(fontSize: 12),
-        ),
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-      ]),
-    );
-  }
-
-  Widget _buildSignUpButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(50, 0, 50, 20),
-        child: RoundedButtonWidget(
-          buttonText:
-              AppLocalizations.of(context).translate('login_btn_sign_up'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -1064,9 +943,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
-    _userEmailController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
     super.dispose();
   }
 }
