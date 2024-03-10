@@ -93,46 +93,30 @@ class SearchDropdown extends StatelessWidget {
 }
 
 const mockSkillsets = <Skill>[
-  Skill('JavaScript', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('iOS Development', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('C', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
+  Skill('JavaScript', "Fake description", ''),
+  Skill('iOS Development', "Fake description", ''),
+  Skill('C', "Fake description", ''),
   Skill('Java', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('C++', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Kubernetes', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('C++', "Fake description", ''),
+  Skill('Kubernetes', "Fake description", ''),
   Skill('PostgreSQL', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Redis', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Android', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Node.js', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Objective-C', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('React Native', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Video', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('Redis', "Fake description", ''),
+  Skill('Android', "Fake description", ''),
+  Skill('Node.js', "Fake description", ''),
+  Skill('Objective-C', "Fake description", ''),
+  Skill('React Native', "Fake description", ''),
+  Skill('Video', "Fake description", ''),
   Skill('Microservices', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
   Skill('Socket', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('AWS', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('React', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Git', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('SQL', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('WebScrape', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('AWS', "Fake description", ''),
+  Skill('React', "Fake description", ''),
+  Skill('Git', "Fake description", ''),
+  Skill('SQL', "Fake description", ''),
+  Skill('WebScrape', "Fake description", ''),
 ];
 
 class ProfileStudentScreen extends StatefulWidget {
@@ -195,7 +179,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           MediaQuery.of(context).orientation == Orientation.landscape
               ? Row(
                   children: <Widget>[
-                    
                     Expanded(
                       flex: 1,
                       child: _buildRightSide(),
@@ -378,7 +361,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         labelStyle: const TextStyle(fontSize: 10),
                         visualDensity: VisualDensity.compact,
                         avatar: CircleAvatar(
-                          backgroundImage: NetworkImage(profile.imageUrl),
+                          backgroundImage: profile.imageUrl.isNotEmpty
+                              ? NetworkImage(profile.imageUrl)
+                              : null,
                         ),
                         onDeleted: () => state.deleteChip(profile),
                         onSelected: (_) => _onChipTapped(profile),
@@ -540,9 +525,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 width: MediaQuery.of(context).size.width * 0.6,
                                 child: TextFieldWidget(
                                   inputDecoration: InputDecoration(
-                                              border: _languages[index].readOnly
-                                                  ? InputBorder.none
-                                                  : null),
+                                      border: _languages[index].readOnly
+                                          ? InputBorder.none
+                                          : null),
                                   label: _languages[index].readOnly
                                       ? null
                                       : Text(
@@ -597,10 +582,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 width: MediaQuery.of(context).size.width * 0.6,
                                 height: _languages[index].readOnly ? 12 : null,
                                 child: TextFieldWidget(
-                                  inputDecoration: InputDecoration(
-                                              border: _languages[index].readOnly
-                                                  ? InputBorder.none
-                                                  : null),
+                                    inputDecoration: InputDecoration(
+                                        border: _languages[index].readOnly
+                                            ? InputBorder.none
+                                            : null),
                                     label: _languages[index].readOnly
                                         ? null
                                         : Text(
@@ -744,9 +729,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 width: MediaQuery.of(context).size.width * 0.6,
                                 child: TextFieldWidget(
                                   inputDecoration: InputDecoration(
-                                              border: _educations[index].readOnly
-                                                  ? InputBorder.none
-                                                  : null),
+                                      border: _educations[index].readOnly
+                                          ? InputBorder.none
+                                          : null),
                                   label: _educations[index].readOnly
                                       ? null
                                       : Text(
@@ -794,9 +779,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                               height: _educations[index].readOnly ? 12 : null,
                               child: TextFieldWidget(
                                 inputDecoration: InputDecoration(
-                                              border: _educations[index].readOnly
-                                                  ? InputBorder.none
-                                                  : null),
+                                    border: _educations[index].readOnly
+                                        ? InputBorder.none
+                                        : null),
                                 label: _educations[index].readOnly
                                     ? null
                                     : Text(

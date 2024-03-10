@@ -125,6 +125,11 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   @override
+  void connectionClosed() {
+    //_closeInputConnectionIfNeeded();
+  }
+
+  @override
   Widget build(BuildContext context) {
     var chipsChildren = _chips
         .map<Widget>(
@@ -256,6 +261,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     });
   }
 
+  @override
   noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 

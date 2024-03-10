@@ -91,46 +91,30 @@ class SearchDropdown extends StatelessWidget {
 }
 
 const mockSkillsets = <Skill>[
-  Skill('JavaScript', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('iOS Development', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('C', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
+  Skill('JavaScript', "Fake description", ''),
+  Skill('iOS Development', "Fake description", ''),
+  Skill('C', "Fake description", ''),
   Skill('Java', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('C++', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Kubernetes', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('C++', "Fake description", ''),
+  Skill('Kubernetes', "Fake description", ''),
   Skill('PostgreSQL', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Redis', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Android', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Node.js', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Objective-C', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('React Native', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_colourbox4057996.jpg'),
-  Skill('Video', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('Redis', "Fake description", ''),
+  Skill('Android', "Fake description", ''),
+  Skill('Node.js', "Fake description", ''),
+  Skill('Objective-C', "Fake description", ''),
+  Skill('React Native', "Fake description", ''),
+  Skill('Video', "Fake description", ''),
   Skill('Microservices', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
   Skill('Socket', "Fake description",
       'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('AWS', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('React', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('Git', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('SQL', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
-  Skill('WebScrape', "Fake description",
-      'https://d2gg9evh47fn9z.cloudfront.net/800px_COLOURBOX4057996.jpg'),
+  Skill('AWS', "Fake description", ''),
+  Skill('React', "Fake description", ''),
+  Skill('Git', "Fake description", ''),
+  Skill('SQL', "Fake description", ''),
+  Skill('WebScrape', "Fake description", ''),
 ];
 
 class ProfileStudentStep2Screen extends StatefulWidget {
@@ -1156,15 +1140,15 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                     0.84,
                                             height: 300,
                                             child: ChipsInput<Skill>(
-                                              initialChips:
-                                                  _projects[index].skills !=
-                                                          null
-                                                      ? _projects[index]
-                                                          .skills!
-                                                          .map((e) =>
-                                                              Skill(e, "", ""))
-                                                          .toList()
-                                                      : [],
+                                              initialChips: _projects[index]
+                                                          .skills !=
+                                                      null
+                                                  ? _projects[index]
+                                                      .skills!
+                                                      .map((e) => Skill(e, "",
+                                                          "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"))
+                                                      .toList()
+                                                  : [],
                                               onChipTapped: _onChipTapped,
                                               decoration: InputDecoration(
                                                   prefixIconConstraints:
@@ -1183,7 +1167,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   )),
                                               findSuggestions: _findSuggestions,
                                               onChanged: (value) {
-                                                _projects[index].skills = value.map((e) => e.name).toList(growable: true);
+                                                _projects[index].skills = value
+                                                    .map((e) => e.name)
+                                                    .toList(growable: true);
                                               },
                                               chipBuilder: (BuildContext
                                                       context,
@@ -1199,9 +1185,11 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   visualDensity:
                                                       VisualDensity.compact,
                                                   avatar: CircleAvatar(
-                                                    backgroundImage:
-                                                        NetworkImage(
-                                                            profile.imageUrl),
+                                                    backgroundImage: profile
+                                                            .imageUrl.isNotEmpty
+                                                        ? NetworkImage(
+                                                            profile.imageUrl)
+                                                        : null,
                                                   ),
                                                   onDeleted: () =>
                                                       state.deleteChip(profile),
