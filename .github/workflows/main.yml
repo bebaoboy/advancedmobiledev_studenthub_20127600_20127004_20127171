@@ -8,9 +8,11 @@ on:
       - sprint2
       - sprint3
       - sprint4
+      - sprintdev
   push:
     branches:
       - test
+      - sprintdev
 
 jobs:
   build:
@@ -40,7 +42,8 @@ jobs:
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Generate files
+
+      - name: Generate Packages
         run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
         #5 run test
