@@ -8,7 +8,7 @@ import 'exceptions/network_exceptions.dart';
 
 class RestClient {
   // instantiate json decoder for json serialization
-  final JsonDecoder _decoder = JsonDecoder();
+  final JsonDecoder _decoder = const JsonDecoder();
 
   // Get:-----------------------------------------------------------------------
   Future<dynamic> get(String path) {

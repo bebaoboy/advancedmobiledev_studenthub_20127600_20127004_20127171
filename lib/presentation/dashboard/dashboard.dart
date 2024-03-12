@@ -11,6 +11,8 @@ import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DashBoardScreen extends StatefulWidget {
+  const DashBoardScreen({super.key});
+
   @override
   State<DashBoardScreen> createState() => _DashBoardScreenState();
 }
@@ -48,27 +50,31 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         showUnselectedLabels: true,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.w900),
-        unselectedLabelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 12, fontWeight: FontWeight.w200),
-        unselectedIconTheme: IconThemeData(color: Theme.of(context).colorScheme.onSurface),
+        selectedLabelStyle: const TextStyle(fontWeight: FontWeight.w900),
+        unselectedLabelStyle: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontSize: 12,
+            fontWeight: FontWeight.w200),
+        unselectedIconTheme:
+            IconThemeData(color: Theme.of(context).colorScheme.onSurface),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: Icon(Icons.business),
+            icon: const Icon(Icons.business),
             label: 'Projects',
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard),
+            icon: const Icon(Icons.dashboard),
             label: 'Dashboard',
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.message),
+            icon: const Icon(Icons.message),
             label: 'Message',
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.notifications),
+            icon: const Icon(Icons.notifications),
             label: 'Alerts',
             backgroundColor: Theme.of(context).colorScheme.primary,
           ),
@@ -85,31 +91,33 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       children: <Widget>[
         Row(
           children: [
-Align(
-          alignment: Alignment.topLeft,
-          child: Text(
-              AppLocalizations.of(context).translate('Dashboard_your_job')),
-        ),
-        Spacer(),
-        Align(
-          alignment: Alignment.topRight,
-          child: SizedBox(
-            width: 100,
-            height: 30,
-            child: FloatingActionButton(
-              heroTag: "F3",
-              onPressed: () {},
+            Align(
+              alignment: Alignment.topLeft,
               child: Text(
-                  AppLocalizations.of(context).translate('Dashboard_post_job'), style: TextStyle(fontSize: 12),),
+                  AppLocalizations.of(context).translate('Dashboard_your_job')),
             ),
-          ),
-        ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.topRight,
+              child: SizedBox(
+                width: 100,
+                height: 30,
+                child: FloatingActionButton(
+                  heroTag: "F3",
+                  onPressed: () {},
+                  child: Text(
+                    AppLocalizations.of(context)
+                        .translate('Dashboard_post_job'),
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
-        SizedBox(
+        const SizedBox(
           height: 34,
         ),
-        
         Align(
           alignment: Alignment.center,
           child:
@@ -125,7 +133,7 @@ Align(
   }
 
   Widget _buildProjectContent() {
-    return Column(
+    return const Column(
       children: <Widget>[
         Text("This is project page"),
       ],
@@ -133,7 +141,7 @@ Align(
   }
 
   Widget _buildMessageContent() {
-    return Column(
+    return const Column(
       children: <Widget>[
         Text("This is message page"),
       ],
@@ -141,7 +149,7 @@ Align(
   }
 
   Widget _buildAlertContent() {
-    return Column(
+    return const Column(
       children: <Widget>[
         Text("This is alert page"),
       ],
@@ -170,7 +178,7 @@ Align(
       builder: (context) {
         return IconButton(
           onPressed: () {},
-          icon: Icon(Icons.person, size: 25),
+          icon: const Icon(Icons.person, size: 25),
         );
       },
     );
@@ -197,11 +205,11 @@ Align(
         SharedPreferences.getInstance().then((preference) {
           preference.setBool(Preferences.is_logged_in, false);
           Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
-            (Route<dynamic> route) => false);
+            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
+                (Route<dynamic> route) => false);
         });
       },
-      icon: Icon(
+      icon: const Icon(
         Icons.power_settings_new,
       ),
     );
@@ -212,7 +220,7 @@ Align(
       onPressed: () {
         _buildLanguageDialog();
       },
-      icon: Icon(
+      icon: const Icon(
         Icons.language,
       ),
     );
@@ -226,7 +234,7 @@ Align(
         enableFullWidth: true,
         title: Text(
           AppLocalizations.of(context).translate('home_tv_choose_language'),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16.0,
           ),
@@ -243,9 +251,9 @@ Align(
             .map(
               (object) => ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.all(0.0),
+                contentPadding: const EdgeInsets.all(0.0),
                 title: Text(
-                  object.language!,
+                  object.language,
                   style: TextStyle(
                     color: _languageStore.locale == object.locale
                         ? Theme.of(context).primaryColor
@@ -257,7 +265,7 @@ Align(
                 onTap: () {
                   Navigator.of(context).pop();
                   // change user language based on selected locale
-                  _languageStore.changeLanguage(object.locale!);
+                  _languageStore.changeLanguage(object.locale);
                 },
               ),
             )

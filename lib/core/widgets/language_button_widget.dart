@@ -9,9 +9,11 @@ class LanguageButton extends StatelessWidget {
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
 
+  LanguageButton({super.key});
+
   @override
   Widget build(BuildContext context) {
-    _showDialog<T>({required BuildContext context, required Widget child}) {
+    showDialogModified<T>({required BuildContext context, required Widget child}) {
       showDialog<T>(
         context: context,
         builder: (BuildContext context) => child,
@@ -20,15 +22,15 @@ class LanguageButton extends StatelessWidget {
       });
     }
 
-    _buildLanguageDialog() {
-      _showDialog<String>(
+    buildLanguageDialog() {
+      showDialogModified<String>(
         context: context,
         child: MaterialDialog(
           borderRadius: 5.0,
           enableFullWidth: true,
           title: Text(
             AppLocalizations.of(context).translate('home_tv_choose_language'),
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 16.0,
             ),
@@ -45,9 +47,9 @@ class LanguageButton extends StatelessWidget {
               .map(
                 (object) => ListTile(
                   dense: true,
-                  contentPadding: EdgeInsets.all(0.0),
+                  contentPadding: const EdgeInsets.all(0.0),
                   title: Text(
-                    object.language!,
+                    object.language,
                     style: TextStyle(
                       color: _languageStore.locale == object.locale
                           ? Theme.of(context).primaryColor
@@ -59,7 +61,7 @@ class LanguageButton extends StatelessWidget {
                   onTap: () {
                     Navigator.of(context).pop();
                     // change user language based on selected locale
-                    _languageStore.changeLanguage(object.locale!);
+                    _languageStore.changeLanguage(object.locale);
                   },
                 ),
               )
@@ -68,17 +70,17 @@ class LanguageButton extends StatelessWidget {
       );
     }
 
-    Widget _buildLanguageButton() {
+    Widget buildLanguageButton() {
       return IconButton(
         onPressed: () {
-          _buildLanguageDialog();
+          buildLanguageDialog();
         },
-        icon: Icon(
+        icon: const Icon(
           Icons.language,
         ),
       );
     }
 
-    return _buildLanguageButton();
+    return buildLanguageButton();
   }
 }

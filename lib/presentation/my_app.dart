@@ -18,6 +18,8 @@ class MyApp extends StatelessWidget {
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
 
+  MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Observer(
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
         return MaterialApp(
           builder: (context, child) => Container(
               color: Theme.of(context).colorScheme.primary,
-              child: SafeArea(child: child ?? SizedBox())),
+              child: SafeArea(child: child ?? const SizedBox())),
           debugShowCheckedModeBanner: false,
           title: Strings.appName,
           theme: _themeStore.darkMode
@@ -46,7 +48,7 @@ class MyApp extends StatelessWidget {
             // Built-in localization of basic text for Cupertino widgets
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: SplashScreen(),
+          home: const SplashScreen(),
         );
       },
     );

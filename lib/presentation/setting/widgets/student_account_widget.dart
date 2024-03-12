@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class StudentAccountWidget extends StatelessWidget {
   final String name;
 
-  StudentAccountWidget({required this.name});
+  const StudentAccountWidget({super.key, required this.name});
 
   @override
   Widget build(BuildContext context) {

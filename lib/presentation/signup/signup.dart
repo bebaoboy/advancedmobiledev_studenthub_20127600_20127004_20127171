@@ -33,7 +33,7 @@ class RadioModel {
 class RadioItem extends StatefulWidget {
   final RadioModel _item;
 
-  RadioItem(this._item);
+  const RadioItem(this._item, {super.key});
 
   @override
   State<RadioItem> createState() => _RadioItemState();
@@ -43,13 +43,13 @@ class _RadioItemState extends State<RadioItem> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(5.0),
+      margin: const EdgeInsets.all(5.0),
       child: Column(
         children: [
           Row(
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
-              Container(
+              SizedBox(
                 height: 50.0,
                 width: 50.0,
                 child: Center(
@@ -61,12 +61,12 @@ class _RadioItemState extends State<RadioItem> {
                   ),
                 ),
               ),
-              Spacer(), // use Spacer
+              const Spacer(), // use Spacer
               Checkbox(
                 checkColor: Colors.white,
                 // fillColor: MaterialStateProperty.resolveWith(getColor),
                 value: widget._item.isSelected,
-                shape: CircleBorder(),
+                shape: const CircleBorder(),
                 onChanged: (bool? value) {
                   // setState(() {
                   //   _item.isSelected = value!;
@@ -77,7 +77,7 @@ class _RadioItemState extends State<RadioItem> {
           ),
           Container(
             alignment: Alignment.centerLeft,
-            margin: EdgeInsets.only(left: 10.0),
+            margin: const EdgeInsets.only(left: 10.0),
             child: AutoSizeText(
               widget._item.text,
               style: TextStyle(
@@ -101,14 +101,16 @@ class _RadioItemState extends State<RadioItem> {
 }
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -142,12 +144,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Theme.of(context).colorScheme.primary,
           Colors.black));
     } else {
-      sampleData[0].text = AppLocalizations.of(context).translate("signup_student_role_text");
-      sampleData[1].text = AppLocalizations.of(context).translate("signup_company_role_text");
+      sampleData[0].text =
+          AppLocalizations.of(context).translate("signup_student_role_text");
+      sampleData[1].text =
+          AppLocalizations.of(context).translate("signup_company_role_text");
     }
     return Scaffold(
       primary: true,
-      appBar: EmptyAppBar(),
+      appBar: const EmptyAppBar(),
       body: _buildBody(),
     );
   }
@@ -183,7 +187,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               return Visibility(
                 visible: _userStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
-                child: LoadingScreen(),
+                child: const LoadingScreen(),
               );
             },
           )
@@ -205,7 +209,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
             minWidth: MediaQuery.of(context).size.width,
@@ -218,18 +222,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            EmptyAppBar(),
-            SizedBox(height: 24.0),
+            const EmptyAppBar(),
+            const SizedBox(height: 24.0),
             Center(
               child: AutoSizeText(
                 AppLocalizations.of(context).translate('signup_main_text'),
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 minFontSize: 10,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            SizedBox(height: 24.0),
+            const SizedBox(height: 24.0),
             Expanded(
               child: Padding(
                 padding:
@@ -239,7 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     _buildAccountTypeRadioGroup(),
                     // _buildForgotPasswordButton(),
                     _buildSignUpButton(),
-                    SizedBox(height: 24.0),
+                    const SizedBox(height: 24.0),
                     RichText(
                       text: TextSpan(
                         text: AppLocalizations.of(context)
@@ -251,9 +256,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
-                              text: " " +
-                                  AppLocalizations.of(context).translate(
-                                      'signup_sign_up_prompt_action'),
+                              text:
+                                  " ${AppLocalizations.of(context).translate('signup_sign_up_prompt_action')}",
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
@@ -283,12 +287,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               margin: const EdgeInsets.only(top: 5, bottom: 5),
               decoration: BoxDecoration(
                   color: sampleData[0].isSelected
-                      ? Color.fromARGB(53, 141, 141, 141)
+                      ? const Color.fromARGB(53, 141, 141, 141)
                       : _themeStore.darkMode
-                          ? Color.fromARGB(255, 233, 233, 233)
+                          ? const Color.fromARGB(255, 233, 233, 233)
                           : Colors.white,
                   border: Border.all(color: Colors.black, width: 3),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                       Radius.circular(10.0) //         <--- border radius here
                       )),
               child: InkWell(
@@ -307,12 +311,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               margin: const EdgeInsets.only(top: 5, bottom: 5),
               decoration: BoxDecoration(
                   color: sampleData[1].isSelected
-                      ? Color.fromARGB(53, 141, 141, 141)
+                      ? const Color.fromARGB(53, 141, 141, 141)
                       : _themeStore.darkMode
-                          ? Color.fromARGB(255, 233, 233, 233)
+                          ? const Color.fromARGB(255, 233, 233, 233)
                           : Colors.white,
                   border: Border.all(color: Colors.black, width: 3),
-                  borderRadius: BorderRadius.all(
+                  borderRadius: const BorderRadius.all(
                       Radius.circular(10.0) //         <--- border radius here
                       )),
               child: InkWell(
@@ -348,7 +352,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText:_formStore.formErrorStore.userEmail == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.userEmail),
+          errorText: _formStore.formErrorStore.userEmail == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -361,12 +368,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
           hint:
               AppLocalizations.of(context).translate('login_et_user_password'),
           isObscure: true,
-          padding: EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText:_formStore.formErrorStore.password == null ? null : AppLocalizations.of(context).translate(_formStore.formErrorStore.password),
+          errorText: _formStore.formErrorStore.password == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -379,7 +389,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Align(
       alignment: FractionalOffset.centerRight,
       child: MaterialButton(
-        padding: EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(0.0),
         child: Text(
           AppLocalizations.of(context).translate('login_btn_forgot_password'),
           style: Theme.of(context)
@@ -394,7 +404,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildSignInButton() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 50),
+      margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
         buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
         buttonColor: Colors.orangeAccent,
@@ -416,24 +426,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildFooterText() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 24),
+      margin: const EdgeInsets.symmetric(horizontal: 24),
       child: Row(children: <Widget>[
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
         ),
         Text(
           AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
@@ -443,28 +453,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget _buildSignUpButton() {
-    return Container(
-      child: RoundedButtonWidget(
-        buttonText:
-            AppLocalizations.of(context).translate('signup_btn_sign_up'),
-        buttonColor: Theme.of(context).colorScheme.primary,
-        textColor: Colors.white,
-        onPressed: () async {
-          Navigator.of(context)
-            ..push(MaterialPageRoute2(
-                routeName: sampleData[0].isSelected
-                    ? Routes.signUpStudent
-                    : Routes.signUpCompany));
-          // if (_formStore.canSignUp) {
-          //   DeviceUtils.hideKeyboard(context);
-          //   _userStore.login(
-          //       _userEmailController.text, _passwordController.text);
-          // } else {
-          //   _showErrorMessage(AppLocalizations.of(context)
-          //       .translate('login_error_missing_fields'));
-          // }
-        },
-      ),
+    return RoundedButtonWidget(
+      buttonText:
+          AppLocalizations.of(context).translate('signup_btn_sign_up'),
+      buttonColor: Theme.of(context).colorScheme.primary,
+      textColor: Colors.white,
+      onPressed: () async {
+        Navigator.of(context)
+          ..push(MaterialPageRoute2(
+              routeName: sampleData[0].isSelected
+                  ? Routes.signUpStudent
+                  : Routes.signUpCompany));
+        // if (_formStore.canSignUp) {
+        //   DeviceUtils.hideKeyboard(context);
+        //   _userStore.login(
+        //       _userEmailController.text, _passwordController.text);
+        // } else {
+        //   _showErrorMessage(AppLocalizations.of(context)
+        //       .translate('login_error_missing_fields'));
+        // }
+      },
     );
   }
 
@@ -473,7 +481,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       prefs.setBool(Preferences.is_logged_in, true);
     });
 
-    Future.delayed(Duration(milliseconds: 0), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       Navigator.of(context)
         ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
@@ -485,18 +493,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
-      Future.delayed(Duration(milliseconds: 0), () {
+      Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
             title: AppLocalizations.of(context).translate('home_tv_error'),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           )..show(context);
         }
       });
     }
 
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   // dispose:-------------------------------------------------------------------

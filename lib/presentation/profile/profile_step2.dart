@@ -84,7 +84,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
           builder: (context) {
             return Visibility(
               visible: _userStore.isLoading,
-              child: CustomProgressIndicatorWidget(),
+              child: const CustomProgressIndicatorWidget(),
             );
           },
         ),
@@ -138,8 +138,8 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
-              inputDecoration: InputDecoration(
-                border: const OutlineInputBorder(
+              inputDecoration: const InputDecoration(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
               ),
               inputType: TextInputType.name,
@@ -171,8 +171,8 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
-              inputDecoration: InputDecoration(
-                border: const OutlineInputBorder(
+              inputDecoration: const InputDecoration(
+                border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
               ),
               inputType: TextInputType.url,
@@ -277,7 +277,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
-                  SizedBox(width: 15,),
+                  const SizedBox(width: 15,),
                   MaterialButton(
                     onPressed: () => navigate(context),
                     color: Colors.orange,

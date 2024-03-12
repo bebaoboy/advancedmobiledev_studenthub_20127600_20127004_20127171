@@ -22,7 +22,7 @@ class PostApi {
       return PostList.fromJson(res.data);
     } catch (e) {
       print(e.toString());
-      throw e;
+      rethrow;
     }
   }
 

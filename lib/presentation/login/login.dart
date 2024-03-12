@@ -14,13 +14,14 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
 class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -90,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         loading = false;
                       });
                     },
-                    child: LoadingScreen()),
+                    child: const LoadingScreen()),
               );
             },
           )
@@ -110,7 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -126,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   AutoSizeText(
                     AppLocalizations.of(context).translate('login_main_text'),
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -135,11 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     'assets/images/img_login.png',
                     scale: 1.2,
                   ),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
                   _buildUserIdField(),
                   _buildPasswordField(),
                   // _buildForgotPasswordButton(),
-                  SizedBox(height: 24.0),
+                  const SizedBox(height: 24.0),
                   _buildSignInButton(),
                 ],
               ),
@@ -151,7 +152,7 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               children: [
                 _buildFooterText(),
-                SizedBox(
+                const SizedBox(
                   height: 14,
                 ),
                 _buildSignUpButton(),
@@ -196,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
           hint:
               AppLocalizations.of(context).translate('login_et_user_password'),
           isObscure: true,
-          padding: EdgeInsets.only(top: 16.0),
+          padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           textController: _passwordController,
@@ -217,7 +218,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Align(
       alignment: FractionalOffset.centerRight,
       child: MaterialButton(
-        padding: EdgeInsets.all(0.0),
+        padding: const EdgeInsets.all(0.0),
         child: Text(
           AppLocalizations.of(context).translate('login_btn_forgot_password'),
           style: Theme.of(context)
@@ -232,7 +233,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSignInButton() {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 50),
+      margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
         buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
         buttonColor: Theme.of(context).colorScheme.primary,
@@ -254,24 +255,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildFooterText() {
     return Container(
-      margin: EdgeInsets.only(bottom: 3),
+      margin: const EdgeInsets.only(bottom: 3),
       child: Row(children: <Widget>[
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
         ),
         Text(
           AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: TextStyle(fontSize: 12),
+          style: const TextStyle(fontSize: 12),
         ),
         Expanded(
-          child: new Container(
+          child: Container(
               margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: Divider(
+              child: const Divider(
                 color: Colors.black,
                 height: 36,
               )),
@@ -284,7 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       child: Container(
-        margin: EdgeInsets.fromLTRB(50, 0, 50, 50),
+        margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
         child: RoundedButtonWidget(
           buttonText:
               AppLocalizations.of(context).translate('login_btn_sign_up'),
@@ -312,7 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
       prefs.setBool(Preferences.is_logged_in, true);
     });
 
-    Future.delayed(Duration(milliseconds: 0), () {
+    Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       Navigator.of(context)
         ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
@@ -325,18 +326,18 @@ class _LoginScreenState extends State<LoginScreen> {
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
-      Future.delayed(Duration(milliseconds: 0), () {
+      Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
             title: AppLocalizations.of(context).translate('home_tv_error'),
-            duration: Duration(seconds: 3),
+            duration: const Duration(seconds: 3),
           )..show(context);
         }
       });
     }
 
-    return SizedBox.shrink();
+    return const SizedBox.shrink();
   }
 
   // dispose:-------------------------------------------------------------------

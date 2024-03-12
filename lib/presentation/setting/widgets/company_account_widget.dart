@@ -4,7 +4,7 @@ class CompanyAccountWidget extends StatelessWidget {
   final String name;
   final VoidCallback? onPressedNext;
 
-  CompanyAccountWidget({
+  const CompanyAccountWidget({super.key, 
     required this.name,
     this.onPressedNext,
   });

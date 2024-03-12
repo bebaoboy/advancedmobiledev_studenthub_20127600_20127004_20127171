@@ -52,7 +52,7 @@ class ProjectExperience {
 
   ProjectExperience(this.name,
       {this.description,
-      this.link="",
+      this.link = "",
       this.startDate,
       this.endDate,
       this.readOnly = true,

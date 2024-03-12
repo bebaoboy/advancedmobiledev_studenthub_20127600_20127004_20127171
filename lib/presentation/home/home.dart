@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
@@ -11,6 +12,8 @@ import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
@@ -42,15 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                           AppLocalizations.of(context).translate('home_title')),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       Text(
                           AppLocalizations.of(context).translate('home_intro')),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                       SizedBox(
                         width: 200,
                         height: 50,
-                        child: FloatingActionButton(
-                          heroTag: "F1",
+                        child: RoundedButtonWidget(
                           onPressed: () {
                             // Handle your action
                             Navigator.of(context)
@@ -58,24 +60,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                 MaterialPageRoute2(routeName: Routes.welcome),
                               );
                           },
-                          child: Text(AppLocalizations.of(context)
-                              .translate('Company_button')),
+                          buttonText: AppLocalizations.of(context)
+                              .translate('Company_button'),
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
                       SizedBox(
                         width: 200,
                         height: 50,
-                        child: FloatingActionButton(
-                          heroTag: "F2",
+                        child: RoundedButtonWidget(
                           onPressed: () {
                             // Handle your action
                           },
-                          child: Text(AppLocalizations.of(context)
-                              .translate('Student_button')),
+                          buttonText: AppLocalizations.of(context)
+                              .translate('Student_button'),
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 25),
+                      const SizedBox(height: 25),
                     ],
                   )),
               Text(AppLocalizations.of(context).translate('home_description')),
@@ -122,7 +127,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (context) {
         return IconButton(
           onPressed: () {},
-          icon: Icon(Icons.person, size: 25),
+          icon: const Icon(Icons.person, size: 25),
         );
       },
     );
@@ -153,7 +158,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 (Route<dynamic> route) => false);
         });
       },
-      icon: Icon(
+      icon: const Icon(
         Icons.power_settings_new,
       ),
     );
@@ -164,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
       onPressed: () {
         _buildLanguageDialog();
       },
-      icon: Icon(
+      icon: const Icon(
         Icons.language,
       ),
     );
@@ -178,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
         enableFullWidth: true,
         title: Text(
           AppLocalizations.of(context).translate('home_tv_choose_language'),
-          style: TextStyle(
+          style: const TextStyle(
             color: Colors.white,
             fontSize: 16.0,
           ),
@@ -195,9 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
             .map(
               (object) => ListTile(
                 dense: true,
-                contentPadding: EdgeInsets.all(0.0),
+                contentPadding: const EdgeInsets.all(0.0),
                 title: Text(
-                  object.language!,
+                  object.language,
                   style: TextStyle(
                     color: _languageStore.locale == object.locale
                         ? Theme.of(context).primaryColor
@@ -209,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () {
                   Navigator.of(context).pop();
                   // change user language based on selected locale
-                  _languageStore.changeLanguage(object.locale!);
+                  _languageStore.changeLanguage(object.locale);
                 },
               ),
             )
