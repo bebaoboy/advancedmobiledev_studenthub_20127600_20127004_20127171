@@ -10,8 +10,8 @@ description: A flutter boilerplate project created using MobX and Provider.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.6 <4.0.0'
-  
+  sdk: ">=3.0.6 <4.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
@@ -23,7 +23,7 @@ dependencies:
   animations: ^2.0.11
   auto_size_text: ^3.0.0
   another_flushbar: ^1.12.29
-  animated_custom_dropdown: 
+  animated_custom_dropdown:
   # B
   # C
   cupertino_icons: ^1.0.5
@@ -51,6 +51,7 @@ dependencies:
   mobx: ^2.1.4
   mobx_codegen:
   # N
+  navbar_router:
   # O
   # P
   path_provider: ^2.0.14
@@ -74,7 +75,7 @@ dependencies:
   tree_view_flutter: ^1.0.2
   lottie: ^3.0.0
   json_annotation: ^4.8.1
-  
+  animated_tree_view: 
   # Y
   # Z
 
@@ -97,13 +98,11 @@ flutter_icons:
   android: true
   ios: true
 
-
 # For information on the generic Dart art of this file, see the
 # following page: https://www.dartlang.org/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -128,13 +127,13 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-  - family: ProductSans
-    fonts:
-    - asset: assets/fonts/Product-Sans-Regular.ttf
-    - asset: assets/fonts/Product-Sans-Italic.ttf
-      style: italic
-    - asset: assets/fonts/Product-Sans-Bold.ttf
-      weight: 700
+    - family: ProductSans
+      fonts:
+        - asset: assets/fonts/Product-Sans-Regular.ttf
+        - asset: assets/fonts/Product-Sans-Italic.ttf
+          style: italic
+        - asset: assets/fonts/Product-Sans-Bold.ttf
+          weight: 700
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.io/custom-fonts/#from-packages
