@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:navbar_router/navbar_router.dart';
 
 const double kM3NavbarHeight = kBottomNavigationBarHeight;
@@ -407,22 +408,23 @@ class NavbarRouter2 extends NavbarRouter {
   /// File a feature request by clicking [here](https://github.com/maheshmnj/navbar_router/issues/new?assignees=&labels=&template=feature_request.md&title=)
   ///
   ///
-  const NavbarRouter2(
-      {super.key,
-      required this.destinations,
-      required this.errorBuilder,
-      this.shouldPopToBaseRoute = true,
-      this.onChanged,
-      this.decoration,
-      this.isDesktop = false,
-      this.initialIndex = 0,
-      this.type = NavbarType.standard,
-      this.destinationAnimationCurve = Curves.fastOutSlowIn,
-      this.destinationAnimationDuration = 300,
-      this.backButtonBehavior = BackButtonBehavior.exit,
-      this.onCurrentTabClicked,
-      this.onBackButtonPressed})
-      : assert(destinations.length >= 2,
+  ///
+  const NavbarRouter2({
+    super.key,
+    required this.destinations,
+    required this.errorBuilder,
+    this.shouldPopToBaseRoute = true,
+    this.onChanged,
+    this.decoration,
+    this.isDesktop = false,
+    this.initialIndex = 0,
+    this.type = NavbarType.standard,
+    this.destinationAnimationCurve = Curves.fastOutSlowIn,
+    this.destinationAnimationDuration = 300,
+    this.backButtonBehavior = BackButtonBehavior.exit,
+    this.onCurrentTabClicked,
+    this.onBackButtonPressed,
+  })  : assert(destinations.length >= 2,
             "Destinations length must be greater than or equal to 2"),
         super(
             destinations: destinations,
@@ -443,7 +445,7 @@ class NavbarRouter2 extends NavbarRouter {
   State<NavbarRouter> createState() => _NavbarRouterState();
 }
 
-class _NavbarRouterState extends State<NavbarRouter>
+class _NavbarRouterState extends State<NavbarRouter2>
     with TickerProviderStateMixin {
   final List<NavbarItem> items = [];
   late List<AnimationController> fadeAnimation;
@@ -455,11 +457,17 @@ class _NavbarRouterState extends State<NavbarRouter>
     initialize();
   }
 
-  void initialize({bool isUpdate = false}) {
+  void initialize({bool isUpdate = false, int? i}) {
+    if (i != null) {
+      final navbaritem = widget.destinations[i].navbarItem;
+      keys[i] = GlobalKey<NavigatorState>(debugLabel: navbaritem.text);
+      items[i] = navbaritem;
+      return;
+    }
     NavbarNotifier.length = widget.destinations.length;
     for (int i = 0; i < NavbarNotifier.length; i++) {
       final navbaritem = widget.destinations[i].navbarItem;
-      keys.add(GlobalKey<NavigatorState>());
+      keys.add(GlobalKey<NavigatorState>(debugLabel: navbaritem.text));
       items.add(navbaritem);
     }
     NavbarNotifier.setKeys(keys);
@@ -497,7 +505,7 @@ class _NavbarRouterState extends State<NavbarRouter>
   }
 
   @override
-  void didUpdateWidget(covariant NavbarRouter oldWidget) {
+  void didUpdateWidget(covariant NavbarRouter2 oldWidget) {
     if (widget.destinationAnimationCurve !=
             oldWidget.destinationAnimationCurve ||
         widget.destinationAnimationDuration !=
@@ -541,15 +549,17 @@ class _NavbarRouterState extends State<NavbarRouter>
 
   Widget _buildIndexedStackItem(int index, BuildContext context) {
     return AnimatedBuilder(
+      key: ValueKey(keys[index]),
       animation: fadeAnimation[index],
       builder: (context, child) {
+        print(index);
         // return IgnorePointer(
         //   ignoring: index != NavbarNotifier.currentIndex,
         //   child: Opacity(opacity: fadeAnimation[index].value, child: child),
         // );
         return SlideTransition(
           position: Tween<Offset>(
-            begin: Offset(0, 1),
+            begin: const Offset(-1.0, 0.0),
             end: Offset.zero,
           ).animate(fadeAnimation[index]),
           child: child,
@@ -584,59 +594,65 @@ class _NavbarRouterState extends State<NavbarRouter>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: () async {
-          final bool isExitingApp = await NavbarNotifier.onBackButtonPressed(
-              behavior: widget.backButtonBehavior);
-          final bool value = widget.onBackButtonPressed!(isExitingApp);
-          return value;
-        },
-        child: AnimatedBuilder(
-            animation: _navbarNotifier,
-            builder: (context, child) {
-              return Stack(
-                children: [
-                  AnimatedPadding(
-                    /// same duration as [_AnimatedNavbar]'s animation duration
-                    duration: const Duration(milliseconds: 500),
-                    padding: EdgeInsets.only(left: getPadding()),
-                    child: Stack(children: [
-                      for (int i = 0; i < NavbarNotifier.length; i++)
-                        _buildIndexedStackItem(i, context)
-                    ]),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: widget.isDesktop ? 0 : null,
-                    bottom: bottomPadding(),
-                    right: widget.isDesktop ? null : 0,
-                    child: _AnimatedNavBar(
-                        model: _navbarNotifier,
-                        isDesktop: widget.isDesktop,
-                        decoration: widget.decoration,
-                        navbarType: widget.type,
-                        onItemTapped: (x) {
-                          // User pressed  on the same tab twice
-                          if (NavbarNotifier.currentIndex == x) {
-                            if (widget.shouldPopToBaseRoute) {
-                              NavbarNotifier.popAllRoutes(x);
+    return Observer(
+      builder: (context) => WillPopScope(
+          onWillPop: () async {
+            final bool isExitingApp = await NavbarNotifier.onBackButtonPressed(
+                behavior: widget.backButtonBehavior);
+            final bool value = widget.onBackButtonPressed!(isExitingApp);
+            return value;
+          },
+          child: AnimatedBuilder(
+              animation: _navbarNotifier,
+              builder: (context, child) {
+                return Stack(
+                  children: [
+                    AnimatedPadding(
+                      /// same duration as [_AnimatedNavbar]'s animation duration
+                      duration: const Duration(milliseconds: 500),
+                      padding: EdgeInsets.only(left: getPadding()),
+                      child: Stack(children: [
+                        for (int i = 0; i < NavbarNotifier.length; i++)
+                          _buildIndexedStackItem(i, context)
+                      ]),
+                    ),
+                    Positioned(
+                      left: 0,
+                      top: widget.isDesktop ? 0 : null,
+                      bottom: bottomPadding(),
+                      right: widget.isDesktop ? null : 0,
+                      child: _AnimatedNavBar(
+                          model: _navbarNotifier,
+                          isDesktop: widget.isDesktop,
+                          decoration: widget.decoration,
+                          navbarType: widget.type,
+                          onItemTapped: (x) {
+                            // User pressed  on the same tab twice
+                            if (NavbarNotifier.currentIndex == x) {
+                              if (widget.shouldPopToBaseRoute) {
+                                NavbarNotifier.popAllRoutes(x);
+                              }
+                              if (widget.onCurrentTabClicked != null) {
+                                setState(() {
+                                  widget.onCurrentTabClicked!();
+                                  print("tap");
+                                  initialize(i: NavbarNotifier.currentIndex);
+                                });
+                              }
+                            } else {
+                              NavbarNotifier.index = x;
+                              if (widget.onChanged != null) {
+                                widget.onChanged!(x);
+                              }
+                              _handleFadeAnimation();
                             }
-                            if (widget.onCurrentTabClicked != null) {
-                              widget.onCurrentTabClicked!();
-                            }
-                          } else {
-                            NavbarNotifier.index = x;
-                            if (widget.onChanged != null) {
-                              widget.onChanged!(x);
-                            }
-                            _handleFadeAnimation();
-                          }
-                        },
-                        menuItems: items),
-                  ),
-                ],
-              );
-            }));
+                          },
+                          menuItems: items),
+                    ),
+                  ],
+                );
+              })),
+    );
   }
 }
 
@@ -666,7 +682,7 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
         secondaryAnimation,
         SlideTransition(
           position: Tween<Offset>(
-            begin: Offset(0, 1),
+            begin: const Offset(1.0, 0.0),
             end: Offset.zero,
           ).animate(animation),
           child: child,

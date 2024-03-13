@@ -1,5 +1,3 @@
-import 'package:boilerplate/core/widgets/language_button_widget.dart';
-import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';

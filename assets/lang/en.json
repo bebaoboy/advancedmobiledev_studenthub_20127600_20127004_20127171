@@ -16,6 +16,8 @@
   "Dashboard_post_job": "Post a jobs",
   "Dashboard_intro": "Welcome, Hal!",
   "Dashboard_content": "You have no jobs!",
+  "Dashboard_message": "Message",
+  "Dashboard_alert": "Alerts",
 
   "login_start": "Below are list of strings for login",
   "login_main_text": "Login with StudentHub",

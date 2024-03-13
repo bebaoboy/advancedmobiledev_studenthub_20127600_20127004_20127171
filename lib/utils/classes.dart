@@ -59,3 +59,42 @@ class ProjectExperience {
       this.enabled = true,
       this.skills});
 }
+
+// ----------------
+class Student {
+  String name;
+  String education;
+  String introduction;
+  int yearOfExperience;
+  String title; // job
+  String review; // maybe enum
+
+  Student(
+      {required this.name,
+      required this.education,
+      required this.introduction,
+      required this.title,
+      required this.review,
+      this.yearOfExperience = 0});
+}
+
+class Project {
+  String title;
+  String description;
+  String scope;
+  int numberOfStudents;
+  List<Student>? hired = [];
+  List<Student>? proposal = [];
+  List<Student>? messages = [];
+  DateTime? timeCreated = DateTime.now();
+
+  Project(
+      {required this.title,
+      required this.description,
+      this.scope = "",
+      this.numberOfStudents = 1,
+      this.hired,
+      this.proposal,
+      this.messages,
+      this.timeCreated});
+}

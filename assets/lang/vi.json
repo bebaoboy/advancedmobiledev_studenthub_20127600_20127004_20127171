@@ -2,7 +2,7 @@
   "home_title": "Xây dựng sản phẩm của bạn với sinh viên có tay nghề cao",
   "home_intro": "Tìm và giới thiệu sinh viên có kỹ năng tốt nhất cho sản phẩm của bạn. Sinh viên làm việc để có được kinh nghiệm và kỹ năng từ các dự án trong thế giới thực",
   "home_description": "StudentHub là môi trường đại học để kết nối sinh viên có tay nghề cao và công ty trên một dự án thực tế",
-  "Student_button": "Học sinh / sinh viên",
+  "Student_button": "Sinh viên",
   "Company_button": "Công ty",
   "Welcome": "Chào mừng, Hal!",
   "Start": "Hãy bắt đầu với bài đăng dự án đầu tiên của bạn",
@@ -16,6 +16,8 @@
   "Dashboard_post_job": "Tạo công việc",
   "Dashboard_intro": "Chào mừng, Hal!",
   "Dashboard_content": "Bạn hiện đang không có công việc",
+  "Dashboard_message": "Tin nhắn",
+  "Dashboard_alert": "Thông báo",
 
   "login_start": "Below are list of strings for login",
   "login_main_text": "Đăng nhập vào StudentHub",

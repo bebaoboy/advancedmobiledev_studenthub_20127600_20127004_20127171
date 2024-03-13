@@ -1,8 +1,6 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
-import 'package:animated_tree_view/tree_view/tree_view_state_helper.dart';
-import 'package:animations/animations.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
@@ -11,8 +9,6 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
