@@ -1,4 +1,5 @@
 import 'package:animations/animations.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +27,7 @@ class _AnimatedNavBar extends StatefulWidget {
       required this.onItemTapped})
       : super(key: key);
   final List<NavbarItem> menuItems;
-  final NavbarNotifier model;
+  final NavbarNotifier2 model;
   final Function(int) onItemTapped;
   final bool isDesktop;
   final NavbarType navbarType;
@@ -40,7 +41,7 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
     with SingleTickerProviderStateMixin {
   @override
   void didUpdateWidget(covariant _AnimatedNavBar oldWidget) {
-    if (NavbarNotifier.isNavbarHidden != isHidden) {
+    if (NavbarNotifier2.isNavbarHidden != isHidden) {
       if (!isHidden) {
         _showBottomNavBar();
       } else {
@@ -65,8 +66,9 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        duration: const Duration(milliseconds: 500), vsync: this)
-      ..addListener(() => setState(() {}));
+        duration: const Duration(milliseconds: 200), vsync: this)
+      // ..addListener(() => setState(() {}))
+      ;
     animation = Tween(begin: 0.0, end: 100.0).animate(_controller);
   }
 
@@ -140,7 +142,7 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
         case NavbarType.standard:
           kNavbarHeight = kBottomNavigationBarHeight;
           return StandardNavbar(
-            index: NavbarNotifier.currentIndex,
+            index: NavbarNotifier2.currentIndex,
             navbarHeight: kBottomNavigationBarHeight,
             navBarDecoration: widget.decoration ?? defaultDecoration,
             items: widget.menuItems,
@@ -210,7 +212,7 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
               label: Text(menuItem.text),
             );
           }).toList(),
-          selectedIndex: NavbarNotifier.currentIndex);
+          selectedIndex: NavbarNotifier2.currentIndex);
     }
 
     return AnimatedBuilder(
@@ -288,7 +290,7 @@ class StandardNavbarState extends State<StandardNavbar> {
     final items = widget.menuItems;
     return BottomNavigationBar(
         type: widget.decoration.navbarType,
-        currentIndex: NavbarNotifier.currentIndex,
+        currentIndex: NavbarNotifier2.currentIndex,
         onTap: (x) {
           _selectedIndex = x;
           widget.onItemTapped!(x);
@@ -464,16 +466,16 @@ class _NavbarRouterState extends State<NavbarRouter2>
       items[i] = navbaritem;
       return;
     }
-    NavbarNotifier.length = widget.destinations.length;
-    for (int i = 0; i < NavbarNotifier.length; i++) {
+    NavbarNotifier2.length = widget.destinations.length;
+    for (int i = 0; i < NavbarNotifier2.length; i++) {
       final navbaritem = widget.destinations[i].navbarItem;
       keys.add(GlobalKey<NavigatorState>(debugLabel: navbaritem.text));
       items.add(navbaritem);
     }
-    NavbarNotifier.setKeys(keys);
+    NavbarNotifier2.setKeys(keys);
     if (!isUpdate) {
       initAnimation();
-      NavbarNotifier.index = widget.initialIndex;
+      NavbarNotifier2.index = widget.initialIndex;
     }
   }
 
@@ -491,7 +493,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
   void clearInitialization() {
     keys.clear();
     items.clear();
-    NavbarNotifier.clear();
+    NavbarNotifier2.clear();
   }
 
   @override
@@ -500,7 +502,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
       controller.dispose();
     }
     clearInitialization();
-    NavbarNotifier.removeAllListeners();
+    NavbarNotifier2.removeAllListeners();
     super.dispose();
   }
 
@@ -552,9 +554,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
       key: ValueKey(keys[index]),
       animation: fadeAnimation[index],
       builder: (context, child) {
-        print(index);
+        // print(index);
         // return IgnorePointer(
-        //   ignoring: index != NavbarNotifier.currentIndex,
+        //   ignoring: index != NavbarNotifier2.currentIndex,
         //   child: Opacity(opacity: fadeAnimation[index].value, child: child),
         // );
         return SlideTransition(
@@ -584,7 +586,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   void _handleFadeAnimation() {
     for (int i = 0; i < fadeAnimation.length; i++) {
-      if (i == NavbarNotifier.currentIndex) {
+      if (i == NavbarNotifier2.currentIndex) {
         fadeAnimation[i].forward();
       } else {
         fadeAnimation[i].reverse();
@@ -594,69 +596,76 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   Widget build(BuildContext context) {
-    return Observer(
-      builder: (context) => WillPopScope(
-          onWillPop: () async {
-            final bool isExitingApp = await NavbarNotifier.onBackButtonPressed(
-                behavior: widget.backButtonBehavior);
-            final bool value = widget.onBackButtonPressed!(isExitingApp);
-            return value;
-          },
-          child: AnimatedBuilder(
-              animation: _navbarNotifier,
-              builder: (context, child) {
-                return Stack(
-                  children: [
-                    AnimatedPadding(
-                      /// same duration as [_AnimatedNavbar]'s animation duration
-                      duration: const Duration(milliseconds: 500),
-                      padding: EdgeInsets.only(left: getPadding()),
-                      child: Stack(children: [
-                        for (int i = 0; i < NavbarNotifier.length; i++)
-                          _buildIndexedStackItem(i, context)
-                      ]),
-                    ),
-                    Positioned(
-                      left: 0,
-                      top: widget.isDesktop ? 0 : null,
-                      bottom: bottomPadding(),
-                      right: widget.isDesktop ? null : 0,
-                      child: _AnimatedNavBar(
-                          model: _navbarNotifier,
-                          isDesktop: widget.isDesktop,
-                          decoration: widget.decoration,
-                          navbarType: widget.type,
-                          onItemTapped: (x) {
-                            // User pressed  on the same tab twice
-                            if (NavbarNotifier.currentIndex == x) {
-                              if (widget.shouldPopToBaseRoute) {
-                                NavbarNotifier.popAllRoutes(x);
-                              }
-                              if (widget.onCurrentTabClicked != null) {
-                                setState(() {
-                                  widget.onCurrentTabClicked!();
-                                  print("tap");
-                                  initialize(i: NavbarNotifier.currentIndex);
-                                });
-                              }
-                            } else {
-                              NavbarNotifier.index = x;
-                              if (widget.onChanged != null) {
-                                widget.onChanged!(x);
-                              }
-                              _handleFadeAnimation();
+    return WillPopScope(
+        onWillPop: () async {
+          final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
+              behavior: widget.backButtonBehavior);
+
+          final bool value = widget.onBackButtonPressed!(isExitingApp);
+          setState(() {
+            NavbarNotifier2.index = NavbarNotifier2.currentIndex;
+            print("change will pop");
+            if (widget.onChanged != null) {
+              widget.onChanged!(NavbarNotifier2.currentIndex);
+            }
+            _handleFadeAnimation();
+          });
+          return value;
+        },
+        child: AnimatedBuilder(
+            animation: _navbarNotifier,
+            builder: (context, child) {
+              return Stack(
+                children: [
+                  AnimatedPadding(
+                    /// same duration as [_AnimatedNavbar]'s animation duration
+                    duration: const Duration(milliseconds: 500),
+                    padding: EdgeInsets.only(left: getPadding()),
+                    child: Stack(children: [
+                      for (int i = 0; i < NavbarNotifier2.length; i++)
+                        _buildIndexedStackItem(i, context)
+                    ]),
+                  ),
+                  Positioned(
+                    left: 0,
+                    top: widget.isDesktop ? 0 : null,
+                    bottom: bottomPadding(),
+                    right: widget.isDesktop ? null : 0,
+                    child: _AnimatedNavBar(
+                        model: _navbarNotifier,
+                        isDesktop: widget.isDesktop,
+                        decoration: widget.decoration,
+                        navbarType: widget.type,
+                        onItemTapped: (x) {
+                          // User pressed  on the same tab twice
+                          if (NavbarNotifier2.currentIndex == x) {
+                            if (widget.shouldPopToBaseRoute) {
+                              NavbarNotifier2.popAllRoutes(x);
                             }
-                          },
-                          menuItems: items),
-                    ),
-                  ],
-                );
-              })),
-    );
+                            if (widget.onCurrentTabClicked != null) {
+                              setState(() {
+                                widget.onCurrentTabClicked!();
+                                print("tap");
+                                initialize(i: NavbarNotifier2.currentIndex);
+                              });
+                            }
+                          } else {
+                            NavbarNotifier2.index = x;
+                            if (widget.onChanged != null) {
+                              widget.onChanged!(x);
+                            }
+                            _handleFadeAnimation();
+                          }
+                        },
+                        menuItems: items),
+                  ),
+                ],
+              );
+            }));
   }
 }
 
-final NavbarNotifier _navbarNotifier = NavbarNotifier();
+final NavbarNotifier2 _navbarNotifier = NavbarNotifier2();
 List<Color> colors = [mediumPurple, Colors.orange, Colors.teal];
 const Color mediumPurple = Color.fromRGBO(79, 0, 241, 1.0);
 

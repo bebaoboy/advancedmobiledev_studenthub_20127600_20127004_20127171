@@ -302,7 +302,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
               : AppLocalizations.of(context)
                   .translate(_formStore.formErrorStore.confirmPassword),
           onChanged: (value) {
-            _formStore.setConfirmPassword(_passwordController.text);
+            _formStore.setConfirmPassword(_passwordConfirmController.text);
           },
         );
       },

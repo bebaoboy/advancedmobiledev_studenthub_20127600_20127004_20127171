@@ -120,7 +120,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   color: Colors.blue[700],
                   padding: const EdgeInsets.all(8),
                 ),
-            indentation: const Indentation(style: IndentStyle.squareJoint),
+            indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {
               print(item.data!.name);
               setState(() {
