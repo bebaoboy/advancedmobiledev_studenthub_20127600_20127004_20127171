@@ -1,9 +1,7 @@
-import 'dart:ui';
 
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/core/widgets/circular_animation/capture_widget.dart';
 import 'package:boilerplate/core/widgets/circular_animation/circular_reveal_clipper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:rect_getter/rect_getter.dart';
@@ -28,7 +26,7 @@ class CircularAnimatedTheme extends StatefulWidget {
   /// By default, the theme transition uses a linear curve. The [data] and
   /// [child] arguments must not be null.
   const CircularAnimatedTheme({
-    Key? key,
+    super.key,
     required this.data,
     required this.end,
     this.isMaterialAppTheme = false,
@@ -36,7 +34,7 @@ class CircularAnimatedTheme extends StatefulWidget {
     this.duration = kThemeAnimationDuration,
     VoidCallback? onEnd,
     required this.child,
-  }) : super(key: key);
+  });
 
   /// Specifies the color and typography values for descendant widgets.
   final ThemeData data;
@@ -109,7 +107,7 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
               alignment: Alignment.topLeft,
               width: 5,
               height: 5,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 shape: BoxShape.circle,
               ),
             ),
@@ -138,8 +136,8 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
   Widget _theme() {
     return Theme(
       key: _globalKey,
-      child: widget.child,
       data: _data.end!,
+      child: widget.child,
     );
   }
 

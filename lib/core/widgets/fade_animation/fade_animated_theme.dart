@@ -21,16 +21,15 @@ class FadeAnimatedTheme extends ImplicitlyAnimatedWidget {
   /// By default, the theme transition uses a linear curve. The [data] and
   /// [child] arguments must not be null.
   const FadeAnimatedTheme({
-    Key? key,
+    super.key,
     required this.data,
     this.isMaterialAppTheme = false,
-    Curve curve = Curves.linear,
-    Duration duration = kThemeAnimationDuration,
-    VoidCallback? onEnd,
+    super.curve,
+    super.duration = kThemeAnimationDuration,
+    super.onEnd,
     required this.child,
   })  : assert(child != null),
-        assert(data != null),
-        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+        assert(data != null);
 
   /// Specifies the color and typography values for descendant widgets.
   final ThemeData data;
@@ -61,8 +60,8 @@ class _FadeAnimatedThemeState
   @override
   Widget build(BuildContext context) {
     return Theme(
-      child: widget.child,
       data: _data!.evaluate(animation),
+      child: widget.child,
     );
   }
 

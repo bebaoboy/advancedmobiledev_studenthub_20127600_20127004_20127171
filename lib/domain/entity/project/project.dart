@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 class Skill {
   final String name;
   final String description;
@@ -78,10 +80,27 @@ class Student {
       this.yearOfExperience = 0});
 }
 
+// short: 1-3 months, long: 3-6 months
+enum Scope { short, long }
+
+extension ScopeTitle on Scope {
+  String get title {
+    switch (this) {
+      case Scope.short:
+        return '1-3 months';
+      case Scope.long:
+        return '3-6 months';
+      default:
+        return '';
+    }
+  }
+}
+
 class Project {
+  var id = const Uuid().v4();
   String title;
   String description;
-  String scope;
+  Scope scope;
   int numberOfStudents;
   List<Student>? hired = [];
   List<Student>? proposal = [];
@@ -91,10 +110,14 @@ class Project {
   Project(
       {required this.title,
       required this.description,
-      this.scope = "",
+      this.scope = Scope.short,
       this.numberOfStudents = 1,
       this.hired,
       this.proposal,
       this.messages,
       this.timeCreated});
+
+  getModifiedTimeCreated() {
+    return timeCreated?.difference(DateTime.now()).inDays.abs();
+  }
 }

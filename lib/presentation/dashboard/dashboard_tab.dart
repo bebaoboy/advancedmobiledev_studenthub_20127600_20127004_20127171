@@ -1,12 +1,5 @@
-import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/searchbar_widget.dart';
-import 'package:boilerplate/utils/classes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
-import 'package:navbar_router/navbar_router.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 class DashBoardTab extends StatefulWidget {
   @override
