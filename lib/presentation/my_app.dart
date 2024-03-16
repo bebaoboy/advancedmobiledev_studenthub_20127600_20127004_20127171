@@ -1,5 +1,7 @@
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/constants/strings.dart';
+import 'package:boilerplate/core/widgets/animated_theme_app.dart';
+import 'package:boilerplate/core/widgets/animation_type.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -24,7 +26,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(
       builder: (context) {
-        return MaterialApp(
+        return AnimatedThemeApp(
+          animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
+                animationDuration: Duration(milliseconds: 500),
           builder: (context, child) => Container(
               color: Theme.of(context).colorScheme.primary,
               child: SafeArea(child: child ?? const SizedBox())),
