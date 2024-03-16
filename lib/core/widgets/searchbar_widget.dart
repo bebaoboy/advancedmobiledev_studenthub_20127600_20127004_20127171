@@ -149,10 +149,10 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
     return Container(
       decoration: BoxDecoration(
                     border: toggle == 1 ? Border(
-              bottom: BorderSide(width: 1.5, color: Colors.grey),
+              bottom: BorderSide(width: 0.5, color: Colors.grey),
             ) : null,
       ),
-      height: 100.0,
+      height: 50.0,
 
       ///if the rtl is true, search bar will be from right to left
       alignment:
@@ -195,7 +195,6 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                 opacity: (toggle == 0) ? 0.0 : 1.0,
                 duration: const Duration(milliseconds: 200),
                 child: Container(
-                  padding: const EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     /// can add custom color or the color will be white
                     color: widget.color,
@@ -249,6 +248,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                       ///suffixIcon is of type Icon
                       child: widget.suffixIcon ??
                           IconButton(
+                            padding: EdgeInsets.only(left: 20),
                             alignment: Alignment.centerRight,
                             icon: Icon(
                               Icons.close_outlined,
@@ -297,9 +297,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
             AnimatedPositioned(
               duration: Duration(milliseconds: widget.animationDurationInMilli),
               left: (toggle == 0) ? 20.0 : 10,
-              right: (toggle == 0) ? 0 : 70,
+              right: (toggle == 0) ? 0 : 40,
               curve: Curves.easeOut,
-              top: 11.0,
+              top: 6.0,
 
               ///Using Animated opacity to change the opacity of th textField while expanding
               child: AnimatedOpacity(

@@ -1,3 +1,7 @@
+
+import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
+import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
@@ -7,10 +11,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
-class SearchBottomSheet extends StatelessWidget {
-  SearchBottomSheet({super.key, this.onSheetDismissed});
-  TextEditingController controller = TextEditingController();
+
+class SearchBottomSheet extends StatefulWidget {
+  const SearchBottomSheet(
+      {required this.onSheetDismissed,
+      this.height = 550,
+      required this.onFilterTap});
   final onSheetDismissed;
+  final onFilterTap;
+  final double height;
+
+  @override
+  State<SearchBottomSheet> createState() => _SearchBottomSheetState();
+}
+
+class _SearchBottomSheetState extends State<SearchBottomSheet> {
+  TextEditingController controller = TextEditingController();
+  bool isSuggestionTapped = false;
+
+  var allProjects = [
+    Project(title: "ABC", description: "description"),
+    Project(title: "XYZ", description: "description"),
+    Project(title: "JKMM", description: "description"),
+    Project(title: "man bhsk p", description: "description"),
+    Project(title: "jOa josfj á ", description: "description"),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +50,14 @@ class SearchBottomSheet extends StatelessWidget {
       // With the following configuration, the sheet height will be
       // 500px + (app bar height) + (bottom bar height).
       body: Container(
-        height: 550,
-        child: const Align(
+        height: widget.height,
+        child: Align(
           alignment: Alignment.topCenter,
+          child: isSuggestionTapped
+              ? ExampleUiLoadingAnimation(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                )
+              : null,
           // child:
           // AnimationSearchBar(
           //   onSelected: (project) {
@@ -129,10 +159,11 @@ class SearchBottomSheet extends StatelessWidget {
 
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 80,
+      titleSpacing: 0,
       // title: const Text('Search projects'),
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      actions: [
-        AnimSearchBar2(
+      title:  AnimSearchBar2(
           textFieldColor: Theme.of(context).colorScheme.surface,
           color: Theme.of(context).colorScheme.surface,
           onSubmitted: (p0) {},
@@ -141,6 +172,9 @@ class SearchBottomSheet extends StatelessWidget {
           onSuffixTap: () {},
           onSelected: (project) {
             print(project.title);
+            setState(() {
+              isSuggestionTapped = true;
+            });
           },
           searchTextEditingController: controller,
           onSuggestionCallback: (pattern) {
@@ -161,40 +195,45 @@ class SearchBottomSheet extends StatelessWidget {
             subtitle: Text(project.description),
           ),
         ),
-
-        // IconButton(
-        //     onPressed: () {
-        //       onSheetDismissed();
-        //     },
-        //     icon: Icon(Icons.expand_more))
+        
+      actions: [
+       IconButton(
+            onPressed: () {
+              widget.onFilterTap();
+            },
+            icon: Icon(Icons.filter_alt_outlined))
       ],
     );
   }
 
   Widget buildBottomBar() {
     return BottomAppBar(
-      child: Row(
-        children: [
-          Flexible(
-            fit: FlexFit.tight,
-            child: TextButton(
+      height: 70,
+      surfaceTintColor: Colors.white,
+      child: Center(
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Flexible(
+            //   fit: FlexFit.tight,
+            //   child: TextButton(
+            //     onPressed: () {
+            //       widget.onSheetDismissed();
+            //     },
+            //     child: const Text('Cancel'),
+            //   ),
+            // ),
+            // const SizedBox(width: 16),
+            RoundedButtonWidget(
+              buttonColor: Theme.of(context).colorScheme.primary,
               onPressed: () {
-                onSheetDismissed();
+                widget.onSheetDismissed();
               },
-              child: const Text('Cancel'),
+              buttonText: "OK",
             ),
-          ),
-          const SizedBox(width: 16),
-          Flexible(
-            fit: FlexFit.tight,
-            child: FilledButton(
-              onPressed: () {
-                onSheetDismissed();
-              },
-              child: const Text('OK'),
-            ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -213,14 +252,14 @@ class _ProjectTabState extends State<ProjectTab> {
     return _buildProjectContent();
   }
 
-  Future<SearchBottomSheet?> showTodoEditor(BuildContext context) {
-    return Navigator.push(
-      context,
-      ModalSheetRoute(
-        builder: (context) => SearchBottomSheet(),
-      ),
-    );
-  }
+  // Future<SearchBottomSheet?> showTodoEditor(BuildContext context) {
+  //   return Navigator.push(
+  //     context,
+  //     ModalSheetRoute(
+  //       builder: (context) => SearchBottomSheet(),
+  //     ),
+  //   );
+  // }
 
   double yOffset = 0;
 
@@ -228,8 +267,8 @@ class _ProjectTabState extends State<ProjectTab> {
     if (yOffset == 0) {
       yOffset = MediaQuery.of(context).size.height;
     }
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return Stack(
+      // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         // Text("This is project page"),
         Align(
@@ -292,6 +331,34 @@ class _ProjectTabState extends State<ProjectTab> {
             }),
           ),
         ),
+        SizedBox(
+          height: 100,
+        ),
+        Container(
+          margin: EdgeInsets.only(top: 40),
+          child: ExampleUiLoadingAnimation(
+              height: MediaQuery.of(context).size.height - 60),
+        ),
+        AnimatedContainer(
+            curve: Easing.legacyAccelerate,
+            // color: Colors.amber,
+            alignment: Alignment.bottomCenter,
+            duration: Duration(milliseconds: 300),
+            transform: Matrix4.translationValues(0, yOffset, -1.0),
+            child: SearchBottomSheet(
+              onSheetDismissed: () {
+              setState(() {
+                NavbarNotifier2.hideBottomNavBar = false;
+                yOffset = MediaQuery.of(context).size.height;
+              });
+              final FocusScopeNode currentScope = FocusScope.of(context);
+              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              }
+              return true;
+            },
+            onFilterTap: () {},
+            )),
       ],
     );
   }
