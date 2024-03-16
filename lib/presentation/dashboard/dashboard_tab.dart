@@ -1,5 +1,9 @@
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 
 class DashBoardTab extends StatefulWidget {
   @override
@@ -30,7 +34,11 @@ class _DashBoardTabState extends State<DashBoardTab> {
                 height: 30,
                 child: FloatingActionButton(
                   heroTag: "F3",
-                  onPressed: () {},
+                  onPressed: () {
+                    // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
+                    Navigator.of(NavigationService.navigatorKey.currentContext!).push(
+                        MaterialPageRoute2(routeName: Routes.project_post));
+                  },
                   child: Text(
                     AppLocalizations.of(context)
                         .translate('Dashboard_post_job'),

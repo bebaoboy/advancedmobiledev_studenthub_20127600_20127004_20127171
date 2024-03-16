@@ -1,4 +1,5 @@
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
+import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
@@ -38,6 +39,7 @@ class Routes {
   static const String profileStep2 = '/profile-step2';
   static const String setting = '/settings';
   static const String project_post = '/project-post';
+  static const String favortie_project = "/favortie-project";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -55,6 +57,7 @@ class Routes {
     profileStudentStep2: const ProfileStudentStep2Screen(),
     profileStudentStep3: const ProfileStudentStep3Screen(),
     project_post: const ProjectPostScreen(),
+    favortie_project: const FavoriteScreen(),
   };
 
   static final routes = <String, WidgetBuilder>{};

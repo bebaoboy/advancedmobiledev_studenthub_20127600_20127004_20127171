@@ -14,7 +14,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 // Examples can assume:
 // typedef GlobalWidgetsLocalizations = DefaultWidgetsLocalizations;
 // typedef GlobalMaterialLocalizations = DefaultMaterialLocalizations;
@@ -38,18 +37,6 @@ const TextStyle _errorTextStyle = TextStyle(
 );
 
 /// Describes which theme will be used by [MaterialApp].
-enum ThemeMode {
-  /// Use either the light or dark theme based on what the user has selected in
-  /// the system settings.
-  system,
-
-  /// Always use the light mode regardless of system preference.
-  light,
-
-  /// Always use the dark mode (if available) regardless of system preference.
-  dark,
-}
-
 /// An application that uses Material Design.
 ///
 /// A convenience widget that wraps a number of widgets that are commonly
@@ -1007,6 +994,8 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           endTheme = widget.theme ?? ThemeData.fallback();
 
         if (lastThemeMode != mode && key.currentState != null) {
+          print(lastThemeMode == ThemeMode.light);
+          print(mode == ThemeMode.light);
           key.currentState!.startAnimation();
         }
 
@@ -1159,7 +1148,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           );
         }
     }
-            lastThemeMode = lastThemeMode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark;
+    lastThemeMode = widget.themeMode;
 
     return ScaffoldMessenger(
       key: widget.scaffoldMessengerKey,

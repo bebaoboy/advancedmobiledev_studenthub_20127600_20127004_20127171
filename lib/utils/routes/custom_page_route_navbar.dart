@@ -678,7 +678,7 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
     required this.settings,
   }) : super(
           settings: settings,
-          transitionDuration: const Duration(milliseconds: 800),
+          transitionDuration: const Duration(milliseconds: 400),
           pageBuilder: (context, animation, secondaryAnimation) => route,
         );
 
@@ -689,21 +689,21 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
         context,
         animation,
         secondaryAnimation,
-        SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1.0, 0.0),
-            end: Offset.zero,
-          ).animate(animation),
-          child: child,
-        )
-        // ScaleTransition(scale: animation, child: child,),
-        // SharedAxisTransition(
-        //   fillColor: Theme.of(context).cardColor,
-        //   animation: animation,
-        //   secondaryAnimation: secondaryAnimation,
-        //   transitionType: SharedAxisTransitionType.scaled,
+        // SlideTransition(
+        //   position: Tween<Offset>(
+        //     begin: const Offset(1.0, 0.0),
+        //     end: Offset.zero,
+        //   ).animate(animation),
         //   child: child,
-        // ),
+        // )
+        // ScaleTransition(scale: animation, child: child,),
+        SharedAxisTransition(
+          fillColor: Theme.of(context).cardColor,
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          transitionType: SharedAxisTransitionType.scaled,
+          child: child,
+        ),
         );
   }
 }

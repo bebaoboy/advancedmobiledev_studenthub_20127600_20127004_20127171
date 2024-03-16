@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class ProjectItem extends StatefulWidget {
   final Project project;
-  ProjectItem({super.key, required this.project});
+  final Function onFavoriteTap;
+  ProjectItem({super.key, required this.project, required this.onFavoriteTap});
 
   @override
   _ProjectItemState createState() => _ProjectItemState();
@@ -100,8 +101,8 @@ class _ProjectItemState extends State<ProjectItem> {
                   color: Theme.of(context).colorScheme.primary,
                   onPressed: () {
                     setState(() {
-                      widget.project.isFavorite =
-                          !(widget.project.isFavorite ?? false);
+                      widget.onFavoriteTap();
+                      
                     });
                   },
                   icon: icon,

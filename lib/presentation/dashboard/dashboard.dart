@@ -7,6 +7,7 @@ import 'package:boilerplate/presentation/dashboard/project_tab.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 
@@ -64,11 +65,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       _routes = {
         0: {
           '/': const ProjectTab(),
-          // FeedDetail.route: FeedDetail(),
+          Routes.favortie_project: getRoute(Routes.favortie_project),
         },
         1: {
           '/': DashBoardTab(),
-          // ProductDetail.route: ProductDetail(),
+          // Routes.project_post: getRoute(Routes.project_post),
         },
         2: {
           '/': MessageTab(),

@@ -5,12 +5,6 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:flutter/material.dart';
 
-mapDataWithItem<T>(w) {
-  if (T == Project) {
-    return ProjectItem(project: w as Project);
-  }
-}
-
 const _shimmerGradient = LinearGradient(
   colors: [
     Color(0xFFEBEBF4),
@@ -27,23 +21,25 @@ const _shimmerGradient = LinearGradient(
   tileMode: TileMode.clamp,
 );
 
-class ExampleUiLoadingAnimation<T extends ShimmerLoadable>
+class ExampleUiLoadingAnimation
     extends StatefulWidget {
   const ExampleUiLoadingAnimation({
     super.key,
     required this.height,
     required this.list,
+    required this.firstCallback,
   });
 
   final double height;
-  final List<T> list;
+  final List<Project> list;
+  final Function firstCallback;
 
   @override
   State<ExampleUiLoadingAnimation> createState() =>
-      _ExampleUiLoadingAnimationState<T>();
+      _ExampleUiLoadingAnimationState();
 }
 
-class _ExampleUiLoadingAnimationState<T>
+class _ExampleUiLoadingAnimationState
     extends State<ExampleUiLoadingAnimation> {
   bool _isLoading = true;
 
@@ -128,7 +124,7 @@ class _ExampleUiLoadingAnimationState<T>
         shrinkWrap: true,
         itemCount: widget.list.length,
         itemBuilder: (context, index) {
-          return _buildListItem(widget.list[index]);
+          return _buildListItem(widget.list[index], index);
         },
       ),
     );
@@ -142,11 +138,10 @@ class _ExampleUiLoadingAnimationState<T>
   //     ),
   //   );
   // }
-
-  Widget _buildListItem(ShimmerLoadable w) {
+  Widget _buildListItem(ShimmerLoadable w, int index) {
     return ShimmerLoading(
       isLoading: w.isLoading,
-      child: mapDataWithItem<T>(w),
+      child: ProjectItem(project: w as Project, onFavoriteTap: () => widget.firstCallback(index),),
     );
   }
 }
@@ -322,7 +317,6 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
         );
       },
       child: widget.child,
-      
     );
   }
 }
