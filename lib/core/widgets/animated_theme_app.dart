@@ -8,11 +8,12 @@ import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/core/widgets/circular_animation/circular_animated_theme.dart';
 import 'package:boilerplate/core/widgets/fade_animation/fade_animated_theme.dart';
 import 'package:boilerplate/core/widgets/scale_animation/scale_animated_theme.dart';
+import 'package:boilerplate/core/widgets/animation_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'animation_type.dart';
+
 import 'package:flutter/services.dart';
 
 // Examples can assume:

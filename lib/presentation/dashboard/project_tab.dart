@@ -1,23 +1,16 @@
-import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
-import 'package:boilerplate/utils/classes.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
+import 'package:boilerplate/domain/entity/project/mockData.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
-import 'package:navbar_router/navbar_router.dart';
+import 'package:flutter/widgets.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
+
 class SearchBottomSheet extends StatelessWidget {
-  SearchBottomSheet({this.onSheetDismissed});
+  SearchBottomSheet({super.key, this.onSheetDismissed});
   TextEditingController controller = TextEditingController();
   final onSheetDismissed;
-  var allProjects = [
-    Project(title: "ABC", description: "description"),
-    Project(title: "XYZ", description: "description"),
-    Project(title: "JKMM", description: "description"),
-    Project(title: "man bhsk p", description: "description"),
-    Project(title: "jOa josfj á ", description: "description"),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +26,7 @@ class SearchBottomSheet extends StatelessWidget {
       // 500px + (app bar height) + (bottom bar height).
       body: Container(
         height: 550,
-        child: Align(
+        child: const Align(
           alignment: Alignment.topCenter,
           // child:
           // AnimationSearchBar(
@@ -121,7 +114,7 @@ class SearchBottomSheet extends StatelessWidget {
     return DraggableSheet(
       physics: physics,
       keyboardDismissBehavior:
-          SheetKeyboardDismissBehavior.onDrag(isContentScrollAware: true),
+          const SheetKeyboardDismissBehavior.onDrag(isContentScrollAware: true),
       minExtent: const Extent.pixels(0),
       child: Card(
         clipBehavior: Clip.antiAlias,
@@ -153,7 +146,7 @@ class SearchBottomSheet extends StatelessWidget {
           onSuggestionCallback: (pattern) {
             if (pattern.isEmpty) return [];
             return Future<List<Project>>.delayed(
-              Duration(milliseconds: 300),
+              const Duration(milliseconds: 300),
               () => allProjects.where((product) {
                 final nameLower =
                     product.title.toLowerCase().split(' ').join('');
@@ -208,6 +201,8 @@ class SearchBottomSheet extends StatelessWidget {
 }
 
 class ProjectTab extends StatefulWidget {
+  const ProjectTab({super.key});
+
   @override
   State<ProjectTab> createState() => _ProjectTabState();
 }
@@ -238,46 +233,65 @@ class _ProjectTabState extends State<ProjectTab> {
       children: <Widget>[
         // Text("This is project page"),
         Align(
-          alignment: Alignment.topRight,
-          child: IconButton(
-            icon: Icon(Icons.search,
-                size: 35, color: Colors.black ?? Colors.black.withOpacity(.7)),
-            onPressed: () {
-              // showTodoEditor(context);
-              setState(() {
-                if (yOffset == MediaQuery.of(context).size.height) {
-                  NavbarNotifier2.hideBottomNavBar = true;
-                  yOffset = -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                } else {
-                  NavbarNotifier2.hideBottomNavBar = false;
-                  yOffset = MediaQuery.of(context).size.height;
-                }
-              });
-            },
+            alignment: Alignment.topRight,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    onTap: () {
+                      setState(() {
+                        if (yOffset == MediaQuery.of(context).size.height) {
+                          NavbarNotifier2.hideBottomNavBar = true;
+                          yOffset =
+                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                        } else {
+                          NavbarNotifier2.hideBottomNavBar = false;
+                          yOffset = MediaQuery.of(context).size.height;
+                        }
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search for projects',
+                      prefixIcon: Icon(Icons.search,
+                          size: 35, color: Colors.black.withOpacity(.7)),
+                    ),
+                  ),
+                ),
+                IconButton(
+                    onPressed: () => print(''),
+                    icon: const Icon(Icons.favorite_rounded))
+              ],
+            )),
+        Flexible(
+          child: ListView.builder(
+            itemCount: allProjects.length,
+            itemBuilder: (context, index) => ProjectItem(
+              project: allProjects[index],
+              isFavorite: index % 2 == 0 ? true : false,
+            ),
           ),
         ),
-        SizedBox(
-          height: 100,
-        ),
         Flexible(
-            fit: FlexFit.loose,
-            child: AnimatedContainer(
-                curve: Easing.legacyAccelerate,
-                // color: Colors.amber,
-                alignment: Alignment.bottomCenter,
-                duration: Duration(milliseconds: 300),
-                transform: Matrix4.translationValues(0, yOffset, -1.0),
-                child: SearchBottomSheet(onSheetDismissed: () {
-                  setState(() {
-                    NavbarNotifier2.hideBottomNavBar = false;
-                    yOffset = MediaQuery.of(context).size.height;
-                  });
-                  final FocusScopeNode currentScope = FocusScope.of(context);
-                  if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                    FocusManager.instance.primaryFocus?.unfocus();
-                  }
-                  return true;
-                }))),
+          fit: FlexFit.loose,
+          child: AnimatedContainer(
+            curve: Easing.legacyAccelerate,
+            // color: Colors.amber,
+            alignment: Alignment.bottomCenter,
+            duration: const Duration(milliseconds: 300),
+            transform: Matrix4.translationValues(0, yOffset, -1.0),
+            child: SearchBottomSheet(onSheetDismissed: () {
+              setState(() {
+                NavbarNotifier2.hideBottomNavBar = false;
+                yOffset = MediaQuery.of(context).size.height;
+              });
+              final FocusScopeNode currentScope = FocusScope.of(context);
+              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                FocusManager.instance.primaryFocus?.unfocus();
+              }
+              return true;
+            }),
+          ),
+        ),
       ],
     );
   }

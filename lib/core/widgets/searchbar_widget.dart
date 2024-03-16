@@ -2,14 +2,12 @@ library animation_search_bar;
 
 import 'dart:async';
 
-import 'package:boilerplate/utils/classes.dart';
-import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
+import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'
-    show ProviderScope, StateProvider, Consumer;
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'dart:math';
+// ignore: duplicate_import
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 

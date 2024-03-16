@@ -1,16 +1,13 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
-import 'package:boilerplate/utils/classes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
-import 'package:smooth_sheets/smooth_sheets.dart';
 
 
 // ---------------------------------------------------------------------------
@@ -66,7 +63,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       ];
       _routes = {
         0: {
-          '/': ProjectTab(),
+          '/': const ProjectTab(),
           // FeedDetail.route: FeedDetail(),
         },
         1: {
@@ -161,8 +158,9 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               oldTime = DateTime.now();
               return false;
             }
-          } else
+          } else {
             return isExiting;
+          }
         },
         destinationAnimationCurve: Curves.fastOutSlowIn,
         destinationAnimationDuration: 200,
@@ -188,6 +186,6 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return MainAppBar();
+    return const MainAppBar();
   }
 }
