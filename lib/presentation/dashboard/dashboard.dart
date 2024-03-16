@@ -104,7 +104,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 height: 30,
                 child: FloatingActionButton(
                   heroTag: "F3",
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.of(context)
+                      ..pushAndRemoveUntil(
+                          MaterialPageRoute2(routeName: Routes.project_post),
+                          (Route<dynamic> route) => false);
+                  },
                   child: Text(
                     AppLocalizations.of(context)
                         .translate('Dashboard_post_job'),
