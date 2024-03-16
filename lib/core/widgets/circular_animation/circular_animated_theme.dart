@@ -144,6 +144,7 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
   }
 
   _takeScreenShot() {
+    try {
     _captureKey.currentState!.captureImage((image) {
       precacheImage(MemoryImage(image.data), context).then((cachedImage) {
         setState(() {
@@ -157,6 +158,7 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
         });
       });
     });
+    } catch(e) {}
   }
 
   void _onChangeTheme() async {

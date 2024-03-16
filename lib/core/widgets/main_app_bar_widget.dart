@@ -150,7 +150,10 @@ class _DarkTransitionState extends State<DarkTransition>
               _body(1),
               ClipPath(
                   clipper: CircularClipper(
-                      _animationController.value * radius * (isDark ? 0.8 : 0.9), position),
+                      _animationController.value *
+                          radius *
+                          (isDark ? 0.8 : 0.9),
+                      position),
                   child: _body(2)),
             ],
           );
@@ -230,8 +233,7 @@ class _MainAppBarState extends State<MainAppBar> {
             //     darkCB();
             //   });
             // }
-                            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-
+            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
           },
           icon: Icon(
             _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
@@ -333,26 +335,25 @@ class _MainAppBarState extends State<MainAppBar> {
     // return DarkTransition(
     //     isDark: isDark,
     //     offset: Offset(MediaQuery.of(context).size.width * 0.7, 20),
-    //     childBuilder: (context, x) => 
-        return AppBar(
-              leadingWidth: 30,
-              titleSpacing: 0,
-              toolbarHeight: 250,
-              // flexibleSpace: Container(child: Column(
-              // children: [
-              //   Container(height: 900, child: Center(child: Text("ooooooooooooooooooooo"),),)
-              // ],)),
-              title: Container(
-                  margin: const EdgeInsets.only(left: 20),
-                  child: Text(
-                      AppLocalizations.of(context).translate('appbar_title'))),
-              actions: [
-                _buildLanguageButton(),
-                _buildThemeButton(),
-                _buildProfileButton(),
-                _buildLogoutButton(),
-              ],
-            // )
-            );
+    //     childBuilder: (context, x) =>
+    return AppBar(
+      leadingWidth: 30,
+      titleSpacing: 0,
+      toolbarHeight: 250,
+      // flexibleSpace: Container(child: Column(
+      // children: [
+      //   Container(height: 900, child: Center(child: Text("ooooooooooooooooooooo"),),)
+      // ],)),
+      title: Container(
+          margin: const EdgeInsets.only(left: 20),
+          child: Text(AppLocalizations.of(context).translate('appbar_title'))),
+      actions: [
+        _buildLanguageButton(),
+        _buildThemeButton(),
+        _buildProfileButton(),
+        _buildLogoutButton(),
+      ],
+      // )
+    );
   }
 }
