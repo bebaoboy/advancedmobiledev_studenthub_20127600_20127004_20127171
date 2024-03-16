@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
@@ -11,15 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
-
 class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet(
       {required this.onSheetDismissed,
       this.height = 550,
-      required this.onFilterTap});
+      required this.onFilterTap,
+      required this.searchList});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
+  final List<Project> searchList;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -27,7 +27,7 @@ class SearchBottomSheet extends StatefulWidget {
 
 class _SearchBottomSheetState extends State<SearchBottomSheet> {
   TextEditingController controller = TextEditingController();
-  bool isSuggestionTapped = false;
+  bool isSuggestionTapped = true;
 
   var allProjects = [
     Project(title: "ABC", description: "description"),
@@ -54,74 +54,11 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
         child: Align(
           alignment: Alignment.topCenter,
           child: isSuggestionTapped
-              ? ExampleUiLoadingAnimation(
+              ? ExampleUiLoadingAnimation<Project>(
                   height: MediaQuery.of(context).size.height * 0.8,
+                  list: widget.searchList,
                 )
               : null,
-          // child:
-          // AnimationSearchBar(
-          //   onSelected: (project) {
-          //     print(project.title);
-          //   },
-          //   onSuggestionCallback: (pattern) {
-          //     return Future<List<Project>>.delayed(
-          //       Duration(milliseconds: 300),
-          //       () => allProjects.where((product) {
-          //         final nameLower =
-          //             product.title.toLowerCase().split(' ').join('');
-          //         print(nameLower);
-          //         final patternLower =
-          //             pattern.toLowerCase().split(' ').join('');
-          //         return nameLower.contains(patternLower);
-          //       }).toList(),
-          //     );
-          //   },
-          //   suggestionItemBuilder: (context, project) => ListTile(
-          //     title: Text(project.title),
-          //     subtitle: Text(project.description),
-          //   ),
-
-          //   ///! Required
-          //   onChanged: (text) => debugPrint(text),
-          //   searchTextEditingController: controller,
-
-          //   ///! Optional. For more customization
-          //   //? Back Button
-          //   backIcon: Icons.arrow_back_ios_new,
-          //   backIconColor: Colors.black,
-          //   isBackButtonVisible: false,
-          //   previousScreen:
-          //       null, // It will push and replace this screen when pressing the back button
-          //   //? Close Button
-          //   closeIconColor: Colors.black,
-          //   //? Center Title
-          //   centerTitle: ' ',
-          //   hintText: 'Type here...',
-          //   centerTitleStyle:
-          //       const TextStyle(fontWeight: FontWeight.w500, fontSize: 13,),
-          //   //? Search hint text
-          //   hintStyle: const TextStyle(fontWeight: FontWeight.w300, fontSize: 13),
-          //   //? Search Text
-          //   textStyle: const TextStyle(fontWeight: FontWeight.w300),
-          //   //? Cursor color
-          //   cursorColor: Colors.lightBlue.shade300,
-          //   //? Duration
-          //   duration: const Duration(milliseconds: 300),
-          //   //? Height, Width & Padding
-          //   searchFieldHeight: 35, // Total height of the search field
-          //   searchBarHeight: 50, // Total height of this Widget
-          //   searchBarWidth: MediaQuery.of(context).size.width -
-          //       20, // Total width of this Widget
-          //   horizontalPadding: 10,
-          //   verticalPadding: 0,
-          //   //? Search icon color
-          //   searchIconColor: Colors.black.withOpacity(.7),
-          //   //? Search field background decoration
-          //   searchFieldDecoration: BoxDecoration(
-          //       border:
-          //           Border.all(color: Colors.black.withOpacity(.2), width: .5),
-          //       borderRadius: BorderRadius.circular(15)),
-          // ),
         ),
       ),
       appBar: buildAppBar(context),
@@ -163,41 +100,40 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       titleSpacing: 0,
       // title: const Text('Search projects'),
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      title:  AnimSearchBar2(
-          textFieldColor: Theme.of(context).colorScheme.surface,
-          color: Theme.of(context).colorScheme.surface,
-          onSubmitted: (p0) {},
-          width: MediaQuery.of(context).size.width,
-          textController: controller,
-          onSuffixTap: () {},
-          onSelected: (project) {
-            print(project.title);
-            setState(() {
-              isSuggestionTapped = true;
-            });
-          },
-          searchTextEditingController: controller,
-          onSuggestionCallback: (pattern) {
-            if (pattern.isEmpty) return [];
-            return Future<List<Project>>.delayed(
-              const Duration(milliseconds: 300),
-              () => allProjects.where((product) {
-                final nameLower =
-                    product.title.toLowerCase().split(' ').join('');
-                print(nameLower);
-                final patternLower = pattern.toLowerCase().split(' ').join('');
-                return nameLower.contains(patternLower);
-              }).toList(),
-            );
-          },
-          suggestionItemBuilder: (context, project) => ListTile(
-            title: Text(project.title),
-            subtitle: Text(project.description),
-          ),
+      title: AnimSearchBar2(
+        textFieldColor: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surface,
+        onSubmitted: (p0) {},
+        width: MediaQuery.of(context).size.width,
+        textController: controller,
+        onSuffixTap: () {},
+        onSelected: (project) {
+          print(project.title);
+          setState(() {
+            isSuggestionTapped = true;
+          });
+        },
+        searchTextEditingController: controller,
+        onSuggestionCallback: (pattern) {
+          if (pattern.isEmpty) return [];
+          return Future<List<Project>>.delayed(
+            const Duration(milliseconds: 300),
+            () => allProjects.where((product) {
+              final nameLower = product.title.toLowerCase().split(' ').join('');
+              print(nameLower);
+              final patternLower = pattern.toLowerCase().split(' ').join('');
+              return nameLower.contains(patternLower);
+            }).toList(),
+          );
+        },
+        suggestionItemBuilder: (context, project) => ListTile(
+          title: Text(project.title),
+          subtitle: Text(project.description),
         ),
-        
+      ),
+
       actions: [
-       IconButton(
+        IconButton(
             onPressed: () {
               widget.onFilterTap();
             },
@@ -262,6 +198,7 @@ class _ProjectTabState extends State<ProjectTab> {
   // }
 
   double yOffset = 0;
+  String keyword = "";
 
   Widget _buildProjectContent() {
     if (yOffset == 0) {
@@ -277,67 +214,67 @@ class _ProjectTabState extends State<ProjectTab> {
               children: [
                 Expanded(
                   child: TextField(
-                    onTap: () {
+                    onChanged: (value) {
+                      keyword = value;
+                    },
+                    onSubmitted: (value) {
                       setState(() {
-                        if (yOffset == MediaQuery.of(context).size.height) {
-                          NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {
-                          NavbarNotifier2.hideBottomNavBar = false;
-                          yOffset = MediaQuery.of(context).size.height;
-                        }
-                      });
+                            if (yOffset == MediaQuery.of(context).size.height) {
+                              NavbarNotifier2.hideBottomNavBar = true;
+                              yOffset =
+                                  -(MediaQuery.of(context).size.height) * 0.05 +
+                                      45;
+                            } else {
+                              
+                            }
+                          });
                     },
                     decoration: InputDecoration(
                       hintText: 'Search for projects',
-                      prefixIcon: Icon(Icons.search,
-                          size: 35, color: Colors.black.withOpacity(.7)),
+                      prefixIcon: IconButton(
+                        icon: Icon(Icons.search,
+                            size: 35, color: Colors.black.withOpacity(.7)),
+                        onPressed: () {
+                          setState(() {
+                            if (yOffset == MediaQuery.of(context).size.height) {
+                              NavbarNotifier2.hideBottomNavBar = true;
+                              yOffset =
+                                  -(MediaQuery.of(context).size.height) * 0.05 +
+                                      45;
+                            } else {
+                              NavbarNotifier2.hideBottomNavBar = false;
+                              yOffset = MediaQuery.of(context).size.height;
+                            }
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
                     onPressed: () => print(''),
+                    color: Theme.of(context).colorScheme.primary,
                     icon: const Icon(Icons.favorite_rounded))
               ],
             )),
-        Flexible(
-          child: ListView.builder(
-            itemCount: allProjects.length,
-            itemBuilder: (context, index) => ProjectItem(
-              project: allProjects[index],
-              isFavorite: index % 2 == 0 ? true : false,
-            ),
-          ),
-        ),
-        Flexible(
-          fit: FlexFit.loose,
-          child: AnimatedContainer(
-            curve: Easing.legacyAccelerate,
-            // color: Colors.amber,
-            alignment: Alignment.bottomCenter,
-            duration: const Duration(milliseconds: 300),
-            transform: Matrix4.translationValues(0, yOffset, -1.0),
-            child: SearchBottomSheet(onSheetDismissed: () {
-              setState(() {
-                NavbarNotifier2.hideBottomNavBar = false;
-                yOffset = MediaQuery.of(context).size.height;
-              });
-              final FocusScopeNode currentScope = FocusScope.of(context);
-              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-              return true;
-            }),
-          ),
-        ),
+        // Flexible(
+        //   child: ListView.builder(
+        //     itemCount: allProjects.length,
+        //     itemBuilder: (context, index) => ProjectItem(
+        //       project: allProjects[index],
+        //       isFavorite: index % 2 == 0 ? true : false,
+        //     ),
+        //   ),
+        // ),
         SizedBox(
           height: 100,
         ),
         Container(
           margin: EdgeInsets.only(top: 40),
-          child: ExampleUiLoadingAnimation(
-              height: MediaQuery.of(context).size.height - 60),
+          child: ExampleUiLoadingAnimation<Project>(
+            height: MediaQuery.of(context).size.height - 60,
+            list: allProjects,
+          ),
         ),
         AnimatedContainer(
             curve: Easing.legacyAccelerate,
@@ -346,18 +283,19 @@ class _ProjectTabState extends State<ProjectTab> {
             duration: Duration(milliseconds: 300),
             transform: Matrix4.translationValues(0, yOffset, -1.0),
             child: SearchBottomSheet(
+              searchList: allProjects.takeWhile((e) => e.title.toLowerCase().contains(keyword.toLowerCase())).toList(),
               onSheetDismissed: () {
-              setState(() {
-                NavbarNotifier2.hideBottomNavBar = false;
-                yOffset = MediaQuery.of(context).size.height;
-              });
-              final FocusScopeNode currentScope = FocusScope.of(context);
-              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-              return true;
-            },
-            onFilterTap: () {},
+                setState(() {
+                  NavbarNotifier2.hideBottomNavBar = false;
+                  yOffset = MediaQuery.of(context).size.height;
+                });
+                final FocusScopeNode currentScope = FocusScope.of(context);
+                if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
+                return true;
+              },
+              onFilterTap: () {},
             )),
       ],
     );

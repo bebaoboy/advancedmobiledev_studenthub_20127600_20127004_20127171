@@ -196,17 +196,14 @@ class _MainAppBarState extends State<MainAppBar> {
   bool isDark = false;
 
   Widget _buildProfileButton() {
-    return Observer(
-      builder: (context) {
-        return IconButton(
+    return IconButton(
           onPressed: () {
             Navigator.of(context)
               ..push(MaterialPageRoute2(routeName: Routes.setting));
           },
           icon: const Icon(Icons.account_circle, size: 25),
         );
-      },
-    );
+      
   }
 
   // darkCB() {
