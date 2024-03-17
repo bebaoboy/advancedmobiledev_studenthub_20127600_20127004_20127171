@@ -1,20 +1,38 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class ProposalItem extends StatefulWidget {
   final Student proposal;
-  const ProposalItem({super.key, required this.proposal});
+  final bool pending;
+  const ProposalItem(
+      {super.key, required this.proposal, required this.pending});
 
   @override
   State<ProposalItem> createState() => _ProposalItemState();
 }
 
 class _ProposalItemState extends State<ProposalItem> {
+  late bool isPending;
+
+  @override
+  void initState() {
+    super.initState();
+    isPending = widget.pending;
+  }
+
   @override
   Widget build(BuildContext context) {
+    var buttonHireText = 'Hire';
+    if (isPending) {
+      buttonHireText = 'Sent hired offer';
+    }
+
     return Padding(
-      padding: const EdgeInsets.all(Dimens.horizontal_padding),
+      padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.horizontal_padding - 3,
+          vertical: Dimens.vertical_padding),
       child: Container(
         decoration: const BoxDecoration(
             border:
@@ -77,8 +95,38 @@ class _ProposalItemState extends State<ProposalItem> {
                   MaterialButton(
                     color: Theme.of(context).primaryColor,
                     textColor: Colors.white,
-                    onPressed: () => print('send a hire notification'),
-                    child: const Text('Hire'),
+                    onPressed: () {
+                      if (isPending) {
+                        return;
+                      }
+                      print('send a hire notification');
+                      showAnimatedDialog(
+                        context: context,
+                        barrierDismissible: true,
+                        builder: (BuildContext context) {
+                          return ClassicGeneralDialogWidget(
+                            titleText: 'Hired offer',
+                            contentText:
+                                'Do you really want to send hired offer for student to do this project',
+                            negativeText: 'Cancel',
+                            positiveText: 'Send',
+                            onPositiveClick: () {
+                              setState(() {
+                                isPending = !isPending;
+                              });
+                              Navigator.of(context).pop();
+                            },
+                            onNegativeClick: () {
+                              Navigator.of(context).pop();
+                            },
+                          );
+                        },
+                        animationType: DialogTransitionType.size,
+                        curve: Curves.fastOutSlowIn,
+                        duration: const Duration(seconds: 1),
+                      );
+                    },
+                    child: Text(buttonHireText),
                   ),
                 ],
               ),

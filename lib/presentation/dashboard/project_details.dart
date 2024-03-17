@@ -1,6 +1,5 @@
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
@@ -27,20 +26,18 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(Dimens.horizontal_padding),
-        child:
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
             child: Text(widget.project.title),
           ),
           DefaultTabController(
             length: 4,
             child: Stack(children: [
               SegmentedTabControl(
-                height: Dimens.tab_height,
+                height: Dimens.tab_height + 6,
                 radius: const Radius.circular(12),
-                indicatorColor:
-                    Theme.of(context).colorScheme.primaryContainer,
+                indicatorColor: Theme.of(context).colorScheme.primaryContainer,
                 tabTextColor: Colors.black45,
                 selectedTabTextColor: Colors.white,
                 backgroundColor: Colors.grey.shade300,
@@ -52,9 +49,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: Dimens.tab_height + 8),
+                padding: const EdgeInsets.only(top: 20),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.72,
+                  height: MediaQuery.of(context).size.height,
                   child: TabBarView(
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
@@ -85,14 +82,14 @@ class ProposalTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: proposals?.length ?? 0,
-        itemBuilder: (context, index) {
-          return ProposalItem(proposal: proposals![index]);
-        },
-      ),
+    return ListView.builder(
+      itemCount: proposals?.length ?? 0,
+      itemBuilder: (context, index) {
+        return ProposalItem(
+          proposal: proposals![index],
+          pending: false,
+        );
+      },
     );
   }
 }
@@ -105,65 +102,69 @@ class DetailTabLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          Container(
-            margin: const EdgeInsetsDirectional.only(top: 10),
-            width: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(
-                border: Border(
-                    top: BorderSide(width: 1, color: Colors.black),
-                    bottom: BorderSide(width: 1, color: Colors.black))),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text(project.description),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsetsDirectional.only(
+                  top: Dimens.vertical_padding + 10),
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                  border: Border(
+                      top: BorderSide(width: 1, color: Colors.black),
+                      bottom: BorderSide(width: 1, color: Colors.black))),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(project.description),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.alarm,
+                    size: 45,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        'Project scope',
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      Text(
+                        project.scope.title,
+                        style: Theme.of(context).textTheme.bodyText1,
+                      )
+                    ],
+                  )
+                ],
+              ),
+            ),
+            Row(
               children: [
                 const Icon(
-                  Icons.alarm,
+                  Icons.people,
                   size: 45,
                 ),
                 Column(
                   children: [
                     Text(
-                      'Project scope',
+                      'Student required',
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                     Text(
-                      project.scope.title,
+                      '${project.numberOfStudents} students',
                       style: Theme.of(context).textTheme.bodyText1,
                     )
                   ],
                 )
               ],
-            ),
-          ),
-          Row(
-            children: [
-              const Icon(
-                Icons.people,
-                size: 45,
-              ),
-              Column(
-                children: [
-                  Text(
-                    'Student required',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  ),
-                  Text(
-                    '${project.numberOfStudents} students',
-                    style: Theme.of(context).textTheme.bodyText1,
-                  )
-                ],
-              )
-            ],
-          )
-        ],
+            )
+          ],
+        ),
       ),
     );
   }
@@ -176,16 +177,13 @@ class HiredTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: hired?.length ?? 0,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(hired![index].name),
-          );
-        },
-      ),
+    return ListView.builder(
+      itemCount: hired?.length ?? 0,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(hired![index].name),
+        );
+      },
     );
   }
 }
@@ -197,16 +195,13 @@ class MessageTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height,
-      child: ListView.builder(
-        itemCount: messages?.length ?? 0,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(messages![index].name),
-          );
-        },
-      ),
+    return ListView.builder(
+      itemCount: messages?.length ?? 0,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(messages![index].name),
+        );
+      },
     );
   }
 }

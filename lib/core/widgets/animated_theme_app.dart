@@ -975,10 +975,12 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
               (mode == ThemeMode.system &&
                   platformBrightness == ui.Brightness.dark)) {
             lastTheme = widget.theme;
-          } else
+          } else {
             lastTheme ??= widget.darkTheme ?? ThemeData.fallback();
-        } else
+          }
+        } else {
           lastTheme ??= widget.darkTheme ?? ThemeData.fallback();
+        }
 
         // Use a light theme, dark theme, or fallback theme.
         if (widget.darkTheme != null) {
@@ -988,10 +990,12 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
               (mode == ThemeMode.system &&
                   platformBrightness == ui.Brightness.dark)) {
             endTheme = widget.darkTheme!;
-          } else
+          } else {
             endTheme = widget.theme ?? ThemeData.fallback();
-        } else
+          }
+        } else {
           endTheme = widget.theme ?? ThemeData.fallback();
+        }
 
         if (lastThemeMode != mode && key.currentState != null) {
           print(lastThemeMode == ThemeMode.light);
