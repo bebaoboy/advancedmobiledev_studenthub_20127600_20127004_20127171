@@ -81,8 +81,8 @@ class NavbarNotifier2 extends ChangeNotifier {
           _index = _navbarStackHistory.last;
           //index = _index!;
           print("pop" + _index!.toString());
-          _notifyIndexChangeListeners(_index!);
-          _singleton.notify();
+          // _notifyIndexChangeListeners(_index!);
+          // _singleton.notify();
           exitingApp = false;
         } else {
           return exitingApp;

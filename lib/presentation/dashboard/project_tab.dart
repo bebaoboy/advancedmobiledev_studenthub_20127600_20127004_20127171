@@ -223,7 +223,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-        controller.text = widget.keyword ?? "";
+    controller.text = widget.keyword ?? "";
 
     // SheetContentScaffold is a special Scaffold designed for use in a sheet.
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
@@ -371,13 +371,15 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
 }
 
 class ProjectTab extends StatefulWidget {
-  const ProjectTab({super.key});
+  ProjectTab({super.key, this.isAlive = true});
+  bool? isAlive;
 
   @override
   State<ProjectTab> createState() => _ProjectTabState();
 }
 
-class _ProjectTabState extends State<ProjectTab> {
+class _ProjectTabState extends State<ProjectTab>
+    with AutomaticKeepAliveClientMixin {
   @override
   Widget build(BuildContext context) {
     return _buildProjectContent();
@@ -541,4 +543,8 @@ class _ProjectTabState extends State<ProjectTab> {
       ],
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => widget.isAlive!;
 }

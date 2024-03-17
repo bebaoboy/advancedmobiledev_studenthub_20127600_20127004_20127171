@@ -36,6 +36,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<NavbarItem> items = [];
   Map<int, Map<String, Widget>> _routes = {};
   DateTime oldTime = DateTime.now();
+  final  _pageController = PageController(initialPage: 1);
 
   @override
   Widget build(BuildContext context) {
@@ -64,11 +65,11 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       ];
       _routes = {
         0: {
-          '/': const ProjectTab(),
+          '/': ProjectTab(),
           Routes.favortie_project: getRoute(Routes.favortie_project),
         },
         1: {
-          '/': const DashBoardTab(),
+          '/': DashBoardTab(pageController: _pageController,),
           // Routes.projectDetails: ProjectDetailsPage(
           //   project: Project(title: 'som', description: 'smm'),
           // ),
@@ -133,6 +134,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       // ),
 
       body: NavbarRouter2(
+        pageController: _pageController,
         initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
