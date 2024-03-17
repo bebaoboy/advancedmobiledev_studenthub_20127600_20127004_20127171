@@ -53,22 +53,21 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 child: SizedBox(
                   height: MediaQuery.of(context).size.height,
                   child: TabBarView(
-                    physics: const NeverScrollableScrollPhysics(),
+                    physics: const BouncingScrollPhysics(),
                     children: [
                       ProposalTabLayout(
                           proposals: widget.project.proposal,
                           onHired: (index) {
                             setState(() {
-                              try{
-                              widget.project.hired != null
-                                  ? widget.project.hired!.add(
-                                      widget.project.proposal!.removeAt(index))
-                                  : widget.project.hired = [
-                                      widget.project.proposal!.removeAt(index)
-                                    ];
-                              } catch(e) {
-                                
-                              }
+                              try {
+                                widget.project.hired != null
+                                    ? widget.project.hired!.add(widget
+                                        .project.proposal!
+                                        .removeAt(index))
+                                    : widget.project.hired = [
+                                        widget.project.proposal!.removeAt(index)
+                                      ];
+                              } catch (e) {}
                             });
                           }),
                       DetailTabLayout(

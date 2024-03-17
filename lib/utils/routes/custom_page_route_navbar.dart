@@ -413,22 +413,24 @@ class NavbarRouter2 extends NavbarRouter {
   ///
   ///
   ///
-  const NavbarRouter2({
-    super.key,
-    required this.destinations,
-    required this.errorBuilder,
-    this.shouldPopToBaseRoute = true,
-    this.onChanged,
-    this.decoration,
-    this.isDesktop = false,
-    this.initialIndex = 0,
-    this.type = NavbarType.standard,
-    this.destinationAnimationCurve = Curves.fastOutSlowIn,
-    this.destinationAnimationDuration = 300,
-    this.backButtonBehavior = BackButtonBehavior.exit,
-    this.onCurrentTabClicked,
-    this.onBackButtonPressed,
-  })  : assert(destinations.length >= 2,
+  final PageController pageController;
+  const NavbarRouter2(
+      {super.key,
+      required this.destinations,
+      required this.errorBuilder,
+      this.shouldPopToBaseRoute = true,
+      this.onChanged,
+      this.decoration,
+      this.isDesktop = false,
+      this.initialIndex = 0,
+      this.type = NavbarType.standard,
+      this.destinationAnimationCurve = Curves.fastOutSlowIn,
+      this.destinationAnimationDuration = 300,
+      this.backButtonBehavior = BackButtonBehavior.exit,
+      this.onCurrentTabClicked,
+      this.onBackButtonPressed,
+      required this.pageController})
+      : assert(destinations.length >= 2,
             "Destinations length must be greater than or equal to 2"),
         super(
             destinations: destinations,
@@ -552,42 +554,47 @@ class _NavbarRouterState extends State<NavbarRouter2>
   }
 
   Widget _buildIndexedStackItem(int index, BuildContext context) {
-    return AnimatedBuilder(
-      key: ValueKey(keys[index]),
-      animation: fadeAnimation[index],
-      builder: (context, child) {
-        // print(index);
-        // return IgnorePointer(
-        //   ignoring: index != NavbarNotifier2.currentIndex,
-        //   child: Opacity(opacity: fadeAnimation[index].value, child: child),
-        // );
-        return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(-1.0, 0.0),
-            end: Offset.zero,
-          ).animate(fadeAnimation[index]),
-          child: child,
-        );
-      },
-      child: Navigator(
-          key: keys[index],
-          initialRoute: widget.destinations[index].initialRoute,
-          onGenerateRoute: (RouteSettings settings) {
-            Widget? builder = const SizedBox();
-            final nestedLength = widget.destinations[index].destinations.length;
-            for (int j = 0; j < nestedLength; j++) {
-              if (widget.destinations[index].destinations[j].route ==
-                  settings.name) {
-                if (settings.name == Routes.projectDetails) {
-                  builder = ProjectDetailsPage(
-                      project: settings.arguments as Project);
-                } else {
-                  builder = widget.destinations[index].destinations[j].widget;
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: AnimatedBuilder(
+        key: ValueKey(keys[index]),
+        animation: fadeAnimation[index],
+        builder: (context, child) {
+          //print(index);
+          return IgnorePointer(
+            ignoring: index != NavbarNotifier2.currentIndex,
+            child: Opacity(opacity: fadeAnimation[index].value, child: child),
+          );
+          // return SlideTransition(
+          //   position: Tween<Offset>(
+          //     begin: const Offset(-1.0, 0.0),
+          //     end: Offset.zero,
+          //   ).animate(fadeAnimation[index]),
+          //   child: child,
+          // );
+        },
+        child: Navigator(
+            key: keys[index],
+            initialRoute: widget.destinations[index].initialRoute,
+            onGenerateRoute: (RouteSettings settings) {
+              Widget? builder = const SizedBox();
+              final nestedLength =
+                  widget.destinations[index].destinations.length;
+              for (int j = 0; j < nestedLength; j++) {
+                if (widget.destinations[index].destinations[j].route ==
+                    settings.name) {
+                  if (settings.name == Routes.projectDetails) {
+                    builder = ProjectDetailsPage(
+                        project: settings.arguments as Project);
+                  } else {
+                    builder = widget.destinations[index].destinations[j].widget;
+                  }
                 }
               }
-            }
-            return MaterialPageRouteNavBar(route: builder!, settings: settings);
-          }),
+              return MaterialPageRouteNavBar(
+                  route: builder!, settings: settings);
+            }),
+      ),
     );
   }
 
@@ -614,8 +621,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
           final bool value = widget.onBackButtonPressed!(isExitingApp);
           setState(() {
-            NavbarNotifier2.index = NavbarNotifier2.currentIndex;
-            print("change will pop");
+            // NavbarNotifier2.index = NavbarNotifier2.currentIndex;
+            widget.pageController.jumpToPage(NavbarNotifier2.currentIndex);
+            print("change will pop" + NavbarNotifier2.currentIndex.toString());
             if (widget.onChanged != null) {
               widget.onChanged!(NavbarNotifier2.currentIndex);
             }
@@ -632,10 +640,20 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     /// same duration as [_AnimatedNavbar]'s animation duration
                     duration: const Duration(milliseconds: 500),
                     padding: EdgeInsets.only(left: getPadding()),
-                    child: Stack(children: [
-                      for (int i = 0; i < NavbarNotifier2.length; i++)
-                        _buildIndexedStackItem(i, context)
-                    ]),
+                    child: PageView(
+                      controller: widget.pageController,
+                      children: [
+                        for (int i = 0; i < NavbarNotifier2.length; i++)
+                          _buildIndexedStackItem(i, context)
+                      ],
+                      onPageChanged: (value) {
+                        NavbarNotifier2.index = value;
+                        if (widget.onChanged != null) {
+                          widget.onChanged!(value);
+                        }
+                        _handleFadeAnimation();
+                      },
+                    ),
                   ),
                   Positioned(
                     left: 0,
@@ -661,11 +679,14 @@ class _NavbarRouterState extends State<NavbarRouter2>
                               });
                             }
                           } else {
-                            NavbarNotifier2.index = x;
-                            if (widget.onChanged != null) {
-                              widget.onChanged!(x);
-                            }
-                            _handleFadeAnimation();
+                            // NavbarNotifier2.index = x;
+                            // if (widget.onChanged != null) {
+                            //   widget.onChanged!(x);
+                            // }
+                            // _handleFadeAnimation();
+                            widget.pageController.animateToPage(x,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.ease);
                           }
                         },
                         menuItems: items),

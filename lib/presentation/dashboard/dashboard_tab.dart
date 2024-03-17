@@ -6,18 +6,42 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 
 class DashBoardTab extends StatefulWidget {
-  const DashBoardTab({super.key});
+  DashBoardTab({super.key, this.isAlive = true, required this.pageController});
+  bool? isAlive;
+  PageController pageController;
 
   @override
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
-class _DashBoardTabState extends State<DashBoardTab> {
+class _DashBoardTabState extends State<DashBoardTab>
+    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
+  late TabController tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    tabController = TabController(length: 3, vsync: this);
+    // tabController.addListener(() {
+    //   if (tabController.index == 2 && tabController.offset > 0) {
+    //     print("right");
+    //     widget.pageController.animateToPage(NavbarNotifier2.currentIndex + 1,
+    //         duration: Duration(seconds: 1), curve: Curves.ease);
+    //   } else if (tabController.index == 0 && tabController.offset < -0) {
+    //     print("left");
+    //     widget.pageController.animateToPage(NavbarNotifier2.currentIndex - 1,
+    //         duration: Duration(seconds: 1), curve: Curves.ease);
+    //   }
+    // });
+  }
+
   @override
   Widget build(BuildContext context) {
     return _buildDashBoardContent();
@@ -32,8 +56,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(
-                    AppLocalizations.of(context).translate('Dashboard_your_job')),
+                child: Text(AppLocalizations.of(context)
+                    .translate('Dashboard_your_job')),
               ),
               const Spacer(),
               Align(
@@ -45,9 +69,10 @@ class _DashBoardTabState extends State<DashBoardTab> {
                     heroTag: "F3",
                     onPressed: () {
                       // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                      Navigator.of(NavigationService.navigatorKey.currentContext!)
-                          .push(
-                              MaterialPageRoute2(routeName: Routes.project_post));
+                      Navigator.of(
+                              NavigationService.navigatorKey.currentContext!)
+                          .push(MaterialPageRoute2(
+                              routeName: Routes.project_post));
                     },
                     child: Text(
                       AppLocalizations.of(context)
@@ -80,15 +105,24 @@ class _DashBoardTabState extends State<DashBoardTab> {
             // ignore: prefer_const_constructors
             : Expanded(
                 // ignore: prefer_const_constructors
-                child: ProjectTabs(),
+                child: ProjectTabs(
+                  tabController: tabController,
+                  pageController: widget.pageController,
+                ),
               ),
       ],
     );
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => widget.isAlive!;
 }
 
 class ProjectTabs extends StatefulWidget {
-  const ProjectTabs({super.key});
+  ProjectTabs({super.key, this.tabController, required this.pageController});
+  TabController? tabController;
+  PageController pageController;
 
   @override
   State<ProjectTabs> createState() => _ProjectTabsState();
@@ -105,6 +139,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
           padding:
               const EdgeInsets.symmetric(horizontal: Dimens.horizontal_padding),
           child: SegmentedTabControl(
+            controller: widget.tabController,
             height: Dimens.tab_height,
             radius: const Radius.circular(12),
             indicatorColor: Theme.of(context).colorScheme.primaryContainer,
@@ -128,7 +163,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
           padding:
               const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55),
           child: TabBarView(
-              physics: const NeverScrollableScrollPhysics(),
+              controller: widget.tabController,
+              physics: const BouncingScrollPhysics(),
               children: [
                 AllProjects(
                   projects: myProjects,
@@ -148,7 +184,12 @@ class _ProjectTabsState extends State<ProjectTabs> {
 
 void showBottomSheet(Project project) {
   showAdaptiveActionSheet(
-    title: Text("Menu", style: TextStyle(fontWeight: FontWeight.bold,),),
+    title: Text(
+      "Menu",
+      style: TextStyle(
+        fontWeight: FontWeight.bold,
+      ),
+    ),
     context: NavigationService.navigatorKey.currentContext!,
     isDismissible: true,
     barrierColor: Colors.black87,
@@ -160,14 +201,12 @@ void showBottomSheet(Project project) {
               'View proposals',
               style: TextStyle(fontWeight: FontWeight.normal),
             )),
-        
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
             child: const Text('View messages',
                 style: TextStyle(fontWeight: FontWeight.w100))),
-        
       ),
       BottomSheetAction(
         title: Container(
@@ -175,25 +214,21 @@ void showBottomSheet(Project project) {
           child: const Text('View hired',
               style: TextStyle(fontWeight: FontWeight.normal)),
         ),
-        
       ),
       BottomSheetAction(
         title: null,
-        
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
             child: const Text('View job posting',
                 style: TextStyle(fontWeight: FontWeight.normal))),
-        
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
             child: const Text('Edit posting',
                 style: TextStyle(fontWeight: FontWeight.normal))),
-        
       ),
       BottomSheetAction(
         title: Container(
@@ -201,11 +236,9 @@ void showBottomSheet(Project project) {
           child: const Text('Remove posting',
               style: TextStyle(fontWeight: FontWeight.normal)),
         ),
-        
       ),
       BottomSheetAction(
         title: null,
-        
       ),
       BottomSheetAction(
         title: Container(
