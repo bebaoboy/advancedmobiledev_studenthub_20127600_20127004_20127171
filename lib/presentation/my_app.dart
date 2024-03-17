@@ -13,6 +13,11 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../di/service_locator.dart';
 
+class NavigationService {
+  static GlobalKey<NavigatorState> navigationKey =
+      GlobalKey<NavigatorState>();
+}
+
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   // Create your store as a final variable in a base Widget. This works better
@@ -28,7 +33,7 @@ class MyApp extends StatelessWidget {
       builder: (context) {
         return AnimatedThemeApp(
           animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
-                animationDuration: Duration(milliseconds: 500),
+          animationDuration: const Duration(milliseconds: 500),
           builder: (context, child) => Container(
               color: Theme.of(context).colorScheme.primary,
               child: SafeArea(child: child ?? const SizedBox())),
@@ -53,6 +58,7 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           home: const SplashScreen(),
+          navigatorKey: NavigationService.navigationKey,
         );
       },
     );

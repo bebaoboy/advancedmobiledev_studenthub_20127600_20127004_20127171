@@ -1,3 +1,4 @@
+import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +6,8 @@ class ProjectItem extends StatefulWidget {
   final Project project;
   final bool isFavorite;
 
-  const ProjectItem({super.key, required this.project, required this.isFavorite});
+  const ProjectItem(
+      {super.key, required this.project, required this.isFavorite});
 
   @override
   _ProjectItemState createState() => _ProjectItemState();
@@ -65,8 +67,14 @@ class _ProjectItemState extends State<ProjectItem> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(createdText),
-                    Text(widget.project.title),
+                    Text(
+                      createdText,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    Text(
+                      widget.project.title,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
                     Text(
                       'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
                     ),
