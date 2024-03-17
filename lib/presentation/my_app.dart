@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       builder: (context) {
         return AnimatedThemeApp(
           animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
-                animationDuration: Duration(milliseconds: 500),
+          animationDuration: const Duration(milliseconds: 500),
           builder: (context, child) => Container(
               color: Theme.of(context).colorScheme.primary,
               child: SafeArea(child: child ?? const SizedBox())),

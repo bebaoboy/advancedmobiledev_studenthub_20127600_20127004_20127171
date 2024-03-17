@@ -1,11 +1,18 @@
+import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
+import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
+import 'package:boilerplate/domain/entity/project/myMockData.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/material.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 
 class DashBoardTab extends StatefulWidget {
+  const DashBoardTab({super.key});
+
   @override
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
@@ -19,50 +26,238 @@ class _DashBoardTabState extends State<DashBoardTab> {
   Widget _buildDashBoardContent() {
     return Column(
       children: <Widget>[
-        Row(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                  AppLocalizations.of(context).translate('Dashboard_your_job')),
-            ),
-            const Spacer(),
-            Align(
-              alignment: Alignment.topRight,
-              child: SizedBox(
-                width: 100,
-                height: 30,
-                child: FloatingActionButton(
-                  heroTag: "F3",
-                  onPressed: () {
-                    // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                    Navigator.of(NavigationService.navigatorKey.currentContext!).push(
-                        MaterialPageRoute2(routeName: Routes.project_post));
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)
-                        .translate('Dashboard_post_job'),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    AppLocalizations.of(context).translate('Dashboard_your_job')),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.topRight,
+                child: SizedBox(
+                  width: 100,
+                  height: 30,
+                  child: FloatingActionButton(
+                    heroTag: "F3",
+                    onPressed: () {
+                      // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
+                      Navigator.of(NavigationService.navigatorKey.currentContext!)
+                          .push(
+                              MaterialPageRoute2(routeName: Routes.project_post));
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)
+                          .translate('Dashboard_post_job'),
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-        const SizedBox(
-          height: 34,
-        ),
-        Align(
-          alignment: Alignment.center,
-          child:
-              Text(AppLocalizations.of(context).translate('Dashboard_intro')),
-        ),
-        Align(
-          alignment: Alignment.center,
-          child:
-              Text(AppLocalizations.of(context).translate('Dashboard_content')),
-        ),
+
+        // Conditional rendering based on whether myProjects is empty or not
+        myProjects.isEmpty
+            ? Column(
+                children: [
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(AppLocalizations.of(context)
+                        .translate('Dashboard_intro')),
+                  ),
+                  Align(
+                    alignment: Alignment.center,
+                    child: Text(AppLocalizations.of(context)
+                        .translate('Dashboard_content')),
+                  ),
+                ],
+              )
+            // ignore: prefer_const_constructors
+            : Expanded(
+                // ignore: prefer_const_constructors
+                child: ProjectTabs(),
+              ),
       ],
+    );
+  }
+}
+
+class ProjectTabs extends StatefulWidget {
+  const ProjectTabs({super.key});
+
+  @override
+  State<ProjectTabs> createState() => _ProjectTabsState();
+}
+
+class _ProjectTabsState extends State<ProjectTabs> {
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 3,
+      child: Stack(children: [
+        Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: Dimens.horizontal_padding),
+          child: SegmentedTabControl(
+            height: Dimens.tab_height,
+            radius: const Radius.circular(12),
+            indicatorColor: Theme.of(context).colorScheme.primaryContainer,
+            tabTextColor: Colors.black45,
+            backgroundColor: Colors.grey.shade300,
+            selectedTabTextColor: Colors.white,
+            tabs: const [
+              SegmentTab(
+                label: 'All projects',
+              ),
+              SegmentTab(
+                label: 'Working',
+              ),
+              SegmentTab(
+                label: 'Archived',
+              )
+            ],
+          ),
+        ),
+        Padding(
+          padding:
+              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55),
+          child: TabBarView(
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                AllProjects(
+                  projects: myProjects,
+                ),
+                WorkingProjects(
+                  projects: workingProjects,
+                ),
+                AllProjects(
+                  projects: myProjects,
+                )
+              ]),
+        )
+      ]),
+    );
+  }
+}
+
+void showBottomSheet(Project project) {
+  showAdaptiveActionSheet(
+    title: Text("Menu", style: TextStyle(fontWeight: FontWeight.bold,),),
+    context: NavigationService.navigatorKey.currentContext!,
+    isDismissible: true,
+    barrierColor: Colors.black87,
+    actions: <BottomSheetAction>[
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text(
+              'View proposals',
+              style: TextStyle(fontWeight: FontWeight.normal),
+            )),
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text('View messages',
+                style: TextStyle(fontWeight: FontWeight.w100))),
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+          alignment: Alignment.topLeft,
+          child: const Text('View hired',
+              style: TextStyle(fontWeight: FontWeight.normal)),
+        ),
+        
+      ),
+      BottomSheetAction(
+        title: null,
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text('View job posting',
+                style: TextStyle(fontWeight: FontWeight.normal))),
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text('Edit posting',
+                style: TextStyle(fontWeight: FontWeight.normal))),
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+          alignment: Alignment.topLeft,
+          child: const Text('Remove posting',
+              style: TextStyle(fontWeight: FontWeight.normal)),
+        ),
+        
+      ),
+      BottomSheetAction(
+        title: null,
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text('Start working this project',
+                style: TextStyle(fontWeight: FontWeight.normal))),
+        onPressed: (_) {
+          workingProjects.add(project);
+        },
+      ),
+    ],
+  );
+}
+
+class WorkingProjects extends StatefulWidget {
+  final List<Project>? projects;
+  const WorkingProjects({super.key, required this.projects});
+
+  @override
+  State<WorkingProjects> createState() => _WorkingProjectsState();
+}
+
+class _WorkingProjectsState extends State<WorkingProjects> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.projects?.length ?? 0,
+      itemBuilder: (context, index) => MyProjectItem(
+        project: myProjects[index],
+        onShowBottomSheet: showBottomSheet,
+      ),
+    );
+  }
+}
+
+class AllProjects extends StatefulWidget {
+  final List<Project>? projects;
+  const AllProjects({super.key, required this.projects});
+
+  @override
+  State<AllProjects> createState() => _AllProjectsState();
+}
+
+class _AllProjectsState extends State<AllProjects> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.projects?.length ?? 0,
+      itemBuilder: (context, index) => MyProjectItem(
+        project: myProjects[index],
+        onShowBottomSheet: showBottomSheet,
+      ),
     );
   }
 }

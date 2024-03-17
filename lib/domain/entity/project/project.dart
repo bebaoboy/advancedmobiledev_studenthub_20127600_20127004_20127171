@@ -106,9 +106,9 @@ class Project implements ShimmerLoadable {
   String description;
   Scope scope;
   int numberOfStudents;
-  List<Student>? hired = [];
-  List<Student>? proposal = [];
-  List<Student>? messages = [];
+  List<Student>? hired = List.empty(growable: true);
+  List<Student>? proposal = List.empty(growable: true);
+  List<Student>? messages = List.empty(growable: true);
   DateTime? timeCreated = DateTime.now();
   bool? isFavorite = false;
 

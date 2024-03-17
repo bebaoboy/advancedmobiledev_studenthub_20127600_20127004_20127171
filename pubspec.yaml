@@ -24,7 +24,9 @@ dependencies:
   auto_size_text: ^3.0.0
   another_flushbar: ^1.12.29
   animated_custom_dropdown:
-  anim_search_bar: 
+  anim_search_bar:
+  animated_segmented_tab_control: 
+  adaptive_action_sheet:
   # B
   # C
   cupertino_icons: ^1.0.5
@@ -36,6 +38,7 @@ dependencies:
   file_picker:
   flutter_mobx: ^2.0.6+5
   file_previewer:
+  flutter_animated_dialog: 
   # G
   get_it: ^7.2.0
   google_fonts: ^4.0.3
@@ -83,6 +86,7 @@ dependencies:
   flutter_riverpod:
   flutter_typeahead:
   simple_animations:
+  universal_io:
   # Y
   # Z
 

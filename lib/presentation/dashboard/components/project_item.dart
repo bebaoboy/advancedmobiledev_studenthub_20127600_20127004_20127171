@@ -1,9 +1,11 @@
+import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
 
 class ProjectItem extends StatefulWidget {
   final Project project;
+
   final Function onFavoriteTap;
   ProjectItem({super.key, required this.project, required this.onFavoriteTap});
 
@@ -77,6 +79,31 @@ class _ProjectItemState extends State<ProjectItem> {
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
+      
+//       Card(
+//         child: Padding(
+//           padding: const EdgeInsets.all(8.0),
+//           child: Row(
+//             children: [
+//               Expanded(
+//                 flex: 9,
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       createdText,
+//                       style: Theme.of(context).textTheme.labelSmall,
+//                     ),
+//                     Text(
+//                       widget.project.title,
+//                       style: Theme.of(context).textTheme.bodyText1,
+//                     ),
+//                     Text(
+//                       'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+//                     ),
+//                     Text(widget.project.description),
+//                     Text(proposalText),
+//                   ],
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(8.0),
