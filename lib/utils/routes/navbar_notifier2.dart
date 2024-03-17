@@ -106,11 +106,11 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   /// Use this method to programmatically push a route to a specific navigator stack
   /// by passing the route name and the index of the navigator stack
-  static void pushNamed(String route, int x) {
+  static void pushNamed(String route, int x, Object? arguments) {
     NavigatorState? currentState;
     currentState = _keys[x].currentState;
     if (currentState != null) {
-      currentState.pushNamed(route);
+      currentState.pushNamed(route, arguments: arguments);
     }
   }
 

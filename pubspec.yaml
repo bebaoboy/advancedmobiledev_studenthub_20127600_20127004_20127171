@@ -24,7 +24,9 @@ dependencies:
   auto_size_text: ^3.0.0
   another_flushbar: ^1.12.29
   animated_custom_dropdown:
-  anim_search_bar: 
+  anim_search_bar:
+  animated_segmented_tab_control: 
+  adaptive_action_sheet:
   # B
   # C
   cupertino_icons: ^1.0.5

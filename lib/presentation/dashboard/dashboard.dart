@@ -1,14 +1,16 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
+import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
-
 
 // ---------------------------------------------------------------------------
 class DashBoardScreen extends StatefulWidget {
@@ -67,8 +69,10 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           // FeedDetail.route: FeedDetail(),
         },
         1: {
-          '/': DashBoardTab(),
-          // ProductDetail.route: ProductDetail(),
+          '/': const DashBoardTab(),
+          // Routes.projectDetails: ProjectDetailsPage(
+          //   project: Project(title: 'som', description: 'smm'),
+          // ),
         },
         2: {
           '/': MessageTab(),

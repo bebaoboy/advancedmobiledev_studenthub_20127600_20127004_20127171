@@ -1,4 +1,6 @@
 import 'package:animations/animations.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
@@ -66,9 +68,9 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
   void initState() {
     super.initState();
     _controller = AnimationController(
-        duration: const Duration(milliseconds: 200), vsync: this)
-      // ..addListener(() => setState(() {}))
-      ;
+            duration: const Duration(milliseconds: 200), vsync: this)
+        // ..addListener(() => setState(() {}))
+        ;
     animation = Tween(begin: 0.0, end: 100.0).animate(_controller);
   }
 
@@ -576,7 +578,12 @@ class _NavbarRouterState extends State<NavbarRouter2>
             for (int j = 0; j < nestedLength; j++) {
               if (widget.destinations[index].destinations[j].route ==
                   settings.name) {
-                builder = widget.destinations[index].destinations[j].widget;
+                if (settings.name == Routes.projectDetails) {
+                  builder = ProjectDetailsPage(
+                      project: settings.arguments as Project);
+                } else {
+                  builder = widget.destinations[index].destinations[j].widget;
+                }
               }
             }
             return MaterialPageRouteNavBar(route: builder!, settings: settings);
