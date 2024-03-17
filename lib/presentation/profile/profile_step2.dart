@@ -271,7 +271,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                 children: [
                   MaterialButton(
                     onPressed: () => navigate(context),
-                    color: Colors.orange,
+                    // color: Colors.orange,
                     child: Text(
                       AppLocalizations.of(context).translate('profile_edit'),
                       style: Theme.of(context).textTheme.bodyText1,
@@ -280,7 +280,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                   const SizedBox(width: 15,),
                   MaterialButton(
                     onPressed: () => navigate(context),
-                    color: Colors.orange,
+                    // color: Colors.orange,
                     child: Text(
                       AppLocalizations.of(context).translate('profile_cancel'),
                       style: Theme.of(context).textTheme.bodyText1,
@@ -300,8 +300,8 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
 
   Widget navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushNamedAndRemoveUntil(
-          Routes.setting, (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
     });
 
     return Container();

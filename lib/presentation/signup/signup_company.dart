@@ -31,6 +31,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
   final TextEditingController _userEmailController = TextEditingController();
   final TextEditingController _userFullnameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -144,6 +145,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                     _buildFullnameField(),
                     _buildUserIdField(),
                     _buildPasswordField(),
+                    _buildPasswordConfirmField(),
                     // _buildForgotPasswordButton(),
                     const SizedBox(height: 24.0),
                     Container(
@@ -285,6 +287,28 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
       },
     );
   }
+
+    Widget _buildPasswordConfirmField() {
+    return Observer(
+      builder: (context) {
+        return TextFieldWidget(
+          hint: AppLocalizations.of(context)
+              .translate('signup_company_et_password_confirm'),
+          isObscure: true,
+          icon: Icons.lock,
+          textController: _passwordConfirmController,
+          errorText: _formStore.formErrorStore.confirmPassword == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.confirmPassword),
+          onChanged: (value) {
+            _formStore.setConfirmPassword(_passwordConfirmController.text);
+          },
+        );
+      },
+    );
+  }
+
 
   Widget _buildForgotPasswordButton() {
     return Align(

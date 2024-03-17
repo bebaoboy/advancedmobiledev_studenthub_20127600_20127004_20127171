@@ -294,8 +294,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.home));
+            Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home), (Route<dynamic> route) => false);
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(

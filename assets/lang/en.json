@@ -39,6 +39,8 @@
   "Dashboard_post_job": "Post a jobs",
   "Dashboard_intro": "Welcome, Hal!",
   "Dashboard_content": "You have no jobs!",
+  "Dashboard_message": "Message",
+  "Dashboard_alert": "Alerts",
 
   "login_start": "Below are list of strings for login",
   "login_main_text": "Login with StudentHub",
@@ -69,6 +71,7 @@
   "signup_company_et_fullname": "Enter fullname",
   "signup_company_et_email": "Enter work email address",
   "signup_company_et_password": "Enter password (min 8 char)",
+  "signup_company_et_password_confirm": "Enter password again",
   "signup_company_policy_agree": "Yes, I understand and agree to StudentHub",
   "signup_company_sign_up": "Create my account",
   "signup_company_student_prompt": "Looking for a project?",
