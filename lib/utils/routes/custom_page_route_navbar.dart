@@ -605,6 +605,10 @@ class _NavbarRouterState extends State<NavbarRouter2>
   Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () async {
+          if (NavbarNotifier2.isNavbarHidden) {
+            NavbarNotifier2.hideBottomNavBar = false;
+            return false;
+          }
           final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
               behavior: widget.backButtonBehavior);
 
@@ -693,24 +697,24 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     return super.buildTransitions(
-        context,
-        animation,
-        secondaryAnimation,
-        // SlideTransition(
-        //   position: Tween<Offset>(
-        //     begin: const Offset(1.0, 0.0),
-        //     end: Offset.zero,
-        //   ).animate(animation),
-        //   child: child,
-        // )
-        // ScaleTransition(scale: animation, child: child,),
-        SharedAxisTransition(
-          fillColor: Theme.of(context).cardColor,
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          transitionType: SharedAxisTransitionType.scaled,
-          child: child,
-        ),
-        );
+      context,
+      animation,
+      secondaryAnimation,
+      // SlideTransition(
+      //   position: Tween<Offset>(
+      //     begin: const Offset(1.0, 0.0),
+      //     end: Offset.zero,
+      //   ).animate(animation),
+      //   child: child,
+      // )
+      // ScaleTransition(scale: animation, child: child,),
+      SharedAxisTransition(
+        fillColor: Theme.of(context).cardColor,
+        animation: animation,
+        secondaryAnimation: secondaryAnimation,
+        transitionType: SharedAxisTransitionType.scaled,
+        child: child,
+      ),
+    );
   }
 }

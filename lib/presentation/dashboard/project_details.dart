@@ -56,8 +56,21 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                     physics: const NeverScrollableScrollPhysics(),
                     children: [
                       ProposalTabLayout(
-                        proposals: widget.project.proposal,
-                      ),
+                          proposals: widget.project.proposal,
+                          onHired: (index) {
+                            setState(() {
+                              try{
+                              widget.project.hired != null
+                                  ? widget.project.hired!.add(
+                                      widget.project.proposal!.removeAt(index))
+                                  : widget.project.hired = [
+                                      widget.project.proposal!.removeAt(index)
+                                    ];
+                              } catch(e) {
+                                
+                              }
+                            });
+                          }),
                       DetailTabLayout(
                         project: widget.project,
                       ),
@@ -78,7 +91,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 class ProposalTabLayout extends StatelessWidget {
   final List<Student>? proposals;
 
-  const ProposalTabLayout({super.key, required this.proposals});
+  const ProposalTabLayout(
+      {super.key, required this.proposals, required this.onHired});
+  final Function? onHired;
 
   @override
   Widget build(BuildContext context) {
@@ -86,9 +101,9 @@ class ProposalTabLayout extends StatelessWidget {
       itemCount: proposals?.length ?? 0,
       itemBuilder: (context, index) {
         return ProposalItem(
-          proposal: proposals![index],
-          pending: false,
-        );
+            proposal: proposals![index],
+            pending: false,
+            onHired: () => onHired!(index));
       },
     );
   }

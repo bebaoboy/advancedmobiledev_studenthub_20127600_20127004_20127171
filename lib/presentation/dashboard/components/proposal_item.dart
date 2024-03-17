@@ -6,8 +6,12 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 class ProposalItem extends StatefulWidget {
   final Student proposal;
   final bool pending;
+  final Function? onHired;
   const ProposalItem(
-      {super.key, required this.proposal, required this.pending});
+      {super.key,
+      required this.proposal,
+      required this.pending,
+      required this.onHired});
 
   @override
   State<ProposalItem> createState() => _ProposalItemState();
@@ -112,6 +116,9 @@ class _ProposalItemState extends State<ProposalItem> {
                             positiveText: 'Send',
                             onPositiveClick: () {
                               setState(() {
+                                if (!isPending) {
+                                  widget.onHired!();
+                                }
                                 isPending = !isPending;
                               });
                               Navigator.of(context).pop();

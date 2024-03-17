@@ -194,11 +194,13 @@ class SearchBottomSheet extends StatefulWidget {
       {required this.onSheetDismissed,
       this.height = 750,
       required this.onFilterTap,
-      required this.searchList});
+      required this.searchList,
+      this.keyword});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
   final List<Project> searchList;
+  final String? keyword;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -209,7 +211,20 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   bool isSuggestionTapped = true;
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+        controller.text = widget.keyword ?? "";
+
     // SheetContentScaffold is a special Scaffold designed for use in a sheet.
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
     // However, it differs in that its height reduces to fit the 'body' widget.
@@ -284,26 +299,27 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
         textController: controller,
         onSuffixTap: () {},
         onSelected: (project) {
-          print(project.title);
-          setState(() {
-            isSuggestionTapped = true;
-          });
+          // print(project.title);
+          // setState(() {
+          //   isSuggestionTapped = true;
+          // });
         },
         // initialText:
         // readOnly:
         // TODO:
         searchTextEditingController: controller,
         onSuggestionCallback: (pattern) {
-          if (pattern.isEmpty) return [];
-          return Future<List<Project>>.delayed(
-            const Duration(milliseconds: 300),
-            () => allProjects.where((product) {
-              final nameLower = product.title.toLowerCase().split(' ').join('');
-              print(nameLower);
-              final patternLower = pattern.toLowerCase().split(' ').join('');
-              return nameLower.contains(patternLower);
-            }).toList(),
-          );
+          // if (pattern.isEmpty) return [];
+          // return Future<List<Project>>.delayed(
+          //   const Duration(milliseconds: 300),
+          //   () => allProjects.where((product) {
+          //     final nameLower = product.title.toLowerCase().split(' ').join('');
+          //     print(nameLower);
+          //     final patternLower = pattern.toLowerCase().split(' ').join('');
+          //     return nameLower.contains(patternLower);
+          //   }).toList(),
+          // );
+          return [];
         },
         suggestionItemBuilder: (context, project) => ListTile(
           title: Text(project.title),
@@ -378,6 +394,7 @@ class _ProjectTabState extends State<ProjectTab> {
 
   double yOffset = 0;
   String keyword = "";
+  TextEditingController controller = TextEditingController();
 
   Widget _buildProjectContent() {
     if (yOffset == 0) {
@@ -386,18 +403,34 @@ class _ProjectTabState extends State<ProjectTab> {
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        IconButton(
+          icon:
+              Icon(Icons.search, size: 35, color: Colors.black.withOpacity(.7)),
+          onPressed: () {
+            setState(() {
+              if (yOffset == MediaQuery.of(context).size.height) {
+                NavbarNotifier2.hideBottomNavBar = true;
+                yOffset = -(MediaQuery.of(context).size.height) * 0.05 + 45;
+              } else {
+                NavbarNotifier2.hideBottomNavBar = false;
+                yOffset = MediaQuery.of(context).size.height;
+              }
+            });
+          },
+        ),
         // Text("This is project page"),
         Align(
             alignment: Alignment.topRight,
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    onChanged: (value) {
-                      keyword = value;
-                    },
-                    onSubmitted: (value) {
+                  child: AnimSearchBar2(
+                    textFieldColor: Theme.of(context).colorScheme.surface,
+                    color: Theme.of(context).colorScheme.surface,
+                    onSubmitted: (p0) {
                       setState(() {
+                        keyword = p0;
+
                         if (yOffset == MediaQuery.of(context).size.height) {
                           NavbarNotifier2.hideBottomNavBar = true;
                           yOffset =
@@ -405,25 +438,40 @@ class _ProjectTabState extends State<ProjectTab> {
                         } else {}
                       });
                     },
-                    decoration: InputDecoration(
-                      hintText: 'Search for projects',
-                      prefixIcon: IconButton(
-                        icon: Icon(Icons.search,
-                            size: 35, color: Colors.black.withOpacity(.7)),
-                        onPressed: () {
-                          setState(() {
-                            if (yOffset == MediaQuery.of(context).size.height) {
-                              NavbarNotifier2.hideBottomNavBar = true;
-                              yOffset =
-                                  -(MediaQuery.of(context).size.height) * 0.05 +
-                                      45;
-                            } else {
-                              NavbarNotifier2.hideBottomNavBar = false;
-                              yOffset = MediaQuery.of(context).size.height;
-                            }
-                          });
-                        },
-                      ),
+                    width: MediaQuery.of(context).size.width,
+                    textController: controller,
+                    onSuffixTap: () {},
+                    onSelected: (project) {
+                      setState(() {
+                        keyword = project.title;
+                        if (yOffset == MediaQuery.of(context).size.height) {
+                          NavbarNotifier2.hideBottomNavBar = true;
+                          yOffset =
+                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                        } else {}
+                      });
+                    },
+                    // initialText:
+                    // readOnly:
+                    // TODO:
+                    searchTextEditingController: controller,
+                    onSuggestionCallback: (pattern) {
+                      if (pattern.isEmpty) return [];
+                      return Future<List<Project>>.delayed(
+                        const Duration(milliseconds: 300),
+                        () => allProjects.where((product) {
+                          final nameLower =
+                              product.title.toLowerCase().split(' ').join('');
+                          print(nameLower);
+                          final patternLower =
+                              pattern.toLowerCase().split(' ').join('');
+                          return nameLower.contains(patternLower);
+                        }).toList(),
+                      );
+                    },
+                    suggestionItemBuilder: (context, project) => ListTile(
+                      title: Text(project.title),
+                      subtitle: Text(project.description),
                     ),
                   ),
                 ),
@@ -469,6 +517,7 @@ class _ProjectTabState extends State<ProjectTab> {
             duration: Duration(milliseconds: 300),
             transform: Matrix4.translationValues(0, yOffset, -1.0),
             child: SearchBottomSheet(
+              keyword: keyword,
               searchList: allProjects
                   .where((e) =>
                       keyword.isNotEmpty &&
