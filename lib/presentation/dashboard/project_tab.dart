@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
@@ -7,19 +6,199 @@ import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
+class _ConfirmPage extends StatefulWidget {
+  const _ConfirmPage();
+
+  @override
+  State<_ConfirmPage> createState() => _ConfirmPageState();
+}
+
+class _ConfirmPageState extends State<_ConfirmPage> {
+  @override
+  Widget build(BuildContext context) {
+    return SheetDismissible(
+      child: ScrollableSheet(
+        keyboardDismissBehavior: const SheetKeyboardDismissBehavior.onDragDown(
+          isContentScrollAware: true,
+        ),
+        child: SheetContentScaffold(
+            requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
+            appBar: AppBar(
+              title: Text("Filter by"),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Padding(
+                    //   padding: const EdgeInsets.only(right: 32),
+                    //   child: Text(
+                    //     'Confirm your choices',
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 24),
+                    ListTile(
+                      title: const Text('Project Length'),
+                    ),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(right: 32),
+                    //   child: Wrap(
+                    //     spacing: 10,
+                    //     children: [
+                    //       for (final genre in _genres.take(5))
+                    //         FilterChip(
+                    //           selected: true,
+                    //           label: Text(genre),
+                    //           onSelected: (_) {},
+                    //         ),
+                    //     ],
+                    //   ),
+                    // ),
+                    // const Divider(height: 32),
+                    // ListTile(
+                    //   title: const Text('Mood'),
+                    //   // trailing: IconButton(
+                    //   //   onPressed: () => context.go('/intro/genre/mood'),
+                    //   //   icon: const Icon(Icons.edit_outlined),
+                    //   // ),
+                    // ),
+                    RadioListTile(
+                      title: Text("Less than one month"),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style: const TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: '',
+                      groupValue: '',
+                      onChanged: (_) {},
+                    ),
+                    RadioListTile(
+                      title: Text("1 to 3 months"),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style: const TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: null,
+                      groupValue: '',
+                      onChanged: (_) {},
+                    ),
+                    RadioListTile(
+                      title: Text("3 to 6 months"),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style: const TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: null,
+                      groupValue: '',
+                      onChanged: (_) {},
+                    ),
+                    RadioListTile(
+                      title: Text("More than 6 months"),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style: const TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: '',
+                      groupValue: null,
+                      onChanged: (_) {},
+                    ),
+                    const Divider(height: 32),
+                    // ListTile(
+                    //   title: const Text('Seed tracks'),
+                    //   trailing: IconButton(
+                    //     onPressed: () =>
+                    //         context.go('/intro/genre/mood/seed-track'),
+                    //     icon: const Icon(Icons.edit_outlined),
+                    //   ),
+                    // ),
+                    TextField(
+                      decoration: InputDecoration(
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: "Students needed",
+                      ),
+                    ),
+                    const Divider(height: 32),
+                    TextField(
+                      decoration: InputDecoration(
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: "Proposal less than",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            bottomBar: BottomAppBar(
+              height: 70,
+              surfaceTintColor: Colors.white,
+              child: Center(
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Flexible(
+                    //   fit: FlexFit.tight,
+                    //   child: TextButton(
+                    //     onPressed: () {
+                    //       widget.onSheetDismissed();
+                    //     },
+                    //     child: const Text('Cancel'),
+                    //   ),
+                    // ),
+                    // const SizedBox(width: 16),
+                    RoundedButtonWidget(
+                      buttonColor: Theme.of(context).colorScheme.primary,
+                      onPressed: () {},
+                      buttonText: "Clear filter",
+                    ),
+                    const SizedBox(width: 12),
+                    RoundedButtonWidget(
+                      buttonColor: Theme.of(context).colorScheme.primary,
+                      onPressed: () {},
+                      buttonText: "Apply",
+                    ),
+                  ],
+                ),
+              ),
+            )),
+      ),
+    );
+  }
+}
 
 class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet(
       {required this.onSheetDismissed,
-      this.height = 550,
-      required this.onFilterTap});
+      this.height = 750,
+      required this.onFilterTap,
+      required this.searchList});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
+  final List<Project> searchList;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -27,15 +206,7 @@ class SearchBottomSheet extends StatefulWidget {
 
 class _SearchBottomSheetState extends State<SearchBottomSheet> {
   TextEditingController controller = TextEditingController();
-  bool isSuggestionTapped = false;
-
-  var allProjects = [
-    Project(title: "ABC", description: "description"),
-    Project(title: "XYZ", description: "description"),
-    Project(title: "JKMM", description: "description"),
-    Project(title: "man bhsk p", description: "description"),
-    Project(title: "jOa josfj á ", description: "description"),
-  ];
+  bool isSuggestionTapped = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,73 +226,15 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           alignment: Alignment.topCenter,
           child: isSuggestionTapped
               ? ExampleUiLoadingAnimation(
-                  height: MediaQuery.of(context).size.height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.85,
+                  list: widget.searchList,
+                  firstCallback: (i) {
+                    setState(() {
+                      allProjects[i].isFavorite = !allProjects[i].isFavorite!;
+                    });
+                  },
                 )
               : null,
-          // child:
-          // AnimationSearchBar(
-          //   onSelected: (project) {
-          //     print(project.title);
-          //   },
-          //   onSuggestionCallback: (pattern) {
-          //     return Future<List<Project>>.delayed(
-          //       Duration(milliseconds: 300),
-          //       () => allProjects.where((product) {
-          //         final nameLower =
-          //             product.title.toLowerCase().split(' ').join('');
-          //         print(nameLower);
-          //         final patternLower =
-          //             pattern.toLowerCase().split(' ').join('');
-          //         return nameLower.contains(patternLower);
-          //       }).toList(),
-          //     );
-          //   },
-          //   suggestionItemBuilder: (context, project) => ListTile(
-          //     title: Text(project.title),
-          //     subtitle: Text(project.description),
-          //   ),
-
-          //   ///! Required
-          //   onChanged: (text) => debugPrint(text),
-          //   searchTextEditingController: controller,
-
-          //   ///! Optional. For more customization
-          //   //? Back Button
-          //   backIcon: Icons.arrow_back_ios_new,
-          //   backIconColor: Colors.black,
-          //   isBackButtonVisible: false,
-          //   previousScreen:
-          //       null, // It will push and replace this screen when pressing the back button
-          //   //? Close Button
-          //   closeIconColor: Colors.black,
-          //   //? Center Title
-          //   centerTitle: ' ',
-          //   hintText: 'Type here...',
-          //   centerTitleStyle:
-          //       const TextStyle(fontWeight: FontWeight.w500, fontSize: 13,),
-          //   //? Search hint text
-          //   hintStyle: const TextStyle(fontWeight: FontWeight.w300, fontSize: 13),
-          //   //? Search Text
-          //   textStyle: const TextStyle(fontWeight: FontWeight.w300),
-          //   //? Cursor color
-          //   cursorColor: Colors.lightBlue.shade300,
-          //   //? Duration
-          //   duration: const Duration(milliseconds: 300),
-          //   //? Height, Width & Padding
-          //   searchFieldHeight: 35, // Total height of the search field
-          //   searchBarHeight: 50, // Total height of this Widget
-          //   searchBarWidth: MediaQuery.of(context).size.width -
-          //       20, // Total width of this Widget
-          //   horizontalPadding: 10,
-          //   verticalPadding: 0,
-          //   //? Search icon color
-          //   searchIconColor: Colors.black.withOpacity(.7),
-          //   //? Search field background decoration
-          //   searchFieldDecoration: BoxDecoration(
-          //       border:
-          //           Border.all(color: Colors.black.withOpacity(.2), width: .5),
-          //       borderRadius: BorderRadius.circular(15)),
-          // ),
         ),
       ),
       appBar: buildAppBar(context),
@@ -163,41 +276,43 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       titleSpacing: 0,
       // title: const Text('Search projects'),
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      title:  AnimSearchBar2(
-          textFieldColor: Theme.of(context).colorScheme.surface,
-          color: Theme.of(context).colorScheme.surface,
-          onSubmitted: (p0) {},
-          width: MediaQuery.of(context).size.width,
-          textController: controller,
-          onSuffixTap: () {},
-          onSelected: (project) {
-            print(project.title);
-            setState(() {
-              isSuggestionTapped = true;
-            });
-          },
-          searchTextEditingController: controller,
-          onSuggestionCallback: (pattern) {
-            if (pattern.isEmpty) return [];
-            return Future<List<Project>>.delayed(
-              const Duration(milliseconds: 300),
-              () => allProjects.where((product) {
-                final nameLower =
-                    product.title.toLowerCase().split(' ').join('');
-                print(nameLower);
-                final patternLower = pattern.toLowerCase().split(' ').join('');
-                return nameLower.contains(patternLower);
-              }).toList(),
-            );
-          },
-          suggestionItemBuilder: (context, project) => ListTile(
-            title: Text(project.title),
-            subtitle: Text(project.description),
-          ),
+      title: AnimSearchBar2(
+        textFieldColor: Theme.of(context).colorScheme.surface,
+        color: Theme.of(context).colorScheme.surface,
+        onSubmitted: (p0) {},
+        width: MediaQuery.of(context).size.width,
+        textController: controller,
+        onSuffixTap: () {},
+        onSelected: (project) {
+          print(project.title);
+          setState(() {
+            isSuggestionTapped = true;
+          });
+        },
+        // initialText:
+        // readOnly:
+        // TODO:
+        searchTextEditingController: controller,
+        onSuggestionCallback: (pattern) {
+          if (pattern.isEmpty) return [];
+          return Future<List<Project>>.delayed(
+            const Duration(milliseconds: 300),
+            () => allProjects.where((product) {
+              final nameLower = product.title.toLowerCase().split(' ').join('');
+              print(nameLower);
+              final patternLower = pattern.toLowerCase().split(' ').join('');
+              return nameLower.contains(patternLower);
+            }).toList(),
+          );
+        },
+        suggestionItemBuilder: (context, project) => ListTile(
+          title: Text(project.title),
+          subtitle: Text(project.description),
         ),
-        
+      ),
+
       actions: [
-       IconButton(
+        IconButton(
             onPressed: () {
               widget.onFilterTap();
             },
@@ -252,16 +367,17 @@ class _ProjectTabState extends State<ProjectTab> {
     return _buildProjectContent();
   }
 
-  // Future<SearchBottomSheet?> showTodoEditor(BuildContext context) {
-  //   return Navigator.push(
-  //     context,
-  //     ModalSheetRoute(
-  //       builder: (context) => SearchBottomSheet(),
-  //     ),
-  //   );
-  // }
+  Future<SearchBottomSheet?> showTodoEditor(BuildContext context) {
+    return Navigator.push(
+      context,
+      ModalSheetRoute(
+        builder: (context) => _ConfirmPage(),
+      ),
+    );
+  }
 
   double yOffset = 0;
+  String keyword = "";
 
   Widget _buildProjectContent() {
     if (yOffset == 0) {
@@ -277,87 +393,101 @@ class _ProjectTabState extends State<ProjectTab> {
               children: [
                 Expanded(
                   child: TextField(
-                    onTap: () {
+                    onChanged: (value) {
+                      keyword = value;
+                    },
+                    onSubmitted: (value) {
                       setState(() {
                         if (yOffset == MediaQuery.of(context).size.height) {
                           NavbarNotifier2.hideBottomNavBar = true;
                           yOffset =
                               -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {
-                          NavbarNotifier2.hideBottomNavBar = false;
-                          yOffset = MediaQuery.of(context).size.height;
-                        }
+                        } else {}
                       });
                     },
                     decoration: InputDecoration(
                       hintText: 'Search for projects',
-                      prefixIcon: Icon(Icons.search,
-                          size: 35, color: Colors.black.withOpacity(.7)),
+                      prefixIcon: IconButton(
+                        icon: Icon(Icons.search,
+                            size: 35, color: Colors.black.withOpacity(.7)),
+                        onPressed: () {
+                          setState(() {
+                            if (yOffset == MediaQuery.of(context).size.height) {
+                              NavbarNotifier2.hideBottomNavBar = true;
+                              yOffset =
+                                  -(MediaQuery.of(context).size.height) * 0.05 +
+                                      45;
+                            } else {
+                              NavbarNotifier2.hideBottomNavBar = false;
+                              yOffset = MediaQuery.of(context).size.height;
+                            }
+                          });
+                        },
+                      ),
                     ),
                   ),
                 ),
                 IconButton(
-                    onPressed: () => print(''),
+                    onPressed: () {
+                      NavbarNotifier2.pushNamed(Routes.favortie_project,
+                          NavbarNotifier2.currentIndex, null);
+                    },
+                    color: Theme.of(context).colorScheme.primary,
                     icon: const Icon(Icons.favorite_rounded))
               ],
             )),
-        Flexible(
-          child: ListView.builder(
-            itemCount: allProjects.length,
-            itemBuilder: (context, index) => ProjectItem(
-              project: allProjects[index],
-              isFavorite: index % 2 == 0 ? true : false,
-            ),
-          ),
-        ),
-        Flexible(
-          fit: FlexFit.loose,
-          child: AnimatedContainer(
-            curve: Easing.legacyAccelerate,
-            // color: Colors.amber,
-            alignment: Alignment.bottomCenter,
-            duration: const Duration(milliseconds: 300),
-            transform: Matrix4.translationValues(0, yOffset, -1.0),
-            child: SearchBottomSheet(onSheetDismissed: () {
-              setState(() {
-                NavbarNotifier2.hideBottomNavBar = false;
-                yOffset = MediaQuery.of(context).size.height;
-              });
-              final FocusScopeNode currentScope = FocusScope.of(context);
-              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-              return true;
-            }),
-          ),
-        ),
+        // Flexible(
+        //   child: ListView.builder(
+        //     itemCount: allProjects.length,
+        //     itemBuilder: (context, index) => ProjectItem(
+        //       project: allProjects[index],
+        //       isFavorite: index % 2 == 0 ? true : false,
+        //     ),
+        //   ),
+        // ),
         SizedBox(
           height: 100,
         ),
         Container(
           margin: EdgeInsets.only(top: 40),
           child: ExampleUiLoadingAnimation(
-              height: MediaQuery.of(context).size.height - 60),
+            height: MediaQuery.of(context).size.height - 60,
+            list: allProjects,
+            firstCallback: (i) {
+              setState(() {
+                allProjects[i].isFavorite = !allProjects[i].isFavorite!;
+              });
+            },
+          ),
         ),
         AnimatedContainer(
             curve: Easing.legacyAccelerate,
+            color: Colors.black.withOpacity(0.5),
+
             // color: Colors.amber,
             alignment: Alignment.bottomCenter,
             duration: Duration(milliseconds: 300),
             transform: Matrix4.translationValues(0, yOffset, -1.0),
             child: SearchBottomSheet(
+              searchList: allProjects
+                  .where((e) =>
+                      keyword.isNotEmpty &&
+                      e.title.toLowerCase().contains(keyword.toLowerCase()))
+                  .toList(),
               onSheetDismissed: () {
-              setState(() {
-                NavbarNotifier2.hideBottomNavBar = false;
-                yOffset = MediaQuery.of(context).size.height;
-              });
-              final FocusScopeNode currentScope = FocusScope.of(context);
-              if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                FocusManager.instance.primaryFocus?.unfocus();
-              }
-              return true;
-            },
-            onFilterTap: () {},
+                setState(() {
+                  NavbarNotifier2.hideBottomNavBar = false;
+                  yOffset = MediaQuery.of(context).size.height;
+                });
+                final FocusScopeNode currentScope = FocusScope.of(context);
+                if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+                  FocusManager.instance.primaryFocus?.unfocus();
+                }
+                return true;
+              },
+              onFilterTap: () async {
+                await showTodoEditor(context);
+              },
             )),
       ],
     );

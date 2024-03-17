@@ -96,7 +96,11 @@ extension ScopeTitle on Scope {
   }
 }
 
-class Project {
+abstract class ShimmerLoadable {
+  bool isLoading = true;
+}
+
+class Project implements ShimmerLoadable {
   var id = const Uuid().v4();
   String title;
   String description;
@@ -106,6 +110,7 @@ class Project {
   List<Student>? proposal = [];
   List<Student>? messages = [];
   DateTime? timeCreated = DateTime.now();
+  bool? isFavorite = false;
 
   Project(
       {required this.title,
@@ -115,9 +120,14 @@ class Project {
       this.hired,
       this.proposal,
       this.messages,
-      this.timeCreated});
+      this.timeCreated,
+      this.isFavorite = false,
+      this.isLoading = true});
 
   getModifiedTimeCreated() {
     return timeCreated?.difference(DateTime.now()).inDays.abs();
   }
+  
+  @override
+  bool isLoading;
 }

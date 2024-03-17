@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/core/widgets/circular_animation/capture_widget.dart';
 import 'package:boilerplate/core/widgets/circular_animation/circular_reveal_clipper.dart';
@@ -117,7 +116,7 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
     } else {
       children.addAll(
         [
-           SizedBox.expand(
+          SizedBox.expand(
             child: Image.memory(
               _image!.data,
               height: MediaQuery.of(context).size.height,
@@ -143,20 +142,20 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
 
   _takeScreenShot() {
     try {
-    _captureKey.currentState!.captureImage((image) {
-      precacheImage(MemoryImage(image.data), context).then((cachedImage) {
-        setState(() {
-          _image = image;
-        });
-        _onChangeTheme();
-        animationController.reset();
-        animationController.forward();
-        setState(() {
-          changeData();
+      _captureKey.currentState!.captureImage((image) {
+        precacheImage(MemoryImage(image.data), context).then((cachedImage) {
+          setState(() {
+            _image = image;
+          });
+          _onChangeTheme();
+          animationController.reset();
+          animationController.forward();
+          setState(() {
+            changeData();
+          });
         });
       });
-    });
-    } catch(e) {}
+    } catch (e) {}
   }
 
   void _onChangeTheme() async {
@@ -179,8 +178,8 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
           clipper: CircularRevealClipper(
             isReverse: false,
             fraction: animation.value,
-            centerOffset: Offset(MediaQuery.of(context).size.width - 150,
-                150),),
+            centerOffset: Offset(MediaQuery.of(context).size.width - 150, 150),
+          ),
           child: child,
         );
       },

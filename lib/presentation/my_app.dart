@@ -12,10 +12,9 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../di/service_locator.dart';
-
-class NavigationService {
-  static GlobalKey<NavigatorState> navigationKey =
-      GlobalKey<NavigatorState>();
+class NavigationService { 
+  static GlobalKey<NavigatorState> navigatorKey = 
+  GlobalKey<NavigatorState>();
 }
 
 class MyApp extends StatelessWidget {
@@ -42,6 +41,7 @@ class MyApp extends StatelessWidget {
           theme: _themeStore.darkMode
               ? AppThemeData.darkThemeData
               : AppThemeData.lightThemeData,
+              themeMode: _themeStore.darkMode ? ThemeMode.dark : ThemeMode.light,
           routes: Routes.routes,
           locale: Locale(_languageStore.locale),
           supportedLocales: _languageStore.supportedLanguages
@@ -58,7 +58,7 @@ class MyApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           home: const SplashScreen(),
-          navigatorKey: NavigationService.navigationKey,
+          navigatorKey: NavigationService.navigatorKey,
         );
       },
     );

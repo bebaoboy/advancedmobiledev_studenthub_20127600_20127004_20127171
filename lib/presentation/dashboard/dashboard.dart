@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
@@ -66,13 +67,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       _routes = {
         0: {
           '/': const ProjectTab(),
-          // FeedDetail.route: FeedDetail(),
+          Routes.favortie_project: getRoute(Routes.favortie_project),
         },
         1: {
           '/': const DashBoardTab(),
           // Routes.projectDetails: ProjectDetailsPage(
           //   project: Project(title: 'som', description: 'smm'),
           // ),
+          // Routes.project_post: getRoute(Routes.project_post),
         },
         2: {
           '/': MessageTab(),
@@ -133,12 +135,17 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       // ),
 
       body: NavbarRouter2(
+        initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
           return const Center(child: Text('Error 404'));
         },
         onCurrentTabClicked: () {
-          setState(() {});
+          setState(() {
+            allProjects.forEach((element) {
+              element.isLoading = true;
+            });
+          });
         },
         onChanged: (p0) {
           setState(() {});

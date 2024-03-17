@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:flutter/material.dart';
 
 const _shimmerGradient = LinearGradient(
@@ -17,30 +21,45 @@ const _shimmerGradient = LinearGradient(
   tileMode: TileMode.clamp,
 );
 
-class ExampleUiLoadingAnimation extends StatefulWidget {
+class ExampleUiLoadingAnimation
+    extends StatefulWidget {
   const ExampleUiLoadingAnimation({
     super.key,
     required this.height,
+    required this.list,
+    required this.firstCallback,
   });
 
   final double height;
+  final List<Project> list;
+  final Function firstCallback;
 
   @override
   State<ExampleUiLoadingAnimation> createState() =>
       _ExampleUiLoadingAnimationState();
 }
 
-class _ExampleUiLoadingAnimationState extends State<ExampleUiLoadingAnimation> {
+class _ExampleUiLoadingAnimationState
+    extends State<ExampleUiLoadingAnimation> {
   bool _isLoading = true;
 
   void _toggleLoading() async {
-    await Future.delayed(Duration(seconds: 5)).then(
-      (value) {
-        setState(() {
-          _isLoading = !_isLoading;
-        });
-      },
-    );
+    print("done animation shimmering");
+    for (int i = 0; i < widget.list.length; i++) {
+      bool b = widget.list[i].isLoading;
+      // print(i.toString() + ": " + b.toString());
+      Future.delayed(
+              Duration(milliseconds: b ? Random().nextInt(30) + 8 : 0) * 100)
+          .then((value) {
+        try {
+          setState(() {
+            widget.list[i].isLoading = false;
+          });
+        } catch (e) {
+          print(e.toString());
+        }
+      });
+    }
   }
 
   @override
@@ -103,20 +122,26 @@ class _ExampleUiLoadingAnimationState extends State<ExampleUiLoadingAnimation> {
       child: ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        itemCount: 5,
+        itemCount: widget.list.length,
         itemBuilder: (context, index) {
-          return _buildListItem();
+          return _buildListItem(widget.list[index], index);
         },
       ),
     );
   }
 
-  Widget _buildListItem() {
+  // Widget _buildListItem() {
+  //   return ShimmerLoading(
+  //     isLoading: _isLoading,
+  //     child: CardListItem(
+  //       isLoading: _isLoading,
+  //     ),
+  //   );
+  // }
+  Widget _buildListItem(ShimmerLoadable w, int index) {
     return ShimmerLoading(
-      isLoading: _isLoading,
-      child: CardListItem(
-        isLoading: _isLoading,
-      ),
+      isLoading: w.isLoading,
+      child: ProjectItem(project: w as Project, onFavoriteTap: () => widget.firstCallback(index),),
     );
   }
 }
@@ -230,6 +255,8 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
     }
   }
 
+  double opacity = 0;
+
   @override
   void dispose() {
     _shimmerChanges?.removeListener(_onShimmerChange);
@@ -241,6 +268,10 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
       setState(() {
         // update the shimmer painting.
       });
+    } else {
+      setState(() {
+        opacity = 1;
+      });
     }
   }
 // code-excerpt-closing-bracket
@@ -248,7 +279,11 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
   @override
   Widget build(BuildContext context) {
     if (!widget.isLoading) {
-      return widget.child;
+      return AnimatedOpacity(
+        opacity: opacity,
+        duration: Duration(seconds: 1),
+        child: widget.child,
+      );
     }
 
     // Collect ancestor shimmer info.

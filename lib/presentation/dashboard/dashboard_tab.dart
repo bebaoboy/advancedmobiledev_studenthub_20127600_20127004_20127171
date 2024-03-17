@@ -10,6 +10,12 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/material.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 
 class DashBoardTab extends StatefulWidget {
   const DashBoardTab({super.key});
@@ -27,24 +33,32 @@ class _DashBoardTabState extends State<DashBoardTab> {
   Widget _buildDashBoardContent() {
     return Column(
       children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(AppLocalizations.of(context)
-                    .translate('Dashboard_your_job')),
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.topRight,
-                child: RoundedButtonWidget(
-                  onPressed: () {},
-                  buttonColor: Theme.of(context).colorScheme.primary,
-                  buttonText: AppLocalizations.of(context)
-                      .translate('Dashboard_post_job'),
-                  buttonTextSize: 13,
+
+        Row(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: Text(
+                  AppLocalizations.of(context).translate('Dashboard_your_job')),
+            ),
+            const Spacer(),
+            Align(
+              alignment: Alignment.topRight,
+              child: SizedBox(
+                width: 100,
+                height: 30,
+                child: FloatingActionButton(
+                  heroTag: "F3",
+                  onPressed: () {
+                    // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
+                    Navigator.of(NavigationService.navigatorKey.currentContext!).push(
+                        MaterialPageRoute2(routeName: Routes.project_post));
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)
+                        .translate('Dashboard_post_job'),
+                    style: const TextStyle(fontSize: 12, color: Colors.white),
+                  ),
                 ),
               ),
             ],
