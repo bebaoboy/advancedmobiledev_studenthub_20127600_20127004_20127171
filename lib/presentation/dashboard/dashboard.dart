@@ -1,10 +1,8 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
-import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';

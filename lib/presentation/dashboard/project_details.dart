@@ -25,56 +25,54 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
   Widget _buildBody() {
     return SingleChildScrollView(
-      child: Expanded(
-        child: Padding(
-          padding: const EdgeInsets.all(Dimens.horizontal_padding),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
-              child: Text(widget.project.title),
-            ),
-            DefaultTabController(
-              length: 4,
-              child: Stack(children: [
-                SegmentedTabControl(
-                  height: Dimens.tab_height,
-                  radius: const Radius.circular(12),
-                  indicatorColor:
-                      Theme.of(context).colorScheme.primaryContainer,
-                  tabTextColor: Colors.black45,
-                  selectedTabTextColor: Colors.white,
-                  backgroundColor: Colors.grey.shade300,
-                  tabs: const [
-                    SegmentTab(label: 'Proposals'),
-                    SegmentTab(label: 'Detail'),
-                    SegmentTab(label: 'Message'),
-                    SegmentTab(label: 'Hired'),
-                  ],
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(top: Dimens.tab_height + 8),
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.72,
-                    child: TabBarView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      children: [
-                        ProposalTabLayout(
-                          proposals: widget.project.proposal,
-                        ),
-                        DetailTabLayout(
-                          project: widget.project,
-                        ),
-                        MessageTabLayout(messages: widget.project.messages),
-                        HiredTabLayout(hired: widget.project.hired),
-                      ],
-                    ),
+      child: Padding(
+        padding: const EdgeInsets.all(Dimens.horizontal_padding),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 4),
+            child: Text(widget.project.title),
+          ),
+          DefaultTabController(
+            length: 4,
+            child: Stack(children: [
+              SegmentedTabControl(
+                height: Dimens.tab_height,
+                radius: const Radius.circular(12),
+                indicatorColor:
+                    Theme.of(context).colorScheme.primaryContainer,
+                tabTextColor: Colors.black45,
+                selectedTabTextColor: Colors.white,
+                backgroundColor: Colors.grey.shade300,
+                tabs: const [
+                  SegmentTab(label: 'Proposals'),
+                  SegmentTab(label: 'Detail'),
+                  SegmentTab(label: 'Message'),
+                  SegmentTab(label: 'Hired'),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: Dimens.tab_height + 8),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.72,
+                  child: TabBarView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      ProposalTabLayout(
+                        proposals: widget.project.proposal,
+                      ),
+                      DetailTabLayout(
+                        project: widget.project,
+                      ),
+                      MessageTabLayout(messages: widget.project.messages),
+                      HiredTabLayout(hired: widget.project.hired),
+                    ],
                   ),
                 ),
-              ]),
-            ),
-          ]),
-        ),
+              ),
+            ]),
+          ),
+        ]),
       ),
     );
   }

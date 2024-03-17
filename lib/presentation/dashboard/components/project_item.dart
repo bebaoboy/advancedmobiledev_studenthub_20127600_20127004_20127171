@@ -79,8 +79,7 @@ class _ProjectItemState extends State<ProjectItem> {
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
-      ),
-      child: 
+      
 //       Card(
 //         child: Padding(
 //           padding: const EdgeInsets.all(8.0),

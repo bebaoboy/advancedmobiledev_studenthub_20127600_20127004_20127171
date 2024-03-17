@@ -1,21 +1,14 @@
-import 'package:adaptive_action_sheet/adaptive_action_sheet.dart';
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/material.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 
 class DashBoardTab extends StatefulWidget {
   const DashBoardTab({super.key});
@@ -33,37 +26,41 @@ class _DashBoardTabState extends State<DashBoardTab> {
   Widget _buildDashBoardContent() {
     return Column(
       children: <Widget>[
-
-        Row(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: Text(
-                  AppLocalizations.of(context).translate('Dashboard_your_job')),
-            ),
-            const Spacer(),
-            Align(
-              alignment: Alignment.topRight,
-              child: SizedBox(
-                width: 100,
-                height: 30,
-                child: FloatingActionButton(
-                  heroTag: "F3",
-                  onPressed: () {
-                    // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                    Navigator.of(NavigationService.navigatorKey.currentContext!).push(
-                        MaterialPageRoute2(routeName: Routes.project_post));
-                  },
-                  child: Text(
-                    AppLocalizations.of(context)
-                        .translate('Dashboard_post_job'),
-                    style: const TextStyle(fontSize: 12, color: Colors.white),
+        Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Row(
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    AppLocalizations.of(context).translate('Dashboard_your_job')),
+              ),
+              const Spacer(),
+              Align(
+                alignment: Alignment.topRight,
+                child: SizedBox(
+                  width: 100,
+                  height: 30,
+                  child: FloatingActionButton(
+                    heroTag: "F3",
+                    onPressed: () {
+                      // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
+                      Navigator.of(NavigationService.navigatorKey.currentContext!)
+                          .push(
+                              MaterialPageRoute2(routeName: Routes.project_post));
+                    },
+                    child: Text(
+                      AppLocalizations.of(context)
+                          .translate('Dashboard_post_job'),
+                      style: const TextStyle(fontSize: 12, color: Colors.white),
+                    ),
                   ),
                 ),
               ),
             ],
           ),
         ),
+
         // Conditional rendering based on whether myProjects is empty or not
         myProjects.isEmpty
             ? Column(
@@ -151,45 +148,70 @@ class _ProjectTabsState extends State<ProjectTabs> {
 
 void showBottomSheet(Project project) {
   showAdaptiveActionSheet(
-    context: NavigationService.navigationKey.currentContext!,
+    title: Text("Menu", style: TextStyle(fontWeight: FontWeight.bold,),),
+    context: NavigationService.navigatorKey.currentContext!,
     isDismissible: true,
     barrierColor: Colors.black87,
     actions: <BottomSheetAction>[
       BottomSheetAction(
         title: Container(
-            alignment: Alignment.topLeft, child: const Text('View proposals')),
-        onPressed: (_) {},
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft, child: const Text('View messages')),
-        onPressed: (_) {},
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft, child: const Text('View hired')),
-        onPressed: (_) {},
+            alignment: Alignment.topLeft,
+            child: const Text(
+              'View proposals',
+              style: TextStyle(fontWeight: FontWeight.normal),
+            )),
+        
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('View job posting')),
-        onPressed: (_) {},
+            child: const Text('View messages',
+                style: TextStyle(fontWeight: FontWeight.w100))),
+        
       ),
       BottomSheetAction(
         title: Container(
-            alignment: Alignment.topLeft, child: const Text('Edit posting')),
-        onPressed: (_) {},
+          alignment: Alignment.topLeft,
+          child: const Text('View hired',
+              style: TextStyle(fontWeight: FontWeight.normal)),
+        ),
+        
       ),
       BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft, child: const Text('Remove posting')),
-        onPressed: (_) {},
+        title: null,
+        
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('Start working this project')),
+            child: const Text('View job posting',
+                style: TextStyle(fontWeight: FontWeight.normal))),
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text('Edit posting',
+                style: TextStyle(fontWeight: FontWeight.normal))),
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+          alignment: Alignment.topLeft,
+          child: const Text('Remove posting',
+              style: TextStyle(fontWeight: FontWeight.normal)),
+        ),
+        
+      ),
+      BottomSheetAction(
+        title: null,
+        
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: const Text('Start working this project',
+                style: TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
           workingProjects.add(project);
         },
@@ -209,14 +231,11 @@ class WorkingProjects extends StatefulWidget {
 class _WorkingProjectsState extends State<WorkingProjects> {
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      fit: FlexFit.loose,
-      child: ListView.builder(
-        itemCount: widget.projects?.length ?? 0,
-        itemBuilder: (context, index) => MyProjectItem(
-          project: myProjects[index],
-          onShowBottomSheet: showBottomSheet,
-        ),
+    return ListView.builder(
+      itemCount: widget.projects?.length ?? 0,
+      itemBuilder: (context, index) => MyProjectItem(
+        project: myProjects[index],
+        onShowBottomSheet: showBottomSheet,
       ),
     );
   }
@@ -233,14 +252,11 @@ class AllProjects extends StatefulWidget {
 class _AllProjectsState extends State<AllProjects> {
   @override
   Widget build(BuildContext context) {
-    return Flexible(
-      fit: FlexFit.loose,
-      child: ListView.builder(
-        itemCount: widget.projects?.length ?? 0,
-        itemBuilder: (context, index) => MyProjectItem(
-          project: myProjects[index],
-          onShowBottomSheet: showBottomSheet,
-        ),
+    return ListView.builder(
+      itemCount: widget.projects?.length ?? 0,
+      itemBuilder: (context, index) => MyProjectItem(
+        project: myProjects[index],
+        onShowBottomSheet: showBottomSheet,
       ),
     );
   }

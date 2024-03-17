@@ -42,7 +42,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
         child: GestureDetector(
           onTap: () {
             //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
-            Navigator.of(NavigationService.navigationKey.currentContext!)
+            Navigator.of(NavigationService.navigatorKey.currentContext!)
                 .pushNamed(Routes.projectDetails, arguments: widget.project);
           },
           child: Card(

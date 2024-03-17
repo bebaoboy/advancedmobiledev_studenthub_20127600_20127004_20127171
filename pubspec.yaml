@@ -85,6 +85,7 @@ dependencies:
   flutter_riverpod:
   flutter_typeahead:
   simple_animations:
+  universal_io:
   # Y
   # Z
 
