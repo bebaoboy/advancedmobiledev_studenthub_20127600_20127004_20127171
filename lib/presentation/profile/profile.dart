@@ -284,7 +284,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               alignment: Alignment.centerRight,
               child: MaterialButton(
                 onPressed: () => navigate(context),
-                color: Colors.orange,
+                // color: Colors.orange,
                 child: Text(
                   AppLocalizations.of(context).translate('profile_continue'),
                   style: Theme.of(context).textTheme.bodyText1,
