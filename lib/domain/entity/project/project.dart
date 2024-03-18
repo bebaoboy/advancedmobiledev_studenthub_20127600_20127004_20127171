@@ -80,18 +80,20 @@ class Student {
       this.yearOfExperience = 0});
 }
 
-// short: 1-3 months, long: 3-6 months
-enum Scope { short, long }
+// tight: less 1 month, short: 1-3 months, long: 3-6 months, extended: > 6 months
+enum Scope { tight, short, long, extended }
 
 extension ScopeTitle on Scope {
   String get title {
     switch (this) {
+      case Scope.tight:
+        return 'Less than 1 month';
       case Scope.short:
-        return '1-3 months';
+        return '1 to 3 months';
       case Scope.long:
-        return '3-6 months';
+        return '3 to 6 months';
       default:
-        return '';
+        return 'More than 6 months';
     }
   }
 }
@@ -111,6 +113,7 @@ class Project implements ShimmerLoadable {
   List<Student>? messages = List.empty(growable: true);
   DateTime? timeCreated = DateTime.now();
   bool? isFavorite = false;
+  bool? isWorking = false;
 
   Project(
       {required this.title,
@@ -122,12 +125,30 @@ class Project implements ShimmerLoadable {
       this.messages,
       this.timeCreated,
       this.isFavorite = false,
-      this.isLoading = true});
+      this.isLoading = true,
+      this.isWorking});
 
   getModifiedTimeCreated() {
     return timeCreated?.difference(DateTime.now()).inDays.abs();
   }
-  
+
   @override
   bool isLoading;
+}
+
+class StudentProject extends Project {
+  bool? isSubmitted = false;
+  bool? isAccepted = false;
+
+  StudentProject({
+    required super.title,
+    required super.description,
+    super.scope = Scope.short,
+    super.numberOfStudents = 1,
+    super.timeCreated,
+    super.isFavorite = false,
+    super.isLoading = true,
+    this.isSubmitted = false,
+    this.isAccepted = false,
+  });
 }

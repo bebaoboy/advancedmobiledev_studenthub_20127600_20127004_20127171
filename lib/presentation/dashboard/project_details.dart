@@ -2,6 +2,7 @@ import 'package:animated_segmented_tab_control/animated_segmented_tab_control.da
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:flutter/material.dart';
 
@@ -194,10 +195,15 @@ class HiredTabLayout extends StatelessWidget {
     return ListView.builder(
       itemCount: hired?.length ?? 0,
       itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(hired![index].name),
-        );
-      },
+        // return ListTile(
+        //   title: Text(hired![index].name),
+        // );
+        
+            return HiredItem(
+                hired: hired![index],
+                pending: false,
+            );
+          },
     );
   }
 }

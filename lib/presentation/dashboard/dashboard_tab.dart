@@ -1,13 +1,12 @@
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
+import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -67,12 +66,18 @@ class _DashBoardTabState extends State<DashBoardTab>
                   height: 30,
                   child: FloatingActionButton(
                     heroTag: "F3",
-                    onPressed: () {
+                    onPressed: () async {
                       // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                      Navigator.of(
+                      await Navigator.of(
                               NavigationService.navigatorKey.currentContext!)
                           .push(MaterialPageRoute2(
-                              routeName: Routes.project_post));
+                              routeName: Routes.project_post))
+                          .then((value) {
+                        setState(() {
+                          allProjects.insert(0, value as Project);
+                          myProjects.insert(0, value as Project);
+                        });
+                      });
                     },
                     child: Text(
                       AppLocalizations.of(context)

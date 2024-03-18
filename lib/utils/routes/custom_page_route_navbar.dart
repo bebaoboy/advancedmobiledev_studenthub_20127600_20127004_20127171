@@ -1,13 +1,12 @@
 import 'package:animations/animations.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:navbar_router/navbar_router.dart';
 
 const double kM3NavbarHeight = kBottomNavigationBarHeight;
@@ -586,6 +585,8 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   if (settings.name == Routes.projectDetails) {
                     builder = ProjectDetailsPage(
                         project: settings.arguments as Project);
+                  } else if (settings.name == Routes.favortie_project) {
+                    builder = settings.arguments as FavoriteScreen;
                   } else {
                     builder = widget.destinations[index].destinations[j].widget;
                   }

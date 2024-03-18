@@ -1,24 +1,61 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
-import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
-import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
+import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
-class _ConfirmPage extends StatefulWidget {
-  const _ConfirmPage();
+class SearchFilter {
+  Scope? scope;
+  int? studentNeeded;
+  int? proposalLessThan;
+
+  SearchFilter({this.scope, this.studentNeeded, this.proposalLessThan});
+
+  clear() {
+    scope = null;
+    studentNeeded = null;
+    proposalLessThan = null;
+  }
 
   @override
-  State<_ConfirmPage> createState() => _ConfirmPageState();
+  String toString() {
+    return "${scope != null ? scope!.title : ""}" +
+        (studentNeeded != null ? "\n${studentNeeded} students needed" : "") +
+        (proposalLessThan != null
+            ? "\nProposal less than ${proposalLessThan}"
+            : "");
+  }
 }
 
-class _ConfirmPageState extends State<_ConfirmPage> {
+class _FilterBottomSheet extends StatefulWidget {
+  const _FilterBottomSheet({required this.filter});
+  final SearchFilter filter;
+
+  @override
+  State<_FilterBottomSheet> createState() => _FilterBottomSheetState();
+}
+
+class _FilterBottomSheetState extends State<_FilterBottomSheet> {
+  Scope? groupValue;
+  TextEditingController studentNeededController = TextEditingController();
+  TextEditingController proposalLessThanController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    groupValue = widget.filter.scope ?? Scope.tight;
+    studentNeededController.text =
+        (widget.filter.studentNeeded ?? 2).toString();
+    proposalLessThanController.text =
+        (widget.filter.proposalLessThan ?? 0).toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SheetDismissible(
@@ -56,7 +93,7 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                     //         FilterChip(
                     //           selected: true,
                     //           label: Text(genre),
-                    //           onSelected: (_) {},
+                    //           onSelected: () {},
                     //         ),
                     //     ],
                     //   ),
@@ -69,49 +106,69 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                     //   //   icon: const Icon(Icons.edit_outlined),
                     //   // ),
                     // ),
-                    RadioListTile(
+                    RadioListTile<Scope>(
                       title: Text("Less than one month"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: '',
-                      groupValue: '',
-                      onChanged: (_) {},
+                      value: Scope.tight,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
-                    RadioListTile(
+                    RadioListTile<Scope>(
                       title: Text("1 to 3 months"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: null,
-                      groupValue: '',
-                      onChanged: (_) {},
+                      value: Scope.short,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
-                    RadioListTile(
+                    RadioListTile<Scope>(
                       title: Text("3 to 6 months"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: null,
-                      groupValue: '',
-                      onChanged: (_) {},
+                      value: Scope.long,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
-                    RadioListTile(
+                    RadioListTile<Scope>(
                       title: Text("More than 6 months"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: '',
-                      groupValue: null,
-                      onChanged: (_) {},
+                      value: Scope.extended,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
                     const Divider(height: 32),
                     // ListTile(
@@ -123,6 +180,8 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                     //   ),
                     // ),
                     TextField(
+                      controller: studentNeededController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
@@ -133,9 +192,13 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                                 BorderSide(color: Colors.black, width: 2)),
                         labelText: "Students needed",
                       ),
+                      onChanged: (value) {
+                        widget.filter.studentNeeded = int.tryParse(value) ?? 2;
+                      },
                     ),
                     const Divider(height: 32),
                     TextField(
+                      controller: proposalLessThanController,
                       decoration: InputDecoration(
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
@@ -146,6 +209,10 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                                 BorderSide(color: Colors.black, width: 2)),
                         labelText: "Proposal less than",
                       ),
+                      onChanged: (value) {
+                        widget.filter.proposalLessThan =
+                            int.tryParse(value) ?? 0;
+                      },
                     ),
                   ],
                 ),
@@ -171,13 +238,17 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                     // const SizedBox(width: 16),
                     RoundedButtonWidget(
                       buttonColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {},
+                      onPressed: () {
+                        widget.filter.clear();
+                      },
                       buttonText: "Clear filter",
                     ),
                     const SizedBox(width: 12),
                     RoundedButtonWidget(
                       buttonColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context, widget.filter);
+                      },
                       buttonText: "Apply",
                     ),
                   ],
@@ -195,12 +266,14 @@ class SearchBottomSheet extends StatefulWidget {
       this.height = 750,
       required this.onFilterTap,
       required this.searchList,
-      this.keyword});
+      this.keyword,
+      this.filter});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
   final List<Project> searchList;
   final String? keyword;
+  final SearchFilter? filter;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -288,44 +361,57 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 80,
-      titleSpacing: 0,
       // title: const Text('Search projects'),
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      title: AnimSearchBar2(
-        textFieldColor: Theme.of(context).colorScheme.surface,
-        color: Theme.of(context).colorScheme.surface,
-        onSubmitted: (p0) {},
-        width: MediaQuery.of(context).size.width,
-        textController: controller,
-        onSuffixTap: () {},
-        onSelected: (project) {
-          // print(project.title);
-          // setState(() {
-          //   isSuggestionTapped = true;
-          // });
-        },
-        // initialText:
-        // readOnly:
-        // TODO:
-        searchTextEditingController: controller,
-        onSuggestionCallback: (pattern) {
-          // if (pattern.isEmpty) return [];
-          // return Future<List<Project>>.delayed(
-          //   const Duration(milliseconds: 300),
-          //   () => allProjects.where((product) {
-          //     final nameLower = product.title.toLowerCase().split(' ').join('');
-          //     print(nameLower);
-          //     final patternLower = pattern.toLowerCase().split(' ').join('');
-          //     return nameLower.contains(patternLower);
-          //   }).toList(),
-          // );
-          return [];
-        },
-        suggestionItemBuilder: (context, project) => ListTile(
-          title: Text(project.title),
-          subtitle: Text(project.description),
-        ),
-      ),
+      title: widget.filter != null
+          ? AutoSizeText(
+              "Filter: " + widget.filter!.toString(),
+              maxLines: 3,
+              minFontSize: 12,
+            )
+          : SizedBox(),
+      titleTextStyle: Theme.of(context).textTheme.titleSmall!.merge(TextStyle(
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          )),
+
+      // AnimSearchBar2(
+      //   enabled: false,
+      //   expandedByDefault: false,
+      //   textFieldColor: Theme.of(context).colorScheme.surface,
+      //   color: Theme.of(context).colorScheme.surface,
+      //   onSubmitted: (p0) {},
+      //   width: MediaQuery.of(context).size.width,
+      //   textController: controller,
+      //   onSuffixTap: () {},
+      //   onSelected: (project) {
+      //     // print(project.title);
+      //     // setState(() {
+      //     //   isSuggestionTapped = true;
+      //     // });
+      //   },
+      //   // initialText:
+      //   // readOnly:
+      //   // TODO:
+      //   searchTextEditingController: controller,
+      //   onSuggestionCallback: (pattern) {
+      //     // if (pattern.isEmpty) return [];
+      //     // return Future<List<Project>>.delayed(
+      //     //   const Duration(milliseconds: 300),
+      //     //   () => allProjects.where((product) {
+      //     //     final nameLower = product.title.toLowerCase().split(' ').join('');
+      //     //     print(nameLower);
+      //     //     final patternLower = pattern.toLowerCase().split(' ').join('');
+      //     //     return nameLower.contains(patternLower);
+      //     //   }).toList(),
+      //     // );
+      //     return [];
+      //   },
+      //   suggestionItemBuilder: (context, project) => ListTile(
+      //     title: Text(project.title),
+      //     subtitle: Text(project.description),
+      //   ),
+      // ),
 
       actions: [
         IconButton(
@@ -380,18 +466,26 @@ class ProjectTab extends StatefulWidget {
 
 class _ProjectTabState extends State<ProjectTab>
     with AutomaticKeepAliveClientMixin {
+  SearchFilter filter = SearchFilter();
   @override
   Widget build(BuildContext context) {
     return _buildProjectContent();
   }
 
-  Future<SearchBottomSheet?> showTodoEditor(BuildContext context) {
-    return Navigator.push(
+  Future<SearchBottomSheet?> showTodoEditor(BuildContext context) async {
+    return await Navigator.push(
       context,
       ModalSheetRoute(
-        builder: (context) => _ConfirmPage(),
+        builder: (context) => _FilterBottomSheet(
+          filter: filter,
+        ),
       ),
-    );
+    ).then((value) {
+      if (value != null) {
+        filter = value;
+      }
+      print(filter);
+    });
   }
 
   double yOffset = 0;
@@ -427,6 +521,7 @@ class _ProjectTabState extends State<ProjectTab>
               children: [
                 Expanded(
                   child: AnimSearchBar2(
+                    expandedByDefault: true,
                     textFieldColor: Theme.of(context).colorScheme.surface,
                     color: Theme.of(context).colorScheme.surface,
                     onSubmitted: (p0) {
@@ -479,8 +574,17 @@ class _ProjectTabState extends State<ProjectTab>
                 ),
                 IconButton(
                     onPressed: () {
-                      NavbarNotifier2.pushNamed(Routes.favortie_project,
-                          NavbarNotifier2.currentIndex, null);
+                      NavbarNotifier2.pushNamed(
+                          Routes.favortie_project,
+                          NavbarNotifier2.currentIndex,
+                          FavoriteScreen(
+                              projectList: allProjects
+                                  .where((element) => element.isFavorite!)
+                                  .toList(),
+                              onFavoriteTap: (int i) {
+                                allProjects[i].isFavorite =
+                                    !allProjects[i].isFavorite!;
+                              }));
                     },
                     color: Theme.of(context).colorScheme.primary,
                     icon: const Icon(Icons.favorite_rounded))
@@ -519,6 +623,7 @@ class _ProjectTabState extends State<ProjectTab>
             duration: Duration(milliseconds: 300),
             transform: Matrix4.translationValues(0, yOffset, -1.0),
             child: SearchBottomSheet(
+              filter: filter,
               keyword: keyword,
               searchList: allProjects
                   .where((e) =>

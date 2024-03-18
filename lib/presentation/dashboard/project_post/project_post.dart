@@ -1,16 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:material_dialog/material_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectPostScreen extends StatefulWidget {
   const ProjectPostScreen({super.key});
@@ -29,6 +24,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   String number = "";
   String description = "";
   String? groupValue;
+  Scope scope = Scope.short;
 
   @override
   void initState() {
@@ -162,22 +158,46 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             RadioListTile<String>(
               title: Text(AppLocalizations.of(context).translate('1-3')),
-              value: '1 to 3 months',
+              value: Scope.tight.title,
               groupValue: groupValue,
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
+                  scope = Scope.tight;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: Text(AppLocalizations.of(context).translate('1-3')),
+              value: Scope.short.title,
+              groupValue: groupValue,
+              onChanged: (String? value) {
+                setState(() {
+                  groupValue = value;
+                  scope = Scope.short;
                 });
               },
             ),
             RadioListTile<String>(
               title: Text(AppLocalizations.of(context).translate('3-6')),
-              value: '3 to 6 months',
+              value: Scope.long.title,
               groupValue: groupValue,
               activeColor: Colors.red,
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
+                  scope = Scope.long;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: Text(AppLocalizations.of(context).translate('1-3')),
+              value: Scope.extended.title,
+              groupValue: groupValue,
+              onChanged: (String? value) {
+                setState(() {
+                  groupValue = value;
+                  scope = Scope.extended;
                 });
               },
             ),
@@ -384,7 +404,14 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                       height: 50,
                       child: FloatingActionButton(
                         onPressed: () {
-                          Navigator.of(context)..pop();
+                          Navigator.of(context)
+                            ..pop<Project>(Project(
+                              title: title,
+                              description: description,
+                              scope: scope,
+                              numberOfStudents: int.tryParse(number) ?? 2,
+                              timeCreated: DateTime.now(),
+                            ));
                         },
                         child: Text(
                           AppLocalizations.of(context).translate('post_job'),

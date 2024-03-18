@@ -1,4 +1,3 @@
-import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/core/widgets/circular_animation/capture_widget.dart';
 import 'package:boilerplate/core/widgets/circular_animation/circular_reveal_clipper.dart';
 import 'package:flutter/material.dart';

@@ -1,7 +1,6 @@
-import 'package:boilerplate/constants/app_theme.dart';
-import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class ProjectItem extends StatefulWidget {
   final Project project;
@@ -73,6 +72,7 @@ class _ProjectItemState extends State<ProjectItem> {
       }
 
       return Container(
+        constraints: BoxConstraints(maxHeight: 230),
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(color: Colors.black, width: 1.0),
@@ -111,17 +111,19 @@ class _ProjectItemState extends State<ProjectItem> {
               children: [
                 Expanded(
                   flex: 9,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(createdText),
-                      Text(widget.project.title),
-                      Text(
-                        'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-                      ),
-                      Text(widget.project.description),
-                      Text(proposalText),
-                    ],
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(createdText),
+                        Text(widget.project.title),
+                        Text(
+                          'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                        ),
+                        Text(widget.project.description),
+                        Text(proposalText),
+                      ],
+                    ),
                   ),
                 ),
                 IconButton(

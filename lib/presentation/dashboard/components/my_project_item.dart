@@ -1,9 +1,6 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
-import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
