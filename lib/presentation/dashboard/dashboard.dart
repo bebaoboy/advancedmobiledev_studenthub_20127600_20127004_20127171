@@ -1,9 +1,13 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
+import 'package:boilerplate/presentation/dashboard/student_dashboard_tab.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -22,6 +26,8 @@ class DashBoardScreen extends StatefulWidget {
 class _DashBoardScreenState extends State<DashBoardScreen> {
   int _selectedIndex = 1;
 
+  final UserStore _userStore = getIt<UserStore>();
+
   @override
   void initState() {
     super.initState();
@@ -36,10 +42,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
   List<NavbarItem> items = [];
   Map<int, Map<String, Widget>> _routes = {};
   DateTime oldTime = DateTime.now();
-  final  _pageController = PageController(initialPage: 1);
+  final _pageController = PageController(initialPage: 1);
 
   @override
   Widget build(BuildContext context) {
+    print('${_userStore.user.email} ${_userStore.user.type.name}');
+
     if (items.isEmpty) {
       items = [
         NavbarItem(
@@ -66,10 +74,14 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       _routes = {
         0: {
           '/': ProjectTab(),
-          Routes.favortie_project: getRoute(Routes.favortie_project, context),
+          Routes.favortieProject: getRoute(Routes.favortieProject, context),
         },
         1: {
-          '/': DashBoardTab(pageController: _pageController,),
+          '/': _userStore.user.type == UserType.company
+              ? DashBoardTab(
+                  pageController: _pageController,
+                )
+              : StudentDashBoardTab(pageController: _pageController),
           // Routes.projectDetails: ProjectDetailsPage(
           //   project: Project(title: 'som', description: 'smm'),
           // ),

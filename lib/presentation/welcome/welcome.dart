@@ -62,6 +62,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return MainAppBar();
+    return const MainAppBar();
   }
 }

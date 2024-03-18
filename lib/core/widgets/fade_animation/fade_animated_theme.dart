@@ -28,7 +28,9 @@ class FadeAnimatedTheme extends ImplicitlyAnimatedWidget {
     super.duration = kThemeAnimationDuration,
     super.onEnd,
     required this.child,
+  // ignore: unnecessary_null_comparison
   })  : assert(child != null),
+        // ignore: unnecessary_null_comparison
         assert(data != null);
 
   /// Specifies the color and typography values for descendant widgets.
@@ -43,6 +45,7 @@ class FadeAnimatedTheme extends ImplicitlyAnimatedWidget {
   final Widget child;
 
   @override
+  // ignore: library_private_types_in_public_api
   _FadeAnimatedThemeState createState() => _FadeAnimatedThemeState();
 }
 

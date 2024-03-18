@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          EmptyAppBar(),
+          const EmptyAppBar(),
           Flexible(
             flex: 1,
             fit: FlexFit.loose,

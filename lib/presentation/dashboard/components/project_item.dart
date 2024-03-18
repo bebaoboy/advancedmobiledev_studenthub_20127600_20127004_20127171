@@ -1,6 +1,7 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 class ProjectItem extends StatefulWidget {
   final Project project;
@@ -79,7 +80,7 @@ class _ProjectItemState extends State<ProjectItem> {
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
-      
+
 //       Card(
 //         child: Padding(
 //           padding: const EdgeInsets.all(8.0),
@@ -131,7 +132,6 @@ class _ProjectItemState extends State<ProjectItem> {
                   onPressed: () {
                     setState(() {
                       widget.onFavoriteTap();
-                      
                     });
                   },
                   icon: icon,

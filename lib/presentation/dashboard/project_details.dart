@@ -198,12 +198,12 @@ class HiredTabLayout extends StatelessWidget {
         // return ListTile(
         //   title: Text(hired![index].name),
         // );
-        
-            return HiredItem(
-                hired: hired![index],
-                pending: false,
-            );
-          },
+
+        return HiredItem(
+          hired: hired![index],
+          pending: false,
+        );
+      },
     );
   }
 }

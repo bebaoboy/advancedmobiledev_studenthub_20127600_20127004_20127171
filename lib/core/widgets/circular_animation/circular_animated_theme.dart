@@ -154,12 +154,13 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
           });
         });
       });
+    // ignore: empty_catches
     } catch (e) {}
   }
 
   void _onChangeTheme() async {
     setState(() => rect = RectGetter.getRectFromKey(rectGetterKey));
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       setState(() =>
           rect = rect!.inflate(1.3 * MediaQuery.of(context).size.longestSide));
     });
@@ -186,9 +187,9 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
   }
 
   @override
-  void debugFillProperties(DiagnosticPropertiesBuilder description) {
-    super.debugFillProperties(description);
-    description.add(DiagnosticsProperty<ThemeDataTween>('data', _data,
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(DiagnosticsProperty<ThemeDataTween>('data', _data,
         showName: false, defaultValue: null));
   }
 }

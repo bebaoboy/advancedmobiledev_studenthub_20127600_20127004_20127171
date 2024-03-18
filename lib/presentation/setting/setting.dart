@@ -85,14 +85,14 @@ class _SettingScreenState extends State<SettingScreen> {
           height += calculateTreeHeight(element.children);
         }
       }
-      print(element.name + ": " + height.toString());
+      print("${element.name}: $height");
     }
     return height;
   }
 
   void calculate(List<Account> list) {
     var h = calculateTreeHeight(accountList);
-    print("TREEEEEEEEHEIGHT: " + h.toString());
+    print("TREEEEEEEEHEIGHT: $h");
     if (h != height) {
       setState(() {
         height = h;
@@ -108,7 +108,7 @@ class _SettingScreenState extends State<SettingScreen> {
     if (height == 0) calculate(accountList);
     return AnimatedContainer(
       height: max(MediaQuery.of(context).size.height * 0.3, min(height, MediaQuery.of(context).size.height * 0.5)),
-      duration: Duration(milliseconds: 550),
+      duration: const Duration(milliseconds: 550),
       curve: Curves.fastOutSlowIn,
       child: Container(
         child: TreeView.simple<Account>(

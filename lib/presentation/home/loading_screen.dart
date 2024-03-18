@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 class Background extends StatelessWidget {
-  const Background({Key? key, required this.child}) : super(key: key);
+  const Background({super.key, required this.child});
   final Widget child;
   @override
   Widget build(BuildContext context) {
