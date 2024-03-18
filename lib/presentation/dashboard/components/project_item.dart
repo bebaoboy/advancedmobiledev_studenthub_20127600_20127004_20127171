@@ -1,4 +1,6 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -105,38 +107,46 @@ class _ProjectItemState extends State<ProjectItem> {
 //                     Text(proposalText),
 //                   ],
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 9,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(createdText),
-                        Text(widget.project.title),
-                        Text(
-                          'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-                        ),
-                        Text(widget.project.description),
-                        Text(proposalText),
-                      ],
+          child: InkWell(
+            onTap: () {
+              //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
+              Navigator.of(NavigationService.navigatorKey.currentContext!)
+                  .pushNamed(Routes.projectDetailsStudent,
+                      arguments: widget.project);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 9,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(createdText),
+                          Text(widget.project.title),
+                          Text(
+                            'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                          ),
+                          Text(widget.project.description),
+                          Text(proposalText),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                IconButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  onPressed: () {
-                    setState(() {
-                      widget.onFavoriteTap();
-                      
-                    });
-                  },
-                  icon: icon,
-                ),
-              ],
+                  IconButton(
+                    color: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      setState(() {
+                        widget.onFavoriteTap();
+                        
+                      });
+                    },
+                    icon: icon,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

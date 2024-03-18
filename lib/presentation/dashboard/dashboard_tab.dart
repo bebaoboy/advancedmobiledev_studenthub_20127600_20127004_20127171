@@ -74,8 +74,10 @@ class _DashBoardTabState extends State<DashBoardTab>
                               routeName: Routes.project_post))
                           .then((value) {
                         setState(() {
-                          allProjects.insert(0, value as Project);
-                          myProjects.insert(0, value as Project);
+                          if (value != null) {
+                            allProjects.insert(0, value as Project);
+                            myProjects.insert(0, value as Project);
+                          }
                         });
                       });
                     },

@@ -60,7 +60,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         NavbarItem(
           Icons.notifications,
           AppLocalizations.of(context).translate('Dashboard_alert'),
-          backgroundColor: Theme.of(context).colorScheme.secondary,
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
         ),
       ];
       _routes = {

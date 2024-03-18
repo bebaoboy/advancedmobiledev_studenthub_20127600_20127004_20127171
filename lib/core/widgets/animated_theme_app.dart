@@ -1000,7 +1000,10 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
         if (lastThemeMode != mode && key.currentState != null) {
           print(lastThemeMode == ThemeMode.light);
           print(mode == ThemeMode.light);
-          key.currentState!.startAnimation();
+          //key.currentState!.startAnimation();
+        }
+        if (key.currentState != null) {
+          key.currentState!.startAnimation(lastThemeMode != mode);
         }
 
         break;

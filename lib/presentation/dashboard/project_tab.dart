@@ -5,6 +5,8 @@ import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
@@ -51,9 +53,9 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
     super.initState();
     groupValue = widget.filter.scope ?? Scope.tight;
     studentNeededController.text =
-        (widget.filter.studentNeeded ?? 2).toString();
+        (widget.filter.studentNeeded ?? "").toString();
     proposalLessThanController.text =
-        (widget.filter.proposalLessThan ?? 0).toString();
+        (widget.filter.proposalLessThan ?? "").toString();
   }
 
   @override
@@ -183,6 +185,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       controller: studentNeededController,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
+                        hintText: "None",
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
                             borderSide:
@@ -200,6 +203,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     TextField(
                       controller: proposalLessThanController,
                       decoration: InputDecoration(
+                        hintText: "None",
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
                             borderSide:
@@ -313,7 +317,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
         child: Align(
           alignment: Alignment.topCenter,
           child: isSuggestionTapped
-              ? ExampleUiLoadingAnimation(
+              ? ExampleLoadingAnimationProjectList(
                   height: MediaQuery.of(context).size.height * 0.85,
                   list: widget.searchList,
                   firstCallback: (i) {
@@ -414,11 +418,11 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       // ),
 
       actions: [
-        IconButton(
-            onPressed: () {
-              widget.onFilterTap();
-            },
-            icon: Icon(Icons.filter_alt_outlined))
+        // IconButton(
+        //     onPressed: () {
+        //       widget.onFilterTap();
+        //     },
+        //     icon: Icon(Icons.filter_alt_outlined))
       ],
     );
   }
@@ -456,6 +460,18 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   }
 }
 
+bool applyFilter(SearchFilter f, Project p) {
+  bool b = true;
+  b &= (f.scope != null && f.scope! == p.scope) || (f.scope == null);
+  b &= (f.studentNeeded != null && f.studentNeeded! == p.numberOfStudents) ||
+      (f.studentNeeded == null);
+  b &= (f.proposalLessThan != null &&
+          (p.proposal != null && f.proposalLessThan! == p.proposal!.length)) ||
+      (f.studentNeeded == null) ||
+      (p.proposal == null);
+  return b;
+}
+
 class ProjectTab extends StatefulWidget {
   ProjectTab({super.key, this.isAlive = true});
   bool? isAlive;
@@ -472,8 +488,9 @@ class _ProjectTabState extends State<ProjectTab>
     return _buildProjectContent();
   }
 
-  Future<SearchBottomSheet?> showTodoEditor(BuildContext context) async {
-    return await Navigator.push(
+  Future<SearchFilter?> showFilterBottomSheet(BuildContext context) async {
+    return await NavbarNotifier2.push(
+      NavbarNotifier2.currentIndex,
       context,
       ModalSheetRoute(
         builder: (context) => _FilterBottomSheet(
@@ -482,9 +499,58 @@ class _ProjectTabState extends State<ProjectTab>
       ),
     ).then((value) {
       if (value != null) {
-        filter = value;
+        return value;
       }
       print(filter);
+    });
+  }
+
+  Future<SearchBottomSheet?> showSearchBottomSheet(BuildContext context) async {
+    return await NavbarNotifier2.push(
+      NavbarNotifier2.currentIndex,
+      context,
+      ModalSheetRoute(
+        barrierColor: Theme.of(context).colorScheme.secondaryContainer,
+        builder: (context) => SearchBottomSheet(
+          filter: filter,
+          keyword: keyword,
+          searchList: allProjects
+              .where((e) =>
+                  keyword.isNotEmpty &&
+                  e.title.toLowerCase().contains(keyword.toLowerCase()) &&
+                  applyFilter(filter, e))
+              .toList(),
+          onSheetDismissed: () {
+            setState(() {
+              NavbarNotifier2.hideBottomNavBar = false;
+              yOffset = MediaQuery.of(context).size.height;
+            });
+            final FocusScopeNode currentScope = FocusScope.of(context);
+            if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+            NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+
+            return true;
+          },
+          onFilterTap: () async {
+            // await showFilterBottomSheet(context).then((value) {
+            //   if (value != null) {
+            //     setState(() {
+            //       filter = value;
+            //     });
+            //     // NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+            //   }
+            // });
+          },
+        ),
+      ),
+    ).then((value) {
+      setState(() {
+        NavbarNotifier2.hideBottomNavBar = false;
+        yOffset = MediaQuery.of(context).size.height;
+      });
+      FocusManager.instance.primaryFocus?.unfocus();
     });
   }
 
@@ -524,16 +590,16 @@ class _ProjectTabState extends State<ProjectTab>
                     expandedByDefault: true,
                     textFieldColor: Theme.of(context).colorScheme.surface,
                     color: Theme.of(context).colorScheme.surface,
-                    onSubmitted: (p0) {
+                    onSubmitted: (p0) async {
                       setState(() {
                         keyword = p0;
-
-                        if (yOffset == MediaQuery.of(context).size.height) {
+                        setState(() {
                           NavbarNotifier2.hideBottomNavBar = true;
                           yOffset =
                               -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {}
+                        });
                       });
+                      await showSearchBottomSheet(context);
                     },
                     width: MediaQuery.of(context).size.width,
                     textController: controller,
@@ -573,6 +639,24 @@ class _ProjectTabState extends State<ProjectTab>
                   ),
                 ),
                 IconButton(
+                    onPressed: () async {
+                      if (yOffset == MediaQuery.of(context).size.height) {
+                          NavbarNotifier2.hideBottomNavBar = true;
+                          yOffset =
+                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                        } else {}
+                      await showFilterBottomSheet(context).then((value) {
+                        NavbarNotifier2.hideBottomNavBar = false;
+                        if (value != null) {
+                          setState(() {
+                            filter = value;
+                          });
+                          // NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+                        }
+                      });
+                    },
+                    icon: Icon(Icons.filter_alt_outlined)),
+                    IconButton(
                     onPressed: () {
                       NavbarNotifier2.pushNamed(
                           Routes.favortie_project,
@@ -587,7 +671,8 @@ class _ProjectTabState extends State<ProjectTab>
                               }));
                     },
                     color: Theme.of(context).colorScheme.primary,
-                    icon: const Icon(Icons.favorite_rounded))
+                    icon: const Icon(Icons.favorite_rounded)),
+                
               ],
             )),
         // Flexible(
@@ -604,8 +689,8 @@ class _ProjectTabState extends State<ProjectTab>
         ),
         Container(
           margin: EdgeInsets.only(top: 40),
-          child: ExampleUiLoadingAnimation(
-            height: MediaQuery.of(context).size.height - 60,
+          child: LazyLoadingAnimationProjectList(
+            itemHeight: 230,
             list: allProjects,
             firstCallback: (i) {
               setState(() {
@@ -614,37 +699,37 @@ class _ProjectTabState extends State<ProjectTab>
             },
           ),
         ),
-        AnimatedContainer(
-            curve: Easing.legacyAccelerate,
-            color: Colors.black.withOpacity(0.5),
+        // AnimatedContainer(
+        //     curve: Easing.legacyAccelerate,
+        //     color: Colors.black.withOpacity(0.5),
 
-            // color: Colors.amber,
-            alignment: Alignment.bottomCenter,
-            duration: Duration(milliseconds: 300),
-            transform: Matrix4.translationValues(0, yOffset, -1.0),
-            child: SearchBottomSheet(
-              filter: filter,
-              keyword: keyword,
-              searchList: allProjects
-                  .where((e) =>
-                      keyword.isNotEmpty &&
-                      e.title.toLowerCase().contains(keyword.toLowerCase()))
-                  .toList(),
-              onSheetDismissed: () {
-                setState(() {
-                  NavbarNotifier2.hideBottomNavBar = false;
-                  yOffset = MediaQuery.of(context).size.height;
-                });
-                final FocusScopeNode currentScope = FocusScope.of(context);
-                if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                }
-                return true;
-              },
-              onFilterTap: () async {
-                await showTodoEditor(context);
-              },
-            )),
+        //     // color: Colors.amber,
+        //     alignment: Alignment.bottomCenter,
+        //     duration: Duration(milliseconds: 300),
+        //     transform: Matrix4.translationValues(0, yOffset, -1.0),
+        //     child: SearchBottomSheet(
+        //       filter: filter,
+        //       keyword: keyword,
+        //       searchList: allProjects
+        //           .where((e) =>
+        //               keyword.isNotEmpty &&
+        //               e.title.toLowerCase().contains(keyword.toLowerCase()))
+        //           .toList(),
+        //       onSheetDismissed: () {
+        //         setState(() {
+        //           NavbarNotifier2.hideBottomNavBar = false;
+        //           yOffset = MediaQuery.of(context).size.height;
+        //         });
+        //         final FocusScopeNode currentScope = FocusScope.of(context);
+        //         if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+        //           FocusManager.instance.primaryFocus?.unfocus();
+        //         }
+        //         return true;
+        //       },
+        //       onFilterTap: () async {
+        //         await showFilterBottomSheet(NavigationService.navigatorKey.currentContext ?? context);
+        //       },
+        //     )),
       ],
     );
   }

@@ -64,8 +64,8 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
   final _captureKey = GlobalKey<CaptureWidgetState>();
   final _globalKey = GlobalKey();
 
-  void startAnimation() {
-    _takeScreenShot();
+  void startAnimation(bool willContinue) {
+    _takeScreenShot(willContinue: willContinue);
   }
 
   void changeData() {
@@ -139,19 +139,21 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
     );
   }
 
-  _takeScreenShot() {
+  _takeScreenShot({bool willContinue = true}) {
     try {
       _captureKey.currentState!.captureImage((image) {
         precacheImage(MemoryImage(image.data), context).then((cachedImage) {
           setState(() {
             _image = image;
           });
-          _onChangeTheme();
-          animationController.reset();
-          animationController.forward();
-          setState(() {
-            changeData();
-          });
+          if (willContinue) {
+            _onChangeTheme();
+            animationController.reset();
+            animationController.forward();
+            setState(() {
+              changeData();
+            });
+          }
         });
       });
     } catch (e) {}

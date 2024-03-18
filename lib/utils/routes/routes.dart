@@ -2,11 +2,11 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
@@ -38,6 +38,7 @@ class Routes {
   static const String profileStep2 = '/profile-step2';
   static const String setting = '/settings';
   static const String projectDetails = '/projectDetails';
+  static const String projectDetailsStudent = '/projectDetailsStudent';
   static const String project_post = '/project-post';
   static const String favortie_project = "/favortie-project";
 
@@ -57,6 +58,7 @@ class Routes {
     profileStudentStep2: const ProfileStudentStep2Screen(),
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),
+    projectDetailsStudent: const Placeholder(),
     project_post: const ProjectPostScreen(),
     favortie_project: const FavoriteScreen(),
   };
@@ -81,6 +83,9 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.projectDetails) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       return ProjectDetailsPage(project: arguments as Project);
+    } if (name == Routes.projectDetailsStudent) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return ProjectDetailsStudentScreen(project: arguments as Project);
     } else {
       return Routes._route[name] ?? const HomeScreen();
     }

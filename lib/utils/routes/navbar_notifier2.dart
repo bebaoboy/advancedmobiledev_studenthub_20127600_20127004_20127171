@@ -62,6 +62,10 @@ class NavbarNotifier2 extends ChangeNotifier {
     _navbarStackHistory = x;
   }
 
+  static bool isCurrentNavbarHistoryStackSemiEmpty() {
+    return _navbarStackHistory.length <= 1;
+  }
+
   // pop routes from the nested navigator stack and not the main stack
   // this is done based on the currentIndex of the bottom navbar
   // if the backButton is pressed on the initial route the app will be terminated
@@ -114,8 +118,16 @@ class NavbarNotifier2 extends ChangeNotifier {
     }
   }
 
+  static Future push(int x, BuildContext context, Route route) async {
+    NavigatorState? currentState;
+    currentState = _keys[x].currentState;
+    if (currentState != null) {
+      return await currentState.push(route);
+    }
+  }
+
   /// pops all routes except first, if there are more than 1 route in each navigator stack
-  static void popAllRoutes(int index) {
+  static bool popAllRoutes(int index) {
     NavigatorState? currentState;
     for (int i = 0; i < _keys.length; i++) {
       if (_index == i) {
@@ -124,7 +136,9 @@ class NavbarNotifier2 extends ChangeNotifier {
     }
     if (currentState != null && currentState.canPop()) {
       currentState.popUntil((route) => route.isFirst);
+      return true;
     }
+    return false;
   }
 
   // adds a listener to the list of listeners
