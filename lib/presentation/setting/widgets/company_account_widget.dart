@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 class CompanyAccountWidget extends StatelessWidget {
   final String name;
   final VoidCallback? onPressedNext;
+  final onTap;
 
-  const CompanyAccountWidget({super.key, 
-    required this.name,
-    this.onPressedNext,
-  });
+  const CompanyAccountWidget(
+      {super.key, required this.name, this.onPressedNext, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class CompanyAccountWidget extends StatelessWidget {
         Text(name, style: Theme.of(context).textTheme.bodySmall);
     Widget subtitleWidget =
         Text('company', style: Theme.of(context).textTheme.bodyText1);
-    Icon profileIcon = const Icon(Icons.person);
+    Icon profileIcon = const Icon(Icons.business);
 
     IconButton expandButton = IconButton(
       icon: const Icon(Icons.navigate_next),
@@ -28,8 +27,7 @@ class CompanyAccountWidget extends StatelessWidget {
           leading: profileIcon,
           title: titleWidget,
           subtitle: subtitleWidget,
-          trailing: expandButton,
-          onTap: (() => print(name)),
+          // trailing: expandButton,
         ),
         const Divider(
           height: 3,
