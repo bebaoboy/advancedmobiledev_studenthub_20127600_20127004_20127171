@@ -32,13 +32,25 @@ import 'package:flutter/material.dart';
 
 class MaterialPageRoute2 extends PageRouteBuilder {
   final String routeName;
+  final Object? arguments;
 
   MaterialPageRoute2({
     required this.routeName,
+    this.arguments
   }) : super(
-          transitionDuration: const Duration(milliseconds: 800),
-          pageBuilder: (context, animation, secondaryAnimation) => getRoute(routeName),
-        );
+            transitionDuration: Duration(milliseconds: arguments != null ? 500 : 800),
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                getRoute(routeName, context, arguments: arguments),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              return SharedAxisTransition(
+                fillColor: Theme.of(context).cardColor,
+                animation: animation,
+                secondaryAnimation: secondaryAnimation,
+                transitionType: SharedAxisTransitionType.scaled,
+                child: child,
+              );
+            });
 
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,

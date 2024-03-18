@@ -6,6 +6,7 @@ import 'package:boilerplate/presentation/dashboard/project_post/project_post.dar
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
@@ -75,6 +76,15 @@ class Routes {
   };
 }
 
-getRoute(name) {
-  return Routes._route[name] ?? const HomeScreen();
+getRoute(name, context, {arguments}) {
+  try {
+    if (name == Routes.projectDetails) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return ProjectDetailsPage(project: arguments as Project);
+    } else {
+      return Routes._route[name] ?? const HomeScreen();
+    }
+  } catch (e) {
+    return const HomeScreen();
+  }
 }

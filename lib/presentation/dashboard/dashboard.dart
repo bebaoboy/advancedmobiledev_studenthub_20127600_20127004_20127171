@@ -66,7 +66,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
       _routes = {
         0: {
           '/': ProjectTab(),
-          Routes.favortie_project: getRoute(Routes.favortie_project),
+          Routes.favortie_project: getRoute(Routes.favortie_project, context),
         },
         1: {
           '/': DashBoardTab(pageController: _pageController,),
