@@ -3,6 +3,7 @@ import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 class ProjectItem extends StatefulWidget {
   final Project project;
@@ -81,7 +82,7 @@ class _ProjectItemState extends State<ProjectItem> {
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
-      
+
 //       Card(
 //         child: Padding(
 //           padding: const EdgeInsets.all(8.0),

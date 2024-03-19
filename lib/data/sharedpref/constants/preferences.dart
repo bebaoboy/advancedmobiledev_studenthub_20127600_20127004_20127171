@@ -5,4 +5,6 @@ class Preferences {
   static const String auth_token = "authToken";
   static const String is_dark_mode = "is_dark_mode";
   static const String current_language = "current_language";
+  static const String current_user_role = "current_user_role";
+  static const String current_user_email = "current_user_email";
 }

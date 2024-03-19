@@ -12,7 +12,7 @@ class CircularRevealClipper extends CustomClipper<Path> {
   final double? maxRadius;
   final bool isReverse;
 
-  CircularRevealClipper({
+  const CircularRevealClipper({
     required this.fraction,
     this.centerAlignment,
     this.centerOffset,
@@ -23,8 +23,8 @@ class CircularRevealClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    final Offset center = this.centerAlignment?.alongSize(size) ??
-        this.centerOffset ??
+    final Offset center = centerAlignment?.alongSize(size) ??
+        centerOffset ??
         Offset(size.width / 2, size.height / 2);
     // final minRadius = this.minRadius ?? 0;
     final maxRadius = this.maxRadius ?? calcMaxRadius(size, center);

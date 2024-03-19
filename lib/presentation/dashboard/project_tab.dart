@@ -68,7 +68,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
         child: SheetContentScaffold(
             requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
             appBar: AppBar(
-              title: Text("Filter by"),
+              title: const Text("Filter by"),
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -83,8 +83,8 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     //   ),
                     // ),
                     // const SizedBox(height: 24),
-                    ListTile(
-                      title: const Text('Project Length'),
+                    const ListTile(
+                      title: Text('Project Length'),
                     ),
                     // Padding(
                     //   padding: const EdgeInsets.only(right: 32),
@@ -109,7 +109,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     //   // ),
                     // ),
                     RadioListTile<Scope>(
-                      title: Text("Less than one month"),
+                      title: const Text("Less than one month"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
@@ -125,7 +125,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title: Text("1 to 3 months"),
+                      title: const Text("1 to 3 months"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
@@ -141,7 +141,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title: Text("3 to 6 months"),
+                      title: const Text("3 to 6 months"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
@@ -157,7 +157,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title: Text("More than 6 months"),
+                      title: const Text("More than 6 months"),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style: const TextStyle(fontSize: 24),
@@ -266,7 +266,8 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
 
 class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet(
-      {required this.onSheetDismissed,
+      {super.key,
+      required this.onSheetDismissed,
       this.height = 750,
       required this.onFilterTap,
       required this.searchList,
@@ -312,7 +313,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
       // With the following configuration, the sheet height will be
       // 500px + (app bar height) + (bottom bar height).
-      body: Container(
+      body: SizedBox(
         height: widget.height,
         child: Align(
           alignment: Alignment.topCenter,
@@ -418,6 +419,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       // ),
 
       actions: [
+
         // IconButton(
         //     onPressed: () {
         //       widget.onFilterTap();
@@ -485,6 +487,7 @@ class _ProjectTabState extends State<ProjectTab>
   SearchFilter filter = SearchFilter();
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _buildProjectContent();
   }
 
@@ -659,7 +662,18 @@ class _ProjectTabState extends State<ProjectTab>
                     IconButton(
                     onPressed: () {
                       NavbarNotifier2.pushNamed(
-                          Routes.favortie_project,
+                          Routes.favortieProject,
+                          NavbarNotifier2.currentIndex,
+                          FavoriteScreen(
+                              projectList: allProjects
+                                  .where((element) => element.isFavorite!)
+                                  .toList(),
+                              onFavoriteTap: (int i) {
+                                allProjects[i].isFavorite =
+                                    !allProjects[i].isFavorite!;
+                              }));
+                      NavbarNotifier2.pushNamed(
+                          Routes.favortieProject,
                           NavbarNotifier2.currentIndex,
                           FavoriteScreen(
                               projectList: allProjects
@@ -684,7 +698,7 @@ class _ProjectTabState extends State<ProjectTab>
         //     ),
         //   ),
         // ),
-        SizedBox(
+        const SizedBox(
           height: 100,
         ),
         Container(

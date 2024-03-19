@@ -43,6 +43,7 @@ class _DashBoardTabState extends State<DashBoardTab>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _buildDashBoardContent();
   }
 
@@ -70,8 +71,8 @@ class _DashBoardTabState extends State<DashBoardTab>
                       // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
                       await Navigator.of(
                               NavigationService.navigatorKey.currentContext!)
-                          .push(MaterialPageRoute2(
-                              routeName: Routes.project_post))
+                          .push(
+                              MaterialPageRoute2(routeName: Routes.projectPost))
                           .then((value) {
                         setState(() {
                           if (value != null) {
@@ -177,7 +178,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   projects: myProjects,
                 ),
                 WorkingProjects(
-                  projects: workingProjects,
+                  projects: myProjects,
                 ),
                 AllProjects(
                   projects: myProjects,
@@ -253,7 +254,11 @@ void showBottomSheet(Project project) {
             child: const Text('Start working this project',
                 style: TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
-          workingProjects.add(project);
+          myProjects
+              .where((element) => element.id == project.id)
+              .toSet()
+              .first
+              .isWorking = true;
         },
       ),
     ],
@@ -269,12 +274,25 @@ class WorkingProjects extends StatefulWidget {
 }
 
 class _WorkingProjectsState extends State<WorkingProjects> {
+  late List<Project>? workingProjects;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.projects != null) {
+      workingProjects =
+          widget.projects!.where((element) => element.isWorking!).toList();
+    } else {
+      workingProjects = List.empty(growable: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: widget.projects?.length ?? 0,
+      itemCount: workingProjects?.length ?? 0,
       itemBuilder: (context, index) => MyProjectItem(
-        project: myProjects[index],
+        project: workingProjects![index],
         onShowBottomSheet: showBottomSheet,
       ),
     );

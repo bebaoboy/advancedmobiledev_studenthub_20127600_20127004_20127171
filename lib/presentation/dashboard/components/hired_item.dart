@@ -7,12 +7,12 @@ class HiredItem extends StatefulWidget {
   final Student hired;
   final bool pending;
   // final Function? onHired;
-  const HiredItem(
-      {super.key,
-      required this.hired,
-      required this.pending,
-      // required this.onHired
-      });
+  const HiredItem({
+    super.key,
+    required this.hired,
+    required this.pending,
+    // required this.onHired
+  });
 
   @override
   State<HiredItem> createState() => _HiredItemState();
@@ -136,7 +136,6 @@ class _HiredItemState extends State<HiredItem> {
                   //   },
                   //   child: Text(buttonHireText),
                   // ),
-                
                 ],
               ),
             )

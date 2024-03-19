@@ -126,29 +126,35 @@ class Project implements ShimmerLoadable {
       this.timeCreated,
       this.isFavorite = false,
       this.isLoading = true,
-      this.isWorking});
+      this.isWorking = false});
 
   getModifiedTimeCreated() {
     return timeCreated?.difference(DateTime.now()).inDays.abs();
   }
-
   @override
   bool isLoading;
 }
 
 class StudentProject extends Project {
-  bool? isSubmitted = false;
-  bool? isAccepted = false;
+
+  bool isSubmitted = true;
+  bool isAccepted = false;
+  DateTime? submittedTime;
+
+  getModifiedSubmittedTime() {
+    return submittedTime?.difference(DateTime.now()).inDays.abs();
+  }
 
   StudentProject({
     required super.title,
     required super.description,
+    required this.submittedTime,
     super.scope = Scope.short,
     super.numberOfStudents = 1,
     super.timeCreated,
     super.isFavorite = false,
     super.isLoading = true,
-    this.isSubmitted = false,
+    this.isSubmitted = true,
     this.isAccepted = false,
   });
 }

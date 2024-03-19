@@ -83,6 +83,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return MainAppBar();
+    return const MainAppBar();
   }
 }

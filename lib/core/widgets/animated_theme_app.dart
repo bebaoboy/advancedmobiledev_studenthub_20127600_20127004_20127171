@@ -871,7 +871,7 @@ class MaterialScrollBehavior extends ScrollBehavior {
           case AndroidOverscrollIndicator.stretch:
             return StretchingOverscrollIndicator(
               axisDirection: details.direction,
-              clipBehavior: details.clipBehavior ?? Clip.hardEdge,
+              clipBehavior: details.decorationClipBehavior ?? Clip.hardEdge,
               child: child,
             );
           case AndroidOverscrollIndicator.glow:
@@ -1008,9 +1008,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
 
         break;
     }
-    if (endTheme == null) {
-      endTheme = AppThemeData.lightThemeData;
-    }
+    endTheme ??= AppThemeData.lightThemeData;
     return endTheme;
   }
 
@@ -1030,7 +1028,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           key: widget.scaffoldMessengerKey,
           child: FadeAnimatedTheme(
             duration: widget.animationDuration,
-            data: theme!,
+            data: theme,
             isMaterialAppTheme: true,
             child: widget.builder != null
                 ? Builder(
@@ -1058,7 +1056,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           key: widget.scaffoldMessengerKey,
           child: ScaleAnimatedTheme(
             duration: widget.animationDuration,
-            data: theme!,
+            data: theme,
             isMaterialAppTheme: true,
             child: widget.builder != null
                 ? Builder(

@@ -15,12 +15,12 @@ class AnimatedWave extends StatelessWidget {
   final double speed;
   final double offset;
 
-  AnimatedWave({required this.height, required this.speed, this.offset = 0.0});
+  const AnimatedWave({super.key, required this.height, required this.speed, this.offset = 0.0});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return Container(
+      return SizedBox(
         height: height,
         width: constraints.biggest.width,
         child: LoopAnimationBuilder(
@@ -70,17 +70,19 @@ class CurvePainter extends CustomPainter {
 }
 
 class AnimatedBackground extends StatelessWidget {
+  const AnimatedBackground({super.key});
+
   @override
   Widget build(BuildContext context) {
     final tween = MovieTween()
       ..tween(
           "color1",
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           ColorTween(
               begin: Colors.lightBlue.shade500, end: Colors.lightBlue.shade900))
       ..tween(
           "color2",
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           ColorTween(begin: Colors.blue.shade200, end: Colors.blue.shade600));
 
     return MirrorAnimationBuilder(
@@ -88,15 +90,15 @@ class AnimatedBackground extends StatelessWidget {
       duration: tween.duration,
       builder: (context, value, child) {
         return Container(
-          child: child,
           decoration: BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                Color.fromARGB(165, 114, 248, 128),
+                const Color.fromARGB(165, 114, 248, 128),
                 Colors.blueAccent.shade100
               ])),
+          child: child,
         );
       },
     );
@@ -105,22 +107,22 @@ class AnimatedBackground extends StatelessWidget {
 
 class FancyBackgroundApp extends StatelessWidget {
   final Widget child;
-  FancyBackgroundApp({required this.child});
+  const FancyBackgroundApp({super.key, required this.child});
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Positioned.fill(child: AnimatedBackground()),
-        onBottom(AnimatedWave(
+        const Positioned.fill(child: AnimatedBackground()),
+        onBottom(const AnimatedWave(
           height: 180,
           speed: 1.0,
         )),
-        onBottom(AnimatedWave(
+        onBottom(const AnimatedWave(
           height: 120,
           speed: 0.9,
           offset: pi,
         )),
-        onBottom(AnimatedWave(
+        onBottom(const AnimatedWave(
           height: 220,
           speed: 1.2,
           offset: pi / 2,
@@ -160,11 +162,10 @@ class _SplashScreenState extends State<SplashScreen>
         if (_controller.isCompleted) {
           await _controller.playReverse(
               duration: const Duration(milliseconds: 3500));
-          await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(const Duration(seconds: 1));
           await _controller.play();
         }
       });
-    ;
     _playAnimation(context);
     // Timer(
     //     Duration(seconds: 3),
@@ -177,7 +178,7 @@ class _SplashScreenState extends State<SplashScreen>
   Future<Null> _playAnimation(BuildContext context) async {
     try {
       await _controller.forward().orCancel;
-      await Future.delayed(Duration(seconds: 15));
+      await Future.delayed(const Duration(seconds: 15));
 //      await controller.reverse().orCancel;
     } on TickerCanceled {
       // the animation got canceled, probably because we were disposed
@@ -188,6 +189,7 @@ class _SplashScreenState extends State<SplashScreen>
             context,
             MaterialPageRoute2(
                 routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+      // ignore: empty_catches
       } catch (e) {}
     }
   }

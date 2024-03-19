@@ -38,9 +38,9 @@ class Routes {
   static const String profileStep2 = '/profile-step2';
   static const String setting = '/settings';
   static const String projectDetails = '/projectDetails';
+  static const String projectPost = '/project-post';
+  static const String favortieProject = "/favortie-project";
   static const String projectDetailsStudent = '/projectDetailsStudent';
-  static const String project_post = '/project-post';
-  static const String favortie_project = "/favortie-project";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -58,9 +58,9 @@ class Routes {
     profileStudentStep2: const ProfileStudentStep2Screen(),
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),
+    projectPost: const ProjectPostScreen(),
+    favortieProject: const FavoriteScreen(),
     projectDetailsStudent: const Placeholder(),
-    project_post: const ProjectPostScreen(),
-    favortie_project: const FavoriteScreen(),
   };
 
   static final routes = <String, WidgetBuilder>{

@@ -21,14 +21,12 @@ double kNavbarHeight = 0.0;
 
 class _AnimatedNavBar extends StatefulWidget {
   const _AnimatedNavBar(
-      {Key? key,
-      this.decoration,
+      {this.decoration,
       required this.model,
       this.isDesktop = false,
       this.navbarType = NavbarType.standard,
       required this.menuItems,
-      required this.onItemTapped})
-      : super(key: key);
+      required this.onItemTapped});
   final List<NavbarItem> menuItems;
   final NavbarNotifier2 model;
   final Function(int) onItemTapped;
@@ -231,7 +229,7 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
 }
 
 abstract class NavbarBase extends StatefulWidget {
-  const NavbarBase({Key? key}) : super(key: key);
+  const NavbarBase({super.key});
   NavbarDecoration get decoration;
 
   double? get elevation;
@@ -245,14 +243,13 @@ abstract class NavbarBase extends StatefulWidget {
 
 class StandardNavbar extends NavbarBase {
   const StandardNavbar(
-      {Key? key,
+      {super.key,
       required this.navBarDecoration,
       required this.navBarElevation,
       required this.onTap,
       this.navbarHeight,
       this.index = 0,
-      required this.items})
-      : super(key: key);
+      required this.items});
 
   final List<NavbarItem> items;
   final Function(int) onTap;
@@ -391,6 +388,7 @@ class NavbarRouter2 extends NavbarRouter {
   /// For
   /// NavbarType.standard use [NavbarDecoration]
   /// NavbarType.notched use [NotchedDecoration]
+  @override
   final NavbarType type;
 
   /// Whether the back button pressed should pop the current route and switch to the previous route,
@@ -591,7 +589,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   if (settings.name == Routes.projectDetails) {
                     builder = ProjectDetailsPage(
                         project: settings.arguments as Project);
-                  } else if (settings.name == Routes.favortie_project) {
+                  } else if (settings.name == Routes.favortieProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
                     builder =
@@ -618,6 +616,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   Widget build(BuildContext context) {
+    // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
           final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
@@ -713,6 +712,7 @@ const Color mediumPurple = Color.fromRGBO(79, 0, 241, 1.0);
 
 class MaterialPageRouteNavBar extends PageRouteBuilder {
   final Widget route;
+  @override
   final RouteSettings settings;
 
   MaterialPageRouteNavBar({

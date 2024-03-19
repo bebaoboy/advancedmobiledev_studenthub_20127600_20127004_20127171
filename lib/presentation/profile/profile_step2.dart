@@ -19,6 +19,8 @@ enum CompanySize {
 }
 
 class ProfileStep2Screen extends StatefulWidget {
+  const ProfileStep2Screen({super.key});
+
   @override
   _ProfileStep2ScreenState createState() => _ProfileStep2ScreenState();
 }
