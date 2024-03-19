@@ -239,11 +239,11 @@ class _LoginScreenState extends State<LoginScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          loading = true;
           if (_formStore.canLogin) {
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
                 _userEmailController.text, _passwordController.text);
+                loading = true;
           } else {
             _showErrorMessage(AppLocalizations.of(context)
                 .translate('login_error_missing_fields'));

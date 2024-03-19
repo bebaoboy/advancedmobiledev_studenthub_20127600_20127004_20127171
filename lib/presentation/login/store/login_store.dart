@@ -85,10 +85,14 @@ abstract class _UserStore with Store {
   // actions:-------------------------------------------------------------------
   @action
   Future login(String email, String password) async {
-    //TODO change userType to debug company or student
-    print(UserType.company.name);
+    // TODO change userType to debug company or student
+    // print(UserType.company.name);
     final LoginParams loginParams = LoginParams(
-        username: email, password: password, userType: UserType.company.name);
+        username: email,
+        password: password,
+        userType: email == "c@mpany.com"
+            ? UserType.company.name
+            : UserType.student.name);
     final future = _loginUseCase.call(params: loginParams);
     loginFuture = ObservableFuture(future);
 
@@ -98,6 +102,7 @@ abstract class _UserStore with Store {
         await _saveUserDataUseCase.call(params: value);
         isLoggedIn = true;
         success = true;
+        _user = value;
       }
     }).catchError((e) {
       print(e);

@@ -91,11 +91,11 @@ class AnimatedBackground extends StatelessWidget {
       builder: (context, value, child) {
         return Container(
           decoration: BoxDecoration(
-              gradient: LinearGradient(
+                                                                                                                                                                                                                                                                                                                                                                                   gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                const Color.fromARGB(165, 114, 248, 128),
+                Color.fromARGB(164, 255, 255, 255),
                 Colors.blueAccent.shade100
               ])),
           child: child,

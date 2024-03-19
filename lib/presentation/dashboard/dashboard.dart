@@ -46,7 +46,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('${_userStore.user.email} ${_userStore.user.type.name}');
+    print('check ${_userStore.user.email} ${_userStore.user.type.name}');
 
     if (items.isEmpty) {
       items = [
