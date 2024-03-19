@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:animations/animations.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
@@ -461,6 +463,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
   }
 
   void initialize({bool isUpdate = false, int? i}) {
+    // widget.pageController.addListener(() {
+    //   if (widget.pageController.)
+    // })
     if (i != null) {
       final navbaritem = widget.destinations[i].navbarItem;
       keys[i] = GlobalKey<NavigatorState>(debugLabel: navbaritem.text);
@@ -483,8 +488,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
   void initAnimation() {
     fadeAnimation = items.map<AnimationController>((NavbarItem item) {
       return AnimationController(
+        lowerBound: 0.5,
           vsync: this,
-          value: item == items[widget.initialIndex] ? 1.0 : 0.0,
+          value: item == items[widget.initialIndex] ? 1.0 : 0.5,
           duration:
               Duration(milliseconds: widget.destinationAnimationDuration));
     }).toList();
@@ -586,7 +592,8 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   } else if (settings.name == Routes.favortieProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
-                    builder = widget.destinations[index].destinations[j].widget;
+                    builder =
+                        widget.destinations[index].destinations[j].widget;
                   }
                 }
               }
@@ -612,13 +619,14 @@ class _NavbarRouterState extends State<NavbarRouter2>
     // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
-          if (NavbarNotifier2.isNavbarHidden) {
-            NavbarNotifier2.hideBottomNavBar = false;
-            return false;
-          }
           final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
               behavior: widget.backButtonBehavior);
-
+          if (NavbarNotifier2.isCurrentNavbarHistoryStackSemiEmpty()) {
+            if (NavbarNotifier2.isNavbarHidden) {
+              NavbarNotifier2.hideBottomNavBar = false;
+              //return false;
+            }
+          }
           final bool value = widget.onBackButtonPressed!(isExitingApp);
           setState(() {
             // NavbarNotifier2.index = NavbarNotifier2.currentIndex;
@@ -668,10 +676,11 @@ class _NavbarRouterState extends State<NavbarRouter2>
                         onItemTapped: (x) {
                           // User pressed  on the same tab twice
                           if (NavbarNotifier2.currentIndex == x) {
+                            bool ok = true;
                             if (widget.shouldPopToBaseRoute) {
-                              NavbarNotifier2.popAllRoutes(x);
+                              ok = NavbarNotifier2.popAllRoutes(x);
                             }
-                            if (widget.onCurrentTabClicked != null) {
+                            if (widget.onCurrentTabClicked != null && !ok) {
                               setState(() {
                                 widget.onCurrentTabClicked!();
                                 print("tap");

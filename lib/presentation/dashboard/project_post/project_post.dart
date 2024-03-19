@@ -362,7 +362,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(title.isEmpty ? "Demo Project" : title),
+              child: Text(title.isEmpty ? "Demo Project" : title, style: TextStyle(fontWeight: FontWeight.w700),),
             ),
             const SizedBox(
               height: 20,
@@ -370,12 +370,17 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             const Divider(color: Colors.black),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(description.isEmpty
-                  ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                      'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                      'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                  : description),
+              child: Container(
+                constraints: BoxConstraints(maxHeight: 400),
+                child: SingleChildScrollView(
+                  child: Text(description.isEmpty
+                      ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
+                          'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
+                          'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                      : description),
+                ),
+              ),
             ),
             const Divider(color: Colors.black),
             const SizedBox(
@@ -383,8 +388,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Row(
               children: <Widget>[
-                const Icon(Icons.alarm),
-                const SizedBox(
+                Icon(Icons.alarm, size: 30,),
+                SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
                 Text(
@@ -396,12 +401,12 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Row(
               children: <Widget>[
-                const Icon(Icons.people),
-                const SizedBox(
+                Icon(Icons.people, size: 30,),
+                SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
                 Text(
-                    '${AppLocalizations.of(context).translate('student_require')}\n  - $number'),
+                    '${AppLocalizations.of(context).translate('student_require')}\n  - $number students'),
               ],
             ),
             const SizedBox(

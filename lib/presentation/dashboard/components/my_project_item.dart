@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 class MyProjectItem extends StatefulWidget {
   final void Function(Project project)? onShowBottomSheet;
   final Project project;
-  const MyProjectItem({super.key, required this.project, required this.onShowBottomSheet});
+  const MyProjectItem(
+      {super.key, required this.project, required this.onShowBottomSheet});
 
   @override
   State<MyProjectItem> createState() => _MyProjectItemState();
@@ -36,13 +37,14 @@ class _MyProjectItemState extends State<MyProjectItem> {
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
-        child: GestureDetector(
-          onTap: () {
-            //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
-            Navigator.of(NavigationService.navigatorKey.currentContext!)
-                .pushNamed(Routes.projectDetails, arguments: widget.project);
-          },
-          child: Card(
+        child: Card(
+          child: InkWell(
+            onTap: () {
+              //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
+              Navigator.of(NavigationService.navigatorKey.currentContext!)
+                  .pushNamed(Routes.projectDetails,
+                      arguments: widget.project);
+            },
             child: Padding(
               padding: const EdgeInsets.symmetric(
                   horizontal: Dimens.horizontal_padding,
@@ -79,11 +81,13 @@ class _MyProjectItemState extends State<MyProjectItem> {
                                 Text(
                                   (widget.project.proposal?.length ?? 0)
                                       .toString(),
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1,
                                 ),
                                 Text(
                                   'Proposals',
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1,
                                 )
                               ],
                             ),
@@ -94,11 +98,13 @@ class _MyProjectItemState extends State<MyProjectItem> {
                                 Text(
                                   (widget.project.messages?.length ?? 0)
                                       .toString(),
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1,
                                 ),
                                 Text(
                                   'Messages',
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1,
                                 )
                               ],
                             ),
@@ -108,11 +114,13 @@ class _MyProjectItemState extends State<MyProjectItem> {
                                 Text(
                                   (widget.project.hired?.length ?? 0)
                                       .toString(),
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1,
                                 ),
                                 Text(
                                   'Hired',
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                  style:
+                                      Theme.of(context).textTheme.bodyText1,
                                 )
                               ],
                             )
@@ -123,7 +131,8 @@ class _MyProjectItemState extends State<MyProjectItem> {
                   ),
                   // ToDo: implement show bottom sheet
                   IconButton(
-                      onPressed: () => widget.onShowBottomSheet!(widget.project),
+                      onPressed: () =>
+                          widget.onShowBottomSheet!(widget.project),
                       icon: const Icon(Icons.more_horiz_outlined))
                 ],
               ),

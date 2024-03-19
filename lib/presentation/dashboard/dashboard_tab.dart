@@ -75,8 +75,10 @@ class _DashBoardTabState extends State<DashBoardTab>
                               MaterialPageRoute2(routeName: Routes.projectPost))
                           .then((value) {
                         setState(() {
-                          allProjects.insert(0, value as Project);
-                          myProjects.insert(0, value as Project);
+                          if (value != null) {
+                            allProjects.insert(0, value as Project);
+                            myProjects.insert(0, value as Project);
+                          }
                         });
                       });
                     },

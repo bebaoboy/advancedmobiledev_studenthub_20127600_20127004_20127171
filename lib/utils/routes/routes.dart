@@ -2,11 +2,11 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/login.dart';
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
@@ -40,6 +40,7 @@ class Routes {
   static const String projectDetails = '/projectDetails';
   static const String projectPost = '/project-post';
   static const String favortieProject = "/favortie-project";
+  static const String projectDetailsStudent = '/projectDetailsStudent';
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -59,6 +60,7 @@ class Routes {
     projectDetails: const Placeholder(),
     projectPost: const ProjectPostScreen(),
     favortieProject: const FavoriteScreen(),
+    projectDetailsStudent: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
@@ -81,6 +83,9 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.projectDetails) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       return ProjectDetailsPage(project: arguments as Project);
+    } if (name == Routes.projectDetailsStudent) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return ProjectDetailsStudentScreen(project: arguments as Project);
     } else {
       return Routes._route[name] ?? const HomeScreen();
     }

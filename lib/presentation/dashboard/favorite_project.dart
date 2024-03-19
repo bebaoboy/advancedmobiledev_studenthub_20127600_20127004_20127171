@@ -44,7 +44,7 @@ import 'package:flutter/material.dart';
 //         child: Align(
 //           alignment: Alignment.topCenter,
 //           child: isSuggestionTapped
-//               ? ExampleUiLoadingAnimation(
+//               ? LazyLoadingAnimationProjectList(
 //                   height: MediaQuery.of(context).size.height * 0.8,
 //                   list: widget.searchList,
 //                   firstCallback: (i) {
@@ -361,9 +361,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           height: 100,
         ),
         Container(
-          margin: const EdgeInsets.only(top: 40),
-          child: ExampleUiLoadingAnimation(
-            height: MediaQuery.of(context).size.height - 60,
+          margin: EdgeInsets.only(top: 40),
+          child: LazyLoadingAnimationProjectList(
+            itemHeight: 230,
             list: widget.projectList ?? [],
             firstCallback: (i) {
               setState(() {

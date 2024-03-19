@@ -50,9 +50,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 20),
+                padding: const EdgeInsets.only(top: 60),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height * 0.75,
                   child: TabBarView(
                     physics: const BouncingScrollPhysics(),
                     children: [
@@ -97,7 +97,7 @@ class ProposalTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return (proposals?.length ?? 0) == 0 ? const Center(child: const Text("Nothing here")) : ListView.builder(
       itemCount: proposals?.length ?? 0,
       itemBuilder: (context, index) {
         return ProposalItem(
@@ -120,64 +120,131 @@ class DetailTabLayout extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              margin: const EdgeInsetsDirectional.only(
-                  top: Dimens.vertical_padding + 10),
-              width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                  border: Border(
-                      top: BorderSide(width: 1, color: Colors.black),
-                      bottom: BorderSide(width: 1, color: Colors.black))),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                child: Text(project.description),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.alarm,
-                    size: 45,
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        'Project scope',
-                        style: Theme.of(context).textTheme.bodyText1,
+            Flexible(
+                flex: 1,
+                fit: FlexFit.loose,
+                child: Container(
+                   constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height * 0.7),
+                  child: Column(children: [
+                    Container(
+                     
+                      // margin: const EdgeInsetsDirectional.only(
+                      //     top: Dimens.vertical_padding + 10),
+                      width: MediaQuery.of(context).size.width,
+                      decoration: const BoxDecoration(
+                          border: Border(
+                              top: BorderSide(width: 1, color: Colors.black),
+                              bottom: BorderSide(width: 1, color: Colors.black))),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        child: Text(project.description),
                       ),
-                      Text(
-                        project.scope.title,
-                        style: Theme.of(context).textTheme.bodyText1,
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Row(
-              children: [
-                const Icon(
-                  Icons.people,
-                  size: 45,
-                ),
-                Column(
-                  children: [
-                    Text(
-                      'Student required',
-                      style: Theme.of(context).textTheme.bodyText1,
                     ),
-                    Text(
-                      '${project.numberOfStudents} students',
-                      style: Theme.of(context).textTheme.bodyText1,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.alarm,
+                            size: 45,
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                'Project scope',
+                                style: Theme.of(context).textTheme.bodyText1,
+                              ),
+                              Text(
+                                project.scope.title,
+                                style: Theme.of(context).textTheme.bodyText1,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.people,
+                          size: 45,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              'Student required',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            ),
+                            Text(
+                              '${project.numberOfStudents} students',
+                              style: Theme.of(context).textTheme.bodyText1,
+                            )
+                          ],
+                        )
+                      ],
                     )
-                  ],
-                )
+                  ]),
+                )),
+                Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                // Flexible(
+                //   fit: FlexFit.tight,
+                //   child: TextButton(
+                //     onPressed: () {
+                //       widget.onSheetDismissed();
+                //     },
+                //     child: const Text('Cancel'),
+                //   ),
+                // ),
+                // const SizedBox(width: 16),
+                // ElevatedButton(
+                //   style: ElevatedButton.styleFrom(
+                //     backgroundColor:
+                //         Theme.of(context).colorScheme.primaryContainer,
+                //     surfaceTintColor: Colors.transparent,
+
+                //     minimumSize: Size(
+                //         MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
+                //     shape: RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(3),
+                //     ),
+                //   ),
+                //   onPressed: () {},
+                //   child: Text('Saved',
+                //     style: Theme.of(context).textTheme.bodyMedium!.merge(
+                //         TextStyle(
+                //             color: Theme.of(context).colorScheme.secondary)),
+                //   ),
+                // ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                    surfaceTintColor: Colors.transparent,
+                    minimumSize: Size(
+                        MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(3),
+                    ),
+                  ),
+                  onPressed: () {},
+                  child: Text('Edit project',
+                    style: Theme.of(context).textTheme.bodyMedium!.merge(
+                        TextStyle(
+                            color: Theme.of(context).colorScheme.secondary)),
+                  ),
+                ),
               ],
-            )
+            ),
+          
           ],
         ),
       ),
@@ -192,7 +259,7 @@ class HiredTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return (hired?.length ?? 0) == 0 ? const Center(child: const Text("Nothing here")) : ListView.builder(
       itemCount: hired?.length ?? 0,
       itemBuilder: (context, index) {
         // return ListTile(
@@ -215,7 +282,7 @@ class MessageTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return (messages?.length ?? 0) == 0 ? const Center(child: const Text("Nothing here")) : ListView.builder(
       itemCount: messages?.length ?? 0,
       itemBuilder: (context, index) {
         return ListTile(
