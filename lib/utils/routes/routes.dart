@@ -6,6 +6,10 @@ import 'package:boilerplate/presentation/dashboard/project_details_student.dart'
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
+import 'package:boilerplate/presentation/login/forget_password.dart';
+import 'package:boilerplate/presentation/login/forget_password_change_password.dart';
+import 'package:boilerplate/presentation/login/forget_password_done.dart';
+import 'package:boilerplate/presentation/login/forget_password_sent.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
@@ -41,6 +45,10 @@ class Routes {
   static const String projectPost = '/project-post';
   static const String favortieProject = "/favortie-project";
   static const String projectDetailsStudent = '/projectDetailsStudent';
+  static const String forgetPassword = '/forgetPassword';
+  static const String forgetPasswordSent = '/forgetPasswordSent';
+  static const String forgetPasswordChangePassword = '/forgetPasswordChangePassword';
+  static const String forgetPasswordDone = '/forgetPasswordDone';
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -61,6 +69,10 @@ class Routes {
     projectPost: const ProjectPostScreen(),
     favortieProject: const FavoriteScreen(),
     projectDetailsStudent: const Placeholder(),
+    forgetPassword: const ForgetPasswordScreen(),
+    forgetPasswordSent: const ForgetPasswordSentScreen(),
+    forgetPasswordChangePassword: const ForgetPasswordChangePasswordcreen(),
+    forgetPasswordDone: const ForgetPasswordDoneScreen(),
   };
 
   static final routes = <String, WidgetBuilder>{

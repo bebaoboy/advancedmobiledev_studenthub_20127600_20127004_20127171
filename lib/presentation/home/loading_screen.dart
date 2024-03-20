@@ -24,7 +24,6 @@ class Background extends StatelessWidget {
   }
 }
 
-
 class LoadingScreen extends StatefulWidget {
   const LoadingScreen({super.key});
 
@@ -33,41 +32,54 @@ class LoadingScreen extends StatefulWidget {
 }
 
 class _LoadingScreenState extends State<LoadingScreen> {
-    final ThemeStore _themeStore = getIt<ThemeStore>();
+  final ThemeStore _themeStore = getIt<ThemeStore>();
+  double opacity = 0;
 
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(milliseconds: 100)).then((value) {
+      setState(() {
+        opacity = 1;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _themeStore.darkMode ? Colors.black.withOpacity(0) : Colors.white.withOpacity(0),
-      body: Background(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Lottie.asset(
-                  'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                  fit: BoxFit.cover,
-                  width: 200, // Adjust the width and height as needed
-                  height: 200,
-                  repeat: true, // Set to true if you want the animation to loop
+      backgroundColor: _themeStore.darkMode
+          ? Colors.black.withOpacity(0)
+          : Colors.white.withOpacity(0),
+      body: AnimatedOpacity(
+        opacity: opacity,
+        duration: const Duration(milliseconds: 200),
+        child: Background(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Lottie.asset(
+                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                    fit: BoxFit.cover,
+                    width: 200, // Adjust the width and height as needed
+                    height: 200,
+                    repeat:
+                        true, // Set to true if you want the animation to loop
+                  ),
                 ),
-              ),
-              const Center(
-                child: Text(
-                  "Please wait...",
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.blueAccent),
-                ),
-              )
-            ],
+                const Center(
+                  child: Text(
+                    "Please wait...",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

@@ -13,20 +13,22 @@ import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgetPasswordSentScreen extends StatefulWidget {
+  const ForgetPasswordSentScreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ForgetPasswordSentScreenState createState() =>
+      _ForgetPasswordSentScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
   //text controllers:-----------------------------------------------------------
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
@@ -126,38 +128,33 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context).translate('login_main_text'),
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    AppLocalizations.of(context)
+                        .translate('forget_password_sent'),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Image.asset(
-                    'assets/images/img_login.png',
-                    scale: 1.2,
-                  ),
-                  const SizedBox(height: 24.0),
-                  _buildUserIdField(),
-                  _buildPasswordField(),
-                  _buildForgotPasswordButton(),
+                  const SizedBox(height: 34.0),
                   _buildSignInButton(),
                 ],
               ),
             ),
           ),
-          Align(
-            heightFactor: 2,
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              children: [
-                _buildFooterText(),
-                const SizedBox(
-                  height: 14,
-                ),
-                _buildSignUpButton(),
-              ],
-            ),
-          )
+          // Align(
+          //   heightFactor: 2,
+          //   alignment: Alignment.bottomCenter,
+          //   child: Column(
+          //     children: [
+          //       _buildFooterText(),
+          //       const SizedBox(
+          //         height: 14,
+          //       ),
+          //       _buildSignUpButton(),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );
@@ -223,12 +220,9 @@ class _LoginScreenState extends State<LoginScreen> {
           style: Theme.of(context)
               .textTheme
               .caption
-              ?.copyWith(color: Colors.orangeAccent, fontSize: 12),
+              ?.copyWith(color: Colors.orangeAccent),
         ),
-        onPressed: () {
-          Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.forgetPassword));
-        },
+        onPressed: () {},
       ),
     );
   }
@@ -237,49 +231,25 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-        buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
+        buttonText: "OK",
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          if (_formStore.canLogin) {
-            DeviceUtils.hideKeyboard(context);
-            _userStore.login(
-                _userEmailController.text, _passwordController.text);
-                loading = true;
-          } else {
-            _showErrorMessage(AppLocalizations.of(context)
-                .translate('login_error_missing_fields'));
-          }
+          // to login
+          Navigator.of(context)
+            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword),
+                (Route<dynamic> route) => false);
+          //   if (_formStore.canForgetPasswordSent) {
+          //     DeviceUtils.hideKeyboard(context);
+          //     _userStore.login(
+          //         _userEmailController.text, _passwordController.text);
+          //         // loading = true;
+          //   } else {
+          //     _showErrorMessage(AppLocalizations.of(context)
+          //         .translate('login_error_missing_fields'));
+          //   }
         },
       ),
-    );
-  }
-
-  Widget _buildFooterText() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 3),
-      child: Row(children: <Widget>[
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-        Text(
-          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: const TextStyle(fontSize: 12),
-        ),
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-      ]),
     );
   }
 
@@ -296,7 +266,7 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             Navigator.of(context)
               ..push(MaterialPageRoute2(routeName: Routes.signUp));
-            // if (_formStore.canLogin) {
+            // if (_formStore.canForgetPasswordSent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);

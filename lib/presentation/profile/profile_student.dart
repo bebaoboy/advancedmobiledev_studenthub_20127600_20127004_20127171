@@ -90,7 +90,7 @@ class SearchDropdown extends StatelessWidget {
   }
 }
 
-const mockSkillsets = <Skill>[
+var mockSkillsets = <Skill>[
   Skill('JavaScript', "Fake description", ''),
   Skill('iOS Development', "Fake description", ''),
   Skill('C', "Fake description", ''),

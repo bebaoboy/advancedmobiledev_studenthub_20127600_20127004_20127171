@@ -13,23 +13,27 @@ import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class ForgetPasswordChangePasswordcreen extends StatefulWidget {
+  const ForgetPasswordChangePasswordcreen({super.key});
 
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ForgetPasswordChangePasswordcreenState createState() =>
+      _ForgetPasswordChangePasswordcreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgetPasswordChangePasswordcreenState
+    extends State<ForgetPasswordChangePasswordcreen> {
   //text controllers:-----------------------------------------------------------
   TextEditingController _userEmailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
+  TextEditingController _passwordConfirmController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -126,38 +130,73 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context).translate('login_main_text'),
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    AppLocalizations.of(context)
+                        .translate('forget_password_welcome_back'),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  Image.asset(
-                    'assets/images/img_login.png',
-                    scale: 1.2,
+                  AutoSizeText(
+                    AppLocalizations.of(context)
+                        .translate('forget_password_main_text3'),
+                    style: const TextStyle(fontSize: 13),
+                    minFontSize: 10,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 24.0),
-                  _buildUserIdField(),
+                  // Image.asset(
+                  //   'assets/images/img_login.png',
+                  //   scale: 1.2,
+                  // ),
+                  const SizedBox(height: 44.0),
+                  // _buildUserIdField(),
                   _buildPasswordField(),
-                  _buildForgotPasswordButton(),
+                  _buildPasswordConfirmField(),
+                  // _buildForgotPasswordButton(),
+                  const SizedBox(height: 44.0),
                   _buildSignInButton(),
+                  RichText(
+                    text: TextSpan(
+                      text: AppLocalizations.of(context)
+                          .translate('signup_sign_up_prompt'),
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: _themeStore.darkMode
+                              ? Colors.white
+                              : Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text:
+                                " ${AppLocalizations.of(context).translate('signup_sign_up_prompt_action')}",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.w600),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.of(context)..pop();
+                              }),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-          Align(
-            heightFactor: 2,
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              children: [
-                _buildFooterText(),
-                const SizedBox(
-                  height: 14,
-                ),
-                _buildSignUpButton(),
-              ],
-            ),
-          )
+          // Align(
+          //   heightFactor: 2,
+          //   alignment: Alignment.bottomCenter,
+          //   child: Column(
+          //     children: [
+          //       _buildFooterText(),
+          //       const SizedBox(
+          //         height: 14,
+          //       ),
+          //       _buildSignUpButton(),
+          //     ],
+          //   ),
+          // )
         ],
       ),
     );
@@ -193,8 +232,8 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
+          hint: AppLocalizations.of(context)
+              .translate('forget_password_et_user_password'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -213,6 +252,29 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  Widget _buildPasswordConfirmField() {
+    return Observer(
+      builder: (context) {
+        return TextFieldWidget(
+          hint: AppLocalizations.of(context)
+              .translate('forget_password_et_user_password_confirm'),
+          isObscure: true,
+          padding: const EdgeInsets.only(top: 16.0),
+          icon: Icons.lock,
+          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          textController: _passwordConfirmController,
+          errorText: _formStore.formErrorStore.confirmPassword == null
+              ? null
+              : AppLocalizations.of(context)
+                  .translate(_formStore.formErrorStore.confirmPassword),
+          onChanged: (value) {
+            _formStore.setConfirmPassword(_passwordConfirmController.text);
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildForgotPasswordButton() {
     return Align(
       alignment: FractionalOffset.centerRight,
@@ -223,12 +285,9 @@ class _LoginScreenState extends State<LoginScreen> {
           style: Theme.of(context)
               .textTheme
               .caption
-              ?.copyWith(color: Colors.orangeAccent, fontSize: 12),
+              ?.copyWith(color: Colors.orangeAccent),
         ),
-        onPressed: () {
-          Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.forgetPassword));
-        },
+        onPressed: () {},
       ),
     );
   }
@@ -237,49 +296,31 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-        buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
-        buttonColor: Theme.of(context).colorScheme.primary,
-        textColor: Colors.white,
-        onPressed: () async {
-          if (_formStore.canLogin) {
-            DeviceUtils.hideKeyboard(context);
-            _userStore.login(
-                _userEmailController.text, _passwordController.text);
-                loading = true;
-          } else {
-            _showErrorMessage(AppLocalizations.of(context)
-                .translate('login_error_missing_fields'));
-          }
-        },
-      ),
-    );
-  }
-
-  Widget _buildFooterText() {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 3),
-      child: Row(children: <Widget>[
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-        Text(
-          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
-          style: const TextStyle(fontSize: 12),
-        ),
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-      ]),
+          buttonText: AppLocalizations.of(context)
+              .translate('forget_password_change_password'),
+          buttonColor: Theme.of(context).colorScheme.primary,
+          textColor: Colors.white,
+          onPressed: () async {
+            setState(() {
+              loading = true;
+            });
+            await Future.delayed(const Duration(seconds: 1), () {
+              print("LOADING = $loading");
+              loading = false;
+              Navigator.of(context)
+                ..pushReplacement(
+                    MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
+            });
+            //   if (_formStore.canForgetPassword) {
+            //     DeviceUtils.hideKeyboard(context);
+            //     _userStore.login(
+            //         _userEmailController.text, _passwordController.text);
+            //         // loading = true;
+            //   } else {
+            //     _showErrorMessage(AppLocalizations.of(context)
+            //         .translate('login_error_missing_fields'));
+            //   }
+          }),
     );
   }
 
@@ -289,14 +330,12 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
         child: RoundedButtonWidget(
-          buttonText:
-              AppLocalizations.of(context).translate('login_btn_sign_up'),
+          buttonText: AppLocalizations.of(context)
+              .translate('forget_password_change_password'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.signUp));
-            // if (_formStore.canLogin) {
+            // if (_formStore.canForgetPassword) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);
@@ -311,16 +350,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
-
-    Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
-    });
+    // SharedPreferences.getInstance().then((prefs) {
+    //   prefs.setBool(Preferences.is_logged_in, true);
+    // });
 
     return Container();
   }

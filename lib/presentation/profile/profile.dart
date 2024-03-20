@@ -1,4 +1,5 @@
 import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -58,24 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text(Strings.appName),
-      actions: _buildActions(context),
-    );
-  }
-
-  List<Widget> _buildActions(BuildContext context) {
-    return <Widget>[
-      IconButton(
-          onPressed: () => {
-                //TODO: đổi
-                Navigator.of(context)
-                  ..pushAndRemoveUntil(
-                      MaterialPageRoute2(routeName: Routes.login),
-                      (Route<dynamic> route) => false)
-              },
-          icon: const Icon(Icons.person_rounded))
-    ];
+    return MainAppBar();
   }
 
   // body methods:--------------------------------------------------------------

@@ -165,24 +165,35 @@ Future<T?> _showCupertinoBottomSheet<T>(
           return Material(
             color: Colors.transparent,
             child: CupertinoActionSheetAction(
-              onPressed: () => action.onPressed != null ? action.onPressed!(coxt) : Navigator.of(coxt).pop(),
-              child: action.title == null ? const Divider(color: Colors.black, height: 2,) : Row(
-                children: [
-                  if (action.leading != null) ...[
-                    action.leading!,
-                    const SizedBox(width: 15),
-                  ],
-                  action.title != null
-                      ? Expanded(
-                          child: action.title!,
-                        )
-                      : const Divider(color: Colors.black, height: 2,),
-                  if (action.trailing != null) ...[
-                    const SizedBox(width: 10),
-                    action.trailing!,
-                  ],
-                ],
-              ),
+              onPressed: () {
+                if (action.onPressed != null) action.onPressed!(coxt);
+                Navigator.of(coxt).pop();
+              },
+              child: action.title == null
+                  ? const Divider(
+                      color: Colors.black,
+                      height: 2,
+                    )
+                  : Row(
+                      children: [
+                        if (action.leading != null) ...[
+                          action.leading!,
+                          const SizedBox(width: 15),
+                        ],
+                        action.title != null
+                            ? Expanded(
+                                child: action.title!,
+                              )
+                            : const Divider(
+                                color: Colors.black,
+                                height: 2,
+                              ),
+                        if (action.trailing != null) ...[
+                          const SizedBox(width: 10),
+                          action.trailing!,
+                        ],
+                      ],
+                    ),
             ),
           );
         }).toList(),
@@ -260,27 +271,38 @@ Future<T?> _showMaterialBottomSheet<T>(
                   ],
                   ...actions.map<Widget>((action) {
                     return InkWell(
-                      onTap: () => action.onPressed != null ? action.onPressed!(coxt) : Navigator.of(coxt).pop(),
-                      child: action.title == null ? const Divider(color: Colors.black, height: 2,) : Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Row(
-                          children: [
-                            if (action.leading != null) ...[
-                              action.leading!,
-                              const SizedBox(width: 15),
-                            ],
-                            action.title != null
-                                ? Expanded(
-                                    child: action.title!,
-                                  )
-                                : const Divider(color: Colors.black, height: 2,),
-                            if (action.trailing != null) ...[
-                              const SizedBox(width: 10),
-                              action.trailing!,
-                            ],
-                          ],
-                        ),
-                      ),
+                      onTap: () {
+                        if (action.onPressed != null) action.onPressed!(coxt);
+                        Navigator.of(coxt).pop();
+                      },
+                      child: action.title == null
+                          ? const Divider(
+                              color: Colors.black,
+                              height: 2,
+                            )
+                          : Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                children: [
+                                  if (action.leading != null) ...[
+                                    action.leading!,
+                                    const SizedBox(width: 15),
+                                  ],
+                                  action.title != null
+                                      ? Expanded(
+                                          child: action.title!,
+                                        )
+                                      : const Divider(
+                                          color: Colors.black,
+                                          height: 2,
+                                        ),
+                                  if (action.trailing != null) ...[
+                                    const SizedBox(width: 10),
+                                    action.trailing!,
+                                  ],
+                                ],
+                              ),
+                            ),
                     );
                   }).toList(),
                   if (cancelAction != null)

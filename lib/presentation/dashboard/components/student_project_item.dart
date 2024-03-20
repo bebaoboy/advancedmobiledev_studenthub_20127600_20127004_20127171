@@ -1,4 +1,6 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class StudentProjectItem extends StatefulWidget {
@@ -61,9 +63,14 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
-        child: GestureDetector(
-          onTap: () => print('navigate to student project detail'),
-          child: Card(
+        child: Card(
+          child: InkWell(
+             onTap: () {
+            print('navigate to student project detail');
+            Navigator.of(NavigationService.navigatorKey.currentContext!)
+                .pushNamed(Routes.projectDetailsStudent,
+                    arguments: widget.project);
+          },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
@@ -74,7 +81,10 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(widget.project.title),
+                          Text(
+                            widget.project.title,
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
                           Text(submittedText),
                           Text(widget.project.description),
                         ],
