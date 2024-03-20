@@ -108,6 +108,7 @@ class _InputState extends State<Input> {
     if (_textController.value.isComposingRangeValid) {
       return;
     }
+    if (_textController.text.trim() != '')
     setState(() {
       _sendButtonVisible = _textController.text.trim() != '';
     });
@@ -139,7 +140,7 @@ class _InputState extends State<Input> {
         padding: Chat.theme.inputMargin,
         child: Material(
           borderRadius: Chat.theme.inputBorderRadius,
-          color: Chat.theme.inputBackgroundColor,
+          color: Theme.of(context).colorScheme.primary,
           surfaceTintColor: Chat.theme.inputSurfaceTintColor,
           elevation: Chat.theme.inputElevation,
           child: Container(

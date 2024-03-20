@@ -619,12 +619,12 @@ class ChatState extends State<Chat> {
                             FocusManager.instance.primaryFocus?.unfocus();
                             widget.onBackgroundTap?.call();
                           },
-                          child: LayoutBuilder(
-                            builder: (
-                              BuildContext context,
-                              BoxConstraints constraints,
-                            ) =>
-                                ChatList(
+                          child: LayoutBuilder(builder: (
+                            BuildContext context,
+                            BoxConstraints constraints,
+                          ) {
+                            print("rebuild");
+                            return ChatList(
                               bottomWidget: widget.listBottomWidget,
                               bubbleRtlAlignment: widget.bubbleRtlAlignment!,
                               isLastPage: widget.isLastPage,
@@ -646,8 +646,8 @@ class ChatState extends State<Chat> {
                                   widget.typingIndicatorOptions,
                               useTopSafeAreaInset:
                                   widget.useTopSafeAreaInset ?? isMobile,
-                            ),
-                          ),
+                            );
+                          }),
                         ),
                 ),
                 widget.customBottomWidget ??
@@ -672,7 +672,6 @@ class ChatState extends State<Chat> {
         ],
       );
 }
-
 
 /// Base chat l10n containing all required properties to provide localized copy.
 /// Extend this class if you want to create a custom l10n.

@@ -132,12 +132,13 @@ class _ChatListState extends State<ChatList>
 
   Widget _newMessageBuilder(int index, Animation<double> animation) {
     try {
+      // print(index);
       final item = _oldData[index];
 
-      return SizeTransition(
+      return Container(
         key: _valueKeyForItem(item),
-        axisAlignment: -1,
-        sizeFactor: animation.drive(CurveTween(curve: Curves.easeOutQuad)),
+        // axisAlignment: -1,
+        // sizeFactor: animation.drive(CurveTween(curve: Curves.easeOutQuad)),
         child: widget.itemBuilder(item, index),
       );
     } catch (e) {
@@ -219,11 +220,14 @@ class _ChatListState extends State<ChatList>
         onNotification: (notification) {
           if (notification.metrics.pixels > 10.0 && !_indicatorOnScrollStatus) {
             setState(() {
+              print("scroll");
               _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
             });
           } else if (notification.metrics.pixels == 0.0 &&
               _indicatorOnScrollStatus) {
             setState(() {
+              print("scroll");
+
               _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
             });
           }
@@ -242,6 +246,7 @@ class _ChatListState extends State<ChatList>
 
             setState(() {
               _isNextPageLoading = true;
+              print("load");
             });
 
             widget.onEndReached!().whenComplete(() {
@@ -250,6 +255,8 @@ class _ChatListState extends State<ChatList>
                 _controller.reverse();
 
                 setState(() {
+                  print("load");
+
                   _isNextPageLoading = false;
                 });
               }
@@ -296,22 +303,25 @@ class _ChatListState extends State<ChatList>
             SliverPadding(
               padding: const EdgeInsets.only(bottom: 4),
               sliver: SliverAnimatedList(
-                findChildIndexCallback: (Key key) {
-                  if (key is ValueKey<Object>) {
-                    final newIndex = widget.items.indexWhere(
-                      (v) => _valueKeyForItem(v) == key,
-                    );
-                    if (newIndex != -1) {
-                      return newIndex;
+                  findChildIndexCallback: (Key key) {
+                    if (key is ValueKey<Object>) {
+                      final newIndex = widget.items.indexWhere(
+                        (v) => _valueKeyForItem(v) == key,
+                      );
+                      // print("new: ${widget.items.length}" + newIndex.toString());
+                      // print(widget.items.length);
+                      if (newIndex != -1) {
+                        return newIndex;
+                      }
                     }
-                  }
-                  return null;
-                },
-                initialItemCount: widget.items.length,
-                key: _listKey,
-                itemBuilder: (_, index, animation) =>
-                    _newMessageBuilder(index, animation),
-              ),
+                    return null;
+                  },
+                  initialItemCount: widget.items.length,
+                  key: _listKey,
+                  itemBuilder: (_, index, animation) {
+                    //print("build item");
+                    return _newMessageBuilder(index, animation);
+                  }),
             ),
             SliverPadding(
               padding: EdgeInsets.only(

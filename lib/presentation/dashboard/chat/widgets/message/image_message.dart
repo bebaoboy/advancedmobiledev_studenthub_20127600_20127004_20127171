@@ -167,13 +167,12 @@ class _ImageMessageState extends State<ImageMessage> {
         ),
       );
     } else {
-      return Container(
-        constraints: BoxConstraints(
-          maxHeight: widget.messageWidth.toDouble(),
-          minWidth: 170,
-        ),
-        child: AspectRatio(
-          aspectRatio: _size.aspectRatio > 0 ? _size.aspectRatio : 1,
+      return 
+      AspectRatio(
+        aspectRatio: _size.aspectRatio > 0 ? _size.aspectRatio : 1,
+        child: Container(
+          height: widget.messageWidth.toDouble(),
+          width: 170,
           child: Image(
             fit: BoxFit.contain,
             image: _image!,

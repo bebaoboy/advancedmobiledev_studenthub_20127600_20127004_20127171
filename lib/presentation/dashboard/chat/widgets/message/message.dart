@@ -1,5 +1,6 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:visibility_detector/visibility_detector.dart';
@@ -16,7 +17,7 @@ import 'text_message.dart';
 /// a nice look on larger screens.
 class Message extends StatefulWidget {
   /// Creates a particular message from any message type.
-  const Message({
+  Message({
     super.key,
     this.audioMessageBuilder,
     this.avatarBuilder,
@@ -112,7 +113,7 @@ class Message extends StatefulWidget {
   })? imageProviderBuilder;
 
   /// Any message type.
-  final types.Message message;
+  types.Message message;
 
   /// Maximum message width.
   final int messageWidth;
@@ -221,22 +222,25 @@ class _MessageState extends State<Message> {
     bool currentUserIsAuthor,
     bool enlargeEmojis,
   ) {
-    final defaultMessage =
-        (enlargeEmojis && widget.hideBackgroundOnEmojiMessages)
-            ? _messageBuilder()
-            : Container(
-                decoration: BoxDecoration(
-                  borderRadius: borderRadius,
-                  color: !currentUserIsAuthor ||
-                          widget.message.type == types.MessageType.image
-                      ? Chat.theme.secondaryColor
-                      : Chat.theme.primaryColor,
-                ),
-                child: ClipRRect(
-                  borderRadius: borderRadius,
-                  child: _messageBuilder(),
-                ),
-              );
+    final defaultMessage = (enlargeEmojis &&
+            widget.hideBackgroundOnEmojiMessages)
+        ? _messageBuilder()
+        : Container(
+            decoration: BoxDecoration(
+              borderRadius: borderRadius,
+              border: widget.message.type != types.MessageType.custom ? null : Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
+              color: !currentUserIsAuthor ||
+                      widget.message.type == types.MessageType.image
+                  ? (dateVisibility
+                      ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
+                      : Chat.theme.secondaryColor)
+                  :  widget.message.type != types.MessageType.custom ? Theme.of(context).colorScheme.primary : Chat.theme.secondaryColor,
+            ),
+            child: ClipRRect(
+              borderRadius: borderRadius,
+              child: _messageBuilder(),
+            ),
+          );
     return widget.bubbleBuilder != null
         ? widget.bubbleBuilder!(
             _messageBuilder(),

@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
@@ -15,7 +16,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key, required this.title});
@@ -159,8 +159,7 @@ class _MessageScreenState extends State<MessageScreen> {
             final file = File(localPath);
             await file.writeAsBytes(bytes);
           }
-        } catch(e) {
-          
+        } catch (e) {
         } finally {
           final index =
               _messages.indexWhere((element) => element.id == message.id);
@@ -206,9 +205,16 @@ class _MessageScreenState extends State<MessageScreen> {
 
   void _loadMessages() async {
     final response = await rootBundle.loadString('assets/messages.json');
-    final messages = (jsonDecode(response) as List)
-        .map((e) => types.Message.fromJson(e as Map<String, dynamic>))
-        .toList();
+    final jsonList = jsonDecode(response) as List;
+    List<types.Message> messages = [];
+    jsonList.forEach((e) {
+      var r = types.Message.fromJson(e as Map<String, dynamic>);
+      if (!messages.contains(r)) {
+        messages.add(r);
+      } else {
+        print("duplicated id: " + r.id);
+      }
+    });
 
     setState(() {
       _messages = messages;
@@ -220,7 +226,9 @@ class _MessageScreenState extends State<MessageScreen> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: Chat(
-        typingIndicatorOptions: TypingIndicatorOptions(typingUsers: [types.User(id: "123", firstName: "Lam", lastName: "Quan")]),
+        typingIndicatorOptions: TypingIndicatorOptions(typingUsers: [
+          types.User(id: "123", firstName: "Lam", lastName: "Quan")
+        ]),
         messages: _messages,
         onAttachmentPressed: _handleAttachmentPressed,
         onMessageTap: _handleMessageTap,
@@ -228,6 +236,13 @@ class _MessageScreenState extends State<MessageScreen> {
         onSendPressed: _handleSendPressed,
         showUserAvatars: true,
         showUserNames: true,
+        customMessageBuilder: (p0, {required messageWidth}) {
+          //print(p0.metadata!["type"]);
+          return ScheduleMessage(
+              message: ScheduleMessageType(
+                  author: p0.author, id: p0.id, type: p0.type),
+              messageWidth: messageWidth);
+        },
         // theme: const DefaultChatTheme(
         //   // seenIcon: Text(
         //   //   'read',

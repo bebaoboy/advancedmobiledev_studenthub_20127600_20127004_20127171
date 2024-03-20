@@ -1,6 +1,6 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
-import 'package:boilerplate/presentation/dashboard/message.dart';
+import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
