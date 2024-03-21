@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class ProjectDetailsStudentScreen extends StatefulWidget {
@@ -142,7 +143,8 @@ class _ProjectDetailsStudentScreenState
                     ),
                   ),
                   onPressed: () {},
-                  child: Text('Saved',
+                  child: Text(
+                    'Saved',
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),
@@ -159,8 +161,13 @@ class _ProjectDetailsStudentScreenState
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
-                  onPressed: () {},
-                  child: Text('Apply Now',
+                  onPressed: () {
+                    Navigator.of(context)
+                      ..pushNamed(Routes.submitProposal,
+                          arguments: widget.project);
+                  },
+                  child: Text(
+                    'Apply Now',
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),
