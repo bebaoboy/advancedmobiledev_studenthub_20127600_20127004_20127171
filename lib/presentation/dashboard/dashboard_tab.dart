@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 
+// ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
   DashBoardTab({super.key, this.isAlive = true, required this.pageController});
   bool? isAlive;
@@ -127,6 +128,7 @@ class _DashBoardTabState extends State<DashBoardTab>
   bool get wantKeepAlive => widget.isAlive!;
 }
 
+// ignore: must_be_immutable
 class ProjectTabs extends StatefulWidget {
   ProjectTabs({super.key, this.tabController, required this.pageController});
   TabController? tabController;

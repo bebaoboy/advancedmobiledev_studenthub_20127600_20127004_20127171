@@ -258,7 +258,9 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        widget.scheduleFilter.title ?? "Untitled",
+                        widget.scheduleFilter.title
+                        //  ?? "Untitled"
+                         ,
                         style: const TextStyle(color: Colors.black, fontSize: 13),
                         textWidthBasis: TextWidthBasis.longestLine,
                       ),
