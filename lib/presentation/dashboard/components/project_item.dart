@@ -2,8 +2,6 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter/widgets.dart';
 
 class ProjectItem extends StatefulWidget {
   final Project project;
@@ -48,7 +46,7 @@ class _ProjectItemState extends State<ProjectItem> {
         ),
       );
     } else {
-      var icon = widget.project.isFavorite!
+      var icon = widget.project.isFavorite
           ? const Icon(Icons.favorite)
           : const Icon(Icons.favorite_border);
 

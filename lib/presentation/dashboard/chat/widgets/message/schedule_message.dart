@@ -1,27 +1,36 @@
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:intl/intl.dart';
 
 import '../../conditional/conditional.dart';
-import '../../models/util.dart';
 
 /// A class that represents image message widget. Supports different
 /// aspect ratios, renders blurred image as a background which is visible
 /// if the image is narrow, renders image in form of a file if aspect
 /// ratio is very small or very big.
 
+// ignore: must_be_immutable
 class ScheduleMessageType extends types.Message {
   double? width;
   double? height;
 
   ScheduleMessageType(
       {required super.author,
+      super.createdAt,
       required super.id,
-      required super.type,
+      super.metadata,
+      super.remoteId,
+      super.repliedMessage,
+      super.roomId,
+      super.showStatus,
+      super.status,
+      super.updatedAt,
       this.width = 200,
-      this.height = 100});
+      this.height = 100,
+      required super.type});
 
   @override
   types.Message copyWith(
@@ -36,7 +45,7 @@ class ScheduleMessageType extends types.Message {
       types.Status? status,
       int? updatedAt}) {
     return ScheduleMessageType(
-        author: author ?? types.User(id: ""), id: id ?? "", type: type);
+        author: author ?? const types.User(id: ""), id: id ?? "", type: type);
   }
 
   @override
@@ -71,7 +80,12 @@ class ScheduleMessage extends StatefulWidget {
     this.imageProviderBuilder,
     required this.message,
     required this.messageWidth,
+    required this.onMenuCallback,
+    required this.scheduleFilter,
   });
+
+  final Function(ScheduleFilter) onMenuCallback;
+  final ScheduleFilter scheduleFilter;
 
   /// See [Chat.imageHeaders].
   final Map<String, String>? imageHeaders;
@@ -241,23 +255,23 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               Flexible(
                   fit: FlexFit.loose,
                   child: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        "Catch up meeting",
-                        style: TextStyle(color: Colors.black, fontSize: 13),
+                        widget.scheduleFilter.title ?? "Untitled",
+                        style: const TextStyle(color: Colors.black, fontSize: 13),
                         textWidthBasis: TextWidthBasis.longestLine,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20,
                       ),
                       Text(
-                        "60 mins",
+                        widget.scheduleFilter.getDuration(),
                         style: Chat.theme.sentMessageCaptionTextStyle.merge(
                             TextStyle(
                                 color: Theme.of(context).colorScheme.primary)),
                       ),
                     ],
-                    mainAxisSize: MainAxisSize.min,
                   )),
 
               // Container(
@@ -273,18 +287,19 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               //   ),
               // ),
               Text(
-                "Start time: Thursday 13/3/2024 15:00",
-                style: TextStyle(color: Colors.black, fontSize: 10),
+                "Start time: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
+                style: const TextStyle(color: Colors.black, fontSize: 10),
                 textWidthBasis: TextWidthBasis.longestLine,
               ),
               Text(
-                "End time: Thursday 13/3/2024 16:00",
-                style: TextStyle(color: Colors.black, fontSize: 10),
+                "End time: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
+                style: const TextStyle(color: Colors.black, fontSize: 10),
                 textWidthBasis: TextWidthBasis.longestLine,
               ),
               Align(
                 alignment: Alignment.centerRight,
                 child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     RoundedButtonWidget(
                       buttonText: "Join",
@@ -296,14 +311,15 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       },
                     ),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        widget.onMenuCallback(widget.scheduleFilter);
+                      },
                       icon: Icon(
                         Icons.expand_circle_down_outlined,
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     )
                   ],
-                  mainAxisSize: MainAxisSize.min,
                 ),
               ),
             ],

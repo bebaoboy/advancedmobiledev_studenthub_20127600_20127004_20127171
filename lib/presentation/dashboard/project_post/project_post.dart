@@ -1,9 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
-import 'package:boilerplate/presentation/home/store/language/language_store.dart';
-import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -16,8 +13,8 @@ class ProjectPostScreen extends StatefulWidget {
 
 class _ProjectPostScreenState extends State<ProjectPostScreen> {
   //stores:---------------------------------------------------------------------
-  final ThemeStore _themeStore = getIt<ThemeStore>();
-  final LanguageStore _languageStore = getIt<LanguageStore>();
+  // final ThemeStore _themeStore = getIt<ThemeStore>();
+  // final LanguageStore _languageStore = getIt<LanguageStore>();
   int _startIndex = 0;
   String title = "";
   String duration = "";

@@ -5,11 +5,12 @@ import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
-import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+
+import 'dart:async';
+
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class SearchFilter {
@@ -66,7 +67,6 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
           isContentScrollAware: true,
         ),
         child: SheetContentScaffold(
-            requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
             appBar: AppBar(
               title: const Text("Filter by"),
             ),
@@ -222,41 +222,37 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                 ),
               ),
             ),
-            bottomBar: BottomAppBar(
-              height: 70,
-              surfaceTintColor: Colors.white,
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Flexible(
-                    //   fit: FlexFit.tight,
-                    //   child: TextButton(
-                    //     onPressed: () {
-                    //       widget.onSheetDismissed();
-                    //     },
-                    //     child: const Text('Cancel'),
-                    //   ),
-                    // ),
-                    // const SizedBox(width: 16),
-                    RoundedButtonWidget(
-                      buttonColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {
-                        widget.filter.clear();
-                      },
-                      buttonText: "Clear filter",
-                    ),
-                    const SizedBox(width: 12),
-                    RoundedButtonWidget(
-                      buttonColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {
-                        Navigator.pop(context, widget.filter);
-                      },
-                      buttonText: "Apply",
-                    ),
-                  ],
-                ),
+            bottomBar: StickyBottomBarVisibility(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Flexible(
+                  //   fit: FlexFit.tight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       widget.onSheetDismissed();
+                  //     },
+                  //     child: const Text('Cancel'),
+                  //   ),
+                  // ),
+                  // const SizedBox(width: 16),
+                  RoundedButtonWidget(
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      widget.filter.clear();
+                    },
+                    buttonText: "Clear filter",
+                  ),
+                  const SizedBox(width: 12),
+                  RoundedButtonWidget(
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      Navigator.pop(context, widget.filter);
+                    },
+                    buttonText: "Apply",
+                  ),
+                ],
               ),
             )),
       ),
@@ -268,7 +264,7 @@ class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet(
       {super.key,
       required this.onSheetDismissed,
-      this.height = 750,
+      this.height = 650,
       required this.onFilterTap,
       required this.searchList,
       this.keyword,
@@ -306,32 +302,39 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     // SheetContentScaffold is a special Scaffold designed for use in a sheet.
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
     // However, it differs in that its height reduces to fit the 'body' widget.
-    final content = SheetContentScaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      // The bottom bar sticks to the bottom unless the sheet extent becomes
-      // smaller than this threshold extent.
-      requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
-      // With the following configuration, the sheet height will be
-      // 500px + (app bar height) + (bottom bar height).
-      body: SizedBox(
-        height: widget.height,
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: isSuggestionTapped
-              ? ExampleLoadingAnimationProjectList(
-                  height: MediaQuery.of(context).size.height * 0.85,
-                  list: widget.searchList,
-                  firstCallback: (i) {
-                    setState(() {
-                      allProjects[i].isFavorite = !allProjects[i].isFavorite!;
-                    });
-                  },
-                )
-              : null,
+    final content = Container(
+      decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
       ),
-      appBar: buildAppBar(context),
-      bottomBar: buildBottomBar(),
+      clipBehavior: Clip.antiAlias,
+      child: SheetContentScaffold(
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        // The bottom bar sticks to the bottom unless the sheet extent becomes
+        // smaller than this threshold extent.
+        // With the following configuration, the sheet height will be
+        // 500px + (app bar height) + (bottom bar height).
+        body: SizedBox(
+          height: widget.height * 0.85,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: isSuggestionTapped
+                ? ExampleLoadingAnimationProjectList(
+                    height: MediaQuery.of(context).size.height * 0.85,
+                    list: widget.searchList,
+                    firstCallback: (i) {
+                      setState(() {
+                        allProjects[i].isFavorite = !allProjects[i].isFavorite;
+                      });
+                    },
+                  )
+                : null,
+          ),
+        ),
+        appBar: buildAppBar(context),
+        bottomBar: buildBottomBar(),
+      ),
     );
 
     final physics = StretchingSheetPhysics(
@@ -419,7 +422,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       // ),
 
       actions: [
-
         // IconButton(
         //     onPressed: () {
         //       widget.onFilterTap();
@@ -430,32 +432,34 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   }
 
   Widget buildBottomBar() {
-    return BottomAppBar(
-      height: 70,
-      surfaceTintColor: Colors.white,
-      child: Center(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Flexible(
-            //   fit: FlexFit.tight,
-            //   child: TextButton(
-            //     onPressed: () {
-            //       widget.onSheetDismissed();
-            //     },
-            //     child: const Text('Cancel'),
-            //   ),
-            // ),
-            // const SizedBox(width: 16),
-            RoundedButtonWidget(
-              buttonColor: Theme.of(context).colorScheme.primary,
-              onPressed: () {
-                widget.onSheetDismissed();
-              },
-              buttonText: "OK",
-            ),
-          ],
+    return StickyBottomBarVisibility(
+      child: BottomAppBar(
+        height: 70,
+        surfaceTintColor: Colors.white,
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Flexible(
+              //   fit: FlexFit.tight,
+              //   child: TextButton(
+              //     onPressed: () {
+              //       widget.onSheetDismissed();
+              //     },
+              //     child: const Text('Cancel'),
+              //   ),
+              // ),
+              // const SizedBox(width: 16),
+              RoundedButtonWidget(
+                buttonColor: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  widget.onSheetDismissed();
+                },
+                buttonText: "OK",
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -513,7 +517,6 @@ class _ProjectTabState extends State<ProjectTab>
       NavbarNotifier2.currentIndex,
       context,
       ModalSheetRoute(
-        barrierColor: Theme.of(context).colorScheme.secondaryContainer,
         builder: (context) => SearchBottomSheet(
           filter: filter,
           keyword: keyword,
@@ -596,26 +599,72 @@ class _ProjectTabState extends State<ProjectTab>
                     onSubmitted: (p0) async {
                       setState(() {
                         keyword = p0;
-                        setState(() {
-                          NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        });
+                        NavbarNotifier2.hideBottomNavBar = true;
+                        yOffset =
+                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
                       });
                       await showSearchBottomSheet(context);
                     },
                     width: MediaQuery.of(context).size.width,
                     textController: controller,
                     onSuffixTap: () {},
-                    onSelected: (project) {
+                    onSelected: (project) async {
                       setState(() {
                         keyword = project.title;
-                        if (yOffset == MediaQuery.of(context).size.height) {
-                          NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {}
+                        NavbarNotifier2.hideBottomNavBar = true;
+                        yOffset =
+                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
                       });
+                      await showSearchBottomSheet(context);
+                      // await showSearchBottomSheet(context);
+                      // showModalBottomSheet(
+                      //     isScrollControlled: true,
+                      //     context: context,
+                      //     builder: (context) {
+                      //       return SearchBottomSheet(
+                      //         filter: filter,
+                      //         keyword: keyword,
+                      //         searchList: allProjects
+                      //             .where((e) =>
+                      //                 keyword.isNotEmpty &&
+                      //                 e.title
+                      //                     .toLowerCase()
+                      //                     .contains(keyword.toLowerCase()) &&
+                      //                 applyFilter(filter, e))
+                      //             .toList(),
+                      //         onSheetDismissed: () {
+                      //           setState(() {
+                      //             NavbarNotifier2.hideBottomNavBar = false;
+                      //             yOffset = MediaQuery.of(context).size.height;
+                      //           });
+                      //           final FocusScopeNode currentScope =
+                      //               FocusScope.of(context);
+                      //           if (!currentScope.hasPrimaryFocus &&
+                      //               currentScope.hasFocus) {
+                      //             FocusManager.instance.primaryFocus?.unfocus();
+                      //           }
+                      //           NavbarNotifier2.popRoute(
+                      //               NavbarNotifier2.currentIndex);
+                      //           return true;
+                      //         },
+                      //         onFilterTap: () async {
+                      //           // await showFilterBottomSheet(context).then((value) {
+                      //           //   if (value != null) {
+                      //           //     setState(() {
+                      //           //       filter = value;
+                      //           //     });
+                      //           //     // NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+                      //           //   }
+                      //           // });
+                      //         },
+                      //       );
+                      //     }).then((value) {
+                      //   setState(() {
+                      //     NavbarNotifier2.hideBottomNavBar = false;
+                      //     yOffset = MediaQuery.of(context).size.height;
+                      //   });
+                      //   FocusManager.instance.primaryFocus?.unfocus();
+                      // });
                     },
                     // initialText:
                     // readOnly:
@@ -643,11 +692,11 @@ class _ProjectTabState extends State<ProjectTab>
                 ),
                 IconButton(
                     onPressed: () async {
-                      if (yOffset == MediaQuery.of(context).size.height) {
-                          NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {}
+                      setState(() {
+                        NavbarNotifier2.hideBottomNavBar = true;
+                        yOffset =
+                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                      });
                       await showFilterBottomSheet(context).then((value) {
                         NavbarNotifier2.hideBottomNavBar = false;
                         if (value != null) {
@@ -659,34 +708,22 @@ class _ProjectTabState extends State<ProjectTab>
                       });
                     },
                     icon: Icon(Icons.filter_alt_outlined)),
-                    IconButton(
+                IconButton(
                     onPressed: () {
                       NavbarNotifier2.pushNamed(
                           Routes.favortieProject,
                           NavbarNotifier2.currentIndex,
                           FavoriteScreen(
                               projectList: allProjects
-                                  .where((element) => element.isFavorite!)
+                                  .where((element) => element.isFavorite)
                                   .toList(),
                               onFavoriteTap: (int i) {
                                 allProjects[i].isFavorite =
-                                    !allProjects[i].isFavorite!;
-                              }));
-                      NavbarNotifier2.pushNamed(
-                          Routes.favortieProject,
-                          NavbarNotifier2.currentIndex,
-                          FavoriteScreen(
-                              projectList: allProjects
-                                  .where((element) => element.isFavorite!)
-                                  .toList(),
-                              onFavoriteTap: (int i) {
-                                allProjects[i].isFavorite =
-                                    !allProjects[i].isFavorite!;
+                                    !allProjects[i].isFavorite;
                               }));
                     },
                     color: Theme.of(context).colorScheme.primary,
                     icon: const Icon(Icons.favorite_rounded)),
-                
               ],
             )),
         // Flexible(
@@ -708,7 +745,7 @@ class _ProjectTabState extends State<ProjectTab>
             list: allProjects,
             firstCallback: (i) {
               setState(() {
-                allProjects[i].isFavorite = !allProjects[i].isFavorite!;
+                allProjects[i].isFavorite = !allProjects[i].isFavorite;
               });
             },
           ),

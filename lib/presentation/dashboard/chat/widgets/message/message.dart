@@ -1,6 +1,5 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
-import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:visibility_detector/visibility_detector.dart';
@@ -15,6 +14,7 @@ import 'text_message.dart';
 /// Base widget for all message types in the chat. Renders bubbles around
 /// messages and status. Sets maximum width for a message for
 /// a nice look on larger screens.
+// ignore: must_be_immutable
 class Message extends StatefulWidget {
   /// Creates a particular message from any message type.
   Message({

@@ -283,7 +283,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
     super.initState();
     if (widget.projects != null) {
       workingProjects =
-          widget.projects!.where((element) => element.isWorking!).toList();
+          widget.projects!.where((element) => element.isWorking).toList();
     } else {
       workingProjects = List.empty(growable: true);
     }

@@ -202,9 +202,8 @@ Future<T?> _showCupertinoBottomSheet<T>(
                 onPressed: () {
                   if (cancelAction.onPressed != null) {
                     cancelAction.onPressed!(coxt);
-                  } else {
-                    Navigator.of(coxt).pop();
                   }
+                  Navigator.of(coxt).pop();
                 },
                 child: DefaultTextStyle(
                   style: defaultTextStyle.copyWith(color: Colors.lightBlue),
@@ -310,9 +309,9 @@ Future<T?> _showMaterialBottomSheet<T>(
                       onTap: () {
                         if (cancelAction.onPressed != null) {
                           cancelAction.onPressed!(coxt);
-                        } else {
-                          Navigator.of(coxt).pop();
                         }
+                          Navigator.of(coxt).pop();
+                        
                       },
                       child: Center(
                         child: Padding(

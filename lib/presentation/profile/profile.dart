@@ -10,7 +10,6 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
 

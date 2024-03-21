@@ -240,7 +240,7 @@ class Project extends ProjectBase {
       this.isWorking = false});
 
   getModifiedTimeCreated() {
-    return timeCreated?.difference(DateTime.now()).inDays.abs();
+    return timeCreated.difference(DateTime.now()).inDays.abs();
   }
 
   @override
@@ -258,7 +258,7 @@ class StudentProject extends Project {
   DateTime submittedTime;
 
   getModifiedSubmittedTime() {
-    return submittedTime?.difference(DateTime.now()).inDays.abs();
+    return submittedTime.difference(DateTime.now()).inDays.abs();
   }
 
   StudentProject({

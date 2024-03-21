@@ -16,10 +16,10 @@ class CompanyAccountWidget extends StatelessWidget {
         Text('company', style: Theme.of(context).textTheme.bodyText1);
     Icon profileIcon = const Icon(Icons.business);
 
-    IconButton expandButton = IconButton(
-      icon: const Icon(Icons.navigate_next),
-      onPressed: onPressedNext,
-    );
+    // IconButton expandButton = IconButton(
+    //   icon: const Icon(Icons.navigate_next),
+    //   onPressed: onPressedNext,
+    // );
 
     return Column(
       children: [

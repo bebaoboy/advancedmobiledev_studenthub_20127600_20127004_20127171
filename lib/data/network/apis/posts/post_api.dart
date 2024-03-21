@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';

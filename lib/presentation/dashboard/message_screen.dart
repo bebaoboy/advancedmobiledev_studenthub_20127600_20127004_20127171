@@ -1,8 +1,8 @@
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -10,12 +10,191 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+
+class ScheduleFilter {
+  String title;
+  DateTime endDate;
+  DateTime startDate;
+
+  ScheduleFilter(
+      {required this.endDate, required this.startDate, required this.title});
+
+  clear() {
+    endDate = DateTime.now();
+    startDate = DateTime.now();
+    title = "";
+  }
+
+  getDuration() {
+    return endDate.difference(startDate).inMinutes.toString();
+  }
+
+  @override
+  String toString() {
+    return ("\n${title.toString()}") +
+        ("\n${endDate.toString()}") +
+        ("\n ${startDate.toString()}");
+  }
+}
+
+class ScheduleBottomSheet extends StatefulWidget {
+  const ScheduleBottomSheet({required this.filter});
+  final ScheduleFilter filter;
+
+  @override
+  State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
+}
+
+class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
+  TextEditingController startDate = TextEditingController();
+  TextEditingController endDate = TextEditingController();
+  TextEditingController title = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    title.text = (widget.filter.title).toString();
+    startDate.text =
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.endDate))
+            .toString();
+    endDate.text =
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.startDate))
+            .toString();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScrollableSheet(
+      keyboardDismissBehavior: const SheetKeyboardDismissBehavior.onDragDown(
+        isContentScrollAware: true,
+      ),
+      child: Container(
+        decoration: ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+      ),clipBehavior: Clip.antiAlias,
+        child: SheetContentScaffold(
+            appBar: AppBar(
+              title: const Text("Filter by"),
+            ),
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: title,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        hintText: "None",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: "Title",
+                      ),
+                      onChanged: (value) {
+                        // widget.filter.endDate = int.tryParse(value) ?? 2;
+                      },
+                    ),
+                    const Divider(height: 32),
+                    TextField(
+                      controller: startDate,
+                      keyboardType: TextInputType.text,
+                      decoration: InputDecoration(
+                        hintText: "None",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: "Start",
+                      ),
+                      onChanged: (value) {
+                        // widget.filter.endDate = int.tryParse(value) ?? 2;
+                      },
+                    ),
+                    const Divider(height: 32),
+                    TextField(
+                      controller: endDate,
+                      decoration: InputDecoration(
+                        hintText: "None",
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: "End",
+                      ),
+                      onChanged: (value) {
+                        // widget.filter.startDate = int.tryParse(value) ?? 0;
+                      },
+                    ),
+                    const Divider(height: 32),
+                    Text(widget.filter.getDuration().toString()),
+                  ],
+                ),
+              ),
+            ),
+            bottomBar: StickyBottomBarVisibility(
+              child: BottomAppBar(
+                height: 70,
+                surfaceTintColor: Colors.white,
+                child: Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Flexible(
+                      //   fit: FlexFit.tight,
+                      //   child: TextButton(
+                      //     onPressed: () {
+                      //       widget.onSheetDismissed();
+                      //     },
+                      //     child: const Text('Cancel'),
+                      //   ),
+                      // ),
+                      // const SizedBox(width: 16),
+                      RoundedButtonWidget(
+                        buttonColor: Theme.of(context).colorScheme.primary,
+                        onPressed: () {
+                          widget.filter.clear();
+                        },
+                        buttonText: "Cancel",
+                      ),
+                      const SizedBox(width: 12),
+                      RoundedButtonWidget(
+                        buttonColor: Theme.of(context).colorScheme.primary,
+                        onPressed: () {
+                          Navigator.pop(context, widget.filter);
+                        },
+                        buttonText: "Send Invite",
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )),
+      ),
+    );
+  }
+}
 
 class MessageScreen extends StatefulWidget {
   const MessageScreen({super.key, required this.title});
@@ -30,10 +209,13 @@ class _MessageScreenState extends State<MessageScreen> {
   final _user = const types.User(
     id: '1',
   );
+  late ScheduleFilter filter;
 
   @override
   void initState() {
     super.initState();
+    filter = ScheduleFilter(
+        endDate: DateTime.now(), startDate: DateTime.now(), title: "");
     _loadMessages();
   }
 
@@ -221,10 +403,36 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
+  Future<ScheduleFilter?> showScheduleBottomSheet(BuildContext context,
+      {ScheduleFilter? flt}) async {
+    return await Navigator.push(
+      context,
+      ModalSheetRoute(
+        builder: (context) => ScheduleBottomSheet(
+          filter: flt ?? filter,
+        ),
+      ),
+    ).then((value) {
+      if (value != null) {
+        _addMessage(types.CustomMessage(
+            author: types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
+            id: const Uuid().v4(),
+            type: types.MessageType.custom,
+            createdAt: DateTime.now().millisecondsSinceEpoch));
+        print(filter);
+        return value;
+      }
+      print("cancel schedule");
+    });
+  }
+
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _buildAppBar(),
+      key: _scaffoldKey,
+      appBar: _buildAppBar(context),
       body: Chat(
         typingIndicatorOptions: TypingIndicatorOptions(typingUsers: [
           types.User(id: "123", firstName: "Lam", lastName: "Quan")
@@ -239,6 +447,16 @@ class _MessageScreenState extends State<MessageScreen> {
         customMessageBuilder: (p0, {required messageWidth}) {
           //print(p0.metadata!["type"]);
           return ScheduleMessage(
+              onMenuCallback: (scheduleFilter) async {
+                print(scheduleFilter);
+                await Future.delayed(Duration(microseconds: 500)).then((value) {
+                  showScheduleBottomSheet(_scaffoldKey.currentContext!, flt: scheduleFilter);
+                });
+              },
+              scheduleFilter: ScheduleFilter(
+                  endDate: DateTime.now(),
+                  startDate: DateTime.now(),
+                  title: "New Meeting"),
               message: ScheduleMessageType(
                   author: p0.author, id: p0.id, type: p0.type),
               messageWidth: messageWidth);
@@ -256,9 +474,15 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   // app bar methods:-----------------------------------------------------------
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
       title: widget.title,
+      openScheduleDialog: () async {
+        print("schedule dialog");
+        await Future.delayed(Duration(microseconds: 500)).then((value) {
+          showScheduleBottomSheet(_scaffoldKey.currentContext!);
+        });
+      },
     );
   }
 }
