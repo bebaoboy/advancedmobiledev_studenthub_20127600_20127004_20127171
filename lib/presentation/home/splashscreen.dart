@@ -15,7 +15,11 @@ class AnimatedWave extends StatelessWidget {
   final double speed;
   final double offset;
 
-  const AnimatedWave({super.key, required this.height, required this.speed, this.offset = 0.0});
+  const AnimatedWave(
+      {super.key,
+      required this.height,
+      required this.speed,
+      this.offset = 0.0});
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +99,7 @@ class AnimatedBackground extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                const Color.fromARGB(165, 114, 248, 128),
+                Color.fromARGB(164, 255, 255, 255),
                 Colors.blueAccent.shade100
               ])),
           child: child,
@@ -189,14 +193,14 @@ class _SplashScreenState extends State<SplashScreen>
             context,
             MaterialPageRoute2(
                 routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
-      // ignore: empty_catches
+        // ignore: empty_catches
       } catch (e) {}
     }
   }
 
   @override
   void dispose() {
-        _controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 

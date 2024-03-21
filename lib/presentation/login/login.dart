@@ -139,8 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24.0),
                   _buildUserIdField(),
                   _buildPasswordField(),
-                  // _buildForgotPasswordButton(),
-                  const SizedBox(height: 24.0),
+                  _buildForgotPasswordButton(),
                   _buildSignInButton(),
                 ],
               ),
@@ -224,9 +223,12 @@ class _LoginScreenState extends State<LoginScreen> {
           style: Theme.of(context)
               .textTheme
               .caption
-              ?.copyWith(color: Colors.orangeAccent),
+              ?.copyWith(color: Colors.orangeAccent, fontSize: 12),
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context)
+              ..push(MaterialPageRoute2(routeName: Routes.forgetPassword));
+        },
       ),
     );
   }
@@ -239,11 +241,11 @@ class _LoginScreenState extends State<LoginScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          loading = true;
           if (_formStore.canLogin) {
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
                 _userEmailController.text, _passwordController.text);
+                loading = true;
           } else {
             _showErrorMessage(AppLocalizations.of(context)
                 .translate('login_error_missing_fields'));

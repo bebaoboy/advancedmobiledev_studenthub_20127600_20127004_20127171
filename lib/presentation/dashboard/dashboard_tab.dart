@@ -254,10 +254,12 @@ void showBottomSheet(Project project) {
             child: const Text('Start working this project',
                 style: TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
+          print(project.title);
           myProjects
-              .where((element) => element.id == project.id)
-              .toSet()
-              .first
+              .firstWhere(
+                (element) => element.objectId == project.objectId,
+                orElse: () => myProjects[0],
+              )
               .isWorking = true;
         },
       ),
@@ -281,7 +283,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
     super.initState();
     if (widget.projects != null) {
       workingProjects =
-          widget.projects!.where((element) => element.isWorking!).toList();
+          widget.projects!.where((element) => element.isWorking).toList();
     } else {
       workingProjects = List.empty(growable: true);
     }

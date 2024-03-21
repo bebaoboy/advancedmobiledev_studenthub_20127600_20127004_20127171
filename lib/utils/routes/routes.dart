@@ -1,5 +1,6 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
+import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
@@ -7,6 +8,10 @@ import 'package:boilerplate/presentation/dashboard/project_post/project_post.dar
 import 'package:boilerplate/presentation/dashboard/submit_project_proposal/submit_project_proposal.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
+import 'package:boilerplate/presentation/login/forget_password.dart';
+import 'package:boilerplate/presentation/login/forget_password_change_password.dart';
+import 'package:boilerplate/presentation/login/forget_password_done.dart';
+import 'package:boilerplate/presentation/login/forget_password_sent.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
@@ -78,17 +83,17 @@ class Routes {
   };
 
   static final routes = <String, WidgetBuilder>{
-    for (var entry in _route.entries)
-      entry.key: (_) {
-        if (entry.key == projectDetails) {
-          // If route is projectDetails, return ProjectDetailsPage with arguments
-          final Project project =
-              ModalRoute.of(_)?.settings.arguments as Project;
-          return ProjectDetailsPage(project: project);
-        } else {
-          return entry.value;
-        }
-      }
+    // for (var entry in _route.entries)
+    //   entry.key: (_) {
+    //     if (entry.key == projectDetails) {
+    //       // If route is projectDetails, return ProjectDetailsPage with arguments
+    //       final Project project =
+    //           ModalRoute.of(_)?.settings.arguments as Project;
+    //       return ProjectDetailsPage(project: project);
+    //     } else {
+    //       return entry.value;
+    //     }
+    //   }
   };
 }
 
@@ -109,6 +114,9 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.projectDetailsStudent) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       return ProjectDetailsStudentScreen(project: arguments as Project);
+    } else if (name == Routes.message) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return MessageScreen(title: arguments as String);
     } else {
       return Routes._route[name] ?? const HomeScreen();
     }

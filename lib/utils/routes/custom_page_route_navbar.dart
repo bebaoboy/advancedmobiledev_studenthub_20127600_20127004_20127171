@@ -1,6 +1,4 @@
-import 'dart:math';
 
-import 'package:animations/animations.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
@@ -133,10 +131,10 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
     );
 
-    final foregroundColor =
-        defaultDecoration.backgroundColor!.computeLuminance() > 0.5
-            ? Colors.black
-            : Colors.white;
+    // final foregroundColor =
+    //     defaultDecoration.backgroundColor!.computeLuminance() > 0.5
+    //         ? Colors.black
+    //         : Colors.white;
 
     NavbarBase buildNavBar() {
       switch (widget.navbarType) {
@@ -720,7 +718,7 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
     required this.settings,
   }) : super(
           settings: settings,
-          transitionDuration: const Duration(milliseconds: 400),
+          transitionDuration: const Duration(milliseconds: 600),
           pageBuilder: (context, animation, secondaryAnimation) => route,
         );
 
@@ -731,21 +729,18 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
       context,
       animation,
       secondaryAnimation,
-      // SlideTransition(
-      //   position: Tween<Offset>(
-      //     begin: const Offset(1.0, 0.0),
-      //     end: Offset.zero,
-      //   ).animate(animation),
-      //   child: child,
-      // )
+      ScaleTransition(
+      scale: animation.drive(Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease))),
+      child: FadeTransition(opacity: animation, child: child))
       // ScaleTransition(scale: animation, child: child,),
-      SharedAxisTransition(
-        fillColor: Theme.of(context).cardColor,
-        animation: animation,
-        secondaryAnimation: secondaryAnimation,
-        transitionType: SharedAxisTransitionType.scaled,
-        child: child,
-      ),
+      // SharedAxisTransition(
+      //   // TODO:
+      //   fillColor: Colors.transparent.withOpacity(0),
+      //   animation: animation,
+      //   secondaryAnimation: secondaryAnimation,
+      //   transitionType: SharedAxisTransitionType.scaled,
+      //   child: child,
+      // ),
     );
   }
 }

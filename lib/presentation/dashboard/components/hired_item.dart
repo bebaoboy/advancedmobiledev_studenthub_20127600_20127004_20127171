@@ -1,7 +1,6 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class HiredItem extends StatefulWidget {
   final Student hired;
@@ -29,10 +28,10 @@ class _HiredItemState extends State<HiredItem> {
 
   @override
   Widget build(BuildContext context) {
-    var buttonHireText = 'Hire';
-    if (isPending) {
-      buttonHireText = 'Sent hired offer';
-    }
+    // var buttonHireText = 'Hire';
+    // if (isPending) {
+    //   buttonHireText = 'Sent hired offer';
+    // }
 
     return Padding(
       padding: const EdgeInsets.symmetric(

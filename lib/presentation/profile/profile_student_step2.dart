@@ -90,7 +90,7 @@ class SearchDropdown extends StatelessWidget {
   }
 }
 
-const mockSkillsets = <Skill>[
+var mockSkillsets = <Skill>[
   Skill('JavaScript', "Fake description", ''),
   Skill('iOS Development', "Fake description", ''),
   Skill('C', "Fake description", ''),
@@ -547,7 +547,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                     !_projects[index].readOnly,
                                                 readOnly: true,
                                                 initialValue:
-                                                    "${DateFormat("yyyy/MM").format(_projects[index].startDate!)} - ${DateFormat("yyyy/MM").format(_projects[index].endDate!)} (${_projects[index].startDate!.compareTo(_projects[index].endDate!) < 0 ? (_projects[index].endDate!.difference(_projects[index].startDate!).inDays / 30.0).round() : 0} months)",
+                                                    "${DateFormat("yyyy/MM").format(_projects[index].startDate)} - ${DateFormat("yyyy/MM").format(_projects[index].endDate)} (${_projects[index].startDate.compareTo(_projects[index].endDate) < 0 ? (_projects[index].endDate.difference(_projects[index].startDate).inDays / 30.0).round() : 0} months)",
                                                 fontSize:
                                                     _projects[index].readOnly
                                                         ? 10
@@ -662,7 +662,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   initialValue:
                                                       DateFormat("yyyy/MM")
                                                           .format(_projects[index]
-                                                              .startDate!),
+                                                              .startDate),
                                                   fontSize:
                                                       _projects[index].readOnly
                                                           ? 10
@@ -770,7 +770,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   initialValue:
                                                       DateFormat("yyyy/MM")
                                                           .format(_projects[index]
-                                                              .endDate!),
+                                                              .endDate),
                                                   fontSize:
                                                       _projects[index].readOnly
                                                           ? 10

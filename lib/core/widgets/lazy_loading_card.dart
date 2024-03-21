@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -43,15 +44,15 @@ class ExampleLoadingAnimationProjectList extends StatefulWidget {
 class _ExampleLoadingAnimationProjectListState
     extends State<ExampleLoadingAnimationProjectList> {
   bool _isLoading = true;
+  late List<Timer?> timer;
 
   void _toggleLoading() async {
     print("done animation shimmering");
     for (int i = 0; i < widget.list.length; i++) {
       bool b = widget.list[i].isLoading;
       // print(i.toString() + ": " + b.toString());
-      Future.delayed(
-              Duration(milliseconds: b ? Random().nextInt(30) + 8 : 0) * 100)
-          .then((value) {
+      timer[i] = Timer(
+          Duration(milliseconds: b ? Random().nextInt(30) + 8 : 0) * 100, () {
         try {
           setState(() {
             widget.list[i].isLoading = false;
@@ -64,8 +65,17 @@ class _ExampleLoadingAnimationProjectListState
   }
 
   @override
+  void dispose() {
+    timer.forEach((element) {
+      if (element != null) element.cancel();
+    });
+    super.dispose();
+  }
+
+  @override
   void initState() {
     super.initState();
+    timer = List.filled(widget.list.length, null, growable: true);
     _toggleLoading();
   }
 
