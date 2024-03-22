@@ -1,3 +1,4 @@
+import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
@@ -377,19 +378,54 @@ class Message extends NotifiedObject {
   });
 }
 
+@JsonSerializable()
 class InterviewSchedule extends MyObject {
   String title;
-  List<UserObject> participants = List.empty(growable: true);
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
+  List<UserObject>? participants = List.empty(growable: true);
+  DateTime startDate = DateTime.now();
+  DateTime endDate = DateTime.now();
   bool isCancel = false;
 
   InterviewSchedule(
       { // super.objectId = "",
 
       required this.title,
-      required this.participants,
-      required this.startTime,
-      required this.endTime,
+      this.participants,
+      required this.startDate,
+      required this.endDate,
       this.isCancel = false});
+
+  clear() {
+    endDate = DateTime.now();
+    startDate = DateTime.now();
+    title = "";
+  }
+
+  getDuration() {
+    return endDate.difference(startDate).inMinutes.toString() + " minutes";
+  }
+
+  @override
+  String toString() {
+    return ("\n${title.toString()}") +
+        (",${endDate.toString()}") +
+        (", ${startDate.toString()}, ${isCancel}");
+  }
+
+  InterviewSchedule.fromJson(Map<String, dynamic> json)
+      : title = (json['title'] ?? "Missing Title") as String,
+        endDate = json['endDate'] == null
+            ? DateTime.now().add(Duration(hours: 1, minutes: 1))
+            : json['endDate'] as DateTime,
+        startDate = json["startDate"] == null
+            ? DateTime.now()
+            : json["startDate"] as DateTime,
+        isCancel = json["isCancel"] ?? false;
+
+  Map<String, dynamic> toJson() => {
+        "title": title,
+        "startDate": startDate,
+        "endDate": endDate,
+        "isCancel": isCancel,
+      };
 }

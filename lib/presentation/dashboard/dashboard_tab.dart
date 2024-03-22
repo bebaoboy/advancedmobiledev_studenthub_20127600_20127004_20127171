@@ -169,7 +169,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
         ),
         Padding(
           padding:
-              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55),
+              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55,),
           child: TabBarView(
               controller: widget.tabController,
               physics: const BouncingScrollPhysics(),

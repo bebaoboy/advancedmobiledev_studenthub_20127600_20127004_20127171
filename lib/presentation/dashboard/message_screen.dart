@@ -1,8 +1,14 @@
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:boilerplate/presentation/dashboard/project_tab.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -11,42 +17,18 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:json_annotation/json_annotation.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
-
-class ScheduleFilter {
-  String title;
-  DateTime endDate;
-  DateTime startDate;
-
-  ScheduleFilter(
-      {required this.endDate, required this.startDate, required this.title});
-
-  clear() {
-    endDate = DateTime.now();
-    startDate = DateTime.now();
-    title = "";
-  }
-
-  getDuration() {
-    return endDate.difference(startDate).inMinutes.toString();
-  }
-
-  @override
-  String toString() {
-    return ("\n${title.toString()}") +
-        ("\n${endDate.toString()}") +
-        ("\n ${startDate.toString()}");
-  }
-}
+import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({required this.filter});
-  final ScheduleFilter filter;
+  final InterviewSchedule filter;
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
@@ -62,10 +44,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
     super.initState();
     title.text = (widget.filter.title).toString();
     startDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.endDate))
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.startDate))
             .toString();
     endDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.startDate))
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.endDate))
             .toString();
   }
 
@@ -76,11 +58,12 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
         isContentScrollAware: true,
       ),
       child: Container(
-        decoration: ShapeDecoration(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(16)),
+        decoration: const ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
+          ),
         ),
-      ),clipBehavior: Clip.antiAlias,
+        clipBehavior: Clip.antiAlias,
         child: SheetContentScaffold(
             appBar: AppBar(
               title: const Text("Filter by"),
@@ -91,10 +74,11 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    const SizedBox(height: 44,),
                     TextField(
                       controller: title,
                       keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "None",
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
@@ -106,45 +90,226 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         labelText: "Title",
                       ),
                       onChanged: (value) {
+                        widget.filter.title = value;
                         // widget.filter.endDate = int.tryParse(value) ?? 2;
                       },
                     ),
                     const Divider(height: 32),
-                    TextField(
-                      controller: startDate,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                        hintText: "None",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2)),
-                        labelText: "Start",
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: TextField(
+                              controller: startDate,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                hintText: "None",
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 2)),
+                                enabledBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 2)),
+                                labelText: AppLocalizations.of(context)
+                                    .translate('profile_project_start'),
+                              ),
+                              onChanged: (value) {
+                                // widget.filter.endDate = int.tryParse(value) ?? 2;
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TextFieldWidget(
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      initialDatePickerMode:
+                                          DatePickerMode.year,
+                                      context: context,
+                                      initialDate: widget.filter.startDate,
+                                      firstDate: widget.filter.startDate,
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate: widget.filter.startDate.add(Duration(days: 1)));
+
+                                  if (pickedDate != null) {
+                                    print(pickedDate);
+                                    setState(() {
+                                      widget.filter.startDate = pickedDate;
+                                      startDate.text = (DateFormat(
+                                                  "EEEE dd/MM/yyyy HH:MM")
+                                              .format(widget.filter.startDate))
+                                          .toString();
+                                    });
+                                  }
+                                },
+                                inputDecoration: const InputDecoration(
+                                  floatingLabelBehavior:
+                                      FloatingLabelBehavior.never,
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2)),
+                                ),
+                                isIcon: false,
+                                label: Text(
+                                  AppLocalizations.of(context)
+                                      .translate('profile_project_start'),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                                enabled: true,
+                                enableInteractiveSelection: false,
+                                canRequestFocus: false,
+                                readOnly: true,
+                                fontSize: 15,
+                                hint: "Tap",
+                                inputType: TextInputType.emailAddress,
+                                icon: null,
+                                textController: null,
+                                inputAction: TextInputAction.next,
+                                autoFocus: false,
+                                onChanged: (value) {
+                                  //_projects[index].proficiency = value;
+
+                                  // _formStore
+                                  //     .setUserId(_userEmailController.text);
+                                },
+                                onFieldSubmitted: (value) {
+                                  // FocusScope.of(context)
+                                  //     .requestFocus(_passwordFocusNode);
+                                },
+                                errorText: null
+                                // _formStore
+                                //             .formErrorStore.userEmail ==
+                                //         null
+                                //     ? null
+                                //     : AppLocalizations.of(context).translate(
+                                //         _formStore.formErrorStore.userEmail),
+                                ),
+                          ),
+                        ],
                       ),
-                      onChanged: (value) {
-                        // widget.filter.endDate = int.tryParse(value) ?? 2;
-                      },
                     ),
                     const Divider(height: 32),
-                    TextField(
-                      controller: endDate,
-                      decoration: InputDecoration(
-                        hintText: "None",
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2)),
-                        labelText: "End",
+                    Flexible(
+                      fit: FlexFit.loose,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            flex: 2,
+                            child: TextField(
+                              controller: endDate,
+                              keyboardType: TextInputType.text,
+                              decoration: InputDecoration(
+                                hintText: "None",
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.always,
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 2)),
+                                enabledBorder: const OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 2)),
+                                labelText: AppLocalizations.of(context)
+                                    .translate('profile_project_end'),
+                              ),
+                              onChanged: (value) {
+                                // widget.filter.endDate = int.tryParse(value) ?? 2;
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: TextFieldWidget(
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                      initialDatePickerMode:
+                                          DatePickerMode.year,
+                                      context: context,
+                                      initialDate: widget.filter.endDate,
+                                      firstDate:  widget.filter.endDate,
+                                      //DateTime.now() - not to allow to choose before today.
+                                      lastDate:  widget.filter.endDate.add(Duration(days: 1)));
+
+                                  if (pickedDate != null) {
+                                    print(pickedDate);
+                                    setState(() {
+                                      widget.filter.endDate = pickedDate;
+                                      endDate.text = (DateFormat(
+                                                  "EEEE dd/MM/yyyy HH:MM")
+                                              .format(widget.filter.endDate))
+                                          .toString();
+                                    });
+                                  }
+                                },
+                                floatingLabelBehavior:
+                                    FloatingLabelBehavior.never,
+                                inputDecoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2)),
+                                  enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 2)),
+                                ),
+                                label: Text(
+                                  AppLocalizations.of(context)
+                                      .translate('profile_project_end'),
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary),
+                                ),
+                                isIcon: false,
+                                enabled: true,
+                                enableInteractiveSelection: false,
+                                canRequestFocus: false,
+                                readOnly: true,
+                                fontSize: 15,
+                                inputType: TextInputType.emailAddress,
+                                icon: null,
+                                textController: null,
+                                inputAction: TextInputAction.next,
+                                autoFocus: false,
+                                onChanged: (value) {
+                                  //_projects[index].proficiency = value;
+
+                                  // _formStore
+                                  //     .setUserId(_userEmailController.text);
+                                },
+                                onFieldSubmitted: (value) {
+                                  // FocusScope.of(context)
+                                  //     .requestFocus(_passwordFocusNode);
+                                },
+                                errorText: null
+                                // _formStore
+                                //             .formErrorStore.userEmail ==
+                                //         null
+                                //     ? null
+                                //     : AppLocalizations.of(context).translate(
+                                //         _formStore.formErrorStore.userEmail),
+                                ),
+                          ),
+                        ],
                       ),
-                      onChanged: (value) {
-                        // widget.filter.startDate = int.tryParse(value) ?? 0;
-                      },
                     ),
                     const Divider(height: 32),
                     Text(widget.filter.getDuration().toString()),
@@ -209,12 +374,12 @@ class _MessageScreenState extends State<MessageScreen> {
   final _user = const types.User(
     id: '1',
   );
-  late ScheduleFilter filter;
+  late InterviewSchedule filter;
 
   @override
   void initState() {
     super.initState();
-    filter = ScheduleFilter(
+    filter = InterviewSchedule(
         endDate: DateTime.now(), startDate: DateTime.now(), title: "");
     _loadMessages();
   }
@@ -222,6 +387,20 @@ class _MessageScreenState extends State<MessageScreen> {
   void _addMessage(types.Message message) {
     setState(() {
       _messages.insert(0, message);
+      _sortMessages();
+    });
+  }
+
+  void _sortMessages() {
+    _messages.sort((a, b) {
+      if (a.createdAt == null)
+        return -1;
+      else if (b.createdAt == null) return 1;
+      return a.createdAt!.compareTo(b.createdAt!) == -1
+          ? 1
+          : a.createdAt!.compareTo(b.createdAt!) == 1
+              ? -1
+              : 0;
     });
   }
 
@@ -400,27 +579,56 @@ class _MessageScreenState extends State<MessageScreen> {
 
     setState(() {
       _messages = messages;
+      _sortMessages();
     });
   }
 
-  Future<ScheduleFilter?> showScheduleBottomSheet(BuildContext context,
-      {ScheduleFilter? flt}) async {
-    return await Navigator.push(
+  Future<InterviewSchedule?> showScheduleBottomSheet(BuildContext context,
+      {InterviewSchedule? flt, String? id}) async {
+    return await Navigator.push<InterviewSchedule>(
       context,
       ModalSheetRoute(
         builder: (context) => ScheduleBottomSheet(
-          filter: flt ?? filter,
+          filter: flt ??
+              InterviewSchedule(
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
+                  title: "Null meeting"),
         ),
       ),
     ).then((value) {
-      if (value != null) {
-        _addMessage(types.CustomMessage(
-            author: types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
-            id: const Uuid().v4(),
-            type: types.MessageType.custom,
-            createdAt: DateTime.now().millisecondsSinceEpoch));
-        print(filter);
-        return value;
+      if (flt == null) {
+        if (value != null) {
+          _addMessage(types.CustomMessage(
+              author:
+                  const types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
+              id: const Uuid().v4(),
+              type: types.MessageType.custom,
+              createdAt: DateTime.now().millisecondsSinceEpoch,
+              metadata: value.toJson()));
+          print(filter);
+          return value;
+        }
+      } else {
+        if (value != null) {
+          int i = _messages.indexWhere((element) => element.id == id);
+          if (i != -1) {
+            setState(() {
+              _messages[i] = types.CustomMessage(
+                  author: const types.User(
+                      id: "1", firstName: "Bao", lastName: "Doe,"),
+                  id: const Uuid().v4(),
+                  type: types.MessageType.custom,
+                  createdAt: DateTime.now().millisecondsSinceEpoch,
+                  metadata: {
+                    "title": value.title,
+                    "endDate": value.endDate,
+                    "startDate": value.startDate,
+                  });
+              _sortMessages();
+            });
+          }
+        }
       }
       print("cancel schedule");
     });
@@ -434,7 +642,7 @@ class _MessageScreenState extends State<MessageScreen> {
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Chat(
-        typingIndicatorOptions: TypingIndicatorOptions(typingUsers: [
+        typingIndicatorOptions: const TypingIndicatorOptions(typingUsers: [
           types.User(id: "123", firstName: "Lam", lastName: "Quan")
         ]),
         messages: _messages,
@@ -446,17 +654,72 @@ class _MessageScreenState extends State<MessageScreen> {
         showUserNames: true,
         customMessageBuilder: (p0, {required messageWidth}) {
           //print(p0.metadata!["type"]);
+          var t = InterviewSchedule.fromJson(p0.metadata!);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
-                print(scheduleFilter);
-                await Future.delayed(Duration(microseconds: 500)).then((value) {
-                  showScheduleBottomSheet(_scaffoldKey.currentContext!, flt: scheduleFilter);
-                });
+                showAdaptiveActionSheet(
+                  title: Text(
+                    "Interview Options",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  context: NavigationService.navigatorKey.currentContext!,
+                  isDismissible: true,
+                  barrierColor: Colors.black87,
+                  actions: <BottomSheetAction>[
+                    BottomSheetAction(
+                      title: Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text(
+                            'Re-schedule',
+                            style: TextStyle(fontWeight: FontWeight.normal),
+                          )),
+                      onPressed: (context) async {
+                        print(scheduleFilter);
+                        await Future.delayed(const Duration(microseconds: 500))
+                            .then((value) {
+                          showScheduleBottomSheet(_scaffoldKey.currentContext!,
+                              flt: scheduleFilter, id: p0.id);
+                        });
+                      },
+                    ),
+                    BottomSheetAction(
+                      title: Container(
+                          alignment: Alignment.topLeft,
+                          child: const Text('Cancel',
+                              style: TextStyle(fontWeight: FontWeight.w100))),
+                      onPressed: (context) {
+                        int i = _messages
+                            .indexWhere((element) => element.id == p0.id);
+                        if (i != -1) {
+                          setState(() {
+                            _messages[i] = types.CustomMessage(
+                                author: const types.User(
+                                    id: "1",
+                                    firstName: "Bao",
+                                    lastName: "Doe,"),
+                                id: const Uuid().v4(),
+                                type: types.MessageType.custom,
+                                createdAt:
+                                    DateTime.now().millisecondsSinceEpoch,
+                                metadata: {
+                                  ..._messages[i].metadata!,
+                                  "title": "Cancel",
+                                });
+                            _sortMessages();
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                );
               },
-              scheduleFilter: ScheduleFilter(
-                  endDate: DateTime.now(),
-                  startDate: DateTime.now(),
-                  title: "New Meeting"),
+              scheduleFilter: InterviewSchedule(
+                  endDate: t.endDate ??
+                      DateTime.now().add(const Duration(hours: 1, minutes: 1)),
+                  startDate: t.startDate ?? DateTime.now(),
+                  title: t.title ?? "New Meeting x"),
               message: ScheduleMessageType(
                   author: p0.author, id: p0.id, type: p0.type),
               messageWidth: messageWidth);
@@ -479,7 +742,7 @@ class _MessageScreenState extends State<MessageScreen> {
       title: widget.title,
       openScheduleDialog: () async {
         print("schedule dialog");
-        await Future.delayed(Duration(microseconds: 500)).then((value) {
+        await Future.delayed(const Duration(microseconds: 500)).then((value) {
           showScheduleBottomSheet(_scaffoldKey.currentContext!);
         });
       },

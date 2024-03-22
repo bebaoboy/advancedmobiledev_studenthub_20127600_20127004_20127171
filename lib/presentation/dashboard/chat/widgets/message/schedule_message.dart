@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:flutter/material.dart';
@@ -84,8 +85,8 @@ class ScheduleMessage extends StatefulWidget {
     required this.scheduleFilter,
   });
 
-  final Function(ScheduleFilter) onMenuCallback;
-  final ScheduleFilter scheduleFilter;
+  final Function(InterviewSchedule) onMenuCallback;
+  final InterviewSchedule scheduleFilter;
 
   /// See [Chat.imageHeaders].
   final Map<String, String>? imageHeaders;

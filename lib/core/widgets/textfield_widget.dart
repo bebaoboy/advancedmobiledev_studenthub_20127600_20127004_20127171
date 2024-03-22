@@ -72,7 +72,7 @@ class TextFieldWidget extends StatelessWidget {
         decoration: (inputDecoration ?? const InputDecoration()).copyWith(
           floatingLabelBehavior: initialValue == null ||
                   (initialValue != null && initialValue!.isEmpty)
-              ? FloatingLabelBehavior.always
+              ? FloatingLabelBehavior.never
               : floatingLabelBehavior,
           label: label,
           hintText: hint,
