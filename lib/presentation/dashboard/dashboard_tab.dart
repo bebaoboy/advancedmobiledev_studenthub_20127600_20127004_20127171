@@ -192,7 +192,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
 
 void showBottomSheet(Project project) {
   showAdaptiveActionSheet(
-    title: Text(
+    title: const Text(
       "Menu",
       style: TextStyle(
         fontWeight: FontWeight.bold,

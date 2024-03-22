@@ -110,8 +110,7 @@ dependencies:
   permission_handler: ^10.0.1
   device_info_plus: ^9.0.0
   package_info_plus: ^4.0.0
-
-
+  http:
 dev_dependencies:
   flutter_test:
     sdk: flutter

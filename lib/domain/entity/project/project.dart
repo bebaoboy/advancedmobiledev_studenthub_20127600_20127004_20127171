@@ -415,7 +415,7 @@ class InterviewSchedule extends MyObject {
   InterviewSchedule.fromJson(Map<String, dynamic> json)
       : title = (json['title'] ?? "Missing Title") as String,
         endDate = json['endDate'] == null
-            ? DateTime.now().add(Duration(hours: 1, minutes: 1))
+            ? DateTime.now().add(const Duration(hours: 1, minutes: 1))
             : json['endDate'] as DateTime,
         startDate = json["startDate"] == null
             ? DateTime.now()

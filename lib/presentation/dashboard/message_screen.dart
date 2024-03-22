@@ -137,7 +137,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                       initialDate: widget.filter.startDate,
                                       firstDate: widget.filter.startDate,
                                       //DateTime.now() - not to allow to choose before today.
-                                      lastDate: widget.filter.startDate.add(Duration(days: 1)));
+                                      lastDate: widget.filter.startDate.add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     print(pickedDate);
@@ -246,7 +246,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                       initialDate: widget.filter.endDate,
                                       firstDate:  widget.filter.endDate,
                                       //DateTime.now() - not to allow to choose before today.
-                                      lastDate:  widget.filter.endDate.add(Duration(days: 1)));
+                                      lastDate:  widget.filter.endDate.add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     print(pickedDate);
@@ -658,7 +658,7 @@ class _MessageScreenState extends State<MessageScreen> {
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
                 showAdaptiveActionSheet(
-                  title: Text(
+                  title: const Text(
                     "Interview Options",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,

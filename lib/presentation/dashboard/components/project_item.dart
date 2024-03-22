@@ -73,7 +73,7 @@ class _ProjectItemState extends State<ProjectItem> {
       }
 
       return Container(
-        constraints: BoxConstraints(maxHeight: 230),
+        constraints: const BoxConstraints(maxHeight: 230),
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(color: Colors.black, width: 1.0),

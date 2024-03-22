@@ -359,7 +359,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(title.isEmpty ? "Demo Project" : title, style: TextStyle(fontWeight: FontWeight.w700),),
+              child: Text(title.isEmpty ? "Demo Project" : title, style: const TextStyle(fontWeight: FontWeight.w700),),
             ),
             const SizedBox(
               height: 20,
@@ -368,7 +368,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             Align(
               alignment: Alignment.topLeft,
               child: Container(
-                constraints: BoxConstraints(maxHeight: 400),
+                constraints: const BoxConstraints(maxHeight: 400),
                 child: SingleChildScrollView(
                   child: Text(description.isEmpty
                       ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
@@ -385,8 +385,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Row(
               children: <Widget>[
-                Icon(Icons.alarm, size: 30,),
-                SizedBox(
+                const Icon(Icons.alarm, size: 30,),
+                const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
                 Text(
@@ -398,8 +398,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Row(
               children: <Widget>[
-                Icon(Icons.people, size: 30,),
-                SizedBox(
+                const Icon(Icons.people, size: 30,),
+                const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
                 Text(

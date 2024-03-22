@@ -88,7 +88,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           // Routes.project_post: getRoute(Routes.project_post),
         },
         2: {
-          '/': MessageTab(),
+          '/': const MessageTab(),
           // ProfileEdit.route: ProfileEdit(),
         },
         3: {

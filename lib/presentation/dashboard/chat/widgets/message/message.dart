@@ -451,7 +451,7 @@ class _MessageState extends State<Message> {
                   height: dateVisibility ? 40 : 0,
                   child: Text(
                     dateString,
-                    style: TextStyle(fontSize: 12),
+                    style: const TextStyle(fontSize: 12),
                   ),
                 )
               ],

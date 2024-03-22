@@ -86,7 +86,7 @@ class _ExampleLoadingAnimationProjectListState
         linearGradient: _shimmerGradient,
         child: Scrollbar(
           child: ListView(
-            physics: ClampingScrollPhysics(),
+            physics: const ClampingScrollPhysics(),
             children: [
               // _buildTopRowList(),
               const SizedBox(height: 16),
@@ -128,7 +128,7 @@ class _ExampleLoadingAnimationProjectListState
   Widget _buildList() {
     return Container(
       width: 100,
-      padding: EdgeInsets.only(bottom: 60),
+      padding: const EdgeInsets.only(bottom: 60),
       height: widget.height - 80,
       child: ListView.builder(
         scrollDirection: Axis.vertical,
@@ -289,7 +289,7 @@ class _LazyLoadingAnimationProjectListState
               // ),
 
               Container(
-            padding: EdgeInsets.only(bottom: 60),
+            padding: const EdgeInsets.only(bottom: 60),
             child: EnhancedPaginatedView<Project>(
               shouldDeduplicate: false,
               listOfData: initList,
@@ -421,7 +421,7 @@ class _LazyLoadingAnimationProjectListState
   Widget _buildList() {
     return Container(
       width: 100,
-      padding: EdgeInsets.only(bottom: 60),
+      padding: const EdgeInsets.only(bottom: 60),
       height: widget.itemHeight - 80,
       child: ListView.builder(
         scrollDirection: Axis.vertical,
@@ -588,7 +588,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
     if (!widget.isLoading) {
       return AnimatedOpacity(
         opacity: opacity,
-        duration: Duration(seconds: 1),
+        duration: const Duration(seconds: 1),
         child: widget.child,
       );
     }
@@ -608,7 +608,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
         descendant: context.findRenderObject() as RenderBox,
       );
     } catch (e) {
-      offsetWithinShimmer = Offset(0, 0);
+      offsetWithinShimmer = const Offset(0, 0);
     }
 
     return ShaderMask(

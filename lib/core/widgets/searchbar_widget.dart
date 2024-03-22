@@ -155,7 +155,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
     return Container(
       decoration: BoxDecoration(
         border: toggle == 1
-            ? Border(
+            ? const Border(
                 bottom: BorderSide(width: 0.5, color: Colors.grey),
               )
             : null,
@@ -256,9 +256,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                       ///suffixIcon is of type Icon
                       child: widget.suffixIcon ??
                           IconButton(
-                            padding: EdgeInsets.only(left: 20),
+                            padding: const EdgeInsets.only(left: 20),
                             alignment: Alignment.centerRight,
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.close_outlined,
                               size: 20.0,
                             ),

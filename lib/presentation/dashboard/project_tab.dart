@@ -184,7 +184,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     TextField(
                       controller: studentNeededController,
                       keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "None",
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
@@ -202,7 +202,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     const Divider(height: 32),
                     TextField(
                       controller: proposalLessThanController,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: "None",
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
@@ -303,7 +303,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
     // However, it differs in that its height reduces to fit the 'body' widget.
     final content = Container(
-      decoration: ShapeDecoration(
+      decoration: const ShapeDecoration(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -377,8 +377,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
               maxLines: 3,
               minFontSize: 12,
             )
-          : SizedBox(),
-      titleTextStyle: Theme.of(context).textTheme.titleSmall!.merge(TextStyle(
+          : const SizedBox(),
+      titleTextStyle: Theme.of(context).textTheme.titleSmall!.merge(const TextStyle(
             fontWeight: FontWeight.w700,
             color: Colors.black,
           )),
@@ -707,7 +707,7 @@ class _ProjectTabState extends State<ProjectTab>
                         }
                       });
                     },
-                    icon: Icon(Icons.filter_alt_outlined)),
+                    icon: const Icon(Icons.filter_alt_outlined)),
                 IconButton(
                     onPressed: () {
                       NavbarNotifier2.pushNamed(
@@ -739,7 +739,7 @@ class _ProjectTabState extends State<ProjectTab>
           height: 100,
         ),
         Container(
-          margin: EdgeInsets.only(top: 40),
+          margin: const EdgeInsets.only(top: 40),
           child: LazyLoadingAnimationProjectList(
             itemHeight: 230,
             list: allProjects,

@@ -556,7 +556,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   Widget _buildIndexedStackItem(int index, BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: AnimatedBuilder(
         key: ValueKey(keys[index]),
         animation: fadeAnimation[index],
@@ -692,7 +692,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             // }
                             // _handleFadeAnimation();
                             widget.pageController.animateToPage(x,
-                                duration: Duration(milliseconds: 500),
+                                duration: const Duration(milliseconds: 500),
                                 curve: Curves.ease);
                           }
                         },

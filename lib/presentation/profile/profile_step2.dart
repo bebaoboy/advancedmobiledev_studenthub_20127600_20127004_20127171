@@ -15,7 +15,6 @@ import 'store/form/profile_form_store.dart';
 
 enum CompanySize {
   single, // 1
-
 }
 
 class ProfileStep2Screen extends StatefulWidget {
@@ -63,10 +62,13 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(onPressed: () => {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false)
-      }, icon: const Icon(Icons.person_rounded))
+      IconButton(
+          onPressed: () => {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute2(routeName: Routes.login),
+                    (Route<dynamic> route) => false)
+              },
+          icon: const Icon(Icons.person_rounded))
     ];
   }
 
@@ -245,11 +247,9 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
             const SizedBox(
               height: 30,
             ),
-            
             const SizedBox(
               height: 10,
             ),
-            
             _buildCompanyNameField(context),
             const SizedBox(
               height: 15,
@@ -262,8 +262,8 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
             const SizedBox(
               height: 25,
             ),
-                        _buildCompanySizeSelection(context),
-                        const SizedBox(
+            _buildCompanySizeSelection(context),
+            const SizedBox(
               height: 30,
             ),
             Container(
@@ -272,14 +272,16 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MaterialButton(
-                    onPressed: () => navigate(context),
+                    onPressed: () {},
                     // color: Colors.orange,
                     child: Text(
                       AppLocalizations.of(context).translate('profile_edit'),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
-                  const SizedBox(width: 15,),
+                  const SizedBox(
+                    width: 15,
+                  ),
                   MaterialButton(
                     onPressed: () => navigate(context),
                     // color: Colors.orange,
@@ -302,8 +304,9 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
 
   Widget navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
+      Navigator.of(context).pop();
     });
 
     return Container();

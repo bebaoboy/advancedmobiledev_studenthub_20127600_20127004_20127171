@@ -23,7 +23,7 @@ class _OpenContainerWrapper extends StatelessWidget {
     final theme = Theme.of(context);
     return OpenContainer(
       useRootNavigator: true,
-      transitionDuration: Duration(milliseconds: 500),
+      transitionDuration: const Duration(milliseconds: 500),
       openBuilder: (context, closedContainer) {
         return ProjectDetailsPage(
           project: project,
@@ -72,7 +72,7 @@ class _DismissibleContainer extends StatelessWidget {
       alignment: alignment,
       color: backgroundColor,
       curve: standardEasing,
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       padding: padding,
       child: Material(
         color: Colors.transparent,
@@ -107,7 +107,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
     return _OpenContainerWrapper(
       project: widget.project,
       closedChild: Dismissible(
-        key: ObjectKey(""),
+        key: const ObjectKey(""),
         dismissThresholds: const {
           DismissDirection.startToEnd: 0.8,
           DismissDirection.endToStart: 0.4,

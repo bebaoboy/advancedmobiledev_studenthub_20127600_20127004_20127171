@@ -58,7 +58,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return MainAppBar();
+    return const MainAppBar();
   }
 
   // body methods:--------------------------------------------------------------

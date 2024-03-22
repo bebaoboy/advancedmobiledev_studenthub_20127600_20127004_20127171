@@ -25,7 +25,7 @@ class SelectOpponentsScreen extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               onPressed: () => _logOut(context),
-              icon: Icon(
+              icon: const Icon(
                 Icons.exit_to_app,
                 color: Colors.white,
               ),
@@ -46,17 +46,17 @@ class SelectOpponentsScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Logout"),
-          content: Text("Are you sure you want logout current user"),
+          title: const Text("Logout"),
+          content: const Text("Are you sure you want logout current user"),
           actions: <Widget>[
             TextButton(
-              child: Text("CANCEL"),
+              child: const Text("CANCEL"),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             TextButton(
-              child: Text("OK"),
+              child: const Text("OK"),
               onPressed: () async {
                 CallManager.instance.destroy();
                 CubeChatConnection.instance.destroy();
@@ -107,10 +107,10 @@ class _BodyLayoutState extends State<BodyLayout> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.only(top: 48, left: 48, right: 48, bottom: 12),
+        padding: const EdgeInsets.only(top: 48, left: 48, right: 48, bottom: 12),
         child: Column(
           children: [
-            Text(
+            const Text(
               "Select users to call:",
               style: TextStyle(fontSize: 22),
             ),
@@ -121,29 +121,29 @@ class _BodyLayoutState extends State<BodyLayout> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Padding(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   child: FloatingActionButton(
                     heroTag: "VideoCall",
-                    child: Icon(
-                      Icons.videocam,
-                      color: Colors.white,
-                    ),
                     backgroundColor: Colors.blue,
                     onPressed: () => CallManager.instance.startNewCall(
                         context, CallType.VIDEO_CALL, _selectedUsers),
+                    child: const Icon(
+                      Icons.videocam,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(12),
                   child: FloatingActionButton(
                     heroTag: "AudioCall",
-                    child: Icon(
-                      Icons.call,
-                      color: Colors.white,
-                    ),
                     backgroundColor: Colors.green,
                     onPressed: () => CallManager.instance.startNewCall(
                         context, CallType.AUDIO_CALL, _selectedUsers),
+                    child: const Icon(
+                      Icons.call,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ],

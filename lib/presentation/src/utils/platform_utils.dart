@@ -8,7 +8,7 @@ import 'package:universal_io/io.dart';
 
 Future<bool> initForegroundService() async {
   if (Platform.isAndroid) {
-    final androidConfig = FlutterBackgroundAndroidConfig(
+    final androidConfig = const FlutterBackgroundAndroidConfig(
       notificationTitle: 'P2P Calls sample',
       notificationText: 'Screen sharing is in progress',
       notificationImportance: AndroidNotificationImportance.Default,
@@ -59,8 +59,8 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
           builder: (BuildContext context) {
             return Expanded(
               child: AlertDialog(
-                title: Text('Permission required'),
-                content: Text(
+                title: const Text('Permission required'),
+                content: const Text(
                     'For accepting the calls in the background you should provide access to show System Alerts from the background. Would you like to do it now?'),
                 actions: [
                   TextButton(
@@ -71,7 +71,7 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
                         }
                       });
                     },
-                    child: Text(
+                    child: const Text(
                       'Allow',
                     ),
                   ),
@@ -79,7 +79,7 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
-                    child: Text(
+                    child: const Text(
                       'Later',
                     ),
                   ),

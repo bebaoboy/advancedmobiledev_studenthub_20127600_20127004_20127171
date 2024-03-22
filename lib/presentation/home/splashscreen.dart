@@ -99,7 +99,7 @@ class AnimatedBackground extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                Color.fromARGB(164, 255, 255, 255),
+                const Color.fromARGB(164, 255, 255, 255),
                 Colors.blueAccent.shade100
               ])),
           child: child,

@@ -36,7 +36,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   void showBottomSheet() {
     showAdaptiveActionSheet(
-      title: Text(
+      title: const Text(
         "Chat Options",
         style: TextStyle(
           fontWeight: FontWeight.bold,

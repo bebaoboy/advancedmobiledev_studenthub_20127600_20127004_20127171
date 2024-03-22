@@ -182,9 +182,9 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           Align(
               alignment: Alignment.centerLeft,
               child: Container(
-                margin: EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 child: Padding(
-                  padding: EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: 10,
                   ),
                   child: RotatedBox(
@@ -194,7 +194,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                           .where((event) => event.userId == opponentId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return LinearProgressIndicator(value: 0);
+                          return const LinearProgressIndicator(value: 0);
                         } else {
                           var micLevelForUser = snapshot.data!;
                           return LinearProgressIndicator(
@@ -208,18 +208,18 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           Align(
               alignment: Alignment.topCenter,
               child: Container(
-                margin: EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: 8),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
                   child: Container(
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     color: Colors.black26,
                     child: StreamBuilder<CubeVideoBitrateEvent>(
                       stream: _statsReportsManager.videoBitrateStream
                           .where((event) => event.userId == opponentId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return Text(
+                          return const Text(
                             '0 kbits/sec',
                             style: TextStyle(color: Colors.white),
                           );
@@ -227,7 +227,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                           var videoBitrateForUser = snapshot.data!;
                           return Text(
                             '${videoBitrateForUser.bitRate} kbits/sec',
-                            style: TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           );
                         }
                       },
@@ -318,14 +318,14 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(bottom: 24),
                         child: Text(
                           "Audio call",
                           style: TextStyle(fontSize: 28),
                         ),
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(bottom: 12),
                         child: Text(
                           "Members:",
@@ -335,7 +335,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                       ),
                       Text(
                         _callSession.opponentsIds.join(", "),
-                        style: TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ],
                   ),
@@ -445,7 +445,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
               child: Container(
                 width: itemWidth,
                 height: itemHeight,
-                padding: EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
                 child: Stack(
                   children: [
                     StreamBuilder<CubeMicLevelEvent>(
@@ -483,12 +483,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                       Align(
                           alignment: Alignment.topCenter,
                           child: Container(
-                            margin: EdgeInsets.only(top: 8),
+                            margin: const EdgeInsets.only(top: 8),
                             child: ClipRRect(
                               borderRadius:
-                                  BorderRadius.all(Radius.circular(12)),
+                                  const BorderRadius.all(Radius.circular(12)),
                               child: Container(
-                                padding: EdgeInsets.all(6),
+                                padding: const EdgeInsets.all(6),
                                 color: Colors.black26,
                                 child: StreamBuilder<CubeVideoBitrateEvent>(
                                   stream: _statsReportsManager
@@ -497,7 +497,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                           (event) => event.userId == entry.key),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
-                                      return Text(
+                                      return const Text(
                                         '0 kbits/sec',
                                         style: TextStyle(color: Colors.white),
                                       );
@@ -505,7 +505,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                       var videoBitrateForUser = snapshot.data!;
                                       return Text(
                                         '${videoBitrateForUser.bitRate} kbits/sec',
-                                        style: TextStyle(color: Colors.white),
+                                        style: const TextStyle(color: Colors.white),
                                       );
                                     }
                                   },
@@ -516,11 +516,11 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
-                        margin: EdgeInsets.only(bottom: 8),
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderRadius: const BorderRadius.all(Radius.circular(12)),
                           child: Container(
-                            padding: EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(6),
                             color: Colors.black26,
                             child: Text(
                               entry.key ==
@@ -532,7 +532,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                           .first
                                           .fullName ??
                                       'Unknown',
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -571,7 +571,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   child: RotatedBox(
                     quarterTurns: -1,
                     child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: 200),
+                      constraints: const BoxConstraints(maxWidth: 200),
                       child: LinearProgressIndicator(
                         value: !snapshot.hasData ? 0 : snapshot.data!.micLevel,
                       ),
@@ -593,6 +593,8 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
             child: FloatingActionButton(
               elevation: 0,
               heroTag: "ToggleScreenFit",
+              onPressed: () => _switchPrimaryVideoFit(),
+              backgroundColor: Colors.black38,
               child: Icon(
                 primaryVideoFit ==
                         RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
@@ -600,8 +602,6 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                     : Icons.zoom_out_map,
                 color: Colors.white,
               ),
-              onPressed: () => _switchPrimaryVideoFit(),
-              backgroundColor: Colors.black38,
             ),
           ),
         ),
@@ -612,16 +612,16 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
               margin:
                   EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10),
               child: ClipRRect(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
                 child: Container(
-                  padding: EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(6),
                   color: Colors.black26,
                   child: StreamBuilder<CubeVideoBitrateEvent>(
                     stream: _statsReportsManager.videoBitrateStream
                         .where((event) => event.userId == primaryRenderer!.key),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return Text(
+                        return const Text(
                           '0 kbits/sec',
                           style: TextStyle(color: Colors.white),
                         );
@@ -629,7 +629,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                         var videoBitrateForUser = snapshot.data!;
                         return Text(
                           '${videoBitrateForUser.bitRate} kbits/sec',
-                          style: TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         );
                       }
                     },
@@ -658,43 +658,43 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           left: MediaQuery.of(context).padding.left + 8,
           right: MediaQuery.of(context).padding.right + 8),
       child: ClipRRect(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(32),
             bottomRight: Radius.circular(32),
             topLeft: Radius.circular(32),
             topRight: Radius.circular(32)),
         child: Container(
-          padding: EdgeInsets.all(4),
+          padding: const EdgeInsets.all(4),
           color: Colors.black26,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(right: 4),
+                padding: const EdgeInsets.only(right: 4),
                 child: FloatingActionButton(
                   elevation: 0,
                   heroTag: "Mute",
+                  onPressed: () => _muteMic(),
+                  backgroundColor: Colors.black38,
                   child: Icon(
                     _isMicMute ? Icons.mic_off : Icons.mic,
                     color: _isMicMute ? Colors.grey : Colors.white,
                   ),
-                  onPressed: () => _muteMic(),
-                  backgroundColor: Colors.black38,
                 ),
               ),
               Visibility(
                 visible: _enableScreenSharing,
                 child: Padding(
-                  padding: EdgeInsets.only(right: 4),
+                  padding: const EdgeInsets.only(right: 4),
                   child: FloatingActionButton(
                     elevation: 0,
                     heroTag: "ToggleCamera",
+                    onPressed: () => _toggleCamera(),
+                    backgroundColor: Colors.black38,
                     child: Icon(
                       _isVideoEnabled() ? Icons.videocam : Icons.videocam_off,
                       color: _isVideoEnabled() ? Colors.white : Colors.grey,
                     ),
-                    onPressed: () => _toggleCamera(),
-                    backgroundColor: Colors.black38,
                   ),
                 ),
               ),
@@ -744,7 +744,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   SpeedDialChild(
                     elevation: 0,
                     visible: kIsWeb || WebRTC.platformIsDesktop,
-                    child: Icon(
+                    child: const Icon(
                       Icons.record_voice_over,
                       color: Colors.white,
                     ),
@@ -767,19 +767,19 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   ),
                 ],
               ),
-              Expanded(
-                child: SizedBox(),
+              const Expanded(
                 flex: 1,
+                child: SizedBox(),
               ),
               Padding(
-                padding: EdgeInsets.only(left: 0),
+                padding: const EdgeInsets.only(left: 0),
                 child: FloatingActionButton(
-                  child: Icon(
+                  backgroundColor: Colors.red,
+                  onPressed: () => _endCall(),
+                  child: const Icon(
                     Icons.call_end,
                     color: Colors.white,
                   ),
-                  backgroundColor: Colors.red,
-                  onPressed: () => _endCall(),
                 ),
               ),
             ],

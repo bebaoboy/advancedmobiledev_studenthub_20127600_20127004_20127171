@@ -83,7 +83,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
                         children: [
                           Text(
                             widget.project.title,
-                            style: TextStyle(fontWeight: FontWeight.w700),
+                            style: const TextStyle(fontWeight: FontWeight.w700),
                           ),
                           Text(submittedText),
                           Text(widget.project.description),
