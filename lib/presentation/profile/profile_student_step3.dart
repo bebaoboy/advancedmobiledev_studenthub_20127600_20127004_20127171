@@ -14,7 +14,6 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:file_previewer/file_previewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -168,12 +167,12 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           _cv = file;
                         });
-                        final image = await FilePreview.getThumbnail(
-                          result.files.single.path!,
-                        );
-                        setState(() {
-                          _cvImage = image;
-                        });
+                        // final image = await FilePreview.getThumbnail(
+                        //   result.files.single.path!,
+                        // );
+                        // setState(() {
+                        //   _cvImage = image;
+                        // });
                       } else {
                         // User canceled the picker
                       }
@@ -230,13 +229,13 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           _transcript = file;
                         });
-                        final image = await FilePreview.getThumbnail(
-                          result.files.single.path!,
-                        );
+                        // final image = await FilePreview.getThumbnail(
+                        //   result.files.single.path!,
+                        // );
 
-                        setState(() {
-                          _transcriptImage = image;
-                        });
+                        // setState(() {
+                        //   _transcriptImage = image;
+                        // });
                       } else {
                         // User canceled the picker
                       }

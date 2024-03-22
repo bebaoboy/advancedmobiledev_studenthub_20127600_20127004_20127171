@@ -2,6 +2,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
+import 'package:boilerplate/presentation/src/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:intl/intl.dart';
@@ -260,7 +261,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                     children: [
                       Text(
                         widget.scheduleFilter.title ?? "Untitled",
-                        style: const TextStyle(color: Colors.black, fontSize: 13),
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 13),
                         textWidthBasis: TextWidthBasis.longestLine,
                       ),
                       const SizedBox(
@@ -309,6 +311,9 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       borderColor: Theme.of(context).colorScheme.primary,
                       onPressed: () {
                         print("hey");
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LoginScreen(),
+                        ));
                       },
                     ),
                     IconButton(
