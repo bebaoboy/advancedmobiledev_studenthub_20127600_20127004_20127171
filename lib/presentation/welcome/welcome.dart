@@ -42,10 +42,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 height: 50,
                 child: RoundedButtonWidget(
                   onPressed: () {
-                    Navigator.of(context)
-                      ..pushAndRemoveUntil(
-                          MaterialPageRoute2(routeName: Routes.dashboard),
-                          (Route<dynamic> route) => false);
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute2(routeName: Routes.dashboard),
+                        (Route<dynamic> route) => false);
                   },
                   buttonText:
                       AppLocalizations.of(context).translate('Start_button'),

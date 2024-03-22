@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-import 'package:boilerplate/presentation/src/utils/configs.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:universal_io/io.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
 

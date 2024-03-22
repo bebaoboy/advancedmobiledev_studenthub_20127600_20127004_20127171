@@ -172,7 +172,7 @@ class _ForgetPasswordChangePasswordcreenState
                                 fontWeight: FontWeight.w600),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () {
-                                Navigator.of(context)..pop();
+                                Navigator.of(context).pop();
                               }),
                       ],
                     ),
@@ -304,9 +304,8 @@ class _ForgetPasswordChangePasswordcreenState
             await Future.delayed(const Duration(seconds: 1), () {
               print("LOADING = $loading");
               loading = false;
-              Navigator.of(context)
-                ..pushReplacement(
-                    MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
             });
             //   if (_formStore.canForgetPassword) {
             //     DeviceUtils.hideKeyboard(context);

@@ -14,31 +14,24 @@ class SelectOpponentsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => _onBackPressed(),
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text(
-            'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
-          ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () => _logOut(context),
-              icon: const Icon(
-                Icons.exit_to_app,
-                color: Colors.white,
-              ),
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text(
+          'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
         ),
-        body: BodyLayout(currentUser),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () => _logOut(context),
+            icon: const Icon(
+              Icons.exit_to_app,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
+      body: BodyLayout(currentUser),
     );
-  }
-
-  Future<bool> _onBackPressed() {
-    return Future.value(false);
   }
 
   _logOut(BuildContext context) {
@@ -107,7 +100,8 @@ class _BodyLayoutState extends State<BodyLayout> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: const EdgeInsets.only(top: 48, left: 48, right: 48, bottom: 12),
+        padding:
+            const EdgeInsets.only(top: 48, left: 48, right: 48, bottom: 12),
         child: Column(
           children: [
             const Text(
@@ -186,17 +180,6 @@ class _BodyLayoutState extends State<BodyLayout> {
   @override
   void initState() {
     super.initState();
-
-    initForegroundService();
-
     _selectedUsers = {};
-
-    checkSystemAlertWindowPermission(context);
-
-    requestNotificationsPermission();
-
-    CallManager.instance.init(context);
-
-    PushNotificationsManager.instance.init();
   }
 }

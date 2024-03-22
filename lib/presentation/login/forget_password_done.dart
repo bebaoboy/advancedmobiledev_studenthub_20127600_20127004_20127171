@@ -48,9 +48,9 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
     _passwordFocusNode = FocusNode();
     Future.delayed(const Duration(seconds: 5)).then((value) {
       // TODO: login
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.login),
+          (Route<dynamic> route) => false);
     });
   }
 
@@ -250,9 +250,9 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          Navigator.of(context)
-            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.login),
-                (Route<dynamic> route) => false);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute2(routeName: Routes.login),
+              (Route<dynamic> route) => false);
           //   if (_formStore.canForgetPasswordDone) {
           //     DeviceUtils.hideKeyboard(context);
           //     _userStore.login(
@@ -279,7 +279,7 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
           textColor: Colors.white,
           onPressed: () async {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.signUp));
+                .push(MaterialPageRoute2(routeName: Routes.signUp));
             // if (_formStore.canForgetPasswordDone) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -301,9 +301,9 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
 
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();

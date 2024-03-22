@@ -359,7 +359,10 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(title.isEmpty ? "Demo Project" : title, style: const TextStyle(fontWeight: FontWeight.w700),),
+              child: Text(
+                title.isEmpty ? "Demo Project" : title,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
             const SizedBox(
               height: 20,
@@ -385,7 +388,10 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Row(
               children: <Widget>[
-                const Icon(Icons.alarm, size: 30,),
+                const Icon(
+                  Icons.alarm,
+                  size: 30,
+                ),
                 const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
@@ -398,7 +404,10 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             ),
             Row(
               children: <Widget>[
-                const Icon(Icons.people, size: 30,),
+                const Icon(
+                  Icons.people,
+                  size: 30,
+                ),
                 const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
@@ -418,22 +427,20 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                       height: 50,
                       child: FloatingActionButton(
                         onPressed: () {
-                          Navigator.of(context)
-                            ..pop<Project>(Project(
-                              title: title,
-                              description: description,
-                              scope: scope,
-                              numberOfStudents: int.tryParse(number) ?? 2,
-                              timeCreated: DateTime.now(),
-                            ));
-                          Navigator.of(context)
-                            ..pop<Project>(Project(
-                              title: title,
-                              description: description,
-                              scope: scope,
-                              numberOfStudents: int.tryParse(number) ?? 2,
-                              timeCreated: DateTime.now(),
-                            ));
+                          Navigator.of(context).pop<Project>(Project(
+                            title: title,
+                            description: description,
+                            scope: scope,
+                            numberOfStudents: int.tryParse(number) ?? 2,
+                            timeCreated: DateTime.now(),
+                          ));
+                          Navigator.of(context).pop<Project>(Project(
+                            title: title,
+                            description: description,
+                            scope: scope,
+                            numberOfStudents: int.tryParse(number) ?? 2,
+                            timeCreated: DateTime.now(),
+                          ));
                         },
                         child: Text(
                           AppLocalizations.of(context).translate('post_job'),

@@ -87,9 +87,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        loading = false;
-                      });
+                      // setState(() {
+                      //   loading = false;
+                      // });
                     },
                     child: const LoadingScreen()),
               );
@@ -127,7 +127,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   AutoSizeText(
                     AppLocalizations.of(context).translate('login_main_text'),
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -227,7 +228,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         onPressed: () {
           Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.forgetPassword));
+              .push(MaterialPageRoute2(routeName: Routes.forgetPassword));
         },
       ),
     );
@@ -245,7 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
                 _userEmailController.text, _passwordController.text);
-                loading = true;
+            loading = true;
           } else {
             _showErrorMessage(AppLocalizations.of(context)
                 .translate('login_error_missing_fields'));
@@ -295,7 +296,7 @@ class _LoginScreenState extends State<LoginScreen> {
           textColor: Colors.white,
           onPressed: () async {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.signUp));
+                .push(MaterialPageRoute2(routeName: Routes.signUp));
             // if (_formStore.canLogin) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -311,17 +312,18 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
-
-    Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
+    if (loading) {
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setBool(Preferences.is_logged_in, true);
+      });
+      Future.delayed(const Duration(milliseconds: 10), () {
+        // print("LOADING = $loading");
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
-    });
-
+        loading = false;
+      });
+    }
     return Container();
   }
 

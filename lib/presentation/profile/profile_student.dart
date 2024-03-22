@@ -891,8 +891,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.profileStudentStep2));
+            Navigator.of(context).push(
+                MaterialPageRoute2(routeName: Routes.profileStudentStep2));
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -914,9 +914,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
 
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();

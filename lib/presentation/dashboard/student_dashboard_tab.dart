@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';

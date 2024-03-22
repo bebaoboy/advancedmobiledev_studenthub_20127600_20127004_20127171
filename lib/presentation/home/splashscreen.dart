@@ -2,13 +2,22 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
+import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:connectycube_sdk/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 class AnimatedWave extends StatelessWidget {
   final double height;
@@ -171,12 +180,55 @@ class _SplashScreenState extends State<SplashScreen>
         }
       });
     _playAnimation(context);
+    initCube(NavigationService.navigatorKey.currentContext);
+
     // Timer(
     //     Duration(seconds: 3),
     //     () => Navigator.pushReplacement(
     //         context,
     //         MaterialPageRoute2(
     //             child: _userStore.isLoggedIn ? HomeScreen() : LoginScreen())));
+  }
+
+  initCube(context) async {
+    CubeSessionManager.instance.isActiveSessionValid();
+
+    final UserStore _userStore = getIt<UserStore>();
+    var user = _userStore.user.type == UserType.student
+        ? utils.users[0]
+        : utils.users[1];
+    await createSession(user).then(
+      (value) async {
+        CubeSessionManager.instance.activeSession = value;
+        await CubeChatConnection.instance.login(user).then((cubeUser) {
+          SharedPrefs.saveNewUser(cubeUser);
+          log(cubeUser.toString(), "BEBAOBOY");
+          if (CubeChatConnection.instance.isAuthenticated() &&
+              CubeChatConnection.instance.currentUser != null)
+            log(
+                (CubeSessionManager.instance.activeSession!.user == null)
+                    .toString(),
+                "BEBAOBOY");
+
+          initForegroundService();
+
+          checkSystemAlertWindowPermission(context);
+
+          requestNotificationsPermission();
+
+          CallManager.instance.init(context);
+
+          PushNotificationsManager.instance.init();
+        }).catchError((exception) {
+          //_processLoginError(exception);
+          log(exception.toString(), "BEBAOBOY");
+        });
+        // _controller.stop();
+      },
+    ).catchError((exception) {
+      //_processLoginError(exception);
+      log(exception.toString(), "BEBAOBOY");
+    });
   }
 
   Future<Null> _playAnimation(BuildContext context) async {

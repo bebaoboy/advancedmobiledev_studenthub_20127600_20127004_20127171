@@ -3,11 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
-import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({

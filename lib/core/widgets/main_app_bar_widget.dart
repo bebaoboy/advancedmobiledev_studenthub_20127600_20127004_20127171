@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
@@ -195,13 +194,12 @@ class _MainAppBarState extends State<MainAppBar> {
 
   Widget _buildProfileButton() {
     return IconButton(
-          onPressed: () {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.setting));
-          },
-          icon: const Icon(Icons.account_circle, size: 25),
-        );
-      
+      onPressed: () {
+        Navigator.of(context)
+            .push(MaterialPageRoute2(routeName: Routes.setting));
+      },
+      icon: const Icon(Icons.account_circle, size: 25),
+    );
   }
 
   // darkCB() {
@@ -244,10 +242,9 @@ class _MainAppBarState extends State<MainAppBar> {
             onPressed: () {
               SharedPreferences.getInstance().then((preference) {
                 preference.setBool(Preferences.is_logged_in, false);
-                Navigator.of(context)
-                  ..pushAndRemoveUntil(
-                      MaterialPageRoute2(routeName: Routes.login),
-                      (Route<dynamic> route) => false);
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute2(routeName: Routes.login),
+                    (Route<dynamic> route) => false);
               });
             },
             icon: const Icon(

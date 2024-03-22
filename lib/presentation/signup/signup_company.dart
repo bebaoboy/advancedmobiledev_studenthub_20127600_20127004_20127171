@@ -31,7 +31,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
   final TextEditingController _userEmailController = TextEditingController();
   final TextEditingController _userFullnameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmController = TextEditingController();
+  final TextEditingController _passwordConfirmController =
+      TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -129,7 +130,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
               child: AutoSizeText(
                 AppLocalizations.of(context)
                     .translate('signup_company_main_text'),
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 minFontSize: 10,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -193,8 +195,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                                 : Colors.black),
                         children: <TextSpan>[
                           TextSpan(
-                              text: " ${AppLocalizations.of(context).translate(
-                                      'signup_company_student_prompt_action')}",
+                              text:
+                                  " ${AppLocalizations.of(context).translate('signup_company_student_prompt_action')}",
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
@@ -288,7 +290,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     );
   }
 
-    Widget _buildPasswordConfirmField() {
+  Widget _buildPasswordConfirmField() {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
@@ -308,7 +310,6 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
       },
     );
   }
-
 
   Widget _buildForgotPasswordButton() {
     return Align(
@@ -406,7 +407,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       // Navigator.of(context)
-      //   ..pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
+      //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
       //       (Route<dynamic> route) => false);
     });
 

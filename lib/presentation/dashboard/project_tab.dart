@@ -478,6 +478,7 @@ bool applyFilter(SearchFilter f, Project p) {
   return b;
 }
 
+// ignore: must_be_immutable
 class ProjectTab extends StatefulWidget {
   ProjectTab({super.key, this.isAlive = true});
   bool? isAlive;

@@ -162,9 +162,8 @@ class _ProjectDetailsStudentScreenState
                     ),
                   ),
                   onPressed: () {
-                    Navigator.of(context)
-                      ..pushNamed(Routes.submitProposal,
-                          arguments: widget.project);
+                    Navigator.of(context).pushNamed(Routes.submitProposal,
+                        arguments: widget.project);
                   },
                   child: Text(
                     'Apply Now',

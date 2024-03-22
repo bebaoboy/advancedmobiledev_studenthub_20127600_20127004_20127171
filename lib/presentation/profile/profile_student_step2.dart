@@ -764,8 +764,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   enableInteractiveSelection:
                                                       !_projects[index]
                                                           .readOnly,
-                                                  canRequestFocus: !_projects[index]
-                                                      .readOnly,
+                                                  canRequestFocus:
+                                                      !_projects[index]
+                                                          .readOnly,
                                                   readOnly: true,
                                                   initialValue:
                                                       DateFormat("yyyy/MM")
@@ -782,8 +783,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                       .emailAddress,
                                                   icon: null,
                                                   textController: null,
-                                                  inputAction:
-                                                      TextInputAction.next,
+                                                  inputAction: TextInputAction.next,
                                                   autoFocus: false,
                                                   onChanged: (value) {
                                                     _projects[index].endDate =
@@ -1214,8 +1214,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.profileStudentStep3));
+            Navigator.of(context).push(
+                MaterialPageRoute2(routeName: Routes.profileStudentStep3));
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -1237,9 +1237,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
 
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();

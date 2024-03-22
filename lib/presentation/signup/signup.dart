@@ -222,7 +222,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const EmptyAppBar(),
             const SizedBox(height: 24.0),
             Center(
               child: AutoSizeText(
@@ -263,7 +262,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   fontWeight: FontWeight.w600),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.of(context)..pop();
+                                  Navigator.of(context).pop();
                                 }),
                         ],
                       ),
@@ -454,16 +453,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildSignUpButton() {
     return RoundedButtonWidget(
-      buttonText:
-          AppLocalizations.of(context).translate('signup_btn_sign_up'),
+      buttonText: AppLocalizations.of(context).translate('signup_btn_sign_up'),
       buttonColor: Theme.of(context).colorScheme.primary,
       textColor: Colors.white,
       onPressed: () async {
-        Navigator.of(context)
-          ..push(MaterialPageRoute2(
-              routeName: sampleData[0].isSelected
-                  ? Routes.signUpStudent
-                  : Routes.signUpCompany));
+        Navigator.of(context).push(MaterialPageRoute2(
+            routeName: sampleData[0].isSelected
+                ? Routes.signUpStudent
+                : Routes.signUpCompany));
         // if (_formStore.canSignUp) {
         //   DeviceUtils.hideKeyboard(context);
         //   _userStore.login(
@@ -482,9 +479,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();

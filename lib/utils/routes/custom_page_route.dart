@@ -38,14 +38,14 @@ class MaterialPageRoute2 extends PageRouteBuilder {
   MaterialPageRoute2({required this.routeName, this.arguments})
       : super(
             transitionDuration:
-                Duration(milliseconds: arguments != null ? 300 : 400),
+                Duration(milliseconds: arguments != null ? 300 : 500),
             pageBuilder: (context, animation, secondaryAnimation) =>
                 getRoute(routeName, context, arguments: arguments),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return
                   // SharedAxisTransition(
-                  //   fillColor: Theme.of(context).colorScheme.onBackground,
+                  //   fillColor: Theme.of(context).colorScheme.onBackground.withOpacity(0.01),
                   //   animation: animation,
                   //   secondaryAnimation: secondaryAnimation,
                   //   transitionType: SharedAxisTransitionType.scaled,
@@ -54,10 +54,10 @@ class MaterialPageRoute2 extends PageRouteBuilder {
                   ScaleTransition(
       scale: animation.drive(Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease))),
       child: FadeTransition(opacity: animation, child: child));
-              FadeTransition(
-                opacity: animation,
-                child: child,
-              );
+              // FadeTransition(
+              //   opacity: animation,
+              //   child: child,
+              // );
             });
 
   @override

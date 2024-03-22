@@ -86,7 +86,7 @@ class IncomingCallScreen extends StatelessWidget {
         break;
     }
 
-    return "Incoming $callType call";
+    return "Hello my cutie pie, this is an incoming  $callType call <3";
   }
 
   void _acceptCall(BuildContext context, P2PSession callSession) {

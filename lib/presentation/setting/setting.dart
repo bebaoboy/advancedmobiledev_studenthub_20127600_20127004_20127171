@@ -50,8 +50,14 @@ class _SettingScreenState extends State<SettingScreen> {
       Account(AccountType.student, 'Hai Pham Student 4', []),
       Account(AccountType.student, 'Hai Pham Student 5', [])
     ]),
-    Account(AccountType.company, 'Hai Pham 3',),
-    Account(AccountType.company, 'Hai Pham 4',),
+    Account(
+      AccountType.company,
+      'Hai Pham 3',
+    ),
+    Account(
+      AccountType.company,
+      'Hai Pham 4',
+    ),
   ];
 
   @override
@@ -107,7 +113,8 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget _buildAccountTree() {
     if (height == 0) calculate(accountList);
     return AnimatedContainer(
-      height: max(MediaQuery.of(context).size.height * 0.3, min(height, MediaQuery.of(context).size.height * 0.5)),
+      height: max(MediaQuery.of(context).size.height * 0.3,
+          min(height, MediaQuery.of(context).size.height * 0.5)),
       duration: const Duration(milliseconds: 550),
       curve: Curves.fastOutSlowIn,
       child: Container(
@@ -247,7 +254,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
       Navigator.of(context)
-        ..pushReplacement(MaterialPageRoute2(routeName: route));
+          .pushReplacement(MaterialPageRoute2(routeName: route));
     });
 
     return Container();

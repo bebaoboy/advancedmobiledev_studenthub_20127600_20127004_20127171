@@ -43,7 +43,8 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
               decoration: BoxDecoration(
                   border: Border.all(width: 1, color: Colors.black)),
               child: const TextField(
-                decoration: InputDecoration(contentPadding: EdgeInsets.all(8.0)),
+                decoration:
+                    InputDecoration(contentPadding: EdgeInsets.all(8.0)),
                 minLines: 6,
                 maxLines: 10,
                 textInputAction: TextInputAction.done,
@@ -56,7 +57,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
               children: [
                 MaterialButton(
                   onPressed: () {
-                    Navigator.of(context)..pop();
+                    Navigator.of(context).pop();
                   },
                   textColor: Colors.white,
                   color: Theme.of(context).primaryColor,

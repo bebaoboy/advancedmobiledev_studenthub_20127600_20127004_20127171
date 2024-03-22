@@ -13,7 +13,7 @@ import 'package:connectycube_sdk/connectycube_sdk.dart';
 
 import '../utils/consts.dart';
 import '../utils/pref_util.dart';
-import 'package:boilerplate/presentation/src/utils/configs.dart' as config;
+import 'package:boilerplate/presentation/video_call/utils/configs.dart' as config;
 
 
 class PushNotificationsManager {
@@ -65,8 +65,7 @@ class PushNotificationsManager {
     CreateSubscriptionParameters parameters = CreateSubscriptionParameters();
     parameters.pushToken = token;
 
-    parameters.environment =
-        kReleaseMode ? CubeEnvironment.PRODUCTION : CubeEnvironment.DEVELOPMENT;
+    parameters.environment =CubeEnvironment.DEVELOPMENT;
 
     if (Platform.isAndroid) {
       parameters.channel = NotificationsChannels.GCM;
@@ -165,8 +164,7 @@ Future<void> sendPushAboutRejectFromKilledState(
   // params.parameters[PARAM_IOS_VOIP] = 1;
 
   params.notificationType = NotificationType.PUSH;
-  params.environment =
-      kReleaseMode ? CubeEnvironment.PRODUCTION : CubeEnvironment.DEVELOPMENT;
+  params.environment =CubeEnvironment.DEVELOPMENT;
   params.usersIds = [callerId];
 
   return createEvent(params.getEventForRequest());

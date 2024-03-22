@@ -234,9 +234,10 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
         textColor: Colors.white,
         onPressed: () async {
           // to login
-          Navigator.of(context)
-            ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword),
-                (Route<dynamic> route) => false);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute2(
+                  routeName: Routes.forgetPasswordChangePassword),
+              (Route<dynamic> route) => false);
           //   if (_formStore.canForgetPasswordSent) {
           //     DeviceUtils.hideKeyboard(context);
           //     _userStore.login(
@@ -263,7 +264,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
           textColor: Colors.white,
           onPressed: () async {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.signUp));
+                .push(MaterialPageRoute2(routeName: Routes.signUp));
             // if (_formStore.canForgetPasswordSent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
@@ -285,9 +286,9 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
 
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();

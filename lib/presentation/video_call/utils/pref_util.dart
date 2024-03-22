@@ -27,7 +27,6 @@ class SharedPrefs {
 
   static Future<bool> saveNewUser(CubeUser cubeUser) {
     return getPrefs().then((prefs) {
-      prefs.clear();
       prefs.setString(prefUserLogin, cubeUser.login!);
       prefs.setString(prefUserPsw, cubeUser.password!);
       prefs.setString(prefUserName, cubeUser.fullName!);
@@ -69,7 +68,7 @@ class SharedPrefs {
 
   static Future<bool> deleteUserData() {
     return getPrefs().then((prefs) {
-      return prefs.clear();
+      return true;
     });
   }
 

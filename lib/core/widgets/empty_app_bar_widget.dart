@@ -22,7 +22,7 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
         IconButton(
           onPressed: () {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.setting));
+                .push(MaterialPageRoute2(routeName: Routes.setting));
           },
           icon: const Icon(
             Icons.account_circle,

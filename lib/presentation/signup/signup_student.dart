@@ -310,7 +310,6 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     );
   }
 
-
   Widget _buildForgotPasswordButton() {
     return Align(
       alignment: FractionalOffset.centerRight,
@@ -407,7 +406,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       // Navigator.of(context)
-      //   ..pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
+      //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
       //       (Route<dynamic> route) => false);
     });
 

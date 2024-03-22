@@ -45,10 +45,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: RoundedButtonWidget(
                           onPressed: () {
                             // Handle your action
-                            Navigator.of(context)
-                              ..push(
-                                MaterialPageRoute2(routeName: Routes.welcome),
-                              );
+                            Navigator.of(context).push(
+                              MaterialPageRoute2(routeName: Routes.welcome),
+                            );
                           },
                           buttonText: AppLocalizations.of(context)
                               .translate('Company_button'),

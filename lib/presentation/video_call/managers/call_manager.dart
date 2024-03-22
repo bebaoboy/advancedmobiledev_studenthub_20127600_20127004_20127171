@@ -216,7 +216,7 @@ class CallManager {
     CreateEventParams params = CreateEventParams();
     params.parameters = {
       'message':
-          "Incoming ${currentCall.callType == CallType.VIDEO_CALL ? "Video" : "Audio"} call",
+          "Hello my cutie pie, this is an incoming ${currentCall.callType == CallType.VIDEO_CALL ? "Video" : "Audio"} call",
       PARAM_CALL_TYPE: currentCall.callType,
       PARAM_SESSION_ID: currentCall.sessionId,
       PARAM_CALLER_ID: currentCall.callerId,
@@ -225,8 +225,7 @@ class CallManager {
     };
 
     params.notificationType = NotificationType.PUSH;
-    params.environment =
-        kReleaseMode ? CubeEnvironment.PRODUCTION : CubeEnvironment.DEVELOPMENT;
+    params.environment =CubeEnvironment.DEVELOPMENT;
     params.usersIds = currentCall.opponentsIds.toList();
 
     return params;
