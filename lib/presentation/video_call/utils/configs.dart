@@ -1,4 +1,4 @@
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 const String APP_ID = "7610";
 const String AUTH_KEY = "5xr2UkQsvfQKfn6";

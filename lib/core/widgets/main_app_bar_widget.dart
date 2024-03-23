@@ -9,7 +9,7 @@ import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
@@ -252,6 +252,7 @@ class _MainAppBarState extends State<MainAppBar> {
                 CallManager.instance.destroy();
                 CubeChatConnection.instance.destroy();
                 await PushNotificationsManager.instance.unsubscribe();
+
                 await SharedPrefs.deleteUserData();
                 await signOut();
 

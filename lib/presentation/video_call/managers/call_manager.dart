@@ -1,9 +1,10 @@
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
 
-import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 import 'call_kit_manager.dart';
 import '../conversation_screen.dart';
@@ -12,7 +13,7 @@ import '../utils/configs.dart';
 import '../utils/consts.dart';
 
 class CallManager {
-  static String TAG = "CallManager";
+  static String TAG = "BEBAOBOY";
 
   static CallManager get instance => _getInstance();
   static CallManager? _instance;
@@ -70,6 +71,7 @@ class CallManager {
     _callClient!.onReceiveNewSession = (callSession) async {
       if (_currentCall != null &&
           _currentCall!.sessionId != callSession.sessionId) {
+        log("reject call, sessionId mismatch", "BEBAOBOY");
         callSession.reject();
         return;
       }
@@ -115,9 +117,11 @@ class CallManager {
         await localMediaStream?.dispose();
         localMediaStream = null;
 
-        remoteStreams.forEach((key, value) async {
-          await value.dispose();
-        });
+        try {
+          remoteStreams.forEach((key, value) async {
+            await value.dispose();
+          });
+        } catch (e) {}
 
         remoteStreams.clear();
         CallKitManager.instance.processCallFinished(callSession.sessionId);
@@ -146,7 +150,16 @@ class CallManager {
     _sendStartCallSignalForOffliners(_currentCall!);
   }
 
-  void _showIncomingCallScreen(P2PSession callSession) {
+  void _showIncomingCallScreen(P2PSession callSession) async {
+    CallEvent callEvent = CallEvent(
+    sessionId: callSession.sessionId,
+    callType: callSession.callType,
+    callerId: callSession.callerId,
+    callerName: 'Caller Name',
+    opponentsIds: callSession.opponentsIds,
+    callPhoto: 'https://i.imgur.com/KwrDil8b.jpg',
+    userInfo: {'customParameter1': 'value1'});
+    await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
     if (context != null) {
       Navigator.push(
         context!,
@@ -196,6 +209,8 @@ class CallManager {
 
       _currentCall!.reject();
       _sendEndCallSignalForOffliners(_currentCall);
+    } else {
+      Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }
 
@@ -204,6 +219,8 @@ class CallManager {
       CallKitManager.instance.processCallFinished(_currentCall!.sessionId);
       _currentCall!.hungUp();
       _sendEndCallSignalForOffliners(_currentCall);
+    } else {
+      Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }
 
@@ -225,7 +242,7 @@ class CallManager {
     };
 
     params.notificationType = NotificationType.PUSH;
-    params.environment =CubeEnvironment.DEVELOPMENT;
+    params.environment = CubeEnvironment.DEVELOPMENT;
     params.usersIds = currentCall.opponentsIds.toList();
 
     return params;
@@ -239,9 +256,9 @@ class CallManager {
     params.parameters['ios_push_type'] = 'voip';
 
     createEvent(params.getEventForRequest()).then((cubeEvent) {
-      log("Event for offliners created: $cubeEvent");
+      log("Event for offliners created: $cubeEvent", "BEBAOBOY");
     }).catchError((error) {
-      log("ERROR occurs during create event");
+      log("ERROR occurs during create event: ${error.toString()}", "BEBAOBOY");
     });
   }
 

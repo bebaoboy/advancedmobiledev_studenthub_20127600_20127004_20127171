@@ -1,14 +1,11 @@
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:universal_io/io.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
-import 'package:connectycube_sdk/connectycube_sdk.dart';
-
-import 'login_screen.dart';
 import 'managers/call_manager.dart';
 import 'utils/platform_utils.dart';
 
@@ -26,7 +23,7 @@ class ConversationCallScreen extends StatefulWidget {
 
 class _ConversationCallScreenState extends State<ConversationCallScreen>
     implements RTCSessionStateCallback<P2PSession> {
-  static const String TAG = "_ConversationCallScreenState";
+  static const String TAG = "BEBAOBOY";
   final P2PSession _callSession;
   final bool _isIncoming;
   final CubeStatsReportsManager _statsReportsManager =
@@ -80,20 +77,21 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     super.dispose();
 
     stopBackgroundExecution();
+    try {
+      primaryRenderer?.value.srcObject = null;
+      primaryRenderer?.value.dispose();
 
-    primaryRenderer?.value.srcObject = null;
-    primaryRenderer?.value.dispose();
-
-    minorRenderers.forEach((opponentId, renderer) {
-      log("[dispose] dispose renderer for $opponentId", TAG);
-      try {
-        renderer.srcObject?.dispose();
-        renderer.srcObject = null;
-        renderer.dispose();
-      } catch (e) {
-        log('Error $e');
-      }
-    });
+      minorRenderers.forEach((opponentId, renderer) {
+        log("[dispose] dispose renderer for $opponentId", TAG);
+        try {
+          renderer.srcObject?.dispose();
+          renderer.srcObject = null;
+          renderer.dispose();
+        } catch (e) {
+          log('Error $e');
+        }
+      });
+    } catch (e) {}
   }
 
   Future<void> _addLocalMediaStream(MediaStream stream) async {
@@ -320,10 +318,10 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
-                      const Padding(
+                      Padding(
                         padding: EdgeInsets.only(bottom: 24),
                         child: Text(
-                          "Audio call",
+                          "Audio call from " + _callSession.callerId.toString(),
                           style: TextStyle(fontSize: 28),
                         ),
                       ),

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 import 'managers/call_manager.dart';
 
 class IncomingCallScreen extends StatelessWidget {
-  static const String TAG = "IncomingCallScreen";
+  static const String TAG = "BEBAOBOY";
   final P2PSession _callSession;
 
   IncomingCallScreen(this._callSession);
@@ -21,18 +21,19 @@ class IncomingCallScreen extends StatelessWidget {
         onWillPop: () => _onBackPressed(context),
         child: Scaffold(
             body: Container(
-              color: Colors.blueAccent,
-              child: Center(
-                        child: Column(
+          color: Colors.blueAccent,
+          child: Center(
+            child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Padding(
                   padding: const EdgeInsets.all(36),
-                  child: Text(_getCallTitle(), style: const TextStyle(fontSize: 28)),
+                  child: Text(_getCallTitle(),
+                      style: const TextStyle(fontSize: 28)),
                 ),
                 const Padding(
                   padding: EdgeInsets.only(top: 36, bottom: 8),
-                  child: Text("Members:", style: TextStyle(fontSize: 20)),
+                  child: Text("From:", style: TextStyle(fontSize: 20)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 86),
@@ -69,9 +70,9 @@ class IncomingCallScreen extends StatelessWidget {
                   ],
                 ),
               ],
-                        ),
-                      ),
-            )));
+            ),
+          ),
+        )));
   }
 
   _getCallTitle() {

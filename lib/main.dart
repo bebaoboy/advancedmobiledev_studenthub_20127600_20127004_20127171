@@ -11,9 +11,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
 
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 import 'package:boilerplate/presentation/video_call/utils/configs.dart'
     as config;
@@ -22,9 +22,8 @@ import 'package:boilerplate/presentation/video_call/utils/configs.dart'
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  log('[onMessage] message: ${message.data}', "bebaoboy");
-
-  print("Handling a background message: ${message.messageId}");
+  log('[onMessage] background message: ${message.data}', "bebaoboy");
+  //print("Handling a background message: ${message.messageId}");
 }
 
 Future<void> main() async {

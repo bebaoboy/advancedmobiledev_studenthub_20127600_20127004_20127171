@@ -1,4 +1,4 @@
-import 'package:connectycube_sdk/connectycube_core.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_core.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

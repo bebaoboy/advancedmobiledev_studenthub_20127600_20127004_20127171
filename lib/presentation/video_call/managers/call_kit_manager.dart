@@ -1,12 +1,12 @@
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:universal_io/io.dart';
 
-import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
 
 class CallKitManager {
   static CallKitManager get instance => _getInstance();
   static CallKitManager? _instance;
-  static String TAG = "CallKitManager";
+  static String TAG = "BEBAOBOY";
 
   static CallKitManager _getInstance() {
     return _instance ??= CallKitManager._internal();
@@ -32,6 +32,10 @@ class CallKitManager {
     ConnectycubeFlutterCallKit.instance.init(
         onCallAccepted: _onCallAccepted,
         onCallRejected: _onCallRejected,
+        onCallIncoming: (event) {
+          log("call incoming: ${event.callerId} ${event.callType}");
+          return Future.value(true);
+        },
         icon: Platform.isAndroid ? 'default_avatar' : 'CallkitIcon',
         notificationIcon: 'ic_notification',
         color: '#07711e',
@@ -44,7 +48,7 @@ class CallKitManager {
   }
 
   Future<void> processCallFinished(String uuid) async {
-    if(Platform.isAndroid || Platform.isIOS) {
+    if (Platform.isAndroid || Platform.isIOS) {
       ConnectycubeFlutterCallKit.reportCallEnded(sessionId: uuid);
       ConnectycubeFlutterCallKit.setOnLockScreenVisibility(isVisible: false);
     }
@@ -57,7 +61,8 @@ class CallKitManager {
   }
 
   void muteCall(String sessionId, bool mute) {
-    ConnectycubeFlutterCallKit.reportCallMuted(sessionId: sessionId, muted: mute);
+    ConnectycubeFlutterCallKit.reportCallMuted(
+        sessionId: sessionId, muted: mute);
   }
 
   Future<void> _onCallAccepted(CallEvent callEvent) async {

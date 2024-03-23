@@ -6,18 +6,32 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
+import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
+import 'package:simple_animations/simple_animations.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -316,8 +330,11 @@ class _LoginScreenState extends State<LoginScreen> {
       SharedPreferences.getInstance().then((prefs) {
         prefs.setBool(Preferences.is_logged_in, true);
       });
-      Future.delayed(const Duration(milliseconds: 10), () {
+      Future.delayed(const Duration(milliseconds: 10), () async {
         // print("LOADING = $loading");
+        log("login", "BEBAOBOY");
+        await initCube(NavigationService.navigatorKey.currentContext);
+
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
@@ -325,6 +342,76 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     }
     return Container();
+  }
+
+  initCube(context) async {
+    final UserStore _userStore = getIt<UserStore>();
+    var user;
+
+    if (_userStore.user != null && _userStore.user!.type != UserType.naught) {
+      try {
+        // CallManager.instance.destroy();
+        // CubeChatConnection.instance.destroy();
+        // // await PushNotificationsManager.instance.unsubscribe();
+        // await SharedPrefs.deleteUserData();
+        // // await signOut();
+      } catch (e) {}
+      //CubeSessionManager.instance.isActiveSessionValid();
+
+      // user = _userStore.user!.type == UserType.student
+      //     ? utils.users[0]
+      //     : utils.users[1];
+      user = _userStore.user!.email == "user@1.com"
+          ? utils.users[0]
+          : _userStore.user!.email == "user@2.com"
+              ? utils.users[1]
+              : utils.users[2];
+      await createSession(user).then(
+        (value) async {
+          CubeSessionManager.instance.activeSession = value;
+
+          await CubeChatConnection.instance.login(user).then((cubeUser) async {
+            SharedPrefs.saveNewUser(cubeUser);
+            log(cubeUser.toString(), "BEBAOBOY");
+            if (CubeChatConnection.instance.isAuthenticated() &&
+                CubeChatConnection.instance.currentUser != null)
+              log(
+                  (CubeSessionManager.instance.activeSession!.user == null)
+                      .toString(),
+                  "BEBAOBOY");
+
+            initForegroundService();
+            checkSystemAlertWindowPermission(context);
+
+            requestNotificationsPermission();
+
+            await CallManager.instance.init(context);
+
+            await PushNotificationsManager.instance.init();
+
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute2(
+                    routeName:
+                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+          }).catchError((exception) {
+            //_processLoginError(exception);
+
+            log(exception.toString(), "BEBAOBOY");
+          });
+          // _controller.stop();
+        },
+      ).catchError((exception) {
+        //_processLoginError(exception);
+
+        log(exception.toString(), "BEBAOBOY");
+      });
+      deleteSessionsExceptCurrent()
+          .then((voidResult) {})
+          .catchError((error) {});
+    } else {
+      user = utils.users[2];
+    }
   }
 
   // General Methods:-----------------------------------------------------------

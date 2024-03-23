@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 import 'select_opponents_screen.dart';
 import 'utils/configs.dart' as utils;
@@ -12,8 +12,8 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          AppBar(automaticallyImplyLeading: false, title: const Text('P2P calls')),
+      appBar: AppBar(
+          automaticallyImplyLeading: false, title: const Text('P2P calls')),
       body: BodyLayout(),
     );
   }
@@ -163,7 +163,8 @@ class BodyState extends State<BodyLayout> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: const Text("Login Error"),
-            content: const Text("Something went wrong during login to ConnectyCube"),
+            content:
+                const Text("Something went wrong during login to ConnectyCube"),
             actions: <Widget>[
               TextButton(
                 child: const Text("OK"),

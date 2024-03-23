@@ -1,17 +1,11 @@
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/video_call/login_screen.dart';
 import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart';
-import 'package:connectycube_sdk/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:intl/intl.dart';
-import 'package:boilerplate/presentation/video_call/utils/configs.dart' as utils;
-
 
 import '../../conditional/conditional.dart';
 
@@ -318,7 +312,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       onPressed: () {
                         print("hey");
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SelectOpponentsScreen(CubeSessionManager.instance.activeSession!.user!),
+                          builder: (context) => SelectOpponentsScreen(
+                              CubeSessionManager.instance.activeSession!.user!),
                         ));
                       },
                     ),
