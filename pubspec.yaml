@@ -112,6 +112,9 @@ dependencies:
   package_info_plus: ^4.0.0
   http:
   firebase_messaging:
+  just_audio:
+  super_sliver_list:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

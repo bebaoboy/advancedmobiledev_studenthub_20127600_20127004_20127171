@@ -157,7 +157,6 @@ class CallManager {
     callerId: callSession.callerId,
     callerName: 'Caller Name',
     opponentsIds: callSession.opponentsIds,
-    callPhoto: 'https://i.imgur.com/KwrDil8b.jpg',
     userInfo: {'customParameter1': 'value1'});
     await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
     if (context != null) {

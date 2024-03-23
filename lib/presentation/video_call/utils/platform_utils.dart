@@ -1,3 +1,4 @@
+import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_core.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -53,6 +54,14 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
     var sdkInt = androidInfo.version.sdkInt!;
 
     if (sdkInt >= 31) {
+      if (sdkInt >= 34) {
+        var canUseFullScreenIntent =
+            await ConnectycubeFlutterCallKit.canUseFullScreenIntent();
+
+        if (!canUseFullScreenIntent) {
+          ConnectycubeFlutterCallKit.provideFullScreenIntentAccess();
+        }
+      }
       if (await Permission.systemAlertWindow.isDenied) {
         showDialog(
           context: context,

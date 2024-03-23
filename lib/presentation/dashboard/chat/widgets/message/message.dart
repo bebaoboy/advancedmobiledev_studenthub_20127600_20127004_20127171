@@ -228,13 +228,13 @@ class _MessageState extends State<Message> {
         : Container(
             decoration: BoxDecoration(
               borderRadius: borderRadius,
-              border: widget.message.type != types.MessageType.custom ? null : Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
+              border: (widget.message.type != types.MessageType.custom) ? null : Border.all(color: Theme.of(context).colorScheme.primary, width: 3),
               color: !currentUserIsAuthor ||
                       widget.message.type == types.MessageType.image
                   ? (dateVisibility
                       ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
                       : Chat.theme.secondaryColor)
-                  :  widget.message.type != types.MessageType.custom ? Theme.of(context).colorScheme.primary : Chat.theme.secondaryColor,
+                  :  (widget.message.type != types.MessageType.custom && widget.message.type != types.MessageType.audio) ? Theme.of(context).colorScheme.primary : Chat.theme.secondaryColor,
             ),
             child: ClipRRect(
               borderRadius: borderRadius,

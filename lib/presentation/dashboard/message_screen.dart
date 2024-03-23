@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -71,7 +72,9 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const SizedBox(height: 44,),
+                    const SizedBox(
+                      height: 44,
+                    ),
                     TextField(
                       controller: title,
                       keyboardType: TextInputType.text,
@@ -134,7 +137,8 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                       initialDate: widget.filter.startDate,
                                       firstDate: widget.filter.startDate,
                                       //DateTime.now() - not to allow to choose before today.
-                                      lastDate: widget.filter.startDate.add(const Duration(days: 1)));
+                                      lastDate: widget.filter.startDate
+                                          .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     print(pickedDate);
@@ -241,9 +245,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           DatePickerMode.year,
                                       context: context,
                                       initialDate: widget.filter.endDate,
-                                      firstDate:  widget.filter.endDate,
+                                      firstDate: widget.filter.endDate,
                                       //DateTime.now() - not to allow to choose before today.
-                                      lastDate:  widget.filter.endDate.add(const Duration(days: 1)));
+                                      lastDate: widget.filter.endDate
+                                          .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     print(pickedDate);
@@ -406,8 +411,8 @@ class _MessageScreenState extends State<MessageScreen> {
       context: context,
       builder: (BuildContext context) => SafeArea(
         child: SizedBox(
-          height: 144,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               TextButton(
@@ -418,6 +423,16 @@ class _MessageScreenState extends State<MessageScreen> {
                 child: const Align(
                   alignment: AlignmentDirectional.centerStart,
                   child: Text('Photo'),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  _handleAudioSelection();
+                },
+                child: const Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text('Audio'),
                 ),
               ),
               TextButton(
@@ -455,6 +470,29 @@ class _MessageScreenState extends State<MessageScreen> {
         createdAt: DateTime.now().millisecondsSinceEpoch,
         id: const Uuid().v4(),
         mimeType: lookupMimeType(result.files.single.path!),
+        status: types.Status.delivered,
+        name: result.files.single.name,
+        size: result.files.single.size,
+        uri: result.files.single.path!,
+      );
+
+      _addMessage(message);
+    }
+  }
+
+  void _handleAudioSelection() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.audio,
+    );
+
+    if (result != null && result.files.single.path != null) {
+      final message = types.AudioMessage(
+        duration: Duration.zero,
+        author: _user,
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        id: const Uuid().v4(),
+        mimeType: lookupMimeType(result.files.single.path!),
+        status: types.Status.delivered,
         name: result.files.single.name,
         size: result.files.single.size,
         uri: result.files.single.path!,
@@ -478,6 +516,7 @@ class _MessageScreenState extends State<MessageScreen> {
       final message = types.ImageMessage(
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
+        status: types.Status.delivered,
         height: image.height.toDouble(),
         id: const Uuid().v4(),
         name: result.name,
@@ -546,6 +585,7 @@ class _MessageScreenState extends State<MessageScreen> {
     );
 
     setState(() {
+      logg("loaded preview");
       _messages[index] = updatedMessage;
     });
   }
@@ -555,6 +595,7 @@ class _MessageScreenState extends State<MessageScreen> {
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),
+      status: types.Status.delivered,
       text: message.text,
     );
 
@@ -602,6 +643,7 @@ class _MessageScreenState extends State<MessageScreen> {
               id: const Uuid().v4(),
               type: types.MessageType.custom,
               createdAt: DateTime.now().millisecondsSinceEpoch,
+              status: types.Status.delivered,
               metadata: value.toJson()));
           print(filter);
           return value;
@@ -617,10 +659,12 @@ class _MessageScreenState extends State<MessageScreen> {
                   id: const Uuid().v4(),
                   type: types.MessageType.custom,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
+                  status: types.Status.delivered,
                   metadata: {
                     "title": value.title,
                     "endDate": value.endDate,
                     "startDate": value.startDate,
+                    "isCancel": "false",
                   });
               _sortMessages();
             });
@@ -644,11 +688,21 @@ class _MessageScreenState extends State<MessageScreen> {
         ]),
         messages: _messages,
         onAttachmentPressed: _handleAttachmentPressed,
+        onFirstIconPressed: () => showScheduleBottomSheet(context),
         onMessageTap: _handleMessageTap,
         onPreviewDataFetched: _handlePreviewDataFetched,
         onSendPressed: _handleSendPressed,
         showUserAvatars: true,
         showUserNames: true,
+        audioMessageBuilder: (p0, {required messageWidth}) {
+          return AudioMessageWidget(
+            message: p0,
+            name: p0.name,
+            senderColor: Theme.of(context).colorScheme.primary,
+            inActiveAudioSliderColor: Colors.amber,
+            activeAudioSliderColor: Colors.red,
+          );
+        },
         customMessageBuilder: (p0, {required messageWidth}) {
           //print(p0.metadata!["type"]);
           var t = InterviewSchedule.fromJson(p0.metadata!);
@@ -682,6 +736,7 @@ class _MessageScreenState extends State<MessageScreen> {
                       },
                     ),
                     BottomSheetAction(
+                      visibility: !t.isCancel,
                       title: Container(
                           alignment: Alignment.topLeft,
                           child: const Text('Cancel',
@@ -698,11 +753,12 @@ class _MessageScreenState extends State<MessageScreen> {
                                     lastName: "Doe,"),
                                 id: const Uuid().v4(),
                                 type: types.MessageType.custom,
+                                status: types.Status.delivered,
                                 createdAt:
                                     DateTime.now().millisecondsSinceEpoch,
                                 metadata: {
                                   ..._messages[i].metadata!,
-                                  "title": "Cancel",
+                                  "isCancel": "true",
                                 });
                             _sortMessages();
                           });
@@ -713,6 +769,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 );
               },
               scheduleFilter: InterviewSchedule(
+                  isCancel: t.isCancel,
                   endDate: t.endDate ??
                       DateTime.now().add(const Duration(hours: 1, minutes: 1)),
                   startDate: t.startDate ?? DateTime.now(),

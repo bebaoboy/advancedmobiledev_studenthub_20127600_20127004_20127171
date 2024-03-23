@@ -46,7 +46,7 @@ abstract class Query<T> {
 
       setupRequest(request);
 
-      log(request.toString());
+      // log(request.toString());
 
       request.perform().then((response) {
         handleResponse(response);

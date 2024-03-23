@@ -18,6 +18,10 @@ import 'message/text_message.dart';
 import 'input/typing_indicator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 
+
+  logg(String? message, [String? tag]) {
+    debugPrint("CB-SDK: ${tag != null ? tag : "BEBAOBOY"}: $message");
+  }
 /// Keep track of all the auto scroll indices by their respective message's id to allow animating to them.
 final Map<String, int> chatMessageAutoScrollIndexById = {};
 
@@ -65,6 +69,7 @@ class Chat extends StatefulWidget {
     required this.messages,
     this.nameBuilder,
     this.onAttachmentPressed,
+    this.onFirstIconPressed,
     this.onAvatarTap,
     this.onBackgroundTap,
     this.onEndReached,
@@ -219,6 +224,7 @@ class Chat extends StatefulWidget {
 
   /// See [Input.onAttachmentPressed].
   final VoidCallback? onAttachmentPressed;
+  final VoidCallback? onFirstIconPressed;
 
   /// See [Message.onAvatarTap].
   final void Function(types.User)? onAvatarTap;
@@ -603,74 +609,77 @@ class ChatState extends State<Chat> {
   }
 
   @override
-  Widget build(BuildContext context) => Stack(
-        children: [
-          Container(
-            color: Chat.theme.backgroundColor,
-            child: Column(
-              children: [
-                Flexible(
-                  child: widget.messages.isEmpty
-                      ? SizedBox.expand(
-                          child: _emptyStateBuilder(),
-                        )
-                      : GestureDetector(
-                          onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
-                            widget.onBackgroundTap?.call();
-                          },
-                          child: LayoutBuilder(builder: (
-                            BuildContext context,
-                            BoxConstraints constraints,
-                          ) {
-                            print("rebuild");
-                            return ChatList(
-                              bottomWidget: widget.listBottomWidget,
-                              bubbleRtlAlignment: widget.bubbleRtlAlignment!,
-                              isLastPage: widget.isLastPage,
-                              itemBuilder: (Object item, int? index) =>
-                                  _messageBuilder(
-                                item,
-                                constraints,
-                                index,
-                              ),
-                              items: _chatMessages,
-                              keyboardDismissBehavior:
-                                  widget.keyboardDismissBehavior,
-                              onEndReached: widget.onEndReached,
-                              onEndReachedThreshold:
-                                  widget.onEndReachedThreshold,
-                              scrollController: _scrollController,
-                              scrollPhysics: widget.scrollPhysics,
-                              typingIndicatorOptions:
-                                  widget.typingIndicatorOptions,
-                              useTopSafeAreaInset:
-                                  widget.useTopSafeAreaInset ?? isMobile,
-                            );
-                          }),
-                        ),
-                ),
-                widget.customBottomWidget ??
-                    Input(
-                      isAttachmentUploading: widget.isAttachmentUploading,
-                      onAttachmentPressed: widget.onAttachmentPressed,
-                      onSendPressed: widget.onSendPressed,
-                      options: widget.inputOptions,
-                    ),
-              ],
-            ),
+  Widget build(BuildContext context) {
+    logg("build chat", "BEBAOBOY");
+    return Stack(
+      children: [
+        Container(
+          color: Chat.theme.backgroundColor,
+          child: Column(
+            children: [
+              Flexible(
+                child: widget.messages.isEmpty
+                    ? SizedBox.expand(
+                        child: _emptyStateBuilder(),
+                      )
+                    : GestureDetector(
+                        onTap: () {
+                          FocusManager.instance.primaryFocus?.unfocus();
+                          widget.onBackgroundTap?.call();
+                        },
+                        child: LayoutBuilder(builder: (
+                          BuildContext context,
+                          BoxConstraints constraints,
+                        ) {
+                          print("rebuild");
+                          return ChatList(
+                            bottomWidget: widget.listBottomWidget,
+                            bubbleRtlAlignment: widget.bubbleRtlAlignment!,
+                            isLastPage: widget.isLastPage,
+                            itemBuilder: (Object item, int? index) =>
+                                _messageBuilder(
+                              item,
+                              constraints,
+                              index,
+                            ),
+                            items: _chatMessages,
+                            keyboardDismissBehavior:
+                                widget.keyboardDismissBehavior,
+                            onEndReached: widget.onEndReached,
+                            onEndReachedThreshold: widget.onEndReachedThreshold,
+                            scrollController: _scrollController,
+                            scrollPhysics: widget.scrollPhysics,
+                            typingIndicatorOptions:
+                                widget.typingIndicatorOptions,
+                            useTopSafeAreaInset:
+                                widget.useTopSafeAreaInset ?? isMobile,
+                          );
+                        }),
+                      ),
+              ),
+              widget.customBottomWidget ??
+                  Input(
+                    isAttachmentUploading: widget.isAttachmentUploading,
+                    onAttachmentPressed: widget.onAttachmentPressed,
+                    onFirstIconPressed: widget.onFirstIconPressed,
+                    onSendPressed: widget.onSendPressed,
+                    options: widget.inputOptions,
+                  ),
+            ],
           ),
-          if (_isImageViewVisible)
-            ImageGallery(
-              imageHeaders: widget.imageHeaders,
-              imageProviderBuilder: widget.imageProviderBuilder,
-              images: _gallery,
-              pageController: _galleryPageController!,
-              onClosePressed: _onCloseGalleryPressed,
-              options: widget.imageGalleryOptions,
-            ),
-        ],
-      );
+        ),
+        if (_isImageViewVisible)
+          ImageGallery(
+            imageHeaders: widget.imageHeaders,
+            imageProviderBuilder: widget.imageProviderBuilder,
+            images: _gallery,
+            pageController: _galleryPageController!,
+            onClosePressed: _onCloseGalleryPressed,
+            options: widget.imageGalleryOptions,
+          ),
+      ],
+    );
+  }
 }
 
 /// Base chat l10n containing all required properties to provide localized copy.

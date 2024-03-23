@@ -3,6 +3,7 @@ import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:diffutil_dart/diffutil.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:super_sliver_list/super_sliver_list.dart';
 import 'input/typing_indicator.dart';
 
 /// Animated list that handles automatic animations and pagination.
@@ -130,7 +131,7 @@ class _ChatListState extends State<ChatList>
     _oldData = List.from(widget.items);
   }
 
-  Widget _newMessageBuilder(int index, Animation<double> animation) {
+  Widget _newMessageBuilder(int index) {
     try {
       // print(index);
       final item = _oldData[index];
@@ -220,15 +221,15 @@ class _ChatListState extends State<ChatList>
         onNotification: (notification) {
           if (notification.metrics.pixels > 10.0 && !_indicatorOnScrollStatus) {
             setState(() {
-              print("scroll");
-              _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
+            logg("scroll", "BEBAOBOY");
+            _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
             });
           } else if (notification.metrics.pixels == 0.0 &&
               _indicatorOnScrollStatus) {
             setState(() {
-              print("scroll");
+            logg("scroll", "BEBAOBOY");
 
-              _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
+            _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
             });
           }
 
@@ -246,7 +247,7 @@ class _ChatListState extends State<ChatList>
 
             setState(() {
               _isNextPageLoading = true;
-              print("load");
+              logg("sloadnext", "BEBAOBOY");
             });
 
             widget.onEndReached!().whenComplete(() {
@@ -255,7 +256,7 @@ class _ChatListState extends State<ChatList>
                 _controller.reverse();
 
                 setState(() {
-                  print("load");
+                  logg("loadnext", "BEBAOBOY");
 
                   _isNextPageLoading = false;
                 });
@@ -302,7 +303,12 @@ class _ChatListState extends State<ChatList>
             ),
             SliverPadding(
               padding: const EdgeInsets.only(bottom: 4),
-              sliver: SliverAnimatedList(
+              sliver: SuperSliverList(
+                layoutKeptAliveChildren: true,
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return _newMessageBuilder(index);
+                  },
                   findChildIndexCallback: (Key key) {
                     if (key is ValueKey<Object>) {
                       final newIndex = widget.items.indexWhere(
@@ -316,12 +322,15 @@ class _ChatListState extends State<ChatList>
                     }
                     return null;
                   },
-                  initialItemCount: widget.items.length,
-                  key: _listKey,
-                  itemBuilder: (_, index, animation) {
-                    //print("build item");
-                    return _newMessageBuilder(index, animation);
-                  }),
+                  childCount: widget.items.length,
+                ),
+                // itemCount: widget.items.length,
+                key: _listKey,
+                // itemBuilder: (_, index) {
+                //   //print("build item");
+
+                // }
+              ),
             ),
             SliverPadding(
               padding: EdgeInsets.only(

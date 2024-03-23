@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
@@ -259,17 +260,24 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        widget.scheduleFilter.title ?? "Untitled",
-                        style:
-                            const TextStyle(color: Colors.black, fontSize: 13),
-                        textWidthBasis: TextWidthBasis.longestLine,
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.35,
+                        child: AutoSizeText(
+                          widget.scheduleFilter.title ?? "Untitled",
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          minFontSize: 12,
+                          style: const TextStyle(
+                              color: Colors.black, fontSize: 13),
+                        ),
                       ),
                       const SizedBox(
                         width: 20,
                       ),
                       Text(
                         widget.scheduleFilter.getDuration(),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: Chat.theme.sentMessageCaptionTextStyle.merge(
                             TextStyle(
                                 color: Theme.of(context).colorScheme.primary)),
@@ -304,19 +312,31 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    RoundedButtonWidget(
-                      buttonText: "Join",
-                      buttonTextSize: 12,
-                      textColor: Theme.of(context).colorScheme.primary,
-                      borderColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {
-                        print("hey");
-                        Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => SelectOpponentsScreen(
-                              CubeSessionManager.instance.activeSession!.user!),
-                        ));
-                      },
-                    ),
+                    !widget.scheduleFilter.isCancel
+                        ? RoundedButtonWidget(
+                            buttonText: "Join",
+                            buttonTextSize: 12,
+                            textColor: Theme.of(context).colorScheme.primary,
+                            borderColor: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              print("hey");
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => SelectOpponentsScreen(
+                                    CubeSessionManager
+                                        .instance.activeSession!.user!),
+                              ));
+                            },
+                          )
+                        : Expanded(
+                            flex: 2,
+                            child: Text(
+                              "Meeting Canceled!",
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary),
+                            ),
+                          ),
                     IconButton(
                       onPressed: () {
                         widget.onMenuCallback(widget.scheduleFilter);

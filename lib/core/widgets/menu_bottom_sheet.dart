@@ -50,11 +50,14 @@ class BottomSheetAction {
   /// Typically an [Icon] or a [CircleAvatar] widget.
   final Widget? leading;
 
+  final bool visibility;
+
   BottomSheetAction({
     required this.title,
     this.onPressed,
     this.trailing,
     this.leading,
+    this.visibility = true,
   });
 }
 
@@ -117,6 +120,9 @@ Future<T?> _show<T>(
   bool isDismissible = true,
   bool? useRootNavigator,
 }) {
+  actions.removeWhere(
+    (element) => !element.visibility,
+  );
   if (Platform.isIOS) {
     return _showCupertinoBottomSheet(
       context,
@@ -310,8 +316,7 @@ Future<T?> _showMaterialBottomSheet<T>(
                         if (cancelAction.onPressed != null) {
                           cancelAction.onPressed!(coxt);
                         }
-                          Navigator.of(coxt).pop();
-                        
+                        Navigator.of(coxt).pop();
                       },
                       child: Center(
                         child: Padding(

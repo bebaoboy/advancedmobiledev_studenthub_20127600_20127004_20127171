@@ -17,6 +17,7 @@ class Input extends StatefulWidget {
   const Input({
     super.key,
     this.isAttachmentUploading,
+    this.onFirstIconPressed,
     this.onAttachmentPressed,
     required this.onSendPressed,
     this.options = const InputOptions(),
@@ -30,6 +31,7 @@ class Input extends StatefulWidget {
 
   /// See [AttachmentButton.onPressed].
   final VoidCallback? onAttachmentPressed;
+  final VoidCallback? onFirstIconPressed;
 
   /// Will be called on [SendButton] tap. Has [types.PartialText] which can
   /// be transformed to [types.TextMessage] and added to the messages list.
@@ -150,7 +152,7 @@ class _InputState extends State<Input> {
               textDirection: TextDirection.ltr,
               children: [
                 CalendarButton(
-                  onPressed: () {},
+                  onPressed: widget.onFirstIconPressed,
                   padding: buttonPadding,
                 ),
                 if (widget.onAttachmentPressed != null)
@@ -491,7 +493,7 @@ class CalendarButton extends StatelessWidget {
   });
 
   /// Callback for send button tap event.
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
 
   /// Padding around the button.
   final EdgeInsets padding;

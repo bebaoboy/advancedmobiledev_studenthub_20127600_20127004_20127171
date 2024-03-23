@@ -175,10 +175,14 @@ class _SplashScreenState extends State<SplashScreen>
         duration: const Duration(milliseconds: 3500), vsync: this)
       ..addListener(() async {
         if (_controller.isCompleted) {
+          try {
           await _controller.playReverse(
               duration: const Duration(milliseconds: 3500));
           await Future.delayed(const Duration(seconds: 1));
           await _controller.play();
+          } catch(e) {
+
+          }
         }
       });
     _playAnimation(context);
@@ -280,7 +284,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<Null> _playAnimation(BuildContext context) async {
     try {
-      await _controller.forward().onError(
+       _controller.forward().onError(
             (error, stackTrace) => null,
           );
       await Future.delayed(const Duration(seconds: 15));

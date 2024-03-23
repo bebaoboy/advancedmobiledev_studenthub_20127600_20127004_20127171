@@ -64,7 +64,7 @@ class CreateEventParams {
   String? name;
 
   CubeEvent getEventForRequest() {
-    log(toString());
+    //log(toString());
 
     if (parameters.isEmpty ||
         !parameters.containsKey('message') ||
