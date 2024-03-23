@@ -46,7 +46,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('check ${_userStore.user.email} ${_userStore.user.type.name}');
+    print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
 
     if (items.isEmpty) {
       items = [
@@ -77,7 +77,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
           Routes.favortieProject: getRoute(Routes.favortieProject, context),
         },
         1: {
-          '/': _userStore.user.type == UserType.company
+          '/': _userStore.user!.type == UserType.company
               ? DashBoardTab(
                   pageController: _pageController,
                 )

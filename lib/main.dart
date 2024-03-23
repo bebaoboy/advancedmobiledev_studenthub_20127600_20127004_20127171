@@ -22,7 +22,7 @@ import 'package:boilerplate/presentation/video_call/utils/configs.dart'
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  log('[onMessage] message: $message', "bebaoboy");
+  log('[onMessage] message: ${message.data}', "bebaoboy");
 
   print("Handling a background message: ${message.messageId}");
 }

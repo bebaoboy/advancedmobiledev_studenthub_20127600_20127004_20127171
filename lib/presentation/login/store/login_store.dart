@@ -38,7 +38,7 @@ abstract class _UserStore with Store {
   }
 
   // public variable
-  User get user => _user!;
+  User? get user => _user;
 
   // use cases:-----------------------------------------------------------------
   final IsLoggedInUseCase _isLoggedInUseCase;

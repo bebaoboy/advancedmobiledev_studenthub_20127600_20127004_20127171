@@ -68,13 +68,13 @@ class SelectOpponentsScreen extends StatelessWidget {
   }
 
   _navigateToLoginScreen(BuildContext context) {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginScreen(),
-      ),
-      (r) => false,
-    );
+    // Navigator.pushAndRemoveUntil(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => LoginScreen(),
+    //   ),
+    //   (r) => false,
+    // );
   }
 
   SelectOpponentsScreen(this.currentUser);

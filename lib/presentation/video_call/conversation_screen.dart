@@ -1,3 +1,4 @@
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -162,12 +163,13 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
 
     _statsReportsManager.dispose();
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginScreen(),
-      ),
-    );
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => LoginScreen(),
+    //   ),
+    // );
+    Navigator.pop(context);
   }
 
   Widget buildMinorVideoItem(int opponentId, RTCVideoRenderer renderer) {
@@ -505,7 +507,8 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                       var videoBitrateForUser = snapshot.data!;
                                       return Text(
                                         '${videoBitrateForUser.bitRate} kbits/sec',
-                                        style: const TextStyle(color: Colors.white),
+                                        style: const TextStyle(
+                                            color: Colors.white),
                                       );
                                     }
                                   },
@@ -518,7 +521,8 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                       child: Container(
                         margin: const EdgeInsets.only(bottom: 8),
                         child: ClipRRect(
-                          borderRadius: const BorderRadius.all(Radius.circular(12)),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(12)),
                           child: Container(
                             padding: const EdgeInsets.all(6),
                             color: Colors.black26,

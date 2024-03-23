@@ -67,7 +67,7 @@ class SharedPreferenceHelper {
     String userEmail =
         _sharedPreference.getString(Preferences.current_user_email) ?? '';
     String userRole =
-        _sharedPreference.getString(Preferences.current_user_role) ?? 'company';
+        _sharedPreference.getString(Preferences.current_user_role) ?? '';
 
     UserType userType = getUserType(userRole);
 

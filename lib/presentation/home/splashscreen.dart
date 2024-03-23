@@ -165,10 +165,12 @@ class _SplashScreenState extends State<SplashScreen>
   final UserStore _userStore = getIt<UserStore>();
   final ThemeStore _themeStore = getIt<ThemeStore>();
   late AnimationController _controller;
+  TextEditingController loadingText = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    loadingText.text = "Copyright © 2024";
     _controller = AnimationController(
         duration: const Duration(milliseconds: 3500), vsync: this)
       ..addListener(() async {
@@ -194,12 +196,21 @@ class _SplashScreenState extends State<SplashScreen>
     CubeSessionManager.instance.isActiveSessionValid();
 
     final UserStore _userStore = getIt<UserStore>();
-    var user = _userStore.user.type == UserType.student
-        ? utils.users[0]
-        : utils.users[1];
+    var user;
+
+    if (_userStore.user != null) {
+      user = _userStore.user!.type == UserType.student
+          ? utils.users[0] : _userStore.user!.type == UserType.company
+          ? utils.users[1] : utils.users[2];
+    } else {
+      user = utils.users[2];
+    }
     await createSession(user).then(
       (value) async {
         CubeSessionManager.instance.activeSession = value;
+        loadingText.text =
+            "Loading Cube sesson (User ${user == utils.users[0] ? "1-Student" : user == utils.users[1] ? "2-Company" : "3-Not login"})";
+
         await CubeChatConnection.instance.login(user).then((cubeUser) {
           SharedPrefs.saveNewUser(cubeUser);
           log(cubeUser.toString(), "BEBAOBOY");
@@ -211,7 +222,7 @@ class _SplashScreenState extends State<SplashScreen>
                 "BEBAOBOY");
 
           initForegroundService();
-
+          loadingText.text = "Almost done...";
           checkSystemAlertWindowPermission(context);
 
           requestNotificationsPermission();
@@ -219,26 +230,45 @@ class _SplashScreenState extends State<SplashScreen>
           CallManager.instance.init(context);
 
           PushNotificationsManager.instance.init();
+
+          _controller.stop();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute2(
+                  routeName:
+                      _userStore.isLoggedIn ? Routes.home : Routes.login));
         }).catchError((exception) {
           //_processLoginError(exception);
+          _controller.stop();
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute2(
+                  routeName:
+                      _userStore.isLoggedIn ? Routes.home : Routes.login));
           log(exception.toString(), "BEBAOBOY");
         });
         // _controller.stop();
       },
     ).catchError((exception) {
       //_processLoginError(exception);
+      _controller.stop();
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute2(
+              routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
       log(exception.toString(), "BEBAOBOY");
     });
   }
 
   Future<Null> _playAnimation(BuildContext context) async {
     try {
-      await _controller.forward().orCancel;
+      await _controller.forward().onError((error, stackTrace) => null,);
       await Future.delayed(const Duration(seconds: 15));
 //      await controller.reverse().orCancel;
     } on TickerCanceled {
       // the animation got canceled, probably because we were disposed
       _controller.stop();
+    } catch (E) {
     } finally {
       try {
         Navigator.pushReplacement(
@@ -263,12 +293,12 @@ class _SplashScreenState extends State<SplashScreen>
       body: FancyBackgroundApp(
         child: GestureDetector(
           onTap: () {
-            _controller.stop();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+            // _controller.stop();
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute2(
+            //         routeName:
+            //             _userStore.isLoggedIn ? Routes.home : Routes.login));
           },
           child: Center(
             child: SingleChildScrollView(
@@ -310,14 +340,19 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                   MediaQuery.of(context).orientation != Orientation.landscape
                       ? Center(
-                          child: Text(
+                          child: TextField(
                             // "20127600 - 20127004 - 20127171",
-                            "Copyright © 2024",
+                            controller: loadingText,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.primary,
                             ),
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                            enableInteractiveSelection: false,
+                            readOnly: true,
                           ),
                         )
                       : const SizedBox(

@@ -1,10 +1,13 @@
-enum UserType { student, company }
+enum UserType { student, company, naught }
 
 UserType getUserType(String value) {
   if (value == 'student') {
     return UserType.student;
-  } else {
+  }
+  if (value == 'company') {
     return UserType.company;
+  } else {
+    return UserType.naught;
   }
 }
 

@@ -59,10 +59,19 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
           builder: (BuildContext context) {
             return Expanded(
               child: AlertDialog(
-                title: const Text('Permission required'),
+                title: const Text('Permission Required'),
                 content: const Text(
-                    'For accepting the calls in the background you should provide access to show System Alerts from the background. Would you like to do it now?'),
+                    // 'For accepting the calls in the background you should provide access to show System Alerts from the background. Would you like to do it now?'),
+                    "Please allow to display on screen for calling notificaiton"),
                 actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text(
+                      'Later',
+                    ),
+                  ),
                   TextButton(
                     onPressed: () {
                       Permission.systemAlertWindow.request().then((status) {
@@ -73,14 +82,6 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
                     },
                     child: const Text(
                       'Allow',
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Later',
                     ),
                   ),
                 ],

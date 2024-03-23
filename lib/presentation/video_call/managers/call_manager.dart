@@ -172,7 +172,7 @@ class CallManager {
           ConnectycubeFlutterCallKit.reportCallAccepted(sessionId: sessionId);
         }
 
-        Navigator.pushReplacement(
+        Navigator.push(
           context!,
           MaterialPageRoute(
             builder: (context) => ConversationCallScreen(_currentCall!, true),
