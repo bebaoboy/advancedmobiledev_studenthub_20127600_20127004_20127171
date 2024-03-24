@@ -307,7 +307,7 @@ class _LoginScreenState extends State<LoginScreen> {
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),

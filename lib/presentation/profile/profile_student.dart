@@ -54,7 +54,7 @@ class SearchDropdown extends StatelessWidget {
     return CustomDropdown<Job>.multiSelectSearch(
       noResultFoundText: "No job found!",
       maxlines: 3,
-      hintText: 'Select job role',
+      hintText: Lang.get('profile_choose_skillset'),
       items: _list,
       listItemBuilder: (context, item, isSelected, onItemSelect) {
         return SizedBox(
@@ -335,8 +335,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         //     child: Icon(
                         //       Icons.search,
                         //     )),
-                        hintText: Lang.of(context)
-                            .translate('profile_choose_skillset'),
+                        hintText: Lang.get('profile_choose_skillset'),
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         )),
@@ -524,8 +523,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   label: _languages[index].readOnly
                                       ? null
                                       : Text(
-                                          Lang.of(context)
-                                              .translate('profile_language'),
+                                          Lang.get('profile_language'),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               color: Theme.of(context)
@@ -539,8 +537,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   iconMargin: const EdgeInsets.only(top: 30),
                                   initialValue: _languages[index].name,
                                   readOnly: _languages[index].readOnly,
-                                  hint: Lang.of(context)
-                                      .translate('login_et_user_email'),
+                                  hint: Lang.get('login_et_user_email'),
                                   inputType: TextInputType.emailAddress,
                                   icon: Icons.language,
                                   iconColor: _themeStore.darkMode
@@ -600,8 +597,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                     initialValue: _languages[index].proficiency,
                                     fontSize:
                                         _languages[index].readOnly ? 10 : 15,
-                                    hint: Lang.of(context)
-                                        .translate('login_et_user_email'),
+                                    hint: Lang.get('login_et_user_email'),
                                     inputType: TextInputType.emailAddress,
                                     icon: null,
                                     textController: null,
@@ -622,7 +618,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                     //             .formErrorStore.userEmail ==
                                     //         null
                                     //     ? null
-                                    //     : AppLocalizations.of(context).translate(
+                                    //     : AppLocalizations.of(context).get(
                                     //         _formStore.formErrorStore.userEmail),
                                     ),
                               ),
@@ -730,8 +726,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   label: _educations[index].readOnly
                                       ? null
                                       : Text(
-                                          Lang.of(context)
-                                              .translate('profile_education'),
+                                          Lang.get('profile_education'),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               color: Theme.of(context)
@@ -745,8 +740,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   iconMargin: const EdgeInsets.only(top: 30),
                                   initialValue: _educations[index].name,
                                   readOnly: _educations[index].readOnly,
-                                  hint: Lang.of(context)
-                                      .translate('login_et_user_email'),
+                                  hint: Lang.get('login_et_user_email'),
                                   inputType: TextInputType.emailAddress,
                                   icon: Icons.language,
                                   iconColor: _themeStore.darkMode
@@ -794,8 +788,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 readOnly: _educations[index].readOnly,
                                 initialValue: _educations[index].year,
                                 fontSize: _educations[index].readOnly ? 10 : 15,
-                                hint: Lang.of(context)
-                                    .translate('login_et_user_email'),
+                                hint: Lang.get('login_et_user_email'),
                                 inputType: TextInputType.emailAddress,
                                 icon: null,
                                 textController: null,
@@ -894,7 +887,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),

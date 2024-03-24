@@ -460,8 +460,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       label: _projects[index].readOnly
                                           ? null
                                           : Text(
-                                              Lang.of(context)
-                                                  .translate('profile_project'),
+                                              Lang.get('profile_project'),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w600,
                                                   color: Theme.of(context)
@@ -477,9 +476,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                           const EdgeInsets.only(top: 30),
                                       initialValue: _projects[index].name,
                                       readOnly: _projects[index].readOnly,
-                                      hint: Lang.of(context)
-                                          .translate('login_et_user_email'),
-                                      inputType: TextInputType.emailAddress,
+                                      hint: Lang.get('profile_choose_skillset'),
                                       icon: null,
                                       textController: null,
                                       inputAction: TextInputAction.next,
@@ -549,9 +546,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                         ? 10
                                                         : 15,
                                                 hint: Lang
-                                                    .get('login_et_user_email'),
-                                                inputType:
-                                                    TextInputType.emailAddress,
+                                                    .get('profile_choose_skillset'),
+                                                
                                                 icon: null,
                                                 textController: null,
                                                 inputAction:
@@ -572,7 +568,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                 //             .formErrorStore.userEmail ==
                                                 //         null
                                                 //     ? null
-                                                //     : AppLocalizations.of(context).translate(
+                                                //     : AppLocalizations.of(context).get(
                                                 //         _formStore.formErrorStore.userEmail),
                                                 ),
                                           ),
@@ -659,10 +655,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                       _projects[index].readOnly
                                                           ? 10
                                                           : 15,
-                                                  hint: Lang.get(
-                                                      'login_et_user_email'),
-                                                  inputType: TextInputType
-                                                      .emailAddress,
+                                                 
                                                   icon: null,
                                                   textController: null,
                                                   inputAction:
@@ -683,7 +676,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   //             .formErrorStore.userEmail ==
                                                   //         null
                                                   //     ? null
-                                                  //     : AppLocalizations.of(context).translate(
+                                                  //     : AppLocalizations.of(context).get(
                                                   //         _formStore.formErrorStore.userEmail),
                                                   ),
                                             ),
@@ -767,8 +760,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                           : 15,
                                                   hint: Lang.get(
                                                       'login_et_user_email'),
-                                                  inputType: TextInputType
-                                                      .emailAddress,
+                                                 
                                                   icon: null,
                                                   textController: null,
                                                   inputAction:
@@ -790,7 +782,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   //             .formErrorStore.userEmail ==
                                                   //         null
                                                   //     ? null
-                                                  //     : AppLocalizations.of(context).translate(
+                                                  //     : AppLocalizations.of(context).get(
                                                   //         _formStore.formErrorStore.userEmail),
                                                   ),
                                             ),
@@ -863,7 +855,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                         ? 10
                                                         : 15),
                                             inputType:
-                                                TextInputType.emailAddress,
+                                                TextInputType.url,
                                             icon: null,
                                             fontSize: _projects[index].readOnly
                                                 ? 10
@@ -933,8 +925,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       initialValue:
                                           _projects[index].description,
                                       readOnly: _projects[index].readOnly,
-                                      hint: Lang.of(context)
-                                          .translate('login_et_user_email'),
                                       inputType: TextInputType.multiline,
                                       icon: null,
                                       maxLines:
@@ -973,8 +963,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: AutoSizeText(
-                                          Lang.of(context)
-                                              .translate('profile_skillset'),
+                                          Lang.get('profile_skillset'),
                                           style: const TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600),
@@ -1059,9 +1048,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                         : "...",
                                             readOnly: _projects[index].readOnly,
                                             hint:
-                                                Lang.get('login_et_user_email'),
-                                            inputType:
-                                                TextInputType.emailAddress,
+                                                Lang.get('profile_choose_skillset'),
+                                            
                                             icon: null,
                                             textController: null,
                                             inputAction: TextInputAction.next,
@@ -1112,9 +1100,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                               //     child: Icon(
                                               //       Icons.search,
                                               //     )),
-                                              hintText: Lang.of(context)
-                                                  .translate(
-                                                      'profile_choose_skillset'),
+                                              hintText: Lang.get(
+                                                  'profile_choose_skillset'),
                                               hintStyle: const TextStyle(
                                                 color: Colors.grey,
                                               )),
@@ -1206,7 +1193,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),

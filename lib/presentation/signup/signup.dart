@@ -410,7 +410,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           //       _userEmailController.text, _passwordController.text);
           // } else {
           //   _showErrorMessage(AppLocalizations.of(context)
-          //       .translate('login_error_missing_fields'));
+          //       .get('login_error_missing_fields'));
           // }
         },
       ),
@@ -461,7 +461,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         //       _userEmailController.text, _passwordController.text);
         // } else {
         //   _showErrorMessage(AppLocalizations.of(context)
-        //       .translate('login_error_missing_fields'));
+        //       .get('login_error_missing_fields'));
         // }
       },
     );

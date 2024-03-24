@@ -116,8 +116,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.black, width: 2)),
-                                labelText: Lang.of(context)
-                                    .translate('profile_project_start'),
+                                labelText: Lang.get('profile_project_start'),
                               ),
                               onChanged: (value) {
                                 // widget.filter.endDate = int.tryParse(value) ?? 2;
@@ -163,8 +162,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 ),
                                 isIcon: false,
                                 label: Text(
-                                  Lang.of(context)
-                                      .translate('profile_project_start'),
+                                  Lang.get('profile_project_start'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: Theme.of(context)
@@ -197,7 +195,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 //             .formErrorStore.userEmail ==
                                 //         null
                                 //     ? null
-                                //     : AppLocalizations.of(context).translate(
+                                //     : AppLocalizations.of(context).get(
                                 //         _formStore.formErrorStore.userEmail),
                                 ),
                           ),
@@ -226,8 +224,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.black, width: 2)),
-                                labelText: Lang.of(context)
-                                    .translate('profile_project_end'),
+                                labelText: Lang.get('profile_project_end'),
                               ),
                               onChanged: (value) {
                                 // widget.filter.endDate = int.tryParse(value) ?? 2;
@@ -272,8 +269,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           color: Colors.black, width: 2)),
                                 ),
                                 label: Text(
-                                  Lang.of(context)
-                                      .translate('profile_project_end'),
+                                  Lang.get('profile_project_end'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       color: Theme.of(context)
@@ -306,7 +302,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 //             .formErrorStore.userEmail ==
                                 //         null
                                 //     ? null
-                                //     : AppLocalizations.of(context).translate(
+                                //     : AppLocalizations.of(context).get(
                                 //         _formStore.formErrorStore.userEmail),
                                 ),
                           ),
@@ -724,9 +720,10 @@ class _MessageScreenState extends State<MessageScreen> {
                     BottomSheetAction(
                       title: Container(
                           alignment: Alignment.topLeft,
-                          child:  Text(
+                          child: Text(
                             Lang.get('reschedule'),
-                            style: const TextStyle(fontWeight: FontWeight.normal),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.normal),
                           )),
                       onPressed: (context) async {
                         //print(scheduleFilter);

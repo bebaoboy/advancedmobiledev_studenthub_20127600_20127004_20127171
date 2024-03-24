@@ -241,7 +241,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
           //         // loading = true;
           //   } else {
           //     _showErrorMessage(AppLocalizations.of(context)
-          //         .translate('login_error_missing_fields'));
+          //         .get('login_error_missing_fields'));
           //   }
         },
       ),
@@ -266,7 +266,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),

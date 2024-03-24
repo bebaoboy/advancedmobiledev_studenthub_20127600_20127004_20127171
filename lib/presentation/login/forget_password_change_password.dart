@@ -247,8 +247,7 @@ class _ForgetPasswordChangePasswordcreenState
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: Lang.of(context)
-              .translate('forget_password_et_user_password_confirm'),
+          hint: Lang.get('forget_password_et_user_password_confirm'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -256,8 +255,7 @@ class _ForgetPasswordChangePasswordcreenState
           textController: _passwordConfirmController,
           errorText: _formStore.formErrorStore.confirmPassword == null
               ? null
-              : Lang.of(context)
-                  .translate(_formStore.formErrorStore.confirmPassword),
+              : Lang.get(_formStore.formErrorStore.confirmPassword),
           onChanged: (value) {
             _formStore.setConfirmPassword(_passwordConfirmController.text);
           },
@@ -307,7 +305,7 @@ class _ForgetPasswordChangePasswordcreenState
             //         // loading = true;
             //   } else {
             //     _showErrorMessage(AppLocalizations.of(context)
-            //         .translate('login_error_missing_fields'));
+            //         .get('login_error_missing_fields'));
             //   }
           }),
     );
@@ -329,7 +327,7 @@ class _ForgetPasswordChangePasswordcreenState
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),

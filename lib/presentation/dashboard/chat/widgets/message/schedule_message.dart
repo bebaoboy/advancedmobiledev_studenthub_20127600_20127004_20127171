@@ -315,7 +315,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                   children: [
                     !widget.scheduleFilter.isCancel
                         ? RoundedButtonWidget(
-                            buttonText: Lang.get("join"),
+                            buttonText: Lang.get("Join"),
                             buttonTextSize: 12,
                             textColor: Theme.of(context).colorScheme.primary,
                             borderColor: Theme.of(context).colorScheme.primary,

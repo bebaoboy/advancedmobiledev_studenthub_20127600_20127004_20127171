@@ -64,7 +64,7 @@ class Lang {
 
   // This method will be called from every widget which needs a localized text
   String translate(String? key) {
-    return localizedStrings[key] ?? "<null>";
+    return localizedStrings[key] ?? "<Missing translation>";
   }
 }
 

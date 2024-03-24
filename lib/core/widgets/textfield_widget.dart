@@ -59,6 +59,9 @@ class TextFieldWidget extends StatelessWidget {
         maxLength: maxLength,
         maxLines: maxLines,
         minLines: minLines,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         keyboardType: inputType,
         style: Theme.of(context).textTheme.bodyText1 == null
             ? TextStyle(fontSize: fontSize, overflow: TextOverflow.ellipsis)

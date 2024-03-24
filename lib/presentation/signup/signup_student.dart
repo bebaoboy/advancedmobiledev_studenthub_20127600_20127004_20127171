@@ -155,8 +155,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                           title: Transform.translate(
                             offset: const Offset(-10, 0),
                             child: AutoSizeText(
-                              Lang.of(context)
-                                  .translate('signup_company_policy_agree'),
+                              Lang.get('signup_company_policy_agree'),
                               style: const TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.w800),
                               minFontSize: 10,
@@ -183,8 +182,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                     const SizedBox(height: 24.0),
                     RichText(
                       text: TextSpan(
-                        text: Lang.of(context)
-                            .translate('signup_student_company_prompt'),
+                        text: Lang.get('signup_student_company_prompt'),
                         style: TextStyle(
                             fontSize: 18,
                             color: _themeStore.darkMode
@@ -292,8 +290,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           textController: _passwordConfirmController,
           errorText: _formStore.formErrorStore.confirmPassword == null
               ? null
-              : Lang.of(context)
-                  .translate(_formStore.formErrorStore.confirmPassword),
+              : Lang.get(_formStore.formErrorStore.confirmPassword),
           onChanged: (value) {
             _formStore.setConfirmPassword(_passwordConfirmController.text);
           },

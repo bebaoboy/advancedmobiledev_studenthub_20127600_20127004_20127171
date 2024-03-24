@@ -123,6 +123,8 @@ dependencies:
   objectid:
   crypto:
   http_parser:
+  pdf_image_renderer:
+  cached_network_image:
 
 dev_dependencies:
   flutter_test:
