@@ -1,5 +1,6 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
@@ -73,7 +74,7 @@ class _ProposalItemState extends State<ProposalItem> {
                 Text(widget.proposal.title,
                     style: Theme.of(context).textTheme.bodyText1),
                 // ToDo: need a field for expertise
-                Text('Excellent', style: Theme.of(context).textTheme.bodyText1),
+                Text(Lang.get('excellent'), style: Theme.of(context).textTheme.bodyText1),
               ],
             ),
             Padding(
@@ -94,7 +95,7 @@ class _ProposalItemState extends State<ProposalItem> {
                     color: Colors.grey.shade400,
                     textColor: Colors.black54,
                     onPressed: () => print('send a message'),
-                    child: const Text('Message'),
+                    child: Text(Lang.get('message')),
                   ),
                   MaterialButton(
                     color: Theme.of(context).primaryColor,

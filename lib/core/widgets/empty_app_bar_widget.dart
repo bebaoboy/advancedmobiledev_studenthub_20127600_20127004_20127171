@@ -15,14 +15,14 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
       titleSpacing: 0,
       title: Container(
           margin: const EdgeInsets.only(left: 20),
-          child: Text(AppLocalizations.of(context).translate('appbar_title'))),
+          child: Text(Lang.get('appbar_title'))),
       actions: [
         LanguageButton(),
         ThemeButton(),
         IconButton(
           onPressed: () {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.setting));
+                .push(MaterialPageRoute2(routeName: Routes.setting));
           },
           icon: const Icon(
             Icons.account_circle,
@@ -33,5 +33,5 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size(0.0, 0.0);
+  Size get preferredSize => const Size(0.0, 60.0);
 }

@@ -21,16 +21,17 @@ class ScaleAnimatedTheme extends ImplicitlyAnimatedWidget {
   /// By default, the theme transition uses a linear curve. The [data] and
   /// [child] arguments must not be null.
   const ScaleAnimatedTheme({
-    Key? key,
+    super.key,
     required this.data,
     this.isMaterialAppTheme = false,
-    Curve curve = Curves.linear,
-    Duration duration = kThemeAnimationDuration,
-    VoidCallback? onEnd,
+    super.curve,
+    super.duration = kThemeAnimationDuration,
+    super.onEnd,
     required this.child,
+    // ignore: unnecessary_null_comparison
   })  : assert(child != null),
-        assert(data != null),
-        super(key: key, curve: curve, duration: duration, onEnd: onEnd);
+        // ignore: unnecessary_null_comparison
+        assert(data != null);
 
   /// Specifies the color and typography values for descendant widgets.
   final ThemeData data;
@@ -50,13 +51,14 @@ class ScaleAnimatedTheme extends ImplicitlyAnimatedWidget {
 class _AnimatedThemeState extends AnimatedWidgetBaseState<ScaleAnimatedTheme> {
   ThemeDataTween? _data;
 
-  static final foregroundKey = const Key('Key2');
+  static const foregroundKey = Key('Key2');
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
     // TODO(ianh): Use constructor tear-offs when it becomes possible
     _data = visitor(
-        _data, widget.data, (dynamic value) => ThemeDataTween(begin: value)) as ThemeDataTween?;
+            _data, widget.data, (dynamic value) => ThemeDataTween(begin: value))
+        as ThemeDataTween?;
     assert(_data != null);
   }
 
@@ -69,14 +71,14 @@ class _AnimatedThemeState extends AnimatedWidgetBaseState<ScaleAnimatedTheme> {
                 scale: animation,
                 child: Theme(
                   key: foregroundKey,
-                  child: widget.child,
                   data: widget.data,
+                  child: widget.child,
                 ),
               )
             : Theme(
                 key: foregroundKey,
-                child: widget.child,
                 data: _data!.evaluate(animation),
+                child: widget.child,
               ),
       ],
     );

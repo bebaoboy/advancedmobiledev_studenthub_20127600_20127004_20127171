@@ -1,3 +1,7 @@
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class AlertTab extends StatefulWidget {
@@ -29,8 +33,34 @@ class _AlertTabState extends State<AlertTab> {
     {
       'icon': Icons.star,
       'title': 'Alex Jor',
+      'subtitle':
+          'I have read your requirement but I dont seem to...?\n6/6/2024',
+      'action': null,
+    },
+    {
+      'icon': Icons.star,
+      'title': 'Alex Jor',
+      'subtitle': 'Finish your project?\n6/6/2024',
+      'action': null,
+    },
+    {
+      'icon': Icons.star,
+      'title': 'Alex Jor',
       'subtitle': 'How are you doing?\n6/6/2024',
       'action': null,
+    },
+
+    {
+      'icon': Icons.star,
+      'title': 'You have an offer to join project "Quantum Physics"',
+      'subtitle': '6/6/2024',
+      'action': 'View offer',
+    },
+    {
+      'icon': Icons.star,
+      'title': 'You have an offer to join project "HCMUS - Administration"',
+      'subtitle': '6/6/2024',
+      'action': 'View offer',
     },
     // Add more alerts here
   ];
@@ -61,9 +91,19 @@ class _AlertTabState extends State<AlertTab> {
                       ? ElevatedButton(
                           onPressed: () {
                             print('${alerts[index]['action']} button clicked');
+                            if (alerts[index]['action'] != null) {
+                              if (alerts[index]['action'] == "Join") {
+                                Navigator.of(NavigationService
+                                        .navigatorKey.currentContext!)
+                                    .push(MaterialPageRoute2(
+                                        routeName: Routes.message,
+                                        arguments: "Javis - AI Copilot"));
+                              } else if (alerts[index]['action'] ==
+                                  "View offer") {}
+                            }
                             // You can replace the print statement with your function
                           },
-                          child: Text(alerts[index]['action']),
+                          child: Text(Lang.get(alerts[index]['action'])),
                         )
                       : null,
                 ),

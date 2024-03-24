@@ -6,15 +6,16 @@ import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../di/service_locator.dart';
-class NavigationService { 
-  static GlobalKey<NavigatorState> navigatorKey = 
-  GlobalKey<NavigatorState>();
+
+class NavigationService {
+  static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
 class MyApp extends StatelessWidget {
@@ -41,15 +42,15 @@ class MyApp extends StatelessWidget {
           theme: _themeStore.darkMode
               ? AppThemeData.darkThemeData
               : AppThemeData.lightThemeData,
-              themeMode: _themeStore.darkMode ? ThemeMode.dark : ThemeMode.light,
-          routes: Routes.routes,
+          themeMode: _themeStore.darkMode ? ThemeMode.dark : ThemeMode.light,
+          // routes: Routes.routes,
           locale: Locale(_languageStore.locale),
           supportedLocales: _languageStore.supportedLanguages
               .map((language) => Locale(language.locale, language.code))
               .toList(),
           localizationsDelegates: const [
             // A class which loads the translations from JSON files
-            AppLocalizations.delegate,
+            Lang.delegate,
             // Built-in localization of basic text for Material widgets
             GlobalMaterialLocalizations.delegate,
             // Built-in localization for text direction LTR/RTL
@@ -59,6 +60,12 @@ class MyApp extends StatelessWidget {
           ],
           home: const SplashScreen(),
           navigatorKey: NavigationService.navigatorKey,
+          onGenerateRoute: (settings) {
+            print((settings.name ?? "") + settings.arguments.toString());
+            return MaterialPageRoute2(
+                routeName: settings.name ?? Routes.home,
+                arguments: settings.arguments);
+          },
         );
       },
     );

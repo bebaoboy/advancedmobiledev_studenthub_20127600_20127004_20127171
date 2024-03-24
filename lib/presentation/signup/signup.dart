@@ -134,20 +134,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
       sampleData.add(RadioModel(
           true,
           Icons.account_box_outlined,
-          AppLocalizations.of(context).translate("signup_student_role_text"),
+          Lang.get("signup_student_role_text"),
           Theme.of(context).colorScheme.primary,
           Colors.black));
       sampleData.add(RadioModel(
           false,
           Icons.business,
-          AppLocalizations.of(context).translate("signup_company_role_text"),
+          Lang.get("signup_company_role_text"),
           Theme.of(context).colorScheme.primary,
           Colors.black));
     } else {
-      sampleData[0].text =
-          AppLocalizations.of(context).translate("signup_student_role_text");
-      sampleData[1].text =
-          AppLocalizations.of(context).translate("signup_company_role_text");
+      sampleData[0].text = Lang.get("signup_student_role_text");
+      sampleData[1].text = Lang.get("signup_company_role_text");
     }
     return Scaffold(
       primary: true,
@@ -222,11 +220,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const EmptyAppBar(),
             const SizedBox(height: 24.0),
             Center(
               child: AutoSizeText(
-                AppLocalizations.of(context).translate('signup_main_text'),
+                Lang.get('signup_main_text'),
                 style:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 minFontSize: 10,
@@ -247,8 +244,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const SizedBox(height: 24.0),
                     RichText(
                       text: TextSpan(
-                        text: AppLocalizations.of(context)
-                            .translate('signup_sign_up_prompt'),
+                        text: Lang.get('signup_sign_up_prompt'),
                         style: TextStyle(
                             fontSize: 18,
                             color: _themeStore.darkMode
@@ -257,13 +253,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         children: <TextSpan>[
                           TextSpan(
                               text:
-                                  " ${AppLocalizations.of(context).translate('signup_sign_up_prompt_action')}",
+                                  " ${Lang.get('signup_sign_up_prompt_action')}",
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.of(context)..pop();
+                                  Navigator.of(context).pop();
                                 }),
                         ],
                       ),
@@ -339,7 +335,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          hint: Lang.get('login_et_user_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
@@ -354,8 +350,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           },
           errorText: _formStore.formErrorStore.userEmail == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -365,8 +360,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
+          hint: Lang.get('login_et_user_password'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -375,8 +369,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           focusNode: _passwordFocusNode,
           errorText: _formStore.formErrorStore.password == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -391,7 +384,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       child: MaterialButton(
         padding: const EdgeInsets.all(0.0),
         child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+          Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
               .caption
@@ -406,7 +399,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-        buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
+        buttonText: Lang.get('login_btn_sign_in'),
         buttonColor: Colors.orangeAccent,
         textColor: Colors.white,
         onPressed: () async {
@@ -417,7 +410,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           //       _userEmailController.text, _passwordController.text);
           // } else {
           //   _showErrorMessage(AppLocalizations.of(context)
-          //       .translate('login_error_missing_fields'));
+          //       .get('login_error_missing_fields'));
           // }
         },
       ),
@@ -437,7 +430,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               )),
         ),
         Text(
-          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
+          Lang.get('login_btn_sign_up_prompt'),
           style: const TextStyle(fontSize: 12),
         ),
         Expanded(
@@ -454,23 +447,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildSignUpButton() {
     return RoundedButtonWidget(
-      buttonText:
-          AppLocalizations.of(context).translate('signup_btn_sign_up'),
+      buttonText: Lang.get('signup_btn_sign_up'),
       buttonColor: Theme.of(context).colorScheme.primary,
       textColor: Colors.white,
       onPressed: () async {
-        Navigator.of(context)
-          ..push(MaterialPageRoute2(
-              routeName: sampleData[0].isSelected
-                  ? Routes.signUpStudent
-                  : Routes.signUpCompany));
+        Navigator.of(context).push(MaterialPageRoute2(
+            routeName: sampleData[0].isSelected
+                ? Routes.signUpStudent
+                : Routes.signUpCompany));
         // if (_formStore.canSignUp) {
         //   DeviceUtils.hideKeyboard(context);
         //   _userStore.login(
         //       _userEmailController.text, _passwordController.text);
         // } else {
         //   _showErrorMessage(AppLocalizations.of(context)
-        //       .translate('login_error_missing_fields'));
+        //       .get('login_error_missing_fields'));
         // }
       },
     );
@@ -482,9 +473,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();
@@ -497,7 +488,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
           )..show(context);
         }

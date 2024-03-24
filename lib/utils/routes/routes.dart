@@ -1,10 +1,17 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
+import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
+import 'package:boilerplate/presentation/dashboard/submit_project_proposal/submit_project_proposal.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
+import 'package:boilerplate/presentation/login/forget_password.dart';
+import 'package:boilerplate/presentation/login/forget_password_change_password.dart';
+import 'package:boilerplate/presentation/login/forget_password_done.dart';
+import 'package:boilerplate/presentation/login/forget_password_sent.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
@@ -37,8 +44,16 @@ class Routes {
   static const String profileStep2 = '/profile-step2';
   static const String setting = '/settings';
   static const String projectDetails = '/projectDetails';
-  static const String project_post = '/project-post';
-  static const String favortie_project = "/favortie-project";
+  static const String projectPost = '/project-post';
+  static const String favortieProject = "/favortie-project";
+  static const String projectDetailsStudent = '/projectDetailsStudent';
+  static const String forgetPassword = '/forgetPassword';
+  static const String forgetPasswordSent = '/forgetPasswordSent';
+  static const String forgetPasswordChangePassword =
+      '/forgetPasswordChangePassword';
+  static const String forgetPasswordDone = '/forgetPasswordDone';
+  static const String submitProposal = '/submitProposal';
+  static const String message = "/message";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -46,7 +61,7 @@ class Routes {
     signUp: const SignUpScreen(),
     setting: const SettingScreen(),
     profile: const ProfileScreen(),
-    profileStep2: ProfileStep2Screen(),
+    profileStep2: const ProfileStep2Screen(),
     signUpCompany: const SignUpCompanyScreen(),
     signUpStudent: const SignUpStudentScreen(),
     home: const HomeScreen(),
@@ -56,25 +71,56 @@ class Routes {
     profileStudentStep2: const ProfileStudentStep2Screen(),
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),
-    project_post: const ProjectPostScreen(),
-    favortie_project: const FavoriteScreen(),
+    projectPost: const ProjectPostScreen(),
+    favortieProject: const FavoriteScreen(),
+    projectDetailsStudent: const Placeholder(),
+    forgetPassword: const ForgetPasswordScreen(),
+    forgetPasswordSent: const ForgetPasswordSentScreen(),
+    forgetPasswordChangePassword: const ForgetPasswordChangePasswordcreen(),
+    forgetPasswordDone: const ForgetPasswordDoneScreen(),
+    submitProposal: const Placeholder(),
+    message: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
-    for (var entry in _route.entries)
-      entry.key: (_) {
-        if (entry.key == projectDetails) {
-          // If route is projectDetails, return ProjectDetailsPage with arguments
-          final Project project =
-              ModalRoute.of(_)?.settings.arguments as Project;
-          return ProjectDetailsPage(project: project);
-        } else {
-          return entry.value;
-        }
-      }
+    // for (var entry in _route.entries)
+    //   entry.key: (_) {
+    //     if (entry.key == projectDetails) {
+    //       // If route is projectDetails, return ProjectDetailsPage with arguments
+    //       final Project project =
+    //           ModalRoute.of(_)?.settings.arguments as Project;
+    //       return ProjectDetailsPage(project: project);
+    //     } else {
+    //       return entry.value;
+    //     }
+    //   }
   };
 }
 
-getRoute(name) {
-  return Routes._route[name] ?? const HomeScreen();
+getRoute(name, context, {arguments}) {
+  try {
+    if (name == Routes.projectDetails) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return ProjectDetailsPage(project: arguments as Project);
+    }
+    if (name == Routes.submitProposal) {
+      return SubmitProjectProposal(project: arguments as Project);
+    }
+
+    if (name == Routes.message) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return MessageScreen(title: arguments as String);
+    }
+    if (name == Routes.projectDetailsStudent) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return ProjectDetailsStudentScreen(project: arguments as Project);
+    } else if (name == Routes.message) {
+      // If route is projectDetails, return ProjectDetailsPage with arguments
+      return MessageScreen(title: arguments as String);
+    } else {
+      return Routes._route[name] ?? const HomeScreen();
+    }
+  } catch (e) {
+    return const HomeScreen();
+  }
 }

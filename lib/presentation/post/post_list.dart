@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class PostListScreen extends StatefulWidget {
+  const PostListScreen({super.key});
+
   @override
   _PostListScreenState createState() => _PostListScreenState();
 }
@@ -34,7 +36,6 @@ class _PostListScreenState extends State<PostListScreen> {
   Widget _buildBody() {
     return Stack(
       children: <Widget>[
-
         _handleErrorMessage(),
         _buildMainContent(),
       ],
@@ -64,7 +65,7 @@ class _PostListScreenState extends State<PostListScreen> {
           )
         : Center(
             child: Text(
-              AppLocalizations.of(context).translate('home_tv_no_post_found'),
+              Lang.get('home_tv_no_post_found'),
             ),
           );
   }
@@ -107,7 +108,7 @@ class _PostListScreenState extends State<PostListScreen> {
       if (message.isNotEmpty) {
         FlushbarHelper.createError(
           message: message,
-          title: AppLocalizations.of(context).translate('home_tv_error'),
+          title: Lang.get('error'),
           duration: const Duration(seconds: 3),
         )..show(context);
       }

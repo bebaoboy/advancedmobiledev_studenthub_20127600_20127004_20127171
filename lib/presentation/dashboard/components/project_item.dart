@@ -1,6 +1,7 @@
-import 'package:boilerplate/constants/app_theme.dart';
-import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class ProjectItem extends StatefulWidget {
@@ -46,14 +47,14 @@ class _ProjectItemState extends State<ProjectItem> {
         ),
       );
     } else {
-      var icon = widget.project.isFavorite!
+      var icon = widget.project.isFavorite
           ? const Icon(Icons.favorite)
           : const Icon(Icons.favorite_border);
 
       var createdText = '';
       int differenceWithToday = widget.project.getModifiedTimeCreated();
       if (differenceWithToday == 0) {
-        createdText = 'Created just now';
+        createdText = Lang.get("created_now");
       } else if (differenceWithToday == 1) {
         createdText = 'Created 1 day ago';
       } else {
@@ -73,13 +74,14 @@ class _ProjectItemState extends State<ProjectItem> {
       }
 
       return Container(
+        constraints: const BoxConstraints(maxHeight: 230),
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(color: Colors.black, width: 1.0),
             bottom: BorderSide(color: Colors.black, width: 1.0),
           ),
         ),
-      
+
 //       Card(
 //         child: Padding(
 //           padding: const EdgeInsets.all(8.0),
@@ -105,36 +107,45 @@ class _ProjectItemState extends State<ProjectItem> {
 //                     Text(proposalText),
 //                   ],
         child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 9,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(createdText),
-                      Text(widget.project.title),
-                      Text(
-                        'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+          child: InkWell(
+            onTap: () {
+              //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
+              Navigator.of(NavigationService.navigatorKey.currentContext!)
+                  .pushNamed(Routes.projectDetailsStudent,
+                      arguments: widget.project);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    flex: 9,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(createdText),
+                          Text(widget.project.title),
+                          Text(
+                            'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                          ),
+                          Text(widget.project.description),
+                          Text(proposalText),
+                        ],
                       ),
-                      Text(widget.project.description),
-                      Text(proposalText),
-                    ],
+                    ),
                   ),
-                ),
-                IconButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  onPressed: () {
-                    setState(() {
-                      widget.onFavoriteTap();
-                      
-                    });
-                  },
-                  icon: icon,
-                ),
-              ],
+                  IconButton(
+                    color: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      setState(() {
+                        widget.onFavoriteTap();
+                      });
+                    },
+                    icon: icon,
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -1,6 +1,12 @@
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class MessageTab extends StatefulWidget {
+  const MessageTab({super.key});
+
   @override
   State<MessageTab> createState() => _MessageTabState();
 }
@@ -21,6 +27,20 @@ class _MessageTabState extends State<MessageTab> {
       'message': 'Looking forward to working with you',
       'date': '7/6/2024'
     },
+    {
+      'icon': Icons.message,
+      'name': 'Xingapore',
+      'role': 'Sey',
+      'message': 'Clear expectation about your project or deliverables',
+      'date': '6/6/2024'
+    },
+    {
+      'icon': Icons.message,
+      'name': 'Malaysia Nguyen',
+      'role': 'Doctor',
+      'message': 'Looking forward to working with you',
+      'date': '7/6/2024'
+    },
     // Add more messages here
   ];
 
@@ -32,12 +52,23 @@ class _MessageTabState extends State<MessageTab> {
   Widget _buildMessageContent() {
     return Column(
       children: <Widget>[
+// <<<<<<< sprint3-demovideocall
+//         Center(
+//             child: RoundedButtonWidget(
+//               buttonColor: Colors.black,
+//           buttonText: "Open Chat",
+//           onPressed: () {
+//             Navigator.of(NavigationService.navigatorKey.currentContext!)
+//                 .push(MaterialPageRoute2(routeName: Routes.message, arguments: "Demo User Name"));
+//           },
+//         )),
+// =======
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
             decoration: InputDecoration(
-              labelText: "Search",
-              hintText: "Search",
+              labelText: Lang.get("search"),
+              hintText: Lang.get("search"),
               prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),
@@ -53,6 +84,10 @@ class _MessageTabState extends State<MessageTab> {
               return GestureDetector(
                 onTap: () {
                   print('Tile clicked');
+                  Navigator.of(NavigationService.navigatorKey.currentContext!)
+                      .push(MaterialPageRoute2(
+                          routeName: Routes.message,
+                          arguments: messages[index]['name']));
                   // You can replace the print statement with your function
                 },
                 child: ListTile(

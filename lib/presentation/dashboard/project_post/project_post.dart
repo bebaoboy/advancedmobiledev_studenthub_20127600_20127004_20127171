@@ -1,16 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/presentation/home/store/language/language_store.dart';
-import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:material_dialog/material_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ProjectPostScreen extends StatefulWidget {
   const ProjectPostScreen({super.key});
@@ -21,14 +13,15 @@ class ProjectPostScreen extends StatefulWidget {
 
 class _ProjectPostScreenState extends State<ProjectPostScreen> {
   //stores:---------------------------------------------------------------------
-  final ThemeStore _themeStore = getIt<ThemeStore>();
-  final LanguageStore _languageStore = getIt<LanguageStore>();
+  // final ThemeStore _themeStore = getIt<ThemeStore>();
+  // final LanguageStore _languageStore = getIt<LanguageStore>();
   int _startIndex = 0;
   String title = "";
   String duration = "";
   String number = "";
   String description = "";
   String? groupValue;
+  Scope scope = Scope.short;
 
   @override
   void initState() {
@@ -55,49 +48,46 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   Widget _buildOneContent() {
     final controller1 = TextEditingController();
     return SingleChildScrollView(
-      physics: ClampingScrollPhysics(),
+      physics: const ClampingScrollPhysics(),
       child: Column(
         children: <Widget>[
           Align(
             alignment: Alignment.topLeft,
-            child: AutoSizeText(AppLocalizations.of(context).translate('1/4'),
+            child: AutoSizeText(Lang.get('1/4'),
                 maxLines: 2,
                 minFontSize: 12,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontWeight: FontWeight.bold)),
+                style: const TextStyle(fontWeight: FontWeight.bold)),
           ),
           const SizedBox(
             height: 20,
           ),
           Align(
             alignment: Alignment.topLeft,
-            child: Text(
-                AppLocalizations.of(context).translate('description_title')),
+            child: Text(Lang.get('description_title')),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           TextField(
             controller: controller1,
             decoration: InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: AppLocalizations.of(context).translate('title_guide'),
+              border: const OutlineInputBorder(),
+              labelText: Lang.get('title_guide'),
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
           Align(
             alignment: Alignment.topLeft,
-            child:
-                Text(AppLocalizations.of(context).translate('examples_title')),
+            child: Text(Lang.get('examples_title')),
           ),
           Align(
             alignment: Alignment.topLeft,
-            child: Text(
-                AppLocalizations.of(context).translate('example_description')),
+            child: Text(Lang.get('example_description')),
           ),
-          SizedBox(
+          const SizedBox(
             height: 10,
           ),
           Align(
@@ -115,9 +105,9 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                         });
                       },
                       child: AutoSizeText(
-                        AppLocalizations.of(context).translate('scope'),
+                        Lang.get('scope'),
                         minFontSize: 14,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                         ),
                         textAlign: TextAlign.center,
@@ -133,74 +123,109 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     final controller2 = TextEditingController();
 
     return SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
             Align(
               alignment: Alignment.topLeft,
-              child: AutoSizeText(AppLocalizations.of(context).translate('2/4'),
+              child: AutoSizeText(Lang.get('2/4'),
                   maxLines: 2,
                   minFontSize: 12,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
             const SizedBox(
               height: 20,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child:
-                  Text(AppLocalizations.of(context).translate('scope_title')),
+              child: Text(Lang.get('scope_title')),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(AppLocalizations.of(context).translate('how_long'),
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(Lang.get('how_long'),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
             RadioListTile<String>(
-              title: Text(AppLocalizations.of(context).translate('1-3')),
-              value: '1 to 3 months',
+              title: Text(Lang.get('1-3')),
+              value: Scope.tight.title,
               groupValue: groupValue,
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
+                  scope = Scope.tight;
                 });
               },
             ),
             RadioListTile<String>(
-              title: Text(AppLocalizations.of(context).translate('3-6')),
-              value: '3 to 6 months',
+              title: Text(Lang.get('1-3')),
+              value: Scope.short.title,
+              groupValue: groupValue,
+              onChanged: (String? value) {
+                setState(() {
+                  groupValue = value;
+                  scope = Scope.tight;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: Text(Lang.get('1-3')),
+              value: Scope.short.title,
+              groupValue: groupValue,
+              onChanged: (String? value) {
+                setState(() {
+                  groupValue = value;
+                  scope = Scope.short;
+                  scope = Scope.short;
+                });
+              },
+            ),
+            RadioListTile<String>(
+              title: Text(Lang.get('3-6')),
+              value: Scope.long.title,
               groupValue: groupValue,
               activeColor: Colors.red,
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
+                  scope = Scope.long;
                 });
               },
             ),
-            SizedBox(
+            RadioListTile<String>(
+              title: Text(Lang.get('1-3')),
+              value: Scope.extended.title,
+              groupValue: groupValue,
+              onChanged: (String? value) {
+                setState(() {
+                  groupValue = value;
+                  scope = Scope.extended;
+                });
+              },
+            ),
+            const SizedBox(
               height: 10,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(AppLocalizations.of(context).translate('how_many'),
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(Lang.get('how_many'),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             TextField(
               controller: controller2,
               decoration: InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: AppLocalizations.of(context).translate('number'),
+                border: const OutlineInputBorder(),
+                labelText: Lang.get('number'),
               ),
               keyboardType: TextInputType.number,
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Align(
@@ -219,11 +244,10 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                           });
                         },
                         child: AutoSizeText(
-                          AppLocalizations.of(context)
-                              .translate('Next_Description'),
+                          Lang.get('Next_Description'),
                           minFontSize: 12,
                           maxLines: 3,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
@@ -238,50 +262,48 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     final controller3 = TextEditingController();
 
     return SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
             Align(
               alignment: Alignment.topLeft,
-              child: AutoSizeText(AppLocalizations.of(context).translate('3/4'),
+              child: AutoSizeText(Lang.get('3/4'),
                   maxLines: 2,
                   minFontSize: 12,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(AppLocalizations.of(context).translate('looking')),
+              child: Text(Lang.get('looking')),
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(AppLocalizations.of(context)
-                  .translate('looking_description')),
+              child: Text(Lang.get('looking_description')),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(
-                  AppLocalizations.of(context).translate('project_describe'),
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(Lang.get('project_describe'),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextField(
               maxLines: 5,
               controller: controller3,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: '',
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Align(
@@ -299,9 +321,9 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                           });
                         },
                         child: AutoSizeText(
-                          AppLocalizations.of(context).translate('review'),
+                          Lang.get('review'),
                           minFontSize: 14,
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.white,
                           ),
                           textAlign: TextAlign.center,
@@ -314,65 +336,77 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
 
   Widget _buildFourContent() {
     return SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
+        physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
             Align(
               alignment: Alignment.topLeft,
-              child: AutoSizeText(AppLocalizations.of(context).translate('4/4'),
+              child: AutoSizeText(Lang.get('4/4'),
                   maxLines: 2,
                   minFontSize: 12,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(title.isEmpty ? "Demo Project" : title),
+              child: Text(
+                title.isEmpty ? "Demo Project" : title,
+                style: const TextStyle(fontWeight: FontWeight.w700),
+              ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
-            Divider(color: Colors.black),
+            const Divider(color: Colors.black),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(description.isEmpty
-                  ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                      'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                      'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                  : description),
+              child: Container(
+                constraints: const BoxConstraints(maxHeight: 400),
+                child: SingleChildScrollView(
+                  child: Text(description.isEmpty
+                      ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
+                          'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
+                          'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                      : description),
+                ),
+              ),
             ),
-            Divider(color: Colors.black),
-            SizedBox(
+            const Divider(color: Colors.black),
+            const SizedBox(
               height: 20,
             ),
             Row(
               children: <Widget>[
-                Icon(Icons.alarm),
-                SizedBox(
+                const Icon(
+                  Icons.alarm,
+                  size: 30,
+                ),
+                const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
-                Text(
-                    '${AppLocalizations.of(context).translate('project_scope')}\n  - $duration'),
+                Text('${Lang.get('project_scope')}\n  - $duration'),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Row(
               children: <Widget>[
-                Icon(Icons.people),
-                SizedBox(
+                const Icon(
+                  Icons.people,
+                  size: 30,
+                ),
+                const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
-                Text(
-                    '${AppLocalizations.of(context).translate('student_require')}\n  - $number'),
+                Text('${Lang.get('student_require')}\n  - $number students'),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Align(
@@ -384,11 +418,24 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                       height: 50,
                       child: FloatingActionButton(
                         onPressed: () {
-                          Navigator.of(context)..pop();
+                          Navigator.of(context).pop<Project>(Project(
+                            title: title,
+                            description: description,
+                            scope: scope,
+                            numberOfStudents: int.tryParse(number) ?? 2,
+                            timeCreated: DateTime.now(),
+                          ));
+                          Navigator.of(context).pop<Project>(Project(
+                            title: title,
+                            description: description,
+                            scope: scope,
+                            numberOfStudents: int.tryParse(number) ?? 2,
+                            timeCreated: DateTime.now(),
+                          ));
                         },
                         child: Text(
-                          AppLocalizations.of(context).translate('post_job'),
-                          style: TextStyle(color: Colors.white),
+                          Lang.get('post_job'),
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ))),
             ),
@@ -398,6 +445,6 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return MainAppBar();
+    return const MainAppBar();
   }
 }

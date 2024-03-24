@@ -15,10 +15,11 @@ import 'store/form/profile_form_store.dart';
 
 enum CompanySize {
   single, // 1
-
 }
 
 class ProfileStep2Screen extends StatefulWidget {
+  const ProfileStep2Screen({super.key});
+
   @override
   _ProfileStep2ScreenState createState() => _ProfileStep2ScreenState();
 }
@@ -61,10 +62,13 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(onPressed: () => {
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login), (Route<dynamic> route) => false)
-      }, icon: const Icon(Icons.person_rounded))
+      IconButton(
+          onPressed: () => {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute2(routeName: Routes.login),
+                    (Route<dynamic> route) => false)
+              },
+          icon: const Icon(Icons.person_rounded))
     ];
   }
 
@@ -108,9 +112,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                       _companySize = CompanySize.values[i - 1];
                     });
                   },
-            title: Text(
-                AppLocalizations.of(context)
-                    .translate('profile_question_1_choice_$i'),
+            title: Text(Lang.get('profile_question_1_choice_$i'),
                 style: Theme.of(context).textTheme.bodyText1),
             leading: Radio<CompanySize>(
               value: CompanySize.values[i - 1],
@@ -133,8 +135,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)
-                  .translate('profile_question_title_2'),
+              Lang.get('profile_question_title_2'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
@@ -166,8 +167,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)
-                  .translate('profile_question_title_3'),
+              Lang.get('profile_question_title_3'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
@@ -199,7 +199,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context).translate('profile_question_title_4'),
+          Lang.get('profile_question_title_4'),
           style: Theme.of(context).textTheme.bodySmall,
         ),
         TextField(
@@ -233,7 +233,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
             ),
             Center(
               child: Text(
-                AppLocalizations.of(context).translate('profile_welcome_title'),
+                Lang.get('profile_welcome_title'),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -243,11 +243,9 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
             const SizedBox(
               height: 30,
             ),
-            
             const SizedBox(
               height: 10,
             ),
-            
             _buildCompanyNameField(context),
             const SizedBox(
               height: 15,
@@ -260,8 +258,8 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
             const SizedBox(
               height: 25,
             ),
-                        _buildCompanySizeSelection(context),
-                        const SizedBox(
+            _buildCompanySizeSelection(context),
+            const SizedBox(
               height: 30,
             ),
             Container(
@@ -270,19 +268,21 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MaterialButton(
-                    onPressed: () => navigate(context),
+                    onPressed: () {},
                     // color: Colors.orange,
                     child: Text(
-                      AppLocalizations.of(context).translate('profile_edit'),
+                      Lang.get('edit'),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
-                  const SizedBox(width: 15,),
+                  const SizedBox(
+                    width: 15,
+                  ),
                   MaterialButton(
                     onPressed: () => navigate(context),
                     // color: Colors.orange,
                     child: Text(
-                      AppLocalizations.of(context).translate('profile_cancel'),
+                      Lang.get('cancel'),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -300,8 +300,9 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
 
   Widget navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
+      Navigator.of(context).pop();
     });
 
     return Container();
@@ -314,8 +315,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title:
-                AppLocalizations.of(context).translate('profile_change_error'),
+            title: Lang.get('profile_change_error'),
             duration: const Duration(seconds: 3),
           ).show(context);
         }

@@ -1,17 +1,17 @@
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
+import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 
+// ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
   DashBoardTab({super.key, this.isAlive = true, required this.pageController});
   bool? isAlive;
@@ -44,6 +44,7 @@ class _DashBoardTabState extends State<DashBoardTab>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return _buildDashBoardContent();
   }
 
@@ -56,8 +57,7 @@ class _DashBoardTabState extends State<DashBoardTab>
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppLocalizations.of(context)
-                    .translate('Dashboard_your_job')),
+                child: Text(Lang.get('Dashboard_your_job')),
               ),
               const Spacer(),
               Align(
@@ -67,16 +67,23 @@ class _DashBoardTabState extends State<DashBoardTab>
                   height: 30,
                   child: FloatingActionButton(
                     heroTag: "F3",
-                    onPressed: () {
+                    onPressed: () async {
                       // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                      Navigator.of(
+                      await Navigator.of(
                               NavigationService.navigatorKey.currentContext!)
-                          .push(MaterialPageRoute2(
-                              routeName: Routes.project_post));
+                          .push(
+                              MaterialPageRoute2(routeName: Routes.projectPost))
+                          .then((value) {
+                        setState(() {
+                          if (value != null) {
+                            allProjects.insert(0, value as Project);
+                            myProjects.insert(0, value as Project);
+                          }
+                        });
+                      });
                     },
                     child: Text(
-                      AppLocalizations.of(context)
-                          .translate('Dashboard_post_job'),
+                      Lang.get('Dashboard_post_job'),
                       style: const TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
@@ -92,13 +99,11 @@ class _DashBoardTabState extends State<DashBoardTab>
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: Text(AppLocalizations.of(context)
-                        .translate('Dashboard_intro')),
+                    child: Text(Lang.get('Dashboard_intro')),
                   ),
                   Align(
                     alignment: Alignment.center,
-                    child: Text(AppLocalizations.of(context)
-                        .translate('Dashboard_content')),
+                    child: Text(Lang.get('Dashboard_content')),
                   ),
                 ],
               )
@@ -119,6 +124,7 @@ class _DashBoardTabState extends State<DashBoardTab>
   bool get wantKeepAlive => widget.isAlive!;
 }
 
+// ignore: must_be_immutable
 class ProjectTabs extends StatefulWidget {
   ProjectTabs({super.key, this.tabController, required this.pageController});
   TabController? tabController;
@@ -160,8 +166,10 @@ class _ProjectTabsState extends State<ProjectTabs> {
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55),
+          padding: const EdgeInsets.only(
+            top: Dimens.tab_height + 8,
+            bottom: 55,
+          ),
           child: TabBarView(
               controller: widget.tabController,
               physics: const BouncingScrollPhysics(),
@@ -170,7 +178,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   projects: myProjects,
                 ),
                 WorkingProjects(
-                  projects: workingProjects,
+                  projects: myProjects,
                 ),
                 AllProjects(
                   projects: myProjects,
@@ -184,7 +192,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
 
 void showBottomSheet(Project project) {
   showAdaptiveActionSheet(
-    title: Text(
+    title: const Text(
       "Menu",
       style: TextStyle(
         fontWeight: FontWeight.bold,
@@ -197,22 +205,22 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text(
-              'View proposals',
-              style: TextStyle(fontWeight: FontWeight.normal),
+            child: Text(Lang.get(
+              'project_item_view_proposal'),
+              style: const TextStyle(fontWeight: FontWeight.normal),
             )),
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('View messages',
-                style: TextStyle(fontWeight: FontWeight.w100))),
+            child: Text(Lang.get('project_item_view_message'),
+                style: const TextStyle(fontWeight: FontWeight.w100))),
       ),
       BottomSheetAction(
         title: Container(
           alignment: Alignment.topLeft,
-          child: const Text('View hired',
-              style: TextStyle(fontWeight: FontWeight.normal)),
+          child: Text(Lang.get('project_item_view_hired'),
+              style: const TextStyle(fontWeight: FontWeight.normal)),
         ),
       ),
       BottomSheetAction(
@@ -221,20 +229,20 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('View job posting',
-                style: TextStyle(fontWeight: FontWeight.normal))),
+            child: Text(Lang.get('project_item_view_job_posting'),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('Edit posting',
-                style: TextStyle(fontWeight: FontWeight.normal))),
+            child: Text(Lang.get('project_item_edit_job_posting'),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
       ),
       BottomSheetAction(
         title: Container(
           alignment: Alignment.topLeft,
-          child: const Text('Remove posting',
-              style: TextStyle(fontWeight: FontWeight.normal)),
+          child: Text(Lang.get('project_item_remove_job_posting'),
+              style: const TextStyle(fontWeight: FontWeight.normal)),
         ),
       ),
       BottomSheetAction(
@@ -243,10 +251,16 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('Start working this project',
-                style: TextStyle(fontWeight: FontWeight.normal))),
+            child: Text(Lang.get("project_start_working"),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
-          workingProjects.add(project);
+          print(project.title);
+          myProjects
+              .firstWhere(
+                (element) => element.objectId == project.objectId,
+                orElse: () => myProjects[0],
+              )
+              .isWorking = true;
         },
       ),
     ],
@@ -262,12 +276,25 @@ class WorkingProjects extends StatefulWidget {
 }
 
 class _WorkingProjectsState extends State<WorkingProjects> {
+  late List<Project>? workingProjects;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.projects != null) {
+      workingProjects =
+          widget.projects!.where((element) => element.isWorking).toList();
+    } else {
+      workingProjects = List.empty(growable: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: widget.projects?.length ?? 0,
+      itemCount: workingProjects?.length ?? 0,
       itemBuilder: (context, index) => MyProjectItem(
-        project: myProjects[index],
+        project: workingProjects![index],
         onShowBottomSheet: showBottomSheet,
       ),
     );

@@ -33,11 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   fit: FlexFit.loose,
                   child: Column(
                     children: [
-                      Text(
-                          AppLocalizations.of(context).translate('home_title')),
+                      Text(Lang.get('home_title')),
                       const SizedBox(height: 30),
-                      Text(
-                          AppLocalizations.of(context).translate('home_intro')),
+                      Text(Lang.get('home_intro')),
                       const SizedBox(height: 25),
                       SizedBox(
                         width: 200,
@@ -45,13 +43,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: RoundedButtonWidget(
                           onPressed: () {
                             // Handle your action
-                            Navigator.of(context)
-                              ..push(
-                                MaterialPageRoute2(routeName: Routes.welcome),
-                              );
+                            Navigator.of(context).push(
+                              MaterialPageRoute2(routeName: Routes.welcome),
+                            );
                           },
-                          buttonText: AppLocalizations.of(context)
-                              .translate('Company_button'),
+                          buttonText: Lang.get('company'),
                           buttonColor: Theme.of(context).colorScheme.primary,
                           textColor: Colors.white,
                         ),
@@ -64,8 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             // Handle your action
                           },
-                          buttonText: AppLocalizations.of(context)
-                              .translate('Student_button'),
+                          buttonText: Lang.get('student'),
                           buttonColor: Theme.of(context).colorScheme.primary,
                           textColor: Colors.white,
                         ),
@@ -73,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(height: 25),
                     ],
                   )),
-              Text(AppLocalizations.of(context).translate('home_description')),
+              Text(Lang.get('home_description')),
             ],
           ),
         ),
@@ -83,6 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return MainAppBar();
+    return const MainAppBar();
   }
 }

@@ -34,21 +34,19 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 size: 25,
               ),
               const SizedBox(height: 20.0),
-              Text(AppLocalizations.of(context).translate('Welcome')),
-              Text(AppLocalizations.of(context).translate('Start')),
+              Text(Lang.get('Welcome')),
+              Text(Lang.get('Start')),
               const SizedBox(height: 20.0),
               SizedBox(
                 width: 200,
                 height: 50,
                 child: RoundedButtonWidget(
                   onPressed: () {
-                    Navigator.of(context)
-                      ..pushAndRemoveUntil(
-                          MaterialPageRoute2(routeName: Routes.dashboard),
-                          (Route<dynamic> route) => false);
+                    Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute2(routeName: Routes.dashboard),
+                        (Route<dynamic> route) => false);
                   },
-                  buttonText:
-                      AppLocalizations.of(context).translate('Start_button'),
+                  buttonText: Lang.get('Start_button'),
                   buttonColor: Theme.of(context).colorScheme.primary,
                   textColor: Colors.white,
                 ),
@@ -62,6 +60,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return MainAppBar();
+    return const MainAppBar();
   }
 }

@@ -1,7 +1,9 @@
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
+import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../domain/entity/user/user.dart';
@@ -17,8 +19,10 @@ abstract class _UserStore with Store {
     this._isLoggedInUseCase,
     this._saveLoginStatusUseCase,
     this._loginUseCase,
+    this._saveUserDataUseCase,
     this.formErrorStore,
     this.errorStore,
+    this._getUserDataUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -27,12 +31,21 @@ abstract class _UserStore with Store {
     _isLoggedInUseCase.call(params: null).then((value) async {
       isLoggedIn = value;
     });
+
+    _getUserDataUseCase.call(params: null).then((value) async {
+      _user = value;
+    });
   }
+
+  // public variable
+  User? get user => _user;
 
   // use cases:-----------------------------------------------------------------
   final IsLoggedInUseCase _isLoggedInUseCase;
   final SaveLoginStatusUseCase _saveLoginStatusUseCase;
   final LoginUseCase _loginUseCase;
+  final SaveUserDataUsecase _saveUserDataUseCase;
+  final GetUserDataUseCase _getUserDataUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -61,6 +74,9 @@ abstract class _UserStore with Store {
   bool success = false;
 
   @observable
+  User? _user;
+
+  @observable
   ObservableFuture<User?> loginFuture = emptyLoginResponse;
 
   @computed
@@ -69,16 +85,24 @@ abstract class _UserStore with Store {
   // actions:-------------------------------------------------------------------
   @action
   Future login(String email, String password) async {
-    final LoginParams loginParams =
-        LoginParams(username: email, password: password);
+    // TODO change userType to debug company or student
+    // print(UserType.company.name);
+    final LoginParams loginParams = LoginParams(
+        username: email,
+        password: password,
+        userType: email == "c@mpany.com"
+            ? UserType.company.name
+            : UserType.student.name);
     final future = _loginUseCase.call(params: loginParams);
     loginFuture = ObservableFuture(future);
 
     await future.then((value) async {
       if (value != null) {
         await _saveLoginStatusUseCase.call(params: true);
+        await _saveUserDataUseCase.call(params: value);
         isLoggedIn = true;
         success = true;
+        _user = value;
       }
     }).catchError((e) {
       print(e);
@@ -90,7 +114,9 @@ abstract class _UserStore with Store {
 
   logout() async {
     isLoggedIn = false;
+    _user = null;
     await _saveLoginStatusUseCase.call(params: false);
+    await _saveUserDataUseCase.call(params: null);
   }
 
   // general methods:-----------------------------------------------------------

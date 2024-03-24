@@ -2,25 +2,38 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
+import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 class AnimatedWave extends StatelessWidget {
   final double height;
   final double speed;
   final double offset;
 
-  AnimatedWave({required this.height, required this.speed, this.offset = 0.0});
+  const AnimatedWave(
+      {super.key,
+      required this.height,
+      required this.speed,
+      this.offset = 0.0});
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
-      return Container(
+      return SizedBox(
         height: height,
         width: constraints.biggest.width,
         child: LoopAnimationBuilder(
@@ -70,17 +83,19 @@ class CurvePainter extends CustomPainter {
 }
 
 class AnimatedBackground extends StatelessWidget {
+  const AnimatedBackground({super.key});
+
   @override
   Widget build(BuildContext context) {
     final tween = MovieTween()
       ..tween(
           "color1",
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           ColorTween(
               begin: Colors.lightBlue.shade500, end: Colors.lightBlue.shade900))
       ..tween(
           "color2",
-          duration: Duration(seconds: 3),
+          duration: const Duration(seconds: 3),
           ColorTween(begin: Colors.blue.shade200, end: Colors.blue.shade600));
 
     return MirrorAnimationBuilder(
@@ -88,15 +103,15 @@ class AnimatedBackground extends StatelessWidget {
       duration: tween.duration,
       builder: (context, value, child) {
         return Container(
-          child: child,
           decoration: BoxDecoration(
               gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                Color.fromARGB(165, 114, 248, 128),
+                const Color.fromARGB(164, 255, 255, 255),
                 Colors.blueAccent.shade100
               ])),
+          child: child,
         );
       },
     );
@@ -105,22 +120,22 @@ class AnimatedBackground extends StatelessWidget {
 
 class FancyBackgroundApp extends StatelessWidget {
   final Widget child;
-  FancyBackgroundApp({required this.child});
+  const FancyBackgroundApp({super.key, required this.child});
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        Positioned.fill(child: AnimatedBackground()),
-        onBottom(AnimatedWave(
+        const Positioned.fill(child: AnimatedBackground()),
+        onBottom(const AnimatedWave(
           height: 180,
           speed: 1.0,
         )),
-        onBottom(AnimatedWave(
+        onBottom(const AnimatedWave(
           height: 120,
           speed: 0.9,
           offset: pi,
         )),
-        onBottom(AnimatedWave(
+        onBottom(const AnimatedWave(
           height: 220,
           speed: 1.2,
           offset: pi / 2,
@@ -150,22 +165,27 @@ class _SplashScreenState extends State<SplashScreen>
   final UserStore _userStore = getIt<UserStore>();
   final ThemeStore _themeStore = getIt<ThemeStore>();
   late AnimationController _controller;
+  TextEditingController loadingText = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    loadingText.text = "Copyright © 2024";
     _controller = AnimationController(
         duration: const Duration(milliseconds: 3500), vsync: this)
       ..addListener(() async {
         if (_controller.isCompleted) {
-          await _controller.playReverse(
-              duration: const Duration(milliseconds: 3500));
-          await Future.delayed(Duration(seconds: 1));
-          await _controller.play();
+          try {
+            await _controller.playReverse(
+                duration: const Duration(milliseconds: 3500));
+            await Future.delayed(const Duration(seconds: 1));
+            await _controller.play();
+          } catch (e) {}
         }
       });
-    ;
     _playAnimation(context);
+    initCube(NavigationService.navigatorKey.currentContext);
+
     // Timer(
     //     Duration(seconds: 3),
     //     () => Navigator.pushReplacement(
@@ -174,27 +194,117 @@ class _SplashScreenState extends State<SplashScreen>
     //             child: _userStore.isLoggedIn ? HomeScreen() : LoginScreen())));
   }
 
+  initCube(context) async {
+    final UserStore _userStore = getIt<UserStore>();
+    var user;
+
+    if (_userStore.user != null && _userStore.user!.type != UserType.naught) {
+      try {
+        // CallManager.instance.destroy();
+        // CubeChatConnection.instance.destroy();
+        // // await PushNotificationsManager.instance.unsubscribe();
+        // await SharedPrefs.deleteUserData();
+        // // await signOut();
+      } catch (e) {}
+      //CubeSessionManager.instance.isActiveSessionValid();
+
+      user = _userStore.user!.email == "user@1.com"
+          ? utils.users[0]
+          : _userStore.user!.email == "user@2.com"
+              ? utils.users[1]
+              : utils.users[2];
+      await createSession(user).then(
+        (value) async {
+          CubeSessionManager.instance.activeSession = value;
+          loadingText.text =
+              "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
+
+          await CubeChatConnection.instance.login(user).then((cubeUser) async {
+            SharedPrefs.saveNewUser(cubeUser);
+            log(cubeUser.toString(), "BEBAOBOY");
+            if (CubeChatConnection.instance.isAuthenticated() &&
+                CubeChatConnection.instance.currentUser != null)
+              log(
+                  (CubeSessionManager.instance.activeSession!.user == null)
+                      .toString(),
+                  "BEBAOBOY");
+
+            initForegroundService();
+            loadingText.text = "Almost done...";
+            checkSystemAlertWindowPermission(context);
+
+            requestNotificationsPermission();
+
+            await CallManager.instance.init(context);
+
+            await PushNotificationsManager.instance.init();
+
+            _controller.stop();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute2(
+                    routeName:
+                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+          }).catchError((exception) {
+            //_processLoginError(exception);
+            _controller.stop();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute2(
+                    routeName:
+                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+            log(exception.toString(), "BEBAOBOY");
+          });
+          // _controller.stop();
+        },
+      ).catchError((exception) {
+        //_processLoginError(exception);
+        _controller.stop();
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute2(
+                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+        log(exception.toString(), "BEBAOBOY");
+      });
+      deleteSessionsExceptCurrent()
+          .then((voidResult) {})
+          .catchError((error) {});
+    } else {
+      user = utils.users[2];
+      Future.delayed(Duration(seconds: 2), () {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute2(
+                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+      });
+    }
+  }
+
   Future<Null> _playAnimation(BuildContext context) async {
     try {
-      await _controller.forward().orCancel;
-      await Future.delayed(Duration(seconds: 15));
+      _controller.forward().onError(
+            (error, stackTrace) => null,
+          );
+      await Future.delayed(const Duration(seconds: 15));
 //      await controller.reverse().orCancel;
     } on TickerCanceled {
       // the animation got canceled, probably because we were disposed
       _controller.stop();
+    } catch (E) {
     } finally {
       try {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute2(
                 routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+        // ignore: empty_catches
       } catch (e) {}
     }
   }
 
   @override
   void dispose() {
-        _controller.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -205,12 +315,12 @@ class _SplashScreenState extends State<SplashScreen>
       body: FancyBackgroundApp(
         child: GestureDetector(
           onTap: () {
-            _controller.stop();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+            // _controller.stop();
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute2(
+            //         routeName:
+            //             _userStore.isLoggedIn ? Routes.home : Routes.login));
           },
           child: Center(
             child: SingleChildScrollView(
@@ -252,14 +362,19 @@ class _SplashScreenState extends State<SplashScreen>
                         ),
                   MediaQuery.of(context).orientation != Orientation.landscape
                       ? Center(
-                          child: Text(
+                          child: TextField(
                             // "20127600 - 20127004 - 20127171",
-                            "Copyright © 2024",
+                            controller: loadingText,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Theme.of(context).colorScheme.primary,
                             ),
+                            decoration:
+                                InputDecoration(border: InputBorder.none),
+                            enableInteractiveSelection: false,
+                            readOnly: true,
                           ),
                         )
                       : const SizedBox(

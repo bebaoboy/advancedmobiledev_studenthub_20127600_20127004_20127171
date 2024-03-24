@@ -123,12 +123,10 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const EmptyAppBar(),
             const SizedBox(height: 24.0),
             Center(
               child: AutoSizeText(
-                AppLocalizations.of(context)
-                    .translate('signup_student_main_text'),
+                Lang.get('signup_student_main_text'),
                 style:
                     const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                 minFontSize: 10,
@@ -157,8 +155,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                           title: Transform.translate(
                             offset: const Offset(-10, 0),
                             child: AutoSizeText(
-                              AppLocalizations.of(context)
-                                  .translate('signup_company_policy_agree'),
+                              Lang.get('signup_company_policy_agree'),
                               style: const TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.w800),
                               minFontSize: 10,
@@ -185,8 +182,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                     const SizedBox(height: 24.0),
                     RichText(
                       text: TextSpan(
-                        text: AppLocalizations.of(context)
-                            .translate('signup_student_company_prompt'),
+                        text: Lang.get('signup_student_company_prompt'),
                         style: TextStyle(
                             fontSize: 18,
                             color: _themeStore.darkMode
@@ -195,7 +191,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                         children: <TextSpan>[
                           TextSpan(
                               text:
-                                  " ${AppLocalizations.of(context).translate('signup_student_company_prompt_action')}",
+                                  " ${Lang.get('signup_student_company_prompt_action')}",
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
@@ -222,8 +218,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context)
-              .translate('signup_company_et_fullname'),
+          hint: Lang.get('signup_company_et_fullname'),
           inputType: TextInputType.emailAddress,
           icon: Icons.account_box,
           textController: _userFullnameController,
@@ -245,8 +240,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('signup_company_et_email'),
+          hint: Lang.get('signup_company_et_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           textController: _userEmailController,
@@ -260,8 +254,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           },
           errorText: _formStore.formErrorStore.userEmail == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -271,16 +264,14 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context)
-              .translate('signup_company_et_password'),
+          hint: Lang.get('signup_company_et_password'),
           isObscure: true,
           icon: Icons.lock,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
           errorText: _formStore.formErrorStore.password == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -293,15 +284,13 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context)
-              .translate('signup_company_et_password_confirm'),
+          hint: Lang.get('signup_company_et_password_confirm'),
           isObscure: true,
           icon: Icons.lock,
           textController: _passwordConfirmController,
           errorText: _formStore.formErrorStore.confirmPassword == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.confirmPassword),
+              : Lang.get(_formStore.formErrorStore.confirmPassword),
           onChanged: (value) {
             _formStore.setConfirmPassword(_passwordConfirmController.text);
           },
@@ -310,14 +299,13 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     );
   }
 
-
   Widget _buildForgotPasswordButton() {
     return Align(
       alignment: FractionalOffset.centerRight,
       child: MaterialButton(
         padding: const EdgeInsets.all(0.0),
         child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+          Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
               .caption
@@ -332,7 +320,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-        buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
+        buttonText: Lang.get('login_btn_sign_in'),
         buttonColor: Colors.orangeAccent,
         textColor: Colors.white,
         onPressed: () async {
@@ -363,7 +351,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
               )),
         ),
         Text(
-          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
+          Lang.get('login_btn_sign_up_prompt'),
           style: const TextStyle(fontSize: 12),
         ),
         Expanded(
@@ -380,8 +368,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   Widget _buildSignUpStudentButton() {
     return RoundedButtonWidget(
-      buttonText:
-          AppLocalizations.of(context).translate('signup_student_sign_up'),
+      buttonText: Lang.get('signup_student_sign_up'),
       buttonColor: Theme.of(context).colorScheme.primary,
       textColor: Colors.white,
       onPressed: () async {
@@ -407,7 +394,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     Future.delayed(const Duration(milliseconds: 0), () {
       print("LOADING = $loading");
       // Navigator.of(context)
-      //   ..pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
+      //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
       //       (Route<dynamic> route) => false);
     });
 
@@ -421,7 +408,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
           )..show(context);
         }

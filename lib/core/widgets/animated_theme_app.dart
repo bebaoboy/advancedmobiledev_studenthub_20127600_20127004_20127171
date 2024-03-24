@@ -90,7 +90,7 @@ const TextStyle _errorTextStyle = TextStyle(
 /// MaterialApp(
 ///   home: Scaffold(
 ///     appBar: AppBar(
-///       title: const Text('Home'),
+///       title: const Text(Lang.get('Home'),
 ///     ),
 ///   ),
 ///   debugShowCheckedModeBanner: false,
@@ -108,14 +108,14 @@ const TextStyle _errorTextStyle = TextStyle(
 ///     '/': (BuildContext context) {
 ///       return Scaffold(
 ///         appBar: AppBar(
-///           title: const Text('Home Route'),
+///           title: const Text(Lang.get('Home Route'),
 ///         ),
 ///       );
 ///     },
 ///     '/about': (BuildContext context) {
 ///       return Scaffold(
 ///         appBar: AppBar(
-///           title: const Text('About Route'),
+///           title: const Text(Lang.get('About Route'),
 ///         ),
 ///       );
 ///      }
@@ -138,7 +138,7 @@ const TextStyle _errorTextStyle = TextStyle(
 ///   ),
 ///   home: Scaffold(
 ///     appBar: AppBar(
-///       title: const Text('MaterialApp Theme'),
+///       title: const Text(Lang.get('MaterialApp Theme'),
 ///     ),
 ///   ),
 /// )
@@ -163,7 +163,7 @@ const TextStyle _errorTextStyle = TextStyle(
 ///   title: 'Material App',
 ///   home: Scaffold(
 ///     body: Center(
-///       child: Text('Hello World'),
+///       child: Text(Lang.get('Hello World'),
 ///     ),
 ///   ),
 /// )
@@ -871,7 +871,7 @@ class MaterialScrollBehavior extends ScrollBehavior {
           case AndroidOverscrollIndicator.stretch:
             return StretchingOverscrollIndicator(
               axisDirection: details.direction,
-              clipBehavior: details.clipBehavior ?? Clip.hardEdge,
+              clipBehavior: details.decorationClipBehavior ?? Clip.hardEdge,
               child: child,
             );
           case AndroidOverscrollIndicator.glow:
@@ -1000,14 +1000,15 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
         if (lastThemeMode != mode && key.currentState != null) {
           print(lastThemeMode == ThemeMode.light);
           print(mode == ThemeMode.light);
-          key.currentState!.startAnimation();
+          //key.currentState!.startAnimation();
+        }
+        if (key.currentState != null) {
+          key.currentState!.startAnimation(lastThemeMode != mode);
         }
 
         break;
     }
-    if (endTheme == null) {
-      endTheme = AppThemeData.lightThemeData;
-    }
+    endTheme ??= AppThemeData.lightThemeData;
     return endTheme;
   }
 
@@ -1027,7 +1028,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           key: widget.scaffoldMessengerKey,
           child: FadeAnimatedTheme(
             duration: widget.animationDuration,
-            data: theme!,
+            data: theme,
             isMaterialAppTheme: true,
             child: widget.builder != null
                 ? Builder(
@@ -1055,7 +1056,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           key: widget.scaffoldMessengerKey,
           child: ScaleAnimatedTheme(
             duration: widget.animationDuration,
-            data: theme!,
+            data: theme,
             isMaterialAppTheme: true,
             child: widget.builder != null
                 ? Builder(

@@ -50,8 +50,14 @@ class _SettingScreenState extends State<SettingScreen> {
       Account(AccountType.student, 'Hai Pham Student 4', []),
       Account(AccountType.student, 'Hai Pham Student 5', [])
     ]),
-    Account(AccountType.company, 'Hai Pham 3',),
-    Account(AccountType.company, 'Hai Pham 4',),
+    Account(
+      AccountType.company,
+      'Hai Pham 3',
+    ),
+    Account(
+      AccountType.company,
+      'Hai Pham 4',
+    ),
   ];
 
   @override
@@ -85,14 +91,14 @@ class _SettingScreenState extends State<SettingScreen> {
           height += calculateTreeHeight(element.children);
         }
       }
-      print(element.name + ": " + height.toString());
+      print("${element.name}: $height");
     }
     return height;
   }
 
   void calculate(List<Account> list) {
     var h = calculateTreeHeight(accountList);
-    print("TREEEEEEEEHEIGHT: " + h.toString());
+    print("TREEEEEEEEHEIGHT: $h");
     if (h != height) {
       setState(() {
         height = h;
@@ -107,8 +113,9 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget _buildAccountTree() {
     if (height == 0) calculate(accountList);
     return AnimatedContainer(
-      height: max(MediaQuery.of(context).size.height * 0.3, min(height, MediaQuery.of(context).size.height * 0.5)),
-      duration: Duration(milliseconds: 550),
+      height: max(MediaQuery.of(context).size.height * 0.3,
+          min(height, MediaQuery.of(context).size.height * 0.5)),
+      duration: const Duration(milliseconds: 550),
       curve: Curves.fastOutSlowIn,
       child: Container(
         child: TreeView.simple<Account>(
@@ -218,7 +225,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 },
                 leading: const Icon(Icons.person),
                 title: Text(
-                  AppLocalizations.of(context).translate('profile_text'),
+                  Lang.get('profile_text'),
                 )),
             const Divider(
               height: 3,
@@ -227,7 +234,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 onTap: () => navigate(context, Routes.setting),
                 leading: const Icon(Icons.settings),
                 title: Text(
-                  AppLocalizations.of(context).translate('setting_text'),
+                  Lang.get('setting_text'),
                 )),
             const Divider(
               height: 3,
@@ -236,7 +243,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 onTap: () => _userStore.logout(),
                 leading: const Icon(Icons.logout),
                 title: Text(
-                  AppLocalizations.of(context).translate('logout_text'),
+                  Lang.get('logout'),
                 )),
           ],
         ),
@@ -247,7 +254,7 @@ class _SettingScreenState extends State<SettingScreen> {
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
       Navigator.of(context)
-        ..pushReplacement(MaterialPageRoute2(routeName: route));
+          .pushReplacement(MaterialPageRoute2(routeName: route));
     });
 
     return Container();
@@ -260,8 +267,7 @@ class _SettingScreenState extends State<SettingScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title:
-                AppLocalizations.of(context).translate('profile_change_error'),
+            title: Lang.get('profile_change_error'),
             duration: const Duration(seconds: 3),
           ).show(context);
         }

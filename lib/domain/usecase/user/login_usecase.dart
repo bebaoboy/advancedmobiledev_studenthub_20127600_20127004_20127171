@@ -9,8 +9,9 @@ part 'login_usecase.g.dart';
 class LoginParams {
   final String username;
   final String password;
+  String? userType;
 
-  LoginParams({required this.username, required this.password});
+  LoginParams({required this.username, required this.password, this.userType});
 
   factory LoginParams.fromJson(Map<String, dynamic> json) =>
       _$LoginParamsFromJson(json);
