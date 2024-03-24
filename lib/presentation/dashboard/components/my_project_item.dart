@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class _OpenContainerWrapper extends StatelessWidget {
@@ -146,8 +147,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
           alignment: Alignment.centerRight,
           padding: const EdgeInsetsDirectional.only(end: 20),
         ),
-        child: buildItem(MediaQuery.of(context).size.width
-        ),
+        child: buildItem(MediaQuery.of(context).size.width),
       ),
     );
   }
@@ -156,7 +156,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
     var createdText = '';
     int differenceWithToday = widget.project.getModifiedTimeCreated();
     if (differenceWithToday == 0) {
-      createdText = 'Created just now';
+      createdText = Lang.get("created_now");
     } else if (differenceWithToday == 1) {
       createdText = 'Created 1 day ago';
     } else {
@@ -179,7 +179,6 @@ class _MyProjectItemState extends State<MyProjectItem> {
                 horizontal: Dimens.horizontal_padding,
                 vertical: Dimens.vertical_padding),
             child: Stack(
-              
               children: [
                 Column(
                   mainAxisSize: MainAxisSize.min,
@@ -211,8 +210,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              (widget.project.proposal?.length ?? 0)
-                                  .toString(),
+                              (widget.project.proposal?.length ?? 0).toString(),
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                             Text(
@@ -226,8 +224,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           children: [
                             // Add a message length here
                             Text(
-                              (widget.project.messages?.length ?? 0)
-                                  .toString(),
+                              (widget.project.messages?.length ?? 0).toString(),
                               style: Theme.of(context).textTheme.bodyText1,
                             ),
                             Text(
@@ -257,7 +254,8 @@ class _MyProjectItemState extends State<MyProjectItem> {
                 Align(
                   alignment: Alignment.topRight,
                   child: IconButton(
-                      onPressed: () => widget.onShowBottomSheet!(widget.project),
+                      onPressed: () =>
+                          widget.onShowBottomSheet!(widget.project),
                       icon: const Icon(Icons.more_horiz_outlined)),
                 )
               ],

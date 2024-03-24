@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 // class SearchBottomSheet extends StatefulWidget {
@@ -154,7 +155,7 @@ import 'package:flutter/material.dart';
 //     return AppBar(
 //       toolbarHeight: 80,
 //       titleSpacing: 0,
-//       // title: const Text('Search projects'),
+//       // title: const Text(Lang.get('Search projects'),
 //       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
 //       title: AnimSearchBar2(
 //         textFieldColor: Theme.of(context).colorScheme.surface,
@@ -191,7 +192,7 @@ import 'package:flutter/material.dart';
 //     return AppBar(
 //       toolbarHeight: 80,
 //       titleSpacing: 0,
-//       // title: const Text('Search projects'),
+//       // title: const Text(Lang.get('Search projects'),
 //       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
 //       title: AnimSearchBar2(
 //         textFieldColor: Theme.of(context).colorScheme.surface,
@@ -259,7 +260,7 @@ import 'package:flutter/material.dart';
 //             //     onPressed: () {
 //             //       widget.onSheetDismissed();
 //             //     },
-//             //     child: const Text('Cancel'),
+//             //     child: const Text(Lang.get('Cancel'),
 //             //   ),
 //             // ),
 //             // const SizedBox(width: 16),
@@ -291,7 +292,7 @@ import 'package:flutter/material.dart';
 //             //     onPressed: () {
 //             //       widget.onSheetDismissed();
 //             //     },
-//             //     child: const Text('Cancel'),
+//             //     child: const Text(Lang.get('Cancel'),
 //             //   ),
 //             // ),
 //             // const SizedBox(width: 16),
@@ -334,7 +335,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // Text("This is project page"),
+        // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
             child: Row(
@@ -346,7 +347,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                     },
                     onSubmitted: (value) {},
                     decoration: InputDecoration(
-                      hintText: 'Search for projects',
+                      hintText: Lang.get('search'),
                       prefixIcon: IconButton(
                         icon: Icon(Icons.search,
                             size: 35, color: Colors.black.withOpacity(.7)),

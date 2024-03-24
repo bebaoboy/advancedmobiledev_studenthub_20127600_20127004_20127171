@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -37,7 +38,7 @@ class SearchFilter {
 }
 
 class _FilterBottomSheet extends StatefulWidget {
-  const _FilterBottomSheet({required this.filter});
+   _FilterBottomSheet({required this.filter});
   final SearchFilter filter;
 
   @override
@@ -63,31 +64,31 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
   Widget build(BuildContext context) {
     return SheetDismissible(
       child: ScrollableSheet(
-        keyboardDismissBehavior: const SheetKeyboardDismissBehavior.onDragDown(
+        keyboardDismissBehavior:  const SheetKeyboardDismissBehavior.onDragDown(
           isContentScrollAware: true,
         ),
         child: SheetContentScaffold(
             appBar: AppBar(
-              title: const Text("Filter by"),
+              title: Text(Lang.get("filter_title")),
             ),
             body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
+              padding:  const EdgeInsets.symmetric(horizontal: 32),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Padding(
-                    //   padding: const EdgeInsets.only(right: 32),
+                    //   padding:  EdgeInsets.only(right: 32),
                     //   child: Text(
                     //     'Confirm your choices',
                     //   ),
                     // ),
-                    // const SizedBox(height: 24),
-                    const ListTile(
-                      title: Text('Project Length'),
+                    //  SizedBox(height: 24),
+                    ListTile(
+                      title: Text(Lang.get('project_length')),
                     ),
                     // Padding(
-                    //   padding: const EdgeInsets.only(right: 32),
+                    //   padding:  EdgeInsets.only(right: 32),
                     //   child: Wrap(
                     //     spacing: 10,
                     //     children: [
@@ -100,19 +101,19 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     //     ],
                     //   ),
                     // ),
-                    // const Divider(height: 32),
+                    //  Divider(height: 32),
                     // ListTile(
-                    //   title: const Text('Mood'),
+                    //   title:  Text(Lang.get('Mood'),
                     //   // trailing: IconButton(
                     //   //   onPressed: () => context.go('/intro/genre/mood'),
-                    //   //   icon: const Icon(Icons.edit_outlined),
+                    //   //   icon:  Icon(Icons.edit_outlined),
                     //   // ),
                     // ),
                     RadioListTile<Scope>(
-                      title: const Text("Less than one month"),
+                      title:  Text(Lang.get("0-1")),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
                       value: Scope.tight,
@@ -125,10 +126,10 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title: const Text("1 to 3 months"),
+                      title:  Text(Lang.get("1-3")),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
                       value: Scope.short,
@@ -141,10 +142,10 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title: const Text("3 to 6 months"),
+                      title:  Text(Lang.get('3-6')),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
                       value: Scope.long,
@@ -157,10 +158,10 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title: const Text("More than 6 months"),
+                      title:  Text(Lang.get('6-')),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
                       value: Scope.extended,
@@ -172,20 +173,20 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                         });
                       },
                     ),
-                    const Divider(height: 32),
+                     const Divider(height: 32),
                     // ListTile(
-                    //   title: const Text('Seed tracks'),
+                    //   title:  Text(Lang.get('Seed tracks'),
                     //   trailing: IconButton(
                     //     onPressed: () =>
                     //         context.go('/intro/genre/mood/seed-track'),
-                    //     icon: const Icon(Icons.edit_outlined),
+                    //     icon:  Icon(Icons.edit_outlined),
                     //   ),
                     // ),
                     TextField(
                       controller: studentNeededController,
                       keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        hintText: "None",
+                      decoration:  InputDecoration(
+                        hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
                             borderSide:
@@ -193,17 +194,17 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                         enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        labelText: "Students needed",
+                        labelText: Lang.get("student_needed"),
                       ),
                       onChanged: (value) {
                         widget.filter.studentNeeded = int.tryParse(value) ?? 2;
                       },
                     ),
-                    const Divider(height: 32),
+                     const Divider(height: 32),
                     TextField(
                       controller: proposalLessThanController,
-                      decoration: const InputDecoration(
-                        hintText: "None",
+                      decoration:  InputDecoration(
+                        hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         border: OutlineInputBorder(
                             borderSide:
@@ -211,7 +212,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                         enabledBorder: OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        labelText: "Proposal less than",
+                        labelText: Lang.get("proposal_less_than"),
                       ),
                       onChanged: (value) {
                         widget.filter.proposalLessThan =
@@ -233,10 +234,10 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   //     onPressed: () {
                   //       widget.onSheetDismissed();
                   //     },
-                  //     child: const Text('Cancel'),
+                  //     child:  Text(Lang.get('Cancel'),
                   //   ),
                   // ),
-                  // const SizedBox(width: 16),
+                  //  SizedBox(width: 16),
                   RoundedButtonWidget(
                     buttonColor: Theme.of(context).colorScheme.primary,
                     onPressed: () {
@@ -244,7 +245,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     },
                     buttonText: "Clear filter",
                   ),
-                  const SizedBox(width: 12),
+                   const SizedBox(width: 12),
                   RoundedButtonWidget(
                     buttonColor: Theme.of(context).colorScheme.primary,
                     onPressed: () {
@@ -261,7 +262,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
 }
 
 class SearchBottomSheet extends StatefulWidget {
-  const SearchBottomSheet(
+   SearchBottomSheet(
       {super.key,
       required this.onSheetDismissed,
       this.height = 650,
@@ -303,7 +304,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
     // However, it differs in that its height reduces to fit the 'body' widget.
     final content = Container(
-      decoration: const ShapeDecoration(
+      decoration:  const ShapeDecoration(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -341,10 +342,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       parent: SnappingSheetPhysics(
         snappingBehavior: SnapToNearest(
           snapTo: [
-            const Extent.proportional(0.2),
-            const Extent.proportional(0.5),
-            const Extent.proportional(0.8),
-            const Extent.proportional(1),
+             const Extent.proportional(0.2),
+             const Extent.proportional(0.5),
+             const Extent.proportional(0.8),
+             const Extent.proportional(1),
           ],
         ),
       ),
@@ -353,8 +354,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     return DraggableSheet(
       physics: physics,
       keyboardDismissBehavior:
-          const SheetKeyboardDismissBehavior.onDrag(isContentScrollAware: true),
-      minExtent: const Extent.pixels(0),
+           const SheetKeyboardDismissBehavior.onDrag(isContentScrollAware: true),
+      minExtent:  const Extent.pixels(0),
       child: Card(
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.zero,
@@ -369,7 +370,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 80,
-      // title: const Text('Search projects'),
+      // title:  Text(Lang.get('Search projects'),
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       title: widget.filter != null
           ? AutoSizeText(
@@ -377,8 +378,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
               maxLines: 3,
               minFontSize: 12,
             )
-          : const SizedBox(),
-      titleTextStyle: Theme.of(context).textTheme.titleSmall!.merge(const TextStyle(
+          :  const SizedBox(),
+      titleTextStyle: Theme.of(context).textTheme.titleSmall!.merge( const TextStyle(
             fontWeight: FontWeight.w700,
             color: Colors.black,
           )),
@@ -405,7 +406,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       //   onSuggestionCallback: (pattern) {
       //     // if (pattern.isEmpty) return [];
       //     // return Future<List<Project>>.delayed(
-      //     //   const Duration(milliseconds: 300),
+      //     //    Duration(milliseconds: 300),
       //     //   () => allProjects.where((product) {
       //     //     final nameLower = product.title.toLowerCase().split(' ').join('');
       //     //     print(nameLower);
@@ -447,10 +448,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
               //     onPressed: () {
               //       widget.onSheetDismissed();
               //     },
-              //     child: const Text('Cancel'),
+              //     child:  Text(Lang.get('Cancel'),
               //   ),
               // ),
-              // const SizedBox(width: 16),
+              //  SizedBox(width: 16),
               RoundedButtonWidget(
                 buttonColor: Theme.of(context).colorScheme.primary,
                 onPressed: () {
@@ -587,7 +588,7 @@ class _ProjectTabState extends State<ProjectTab>
             });
           },
         ),
-        // Text("This is project page"),
+        // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
             child: Row(
@@ -674,7 +675,7 @@ class _ProjectTabState extends State<ProjectTab>
                     onSuggestionCallback: (pattern) {
                       if (pattern.isEmpty) return [];
                       return Future<List<Project>>.delayed(
-                        const Duration(milliseconds: 300),
+                         const Duration(milliseconds: 300),
                         () => allProjects.where((product) {
                           final nameLower =
                               product.title.toLowerCase().split(' ').join('');
@@ -708,7 +709,7 @@ class _ProjectTabState extends State<ProjectTab>
                         }
                       });
                     },
-                    icon: const Icon(Icons.filter_alt_outlined)),
+                    icon:  const Icon(Icons.filter_alt_outlined)),
                 IconButton(
                     onPressed: () {
                       NavbarNotifier2.pushNamed(
@@ -724,7 +725,7 @@ class _ProjectTabState extends State<ProjectTab>
                               }));
                     },
                     color: Theme.of(context).colorScheme.primary,
-                    icon: const Icon(Icons.favorite_rounded)),
+                    icon:  const Icon(Icons.favorite_rounded)),
               ],
             )),
         // Flexible(
@@ -736,11 +737,11 @@ class _ProjectTabState extends State<ProjectTab>
         //     ),
         //   ),
         // ),
-        const SizedBox(
+         const SizedBox(
           height: 100,
         ),
         Container(
-          margin: const EdgeInsets.only(top: 40),
+          margin:  const EdgeInsets.only(top: 40),
           child: LazyLoadingAnimationProjectList(
             itemHeight: 230,
             list: allProjects,

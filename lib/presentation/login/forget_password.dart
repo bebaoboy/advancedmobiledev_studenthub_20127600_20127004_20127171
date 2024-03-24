@@ -129,8 +129,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                 child: Column(
                   children: [
                     AutoSizeText(
-                      AppLocalizations.of(context)
-                          .translate('forget_password_main_text'),
+                      Lang.get('forget_password_main_text'),
                       style: const TextStyle(
                           fontSize: 15, fontWeight: FontWeight.w800),
                       minFontSize: 10,
@@ -140,8 +139,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     const SizedBox(height: 14.0),
 
                     AutoSizeText(
-                      AppLocalizations.of(context)
-                          .translate('forget_password_main_text2'),
+                      Lang.get('forget_password_main_text2'),
                       style: const TextStyle(
                         fontSize: 13,
                       ),
@@ -163,8 +161,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     _buildSignInButton(),
                     RichText(
                       text: TextSpan(
-                        text: AppLocalizations.of(context)
-                            .translate('signup_sign_up_prompt'),
+                        text: Lang.get('signup_sign_up_prompt'),
                         style: TextStyle(
                             fontSize: 18,
                             color: _themeStore.darkMode
@@ -173,7 +170,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                         children: <TextSpan>[
                           TextSpan(
                               text:
-                                  " ${AppLocalizations.of(context).translate('signup_sign_up_prompt_action')}",
+                                  " ${Lang.get('signup_sign_up_prompt_action')}",
                               style: TextStyle(
                                   color: Theme.of(context).colorScheme.primary,
                                   fontWeight: FontWeight.w600),
@@ -211,7 +208,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          hint: Lang.get('login_et_user_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
@@ -226,8 +223,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           },
           errorText: _formStore.formErrorStore.userEmail == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -237,8 +233,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
+          hint: Lang.get('login_et_user_password'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -247,8 +242,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           focusNode: _passwordFocusNode,
           errorText: _formStore.formErrorStore.password == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -263,7 +257,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       child: MaterialButton(
         padding: const EdgeInsets.all(0.0),
         child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+          Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
               .caption
@@ -278,8 +272,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-        buttonText:
-            AppLocalizations.of(context).translate('forget_password_send'),
+        buttonText: Lang.get('forget_password_send'),
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
@@ -314,8 +307,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
       child: Container(
         margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
         child: RoundedButtonWidget(
-          buttonText:
-              AppLocalizations.of(context).translate('login_btn_sign_up'),
+          buttonText: Lang.get('login_btn_sign_up'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
@@ -348,7 +340,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
           )..show(context);
         }

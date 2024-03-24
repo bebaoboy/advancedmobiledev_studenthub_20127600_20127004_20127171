@@ -348,6 +348,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                       builder: (context, controller, focusNode) {
                         return TextField(
                           enabled: widget.enabled,
+
                           ///Text Controller. you can manipulate the text inside this textField by calling this controller.
                           controller: widget.textController,
                           inputFormatters: widget.inputFormatters,

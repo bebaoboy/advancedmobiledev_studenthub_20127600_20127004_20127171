@@ -61,10 +61,16 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
             widget.isSender ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Container(
-            width: MediaQuery.of(context).size.width * 0.7,
-            padding: EdgeInsets.symmetric(
-              horizontal: 10 * 0.75,
-            ),child: AutoSizeText(widget.name, maxLines: 1, minFontSize: 10,style: TextStyle(fontWeight: FontWeight.bold),)),
+              width: MediaQuery.of(context).size.width * 0.7,
+              padding: EdgeInsets.symmetric(
+                horizontal: 10 * 0.75,
+              ),
+              child: AutoSizeText(
+                widget.name,
+                maxLines: 1,
+                minFontSize: 10,
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
           Container(
             width: MediaQuery.of(context).size.width * 0.7,
             padding: EdgeInsets.symmetric(

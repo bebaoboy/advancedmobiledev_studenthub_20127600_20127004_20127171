@@ -1,5 +1,4 @@
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
 
@@ -152,12 +151,12 @@ class CallManager {
 
   void _showIncomingCallScreen(P2PSession callSession) async {
     CallEvent callEvent = CallEvent(
-    sessionId: callSession.sessionId,
-    callType: callSession.callType,
-    callerId: callSession.callerId,
-    callerName: 'Caller Name',
-    opponentsIds: callSession.opponentsIds,
-    userInfo: {'customParameter1': 'value1'});
+        sessionId: callSession.sessionId,
+        callType: callSession.callType,
+        callerId: callSession.callerId,
+        callerName: 'Caller Name',
+        opponentsIds: callSession.opponentsIds,
+        userInfo: {'customParameter1': 'value1'});
     await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
     if (context != null) {
       Navigator.push(

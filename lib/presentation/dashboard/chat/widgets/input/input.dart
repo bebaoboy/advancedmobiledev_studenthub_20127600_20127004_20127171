@@ -111,9 +111,9 @@ class _InputState extends State<Input> {
       return;
     }
     if (_textController.text.trim() != '')
-    setState(() {
-      _sendButtonVisible = _textController.text.trim() != '';
-    });
+      setState(() {
+        _sendButtonVisible = _textController.text.trim() != '';
+      });
   }
 
   Widget _inputBuilder() {

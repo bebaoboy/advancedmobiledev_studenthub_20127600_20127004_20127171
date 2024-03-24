@@ -57,8 +57,7 @@ class _DashBoardTabState extends State<DashBoardTab>
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppLocalizations.of(context)
-                    .translate('Dashboard_your_job')),
+                child: Text(Lang.get('Dashboard_your_job')),
               ),
               const Spacer(),
               Align(
@@ -84,8 +83,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                       });
                     },
                     child: Text(
-                      AppLocalizations.of(context)
-                          .translate('Dashboard_post_job'),
+                      Lang.get('Dashboard_post_job'),
                       style: const TextStyle(fontSize: 12, color: Colors.white),
                     ),
                   ),
@@ -101,13 +99,11 @@ class _DashBoardTabState extends State<DashBoardTab>
                 children: [
                   Align(
                     alignment: Alignment.center,
-                    child: Text(AppLocalizations.of(context)
-                        .translate('Dashboard_intro')),
+                    child: Text(Lang.get('Dashboard_intro')),
                   ),
                   Align(
                     alignment: Alignment.center,
-                    child: Text(AppLocalizations.of(context)
-                        .translate('Dashboard_content')),
+                    child: Text(Lang.get('Dashboard_content')),
                   ),
                 ],
               )
@@ -170,8 +166,10 @@ class _ProjectTabsState extends State<ProjectTabs> {
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55,),
+          padding: const EdgeInsets.only(
+            top: Dimens.tab_height + 8,
+            bottom: 55,
+          ),
           child: TabBarView(
               controller: widget.tabController,
               physics: const BouncingScrollPhysics(),
@@ -207,22 +205,22 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text(
-              'View proposals',
-              style: TextStyle(fontWeight: FontWeight.normal),
+            child: Text(Lang.get(
+              'project_item_view_proposal'),
+              style: const TextStyle(fontWeight: FontWeight.normal),
             )),
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('View messages',
-                style: TextStyle(fontWeight: FontWeight.w100))),
+            child: Text(Lang.get('project_item_view_message'),
+                style: const TextStyle(fontWeight: FontWeight.w100))),
       ),
       BottomSheetAction(
         title: Container(
           alignment: Alignment.topLeft,
-          child: const Text('View hired',
-              style: TextStyle(fontWeight: FontWeight.normal)),
+          child: Text(Lang.get('project_item_view_hired'),
+              style: const TextStyle(fontWeight: FontWeight.normal)),
         ),
       ),
       BottomSheetAction(
@@ -231,20 +229,20 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('View job posting',
-                style: TextStyle(fontWeight: FontWeight.normal))),
+            child: Text(Lang.get('project_item_view_job_posting'),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('Edit posting',
-                style: TextStyle(fontWeight: FontWeight.normal))),
+            child: Text(Lang.get('project_item_edit_job_posting'),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
       ),
       BottomSheetAction(
         title: Container(
           alignment: Alignment.topLeft,
-          child: const Text('Remove posting',
-              style: TextStyle(fontWeight: FontWeight.normal)),
+          child: Text(Lang.get('project_item_remove_job_posting'),
+              style: const TextStyle(fontWeight: FontWeight.normal)),
         ),
       ),
       BottomSheetAction(
@@ -253,8 +251,8 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: const Text('Start working this project',
-                style: TextStyle(fontWeight: FontWeight.normal))),
+            child: Text(Lang.get("project_start_working"),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
           print(project.title);
           myProjects

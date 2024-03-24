@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -36,8 +37,8 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   void showBottomSheet() {
     showAdaptiveActionSheet(
-      title: const Text(
-        "Chat Options",
+      title: Text(
+        "Chat " + Lang.get("option"),
         style: TextStyle(
           fontWeight: FontWeight.bold,
         ),
@@ -60,7 +61,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         BottomSheetAction(
           title: Container(
               alignment: Alignment.topLeft,
-              child: const Text('Cancel',
+              child: Text(Lang.get('Cancel'),
                   style: TextStyle(fontWeight: FontWeight.w100))),
         ),
       ],

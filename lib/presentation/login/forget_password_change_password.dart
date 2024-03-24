@@ -127,8 +127,7 @@ class _ForgetPasswordChangePasswordcreenState
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('forget_password_welcome_back'),
+                    Lang.get('forget_password_welcome_back'),
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
@@ -136,8 +135,7 @@ class _ForgetPasswordChangePasswordcreenState
                     overflow: TextOverflow.ellipsis,
                   ),
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('forget_password_main_text3'),
+                    Lang.get('forget_password_main_text3'),
                     style: const TextStyle(fontSize: 13),
                     minFontSize: 10,
                     maxLines: 2,
@@ -156,8 +154,7 @@ class _ForgetPasswordChangePasswordcreenState
                   _buildSignInButton(),
                   RichText(
                     text: TextSpan(
-                      text: AppLocalizations.of(context)
-                          .translate('signup_sign_up_prompt'),
+                      text: Lang.get('signup_sign_up_prompt'),
                       style: TextStyle(
                           fontSize: 18,
                           color: _themeStore.darkMode
@@ -166,7 +163,7 @@ class _ForgetPasswordChangePasswordcreenState
                       children: <TextSpan>[
                         TextSpan(
                             text:
-                                " ${AppLocalizations.of(context).translate('signup_sign_up_prompt_action')}",
+                                " ${Lang.get('signup_sign_up_prompt_action')}",
                             style: TextStyle(
                                 color: Theme.of(context).colorScheme.primary,
                                 fontWeight: FontWeight.w600),
@@ -203,7 +200,7 @@ class _ForgetPasswordChangePasswordcreenState
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          hint: Lang.get('login_et_user_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
@@ -218,8 +215,7 @@ class _ForgetPasswordChangePasswordcreenState
           },
           errorText: _formStore.formErrorStore.userEmail == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -229,8 +225,7 @@ class _ForgetPasswordChangePasswordcreenState
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context)
-              .translate('forget_password_et_user_password'),
+          hint: Lang.get('forget_password_et_user_password'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -239,8 +234,7 @@ class _ForgetPasswordChangePasswordcreenState
           focusNode: _passwordFocusNode,
           errorText: _formStore.formErrorStore.password == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -253,7 +247,7 @@ class _ForgetPasswordChangePasswordcreenState
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context)
+          hint: Lang.of(context)
               .translate('forget_password_et_user_password_confirm'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
@@ -262,7 +256,7 @@ class _ForgetPasswordChangePasswordcreenState
           textController: _passwordConfirmController,
           errorText: _formStore.formErrorStore.confirmPassword == null
               ? null
-              : AppLocalizations.of(context)
+              : Lang.of(context)
                   .translate(_formStore.formErrorStore.confirmPassword),
           onChanged: (value) {
             _formStore.setConfirmPassword(_passwordConfirmController.text);
@@ -278,7 +272,7 @@ class _ForgetPasswordChangePasswordcreenState
       child: MaterialButton(
         padding: const EdgeInsets.all(0.0),
         child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+          Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
               .caption
@@ -293,8 +287,7 @@ class _ForgetPasswordChangePasswordcreenState
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-          buttonText: AppLocalizations.of(context)
-              .translate('forget_password_change_password'),
+          buttonText: Lang.get('forget_password_change_password'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
@@ -326,8 +319,7 @@ class _ForgetPasswordChangePasswordcreenState
       child: Container(
         margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
         child: RoundedButtonWidget(
-          buttonText: AppLocalizations.of(context)
-              .translate('forget_password_change_password'),
+          buttonText: Lang.get('forget_password_change_password'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
@@ -360,7 +352,7 @@ class _ForgetPasswordChangePasswordcreenState
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
           )..show(context);
         }

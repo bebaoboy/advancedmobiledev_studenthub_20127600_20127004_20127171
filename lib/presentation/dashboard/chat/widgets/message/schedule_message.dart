@@ -4,6 +4,7 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:intl/intl.dart';
@@ -298,12 +299,12 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               //   ),
               // ),
               Text(
-                "Start time: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
+                Lang.get("profile_project_start") + ": ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
                 style: const TextStyle(color: Colors.black, fontSize: 10),
                 textWidthBasis: TextWidthBasis.longestLine,
               ),
               Text(
-                "End time: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
+                Lang.get("profile_project_end") + ": ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
                 style: const TextStyle(color: Colors.black, fontSize: 10),
                 textWidthBasis: TextWidthBasis.longestLine,
               ),
@@ -314,7 +315,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                   children: [
                     !widget.scheduleFilter.isCancel
                         ? RoundedButtonWidget(
-                            buttonText: "Join",
+                            buttonText: Lang.get("join"),
                             buttonTextSize: 12,
                             textColor: Theme.of(context).colorScheme.primary,
                             borderColor: Theme.of(context).colorScheme.primary,

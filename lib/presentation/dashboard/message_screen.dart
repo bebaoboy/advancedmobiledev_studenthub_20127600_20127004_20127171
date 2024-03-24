@@ -64,7 +64,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
         clipBehavior: Clip.antiAlias,
         child: SheetContentScaffold(
             appBar: AppBar(
-              title: const Text("Filter by"),
+              title: Text(Lang.get("schedule_interview")),
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -78,16 +78,16 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                     TextField(
                       controller: title,
                       keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        hintText: "None",
+                      decoration: InputDecoration(
+                        hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        labelText: "Title",
+                        labelText: Lang.get("title"),
                       ),
                       onChanged: (value) {
                         widget.filter.title = value;
@@ -116,7 +116,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.black, width: 2)),
-                                labelText: AppLocalizations.of(context)
+                                labelText: Lang.of(context)
                                     .translate('profile_project_start'),
                               ),
                               onChanged: (value) {
@@ -141,7 +141,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
-                                    print(pickedDate);
+                                    //print(pickedDate);
                                     setState(() {
                                       widget.filter.startDate = pickedDate;
                                       startDate.text = (DateFormat(
@@ -163,7 +163,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 ),
                                 isIcon: false,
                                 label: Text(
-                                  AppLocalizations.of(context)
+                                  Lang.of(context)
                                       .translate('profile_project_start'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -226,7 +226,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 enabledBorder: const OutlineInputBorder(
                                     borderSide: BorderSide(
                                         color: Colors.black, width: 2)),
-                                labelText: AppLocalizations.of(context)
+                                labelText: Lang.of(context)
                                     .translate('profile_project_end'),
                               ),
                               onChanged: (value) {
@@ -251,7 +251,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
-                                    print(pickedDate);
+                                    //print(pickedDate);
                                     setState(() {
                                       widget.filter.endDate = pickedDate;
                                       endDate.text = (DateFormat(
@@ -272,7 +272,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           color: Colors.black, width: 2)),
                                 ),
                                 label: Text(
-                                  AppLocalizations.of(context)
+                                  Lang.of(context)
                                       .translate('profile_project_end'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w600,
@@ -334,7 +334,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       //     onPressed: () {
                       //       widget.onSheetDismissed();
                       //     },
-                      //     child: const Text('Cancel'),
+                      //     child: const Text(Lang.get('Cancel'),
                       //   ),
                       // ),
                       // const SizedBox(width: 16),
@@ -343,7 +343,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         onPressed: () {
                           widget.filter.clear();
                         },
-                        buttonText: "Cancel",
+                        buttonText: Lang.get("cancel"),
                       ),
                       const SizedBox(width: 12),
                       RoundedButtonWidget(
@@ -351,7 +351,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         onPressed: () {
                           Navigator.pop(context, widget.filter);
                         },
-                        buttonText: "Send Invite",
+                        buttonText: Lang.get("send"),
                       ),
                     ],
                   ),
@@ -395,9 +395,11 @@ class _MessageScreenState extends State<MessageScreen> {
 
   void _sortMessages() {
     _messages.sort((a, b) {
-      if (a.createdAt == null)
+      if (a.createdAt == null) {
         return -1;
-      else if (b.createdAt == null) return 1;
+      } else if (b.createdAt == null) {
+        return 1;
+      }
       return a.createdAt!.compareTo(b.createdAt!) == -1
           ? 1
           : a.createdAt!.compareTo(b.createdAt!) == 1
@@ -420,9 +422,9 @@ class _MessageScreenState extends State<MessageScreen> {
                   Navigator.pop(context);
                   _handleImageSelection();
                 },
-                child: const Align(
+                child: Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text('Photo'),
+                  child: Text(Lang.get('photo')),
                 ),
               ),
               TextButton(
@@ -430,9 +432,9 @@ class _MessageScreenState extends State<MessageScreen> {
                   Navigator.pop(context);
                   _handleAudioSelection();
                 },
-                child: const Align(
+                child: Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text('Audio'),
+                  child: Text(Lang.get('audio')),
                 ),
               ),
               TextButton(
@@ -440,18 +442,18 @@ class _MessageScreenState extends State<MessageScreen> {
                   Navigator.pop(context);
                   _handleFileSelection();
                 },
-                child: const Align(
+                child: Align(
                   alignment: AlignmentDirectional.centerStart,
-                  child: Text('File'),
+                  child: Text(Lang.get('file')),
                 ),
               ),
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text('Cancel'),
-                ),
-              ),
+              // TextButton(
+              //   onPressed: () => Navigator.pop(context),
+              //   child: const Align(
+              //     alignment: AlignmentDirectional.centerStart,
+              //     child: Text(Lang.get('cancel')),
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -611,7 +613,7 @@ class _MessageScreenState extends State<MessageScreen> {
       if (!messages.contains(r)) {
         messages.add(r);
       } else {
-        print("duplicated id: " + r.id);
+        //print("duplicated id: " + r.id);
       }
     });
 
@@ -645,7 +647,7 @@ class _MessageScreenState extends State<MessageScreen> {
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: types.Status.delivered,
               metadata: value.toJson()));
-          print(filter);
+          //print(filter);
           return value;
         }
       } else {
@@ -671,7 +673,7 @@ class _MessageScreenState extends State<MessageScreen> {
           }
         }
       }
-      print("cancel schedule");
+      //print("cancel schedule");
     });
   }
 
@@ -704,14 +706,14 @@ class _MessageScreenState extends State<MessageScreen> {
           );
         },
         customMessageBuilder: (p0, {required messageWidth}) {
-          //print(p0.metadata!["type"]);
+          ////print(p0.metadata!["type"]);
           var t = InterviewSchedule.fromJson(p0.metadata!);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
                 showAdaptiveActionSheet(
-                  title: const Text(
-                    "Interview Options",
-                    style: TextStyle(
+                  title: Text(
+                    "Interview " + Lang.get("option"),
+                    style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -722,12 +724,12 @@ class _MessageScreenState extends State<MessageScreen> {
                     BottomSheetAction(
                       title: Container(
                           alignment: Alignment.topLeft,
-                          child: const Text(
-                            'Re-schedule',
-                            style: TextStyle(fontWeight: FontWeight.normal),
+                          child:  Text(
+                            Lang.get('reschedule'),
+                            style: const TextStyle(fontWeight: FontWeight.normal),
                           )),
                       onPressed: (context) async {
-                        print(scheduleFilter);
+                        //print(scheduleFilter);
                         await Future.delayed(const Duration(microseconds: 500))
                             .then((value) {
                           showScheduleBottomSheet(_scaffoldKey.currentContext!,
@@ -739,8 +741,9 @@ class _MessageScreenState extends State<MessageScreen> {
                       visibility: !t.isCancel,
                       title: Container(
                           alignment: Alignment.topLeft,
-                          child: const Text('Cancel',
-                              style: TextStyle(fontWeight: FontWeight.w100))),
+                          child: Text(Lang.get('cancel'),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w100))),
                       onPressed: (context) {
                         int i = _messages
                             .indexWhere((element) => element.id == p0.id);
@@ -795,7 +798,7 @@ class _MessageScreenState extends State<MessageScreen> {
     return ChatAppBar(
       title: widget.title,
       openScheduleDialog: () async {
-        print("schedule dialog");
+        //print("schedule dialog");
         await Future.delayed(const Duration(microseconds: 500)).then((value) {
           showScheduleBottomSheet(_scaffoldKey.currentContext!);
         });

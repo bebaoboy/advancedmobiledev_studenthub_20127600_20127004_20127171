@@ -42,8 +42,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab>
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(AppLocalizations.of(context)
-                    .translate('Dashboard_your_job')),
+                child: Text(Lang.get('Dashboard_your_job')),
               ),
             ],
           ),
@@ -191,8 +190,8 @@ class _AllProjectsState extends State<AllProjects> {
                   padding: const EdgeInsets.only(top: 12, left: 12),
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: Text(
-                          'Active proposal (${activeProjects?.length ?? 0})')),
+                      child: Text(Lang.get("active_proposal") +
+                          '(${activeProjects?.length ?? 0})')),
                 ),
                 Flexible(
                   fit: FlexFit.loose,
@@ -222,8 +221,8 @@ class _AllProjectsState extends State<AllProjects> {
                   padding: const EdgeInsets.only(top: 12.0, left: 12.0),
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: Text(
-                          'Submitted proposal (${submittedProjects?.length ?? 0})')),
+                      child: Text(Lang.get("submitted_proposal") +
+                          '(${submittedProjects?.length ?? 0})')),
                 ),
                 Flexible(
                   fit: FlexFit.loose,

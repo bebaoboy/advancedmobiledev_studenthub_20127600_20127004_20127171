@@ -2,6 +2,7 @@ import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_ki
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_core.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background/flutter_background.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -9,7 +10,7 @@ import 'package:universal_io/io.dart';
 
 Future<bool> initForegroundService() async {
   if (Platform.isAndroid) {
-    final androidConfig = const FlutterBackgroundAndroidConfig(
+    const androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: 'P2P Calls sample',
       notificationText: 'Screen sharing is in progress',
       notificationImportance: AndroidNotificationImportance.Default,
@@ -68,7 +69,7 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
           builder: (BuildContext context) {
             return Expanded(
               child: AlertDialog(
-                title: const Text('Permission Required'),
+                title: Text(Lang.get('permission_required')),
                 content: const Text(
                     // 'For accepting the calls in the background you should provide access to show System Alerts from the background. Would you like to do it now?'),
                     "Please allow to display on screen for calling notificaiton"),

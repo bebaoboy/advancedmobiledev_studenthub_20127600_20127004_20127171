@@ -62,12 +62,12 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         ),
         NavbarItem(
           Icons.message,
-          AppLocalizations.of(context).translate('Dashboard_message'),
+          Lang.get('Dashboard_message'),
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
         NavbarItem(
           Icons.notifications,
-          AppLocalizations.of(context).translate('Dashboard_alert'),
+          Lang.get('Dashboard_alert'),
           backgroundColor: Theme.of(context).colorScheme.onSecondary,
         ),
       ];
@@ -150,7 +150,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
-          return const Center(child: Text('Error 404'));
+          return const Center(child: Text('Dev: Navbar build failed'));
         },
         onCurrentTabClicked: () {
           setState(() {

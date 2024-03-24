@@ -91,7 +91,7 @@ class _ProjectDetailsStudentScreenState
                               width:
                                   10), // You can adjust the space between the icon and the text
                           Text(
-                              '${AppLocalizations.of(context).translate('project_scope')}\n  - ${widget.project.scope.title}'),
+                              '${Lang.get('project_scope')}\n  - ${widget.project.scope.title}'),
                         ],
                       ),
                       const SizedBox(
@@ -107,7 +107,7 @@ class _ProjectDetailsStudentScreenState
                               width:
                                   10), // You can adjust the space between the icon and the text
                           Text(
-                              '${AppLocalizations.of(context).translate('student_require')}\n  - ${widget.project.numberOfStudents} students'),
+                              '${Lang.get('student_require')}\n  - ${widget.project.numberOfStudents} students'),
                         ],
                       ),
                       const SizedBox(
@@ -126,7 +126,7 @@ class _ProjectDetailsStudentScreenState
                 //     onPressed: () {
                 //       widget.onSheetDismissed();
                 //     },
-                //     child: const Text('Cancel'),
+                //     child: const Text(Lang.get('Cancel'),
                 //   ),
                 // ),
                 // const SizedBox(width: 16),
@@ -144,7 +144,7 @@ class _ProjectDetailsStudentScreenState
                   ),
                   onPressed: () {},
                   child: Text(
-                    'Saved',
+                    Lang.get('saved'),
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),
@@ -166,7 +166,7 @@ class _ProjectDetailsStudentScreenState
                         arguments: widget.project);
                   },
                   child: Text(
-                    'Apply Now',
+                    Lang.get('apply_now'),
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),

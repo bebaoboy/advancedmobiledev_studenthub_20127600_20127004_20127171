@@ -121,8 +121,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_cv'),
+                    Lang.get('profile_welcome_cv'),
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
@@ -130,8 +129,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_text2'),
+                    Lang.get('profile_welcome_text2'),
                     style: const TextStyle(fontSize: 13),
                     minFontSize: 10,
                     maxLines: 2,
@@ -145,7 +143,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AutoSizeText(
-                      "${AppLocalizations.of(context).translate('profile_cv')} ${_cv != null ? _cv!.path : ""}",
+                      "${Lang.get('profile_cv')} ${_cv != null ? _cv!.path : ""}",
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
@@ -197,7 +195,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                   const SizedBox(
                                     width: 20,
                                   ),
-                                  Text(AppLocalizations.of(context)
+                                  Text(Lang.of(context)
                                       .translate('profile_cv_add'))
                                 ]),
                           ),
@@ -207,7 +205,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AutoSizeText(
-                      "${AppLocalizations.of(context).translate('profile_transcript')} ${_transcript != null ? _transcript!.path : ""}",
+                      "${Lang.get('profile_transcript')} ${_transcript != null ? _transcript!.path : ""}",
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
@@ -260,7 +258,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                   const SizedBox(
                                     width: 20,
                                   ),
-                                  Text(AppLocalizations.of(context)
+                                  Text(Lang.of(context)
                                       .translate('profile_transcript_add'))
                                 ]),
                           ),
@@ -289,7 +287,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
       child: SizedBox(
         width: 200,
         child: RoundedButtonWidget(
-          buttonText: AppLocalizations.of(context).translate('profile_next'),
+          buttonText: Lang.get('next'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
@@ -332,7 +330,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
           )..show(context);
         }

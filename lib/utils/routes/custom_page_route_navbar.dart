@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
@@ -486,7 +485,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
   void initAnimation() {
     fadeAnimation = items.map<AnimationController>((NavbarItem item) {
       return AnimationController(
-        lowerBound: 0.5,
+          lowerBound: 0.5,
           vsync: this,
           value: item == items[widget.initialIndex] ? 1.0 : 0.5,
           duration:
@@ -590,8 +589,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   } else if (settings.name == Routes.favortieProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
-                    builder =
-                        widget.destinations[index].destinations[j].widget;
+                    builder = widget.destinations[index].destinations[j].widget;
                   }
                 }
               }
@@ -726,21 +724,22 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     return super.buildTransitions(
-      context,
-      animation,
-      secondaryAnimation,
-      ScaleTransition(
-      scale: animation.drive(Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease))),
-      child: FadeTransition(opacity: animation, child: child))
-      // ScaleTransition(scale: animation, child: child,),
-      // SharedAxisTransition(
-      //   // TODO:
-      //   fillColor: Colors.transparent.withOpacity(0),
-      //   animation: animation,
-      //   secondaryAnimation: secondaryAnimation,
-      //   transitionType: SharedAxisTransitionType.scaled,
-      //   child: child,
-      // ),
-    );
+        context,
+        animation,
+        secondaryAnimation,
+        ScaleTransition(
+            scale: animation.drive(Tween(begin: 0.0, end: 1.0)
+                .chain(CurveTween(curve: Curves.ease))),
+            child: FadeTransition(opacity: animation, child: child))
+        // ScaleTransition(scale: animation, child: child,),
+        // SharedAxisTransition(
+        //   // TODO:
+        //   fillColor: Colors.transparent.withOpacity(0),
+        //   animation: animation,
+        //   secondaryAnimation: secondaryAnimation,
+        //   transitionType: SharedAxisTransitionType.scaled,
+        //   child: child,
+        // ),
+        );
   }
 }

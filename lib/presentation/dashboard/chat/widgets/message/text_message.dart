@@ -232,24 +232,20 @@ class TextMessageText extends StatelessWidget {
                 ),
           ),
           boldMatcher(
-                        onTap: onTapCallback,
-
+            onTap: onTapCallback,
             style: boldTextStyle ??
                 bodyTextStyle.merge(PatternStyle.bold.textStyle),
           ),
           italicMatcher(
-                        onTap: onTapCallback,
-
+            onTap: onTapCallback,
             style: bodyTextStyle.merge(PatternStyle.italic.textStyle),
           ),
           lineThroughMatcher(
-                        onTap: onTapCallback,
-
+            onTap: onTapCallback,
             style: bodyTextStyle.merge(PatternStyle.lineThrough.textStyle),
           ),
           codeMatcher(
-                        onTap: onTapCallback,
-
+            onTap: onTapCallback,
             style: codeTextStyle ??
                 bodyTextStyle.merge(PatternStyle.code.textStyle),
           ),

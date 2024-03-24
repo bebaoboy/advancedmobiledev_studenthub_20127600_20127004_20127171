@@ -33,7 +33,8 @@ class CircularRevealClipper extends CustomClipper<Path> {
       ..addOval(
         Rect.fromCircle(
           center: center,
-          radius: lerpDouble(isReverse ? maxRadius : minRadius, isReverse ? minRadius : maxRadius, fraction)!,
+          radius: lerpDouble(isReverse ? maxRadius : minRadius,
+              isReverse ? minRadius : maxRadius, fraction)!,
         ),
       );
   }

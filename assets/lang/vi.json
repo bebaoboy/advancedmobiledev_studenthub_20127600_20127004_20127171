@@ -25,8 +25,8 @@
   "home_title": "Xây dựng sản phẩm của bạn với sinh viên có tay nghề cao",
   "home_intro": "Tìm và giới thiệu sinh viên có kỹ năng tốt nhất cho sản phẩm của bạn. Sinh viên làm việc để có được kinh nghiệm và kỹ năng từ các dự án trong thế giới thực",
   "home_description": "StudentHub là môi trường đại học để kết nối sinh viên có tay nghề cao và công ty trên một dự án thực tế",
-  "Student_button": "Sinh viên",
-  "Company_button": "Công ty",
+  "student": "Sinh viên",
+  "company": "Công ty",
   "Welcome": "Chào mừng, Hal!",
   "Start": "Hãy bắt đầu với bài đăng dự án đầu tiên của bạn",
   "Start_button": "Bắt đầu",
@@ -98,10 +98,10 @@
   "profile_choose_skillset": "Chọn kỹ năng",
   "profile_languages": "Tài năng ngôn ngữ",
   "profile_education": "Trình độ học vấn",
-  "profile_next": "Tiếp tục",
+  "next": "Tiếp tục",
   "profile_language_proficiency": "Thông thạo",
   "profile_language": "Ngôn ngữ",
-  "profile_year": "Niên khoá",
+  "year": "Niên khoá",
   "profile_experiences": "Kinh nghiệm",
   "profile_welcome_text3": "Thêm các project bạn đã từng làm",
   "profile_projects": "Project",
@@ -118,7 +118,7 @@
   "exception_test": "Thử gửi Exception",
   "home_start": "Below are list of strings for home",
   "home_tv_posts": "Bài đăng",
-  "home_tv_error": "Lỗi",
+  "error": "Lỗi",
   "home_tv_no_post_found": "No posts found",
   "home_tv_choose_language": "Chọn ngôn ngữ",
   "home_end": "-------------------------------------------------------------------------------------",
@@ -135,11 +135,76 @@
   "profile_question_title_2": "Tên công ty",
   "profile_question_title_3": "Website",
   "profile_question_title_4": "Mô tả",
-  "profile_continue": "Tiếp tục",
-  "profile_edit": "Chỉnh sửa",
-  "profile_cancel": "Huỷ",
+  "continue": "Tiếp tục",
+  "edit": "Chỉnh sửa",
+  "cancel": "Huỷ",
+
+
   "setting_text": "Cài đặt",
-  "logout_text": "Đăng xuất",
-  "profile_text": "Thông tin chung"
+  "logout": "Đăng xuất",
+  "profile_text": "Thông tin chung",
+
+  
+
+
+
+  "------------": "================================== NEW TRANS =========================",
+  
+  "nothing_here": "Trống",
+  "reload": "Tải lại",
+  "photo": "Ảnh",
+  "audio": "Âm thanh",
+  "file": "Tập tin",
+  "permission_required": "Yêu cầu quyền",
+  "logout_confirm": "Bạn muốn đăng xuất?",
+
+  "message": "Tin nhắn",
+  "ok": "OK",
+
+  "excellent": "Hết nước chấm!",
+
+  "project_item_view_proposal": "Xem proposals",
+  "project_item_view_hired": "Xem danh sách tuyển dụng",
+  "project_item_view_message": "Xem tin nhắn",
+  "project_item_view_job_posting": "Xem job",
+  "project_item_edit_job_posting": "Sửa job",
+  "project_item_remove_job_posting": "Xoá job",
+  "project_start_working": "Bắt đầu làm project này",
+  "project_edit": "Sửa project",
+
+  "project_submit_proposal": "Mô tả mong muốn khi nhận project",
+  "proposal_submit": "Nộp proposal",
+
+  "filter_title": "Lọc theo",
+  "project_length": "Thời gian project",
+  "0-1": "Ít hơn 1 tháng",
+  "6-": "Lâu hơn 6 tháng",
+
+  "schedule_interview": "Lên lịch phỏng vấn",
+  "no_camera": "Không tìm thấy camera",
+  "select_camera": "Đổi camera",
+  "select_sound": "Đổi loa",
+  "no_sound": "Không tìm thấy loa",
+  "no_mic": "Không tìm thấy míc",
+  "select_mic": "Chọn microphone",
+  "from": "Từ",
+
+  "Join": "Vào",
+  "View offer": "Xem đề nghị",
+
+  "active_proposal": "Proposal đang xử lý",
+  "submitted_proposal": "Proposal đã nộp",
+  "created_now": "Vừa mới tạo",
+
+  "loading": "Đang tải...",
+  "search": "Tìm kiếm",
+  "student_needed": "Min sinh viên",
+  "proposal_less_than": "Max proposal",
+  "save": "Lưu",
+  "apply_now": "Ứng tuyển",
+  "title": "Tựa đề",
+  "send": "Gửi",
+  "reschedule": "Lên lịch lại",
+  "option": "Tuỳ chọn"
 
 }

@@ -1,5 +1,6 @@
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
@@ -69,9 +70,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
                         true, // Set to true if you want the animation to loop
                   ),
                 ),
-                const Center(
+                Center(
                   child: Text(
-                    "Please wait...",
+                    Lang.get("loading"),
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,

@@ -50,7 +50,7 @@ class MyApp extends StatelessWidget {
               .toList(),
           localizationsDelegates: const [
             // A class which loads the translations from JSON files
-            AppLocalizations.delegate,
+            Lang.delegate,
             // Built-in localization of basic text for Material widgets
             GlobalMaterialLocalizations.delegate,
             // Built-in localization for text direction LTR/RTL
@@ -62,7 +62,9 @@ class MyApp extends StatelessWidget {
           navigatorKey: NavigationService.navigatorKey,
           onGenerateRoute: (settings) {
             print((settings.name ?? "") + settings.arguments.toString());
-            return MaterialPageRoute2(routeName: settings.name ?? Routes.home, arguments: settings.arguments);
+            return MaterialPageRoute2(
+                routeName: settings.name ?? Routes.home,
+                arguments: settings.arguments);
           },
         );
       },

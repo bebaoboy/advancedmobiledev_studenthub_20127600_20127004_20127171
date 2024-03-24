@@ -1,3 +1,4 @@
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class CompanyAccountWidget extends StatelessWidget {
@@ -13,7 +14,7 @@ class CompanyAccountWidget extends StatelessWidget {
     Widget titleWidget =
         Text(name, style: Theme.of(context).textTheme.bodySmall);
     Widget subtitleWidget =
-        Text('company', style: Theme.of(context).textTheme.bodyText1);
+        Text(Lang.get('company'), style: Theme.of(context).textTheme.bodyText1);
     Icon profileIcon = const Icon(Icons.business);
 
     // IconButton expandButton = IconButton(

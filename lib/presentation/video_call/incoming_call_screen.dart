@@ -1,3 +1,4 @@
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
@@ -31,9 +32,9 @@ class IncomingCallScreen extends StatelessWidget {
                   child: Text(_getCallTitle(),
                       style: const TextStyle(fontSize: 28)),
                 ),
-                const Padding(
+                Padding(
                   padding: EdgeInsets.only(top: 36, bottom: 8),
-                  child: Text("From:", style: TextStyle(fontSize: 20)),
+                  child: Text(Lang.get('from'), style: TextStyle(fontSize: 20)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 86),

@@ -1,12 +1,11 @@
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
-import 'login_screen.dart';
 import 'managers/call_manager.dart';
 import 'managers/push_notifications_manager.dart';
 import 'utils/configs.dart' as utils;
-import 'utils/platform_utils.dart';
 import 'utils/pref_util.dart';
 
 class SelectOpponentsScreen extends StatelessWidget {
@@ -39,17 +38,17 @@ class SelectOpponentsScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Logout"),
-          content: const Text("Are you sure you want logout current user"),
+          title:  Text(Lang.get('logout')),
+          content: Text(Lang.get("logout_confirm")),
           actions: <Widget>[
             TextButton(
-              child: const Text("CANCEL"),
+              child: Text(Lang.get('cancel')),
               onPressed: () {
                 Navigator.pop(context);
               },
             ),
             TextButton(
-              child: const Text("OK"),
+              child: Text(Lang.get("ok")),
               onPressed: () async {
                 CallManager.instance.destroy();
                 CubeChatConnection.instance.destroy();

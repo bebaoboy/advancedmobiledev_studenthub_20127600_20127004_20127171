@@ -48,7 +48,8 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> {
             child: Container(
           decoration: widget.selected
               ? BoxDecoration(
-                  border: Border.all(width: 2, color: Theme.of(context).primaryColor))
+                  border: Border.all(
+                      width: 2, color: Theme.of(context).primaryColor))
               : null,
           child: InkWell(
             onTap: () {

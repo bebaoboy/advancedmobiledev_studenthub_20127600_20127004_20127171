@@ -18,10 +18,10 @@ import 'message/text_message.dart';
 import 'input/typing_indicator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 
+logg(String? message, [String? tag]) {
+  debugPrint("CB-SDK: ${tag != null ? tag : "BEBAOBOY"}: $message");
+}
 
-  logg(String? message, [String? tag]) {
-    debugPrint("CB-SDK: ${tag != null ? tag : "BEBAOBOY"}: $message");
-  }
 /// Keep track of all the auto scroll indices by their respective message's id to allow animating to them.
 final Map<String, int> chatMessageAutoScrollIndexById = {};
 

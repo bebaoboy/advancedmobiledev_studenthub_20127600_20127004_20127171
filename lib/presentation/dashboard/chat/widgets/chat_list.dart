@@ -221,15 +221,15 @@ class _ChatListState extends State<ChatList>
         onNotification: (notification) {
           if (notification.metrics.pixels > 10.0 && !_indicatorOnScrollStatus) {
             setState(() {
-            logg("scroll", "BEBAOBOY");
-            _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
+              logg("scroll", "BEBAOBOY");
+              _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
             });
           } else if (notification.metrics.pixels == 0.0 &&
               _indicatorOnScrollStatus) {
             setState(() {
-            logg("scroll", "BEBAOBOY");
+              logg("scroll", "BEBAOBOY");
 
-            _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
+              _indicatorOnScrollStatus = !_indicatorOnScrollStatus;
             });
           }
 

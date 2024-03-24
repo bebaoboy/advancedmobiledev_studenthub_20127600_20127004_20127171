@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class ProjectDetailsPage extends StatefulWidget {
@@ -97,7 +98,7 @@ class ProposalTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (proposals?.length ?? 0) == 0 ? const Center(child: const Text("Nothing here")) : ListView.builder(
+    return (proposals?.length ?? 0) == 0 ? Center(child:  Text(Lang.get("nothing_here"))) : ListView.builder(
       itemCount: proposals?.length ?? 0,
       itemBuilder: (context, index) {
         return ProposalItem(
@@ -201,7 +202,7 @@ class DetailTabLayout extends StatelessWidget {
                 //     onPressed: () {
                 //       widget.onSheetDismissed();
                 //     },
-                //     child: const Text('Cancel'),
+                //     child: const Text(Lang.get('Cancel'),
                 //   ),
                 // ),
                 // const SizedBox(width: 16),
@@ -218,7 +219,7 @@ class DetailTabLayout extends StatelessWidget {
                 //     ),
                 //   ),
                 //   onPressed: () {},
-                //   child: Text('Saved',
+                //   child: Text(Lang.get('Saved',
                 //     style: Theme.of(context).textTheme.bodyMedium!.merge(
                 //         TextStyle(
                 //             color: Theme.of(context).colorScheme.secondary)),
@@ -236,7 +237,7 @@ class DetailTabLayout extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {},
-                  child: Text('Edit project',
+                  child: Text(Lang.get('project_edit'),
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),
@@ -259,7 +260,7 @@ class HiredTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (hired?.length ?? 0) == 0 ? const Center(child: const Text("Nothing here")) : ListView.builder(
+    return (hired?.length ?? 0) == 0 ?  Center(child: Text(Lang.get("nothing_here"))) : ListView.builder(
       itemCount: hired?.length ?? 0,
       itemBuilder: (context, index) {
         // return ListTile(
@@ -282,7 +283,7 @@ class MessageTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (messages?.length ?? 0) == 0 ? const Center(child: const Text("Nothing here")) : ListView.builder(
+    return (messages?.length ?? 0) == 0 ? Center(child: Text(Lang.get("nothing_here"))) : ListView.builder(
       itemCount: messages?.length ?? 0,
       itemBuilder: (context, index) {
         return ListTile(

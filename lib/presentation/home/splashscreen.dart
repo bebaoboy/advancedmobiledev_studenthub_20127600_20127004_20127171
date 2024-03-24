@@ -176,13 +176,11 @@ class _SplashScreenState extends State<SplashScreen>
       ..addListener(() async {
         if (_controller.isCompleted) {
           try {
-          await _controller.playReverse(
-              duration: const Duration(milliseconds: 3500));
-          await Future.delayed(const Duration(seconds: 1));
-          await _controller.play();
-          } catch(e) {
-
-          }
+            await _controller.playReverse(
+                duration: const Duration(milliseconds: 3500));
+            await Future.delayed(const Duration(seconds: 1));
+            await _controller.play();
+          } catch (e) {}
         }
       });
     _playAnimation(context);
@@ -219,7 +217,7 @@ class _SplashScreenState extends State<SplashScreen>
         (value) async {
           CubeSessionManager.instance.activeSession = value;
           loadingText.text =
-              "Loading Cube sesson (User ${user == utils.users[0] ? "1-Student" : user == utils.users[1] ? "2-Company" : "3-Not login"})";
+              "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
 
           await CubeChatConnection.instance.login(user).then((cubeUser) async {
             SharedPrefs.saveNewUser(cubeUser);
@@ -284,7 +282,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   Future<Null> _playAnimation(BuildContext context) async {
     try {
-       _controller.forward().onError(
+      _controller.forward().onError(
             (error, stackTrace) => null,
           );
       await Future.delayed(const Duration(seconds: 15));

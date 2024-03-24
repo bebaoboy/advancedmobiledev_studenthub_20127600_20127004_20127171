@@ -17,7 +17,7 @@ class IOConditional extends BaseConditional {
   /// otherwise uses IO to create File.
   @override
   ImageProvider getProvider(String uri, {Map<String, String>? headers}) {
-    if (uri.startsWith('http')  || uri.startsWith('blob')) {
+    if (uri.startsWith('http') || uri.startsWith('blob')) {
       return NetworkImage(uri, headers: headers);
     } else {
       return FileImage(File(uri));

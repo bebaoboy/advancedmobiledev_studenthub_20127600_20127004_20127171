@@ -90,7 +90,7 @@ const TextStyle _errorTextStyle = TextStyle(
 /// MaterialApp(
 ///   home: Scaffold(
 ///     appBar: AppBar(
-///       title: const Text('Home'),
+///       title: const Text(Lang.get('Home'),
 ///     ),
 ///   ),
 ///   debugShowCheckedModeBanner: false,
@@ -108,14 +108,14 @@ const TextStyle _errorTextStyle = TextStyle(
 ///     '/': (BuildContext context) {
 ///       return Scaffold(
 ///         appBar: AppBar(
-///           title: const Text('Home Route'),
+///           title: const Text(Lang.get('Home Route'),
 ///         ),
 ///       );
 ///     },
 ///     '/about': (BuildContext context) {
 ///       return Scaffold(
 ///         appBar: AppBar(
-///           title: const Text('About Route'),
+///           title: const Text(Lang.get('About Route'),
 ///         ),
 ///       );
 ///      }
@@ -138,7 +138,7 @@ const TextStyle _errorTextStyle = TextStyle(
 ///   ),
 ///   home: Scaffold(
 ///     appBar: AppBar(
-///       title: const Text('MaterialApp Theme'),
+///       title: const Text(Lang.get('MaterialApp Theme'),
 ///     ),
 ///   ),
 /// )
@@ -163,7 +163,7 @@ const TextStyle _errorTextStyle = TextStyle(
 ///   title: 'Material App',
 ///   home: Scaffold(
 ///     body: Center(
-///       child: Text('Hello World'),
+///       child: Text(Lang.get('Hello World'),
 ///     ),
 ///   ),
 /// )

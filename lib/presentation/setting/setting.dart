@@ -225,7 +225,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 },
                 leading: const Icon(Icons.person),
                 title: Text(
-                  AppLocalizations.of(context).translate('profile_text'),
+                  Lang.get('profile_text'),
                 )),
             const Divider(
               height: 3,
@@ -234,7 +234,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 onTap: () => navigate(context, Routes.setting),
                 leading: const Icon(Icons.settings),
                 title: Text(
-                  AppLocalizations.of(context).translate('setting_text'),
+                  Lang.get('setting_text'),
                 )),
             const Divider(
               height: 3,
@@ -243,7 +243,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 onTap: () => _userStore.logout(),
                 leading: const Icon(Icons.logout),
                 title: Text(
-                  AppLocalizations.of(context).translate('logout_text'),
+                  Lang.get('logout'),
                 )),
           ],
         ),
@@ -267,8 +267,7 @@ class _SettingScreenState extends State<SettingScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title:
-                AppLocalizations.of(context).translate('profile_change_error'),
+            title: Lang.get('profile_change_error'),
             duration: const Duration(seconds: 3),
           ).show(context);
         }

@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class SubmitProjectProposal extends StatefulWidget {
@@ -34,7 +35,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
             const SizedBox(
               height: 5,
             ),
-            Text('Describe why do fit to this project',
+            Text(Lang.get('project_submit_proposal'),
                 style: Theme.of(context).textTheme.bodyText1),
             const SizedBox(
               height: 10,
@@ -61,7 +62,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                   },
                   textColor: Colors.white,
                   color: Theme.of(context).primaryColor,
-                  child: const Text('Cancel'),
+                  child: Text(Lang.get('cancel')),
                 ),
                 const SizedBox(
                   width: 12,
@@ -76,7 +77,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                     studentProjects.add(newStudentProject);
                   },
                   color: Colors.amber.shade300,
-                  child: const Text('Submit proposal'),
+                  child: Text(Lang.get('proposal_submit')),
                 )
               ],
             )

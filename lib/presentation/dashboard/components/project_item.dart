@@ -1,5 +1,6 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -53,7 +54,7 @@ class _ProjectItemState extends State<ProjectItem> {
       var createdText = '';
       int differenceWithToday = widget.project.getModifiedTimeCreated();
       if (differenceWithToday == 0) {
-        createdText = 'Created just now';
+        createdText = Lang.get("created_now");
       } else if (differenceWithToday == 1) {
         createdText = 'Created 1 day ago';
       } else {
@@ -139,7 +140,6 @@ class _ProjectItemState extends State<ProjectItem> {
                     onPressed: () {
                       setState(() {
                         widget.onFavoriteTap();
-                        
                       });
                     },
                     icon: icon,

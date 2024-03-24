@@ -1,5 +1,5 @@
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +24,20 @@ class _MessageTabState extends State<MessageTab> {
       'icon': Icons.message,
       'name': 'John Doe',
       'role': 'Junior backend developer (Healthcare)',
+      'message': 'Looking forward to working with you',
+      'date': '7/6/2024'
+    },
+    {
+      'icon': Icons.message,
+      'name': 'Xingapore',
+      'role': 'Sey',
+      'message': 'Clear expectation about your project or deliverables',
+      'date': '6/6/2024'
+    },
+    {
+      'icon': Icons.message,
+      'name': 'Malaysia Nguyen',
+      'role': 'Doctor',
       'message': 'Looking forward to working with you',
       'date': '7/6/2024'
     },
@@ -53,8 +67,8 @@ class _MessageTabState extends State<MessageTab> {
           padding: const EdgeInsets.all(8.0),
           child: TextField(
             decoration: InputDecoration(
-              labelText: "Search",
-              hintText: "Search",
+              labelText: Lang.get("search"),
+              hintText: Lang.get("search"),
               prefixIcon: Icon(Icons.search),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),
@@ -71,7 +85,9 @@ class _MessageTabState extends State<MessageTab> {
                 onTap: () {
                   print('Tile clicked');
                   Navigator.of(NavigationService.navigatorKey.currentContext!)
-                .push(MaterialPageRoute2(routeName: Routes.message, arguments: "Demo User Name"));
+                      .push(MaterialPageRoute2(
+                          routeName: Routes.message,
+                          arguments: messages[index]['name']));
                   // You can replace the print statement with your function
                 },
                 child: ListTile(

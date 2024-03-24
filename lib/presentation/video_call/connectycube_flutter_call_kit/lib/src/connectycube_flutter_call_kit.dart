@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:ui';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_storage.dart';

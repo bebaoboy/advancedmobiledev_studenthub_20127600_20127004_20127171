@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:enhanced_paginated_view/enhanced_paginated_view.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -313,9 +314,9 @@ class _LazyLoadingAnimationProjectListState
                             true, // Set to true if you want the animation to loop
                       ),
                     ),
-                    const Center(
+                    Center(
                       child: Text(
-                        "Please wait...",
+                        Lang.get("loading"),
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -333,10 +334,10 @@ class _LazyLoadingAnimationProjectListState
               errorWidget: (page) => Center(
                 child: Column(
                   children: [
-                    const Text('No items found'),
+                    Text(Lang.get('nothing_here')),
                     ElevatedButton(
                       onPressed: () => loadMore(page),
-                      child: const Text('Reload'),
+                      child: Text(Lang.get('Reload')),
                     )
                   ],
                 ),
@@ -352,7 +353,7 @@ class _LazyLoadingAnimationProjectListState
               //       const SizedBox(height: 16),
               //       OutlinedButton(
               //         onPressed: () {},
-              //         child: const Text('Bloc Example'),
+              //         child: const Text(Lang.get('Bloc Example'),
               //       ),
               //     ],
               //   ),

@@ -28,7 +28,7 @@ class ScaleAnimatedTheme extends ImplicitlyAnimatedWidget {
     super.duration = kThemeAnimationDuration,
     super.onEnd,
     required this.child,
-  // ignore: unnecessary_null_comparison
+    // ignore: unnecessary_null_comparison
   })  : assert(child != null),
         // ignore: unnecessary_null_comparison
         assert(data != null);
@@ -57,7 +57,8 @@ class _AnimatedThemeState extends AnimatedWidgetBaseState<ScaleAnimatedTheme> {
   void forEachTween(TweenVisitor<dynamic> visitor) {
     // TODO(ianh): Use constructor tear-offs when it becomes possible
     _data = visitor(
-        _data, widget.data, (dynamic value) => ThemeDataTween(begin: value)) as ThemeDataTween?;
+            _data, widget.data, (dynamic value) => ThemeDataTween(begin: value))
+        as ThemeDataTween?;
     assert(_data != null);
   }
 

@@ -287,7 +287,7 @@ class _MainAppBarState extends State<MainAppBar> {
         borderRadius: 5.0,
         enableFullWidth: true,
         title: Text(
-          AppLocalizations.of(context).translate('home_tv_choose_language'),
+          Lang.get('home_tv_choose_language'),
           style: const TextStyle(
             color: Colors.white,
             fontSize: 16.0,
@@ -349,11 +349,11 @@ class _MainAppBarState extends State<MainAppBar> {
       toolbarHeight: 250,
       // flexibleSpace: Container(child: Column(
       // children: [
-      //   Container(height: 900, child: Center(child: Text("ooooooooooooooooooooo"),),)
+      //   Container(height: 900, child: Center(child: Text(Lang.get('ooooooooooooooooooooo"),),)
       // ],)),
       title: Container(
           margin: const EdgeInsets.only(left: 20),
-          child: Text(AppLocalizations.of(context).translate('appbar_title'))),
+          child: Text(Lang.get('appbar_title'))),
       actions: [
         _buildLanguageButton(),
         _buildThemeButton(),

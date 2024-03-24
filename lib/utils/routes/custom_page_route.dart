@@ -1,4 +1,3 @@
-import 'package:animations/animations.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +51,9 @@ class MaterialPageRoute2 extends PageRouteBuilder {
                   //   child: child,
                   // );
                   ScaleTransition(
-      scale: animation.drive(Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease))),
-      child: FadeTransition(opacity: animation, child: child));
+                      scale: animation.drive(Tween(begin: 0.0, end: 1.0)
+                          .chain(CurveTween(curve: Curves.ease))),
+                      child: FadeTransition(opacity: animation, child: child));
               // FadeTransition(
               //   opacity: animation,
               //   child: child,
@@ -83,7 +83,8 @@ class MaterialPageRoute2 extends PageRouteBuilder {
         //   child: child,
         // ),
         ScaleTransition(
-      scale: animation.drive(Tween(begin: 0.0, end: 1.0).chain(CurveTween(curve: Curves.ease))),
-      child: FadeTransition(opacity: animation, child: child)));
+            scale: animation.drive(Tween(begin: 0.0, end: 1.0)
+                .chain(CurveTween(curve: Curves.ease))),
+            child: FadeTransition(opacity: animation, child: child)));
   }
 }

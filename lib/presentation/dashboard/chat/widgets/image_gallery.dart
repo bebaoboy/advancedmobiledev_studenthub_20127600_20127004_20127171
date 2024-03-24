@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 
 import '../conditional/conditional.dart';
+
 /// A class that represents an image showed in a preview widget.
 @immutable
 class PreviewImage extends Equatable {
@@ -22,7 +23,6 @@ class PreviewImage extends Equatable {
   @override
   List<Object> get props => [id, uri];
 }
-
 
 class ImageGallery extends StatelessWidget {
   const ImageGallery({

@@ -112,9 +112,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                       _companySize = CompanySize.values[i - 1];
                     });
                   },
-            title: Text(
-                AppLocalizations.of(context)
-                    .translate('profile_question_1_choice_$i'),
+            title: Text(Lang.get('profile_question_1_choice_$i'),
                 style: Theme.of(context).textTheme.bodyText1),
             leading: Radio<CompanySize>(
               value: CompanySize.values[i - 1],
@@ -137,8 +135,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)
-                  .translate('profile_question_title_2'),
+              Lang.get('profile_question_title_2'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
@@ -170,8 +167,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)
-                  .translate('profile_question_title_3'),
+              Lang.get('profile_question_title_3'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
@@ -203,7 +199,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          AppLocalizations.of(context).translate('profile_question_title_4'),
+          Lang.get('profile_question_title_4'),
           style: Theme.of(context).textTheme.bodySmall,
         ),
         TextField(
@@ -237,7 +233,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
             ),
             Center(
               child: Text(
-                AppLocalizations.of(context).translate('profile_welcome_title'),
+                Lang.get('profile_welcome_title'),
                 style: Theme.of(context)
                     .textTheme
                     .bodyText1
@@ -275,7 +271,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                     onPressed: () {},
                     // color: Colors.orange,
                     child: Text(
-                      AppLocalizations.of(context).translate('profile_edit'),
+                      Lang.get('edit'),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -286,7 +282,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                     onPressed: () => navigate(context),
                     // color: Colors.orange,
                     child: Text(
-                      AppLocalizations.of(context).translate('profile_cancel'),
+                      Lang.get('cancel'),
                       style: Theme.of(context).textTheme.bodyText1,
                     ),
                   ),
@@ -319,8 +315,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title:
-                AppLocalizations.of(context).translate('profile_change_error'),
+            title: Lang.get('profile_change_error'),
             duration: const Duration(seconds: 3),
           ).show(context);
         }

@@ -167,8 +167,7 @@ class _ImageMessageState extends State<ImageMessage> {
         ),
       );
     } else {
-      return 
-      AspectRatio(
+      return AspectRatio(
         aspectRatio: _size.aspectRatio > 0 ? _size.aspectRatio : 1,
         child: Container(
           height: widget.messageWidth.toDouble(),

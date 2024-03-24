@@ -156,7 +156,7 @@ class CircularAnimatedThemeState extends State<CircularAnimatedTheme>
           }
         });
       });
-    // ignore: empty_catches
+      // ignore: empty_catches
     } catch (e) {}
   }
 

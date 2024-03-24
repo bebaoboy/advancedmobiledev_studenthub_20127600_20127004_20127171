@@ -114,6 +114,15 @@ dependencies:
   firebase_messaging:
   just_audio:
   super_sliver_list:
+  collection:
+  flutter_webrtc:
+  xmpp_stone:
+  web_socket_channel:
+  dart_webrtc:
+  webrtc_interface:
+  objectid:
+  crypto:
+  http_parser:
 
 dev_dependencies:
   flutter_test:

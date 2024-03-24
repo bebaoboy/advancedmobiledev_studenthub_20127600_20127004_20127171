@@ -1,5 +1,6 @@
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -48,7 +49,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
       var submittedText = '';
       int differenceWithToday = widget.project.getModifiedSubmittedTime();
       if (differenceWithToday == 0) {
-        submittedText = 'Created just now';
+        submittedText = Lang.get("created_now");
       } else if (differenceWithToday == 1) {
         submittedText = 'Created 1 day ago';
       } else {
@@ -65,12 +66,12 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
         ),
         child: Card(
           child: InkWell(
-             onTap: () {
-            print('navigate to student project detail');
-            Navigator.of(NavigationService.navigatorKey.currentContext!)
-                .pushNamed(Routes.projectDetailsStudent,
-                    arguments: widget.project);
-          },
+            onTap: () {
+              print('navigate to student project detail');
+              Navigator.of(NavigationService.navigatorKey.currentContext!)
+                  .pushNamed(Routes.projectDetailsStudent,
+                      arguments: widget.project);
+            },
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(

@@ -1,5 +1,6 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class HiredItem extends StatefulWidget {
@@ -73,7 +74,7 @@ class _HiredItemState extends State<HiredItem> {
                 Text(widget.hired.title,
                     style: Theme.of(context).textTheme.bodyText1),
                 // ToDo: need a field for expertise
-                Text('Excellent', style: Theme.of(context).textTheme.bodyText1),
+                Text(Lang.get('excellent'), style: Theme.of(context).textTheme.bodyText1),
               ],
             ),
             Padding(
@@ -93,8 +94,8 @@ class _HiredItemState extends State<HiredItem> {
                   MaterialButton(
                     color: Colors.grey.shade400,
                     textColor: Colors.black54,
-                    onPressed: () => print('send a message'),
-                    child: const Text('Message'),
+                    onPressed: () => null,
+                    child: Text(Lang.get('message')),
                   ),
                   // MaterialButton(
                   //   color: Theme.of(context).primaryColor,

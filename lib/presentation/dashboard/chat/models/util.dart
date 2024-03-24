@@ -72,7 +72,6 @@ class UnreadHeaderTheme {
   final TextStyle textStyle;
 }
 
-
 /// A class that represents a date header between messages.
 @immutable
 class DateHeader extends Equatable {
@@ -125,8 +124,6 @@ class MessageSpacer extends Equatable {
   @override
   List<Object> get props => [height, id];
 }
-
-
 
 /// Returns text representation of a provided bytes value (e.g. 1kB, 1GB).
 String formatBytes(int size, [int fractionDigits = 2]) {
