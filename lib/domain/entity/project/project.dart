@@ -3,8 +3,7 @@ import 'package:uuid/uuid.dart';
 
 class MyObject {
   String objectId = const Uuid().v4();
-
-  // MyObject({required this.objectId});
+  MyObject({required this.objectId});
 }
 
 // ------------------- STUDENT PROFILE ------------------------------
@@ -16,7 +15,7 @@ class TechStack extends MyObject {
     // super.objectId = "",
 
     // }
-  );
+  ) : super(objectId: '');
 }
 
 class Skill extends MyObject {
@@ -32,7 +31,7 @@ class Skill extends MyObject {
     // super.objectId = "",
 
     // }
-  );
+  ) : super(objectId: '');
 
   @override
   bool operator ==(Object other) =>
@@ -57,7 +56,8 @@ class Language extends MyObject {
   Language(this.name, this.proficiency,
       { // super.objectId = "",
       this.readOnly = true,
-      this.enabled = true});
+      this.enabled = true})
+      : super(objectId: '');
 }
 
 class Education extends MyObject {
@@ -69,7 +69,8 @@ class Education extends MyObject {
   Education(this.name, this.year,
       { // super.objectId = "",
       this.readOnly = true,
-      this.enabled = true});
+      this.enabled = true})
+      : super(objectId: '');
 }
 
 class ProjectExperience extends MyObject {
@@ -91,12 +92,14 @@ class ProjectExperience extends MyObject {
       required this.endDate,
       this.readOnly = true,
       this.enabled = true,
-      this.skills});
+      this.skills})
+      : super(objectId: '');
 }
 
 // ------------------- PROFILE ACCOUNT ------------------------------
+@JsonSerializable()
 class UserObject extends MyObject {
-  // UserObject({super.objectId = ""});
+  UserObject({super.objectId = ""});
 }
 
 class Student extends UserObject {
@@ -204,7 +207,7 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
     required this.title,
     required this.description,
     this.scope = Scope.short,
-  });
+  }) : super(objectId: '');
 
   @override
   bool isLoading;
@@ -311,7 +314,8 @@ class Proposal extends MyObject {
       required this.student,
       required this.coverLetter,
       this.isHired = HireStatus.notHire,
-      this.status = Status.inactive});
+      this.status = Status.inactive})
+      : super(objectId: '');
 }
 
 // ------------------- NOTIFICATION ------------------------------
@@ -332,7 +336,7 @@ class NotifiedObject extends MyObject {
     required this.receiver,
     required this.sender,
     this.content = "",
-  });
+  }) : super(objectId: '');
 }
 
 enum NotificationType {
@@ -393,7 +397,8 @@ class InterviewSchedule extends MyObject {
       this.participants,
       required this.startDate,
       required this.endDate,
-      this.isCancel = false});
+      this.isCancel = false})
+      : super(objectId: '');
 
   clear() {
     endDate = DateTime.now();
@@ -413,14 +418,15 @@ class InterviewSchedule extends MyObject {
   }
 
   InterviewSchedule.fromJson(Map<String, dynamic> json)
-      : title = (json['title'] ?? "Missing Title") as String,
+      : participants = json['participants'] ?? [],
+        title = (json['title'] ?? "Missing Title") as String,
         endDate = json['endDate'] == null
             ? DateTime.now().add(const Duration(hours: 1, minutes: 1))
             : json['endDate'] as DateTime,
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = json["isCancel"] ?? false;
+        isCancel = json["isCancel"] ?? false, super(objectId: "");
 
   Map<String, dynamic> toJson() => {
         "title": title,
