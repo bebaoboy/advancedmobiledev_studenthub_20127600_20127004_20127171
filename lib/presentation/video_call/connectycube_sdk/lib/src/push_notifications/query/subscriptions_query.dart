@@ -88,11 +88,12 @@ class CreateSubscriptionParameters {
         isEmpty(channel) ||
         isEmpty(udid) ||
         isEmpty(platform) ||
-        isEmpty(pushToken))
+        isEmpty(pushToken)) {
       throw IllegalArgumentException(
           "Some required parameters are empty or null");
+    }
 
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     CubeDeviceModel device = CubeDeviceModel(udid, platform);
     PushToken token = PushToken(environment, pushToken, bundleIdentifier);

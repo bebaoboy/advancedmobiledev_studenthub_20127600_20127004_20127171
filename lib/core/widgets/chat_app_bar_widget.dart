@@ -38,8 +38,8 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   void showBottomSheet() {
     showAdaptiveActionSheet(
       title: Text(
-        "Chat " + Lang.get("option"),
-        style: TextStyle(
+        "Chat ${Lang.get("option")}",
+        style: const TextStyle(
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -50,8 +50,8 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         BottomSheetAction(
           title: Container(
               alignment: Alignment.topLeft,
-              child: const Text(
-                'Schedule an Interview',
+              child: Text(
+                Lang.get("schedule_interview"),
                 style: TextStyle(fontWeight: FontWeight.normal),
               )),
           onPressed: (context) {
@@ -61,8 +61,8 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
         BottomSheetAction(
           title: Container(
               alignment: Alignment.topLeft,
-              child: Text(Lang.get('Cancel'),
-                  style: TextStyle(fontWeight: FontWeight.w100))),
+              child: Text(Lang.get('cancel'),
+                  style: const TextStyle(fontWeight: FontWeight.w100))),
         ),
       ],
     );

@@ -34,8 +34,7 @@ class WsPacket {
 
   @override
   String toString() {
-    return "WsPacket{" +
-        "messageType=" +
+    return "WsPacket{" "messageType=" +
         messageType.toString() +
         ", sessionId=" +
         sessionId.toString() +
@@ -77,7 +76,7 @@ WsPacket parse(String rawMessage) {
 }
 
 WsPacket parsePacketType(String? janus, Map<String, dynamic> jsonMap) {
-  Type type = Type.values.firstWhere((e) => e.toString() == 'Type.' + janus!);
+  Type type = Type.values.firstWhere((e) => e.toString() == 'Type.${janus!}');
   switch (type) {
     case Type.ack:
       return createAck(jsonMap);
@@ -110,7 +109,7 @@ WsAck createAck(Map<String, dynamic> jsonMap) {
 }
 
 class WsAck extends WsPacket {
-  WsAck.fromJson(Map<String, dynamic> json) : super.fromJson(json);
+  WsAck.fromJson(super.json) : super.fromJson();
 }
 
 WsEvent createEventResponse(Map<String, dynamic> jsonMap) {
@@ -186,7 +185,7 @@ class WsDataPacket extends WsPacket {
 }
 
 class SessionData {
-  int? _id;
+  final int? _id;
 
   SessionData.fromJson(Map<String, dynamic> json) : _id = json['id'];
 
@@ -389,13 +388,9 @@ class Publisher {
         display = json['display'] {
     // prepare the stream by adding required data from the publisher if it absent
     streams = streams?.map((stream) {
-      if (stream.id == null) {
-        stream.id = id;
-      }
+      stream.id ??= id;
 
-      if (stream.display == null) {
-        stream.display = display;
-      }
+      stream.display ??= display;
 
       return stream;
     }).toList();
@@ -558,9 +553,9 @@ class Body {
       if (mids == null) {
         result.add({'feed': userId.toString()});
       } else {
-        mids.forEach((mid) {
+        for (var mid in mids) {
           result.add({'feed': userId.toString(), 'mid': mid});
-        });
+        }
       }
     });
 
@@ -598,7 +593,7 @@ class Candidate {
   bool? completed;
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> jsonMap = Map();
+    Map<String, dynamic> jsonMap = {};
     if (candidate != null) jsonMap['candidate'] = candidate;
     if (sdpMLineIndex != null) jsonMap['sdpMLineIndex'] = sdpMLineIndex;
     if (sdpMid != null) jsonMap['sdpMid'] = sdpMid;
@@ -610,6 +605,7 @@ class Candidate {
 class WsOfferAnswer extends WsRequestPacket {
   late Jsep jsep;
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['jsep'] = jsep.toJson();
@@ -622,6 +618,7 @@ enum WsOfferAnswerType { configure, start }
 class WsOffer extends WsOfferAnswer {
   late WsOfferBody body;
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['body'] = body.toJson();
@@ -646,6 +643,7 @@ class WsOfferBody {
 class WsAnswer extends WsOfferAnswer {
   late WsAnswerBody body;
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['body'] = body.toJson();
@@ -695,6 +693,7 @@ class WsStreamConfig extends WsRequestPacket {
 
   WsStreamConfig(this.params);
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['body'] = {...params, 'request': 'configure'};

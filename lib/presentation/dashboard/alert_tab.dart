@@ -5,6 +5,8 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class AlertTab extends StatefulWidget {
+  const AlertTab({super.key});
+
   @override
   State<AlertTab> createState() => _AlertTabState();
 }
@@ -67,7 +69,10 @@ class _AlertTabState extends State<AlertTab> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildAlertsContent();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 60),
+      child: _buildAlertsContent(),
+    );
   }
 
   Widget _buildAlertsContent() {
@@ -76,7 +81,7 @@ class _AlertTabState extends State<AlertTab> {
         Expanded(
           child: ListView.separated(
             itemCount: alerts.length,
-            separatorBuilder: (context, index) => Divider(color: Colors.black),
+            separatorBuilder: (context, index) => const Divider(color: Colors.black),
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {

@@ -3,19 +3,18 @@ import 'dart:async';
 import 'package:http/http.dart';
 
 import '../../cube_exceptions.dart';
-import '../../utils/cube_logger.dart';
 import '../../utils/string_utils.dart';
 
 class RestResponse {
-  Future<Response> _futureResponse;
-  String _uuid;
+  final Future<Response> _futureResponse;
+  final String _uuid;
 
   Response? response;
 
   RestResponse(this._futureResponse, this._uuid);
 
   Future<RestResponse> getResponse() {
-    Completer<RestResponse> completer = new Completer();
+    Completer<RestResponse> completer = Completer();
 
     try {
       _futureResponse.then((response) {
@@ -31,7 +30,7 @@ class RestResponse {
   }
 
   Map<String, String>? getHeaders() {
-    return response != null ? response!.headers : null;
+    return response?.headers;
   }
 
   String getBody() {
@@ -44,8 +43,7 @@ class RestResponse {
 
   @override
   String toString() {
-    return "*********************************************************\n" +
-        "*** RESPONSE *** ${getResponseCode()} *** $_uuid ***\n"
+    return "*********************************************************\n" "*** RESPONSE *** ${getResponseCode()} *** $_uuid ***\n"
             "HEADERS\n  ${getHeaders()}\n"
             "BODY\n  ${getBody()}\n";
   }
@@ -54,7 +52,7 @@ class RestResponse {
       Response response, Completer<RestResponse> completer) {
     this.response = response;
 
-    log(toString());
+    //log(toString());
 
     switch (response.statusCode) {
       case 200:

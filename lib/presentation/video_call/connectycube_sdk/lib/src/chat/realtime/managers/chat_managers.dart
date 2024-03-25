@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../../connectycube_core.dart';
 
@@ -13,10 +13,10 @@ import '../extentions.dart';
 
 class PrivateChatManager extends BaseChatManager<PrivateChat>
     implements StreamedManager {
-  static Map<Connection, PrivateChatManager> _instances = Map();
-  static Map<int, PrivateChat> _chatsMap = Map();
+  static final Map<Connection, PrivateChatManager> _instances = {};
+  static final Map<int, PrivateChat> _chatsMap = {};
 
-  StreamController<PrivateChat> _chatListStreamController =
+  final StreamController<PrivateChat> _chatListStreamController =
       StreamController.broadcast();
 
   Stream<PrivateChat> get chatListStream => _chatListStreamController.stream;
@@ -26,9 +26,9 @@ class PrivateChatManager extends BaseChatManager<PrivateChat>
   PrivateChatManager._private(Connection connection)
       : super._private(connection) {
     _chatManager = ChatManager.getInstance(connection);
-    _chatManager.chats.forEach((chat) {
+    for (var chat in _chatManager.chats) {
       _chatsMap[getUserIdFromJid(chat.jid)] = PrivateChat.fromChat(chat, this);
-    });
+    }
     _chatManager.chatListStream.listen((chats) {
       chats.where((chat) {
         return !_chatsMap.containsKey(chat.jid);
@@ -121,10 +121,10 @@ class PrivateChatManager extends BaseChatManager<PrivateChat>
 
 class GroupChatManager extends BaseChatManager<GroupChat>
     implements StreamedManager {
-  static Map<Connection?, GroupChatManager> _instances = Map();
-  static Map<String?, GroupChat> _chatsMap = Map();
+  static final Map<Connection?, GroupChatManager> _instances = {};
+  static final Map<String?, GroupChat> _chatsMap = {};
 
-  StreamController<GroupChat> _chatListStreamController =
+  final StreamController<GroupChat> _chatListStreamController =
       StreamController.broadcast();
 
   Stream<GroupChat> get chatListStream => _chatListStreamController.stream;
@@ -233,7 +233,7 @@ class GroupChatManager extends BaseChatManager<GroupChat>
 }
 
 abstract class BaseChatManager<CH extends AbstractChat> extends Manager {
-  BaseChatManager._private(Connection chatConnection) : super(chatConnection);
+  BaseChatManager._private(super.chatConnection);
 
   Future<CubeMessage> sendMessageInternal(CubeMessage chatMessage, CH chat);
 
@@ -325,14 +325,14 @@ abstract class BaseChatManager<CH extends AbstractChat> extends Manager {
 }
 
 class PrivateChat extends BaseCubeChat {
-  PrivateChatManager _privateChatManager;
+  final PrivateChatManager _privateChatManager;
   late int _participantId;
   String? dialogId;
 
   PrivateChat(this._privateChatManager, this._participantId);
 
   PrivateChat.fromChat(Chat stoneChat, this._privateChatManager) {
-    this._participantId = getUserIdFromJid(stoneChat.jid);
+    _participantId = getUserIdFromJid(stoneChat.jid);
   }
 
   @override
@@ -395,7 +395,7 @@ class PrivateChat extends BaseCubeChat {
 }
 
 class GroupChat extends BaseCubeChat {
-  GroupChatManager _groupChatManager;
+  final GroupChatManager _groupChatManager;
   String? _dialogId;
   bool? isJoined;
 
@@ -404,7 +404,7 @@ class GroupChat extends BaseCubeChat {
   GroupChat.fromStanza(MessageStanza messageStanza, this._groupChatManager) {
     Jid? senderJid = messageStanza.fromJid;
     if (senderJid != null) {
-      this._dialogId = getDialogIdFromGroupChatJid(senderJid);
+      _dialogId = getDialogIdFromGroupChatJid(senderJid);
     }
   }
 
@@ -505,7 +505,7 @@ class GroupChat extends BaseCubeChat {
 }
 
 abstract class BaseCubeChat implements AbstractChat {
-  StreamController<CubeMessage> _chatMessagesStreamController =
+  final StreamController<CubeMessage> _chatMessagesStreamController =
       StreamController.broadcast();
 
 //  @override

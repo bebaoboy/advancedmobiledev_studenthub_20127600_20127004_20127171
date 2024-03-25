@@ -39,6 +39,7 @@ class CubeSubscription extends CubeEntity {
     device?.clientIdentificationSequence = clientIdentificationSequence;
   }
 
+  @override
   Map<String, dynamic> toJson() => {
         'notification_channel': cubeNotificationChannel?.channelName,
         'push_token': token,

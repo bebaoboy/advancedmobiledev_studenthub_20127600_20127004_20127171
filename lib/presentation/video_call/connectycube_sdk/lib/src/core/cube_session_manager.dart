@@ -13,7 +13,7 @@ class CubeSessionManager {
 
   /// use setter [activeSession] instead
   void saveActiveSession(CubeSession session) {
-    this.activeSession = session;
+    activeSession = session;
   }
 
   @deprecated
@@ -25,7 +25,7 @@ class CubeSessionManager {
 
   CubeSession? get activeSession => _activeSession;
 
-  set activeSession(CubeSession? session) => this._activeSession = session;
+  set activeSession(CubeSession? session) => _activeSession = session;
 
   bool isActiveSessionValid() {
     return !isSessionExpired(_activeSession);
@@ -51,7 +51,7 @@ class CubeSessionManager {
   }
 
   DateTime? getTokenExpirationDate() {
-    return _activeSession?.tokenExpirationDate ?? null;
+    return _activeSession?.tokenExpirationDate;
   }
 
   void setTokenExpirationDate(DateTime tokenExpirationDate) {

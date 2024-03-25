@@ -62,11 +62,11 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    accountList.forEach((element) {
+    for (var element in accountList) {
       TreeNode<Account> node = TreeNode<Account>(data: element);
       node.addAll(element.children.map((e) => TreeNode<Account>(data: e)));
       sampleTree.add(node);
-    });
+    }
     super.initState();
   }
 

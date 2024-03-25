@@ -1,13 +1,13 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../connectycube_chat.dart';
 
 import '../utils/signaling_specifications.dart';
 
 class CallExtraParamsElement extends ExtraParamsElement {
-  CallExtraParamsElement.fromStanza(XmppElement stanza)
-      : super.fromStanza(stanza);
+  CallExtraParamsElement.fromStanza(super.stanza)
+      : super.fromStanza();
 
   CallExtraParamsElement() : super();
 

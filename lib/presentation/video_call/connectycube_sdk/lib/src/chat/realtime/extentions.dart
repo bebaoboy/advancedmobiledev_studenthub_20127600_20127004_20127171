@@ -1,4 +1,4 @@
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../models/cube_message.dart';
 import 'utils/jid_utils.dart';
@@ -6,7 +6,7 @@ import 'utils/messages_utils.dart';
 
 // use single line stanza to avoid cross-platform conflicts
 class CubeMessageStanza extends MessageStanza {
-  CubeMessageStanza(id, type) : super(id, type);
+  CubeMessageStanza(super.id, super.type);
 
   @override
   String buildXmlString() {
@@ -43,8 +43,12 @@ class ExtraParamsElement extends CubeXmppElement {
   static const String NAME_SPACE = 'jabber:client';
 
   ExtraParamsElement.fromStanza(XmppElement stanza) {
-    stanza.attributes.forEach((attribute) => addAttribute(attribute));
-    stanza.children.forEach((child) => addChild(child));
+    for (var attribute in stanza.attributes) {
+      addAttribute(attribute);
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   ExtraParamsElement() : super();
@@ -52,7 +56,7 @@ class ExtraParamsElement extends CubeXmppElement {
   void addParam(String name, String? value) {
     XmppElement customParam = XmppElement();
     customParam.name = name;
-    customParam.textValue = value == null ? "" : value;
+    customParam.textValue = value ?? "";
 
     children.add(customParam);
   }
@@ -62,14 +66,15 @@ class ExtraParamsElement extends CubeXmppElement {
   }
 
   Map<String, String> getParams() {
-    Map<String, String> params = Map();
+    Map<String, String> params = {};
 
-    children.forEach((xmppElement) {
+    for (var xmppElement in children) {
       if (xmppElement.name != AttachmentElement.ELEMENT_NAME) {
-        if (xmppElement.name != null)
+        if (xmppElement.name != null) {
           params[xmppElement.name!] = xmppElement.textValue ?? '';
+        }
       }
-    });
+    }
 
     return params;
   }
@@ -99,8 +104,12 @@ class AttachmentElement extends XmppElement {
   get name => ELEMENT_NAME;
 
   AttachmentElement.fromStanza(XmppElement stanza) {
-    stanza.attributes.forEach((attribute) => addAttribute(attribute));
-    stanza.children.forEach((child) => addChild(child));
+    for (var attribute in stanza.attributes) {
+      addAttribute(attribute);
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   AttachmentElement.fromAttachment(CubeAttachment attachment) {
@@ -115,9 +124,9 @@ class AttachmentElement extends XmppElement {
   }
 
   CubeAttachment toAttachment() {
-    Map<String, dynamic> attachmentAttributes = Map();
+    Map<String, dynamic> attachmentAttributes = {};
 
-    attributes.forEach((attribute) {
+    for (var attribute in attributes) {
       String name = attribute.name;
       String? stringValue = attribute.value;
 
@@ -135,7 +144,7 @@ class AttachmentElement extends XmppElement {
           value = stringValue;
       }
       attachmentAttributes[name] = value;
-    });
+    }
 
     return CubeAttachment.fromJson(attachmentAttributes);
   }
@@ -152,7 +161,7 @@ class SelfDestroyElement extends CubeXmppElement {
   }
 
   SelfDestroyElement.fromStanza(XmppElement stanza) {
-    this._after = int.parse(stanza.getAttribute('after')!.value!);
+    _after = int.parse(stanza.getAttribute('after')!.value!);
   }
 
   get after => _after;
@@ -177,14 +186,16 @@ class RemoveMessageElement extends CubeXmppElement {
   }
 
   RemoveMessageElement.fromStanza(XmppElement stanza) {
-    stanza.attributes.forEach((attribute) {
+    for (var attribute in stanza.attributes) {
       if (attribute.name == 'id') {
         _id = attribute.value;
       }
 
       addAttribute(attribute);
-    });
-    stanza.children.forEach((child) => addChild(child));
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   @override
@@ -211,7 +222,7 @@ class EditMessageElement extends CubeXmppElement {
   }
 
   EditMessageElement.fromStanza(XmppElement stanza) {
-    stanza.attributes.forEach((attribute) {
+    for (var attribute in stanza.attributes) {
       if (attribute.name == 'last') {
         _isLast = bool.fromEnvironment(attribute.value!);
       } else if (attribute.name == 'id') {
@@ -219,8 +230,10 @@ class EditMessageElement extends CubeXmppElement {
       }
 
       addAttribute(attribute);
-    });
-    stanza.children.forEach((child) => addChild(child));
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   @override
@@ -289,8 +302,12 @@ class MessageMarkerElement extends CubeXmppElement {
 
   MessageMarkerElement.fromStanza(XmppElement stanza) {
     _markerName = stanza.name!;
-    stanza.attributes.forEach((attribute) => addAttribute(attribute));
-    stanza.children.forEach((child) => addChild(child));
+    for (var attribute in stanza.attributes) {
+      addAttribute(attribute);
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   MessageMarkerElement(this._markerName, [this._id]) : super() {
@@ -319,8 +336,12 @@ class ChatStateElement extends CubeXmppElement {
 
   ChatStateElement.fromStanza(XmppElement stanza) {
     state = stateFromString(stanza.name!);
-    stanza.attributes.forEach((attribute) => addAttribute(attribute));
-    stanza.children.forEach((child) => addChild(child));
+    for (var attribute in stanza.attributes) {
+      addAttribute(attribute);
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   ChatStateElement(this.state) : super();
@@ -340,8 +361,12 @@ class LastActivityQuery extends CubeXmppElement {
   static const String NAME_SPACE = 'jabber:iq:last';
 
   LastActivityQuery.fromStanza(XmppElement stanza) {
-    stanza.attributes.forEach((attribute) => addAttribute(attribute));
-    stanza.children.forEach((child) => addChild(child));
+    for (var attribute in stanza.attributes) {
+      addAttribute(attribute);
+    }
+    for (var child in stanza.children) {
+      addChild(child);
+    }
   }
 
   LastActivityQuery() : super();
@@ -363,7 +388,7 @@ class EnableMobileElement extends CubeXmppElement {
   bool _enable = false;
 
   EnableMobileElement.fromStanza(XmppElement stanza) {
-    this._enable =
+    _enable =
         bool.fromEnvironment(stanza.getAttribute('enable')?.value ?? "false");
   }
 
@@ -409,18 +434,18 @@ class ReactionsElement extends XmppElement {
   String? removeReaction;
 
   ReactionsElement.fromStanza(XmppElement stanza) {
-    this.userId =
+    userId =
         int.tryParse(stanza.getAttribute('user_id')?.value ?? '') ?? -1;
-    this.messageId = stanza.getAttribute('message_id')?.value ?? '';
+    messageId = stanza.getAttribute('message_id')?.value ?? '';
 
-    stanza.children.forEach((child) {
-      child.attributes.forEach((attribute) {
+    for (var child in stanza.children) {
+      for (var attribute in child.attributes) {
         if (attribute.name == 'add') {
           addReaction = child.getAttribute('type')?.value;
         } else if (attribute.name == 'remove') {
           removeReaction = child.getAttribute('type')?.value;
         }
-      });
-    });
+      }
+    }
   }
 }

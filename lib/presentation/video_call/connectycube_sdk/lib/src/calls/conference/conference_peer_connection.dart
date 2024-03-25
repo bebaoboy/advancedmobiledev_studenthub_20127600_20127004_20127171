@@ -53,9 +53,10 @@ class ConferencePeerConnection extends PeerConnection {
   @override
   Future<RTCRtpSender> addTrack(
       MediaStreamTrack track, MediaStream? mediaStream) {
-    if (mediaStream == null)
+    if (mediaStream == null) {
       return Future.error(IllegalStateException(
           'Can\'t add the track to the null media stream'));
+    }
 
     if (track.kind == 'video') {
       var sendEncodings = getVideoEncodings();

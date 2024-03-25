@@ -14,7 +14,7 @@ class CompanyAccountWidget extends StatelessWidget {
     Widget titleWidget =
         Text(name, style: Theme.of(context).textTheme.bodySmall);
     Widget subtitleWidget =
-        Text(Lang.get('company'), style: Theme.of(context).textTheme.bodyText1);
+        Text(Lang.get('company'), style: Theme.of(context).textTheme.bodyLarge);
     Icon profileIcon = const Icon(Icons.business);
 
     // IconButton expandButton = IconButton(

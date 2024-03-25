@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../extentions.dart';
 import 'messages_manager.dart';
@@ -10,7 +10,7 @@ import '../utils/jid_utils.dart';
 import '../utils/messages_utils.dart';
 
 class MessagesStatusesManager extends MessagesManager {
-  static Map<Connection, MessagesStatusesManager> _instances = Map();
+  static final Map<Connection, MessagesStatusesManager> _instances = {};
 
   late StreamController<MessageStatus> _deliveredStreamController;
   late StreamController<MessageStatus> _readStreamController;
@@ -26,7 +26,7 @@ class MessagesStatusesManager extends MessagesManager {
 
   Stream<MessageStatus> get deletedStream => _deleteStreamController.stream;
 
-  MessagesStatusesManager._private(Connection connection) : super(connection) {
+  MessagesStatusesManager._private(super.connection) {
     _deliveredStreamController = StreamController.broadcast();
     _readStreamController = StreamController.broadcast();
     _editStreamController = StreamController.broadcast();

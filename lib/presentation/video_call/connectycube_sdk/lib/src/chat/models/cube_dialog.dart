@@ -99,6 +99,7 @@ class CubeDialog extends CubeEntity {
     isMuted = json['is_muted'];
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       '_id': dialogId,
@@ -366,11 +367,12 @@ class CubeDialogType {
 
 @Deprecated('Use the field `CubeDialog.extensions` instead.')
 class CubeDialogCustomData extends CubeBaseCustomObject {
-  CubeDialogCustomData(String className) : super(className);
+  CubeDialogCustomData(String super.className);
 
-  CubeDialogCustomData.fromJson(Map<String, dynamic> json)
-      : super.fromJson(json);
+  CubeDialogCustomData.fromJson(super.json)
+      : super.fromJson();
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['class_name'] = className;

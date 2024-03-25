@@ -110,10 +110,11 @@ class _InputState extends State<Input> {
     if (_textController.value.isComposingRangeValid) {
       return;
     }
-    if (_textController.text.trim() != '')
+    if (_textController.text.trim() != '') {
       setState(() {
         _sendButtonVisible = _textController.text.trim() != '';
       });
+    }
   }
 
   Widget _inputBuilder() {

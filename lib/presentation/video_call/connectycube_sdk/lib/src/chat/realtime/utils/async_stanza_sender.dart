@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../../connectycube_core.dart';
 
@@ -10,12 +10,12 @@ import '../managers/base_managers.dart';
 
 class AsyncStanzaSender extends Manager {
   static const int DEFAULT_SOCKET_TIMEOUT = 60;
-  static Map<Connection, AsyncStanzaSender> _instances = Map();
-  static Map<String, Timer> _timers = Map();
-  static Map<String, Function> _tasks = Map();
+  static final Map<Connection, AsyncStanzaSender> _instances = {};
+  static final Map<String, Timer> _timers = {};
+  static final Map<String, Function> _tasks = {};
   StreamSubscription<AbstractStanza?>? _subscription;
 
-  AsyncStanzaSender._private(Connection connection) : super(connection);
+  AsyncStanzaSender._private(super.connection);
 
   static getInstance(Connection connection) {
     log("getInstance", "AsyncStanzaSender");

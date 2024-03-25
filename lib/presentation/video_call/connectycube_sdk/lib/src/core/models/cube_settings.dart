@@ -10,7 +10,7 @@ import '../utils/consts.dart';
 import '../utils/string_utils.dart';
 
 class CubeSettings {
-  String _versionName = "2.11.2";
+  final String _versionName = "2.11.2";
   String? applicationId;
   String? authorizationKey;
   String? accountKey;
@@ -55,7 +55,7 @@ class CubeSettings {
     }
 
     if (!apiEndpoint.startsWith("http")) {
-      apiEndpoint = "https://" + apiEndpoint;
+      apiEndpoint = "https://$apiEndpoint";
     }
 
     this.apiEndpoint = apiEndpoint;
@@ -65,7 +65,7 @@ class CubeSettings {
   Future<void> _initResourceId() async {
     var deviceInfoPlugin = DeviceInfoPlugin();
 
-    var resourceId;
+    String? resourceId;
 
     if (kIsWeb) {
       var webBrowserInfo = await deviceInfoPlugin.webBrowserInfo;
@@ -88,12 +88,12 @@ class CubeSettings {
     }
 
     if (resourceId == null) {
-      resourceId = Uuid().v4();
+      resourceId = const Uuid().v4();
     } else {
       resourceId = base64Encode(utf8.encode(resourceId ?? ''));
     }
 
-    this.chatDefaultResource = "$PREFIX_CHAT_RESOURCE\_$resourceId";
+    chatDefaultResource = "${PREFIX_CHAT_RESOURCE}_$resourceId";
   }
 
   Future<void> _initDefaultParams() async {

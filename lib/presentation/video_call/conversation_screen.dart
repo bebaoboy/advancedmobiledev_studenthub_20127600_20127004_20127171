@@ -19,7 +19,7 @@ class ConversationCallScreen extends StatefulWidget {
     return _ConversationCallScreenState(_callSession, _isIncoming);
   }
 
-  ConversationCallScreen(this._callSession, this._isIncoming);
+  const ConversationCallScreen(this._callSession, this._isIncoming, {super.key});
 }
 
 class _ConversationCallScreenState extends State<ConversationCallScreen>
@@ -322,7 +322,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                       Padding(
                         padding: const EdgeInsets.only(bottom: 24),
                         child: Text(
-                          "Audio call from " + _callSession.callerId.toString(),
+                          "Audio call from ${_callSession.callerId}",
                           style: const TextStyle(fontSize: 28),
                         ),
                       ),

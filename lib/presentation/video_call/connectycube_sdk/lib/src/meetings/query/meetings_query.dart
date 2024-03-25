@@ -122,8 +122,8 @@ class UpdateMeetingQuery extends AutoManagedQuery<CubeMeeting> {
   Map<String, dynamic> params;
 
   UpdateMeetingQuery(CubeMeeting cubeMeeting)
-      : this.meetingId = cubeMeeting.meetingId!,
-        this.params = cubeMeeting.toUpdateObjectJson();
+      : meetingId = cubeMeeting.meetingId!,
+        params = cubeMeeting.toUpdateObjectJson();
 
   UpdateMeetingQuery.byId(this.meetingId, this.params);
 
@@ -141,9 +141,9 @@ class UpdateMeetingQuery extends AutoManagedQuery<CubeMeeting> {
   setBody(RestRequest request) {
     Map<String, dynamic> parameters = request.params;
 
-    params.entries.forEach((element) {
+    for (var element in params.entries) {
       parameters[element.key] =  element.value;
-    });
+    }
   }
 
   @override

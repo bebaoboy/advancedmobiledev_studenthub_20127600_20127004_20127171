@@ -30,13 +30,13 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
           children: [
             Text(
               'Cover letter',
-              style: Theme.of(context).textTheme.headline6,
+              style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(
               height: 5,
             ),
             Text(Lang.get('project_submit_proposal'),
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
             const SizedBox(
               height: 10,
             ),

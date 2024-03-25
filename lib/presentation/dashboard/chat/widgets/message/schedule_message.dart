@@ -169,7 +169,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Chat.user;
+    const user = Chat.user;
 
     if (_size.aspectRatio == 0) {
       return Container(
@@ -261,7 +261,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
+                      SizedBox(
                         width: MediaQuery.of(context).size.width * 0.35,
                         child: AutoSizeText(
                           widget.scheduleFilter.title ?? "Untitled",
@@ -299,12 +299,12 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               //   ),
               // ),
               Text(
-                Lang.get("profile_project_start") + ": ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
+                "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
                 style: const TextStyle(color: Colors.black, fontSize: 10),
                 textWidthBasis: TextWidthBasis.longestLine,
               ),
               Text(
-                Lang.get("profile_project_end") + ": ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
+                "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
                 style: const TextStyle(color: Colors.black, fontSize: 10),
                 textWidthBasis: TextWidthBasis.longestLine,
               ),

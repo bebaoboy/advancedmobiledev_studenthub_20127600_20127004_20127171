@@ -1,3 +1,5 @@
+import 'package:boilerplate/core/widgets/language_button_widget.dart';
+import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
@@ -242,25 +244,14 @@ class _MainAppBarState extends State<MainAppBar> {
   }
 
   Widget _buildLogoutButton() {
-    final UserStore _userStore = getIt<UserStore>();
+    final UserStore userStore = getIt<UserStore>();
 
     return widget.isHomePage
         ? IconButton(
             onPressed: () {
-              SharedPreferences.getInstance().then((preference) async {
-                await preference.setBool(Preferences.is_logged_in, false);
-                CallManager.instance.destroy();
-                CubeChatConnection.instance.destroy();
-                await PushNotificationsManager.instance.unsubscribe();
-
-                await SharedPrefs.deleteUserData();
-                await signOut();
-
-                await _userStore.logout();
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute2(routeName: Routes.splash),
+              Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute2(routeName: Routes.login),
                     (Route<dynamic> route) => false);
-              });
             },
             icon: const Icon(
               Icons.power_settings_new,
@@ -355,8 +346,10 @@ class _MainAppBarState extends State<MainAppBar> {
           margin: const EdgeInsets.only(left: 20),
           child: Text(Lang.get('appbar_title'))),
       actions: [
-        _buildLanguageButton(),
-        _buildThemeButton(),
+        // _buildLanguageButton(),
+        // _buildThemeButton(),
+        LanguageButton(),
+        ThemeButton(),
         _buildProfileButton(),
         _buildLogoutButton(),
       ],

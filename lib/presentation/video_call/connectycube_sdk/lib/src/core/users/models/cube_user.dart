@@ -81,6 +81,7 @@ class CubeUser extends CubeEntity {
     timeZone = json['timezone'];
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       'full_name': fullName,

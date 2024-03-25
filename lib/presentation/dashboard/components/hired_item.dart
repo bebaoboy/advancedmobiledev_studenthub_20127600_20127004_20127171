@@ -60,9 +60,9 @@ class _HiredItemState extends State<HiredItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(widget.hired.name,
-                          style: Theme.of(context).textTheme.bodyText1),
+                          style: Theme.of(context).textTheme.bodyLarge),
                       Text(widget.hired.education,
-                          style: Theme.of(context).textTheme.bodyText1)
+                          style: Theme.of(context).textTheme.bodyLarge)
                     ],
                   )
                 ],
@@ -72,9 +72,9 @@ class _HiredItemState extends State<HiredItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(widget.hired.title,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
                 // ToDo: need a field for expertise
-                Text(Lang.get('excellent'), style: Theme.of(context).textTheme.bodyText1),
+                Text(Lang.get('excellent'), style: Theme.of(context).textTheme.bodyLarge),
               ],
             ),
             Padding(
@@ -82,7 +82,7 @@ class _HiredItemState extends State<HiredItem> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Text(widget.hired.introduction,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ),
             ),
             Padding(
@@ -94,7 +94,7 @@ class _HiredItemState extends State<HiredItem> {
                   MaterialButton(
                     color: Colors.grey.shade400,
                     textColor: Colors.black54,
-                    onPressed: () => null,
+                    onPressed: () {},
                     child: Text(Lang.get('message')),
                   ),
                   // MaterialButton(

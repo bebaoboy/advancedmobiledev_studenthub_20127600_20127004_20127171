@@ -1,5 +1,5 @@
-import 'package:xmpp_stone/src/elements/XmppAttribute.dart';
-import 'package:xmpp_stone/src/elements/XmppElement.dart';
+import 'package:boilerplate/core/widgets/xmpp/elements/XmppAttribute.dart';
+import 'package:boilerplate/core/widgets/xmpp/elements/XmppElement.dart';
 
 class ErrorPacket {
   String? type;

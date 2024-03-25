@@ -46,7 +46,10 @@ class _MessageTabState extends State<MessageTab> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildMessageContent();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 60),
+      child: _buildMessageContent(),
+    );
   }
 
   Widget _buildMessageContent() {
@@ -69,8 +72,8 @@ class _MessageTabState extends State<MessageTab> {
             decoration: InputDecoration(
               labelText: Lang.get("search"),
               hintText: Lang.get("search"),
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(
+              prefixIcon: const Icon(Icons.search),
+              border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),
               ),
             ),
@@ -79,7 +82,7 @@ class _MessageTabState extends State<MessageTab> {
         Expanded(
           child: ListView.separated(
             itemCount: messages.length,
-            separatorBuilder: (context, index) => Divider(color: Colors.black),
+            separatorBuilder: (context, index) => const Divider(color: Colors.black),
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
@@ -93,7 +96,7 @@ class _MessageTabState extends State<MessageTab> {
                 child: ListTile(
                   leading: Icon(
                       messages[index]['icon']), // Replace with actual icons
-                  title: Text(messages[index]['name']),
+                  title: Text(messages[index]['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

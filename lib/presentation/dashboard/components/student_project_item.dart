@@ -53,7 +53,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
       } else if (differenceWithToday == 1) {
         submittedText = 'Created 1 day ago';
       } else {
-        submittedText = 'Created $differenceWithToday days ago';
+        submittedText = 'Created $differenceWithToday' + Lang.get('day_ago');
       }
 
       return Container(

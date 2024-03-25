@@ -93,7 +93,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     if (_focusNode.hasFocus) {
       _openInputConnection();
     } else {
-      print("out");
+      // print("out");
       _closeInputConnectionIfNeeded();
       _suggestions = [];
     }
@@ -148,7 +148,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
           children: <Widget>[
             Text(
               text,
-              style: theme.textTheme.subtitle1?.copyWith(
+              style: theme.textTheme.titleMedium?.copyWith(
                 height: 1.5,
               ),
             ),
@@ -267,8 +267,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
 class _TextCaret extends StatefulWidget {
   const _TextCaret({
-    this.duration = const Duration(milliseconds: 500),
-    this.resumed = false,
+    this.resumed = false, this.duration = Duration.zero
   });
 
   final Duration duration;

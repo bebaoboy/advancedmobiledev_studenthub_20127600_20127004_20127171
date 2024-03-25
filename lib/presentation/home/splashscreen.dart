@@ -185,20 +185,13 @@ class _SplashScreenState extends State<SplashScreen>
       });
     _playAnimation(context);
     initCube(NavigationService.navigatorKey.currentContext);
-
-    // Timer(
-    //     Duration(seconds: 3),
-    //     () => Navigator.pushReplacement(
-    //         context,
-    //         MaterialPageRoute2(
-    //             child: _userStore.isLoggedIn ? HomeScreen() : LoginScreen())));
   }
 
   initCube(context) async {
-    final UserStore _userStore = getIt<UserStore>();
-    var user;
+    final UserStore userStore = getIt<UserStore>();
+    CubeUser user;
 
-    if (_userStore.user != null && _userStore.user!.type != UserType.naught) {
+    if (userStore.user != null && userStore.user!.type != UserType.naught) {
       try {
         // CallManager.instance.destroy();
         // CubeChatConnection.instance.destroy();
@@ -208,9 +201,9 @@ class _SplashScreenState extends State<SplashScreen>
       } catch (e) {}
       //CubeSessionManager.instance.isActiveSessionValid();
 
-      user = _userStore.user!.email == "user@1.com"
+      user = userStore.user!.email == "user1@gmail.com"
           ? utils.users[0]
-          : _userStore.user!.email == "user@2.com"
+          : userStore.user!.email == "user2@gmail.com"
               ? utils.users[1]
               : utils.users[2];
       await createSession(user).then(
@@ -223,11 +216,12 @@ class _SplashScreenState extends State<SplashScreen>
             SharedPrefs.saveNewUser(cubeUser);
             log(cubeUser.toString(), "BEBAOBOY");
             if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null)
+                CubeChatConnection.instance.currentUser != null) {
               log(
                   (CubeSessionManager.instance.activeSession!.user == null)
                       .toString(),
                   "BEBAOBOY");
+            }
 
             initForegroundService();
             loadingText.text = "Almost done...";
@@ -237,14 +231,14 @@ class _SplashScreenState extends State<SplashScreen>
 
             await CallManager.instance.init(context);
 
-            await PushNotificationsManager.instance.init();
+            PushNotificationsManager.instance.init();
 
             _controller.stop();
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute2(
                     routeName:
-                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+                        userStore.isLoggedIn ? Routes.home : Routes.login));
           }).catchError((exception) {
             //_processLoginError(exception);
             _controller.stop();
@@ -252,7 +246,7 @@ class _SplashScreenState extends State<SplashScreen>
                 context,
                 MaterialPageRoute2(
                     routeName:
-                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+                        userStore.isLoggedIn ? Routes.home : Routes.login));
             log(exception.toString(), "BEBAOBOY");
           });
           // _controller.stop();
@@ -263,7 +257,7 @@ class _SplashScreenState extends State<SplashScreen>
         Navigator.pushReplacement(
             context,
             MaterialPageRoute2(
-                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
         log(exception.toString(), "BEBAOBOY");
       });
       deleteSessionsExceptCurrent()
@@ -271,11 +265,11 @@ class _SplashScreenState extends State<SplashScreen>
           .catchError((error) {});
     } else {
       user = utils.users[2];
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute2(
-                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
       });
     }
   }
@@ -285,18 +279,17 @@ class _SplashScreenState extends State<SplashScreen>
       _controller.forward().onError(
             (error, stackTrace) => null,
           );
-      await Future.delayed(const Duration(seconds: 15));
+     // await Future.delayed(const Duration(seconds: 15));
 //      await controller.reverse().orCancel;
     } on TickerCanceled {
       // the animation got canceled, probably because we were disposed
       _controller.stop();
-    } catch (E) {
     } finally {
       try {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute2(
-                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+        // Navigator.pushReplacement(
+        //     context,
+        //     MaterialPageRoute2(
+        //         routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
         // ignore: empty_catches
       } catch (e) {}
     }
@@ -315,12 +308,7 @@ class _SplashScreenState extends State<SplashScreen>
       body: FancyBackgroundApp(
         child: GestureDetector(
           onTap: () {
-            // _controller.stop();
-            // Navigator.pushReplacement(
-            //     context,
-            //     MaterialPageRoute2(
-            //         routeName:
-            //             _userStore.isLoggedIn ? Routes.home : Routes.login));
+            
           },
           child: Center(
             child: SingleChildScrollView(
@@ -372,7 +360,7 @@ class _SplashScreenState extends State<SplashScreen>
                               color: Theme.of(context).colorScheme.primary,
                             ),
                             decoration:
-                                InputDecoration(border: InputBorder.none),
+                                const InputDecoration(border: InputBorder.none),
                             enableInteractiveSelection: false,
                             readOnly: true,
                           ),

@@ -7,8 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'dart:math';
-// ignore: duplicate_import
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AnimSearchBar2 extends StatefulWidget {
@@ -56,7 +54,7 @@ class AnimSearchBar2 extends StatefulWidget {
   final bool? enabled;
 
   const AnimSearchBar2(
-      {Key? key,
+      {super.key,
 
       /// The width cannot be null
       required this.width,
@@ -65,7 +63,7 @@ class AnimSearchBar2 extends StatefulWidget {
       required this.textController,
       this.suffixIcon,
       this.prefixIcon,
-      this.helpText = "Search...",
+      this.helpText = "",
 
       /// choose your custom color
       this.color = Colors.white,
@@ -108,8 +106,7 @@ class AnimSearchBar2 extends StatefulWidget {
       required this.onSelected,
       required this.onSuggestionCallback,
       this.expandedByDefault,
-      this.enabled})
-      : super(key: key);
+      this.enabled});
 
   @override
   _AnimSearchBar2State createState() => _AnimSearchBar2State();
@@ -443,9 +440,10 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                               toggle = 1;
                               setState(() {
                                 ///if the autoFocus is true, the keyboard will pop open, automatically
-                                if (widget.autoFocus)
+                                if (widget.autoFocus) {
                                   FocusScope.of(context)
                                       .requestFocus(focusNode);
+                                }
                               });
 
                               ///forward == expand

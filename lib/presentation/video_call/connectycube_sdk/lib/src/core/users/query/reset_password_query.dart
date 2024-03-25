@@ -3,7 +3,7 @@ import '../../rest/request/rest_request.dart';
 import '../../utils/consts.dart';
 
 class ResetPasswordQuery extends AutoManagedQuery<void> {
-  String _email;
+  final String _email;
 
   ResetPasswordQuery(this._email);
 

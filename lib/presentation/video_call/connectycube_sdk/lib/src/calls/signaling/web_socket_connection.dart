@@ -12,8 +12,8 @@ class WebSocketConnection {
   static const int _timeOutInSec = 10;
   static int _instances = 0;
   int? _instance;
-  String _url;
-  String _protocol;
+  final String _url;
+  final String _protocol;
 
   late WebSocketChannel _channel;
   int? _sessionId;
@@ -32,7 +32,7 @@ class WebSocketConnection {
   }
 
   void connect() {
-    logTime("connect to " + _url + ", " + _protocol);
+    logTime("connect to $_url, $_protocol");
     _channel =
         WebSocketChannel.connect(Uri.parse(_url), protocols: [_protocol]);
 
@@ -101,12 +101,16 @@ class WebSocketConnection {
   }
 
   notifyListeners(WsPacket packet) {
-    packetListeners.forEach((listener) => listener.onPacketReceived(packet));
+    for (var listener in packetListeners) {
+      listener.onPacketReceived(packet);
+    }
     processResponse(packet);
   }
 
   processResponse(WsPacket packet) {
-    collectors.forEach((collector) => collector.processPacket(packet));
+    for (var collector in collectors) {
+      collector.processPacket(packet);
+    }
     collectors.removeWhere((packet) => packet.cancelled);
   }
 
@@ -115,7 +119,7 @@ class WebSocketConnection {
   }
 
   void closeSession() {
-    WsDataPacket packet = new WsDataPacket();
+    WsDataPacket packet = WsDataPacket();
     packet.messageType = Type.destroy;
     Completer completer = Completer();
     createCollectorAndSend(packet, Type.success, completer);
@@ -155,7 +159,7 @@ class PacketCollector {
 class RandomStringGenerator {
   //FixME RP as an option can be http://pub.dartlang.org/packages/uuid
   String getString() {
-    return Uuid().v4();
+    return const Uuid().v4();
   }
 }
 

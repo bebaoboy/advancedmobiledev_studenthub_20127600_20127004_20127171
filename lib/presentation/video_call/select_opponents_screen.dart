@@ -76,7 +76,7 @@ class SelectOpponentsScreen extends StatelessWidget {
     // );
   }
 
-  SelectOpponentsScreen(this.currentUser);
+  const SelectOpponentsScreen(this.currentUser, {super.key});
 }
 
 class BodyLayout extends StatefulWidget {
@@ -87,7 +87,7 @@ class BodyLayout extends StatefulWidget {
     return _BodyLayoutState(currentUser);
   }
 
-  BodyLayout(this.currentUser);
+  const BodyLayout(this.currentUser, {super.key});
 }
 
 class _BodyLayoutState extends State<BodyLayout> {

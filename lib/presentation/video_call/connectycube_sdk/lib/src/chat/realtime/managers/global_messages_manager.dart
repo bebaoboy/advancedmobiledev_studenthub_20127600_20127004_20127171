@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/src/chat/realtime/utils/messages_utils.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../../connectycube_core.dart';
 
@@ -9,7 +9,7 @@ import 'base_managers.dart';
 import '../../chat_connection_service.dart';
 
 class GlobalMessagesManager extends Manager {
-  static Map<Connection, GlobalMessagesManager> _instances = Map();
+  static final Map<Connection, GlobalMessagesManager> _instances = {};
 
   late StreamSubscription<MessageStanza?> _stanzaSubscription;
 

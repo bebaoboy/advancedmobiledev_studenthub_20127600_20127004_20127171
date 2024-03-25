@@ -49,7 +49,7 @@ class GlobalSearchParams {
   int? limit;
 
   Map<String, dynamic> getSearchParams() {
-    Map<String, dynamic> params = Map();
+    Map<String, dynamic> params = {};
 
     if (dialogIds.isNotEmpty) {
       params['chat_dialog_ids'] = dialogIds.join(",");

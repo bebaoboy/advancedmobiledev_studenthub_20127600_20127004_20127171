@@ -1,5 +1,5 @@
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../connectycube_chat.dart';
 
@@ -24,8 +24,7 @@ class P2PClient implements CallClient<P2PSession>, CallsSignalingCallback {
 
   static P2PClient get instance => _instance;
 
-  Map<String?, P2PSession> _sessions = {};
-
+  final Map<String?, P2PSession> _sessions = {};
 
   /// Creates the instance of [ConferenceSession].
   /// [callType] - can be [CallType.VIDEO_CALL] or [CallType.AUDIO_CALL].
@@ -70,9 +69,7 @@ class P2PClient implements CallClient<P2PSession>, CallsSignalingCallback {
 
   @override
   void init() {
-    if (_signalingProcessor == null) {
-      _signalingProcessor = RTCSignalingProcessor.instance;
-    }
+    _signalingProcessor ??= RTCSignalingProcessor.instance;
 
     _signalingProcessor!.init();
     _signalingProcessor!.addSignalingCallback(this);
@@ -159,7 +156,8 @@ class P2PClient implements CallClient<P2PSession>, CallsSignalingCallback {
   }
 
   @override
-  void onUpdateCallReceive(CubeRTCSessionDescription cubeSdp, CubeUser cubeUser, RTCSessionDescription sdp) {
+  void onUpdateCallReceive(CubeRTCSessionDescription cubeSdp, CubeUser cubeUser,
+      RTCSessionDescription sdp) {
     P2PSession? session = _sessions[cubeSdp.sessionId];
 
     session?.processCallUpdated(cubeUser.id!, sdp);

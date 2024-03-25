@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../../connectycube_core.dart';
 
@@ -13,14 +13,14 @@ import '../utils/chat_constants.dart';
 import '../utils/jid_utils.dart';
 
 class SystemMessagesManager extends MessagesManager {
-  static Map<Connection, SystemMessagesManager> _instances = Map();
+  static final Map<Connection, SystemMessagesManager> _instances = {};
 
   late StreamController<CubeMessage> _systemMessagesStreamController;
 
   Stream<CubeMessage> get systemMessagesStream =>
       _systemMessagesStreamController.stream;
 
-  SystemMessagesManager._private(Connection connection) : super(connection) {
+  SystemMessagesManager._private(super.connection) {
     _systemMessagesStreamController = StreamController.broadcast();
   }
 

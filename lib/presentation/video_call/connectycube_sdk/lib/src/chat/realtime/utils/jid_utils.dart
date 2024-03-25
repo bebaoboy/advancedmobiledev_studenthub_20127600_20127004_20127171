@@ -1,4 +1,4 @@
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../../connectycube_core.dart';
 
@@ -13,7 +13,7 @@ String getJidForGroupChat(String dialogId) {
   String? appId = CubeSettings.instance.applicationId;
   String? chatEndpoint = CubeSettings.instance.chatEndpoint;
 
-  return "$appId\_$dialogId@muc.$chatEndpoint";
+  return "${appId}_$dialogId@muc.$chatEndpoint";
 }
 
 int getUserIdFromJid(Jid jid) {

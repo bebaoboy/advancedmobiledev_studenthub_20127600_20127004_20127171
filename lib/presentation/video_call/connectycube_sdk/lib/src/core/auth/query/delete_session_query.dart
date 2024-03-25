@@ -8,7 +8,7 @@ class DeleteSessionQuery extends AutoManagedQuery<void> {
   late bool _exceptCurrent;
 
   DeleteSessionQuery({bool exceptCurrent = false}) {
-    this._exceptCurrent = exceptCurrent;
+    _exceptCurrent = exceptCurrent;
   }
 
   @override

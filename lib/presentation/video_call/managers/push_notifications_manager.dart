@@ -141,7 +141,7 @@ class PushNotificationsManager {
 
     var deviceInfoPlugin = DeviceInfoPlugin();
 
-    var deviceId;
+    String? deviceId;
 
     if (kIsWeb) {
       var webBrowserInfo = await deviceInfoPlugin.webBrowserInfo;
@@ -166,12 +166,12 @@ class PushNotificationsManager {
         .then((cubeSubscriptions) {
       log('[subscribe] subscription SUCCESS', "BEBAOBOY");
       SharedPrefs.saveSubscriptionToken(token);
-      cubeSubscriptions.forEach((subscription) {
+      for (var subscription in cubeSubscriptions) {
         log('[subscribe] subscription ERROR: $subscription', "BEBAOBOY");
         if (subscription.device!.clientIdentificationSequence == token) {
           SharedPrefs.saveSubscriptionId(subscription.id!);
         }
-      });
+      }
     }).catchError((error) {
       log('[subscribe] subscription ERROR: $error', "BEBAOBOY");
     });

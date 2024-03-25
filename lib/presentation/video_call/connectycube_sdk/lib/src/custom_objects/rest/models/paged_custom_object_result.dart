@@ -10,7 +10,7 @@ class PagedCustomObjectResult extends PagedResult<CubeCustomObject> {
   PagedCustomObjectResult(String rawResponse)
       : super(rawResponse, (element) => CubeCustomObject.fromJson(element)) {
     Map<String, dynamic> res = json.decode(rawResponse);
-    this.className = res['class_name'];
+    className = res['class_name'];
   }
 
   @override

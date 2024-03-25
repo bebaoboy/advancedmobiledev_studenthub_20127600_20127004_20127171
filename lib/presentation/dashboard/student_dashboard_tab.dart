@@ -9,27 +9,26 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
-  bool? isAlive;
-  PageController pageController;
-  StudentDashBoardTab(
-      {super.key, this.isAlive = true, required this.pageController});
+  final bool? isAlive;
+  final ScrollController? pageController;
+  const StudentDashBoardTab(
+      {super.key, this.isAlive = true,  this.pageController});
 
   @override
   State<StudentDashBoardTab> createState() => _StudentDashBoardTabState();
 }
 
 class _StudentDashBoardTabState extends State<StudentDashBoardTab>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  late TabController tabController;
+   {
+  // late TabController tabController;
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    // tabController = TabController(length: 3, vsync: this);
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return _buildDashBoardContent();
   }
 
@@ -42,7 +41,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab>
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(Lang.get('Dashboard_your_job')),
+                child: Text(Lang.get('dashboard_your_job')),
               ),
             ],
           ),
@@ -50,22 +49,19 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab>
         Expanded(
           // ignore: prefer_const_constructors
           child: ProjectTabs(
-            tabController: tabController,
-            pageController: widget.pageController,
+            // tabController: tabController,
+            // pageController: widget.pageController,
           ),
         ),
       ],
     );
   }
-
-  @override
-  bool get wantKeepAlive => widget.isAlive!;
 }
 
 class ProjectTabs extends StatefulWidget {
-  ProjectTabs({super.key, this.tabController, required this.pageController});
+  ProjectTabs({super.key, this.tabController, this.pageController});
   TabController? tabController;
-  PageController pageController;
+  ScrollController? pageController;
 
   @override
   State<ProjectTabs> createState() => _ProjectTabsState();
@@ -115,6 +111,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
                     projects: studentProjects,
                   ),
                   WorkingProjects(
+                                      scrollController: widget.pageController,
+
                     projects: studentWorkingProjects,
                   ),
                   AllProjects(
@@ -130,7 +128,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
 
 class WorkingProjects extends StatefulWidget {
   final List<StudentProject>? projects;
-  const WorkingProjects({super.key, required this.projects});
+  final ScrollController? scrollController;
+  const WorkingProjects({super.key, required this.projects, required this.scrollController});
 
   @override
   State<WorkingProjects> createState() => _WorkingProjectsState();
@@ -140,6 +139,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
+      controller: widget.scrollController,
       itemCount: widget.projects?.length ?? 0,
       itemBuilder: (context, index) {
         widget.projects![index].isLoading = false;
@@ -151,7 +151,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
 
 class AllProjects extends StatefulWidget {
   final List<StudentProject>? projects;
-  const AllProjects({Key? key, required this.projects});
+  const AllProjects({super.key, required this.projects});
 
   @override
   State<AllProjects> createState() => _AllProjectsState();
@@ -190,8 +190,7 @@ class _AllProjectsState extends State<AllProjects> {
                   padding: const EdgeInsets.only(top: 12, left: 12),
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: Text(Lang.get("active_proposal") +
-                          '(${activeProjects?.length ?? 0})')),
+                      child: Text('${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
                 ),
                 Flexible(
                   fit: FlexFit.loose,
@@ -221,8 +220,7 @@ class _AllProjectsState extends State<AllProjects> {
                   padding: const EdgeInsets.only(top: 12.0, left: 12.0),
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: Text(Lang.get("submitted_proposal") +
-                          '(${submittedProjects?.length ?? 0})')),
+                      child: Text('${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
                 ),
                 Flexible(
                   fit: FlexFit.loose,

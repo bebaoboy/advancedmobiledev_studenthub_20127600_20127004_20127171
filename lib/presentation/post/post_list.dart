@@ -79,7 +79,7 @@ class _PostListScreenState extends State<PostListScreen> {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         softWrap: false,
-        style: Theme.of(context).textTheme.subtitle1,
+        style: Theme.of(context).textTheme.titleMedium,
       ),
       subtitle: Text(
         '${_postStore.postList?.posts?[position].body}',
@@ -110,7 +110,7 @@ class _PostListScreenState extends State<PostListScreen> {
           message: message,
           title: Lang.get('error'),
           duration: const Duration(seconds: 3),
-        )..show(context);
+        ).show(context);
       }
     });
 

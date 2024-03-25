@@ -137,13 +137,14 @@ class DetailTabLayout extends StatelessWidget {
                       // margin: const EdgeInsetsDirectional.only(
                       //     top: Dimens.vertical_padding + 10),
                       width: MediaQuery.of(context).size.width,
+                      height: 400,
                       decoration: const BoxDecoration(
                           border: Border(
                               top: BorderSide(width: 1, color: Colors.black),
                               bottom: BorderSide(width: 1, color: Colors.black))),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Text(project.description),
+                        child: SingleChildScrollView(child: Text(project.description)),
                       ),
                     ),
                     Padding(
@@ -159,11 +160,11 @@ class DetailTabLayout extends StatelessWidget {
                             children: [
                               Text(
                                 'Project scope',
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(
                                 project.scope.title,
-                                style: Theme.of(context).textTheme.bodyText1,
+                                style: Theme.of(context).textTheme.bodyLarge,
                               )
                             ],
                           )
@@ -180,11 +181,11 @@ class DetailTabLayout extends StatelessWidget {
                           children: [
                             Text(
                               'Student required',
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Text(
                               '${project.numberOfStudents} students',
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             )
                           ],
                         )

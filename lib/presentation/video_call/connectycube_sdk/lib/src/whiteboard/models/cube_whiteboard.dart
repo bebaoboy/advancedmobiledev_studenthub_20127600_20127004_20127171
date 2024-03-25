@@ -15,6 +15,7 @@ class CubeWhiteboard extends CubeEntity {
     userId = json['user_id'];
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['_id'] = whiteboardId;
@@ -43,7 +44,7 @@ class CubeWhiteboard extends CubeEntity {
     });
 
     String whiteboardUrl =
-        CubeSettings.instance.whiteboardUrl + '?' + whiteboardParams;
+        '${CubeSettings.instance.whiteboardUrl}?$whiteboardParams';
     return whiteboardUrl;
   }
 }

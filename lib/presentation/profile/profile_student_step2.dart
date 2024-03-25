@@ -1225,7 +1225,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

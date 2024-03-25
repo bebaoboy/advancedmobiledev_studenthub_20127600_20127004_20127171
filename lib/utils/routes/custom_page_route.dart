@@ -53,7 +53,7 @@ class MaterialPageRoute2 extends PageRouteBuilder {
                   ScaleTransition(
                       scale: animation.drive(Tween(begin: 0.0, end: 1.0)
                           .chain(CurveTween(curve: Curves.ease))),
-                      child: FadeTransition(opacity: animation, child: child));
+                      child: child);
               // FadeTransition(
               //   opacity: animation,
               //   child: child,
@@ -85,6 +85,6 @@ class MaterialPageRoute2 extends PageRouteBuilder {
         ScaleTransition(
             scale: animation.drive(Tween(begin: 0.0, end: 1.0)
                 .chain(CurveTween(curve: Curves.ease))),
-            child: FadeTransition(opacity: animation, child: child)));
+            child: child));
   }
 }

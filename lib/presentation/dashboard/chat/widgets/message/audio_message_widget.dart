@@ -15,14 +15,13 @@ class AudioMessageWidget extends StatefulWidget {
   final String name;
 
   AudioMessageWidget(
-      {Key? key,
+      {super.key,
       required this.message,
       required this.senderColor,
       required this.inActiveAudioSliderColor,
       required this.activeAudioSliderColor,
       required this.name,
-      this.isSender = true})
-      : super(key: key);
+      this.isSender = true});
 
   @override
   _AudioMessageWidgetState createState() => _AudioMessageWidgetState();
@@ -62,18 +61,18 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
         children: [
           Container(
               width: MediaQuery.of(context).size.width * 0.7,
-              padding: EdgeInsets.symmetric(
+              padding: const EdgeInsets.symmetric(
                 horizontal: 10 * 0.75,
               ),
               child: AutoSizeText(
                 widget.name,
                 maxLines: 1,
                 minFontSize: 10,
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold),
               )),
           Container(
             width: MediaQuery.of(context).size.width * 0.7,
-            padding: EdgeInsets.symmetric(
+            padding: const EdgeInsets.symmetric(
               horizontal: 10 * 0.75,
             ),
             decoration: BoxDecoration(

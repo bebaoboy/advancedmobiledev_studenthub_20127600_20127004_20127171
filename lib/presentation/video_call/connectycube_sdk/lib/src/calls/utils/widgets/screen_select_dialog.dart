@@ -5,11 +5,10 @@ import 'package:flutter_webrtc/flutter_webrtc.dart';
 
 class ThumbnailWidget extends StatefulWidget {
   const ThumbnailWidget(
-      {Key? key,
+      {super.key,
       required this.source,
       required this.selected,
-      required this.onTap})
-      : super(key: key);
+      required this.onTap});
   final DesktopCapturerSource source;
   final bool selected;
   final Function(DesktopCapturerSource) onTap;
@@ -34,9 +33,9 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> {
 
   @override
   void deactivate() {
-    _subscriptions.forEach((element) {
+    for (var element in _subscriptions) {
       element.cancel();
-    });
+    }
     super.deactivate();
   }
 
@@ -80,8 +79,8 @@ class _ThumbnailWidgetState extends State<ThumbnailWidget> {
 
 // ignore: must_be_immutable
 class ScreenSelectDialog extends Dialog {
-  ScreenSelectDialog() {
-    Future.delayed(Duration(milliseconds: 100), () {
+  ScreenSelectDialog({super.key}) {
+    Future.delayed(const Duration(milliseconds: 100), () {
       _getSources();
     });
     _subscriptions.add(desktopCapturer.onAdded.stream.listen((source) {
@@ -109,35 +108,35 @@ class ScreenSelectDialog extends Dialog {
 
   void _ok(context) async {
     _timer?.cancel();
-    _subscriptions.forEach((element) {
+    for (var element in _subscriptions) {
       element.cancel();
-    });
+    }
     Navigator.pop<DesktopCapturerSource>(context, _selected_source);
   }
 
   void _cancel(context) async {
     _timer?.cancel();
-    _subscriptions.forEach((element) {
+    for (var element in _subscriptions) {
       element.cancel();
-    });
+    }
     Navigator.pop<DesktopCapturerSource>(context, null);
   }
 
   Future<void> _getSources() async {
     try {
       var sources = await desktopCapturer.getSources(types: [_sourceType]);
-      sources.forEach((element) {
+      for (var element in sources) {
         print(
             'name: ${element.name}, id: ${element.id}, type: ${element.type}');
-      });
+      }
       _timer?.cancel();
-      _timer = Timer.periodic(Duration(seconds: 3), (timer) {
+      _timer = Timer.periodic(const Duration(seconds: 3), (timer) {
         desktopCapturer.updateSources(types: [_sourceType]);
       });
       _sources.clear();
-      sources.forEach((element) {
+      for (var element in sources) {
         _sources[element.id] = element;
-      });
+      }
       _stateSetter?.call(() {});
       return;
     } catch (e) {
@@ -157,10 +156,10 @@ class ScreenSelectDialog extends Dialog {
         child: Column(
           children: <Widget>[
             Padding(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               child: Stack(
                 children: <Widget>[
-                  Align(
+                  const Align(
                     alignment: Alignment.topLeft,
                     child: Text(
                       'Choose what to share',
@@ -170,7 +169,7 @@ class ScreenSelectDialog extends Dialog {
                   Align(
                     alignment: Alignment.topRight,
                     child: InkWell(
-                      child: Icon(Icons.close),
+                      child: const Icon(Icons.close),
                       onTap: () => _cancel(context),
                     ),
                   ),
@@ -181,7 +180,7 @@ class ScreenSelectDialog extends Dialog {
               flex: 1,
               child: Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: StatefulBuilder(
                   builder: (context, setState) {
                     _stateSetter = setState;
@@ -190,16 +189,16 @@ class ScreenSelectDialog extends Dialog {
                       child: Column(
                         children: <Widget>[
                           Container(
-                            constraints: BoxConstraints.expand(height: 24),
+                            constraints: const BoxConstraints.expand(height: 24),
                             child: TabBar(
                                 onTap: (value) => Future.delayed(
-                                        Duration(milliseconds: 300), () {
+                                        const Duration(milliseconds: 300), () {
                                       _sourceType = value == 0
                                           ? SourceType.Screen
                                           : SourceType.Window;
                                       _getSources();
                                     }),
-                                tabs: [
+                                tabs: const [
                                   Tab(
                                       child: Text(
                                     'Entire Screen',
@@ -212,7 +211,7 @@ class ScreenSelectDialog extends Dialog {
                                   )),
                                 ]),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 2,
                           ),
                           Expanded(
@@ -276,12 +275,12 @@ class ScreenSelectDialog extends Dialog {
                 ),
               ),
             ),
-            Container(
+            SizedBox(
               width: double.infinity,
               child: ButtonBar(
                 children: <Widget>[
                   MaterialButton(
-                    child: Text(
+                    child: const Text(
                       'Cancel',
                       style: TextStyle(color: Colors.black54),
                     ),
@@ -291,7 +290,7 @@ class ScreenSelectDialog extends Dialog {
                   ),
                   MaterialButton(
                     color: Theme.of(context).primaryColor,
-                    child: Text(
+                    child: const Text(
                       'Share',
                     ),
                     onPressed: () {

@@ -425,13 +425,6 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                             numberOfStudents: int.tryParse(number) ?? 2,
                             timeCreated: DateTime.now(),
                           ));
-                          Navigator.of(context).pop<Project>(Project(
-                            title: title,
-                            description: description,
-                            scope: scope,
-                            numberOfStudents: int.tryParse(number) ?? 2,
-                            timeCreated: DateTime.now(),
-                          ));
                         },
                         child: Text(
                           Lang.get('post_job'),

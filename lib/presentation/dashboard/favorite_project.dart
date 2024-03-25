@@ -363,8 +363,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 40),
-          child: LazyLoadingAnimationProjectList(
-            itemHeight: 230,
+          child: ExampleLoadingAnimationProjectList(
+            height: MediaQuery.of(context).size.height * 0.8,
             list: widget.projectList ?? [],
             firstCallback: (i) {
               setState(() {

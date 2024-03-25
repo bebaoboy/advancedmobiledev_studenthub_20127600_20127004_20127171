@@ -113,7 +113,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                     });
                   },
             title: Text(Lang.get('profile_question_1_choice_$i'),
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
             leading: Radio<CompanySize>(
               value: CompanySize.values[i - 1],
               groupValue: _companySize,
@@ -236,7 +236,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                 Lang.get('profile_welcome_title'),
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1
+                    .bodyLarge
                     ?.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
@@ -272,7 +272,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                     // color: Colors.orange,
                     child: Text(
                       Lang.get('edit'),
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
                   const SizedBox(
@@ -283,7 +283,7 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
                     // color: Colors.orange,
                     child: Text(
                       Lang.get('cancel'),
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
                 ],

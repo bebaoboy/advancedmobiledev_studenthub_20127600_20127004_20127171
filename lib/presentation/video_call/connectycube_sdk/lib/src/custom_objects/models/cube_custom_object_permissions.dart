@@ -7,13 +7,13 @@ class CubeCustomObjectPermissions {
       {this.readPermission, this.updatePermission, this.deletePermission});
 
   CubeCustomObjectPermissions.fromJson(Map<String, dynamic> json) {
-    this.readPermission = CubeCustomObjectPermission.fromJson(json['read']);
-    this.updatePermission = CubeCustomObjectPermission.fromJson(json['update']);
-    this.deletePermission = CubeCustomObjectPermission.fromJson(json['delete']);
+    readPermission = CubeCustomObjectPermission.fromJson(json['read']);
+    updatePermission = CubeCustomObjectPermission.fromJson(json['update']);
+    deletePermission = CubeCustomObjectPermission.fromJson(json['delete']);
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = Map();
+    Map<String, dynamic> json = {};
 
     if (readPermission != null) {
       json['read'] = readPermission!.toJson();
@@ -44,12 +44,12 @@ class CubeCustomObjectPermission {
   CubeCustomObjectPermission(this.level, {this.ids, this.tags});
 
   CubeCustomObjectPermission.fromJson(Map<String, dynamic> json) {
-    this.level = json['access'];
+    level = json['access'];
 
     if (Level.OPEN_FOR_USERS_IDS == level) {
-      this.ids = List.from(json['users_ids']);
+      ids = List.from(json['users_ids']);
     } else if (Level.OPEN_FOR_GROUPS == level) {
-      this.tags = List.from(json['users_groups']);
+      tags = List.from(json['users_groups']);
     }
   }
 

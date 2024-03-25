@@ -40,6 +40,7 @@ class CubeEvent extends CubeEntity {
     tagQuery = json['tag_query'];
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> result = {
       ...super.toJson(),
@@ -62,8 +63,9 @@ class CubeEvent extends CubeEntity {
       result['external_user'] = externalUser;
     }
 
-    if (!isEmpty(notificationChannel))
+    if (!isEmpty(notificationChannel)) {
       result['notification_channel'] = notificationChannel;
+    }
     if (userId != null) result['user_id'] = userId;
 
     return result;
@@ -83,7 +85,7 @@ class BaseEventUser {
   List<int?>? ids;
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
     if (ids != null && ids!.isNotEmpty) {
       result['ids'] = ids!.join(',');
     }
@@ -95,6 +97,7 @@ class BaseEventUser {
 class EventUser extends BaseEventUser {
   EventUserTags? tags;
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> result = super.toJson();
     if (tags != null && tags!.toJson().isNotEmpty) {
@@ -110,7 +113,7 @@ class EventUserTags {
   List<String>? exclude;
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
     if (any != null && any!.isNotEmpty) {
       result['any'] = any!.join(',');
     }

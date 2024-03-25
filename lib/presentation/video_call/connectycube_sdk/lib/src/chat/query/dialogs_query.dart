@@ -58,7 +58,7 @@ class CreateDialogQuery extends AutoManagedQuery<CubeDialog> {
   setBody(RestRequest request) {
     Map<String, dynamic> parameters = request.params;
 
-    Map<String, dynamic> dialogToCreate = Map();
+    Map<String, dynamic> dialogToCreate = {};
     for (String key in dialog.toJson().keys) {
       if (dialog.toJson()[key] != null) {
         dialogToCreate[key] = dialog.toJson()[key];
@@ -354,15 +354,15 @@ _processNotificationsSettingsResult(String response) {
 }
 
 class UpdateDialogParams {
-  Map<String, dynamic> _pushAll = Map();
-  Map<String, dynamic> _pullAll = Map();
+  final Map<String, dynamic> _pushAll = {};
+  final Map<String, dynamic> _pullAll = {};
 
-  Set<int> deleteOccupantIds = Set();
-  Set<int> addOccupantIds = Set();
-  Set<int> deleteAdminIds = Set();
-  Set<int> addAdminIds = Set();
-  Set<String> deletePinnedMsgIds = Set();
-  Set<String> addPinnedMsgIds = Set();
+  Set<int> deleteOccupantIds = {};
+  Set<int> addOccupantIds = {};
+  Set<int> deleteAdminIds = {};
+  Set<int> addAdminIds = {};
+  Set<String> deletePinnedMsgIds = {};
+  Set<String> addPinnedMsgIds = {};
 
   String? newName;
   String? newPhoto;
@@ -370,24 +370,29 @@ class UpdateDialogParams {
   CubeDialogCustomData? customData;
 
   Map<String, dynamic> getUpdateDialogParams() {
-    Map<String, dynamic> resultParams = Map();
+    Map<String, dynamic> resultParams = {};
 
-    if (addOccupantIds.isNotEmpty)
+    if (addOccupantIds.isNotEmpty) {
       _pushAll['occupants_ids'] = List.of(addOccupantIds);
+    }
 
-    if (addPinnedMsgIds.isNotEmpty)
+    if (addPinnedMsgIds.isNotEmpty) {
       _pushAll['pinned_messages_ids'] = List.of(addPinnedMsgIds);
+    }
 
     if (addAdminIds.isNotEmpty) _pushAll['admins_ids'] = List.of(addAdminIds);
 
-    if (deleteOccupantIds.isNotEmpty)
+    if (deleteOccupantIds.isNotEmpty) {
       _pullAll['occupants_ids'] = List.of(deleteOccupantIds);
+    }
 
-    if (deletePinnedMsgIds.isNotEmpty)
+    if (deletePinnedMsgIds.isNotEmpty) {
       _pullAll['pinned_messages_ids'] = List.of(deletePinnedMsgIds);
+    }
 
-    if (deleteAdminIds.isNotEmpty)
+    if (deleteAdminIds.isNotEmpty) {
       _pullAll['admins_ids'] = List.of(deleteAdminIds);
+    }
 
     if (_pushAll.isNotEmpty) resultParams['push_all'] = _pushAll;
     if (_pullAll.isNotEmpty) resultParams['pull_all'] = _pullAll;

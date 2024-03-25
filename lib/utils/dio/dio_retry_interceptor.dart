@@ -50,7 +50,7 @@ class RetryInterceptor extends Interceptor {
   }
 }
 
-typedef FutureOr<bool> RetryEvaluator(DioError error);
+typedef RetryEvaluator = FutureOr<bool> Function(DioError error);
 
 extension RequestOptionsExtensions on RequestOptions {
   Options toOptions() {

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../connectycube_chat.dart';
 
@@ -26,10 +26,13 @@ class P2PSession extends BaseSession<P2PClient, PeerConnection>
   UserConnectionStateCallback<P2PSession>? onUserNoAnswer;
   CubeRTCSessionDescription cubeSdp;
 
+  @override
   int get callerId => cubeSdp.callerId;
 
+  @override
   String get sessionId => cubeSdp.sessionId;
 
+  @override
   Set<int> get opponentsIds => cubeSdp.opponents;
 
   @override
@@ -41,20 +44,14 @@ class P2PSession extends BaseSession<P2PClient, PeerConnection>
   P2PSession(
     client,
     this.cubeSdp, {
-    bool startScreenSharing = false,
-    DesktopCapturerSource? desktopCapturerSource,
-    bool useIOSBroadcasting = false,
-    bool requestAudioForScreenSharing = false,
-    String? selectedAudioInputDevice,
-    String? selectedVideoInputDevice,
+    super.startScreenSharing,
+    super.desktopCapturerSource,
+    super.useIOSBroadcasting,
+    super.requestAudioForScreenSharing,
+    super.selectedAudioInputDevice,
+    super.selectedVideoInputDevice,
   }) : super(
           client,
-          startScreenSharing: startScreenSharing,
-          desktopCapturerSource: desktopCapturerSource,
-          useIOSBroadcasting: useIOSBroadcasting,
-          requestAudioForScreenSharing: requestAudioForScreenSharing,
-          selectedAudioInputDevice: selectedAudioInputDevice,
-          selectedVideoInputDevice: selectedVideoInputDevice,
         ) {
     setState(RTCSessionState.RTC_SESSION_NEW);
     _createChannelsForOpponents(cubeSdp.opponents);
@@ -63,13 +60,13 @@ class P2PSession extends BaseSession<P2PClient, PeerConnection>
   void _createChannelsForOpponents(Set<int> opponentIds) {
     CubeUser? currentUser = CubeChatConnection.instance.currentUser;
 
-    opponentIds.forEach((opponentId) {
+    for (var opponentId in opponentIds) {
       if (opponentId != currentUser!.id) {
         channels[opponentId] = PeerConnection(opponentId, this, true);
       } else {
         channels[callerId] = PeerConnection(callerId, this, true);
       }
-    });
+    }
   }
 
   @override
@@ -144,13 +141,13 @@ class P2PSession extends BaseSession<P2PClient, PeerConnection>
 
   @override
   void onSendIceCandidate(int userId, RTCIceCandidate iceCandidate) {
-    log("sendIceCandidate, _sdp = $cubeSdp");
+    //log("sendIceCandidate, _sdp = $cubeSdp");
     onSendIceCandidates(userId, [iceCandidate]);
   }
 
   @override
   void onSendIceCandidates(int userId, List<RTCIceCandidate>? iceCandidates) {
-    log("sendIceCandidates, _sdp = $cubeSdp");
+    //log("sendIceCandidates, _sdp = $cubeSdp");
     MessageStanza iceCandidatesMessage = createIceCandidatesMessage(
       cubeSdp,
       userId,
@@ -290,7 +287,7 @@ class P2PSession extends BaseSession<P2PClient, PeerConnection>
           state == RTCSessionState.RTC_SESSION_CONNECTED) {
         peerConnection.startAnswer(force: true);
       }
-    } else if(sdp.type == 'answer'){
+    } else if (sdp.type == 'answer') {
       peerConnection.processAnswer(sdp);
     }
   }

@@ -1,20 +1,20 @@
 import 'dart:async';
 
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../utils/messages_utils.dart';
 import '../../models/cube_error_packet.dart';
 import 'messages_manager.dart';
 
 class RTCSignalingManager extends MessagesManager {
-  static Map<Connection, RTCSignalingManager> _instances = Map();
+  static final Map<Connection, RTCSignalingManager> _instances = {};
 
   late StreamController<MessageStanza> _signalingMessagesStreamController;
 
   Stream<MessageStanza> get signalingMessagesStream =>
       _signalingMessagesStreamController.stream;
 
-  RTCSignalingManager._private(Connection connection) : super(connection) {
+  RTCSignalingManager._private(super.connection) {
     _signalingMessagesStreamController = StreamController.broadcast();
   }
 

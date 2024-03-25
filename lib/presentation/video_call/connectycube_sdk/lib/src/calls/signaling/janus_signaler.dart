@@ -14,7 +14,7 @@ const String STREAM_KIND_VIDEO = "video";
 
 class JanusSignaler implements WsPacketListener {
   static const String TAG = "JanusSignaler";
-  static const KEEP_ALIVE_PERIOD = const Duration(seconds: 30);
+  static const KEEP_ALIVE_PERIOD = Duration(seconds: 30);
 
   int? _currentUserId;
   int? _publisherHandleId;
@@ -29,7 +29,7 @@ class JanusSignaler implements WsPacketListener {
 
   JanusSignaler(
       String url, String protocol, int socketTimeOutMs, int keepAliveValueSec) {
-    _socketConnection = new WebSocketConnection(url, protocol);
+    _socketConnection = WebSocketConnection(url, protocol);
     _socketConnection.addPacketListener(this);
   }
 
@@ -46,10 +46,7 @@ class JanusSignaler implements WsPacketListener {
 
   void startAutoSendPresence() {
     logTime("startAutoSendPresence", TAG);
-    if (_keepAliveTimer == null) {
-      _keepAliveTimer =
-          Timer.periodic(KEEP_ALIVE_PERIOD, (Timer t) => sendKeepAlive());
-    }
+    _keepAliveTimer ??= Timer.periodic(KEEP_ALIVE_PERIOD, (Timer t) => sendKeepAlive());
   }
 
   void stopAutoSendPresence() {
@@ -61,7 +58,7 @@ class JanusSignaler implements WsPacketListener {
     requestPacket.messageType = Type.message;
     requestPacket.handleId =
         asPublisher ? _publisherHandleId : _subscriberHandleId;
-    requestPacket.body = new Body()
+    requestPacket.body = Body()
       ..room = _meetingId
       ..userId = userId
       ..request = WsRoomPacketType.leave;
@@ -72,7 +69,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   Future<void> detachPlugin(int? handleId) {
-    WsDetach packet = new WsDetach();
+    WsDetach packet = WsDetach();
     packet.messageType = Type.detach;
     packet.handleId = handleId;
     Completer completer = Completer();
@@ -81,7 +78,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   Future<void> attachPlugin(String pluginId, bool asPublisher) {
-    WsPluginPacket packet = new WsPluginPacket();
+    WsPluginPacket packet = WsPluginPacket();
     packet.messageType = Type.attach;
     packet.plugin = pluginId;
     Completer<void> result = Completer();
@@ -102,8 +99,8 @@ class JanusSignaler implements WsPacketListener {
 
   Future<void> joinDialog(String dialogId, int currentUserId, String janusRole,
       ConferenceRole conferenceRole, bool asPublisher) {
-    this._currentUserId = currentUserId;
-    this._meetingId = dialogId;
+    _currentUserId = currentUserId;
+    _meetingId = dialogId;
     WsRoomPacket requestPacket = joinPacket(janusRole, asPublisher);
     requestPacket.body!.display = conferenceRole.name.toLowerCase();
     Completer completer = Completer();
@@ -113,7 +110,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   Future<void> startPublish() {
-    WsRoomPacket requestPacket = new WsRoomPacket();
+    WsRoomPacket requestPacket = WsRoomPacket();
     requestPacket.messageType = Type.message;
     requestPacket.handleId = _publisherHandleId;
     requestPacket.body = Body()..request = WsRoomPacketType.publish;
@@ -133,7 +130,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   Future<void> subscribe(Set<int> feeds) {
-    WsRoomPacket requestPacket = new WsRoomPacket();
+    WsRoomPacket requestPacket = WsRoomPacket();
     requestPacket.messageType = Type.message;
     requestPacket.handleId = _subscriberHandleId;
     requestPacket.body = Body()
@@ -155,9 +152,9 @@ class JanusSignaler implements WsPacketListener {
     logTime(
         '[updateStreamSubscriptions] subscriberHandleId: $_subscriberHandleId, publisherHandleId: $_publisherHandleId',
         TAG);
-    this._meetingId = _meetingId;
+    _meetingId = _meetingId;
     WsUpdateStreamSubscription requestPacket =
-        new WsUpdateStreamSubscription(added: added, removed: removed);
+        WsUpdateStreamSubscription(added: added, removed: removed);
     requestPacket.messageType = Type.message;
     requestPacket.handleId = _subscriberHandleId;
     Completer completer = Completer();
@@ -183,7 +180,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   Future<void> sendIceCandidateComplete(bool asPublisher) {
-    WsCandidate requestPacket = new WsCandidate();
+    WsCandidate requestPacket = WsCandidate();
     requestPacket.messageType = Type.trickle;
     requestPacket.handleId =
         asPublisher ? _publisherHandleId : _subscriberHandleId;
@@ -326,7 +323,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   WsRoomPacket joinPacket(String janusRole, bool asPublisher) {
-    WsRoomPacket requestPacket = new WsRoomPacket();
+    WsRoomPacket requestPacket = WsRoomPacket();
     requestPacket.messageType = Type.message;
     requestPacket.handleId =
         asPublisher ? _publisherHandleId : _subscriberHandleId;
@@ -339,7 +336,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   WsRoomPacket joinSubscriberPacket(Set<int> feeds) {
-    WsRoomPacket requestPacket = new WsRoomPacket();
+    WsRoomPacket requestPacket = WsRoomPacket();
     requestPacket.messageType = Type.message;
     requestPacket.handleId = _subscriberHandleId;
     requestPacket.body = Body()
@@ -364,7 +361,7 @@ class JanusSignaler implements WsPacketListener {
           TAG);
       _janusResponseCallback?.onMediaReceived(packet.type, packet.receiving);
     } else if (packet is WsHangUp) {
-      logTime("WsHangUp packet reason= " + packet.reason!, TAG);
+      logTime("WsHangUp packet reason= ${packet.reason!}", TAG);
       _janusResponseCallback?.onHangUp(packet.reason);
     } else if (packet is WsSlowLink) {
       logTime("WsSlowLink packet uplink= ${packet.uplink}", TAG);
@@ -387,11 +384,11 @@ class JanusSignaler implements WsPacketListener {
   Map<int?, bool?> convertParticipantListToArray(
       List<Map<String, Object>> participants) {
     Map<int?, bool?> publishersMap = HashMap<int?, bool?>();
-    participants.forEach((element) {
+    for (var element in participants) {
       int? id = element["id"] as int?;
       bool? isPublisher = element["publisher"] as bool?;
       publishersMap[id] = isPublisher;
-    });
+    }
 
     return publishersMap;
   }
@@ -401,9 +398,9 @@ class JanusSignaler implements WsPacketListener {
 
     if (publishers == null) return publishersArray;
 
-    publishers.forEach((publisher) {
+    for (var publisher in publishers) {
       publishersArray.add(publisher.id!);
-    });
+    }
 
     return publishersArray;
   }
@@ -413,9 +410,9 @@ class JanusSignaler implements WsPacketListener {
 
     if (subscribers == null) return subscribersArray;
 
-    subscribers.forEach((subscriber) {
+    for (var subscriber in subscribers) {
       subscribersArray.add(subscriber.id!);
-    });
+    }
 
     return subscribersArray;
   }
@@ -454,7 +451,7 @@ class JanusSignaler implements WsPacketListener {
       ConferenceRole? conferenceRole;
       if (displayRole != null) {
         conferenceRole = ConferenceRole.values.firstWhere((e) =>
-            e.toString() == 'ConferenceRole.' + displayRole.toUpperCase());
+            e.toString() == 'ConferenceRole.${displayRole.toUpperCase()}');
       }
       logTime(
           "isJoiningEvent participantId= $participantId , conferenceRole= $displayRole",
@@ -549,7 +546,7 @@ class JanusSignaler implements WsPacketListener {
   }
 
   Future<void> unsubscribeFromPublishers(Map<int, Set<String>?> publishers) {
-    WsRoomPacket requestPacket = new WsRoomPacket();
+    WsRoomPacket requestPacket = WsRoomPacket();
     requestPacket.messageType = Type.message;
     requestPacket.handleId = _subscriberHandleId;
     requestPacket.body = Body()

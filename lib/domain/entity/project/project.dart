@@ -407,14 +407,14 @@ class InterviewSchedule extends MyObject {
   }
 
   getDuration() {
-    return endDate.difference(startDate).inMinutes.toString() + " minutes";
+    return "${endDate.difference(startDate).inMinutes} minutes";
   }
 
   @override
   String toString() {
     return ("\n${title.toString()}") +
         (",${endDate.toString()}") +
-        (", ${startDate.toString()}, ${isCancel}");
+        (", ${startDate.toString()}, $isCancel");
   }
 
   InterviewSchedule.fromJson(Map<String, dynamic> json)

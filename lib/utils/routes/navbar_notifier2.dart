@@ -34,6 +34,11 @@ class NavbarNotifier2 extends ChangeNotifier {
     _keys = value;
   }
 
+  
+  static void setKey(GlobalKey<NavigatorState> value, int index) {
+    _keys[index] = value;
+  }
+
   static final List<Function(int)> _indexChangeListeners = [];
 
   static List<GlobalKey<NavigatorState>> get keys => _keys;
@@ -84,7 +89,7 @@ class NavbarNotifier2 extends ChangeNotifier {
           _navbarStackHistory.removeLast();
           _index = _navbarStackHistory.last;
           //index = _index!;
-          print("pop" + _index!.toString());
+          print("pop${_index!}");
           // _notifyIndexChangeListeners(_index!);
           // _singleton.notify();
           exitingApp = false;

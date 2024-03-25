@@ -13,22 +13,22 @@ import 'package:boilerplate/utils/routes/routes.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
-  DashBoardTab({super.key, this.isAlive = true, required this.pageController});
-  bool? isAlive;
-  PageController pageController;
+  const DashBoardTab({super.key, this.isAlive = true, required this.pageController});
+  final bool? isAlive;
+  final PageController pageController;
 
   @override
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
 class _DashBoardTabState extends State<DashBoardTab>
-    with AutomaticKeepAliveClientMixin, TickerProviderStateMixin {
-  late TabController tabController;
+{
+  // late TabController tabController;
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    //tabController = TabController(length: 3, vsync: this);
     // tabController.addListener(() {
     //   if (tabController.index == 2 && tabController.offset > 0) {
     //     print("right");
@@ -44,11 +44,14 @@ class _DashBoardTabState extends State<DashBoardTab>
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return _buildDashBoardContent();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 60),
+      child: _buildDashBoardContent(),
+    );
   }
 
   Widget _buildDashBoardContent() {
+    print("rebuild db tab");
     return Column(
       children: <Widget>[
         Padding(
@@ -57,7 +60,7 @@ class _DashBoardTabState extends State<DashBoardTab>
             children: [
               Align(
                 alignment: Alignment.topLeft,
-                child: Text(Lang.get('Dashboard_your_job')),
+                child: Text(Lang.get('dashboard_your_job')),
               ),
               const Spacer(),
               Align(
@@ -77,7 +80,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                         setState(() {
                           if (value != null) {
                             allProjects.insert(0, value as Project);
-                            myProjects.insert(0, value as Project);
+                            myProjects.insert(0, value);
                           }
                         });
                       });
@@ -111,7 +114,7 @@ class _DashBoardTabState extends State<DashBoardTab>
             : Expanded(
                 // ignore: prefer_const_constructors
                 child: ProjectTabs(
-                  tabController: tabController,
+                  // tabController: tabController,
                   pageController: widget.pageController,
                 ),
               ),
@@ -168,7 +171,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
         Padding(
           padding: const EdgeInsets.only(
             top: Dimens.tab_height + 8,
-            bottom: 55,
           ),
           child: TabBarView(
               controller: widget.tabController,
@@ -205,8 +207,8 @@ void showBottomSheet(Project project) {
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
-            child: Text(Lang.get(
-              'project_item_view_proposal'),
+            child: Text(
+              Lang.get('project_item_view_proposal'),
               style: const TextStyle(fontWeight: FontWeight.normal),
             )),
       ),

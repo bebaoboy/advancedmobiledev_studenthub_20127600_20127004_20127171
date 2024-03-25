@@ -340,7 +340,7 @@ class GetMessagesParameters {
   Map<String, dynamic>? additionalParams;
 
   Map<String, dynamic> getRequestParameters() {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     if (limit != null) result['limit'] = limit;
     if (skip != null) result['skip'] = skip;
@@ -367,7 +367,7 @@ class UpdateMessageParameters {
   String? newBody;
 
   Map<String, dynamic> getRequestParameters() {
-    Map<String, dynamic> result = Map();
+    Map<String, dynamic> result = {};
 
     if (read) result['read'] = 1;
     if (delivered) result['delivered'] = 1;

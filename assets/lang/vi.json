@@ -35,7 +35,7 @@
   "Message_bar": "Tin nhắn",
   "Alert_bar": "Thông báo",
   "appbar_title": "StudentHub",
-  "Dashboard_your_job": "Công việc của bạn",
+  "dashboard_your_job": "Công việc của bạn",
   "Dashboard_post_job": "Tạo việc",
   "Dashboard_intro": "Chào mừng, Hal!",
   "Dashboard_content": "Bạn hiện đang không có công việc",
@@ -205,6 +205,9 @@
   "title": "Tựa đề",
   "send": "Gửi",
   "reschedule": "Lên lịch lại",
-  "option": "Tuỳ chọn"
+  "option": "Tuỳ chọn",
+  "day_ago": " ngày trước",
+  "clear_filter": "Xoá lọc",
+  "apply": "OK"
 
 }

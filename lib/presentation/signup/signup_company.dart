@@ -309,7 +309,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
-              .caption
+              .bodySmall
               ?.copyWith(color: Colors.orangeAccent),
         ),
         onPressed: () {},
@@ -411,7 +411,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

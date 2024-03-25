@@ -9,9 +9,9 @@ import '../../utils/consts.dart';
 import '../../users/models/cube_user.dart';
 
 class UploadAddressBookQuery extends AutoManagedQuery<AddressBookResult> {
-  List<CubeContact> _contacts;
-  bool? _force;
-  String? _udid;
+  final List<CubeContact> _contacts;
+  final bool? _force;
+  final String? _udid;
 
   UploadAddressBookQuery(this._contacts, [this._force, this._udid]);
 
@@ -41,7 +41,7 @@ class UploadAddressBookQuery extends AutoManagedQuery<AddressBookResult> {
 }
 
 class GetAddressBookQuery extends AutoManagedQuery<List<CubeContact>> {
-  String? _udid;
+  final String? _udid;
 
   GetAddressBookQuery([this._udid]);
 
@@ -70,8 +70,8 @@ class GetAddressBookQuery extends AutoManagedQuery<List<CubeContact>> {
 }
 
 class GetRegisteredUsers extends AutoManagedQuery<List<CubeUser>?> {
-  String? _udid;
-  bool _compact;
+  final String? _udid;
+  final bool _compact;
 
   GetRegisteredUsers(this._compact, [this._udid]);
 

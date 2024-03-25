@@ -144,7 +144,7 @@ class _ProjectDetailsStudentScreenState
                   ),
                   onPressed: () {},
                   child: Text(
-                    Lang.get('saved'),
+                    Lang.get('save'),
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),

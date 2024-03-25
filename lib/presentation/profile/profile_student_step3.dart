@@ -16,7 +16,6 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -30,11 +29,12 @@ ValueNotifier<bool> isLinkCv = ValueNotifier<bool>(false);
 ValueNotifier<bool> isLinkTranscript = ValueNotifier<bool>(false);
 
 changeValue(value, isCV) async {
-  await Future.delayed(Duration(seconds: 1));
-  if (isCV)
+  await Future.delayed(const Duration(seconds: 1));
+  if (isCV) {
     isLinkCv.value = value;
-  else
+  } else {
     isLinkTranscript.value = value;
+  }
 }
 
 class ProfileStudentStep3Screen extends StatefulWidget {
@@ -180,7 +180,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Expanded(
-                        child: Container(
+                        child: SizedBox(
                             height: 30,
                             child: TextFormField(
                               enabled: cvEnable,
@@ -205,17 +205,17 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 });
                               },
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(bottom: 10),
+                                contentPadding: const EdgeInsets.only(bottom: 10),
                                 hintText: Lang.get("profile_project_link"),
                               ),
-                              style: TextStyle(fontSize: 13),
+                              style: const TextStyle(fontSize: 13),
                             )),
                       ),
                       if (_cv != null || _cvImage != null)
-                        Container(
+                        SizedBox(
                           width: 40,
                           child: IconButton(
-                            icon: Icon(Icons.close),
+                            icon: const Icon(Icons.close),
                             color: Theme.of(context).colorScheme.primary,
                             iconSize: 20,
                             onPressed: () {
@@ -342,7 +342,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Expanded(
-                        child: Container(
+                        child: SizedBox(
                             height: 30,
                             child: TextFormField(
                               enabled: transcriptEnable,
@@ -368,17 +368,17 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 });
                               },
                               decoration: InputDecoration(
-                                contentPadding: EdgeInsets.only(bottom: 10),
+                                contentPadding: const EdgeInsets.only(bottom: 10),
                                 hintText: Lang.get("profile_project_link"),
                               ),
-                              style: TextStyle(fontSize: 13),
+                              style: const TextStyle(fontSize: 13),
                             )),
                       ),
                       if (_transcript != null || _transcriptImage != null)
-                        Container(
+                        SizedBox(
                           width: 40,
                           child: IconButton(
-                            icon: Icon(Icons.close),
+                            icon: const Icon(Icons.close),
                             color: Theme.of(context).colorScheme.primary,
                             iconSize: 20,
                             onPressed: () {
@@ -553,7 +553,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

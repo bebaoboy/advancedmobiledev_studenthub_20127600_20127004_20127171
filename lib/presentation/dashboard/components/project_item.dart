@@ -8,7 +8,7 @@ class ProjectItem extends StatefulWidget {
   final Project project;
 
   final Function onFavoriteTap;
-  ProjectItem({super.key, required this.project, required this.onFavoriteTap});
+  const ProjectItem({super.key, required this.project, required this.onFavoriteTap});
 
   @override
   _ProjectItemState createState() => _ProjectItemState();
@@ -58,7 +58,7 @@ class _ProjectItemState extends State<ProjectItem> {
       } else if (differenceWithToday == 1) {
         createdText = 'Created 1 day ago';
       } else {
-        createdText = 'Created $differenceWithToday days ago';
+      createdText = 'Created $differenceWithToday' + Lang.get('day_ago');
       }
 
       var proposalText = 'Proposals: ';

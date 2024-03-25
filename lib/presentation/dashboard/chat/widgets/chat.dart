@@ -19,7 +19,7 @@ import 'input/typing_indicator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 
 logg(String? message, [String? tag]) {
-  debugPrint("CB-SDK: ${tag != null ? tag : "BEBAOBOY"}: $message");
+  debugPrint("CB-SDK: ${tag ?? "BEBAOBOY"}: $message");
 }
 
 /// Keep track of all the auto scroll indices by their respective message's id to allow animating to them.
@@ -210,7 +210,7 @@ class Chat extends StatefulWidget {
   /// Localized copy. Extend [ChatL10n] class to create your own copy or use
   /// existing one, like the default [ChatL10nEn]. You can customize only
   /// certain properties, see more here [ChatL10nEn].
-  static const ChatL10n l10n = const ChatL10nEn();
+  static const ChatL10n l10n = ChatL10nEn();
 
   /// See [ChatList.bottomWidget]. For a custom chat input
   /// use [customBottomWidget] instead.
@@ -309,7 +309,7 @@ class Chat extends StatefulWidget {
   final bool usePreviewData;
 
   /// See [InheritedUser.user].
-  static const types.User user = const types.User(id: "1");
+  static const types.User user = types.User(id: "1");
 
   /// See [Message.userAgent].
   final String? userAgent;

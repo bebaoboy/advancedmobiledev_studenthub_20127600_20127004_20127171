@@ -156,9 +156,10 @@ abstract class BaseSession<C, P extends PeerConnection>
   /// For web implementation, make sure to pass the target deviceId
   @override
   Future<bool> switchCamera({String? deviceId}) async {
-    if (CallType.VIDEO_CALL != callType)
+    if (CallType.VIDEO_CALL != callType) {
       return Future.error(IllegalStateException(
           "Can't perform operation [switchCamera] for AUDIO call"));
+    }
 
     try {
       if (localStream == null) {
@@ -202,9 +203,10 @@ abstract class BaseSession<C, P extends PeerConnection>
 
   @override
   Future<void> setTorchEnabled(bool enabled) {
-    if (CallType.VIDEO_CALL != callType)
+    if (CallType.VIDEO_CALL != callType) {
       return Future.error(IllegalStateException(
           "Can't perform operation [setTorchEnabled] for AUDIO call"));
+    }
 
     try {
       if (localStream == null) {
@@ -446,7 +448,7 @@ abstract class BaseSession<C, P extends PeerConnection>
       _TAG,
     );
 
-    if (channels.length == 0) {
+    if (channels.isEmpty) {
       closeCurrentSession();
     } else {
       log(
@@ -486,9 +488,10 @@ abstract class BaseSession<C, P extends PeerConnection>
 
   @override
   Future<MediaStream> addMediaTrack(MediaStreamTrack track) {
-    if (localStream == null)
+    if (localStream == null) {
       return Future.error(IllegalStateException(
           'Can\'t add the track cause the local media stream doesn\'t exist'));
+    }
 
     return Future.wait(channels
             .map((userId, peerConnection) => MapEntry(
@@ -505,9 +508,10 @@ abstract class BaseSession<C, P extends PeerConnection>
 
   @override
   Future<MediaStream> removeMediaTrack(String trackId) {
-    if (localStream == null)
+    if (localStream == null) {
       return Future.error(IllegalStateException(
           'Can\'t remove the track cause the local media stream doesn\'t exist'));
+    }
 
     var track = localStream?.getTrackById(trackId);
 

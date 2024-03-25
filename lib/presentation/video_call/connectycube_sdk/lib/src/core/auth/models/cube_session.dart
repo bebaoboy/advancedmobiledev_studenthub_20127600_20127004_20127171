@@ -30,6 +30,7 @@ class CubeSession extends CubeEntity {
     }
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       'user_id': userId,

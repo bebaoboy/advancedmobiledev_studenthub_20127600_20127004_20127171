@@ -60,9 +60,9 @@ class _ProposalItemState extends State<ProposalItem> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(widget.proposal.name,
-                          style: Theme.of(context).textTheme.bodyText1),
+                          style: Theme.of(context).textTheme.bodyLarge),
                       Text(widget.proposal.education,
-                          style: Theme.of(context).textTheme.bodyText1)
+                          style: Theme.of(context).textTheme.bodyLarge)
                     ],
                   )
                 ],
@@ -72,9 +72,10 @@ class _ProposalItemState extends State<ProposalItem> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(widget.proposal.title,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
                 // ToDo: need a field for expertise
-                Text(Lang.get('excellent'), style: Theme.of(context).textTheme.bodyText1),
+                Text(Lang.get('excellent'),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ],
             ),
             Padding(
@@ -82,7 +83,7 @@ class _ProposalItemState extends State<ProposalItem> {
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
                 child: Text(widget.proposal.introduction,
-                    style: Theme.of(context).textTheme.bodyText1),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ),
             ),
             Padding(
@@ -118,9 +119,9 @@ class _ProposalItemState extends State<ProposalItem> {
                             onPositiveClick: () {
                               setState(() {
                                 if (!isPending) {
-                                  widget.onHired!();
+                                  isPending = !isPending;
+                                  // widget.onHired!();
                                 }
-                                isPending = !isPending;
                               });
                               Navigator.of(context).pop();
                             },

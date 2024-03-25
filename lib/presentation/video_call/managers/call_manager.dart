@@ -156,7 +156,7 @@ class CallManager {
         callerId: callSession.callerId,
         callerName: 'Caller Name',
         opponentsIds: callSession.opponentsIds,
-        userInfo: {'customParameter1': 'value1'});
+        userInfo: const {'customParameter1': 'value1'});
     await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
     if (context != null) {
       Navigator.push(

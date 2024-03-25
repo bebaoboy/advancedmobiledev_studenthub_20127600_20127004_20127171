@@ -150,7 +150,7 @@ class TextMessage extends StatelessWidget {
         emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
             isConsistsOfEmojis(emojiEnlargementBehavior, message);
     final theme = Chat.theme;
-    final user = Chat.user;
+    const user = Chat.user;
     final width = MediaQuery.of(context).size.width;
 
     if (usePreviewData && onPreviewDataFetched != null) {

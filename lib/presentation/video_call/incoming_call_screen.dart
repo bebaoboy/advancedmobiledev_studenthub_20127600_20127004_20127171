@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +11,7 @@ class IncomingCallScreen extends StatelessWidget {
   static const String TAG = "BEBAOBOY";
   final P2PSession _callSession;
 
-  IncomingCallScreen(this._callSession);
+  const IncomingCallScreen(this._callSession, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +35,8 @@ class IncomingCallScreen extends StatelessWidget {
                       style: const TextStyle(fontSize: 28)),
                 ),
                 Padding(
-                  padding: EdgeInsets.only(top: 36, bottom: 8),
-                  child: Text(Lang.get('from'), style: TextStyle(fontSize: 20)),
+                  padding: const EdgeInsets.only(top: 36, bottom: 8),
+                  child: Text(Lang.get('from'), style: const TextStyle(fontSize: 20)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 86),

@@ -28,10 +28,10 @@ class SignUpStudentScreen extends StatefulWidget {
 
 class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _userFullnameController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-  TextEditingController _passwordConfirmController = TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _userFullnameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordConfirmController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -308,7 +308,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
-              .caption
+              .bodySmall
               ?.copyWith(color: Colors.orangeAccent),
         ),
         onPressed: () {},
@@ -410,7 +410,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

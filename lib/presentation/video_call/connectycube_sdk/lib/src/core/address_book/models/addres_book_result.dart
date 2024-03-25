@@ -11,7 +11,7 @@ class AddressBookResult {
 
     var rejected = json['rejected'];
     if (rejected != null) {
-      this.rejected = Map<String, List<String>>();
+      this.rejected = <String, List<String>>{};
 
       Map<String, dynamic> rawRejected = Map.of(rejected);
       for (String key in rawRejected.keys) {

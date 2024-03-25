@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../extentions.dart';
 import 'messages_manager.dart';
@@ -10,7 +10,7 @@ import '../../models/typing_status_model.dart';
 import '../utils/jid_utils.dart';
 
 class TypingStatusesManager extends MessagesManager {
-  static Map<Connection, TypingStatusesManager> _instances = Map();
+  static final Map<Connection, TypingStatusesManager> _instances = {};
 
   late StreamController<TypingStatus> _isTypingStreamController;
   late StreamController<TypingStatus> _stopTypingStreamController;
@@ -20,7 +20,7 @@ class TypingStatusesManager extends MessagesManager {
   Stream<TypingStatus> get stopTypingStream =>
       _stopTypingStreamController.stream;
 
-  TypingStatusesManager._private(Connection connection) : super(connection) {
+  TypingStatusesManager._private(super.connection) {
     _isTypingStreamController = StreamController.broadcast();
     _stopTypingStreamController = StreamController.broadcast();
   }

@@ -39,7 +39,7 @@ abstract class AutoManagedQuery<T> extends Query<T> {
 
 abstract class Query<T> {
   Future<T> perform() {
-    Completer<T> completer = new Completer();
+    Completer<T> completer = Completer();
 
     try {
       RestRequest request = RestRequest();
@@ -97,9 +97,7 @@ abstract class Query<T> {
   }
 
   _setFrameworkVersion(RestRequest request) {
-    String versionValue = HEADER_FRAMEWORK_VERSION_VALUE_PREFIX +
-        " " +
-        CubeSettings.instance.versionName;
+    String versionValue = "$HEADER_FRAMEWORK_VERSION_VALUE_PREFIX ${CubeSettings.instance.versionName}";
     request.headers[HEADER_FRAMEWORK_VERSION] = versionValue;
   }
 
@@ -145,7 +143,7 @@ abstract class Query<T> {
 
     if (headers.containsKey(HEADER_TOKEN_EXPIRATION_DATE.toLowerCase())) {
       try {
-        DateFormat format = new DateFormat(TOKEN_EXPIRATION_DATE_FORMAT);
+        DateFormat format = DateFormat(TOKEN_EXPIRATION_DATE_FORMAT);
         DateTime expirationDate = format.parse(
             headers[HEADER_TOKEN_EXPIRATION_DATE.toLowerCase()]!, true);
         return expirationDate;

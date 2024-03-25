@@ -63,7 +63,6 @@ dependencies:
   mobx: ^2.1.4
   mobx_codegen:
   # N
-  navbar_router:
   # O
   # P
   path_provider: ^2.0.14
@@ -125,6 +124,18 @@ dependencies:
   http_parser:
   pdf_image_renderer:
   cached_network_image:
+
+  navbar_router:
+  another_transformer_page_view:
+
+  synchronized: 
+  xml: 
+  quiver: 
+  image: 
+  tuple: 
+  cryptoutils: 
+  unorm_dart: 
+  vector_math: 
 
 dev_dependencies:
   flutter_test:

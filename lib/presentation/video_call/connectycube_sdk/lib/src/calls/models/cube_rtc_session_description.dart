@@ -26,7 +26,7 @@ class CubeRTCSessionDescription {
 
   CubeRTCSessionDescription(this.callerId, this.opponents, this.conferenceType,
       [this.userInfo]) {
-    this.sessionId = Uuid().v4();
+    sessionId = const Uuid().v4();
   }
 
   @override

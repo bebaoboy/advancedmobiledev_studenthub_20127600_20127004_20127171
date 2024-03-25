@@ -30,14 +30,14 @@ Future<void> rejectCall(
   Map<String, String>? userInfo,
 }) {
   List<Future<void>> requests = [];
-  callMembers.forEach((memberId) {
+  for (var memberId in callMembers) {
     requests.add(RejectCallQuery(
       callSessionId,
       memberId,
       platform,
-      userInfo == null ? {} : userInfo,
+      userInfo ?? {},
     ).perform());
-  });
+  }
 
   return Future.wait(requests);
 }

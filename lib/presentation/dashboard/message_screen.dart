@@ -25,7 +25,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
-  const ScheduleBottomSheet({required this.filter});
+  const ScheduleBottomSheet({super.key, required this.filter});
   final InterviewSchedule filter;
 
   @override
@@ -554,7 +554,6 @@ class _MessageScreenState extends State<MessageScreen> {
             final file = File(localPath);
             await file.writeAsBytes(bytes);
           }
-        } catch (e) {
         } finally {
           final index =
               _messages.indexWhere((element) => element.id == message.id);
@@ -604,14 +603,14 @@ class _MessageScreenState extends State<MessageScreen> {
     final response = await rootBundle.loadString('assets/messages.json');
     final jsonList = jsonDecode(response) as List;
     List<types.Message> messages = [];
-    jsonList.forEach((e) {
+    for (var e in jsonList) {
       var r = types.Message.fromJson(e as Map<String, dynamic>);
       if (!messages.contains(r)) {
         messages.add(r);
       } else {
         //print("duplicated id: " + r.id);
       }
-    });
+    }
 
     setState(() {
       _messages = messages;
@@ -669,6 +668,7 @@ class _MessageScreenState extends State<MessageScreen> {
           }
         }
       }
+      return null;
       //print("cancel schedule");
     });
   }
@@ -708,7 +708,7 @@ class _MessageScreenState extends State<MessageScreen> {
               onMenuCallback: (scheduleFilter) async {
                 showAdaptiveActionSheet(
                   title: Text(
-                    "Interview " + Lang.get("option"),
+                    "Interview ${Lang.get("option")}",
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
                     ),

@@ -16,9 +16,9 @@ typedef CallEventHandler = Future<dynamic> Function(CallEvent event);
 /// {@endtemplate}
 class ConnectycubeFlutterCallKit {
   static const MethodChannel _methodChannel =
-      const MethodChannel('connectycube_flutter_call_kit.methodChannel');
+      MethodChannel('connectycube_flutter_call_kit.methodChannel');
   static const EventChannel _eventChannel =
-      const EventChannel('connectycube_flutter_call_kit.callEventChannel');
+      EventChannel('connectycube_flutter_call_kit.callEventChannel');
 
   /// {@macro connectycube_flutter_call_kit}
   factory ConnectycubeFlutterCallKit() => _getInstance();
@@ -30,9 +30,7 @@ class ConnectycubeFlutterCallKit {
   static String TAG = "ConnectycubeFlutterCallKit";
 
   static ConnectycubeFlutterCallKit _getInstance() {
-    if (_instance == null) {
-      _instance = ConnectycubeFlutterCallKit._internal();
-    }
+    _instance ??= const ConnectycubeFlutterCallKit._internal();
     return _instance!;
   }
 
@@ -219,8 +217,9 @@ class ConnectycubeFlutterCallKit {
   static Future<String> getCallState({
     required String? sessionId,
   }) async {
-    if (!Platform.isAndroid && !Platform.isIOS)
+    if (!Platform.isAndroid && !Platform.isIOS) {
       return Future.value(CallState.UNKNOWN);
+    }
 
     return _methodChannel.invokeMethod("getCallState", {
       'session_id': sessionId,
@@ -378,12 +377,12 @@ void _backgroundEventsCallbackDispatcher() {
   // Initialize state necessary for MethodChannels.
   WidgetsFlutterBinding.ensureInitialized();
 
-  const MethodChannel _channel = MethodChannel(
+  const MethodChannel channel = MethodChannel(
     'connectycube_flutter_call_kit.methodChannel.background',
   );
 
   // This is where we handle background events from the native portion of the plugin.
-  _channel.setMethodCallHandler((MethodCall call) async {
+  channel.setMethodCallHandler((MethodCall call) async {
     if (call.method == 'onBackgroundEvent') {
       final CallbackHandle handle =
           CallbackHandle.fromRawHandle(call.arguments['userCallbackHandle']);
@@ -410,7 +409,7 @@ void _backgroundEventsCallbackDispatcher() {
 
   // Once we've finished initializing, let the native portion of the plugin
   // know that it can start scheduling alarms.
-  _channel.invokeMethod<void>('onBackgroundHandlerInitialized');
+  channel.invokeMethod<void>('onBackgroundHandlerInitialized');
 }
 
 class CallState {

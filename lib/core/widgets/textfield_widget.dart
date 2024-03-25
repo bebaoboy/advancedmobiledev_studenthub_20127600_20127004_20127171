@@ -63,12 +63,12 @@ class TextFieldWidget extends StatelessWidget {
           FocusManager.instance.primaryFocus?.unfocus();
         },
         keyboardType: inputType,
-        style: Theme.of(context).textTheme.bodyText1 == null
+        style: Theme.of(context).textTheme.bodyLarge == null
             ? TextStyle(fontSize: fontSize, overflow: TextOverflow.ellipsis)
                 .merge(style)
             : Theme.of(context)
                 .textTheme
-                .bodyText1!
+                .bodyLarge!
                 .copyWith(fontSize: fontSize, overflow: TextOverflow.ellipsis)
                 .merge(style),
         magnifierConfiguration: TextMagnifierConfiguration.disabled,
@@ -81,7 +81,7 @@ class TextFieldWidget extends StatelessWidget {
           hintText: hint,
           hintStyle: Theme.of(context)
               .textTheme
-              .bodyText1!
+              .bodyLarge!
               .copyWith(color: hintColor)
               .merge(hintStyle),
           errorText: errorText,

@@ -1,8 +1,6 @@
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
 
-import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';

@@ -6,7 +6,7 @@ import '../../rest/request/rest_request.dart';
 import '../../utils/consts.dart';
 
 class UpdateUserQuery extends AutoManagedQuery<CubeUser> {
-  CubeUser _user;
+  final CubeUser _user;
 
   UpdateUserQuery(this._user);
 
@@ -19,7 +19,7 @@ class UpdateUserQuery extends AutoManagedQuery<CubeUser> {
   setBody(RestRequest request) {
     Map<String, dynamic> parameters = request.params;
 
-    Map<String, dynamic> userWithoutBlankFields = Map();
+    Map<String, dynamic> userWithoutBlankFields = {};
 
     for (String key in _user.toJson().keys) {
       if (_user.toJson()[key] != null) {

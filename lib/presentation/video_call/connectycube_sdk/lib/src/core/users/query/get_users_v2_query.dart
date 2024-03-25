@@ -20,7 +20,7 @@ class GetUsersV2Query extends AutoManagedQuery<PagedResult<CubeUser>> {
   GetUsersV2Query.byIdentifier(String identifierName, dynamic identifierValue,
       {Map<String, dynamic>? additionalParameters})
       : _additionalParams = additionalParameters {
-    if (_additionalParams == null) _additionalParams = {};
+    _additionalParams ??= {};
 
     _additionalParams!.addEntries([MapEntry(identifierName, identifierValue)]);
   }

@@ -48,6 +48,7 @@ class CubeMeeting extends CubeEntity {
     }
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['meetingId'] = meetingId;
@@ -132,8 +133,8 @@ class CubeMeetingNotifyBefore {
   CubeMeetingNotifyBefore(this.metric, this.value);
 
   CubeMeetingNotifyBefore.fromJson(Map<String, dynamic> json)
-      : this.metric = metricFromString(json['metric']),
-        this.value = json['value'];
+      : metric = metricFromString(json['metric']),
+        value = json['value'];
 
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {

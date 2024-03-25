@@ -29,8 +29,8 @@ class ForgetPasswordDoneScreen extends StatefulWidget {
 
 class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -230,7 +230,7 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
           Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
-              .caption
+              .bodySmall
               ?.copyWith(color: Colors.orangeAccent),
         ),
         onPressed: () {},
@@ -313,7 +313,7 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

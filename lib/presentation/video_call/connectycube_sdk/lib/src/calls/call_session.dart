@@ -69,22 +69,22 @@ abstract class P2PCallSession {
   Set<int> get opponentsIds;
 }
 
-typedef void LocalStreamCallback(MediaStream stream);
-typedef void RemoteStreamCallback<T>(T session, int userId, MediaStream stream);
-typedef void UserConnectionStateCallback<T>(T session, int userId);
-typedef void UserActionCallback<T>(T session, int userId,
+typedef LocalStreamCallback = void Function(MediaStream stream);
+typedef RemoteStreamCallback<T> = void Function(T session, int userId, MediaStream stream);
+typedef UserConnectionStateCallback<T> = void Function(T session, int userId);
+typedef UserActionCallback<T> = void Function(T session, int userId,
     [Map<String, String>? userInfo]);
-typedef void SessionClosedCallback<T>(T session);
+typedef SessionClosedCallback<T> = void Function(T session);
 
-typedef void PublishersReceived(List<int?> publishers);
-typedef void PublisherLeft(int? userId);
-typedef void SubscribedOnPublisher(int userId);
-typedef void SubscriberAttached(int userId);
-typedef void SlowLink(bool? uplink, int? lost);
-typedef void Error(WsException ex);
-typedef void SubStreamChanged(int userId, StreamType streamType);
-typedef void LayerChanged(int userId, int layer);
-typedef void RemoteStreamCallbackConference<T>(T session, int userId, MediaStream stream, {String? trackId});
+typedef PublishersReceived = void Function(List<int?> publishers);
+typedef PublisherLeft = void Function(int? userId);
+typedef SubscribedOnPublisher = void Function(int userId);
+typedef SubscriberAttached = void Function(int userId);
+typedef SlowLink = void Function(bool? uplink, int? lost);
+typedef Error = void Function(WsException ex);
+typedef SubStreamChanged = void Function(int userId, StreamType streamType);
+typedef LayerChanged = void Function(int userId, int layer);
+typedef RemoteStreamCallbackConference<T> = void Function(T session, int userId, MediaStream stream, {String? trackId});
 
 enum RTCSessionState {
   RTC_SESSION_PENDING,

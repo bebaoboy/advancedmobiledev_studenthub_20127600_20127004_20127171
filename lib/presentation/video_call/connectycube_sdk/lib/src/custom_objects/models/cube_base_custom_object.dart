@@ -1,7 +1,7 @@
 class CubeBaseCustomObject {
   String? className;
 
-  Map<String, dynamic> fields = Map();
+  Map<String, dynamic> fields = {};
 
   CubeBaseCustomObject(this.className);
 
@@ -12,7 +12,7 @@ class CubeBaseCustomObject {
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> json = Map();
+    Map<String, dynamic> json = {};
     json.addAll(fields);
 
     return json;

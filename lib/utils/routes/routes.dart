@@ -67,7 +67,7 @@ class Routes {
     home: const HomeScreen(),
     welcome: const WelcomeScreen(),
     dashboard: const DashBoardScreen(),
-    profileStudent: ProfileStudentScreen(),
+    profileStudent: const ProfileStudentScreen(),
     profileStudentStep2: const ProfileStudentStep2Screen(),
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),

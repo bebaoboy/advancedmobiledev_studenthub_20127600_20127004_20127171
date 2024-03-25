@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import 'base_managers.dart';
 import '../extentions.dart';
@@ -9,9 +9,9 @@ import '../../chat_connection_service.dart';
 import '../utils/jid_utils.dart';
 
 class LastActivityManager extends Manager implements StreamedManager {
-  static Map<Connection, LastActivityManager> _instances = Map();
+  static final Map<Connection, LastActivityManager> _instances = {};
 
-  static Map<int, Function(int)?> _usersCallbacks = {};
+  static final Map<int, Function(int)?> _usersCallbacks = {};
 
   late StreamController<LastActivitySubscriptionEvent>
       _lastActivityStreamController;

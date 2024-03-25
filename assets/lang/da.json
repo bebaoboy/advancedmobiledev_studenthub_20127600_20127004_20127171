@@ -35,7 +35,7 @@
   "Message_bar": "Message",
   "Alert_bar": "Alert",
   "appbar_title": "StudentHub",
-  "Dashboard_your_job": "Your jobs",
+  "dashboard_your_job": "Your jobs",
   "Dashboard_post_job": "Post a jobs",
   "Dashboard_intro": "Welcome, Hal!",
   "Dashboard_content": "You have no jobs!",
@@ -199,7 +199,7 @@
   "created_now": "Created just now",
 
   "loading": "Loading...",
-  "seacrh": "Search",
+  "search": "Search",
   "student_needed": "Students needed",
   "proposal_less_than": "Proposal less than",
   "save": "Save",
@@ -207,6 +207,9 @@
   "title": "Title",
   "send": "Send",
   "reschedule": "Re-schedule",
-  "option": "Options"
+  "option": "Options",
+  "day_ago": " days ago",
+  "clear_filter": "Clear filter",
+  "apply": "Apply"
 
 }

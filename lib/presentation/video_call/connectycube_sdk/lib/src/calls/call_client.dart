@@ -9,4 +9,4 @@ abstract class CallClient<S extends P2PCallSession> {
   void destroy();
 }
 
-typedef void SessionStateCallback<T>(T session);
+typedef SessionStateCallback<T> = void Function(T session);

@@ -344,7 +344,7 @@ class _MessageState extends State<Message> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    final user = Chat.user;
+    const user = Chat.user;
     final currentUserIsAuthor = user.id == widget.message.author.id;
     final enlargeEmojis =
         widget.emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&

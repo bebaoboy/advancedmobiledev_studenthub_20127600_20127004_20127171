@@ -31,11 +31,11 @@ class UploadFileQuery extends AutoManagedQuery<CubeFile?> {
     Completer<CubeFile> completer = Completer();
 
     try {
-      String uuid = Uuid().v4();
+      String uuid = const Uuid().v4();
 
       CubeFile toCreate = CubeFile();
       toCreate.isPublic = isPublic ?? false;
-      toCreate.name = _name == null ? basename(_file!.path) : _name;
+      toCreate.name = _name ?? basename(_file!.path);
 
       if (!isEmpty(mimeType)) {
         toCreate.contentType = mimeType;
@@ -118,23 +118,23 @@ class UploadFileQuery extends AutoManagedQuery<CubeFile?> {
 
 void _logAmazonRequest(
     MultipartRequestProgressed multipartRequest, String uuid) {
-  log("=========================================================\n" +
-      "=== REQUEST ==== AMAZON === $uuid ===\n"
-          "REQUEST\n  ${multipartRequest.method} ${multipartRequest.url.toString()} \n"
-          "HEADERS\n  ${multipartRequest.headers}\n"
-          "FIELDS\n  ${multipartRequest.fields}\n");
+  // log("=========================================================\n" +
+  //     "=== REQUEST ==== AMAZON === $uuid ===\n"
+  //         "REQUEST\n  ${multipartRequest.method} ${multipartRequest.url.toString()} \n"
+  //         "HEADERS\n  ${multipartRequest.headers}\n"
+  //         "FIELDS\n  ${multipartRequest.fields}\n");
 }
 
 Future<void> _logAmazonResponse(StreamedResponse response, String uuid) async {
   String responseBody = await response.stream.bytesToString();
-  log("*********************************************************\n" +
-      "*** RESPONSE *** AMAZON *** ${response.statusCode} *** $uuid ***\n"
-          "HEADERS\n  ${response.headers}\n"
-          "RESPONSE\n  $responseBody\n");
+  // log("*********************************************************\n" +
+  //     "*** RESPONSE *** AMAZON *** ${response.statusCode} *** $uuid ***\n"
+  //         "HEADERS\n  ${response.headers}\n"
+  //         "RESPONSE\n  $responseBody\n");
 }
 
 class _CreateBlobQuery extends AutoManagedQuery<CubeFile> {
-  CubeFile _cubeFile;
+  final CubeFile _cubeFile;
 
   _CreateBlobQuery(this._cubeFile);
 
@@ -166,8 +166,8 @@ class _CreateBlobQuery extends AutoManagedQuery<CubeFile> {
 }
 
 class DeclareBlobCompletedQuery extends AutoManagedQuery<void> {
-  int _blobId;
-  int _blobSize;
+  final int _blobId;
+  final int _blobSize;
 
   DeclareBlobCompletedQuery(this._blobId, this._blobSize);
 
@@ -196,7 +196,7 @@ class DeclareBlobCompletedQuery extends AutoManagedQuery<void> {
 }
 
 class GetBlobByIdQuery extends AutoManagedQuery<CubeFile> {
-  int _blobId;
+  final int _blobId;
 
   GetBlobByIdQuery(this._blobId);
 
@@ -217,7 +217,7 @@ class GetBlobByIdQuery extends AutoManagedQuery<CubeFile> {
 }
 
 class GetBlobsQuery extends AutoManagedQuery<PagedResult<CubeFile>> {
-  Map<String, dynamic>? _params;
+  final Map<String, dynamic>? _params;
 
   GetBlobsQuery([this._params]);
 
@@ -249,8 +249,8 @@ class GetBlobsQuery extends AutoManagedQuery<PagedResult<CubeFile>> {
 }
 
 class UpdateBlobQuery extends AutoManagedQuery<CubeFile> {
-  CubeFile _blob;
-  bool? _isNew;
+  final CubeFile _blob;
+  final bool? _isNew;
 
   UpdateBlobQuery(this._blob, [this._isNew]);
 
@@ -286,7 +286,7 @@ class UpdateBlobQuery extends AutoManagedQuery<CubeFile> {
 }
 
 class DeleteBlobByIdQuery extends AutoManagedQuery<void> {
-  int _blobId;
+  final int _blobId;
 
   DeleteBlobByIdQuery(this._blobId);
 
@@ -306,10 +306,10 @@ class DeleteBlobByIdQuery extends AutoManagedQuery<void> {
 
 class MultipartRequestProgressed extends MultipartRequest {
   MultipartRequestProgressed(
-    String method,
-    Uri url, {
+    super.method,
+    super.url, {
     this.onProgress,
-  }) : super(method, url);
+  });
 
   final void Function(int bytes, int totalBytes)? onProgress;
 
@@ -318,7 +318,7 @@ class MultipartRequestProgressed extends MultipartRequest {
     final ByteStream byteStream = super.finalize();
     if (onProgress == null) return byteStream;
 
-    final int total = this.contentLength;
+    final int total = contentLength;
     int bytes = 0;
 
     final streamTransformer = StreamTransformer.fromHandlers(

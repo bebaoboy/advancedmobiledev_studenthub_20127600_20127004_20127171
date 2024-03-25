@@ -17,7 +17,7 @@ class FileMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = Chat.user;
+    const user = Chat.user;
     final color = user.id == message.author.id
         ? Chat.theme.sentMessageDocumentIconColor
         : Chat.theme.receivedMessageDocumentIconColor;

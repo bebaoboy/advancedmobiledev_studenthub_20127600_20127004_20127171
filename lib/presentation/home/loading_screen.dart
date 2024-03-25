@@ -73,7 +73,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 Center(
                   child: Text(
                     Lang.get("loading"),
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: Colors.blueAccent),

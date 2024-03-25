@@ -4,13 +4,11 @@ import 'package:http/http.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../connectycube_core.dart';
-import '../response/rest_response.dart';
-import '../../utils/string_utils.dart';
 
 class RestRequest {
-  String _uuid = Uuid().v4();
-  Map<String, String> _headers = {'Content-type': 'application/json'};
-  Map<String, dynamic> _params = {};
+  final String _uuid = const Uuid().v4();
+  final Map<String, String> _headers = {'Content-type': 'application/json'};
+  final Map<String, dynamic> _params = {};
   String? _body;
   RequestMethod _method = RequestMethod.GET;
   String _url = "";
@@ -54,17 +52,17 @@ class RestRequest {
     return RestResponse(response, _uuid).getResponse();
   }
 
-  setUrl(String url) => this._url = url;
+  setUrl(String url) => _url = url;
 
-  setMethod(RequestMethod method) => this._method = method;
+  setMethod(RequestMethod method) => _method = method;
 
-  setBody(String body) => this._body = body;
+  setBody(String body) => _body = body;
 
   Uri _getUrl() {
     if (_method == RequestMethod.GET || _method == RequestMethod.DELETE) {
       var stringParams = getUriQueryString(_params);
       if (!isEmpty(stringParams) && !_url.contains(stringParams)) {
-        _url = _url + "?$stringParams";
+        _url = "$_url?$stringParams";
       }
     }
 
@@ -79,8 +77,7 @@ class RestRequest {
 
   @override
   String toString() {
-    return "=========================================================\n" +
-        "=== REQUEST ==== $_uuid ===\n"
+    return "=========================================================\n" "=== REQUEST ==== $_uuid ===\n"
             "REQUEST\n  ${_method.toString().split('.').last} ${_getUrl()} \n"
             "HEADERS\n  $_headers\n"
             "BODY\n  ${_method == RequestMethod.GET || _method == RequestMethod.DELETE ? "" : _getBody()}\n";

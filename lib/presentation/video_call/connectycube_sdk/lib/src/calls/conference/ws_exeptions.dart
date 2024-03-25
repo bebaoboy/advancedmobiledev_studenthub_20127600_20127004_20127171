@@ -5,9 +5,9 @@ class WsException implements Exception {
 }
 
 class WsNoResponseException extends WsException {
-  WsNoResponseException(String s) : super(s);
+  WsNoResponseException(String super.s);
 }
 
 class WsHangUpException extends WsException {
-  WsHangUpException(String? s) : super(s);
+  WsHangUpException(super.s);
 }

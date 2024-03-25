@@ -34,7 +34,7 @@ class ConferenceClient {
   }) async {
     log("createSession userId= $userId");
     currentUserId = userId;
-    var signaler = new JanusSignaler(
+    var signaler = JanusSignaler(
         ConferenceConfig.instance.url,
         ConferenceConfig.instance.protocol,
         ConferenceConfig.instance.socketTimeOutMs,

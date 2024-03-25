@@ -1,5 +1,5 @@
 import 'package:objectid/objectid.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../../connectycube_core.dart';
 
@@ -18,7 +18,7 @@ class CubeMessage extends CubeEntity {
   int? senderId;
   bool markable = false;
   bool delayed = false;
-  Map<String, String> properties = Map();
+  Map<String, String> properties = {};
   List<CubeAttachment>? attachments;
   bool saveToHistory = true;
   int? destroyAfter;
@@ -115,8 +115,9 @@ class CubeMessage extends CubeEntity {
     }
 
     if (!isEmptyList(attachments)) {
-      attachments!.forEach((attachment) =>
-          extraParams.addChild(AttachmentElement.fromAttachment(attachment)));
+      for (var attachment in attachments!) {
+        extraParams.addChild(AttachmentElement.fromAttachment(attachment));
+      }
     }
 
     messageStanza.addChild(extraParams);
@@ -185,6 +186,7 @@ class CubeMessage extends CubeEntity {
     }
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = {
       '_id': messageId,

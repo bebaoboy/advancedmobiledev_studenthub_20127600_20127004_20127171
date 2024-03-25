@@ -10,6 +10,5 @@ class EditedMessageStatus extends MessageStatus {
   String updatedBody;
 
   EditedMessageStatus(
-      int userId, String messageId, String? dialogId, this.updatedBody)
-      : super(userId, messageId, dialogId);
+      super.userId, super.messageId, super.dialogId, this.updatedBody);
 }

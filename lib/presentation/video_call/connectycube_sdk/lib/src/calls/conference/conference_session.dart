@@ -21,7 +21,7 @@ class ConferenceSession
     implements JanusResponseEventCallback, ConferenceCallSession {
   static const String _TAG = "ConferenceSession";
 
-  JanusSignaler _signaler;
+  final JanusSignaler _signaler;
   late CubeConferenceSessionDescription sessionDescription;
   int? joinSenderId;
 
@@ -34,9 +34,9 @@ class ConferenceSession
   bool joinedAsSubscriber = false;
   bool creatingSubscription = false;
 
-  Set<int> allActivePublishers = Set();
-  Set<int> joinEventPublishers = Set();
-  Set<int> allActiveSubscribers = Set();
+  Set<int> allActivePublishers = {};
+  Set<int> joinEventPublishers = {};
+  Set<int> allActiveSubscribers = {};
 
   Map<String, String> trackIdMid = {};
   Map<String, String> trackIdTrackIdentifier = {};
@@ -79,20 +79,14 @@ class ConferenceSession
     client,
     this._signaler,
     int conferenceType, {
-    bool startScreenSharing = false,
-    DesktopCapturerSource? desktopCapturerSource,
-    bool useIOSBroadcasting = false,
-    bool requestAudioForScreenSharing = false,
-    String? selectedAudioInputDevice,
-    String? selectedVideoInputDevice,
+    super.startScreenSharing,
+    super.desktopCapturerSource,
+    super.useIOSBroadcasting,
+    super.requestAudioForScreenSharing,
+    super.selectedAudioInputDevice,
+    super.selectedVideoInputDevice,
   }) : super(
           client,
-          startScreenSharing: startScreenSharing,
-          desktopCapturerSource: desktopCapturerSource,
-          useIOSBroadcasting: useIOSBroadcasting,
-          requestAudioForScreenSharing: requestAudioForScreenSharing,
-          selectedAudioInputDevice: selectedAudioInputDevice,
-          selectedVideoInputDevice: selectedVideoInputDevice,
         ) {
     sessionDescription = CubeConferenceSessionDescription(conferenceType);
   }
@@ -115,7 +109,7 @@ class ConferenceSession
     _connectionCallback = null;
   }
 
-  Future<void> joinDialog(String dialogId, callback(List<int?> publishers),
+  Future<void> joinDialog(String dialogId, Function(List<int?> publishers) callback,
       {ConferenceRole conferenceRole = ConferenceRole.PUBLISHER}) async {
     _joinCallback = callback;
     _signaler.setJanusResponseEventCallback(this);
@@ -133,9 +127,10 @@ class ConferenceSession
   Future<void> subscribeToPublisher(int? publisherId) async {
     logTime("subscribeToPublisher = $publisherId", _TAG);
 
-    if (publisherId == null)
+    if (publisherId == null) {
       return Future.error(
           IllegalArgumentException('The \'publisherId\' can\'t be null'));
+    }
 
     return subscribeToPublishers({publisherId});
   }
@@ -144,16 +139,16 @@ class ConferenceSession
     logTime("subscribeToPublishers = $publishersIds", _TAG);
     try {
       if (creatingSubscription) {
-        return Future.delayed(Duration(milliseconds: 500),
+        return Future.delayed(const Duration(milliseconds: 500),
             () => subscribeToPublishers(publishersIds));
       }
 
       if (joinedAsSubscriber) {
         return _signaler.subscribe(publishersIds).then((_) {
-          publishersIds.forEach((publisher) {
+          for (var publisher in publishersIds) {
             onSubscribedOnPublisher?.call(publisher);
             _connectionCallback?.onConnectedToUser(this, publisher);
-          });
+          }
 
           joinEventPublishers.removeAll(publishersIds);
         });
@@ -166,10 +161,10 @@ class ConferenceSession
         return _signaler.joinDialogAsSubscriber(publishersIds).then((_) {
           joinedAsSubscriber = true;
 
-          publishersIds.forEach((publisher) {
+          for (var publisher in publishersIds) {
             onSubscribedOnPublisher?.call(publisher);
             _connectionCallback?.onConnectedToUser(this, publisher);
-          });
+          }
 
           // joinEventPublishers.removeAll(publishersIds);
         });
@@ -391,7 +386,7 @@ class ConferenceSession
   void onRemoteSDPEventOffer(int? opponentId, String? sdp) {
     logTime("onRemoteSDPEventOffer", _TAG);
     // set CallType.VIDEO_CALL for getting video in any call mode (audio, video)
-    if (opponentId == null) opponentId = subscriberId;
+    opponentId ??= subscriberId;
 
     _makeAndAddNewChannelForOpponent(opponentId);
     createAnswer(opponentId, sdp);
@@ -472,7 +467,7 @@ class ConferenceSession
   void _makeAndAddNewChannelForOpponent(int connectionId) {
     if (!channels.containsKey(connectionId)) {
       ConferencePeerConnection newChannel =
-          new ConferencePeerConnection(connectionId, this);
+          ConferencePeerConnection(connectionId, this);
 
       channels[connectionId] = newChannel;
       logTime("Make new channel with id: $connectionId, $newChannel", _TAG);
@@ -567,12 +562,10 @@ class ConferenceSession
   void onRemoteStreamRemove(int userId, MediaStream remoteMediaStream,
       {String? trackId}) {
     if (trackId == null) {
-      var feedId;
+      int? feedId;
 
       remoteMediaStream.getTracks().forEach((track) {
-        if (feedId == null) {
-          feedId = _signaler.subStreams[track.id?.replaceAll(JANUS_PREFIX, '')];
-        }
+        feedId ??= _signaler.subStreams[track.id?.replaceAll(JANUS_PREFIX, '')];
       });
       super
           .onRemoteStreamRemove
@@ -594,11 +587,11 @@ class ConferenceSession
       return;
     }
 
-    stats.forEach((stat) {
+    for (var stat in stats) {
       if (stat.type == 'track') {
         trackIdTrackIdentifier[stat.id] = stat.values['trackIdentifier'];
       }
-    });
+    }
 
     statsReportsStreamController.add(CubeStatsReport(userId, stats));
   }
@@ -692,9 +685,9 @@ class ConferenceSession
   @override
   void onSendIceCandidates(int userId, List<RTCIceCandidate>? iceCandidates) {
     logTime("onSendIceCandidates", _TAG);
-    iceCandidates!.forEach((iceCandidate) {
+    for (var iceCandidate in iceCandidates!) {
       onSendIceCandidate(userId, iceCandidate);
-    });
+    }
   }
 
   @override
@@ -721,9 +714,9 @@ class ConferenceSession
 
   Future<void> _unsubscribeFromPublishers(Map<int, Set<String>?> publishers) {
     return _signaler.unsubscribeFromPublishers(publishers).then((_) {
-      publishers.keys.forEach((publisher) {
+      for (var publisher in publishers.keys) {
         _connectionCallback?.onDisconnectedFromUser(this, publisher);
-      });
+      }
     });
   }
 
@@ -735,7 +728,7 @@ class ConferenceSession
   ) {
     if (defaultId == 1) return currentUserId;
 
-    var mid;
+    String? mid;
 
     if (trackIdentifier?.startsWith(JANUS_PREFIX) ?? false) {
       mid = trackIdentifier?.replaceAll(JANUS_PREFIX, '');
@@ -766,9 +759,10 @@ class ConferenceSession
   Future<MediaStream> addMediaTrack(MediaStreamTrack track) {
     log('addMediaTrack', _TAG);
 
-    if (localStream == null)
+    if (localStream == null) {
       return Future.error(IllegalStateException(
           'Can\'t add the track cause the local media stream doesn\'t exist'));
+    }
 
     localStream?.addTrack(track);
 
@@ -783,9 +777,10 @@ class ConferenceSession
 
   @override
   Future<MediaStream> removeMediaTrack(String trackId) {
-    if (localStream == null)
+    if (localStream == null) {
       return Future.error(IllegalStateException(
           'Can\'t remove the track cause the local media stream doesn\'t exist'));
+    }
 
     var track = localStream?.getTrackById(trackId);
 

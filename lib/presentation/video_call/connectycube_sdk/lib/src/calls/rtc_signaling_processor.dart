@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../connectycube_chat.dart';
 
@@ -27,8 +27,7 @@ class RTCSignalingProcessor {
     _rtcSignalingManager = CubeChatConnection.instance.rtcSignalingManager;
 
     _subscription = _rtcSignalingManager?.signalingMessagesStream
-            .listen(_processSignalingMessage) ??
-        null;
+            .listen(_processSignalingMessage);
   }
 
   void dispose() {
@@ -78,35 +77,35 @@ class RTCSignalingProcessor {
         String rawSdp = params[SignalField.SDP]!;
         RTCSessionDescription sdp = RTCSessionDescription(rawSdp, "offer");
 
-        this._notifyNewCallReceive(cubeSdp, userFrom, sdp);
+        _notifyNewCallReceive(cubeSdp, userFrom, sdp);
 
         break;
       case SignalCMD.CANDITATE:
         RTCIceCandidate? iceCandidate = callExtraParams.getIceCandidate();
 
-        this._notifyCandidatesReceive([iceCandidate], cubeSdp, userFrom);
+        _notifyCandidatesReceive([iceCandidate], cubeSdp, userFrom);
 
         break;
       case SignalCMD.CANDITATES:
         List<RTCIceCandidate> iceCandidates =
             callExtraParams.getIceCandidates();
 
-        this._notifyCandidatesReceive(iceCandidates, cubeSdp, userFrom);
+        _notifyCandidatesReceive(iceCandidates, cubeSdp, userFrom);
 
         break;
       case SignalCMD.ACCEPT_CALL:
         String rawSdp = params[SignalField.SDP]!;
         RTCSessionDescription sdp = RTCSessionDescription(rawSdp, "answer");
 
-        this._notifyCallAcceptedByUser(cubeSdp, userFrom, sdp);
+        _notifyCallAcceptedByUser(cubeSdp, userFrom, sdp);
 
         break;
       case SignalCMD.REJECT_CALL:
-        this._notifyCallRejectedByUser(cubeSdp, userFrom);
+        _notifyCallRejectedByUser(cubeSdp, userFrom);
 
         break;
       case SignalCMD.HANG_UP:
-        this._notifyHungUpReceiveFromUser(cubeSdp, userFrom);
+        _notifyHungUpReceiveFromUser(cubeSdp, userFrom);
 
         break;
       case SignalCMD.ADD_USER:
@@ -118,7 +117,7 @@ class RTCSignalingProcessor {
         String sdpType = params[SignalField.SDP_TYPE]!;
         RTCSessionDescription sdp = RTCSessionDescription(rawSdp, sdpType);
 
-        this._notifyUpdateCallReceive(cubeSdp, userFrom, sdp);
+        _notifyUpdateCallReceive(cubeSdp, userFrom, sdp);
         break;
     }
   }
@@ -128,9 +127,9 @@ class RTCSignalingProcessor {
     CubeUser cubeUser,
     RTCSessionDescription rtcSdp,
   ) {
-    callbacks.forEach((callback) {
+    for (var callback in callbacks) {
       callback.onNewCallReceive(cubeSdp, cubeUser, rtcSdp);
-    });
+    }
   }
 
   void _notifyCallAcceptedByUser(
@@ -138,27 +137,27 @@ class RTCSignalingProcessor {
     CubeUser cubeUser,
     RTCSessionDescription rtcSdp,
   ) {
-    callbacks.forEach((callback) {
+    for (var callback in callbacks) {
       callback.onCallAcceptReceive(cubeSdp, cubeUser, rtcSdp);
-    });
+    }
   }
 
   void _notifyCallRejectedByUser(
     CubeRTCSessionDescription cubeSdp,
     CubeUser cubeUser,
   ) {
-    callbacks.forEach((callback) {
+    for (var callback in callbacks) {
       callback.onRejectReceive(cubeSdp, cubeUser);
-    });
+    }
   }
 
   void _notifyHungUpReceiveFromUser(
     CubeRTCSessionDescription cubeSdp,
     CubeUser cubeUser,
   ) {
-    callbacks.forEach((callback) {
+    for (var callback in callbacks) {
       callback.onHungUpReceive(cubeSdp, cubeUser);
-    });
+    }
   }
 
   void _notifyCandidatesReceive(
@@ -166,9 +165,9 @@ class RTCSignalingProcessor {
     CubeRTCSessionDescription cubeRtcSdp,
     CubeUser cubeUser,
   ) {
-    callbacks.forEach((callback) {
+    for (var callback in callbacks) {
       callback.onCandidatesReceive(candidates, cubeRtcSdp, cubeUser);
-    });
+    }
   }
 
   void _notifyUpdateCallReceive(
@@ -176,9 +175,9 @@ class RTCSignalingProcessor {
     CubeUser cubeUser,
     RTCSessionDescription rtcSdp,
   ) {
-    callbacks.forEach((callback) {
+    for (var callback in callbacks) {
       callback.onUpdateCallReceive(cubeSdp, cubeUser, rtcSdp);
-    });
+    }
   }
 
   void addSignalingCallback(CallsSignalingCallback callback) {

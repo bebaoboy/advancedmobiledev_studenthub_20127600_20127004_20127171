@@ -114,7 +114,7 @@ abstract class BaseAuthQuery<T> extends AutoManagedQuery<T> {
 
   _convertFirebaseParamsToJson(
       Map<String, dynamic> parameters, String firebaseProviderName) {
-    Map firebaseParamsJson = Map();
+    Map firebaseParamsJson = {};
 
     firebaseParamsJson['access_token'] = _accessToken;
     parameters.remove(firebaseProviderName == CubeProvider.FIREBASE_PHONE
@@ -130,7 +130,7 @@ abstract class BaseAuthQuery<T> extends AutoManagedQuery<T> {
   }
 
   _convertProviderKeysToJson(Map<String, dynamic> parameters) {
-    Map keysJson = Map();
+    Map keysJson = {};
 
     keysJson['token'] = _accessToken;
     parameters.remove(KEYS_TOKEN);
@@ -149,10 +149,10 @@ abstract class BaseAuthQuery<T> extends AutoManagedQuery<T> {
 class CreateSessionQuery extends BaseAuthQuery<CubeSession> {
   late CubeSession _resultSession;
 
-  CreateSessionQuery([CubeUser? user]) : super(user);
+  CreateSessionQuery([super.user]);
 
-  CreateSessionQuery.usingSocial(String provider, List<String?> args)
-      : super.usingSocial(provider, args);
+  CreateSessionQuery.usingSocial(String super.provider, super.args)
+      : super.usingSocial();
 
   @override
   setUrl(RestRequest request) {
@@ -217,7 +217,7 @@ class CreateSessionQuery extends BaseAuthQuery<CubeSession> {
 
   @override
   void _setupUserForBody(Map<String, dynamic> parameters, CubeUser user) {
-    Map userToBody = Map();
+    Map userToBody = {};
 
     if (user.isGuest != null && user.isGuest!) {
       userToBody['guest'] = '1';
@@ -270,10 +270,10 @@ class CreateSessionQuery extends BaseAuthQuery<CubeSession> {
 }
 
 class SignInQuery extends BaseAuthQuery<CubeUser> {
-  SignInQuery(CubeUser user) : super(user);
+  SignInQuery(CubeUser super.user);
 
-  SignInQuery.usingSocial(String provider, List<String?> args)
-      : super.usingSocial(provider, args);
+  SignInQuery.usingSocial(String super.provider, super.args)
+      : super.usingSocial();
 
   @override
   setUrl(RestRequest request) {

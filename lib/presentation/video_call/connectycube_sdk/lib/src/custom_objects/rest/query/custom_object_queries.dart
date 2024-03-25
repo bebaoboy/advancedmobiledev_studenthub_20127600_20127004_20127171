@@ -7,7 +7,7 @@ import '../models/custom_object_permissions_result.dart';
 import '../models/paged_custom_object_result.dart';
 
 class CreateCustomObjectQuery extends AutoManagedQuery<CubeCustomObject> {
-  CubeCustomObject _customObject;
+  final CubeCustomObject _customObject;
 
   CreateCustomObjectQuery(this._customObject);
 
@@ -39,7 +39,7 @@ class CreateCustomObjectQuery extends AutoManagedQuery<CubeCustomObject> {
 
 class GetCustomObjectQuery extends AutoManagedQuery<PagedCustomObjectResult> {
   List<String>? _ids;
-  String _className;
+  final String _className;
   Map<String, dynamic>? _params;
 
   GetCustomObjectQuery.byIds(this._className, this._ids);
@@ -85,8 +85,8 @@ class GetCustomObjectQuery extends AutoManagedQuery<PagedCustomObjectResult> {
 }
 
 class GetCustomObjectByIdQuery extends AutoManagedQuery<CubeCustomObject?> {
-  String _id;
-  String _className;
+  final String _id;
+  final String _className;
 
   GetCustomObjectByIdQuery(this._className, this._id);
 
@@ -114,8 +114,8 @@ class GetCustomObjectByIdQuery extends AutoManagedQuery<CubeCustomObject?> {
 
 class GetCustomObjectPermissionsQuery
     extends AutoManagedQuery<CustomObjectPermissionsResult> {
-  String _id;
-  String _className;
+  final String _id;
+  final String _className;
 
   GetCustomObjectPermissionsQuery(this._className, this._id);
 
@@ -146,9 +146,9 @@ class GetCustomObjectPermissionsQuery
 }
 
 class UpdateCustomObjectQuery extends AutoManagedQuery<CubeCustomObject> {
-  String _id;
-  String _className;
-  Map<String, dynamic> _params;
+  final String _id;
+  final String _className;
+  final Map<String, dynamic> _params;
 
   UpdateCustomObjectQuery(this._className, this._id, this._params);
 
@@ -185,8 +185,8 @@ class UpdateCustomObjectQuery extends AutoManagedQuery<CubeCustomObject> {
 
 class UpdateCustomObjectByCriteriaQuery
     extends AutoManagedQuery<PagedCustomObjectResult> {
-  String _className;
-  Map<String, dynamic>? _params;
+  final String _className;
+  final Map<String, dynamic>? _params;
 
   UpdateCustomObjectByCriteriaQuery(this._className, this._params);
 
@@ -221,8 +221,8 @@ class UpdateCustomObjectByCriteriaQuery
 }
 
 class DeleteCustomObjectByIdQuery extends AutoManagedQuery<void> {
-  String _id;
-  String _className;
+  final String _id;
+  final String _className;
 
   DeleteCustomObjectByIdQuery(this._className, this._id);
 
@@ -247,8 +247,8 @@ class DeleteCustomObjectByIdQuery extends AutoManagedQuery<void> {
 
 class DeleteCustomObjectsByIdsQuery
     extends AutoManagedQuery<DeleteItemsResult> {
-  List<String> _ids;
-  String _className;
+  final List<String> _ids;
+  final String _className;
 
   DeleteCustomObjectsByIdsQuery(this._className, this._ids);
 
@@ -274,8 +274,8 @@ class DeleteCustomObjectsByIdsQuery
 }
 
 class DeleteCustomObjectsByCriteriaQuery extends AutoManagedQuery<int> {
-  String _className;
-  Map<String, dynamic>? _params;
+  final String _className;
+  final Map<String, dynamic>? _params;
 
   DeleteCustomObjectsByCriteriaQuery(this._className, this._params);
 

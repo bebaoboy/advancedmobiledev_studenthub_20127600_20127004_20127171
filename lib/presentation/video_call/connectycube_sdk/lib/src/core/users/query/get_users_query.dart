@@ -15,7 +15,7 @@ class GetUsersQuery extends AutoManagedQuery<PagedResult<CubeUser>> {
   RequestFilter? _filter;
   RequestSorter? _sorter;
 
-  Map<String, dynamic>? _additionalParams;
+  final Map<String, dynamic>? _additionalParams;
 
   GetUsersQuery.byIdentifier(this._identifierName, this._identifierValue,
       [this._additionalParams]);

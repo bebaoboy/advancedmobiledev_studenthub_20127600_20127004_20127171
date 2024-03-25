@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:mobx/mobx.dart';
 
 part 'theme_store.g.dart';
@@ -37,7 +38,8 @@ abstract class _ThemeStore with Store {
 
   // general methods:-----------------------------------------------------------
   Future init() async {
-    _darkMode = _repository.isDarkMode;
+    var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
+    _darkMode = _repository.isDarkMode || brightness == Brightness.dark;
   }
 
   bool isPlatformDark(BuildContext context) =>

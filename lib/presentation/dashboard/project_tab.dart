@@ -5,9 +5,9 @@ import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -29,16 +29,12 @@ class SearchFilter {
 
   @override
   String toString() {
-    return "${scope != null ? scope!.title : ""}" +
-        (studentNeeded != null ? "\n${studentNeeded} students needed" : "") +
-        (proposalLessThan != null
-            ? "\nProposal less than ${proposalLessThan}"
-            : "");
+    return "${scope != null ? scope!.title : ""}${studentNeeded != null ? "\n$studentNeeded students needed" : ""}${proposalLessThan != null ? "\nProposal less than $proposalLessThan" : ""}";
   }
 }
 
 class _FilterBottomSheet extends StatefulWidget {
-   _FilterBottomSheet({required this.filter});
+  const _FilterBottomSheet({required this.filter});
   final SearchFilter filter;
 
   @override
@@ -64,7 +60,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
   Widget build(BuildContext context) {
     return SheetDismissible(
       child: ScrollableSheet(
-        keyboardDismissBehavior:  const SheetKeyboardDismissBehavior.onDragDown(
+        keyboardDismissBehavior: const SheetKeyboardDismissBehavior.onDragDown(
           isContentScrollAware: true,
         ),
         child: SheetContentScaffold(
@@ -72,7 +68,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
               title: Text(Lang.get("filter_title")),
             ),
             body: Padding(
-              padding:  const EdgeInsets.symmetric(horizontal: 32),
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -110,7 +106,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     //   // ),
                     // ),
                     RadioListTile<Scope>(
-                      title:  Text(Lang.get("0-1")),
+                      title: Text(Lang.get("0-1")),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style:  TextStyle(fontSize: 24),
@@ -126,7 +122,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title:  Text(Lang.get("1-3")),
+                      title: Text(Lang.get("1-3")),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style:  TextStyle(fontSize: 24),
@@ -142,7 +138,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title:  Text(Lang.get('3-6')),
+                      title: Text(Lang.get('3-6')),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style:  TextStyle(fontSize: 24),
@@ -158,7 +154,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                       },
                     ),
                     RadioListTile<Scope>(
-                      title:  Text(Lang.get('6-')),
+                      title: Text(Lang.get('6-')),
                       // secondary: Text(
                       //   _moods.first.emoji,
                       //   style:  TextStyle(fontSize: 24),
@@ -173,7 +169,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                         });
                       },
                     ),
-                     const Divider(height: 32),
+                    const Divider(height: 32),
                     // ListTile(
                     //   title:  Text(Lang.get('Seed tracks'),
                     //   trailing: IconButton(
@@ -185,13 +181,13 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     TextField(
                       controller: studentNeededController,
                       keyboardType: TextInputType.number,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
                         labelText: Lang.get("student_needed"),
@@ -200,16 +196,16 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                         widget.filter.studentNeeded = int.tryParse(value) ?? 2;
                       },
                     ),
-                     const Divider(height: 32),
+                    const Divider(height: 32),
                     TextField(
                       controller: proposalLessThanController,
-                      decoration:  InputDecoration(
+                      decoration: InputDecoration(
                         hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
                         labelText: Lang.get("proposal_less_than"),
@@ -243,15 +239,15 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     onPressed: () {
                       widget.filter.clear();
                     },
-                    buttonText: "Clear filter",
+                    buttonText: Lang.get("clear_filter"),
                   ),
-                   const SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   RoundedButtonWidget(
                     buttonColor: Theme.of(context).colorScheme.primary,
                     onPressed: () {
-                      Navigator.pop(context, widget.filter);
+                      NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
                     },
-                    buttonText: "Apply",
+                    buttonText: Lang.get("apply"),
                   ),
                 ],
               ),
@@ -262,7 +258,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
 }
 
 class SearchBottomSheet extends StatefulWidget {
-   SearchBottomSheet(
+  const SearchBottomSheet(
       {super.key,
       required this.onSheetDismissed,
       this.height = 650,
@@ -304,7 +300,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
     // However, it differs in that its height reduces to fit the 'body' widget.
     final content = Container(
-      decoration:  const ShapeDecoration(
+      decoration: const ShapeDecoration(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -342,10 +338,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       parent: SnappingSheetPhysics(
         snappingBehavior: SnapToNearest(
           snapTo: [
-             const Extent.proportional(0.2),
-             const Extent.proportional(0.5),
-             const Extent.proportional(0.8),
-             const Extent.proportional(1),
+            const Extent.proportional(0.2),
+            const Extent.proportional(0.5),
+            const Extent.proportional(0.8),
+            const Extent.proportional(1),
           ],
         ),
       ),
@@ -354,8 +350,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     return DraggableSheet(
       physics: physics,
       keyboardDismissBehavior:
-           const SheetKeyboardDismissBehavior.onDrag(isContentScrollAware: true),
-      minExtent:  const Extent.pixels(0),
+          const SheetKeyboardDismissBehavior.onDrag(isContentScrollAware: true),
+      minExtent: const Extent.pixels(0),
       child: Card(
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.zero,
@@ -374,15 +370,16 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       title: widget.filter != null
           ? AutoSizeText(
-              "Filter: " + widget.filter!.toString(),
+              "Filter: ${widget.filter!}",
               maxLines: 3,
               minFontSize: 12,
             )
-          :  const SizedBox(),
-      titleTextStyle: Theme.of(context).textTheme.titleSmall!.merge( const TextStyle(
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
-          )),
+          : const SizedBox(),
+      titleTextStyle:
+          Theme.of(context).textTheme.titleSmall!.merge(const TextStyle(
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              )),
 
       // AnimSearchBar2(
       //   enabled: false,
@@ -422,7 +419,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       //   ),
       // ),
 
-      actions: [
+      actions: const [
         // IconButton(
         //     onPressed: () {
         //       widget.onFilterTap();
@@ -481,20 +478,22 @@ bool applyFilter(SearchFilter f, Project p) {
 
 // ignore: must_be_immutable
 class ProjectTab extends StatefulWidget {
-  ProjectTab({super.key, this.isAlive = true});
-  bool? isAlive;
+  const ProjectTab({super.key, this.isAlive = true, this.scrollController});
+  final bool? isAlive;
+  final ScrollController? scrollController;
 
   @override
   State<ProjectTab> createState() => _ProjectTabState();
 }
 
-class _ProjectTabState extends State<ProjectTab>
-    with AutomaticKeepAliveClientMixin {
+class _ProjectTabState extends State<ProjectTab> {
   SearchFilter filter = SearchFilter();
   @override
   Widget build(BuildContext context) {
-    super.build(context);
-    return _buildProjectContent();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 60),
+      child: _buildProjectContent(),
+    );
   }
 
   Future<SearchFilter?> showFilterBottomSheet(BuildContext context) async {
@@ -511,6 +510,7 @@ class _ProjectTabState extends State<ProjectTab>
         return value;
       }
       print(filter);
+      return null;
     });
   }
 
@@ -547,7 +547,7 @@ class _ProjectTabState extends State<ProjectTab>
             //     setState(() {
             //       filter = value;
             //     });
-            //     // NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+            //     NavbarNotifier2.popRoute(Navigator.currentIndex);
             //   }
             // });
           },
@@ -559,6 +559,7 @@ class _ProjectTabState extends State<ProjectTab>
         yOffset = MediaQuery.of(context).size.height;
       });
       FocusManager.instance.primaryFocus?.unfocus();
+      return null;
     });
   }
 
@@ -595,6 +596,7 @@ class _ProjectTabState extends State<ProjectTab>
               children: [
                 Expanded(
                   child: AnimSearchBar2(
+                    helpText: Lang.get("search"),
                     expandedByDefault: true,
                     textFieldColor: Theme.of(context).colorScheme.surface,
                     color: Theme.of(context).colorScheme.surface,
@@ -636,7 +638,7 @@ class _ProjectTabState extends State<ProjectTab>
                       //             .toList(),
                       //         onSheetDismissed: () {
                       //           setState(() {
-                      //             NavbarNotifier2.hideBottomNavBar = false;
+                      //             Navigator.hideBottomNavBar = false;
                       //             yOffset = MediaQuery.of(context).size.height;
                       //           });
                       //           final FocusScopeNode currentScope =
@@ -645,8 +647,8 @@ class _ProjectTabState extends State<ProjectTab>
                       //               currentScope.hasFocus) {
                       //             FocusManager.instance.primaryFocus?.unfocus();
                       //           }
-                      //           NavbarNotifier2.popRoute(
-                      //               NavbarNotifier2.currentIndex);
+                      //           Navigator.popRoute(
+                      //               Navigator.currentIndex);
                       //           return true;
                       //         },
                       //         onFilterTap: () async {
@@ -655,14 +657,14 @@ class _ProjectTabState extends State<ProjectTab>
                       //           //     setState(() {
                       //           //       filter = value;
                       //           //     });
-                      //           //     // NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+                      //           //     NavbarNotifier2.popRoute(Navigator.currentIndex);
                       //           //   }
                       //           // });
                       //         },
                       //       );
                       //     }).then((value) {
                       //   setState(() {
-                      //     NavbarNotifier2.hideBottomNavBar = false;
+                      //     Navigator.hideBottomNavBar = false;
                       //     yOffset = MediaQuery.of(context).size.height;
                       //   });
                       //   FocusManager.instance.primaryFocus?.unfocus();
@@ -675,7 +677,7 @@ class _ProjectTabState extends State<ProjectTab>
                     onSuggestionCallback: (pattern) {
                       if (pattern.isEmpty) return [];
                       return Future<List<Project>>.delayed(
-                         const Duration(milliseconds: 300),
+                        const Duration(milliseconds: 300),
                         () => allProjects.where((product) {
                           final nameLower =
                               product.title.toLowerCase().split(' ').join('');
@@ -705,11 +707,12 @@ class _ProjectTabState extends State<ProjectTab>
                           setState(() {
                             filter = value;
                           });
-                          // NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+                          NavbarNotifier2.popRoute(
+                              NavbarNotifier2.currentIndex);
                         }
                       });
                     },
-                    icon:  const Icon(Icons.filter_alt_outlined)),
+                    icon: const Icon(Icons.filter_alt_outlined)),
                 IconButton(
                     onPressed: () {
                       NavbarNotifier2.pushNamed(
@@ -725,7 +728,7 @@ class _ProjectTabState extends State<ProjectTab>
                               }));
                     },
                     color: Theme.of(context).colorScheme.primary,
-                    icon:  const Icon(Icons.favorite_rounded)),
+                    icon: const Icon(Icons.favorite_rounded)),
               ],
             )),
         // Flexible(
@@ -737,12 +740,13 @@ class _ProjectTabState extends State<ProjectTab>
         //     ),
         //   ),
         // ),
-         const SizedBox(
+        const SizedBox(
           height: 100,
         ),
         Container(
-          margin:  const EdgeInsets.only(top: 40),
+          margin: const EdgeInsets.only(top: 40),
           child: LazyLoadingAnimationProjectList(
+            scrollController: widget.scrollController,
             itemHeight: 230,
             list: allProjects,
             firstCallback: (i) {
@@ -770,7 +774,7 @@ class _ProjectTabState extends State<ProjectTab>
         //           .toList(),
         //       onSheetDismissed: () {
         //         setState(() {
-        //           NavbarNotifier2.hideBottomNavBar = false;
+        //           Navigator.hideBottomNavBar = false;
         //           yOffset = MediaQuery.of(context).size.height;
         //         });
         //         final FocusScopeNode currentScope = FocusScope.of(context);
@@ -786,8 +790,4 @@ class _ProjectTabState extends State<ProjectTab>
       ],
     );
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => widget.isAlive!;
 }

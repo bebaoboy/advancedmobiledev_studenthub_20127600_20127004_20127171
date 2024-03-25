@@ -1,13 +1,13 @@
-import 'package:xmpp_stone/xmpp_stone.dart' as xmpp;
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart' as xmpp;
 
 import '../utils/jid_utils.dart';
 
 import 'base_managers.dart';
 
 class PrivacyListsManager extends Manager {
-  static Map<xmpp.Connection, PrivacyListsManager> _instances = Map();
+  static final Map<xmpp.Connection, PrivacyListsManager> _instances = {};
 
-  PrivacyListsManager._private(xmpp.Connection connection) : super(connection);
+  PrivacyListsManager._private(super.connection);
 
   static getInstance(xmpp.Connection connection) {
     PrivacyListsManager? manager = _instances[connection];
@@ -29,7 +29,7 @@ class PrivacyListsManager extends Manager {
         .then((listItems) {
       var usersList = <int, CubePrivacyListItem>{};
 
-      listItems.forEach((item) {
+      for (var item in listItems) {
         if (item.type == xmpp.PrivacyType.JID) {
           var userId = item.value!.startsWith('muc.')
               ? getUserIdFromNickWithMucDomain(item.value!)
@@ -47,7 +47,7 @@ class PrivacyListsManager extends Manager {
           usersList[userId] =
               CubePrivacyListItem(userId, action, isMutual: isMutual);
         }
-      });
+      }
 
       return List.from(usersList.values);
     });

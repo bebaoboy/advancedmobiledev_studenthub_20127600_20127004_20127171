@@ -40,6 +40,7 @@ class CubeFile extends CubeEntity {
     }
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     json['uid'] = uid;

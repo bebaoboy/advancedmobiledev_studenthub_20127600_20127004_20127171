@@ -1,5 +1,5 @@
 import 'package:collection/collection.dart';
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import 'chat_constants.dart';
 import '../extentions.dart';
@@ -118,13 +118,13 @@ MessageStanza parseMessageStanza(XmppElement messageElement) {
     stanza.fromJid = Jid.fromFullJid(fromAttribute);
   }
 
-  messageElement.attributes.forEach((xmppAttribute) {
+  for (var xmppAttribute in messageElement.attributes) {
     stanza.addAttribute(xmppAttribute);
-  });
+  }
 
-  messageElement.children.forEach((child) {
+  for (var child in messageElement.children) {
     stanza.addChild(child);
-  });
+  }
 
   return stanza;
 }

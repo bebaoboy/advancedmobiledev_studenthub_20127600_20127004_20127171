@@ -1,7 +1,7 @@
 const String EMPTY_STRING = "";
 
 bool isEmpty(String? string) {
-  return string == null || string.length == 0;
+  return string == null || string.isEmpty;
 }
 
 /// Returns query parameters string, e.g.

@@ -12,11 +12,11 @@ import 'utils/signaling_specifications.dart';
 
 class PeerConnection {
   static const String TAG = "PeerConnection";
-  int _userId;
-  CubePeerConnectionStateCallback _peerConnectionStateCallback;
+  final int _userId;
+  final CubePeerConnectionStateCallback _peerConnectionStateCallback;
 
   RTCPeerConnection? _peerConnection;
-  List<RTCIceCandidate?> _remoteCandidates = [];
+  final List<RTCIceCandidate?> _remoteCandidates = [];
   List<RTCIceCandidate>? _localCandidates = [];
 
   RTCSessionDescription? _remoteSdp;
@@ -45,8 +45,7 @@ class PeerConnection {
       if (_localCandidates != null) {
         _localCandidates!.add(candidate);
       } else {
-        this
-            ._peerConnectionStateCallback
+        _peerConnectionStateCallback
             .onSendIceCandidate(_userId, candidate);
       }
     };
@@ -80,7 +79,7 @@ class PeerConnection {
     };
 
     pc.onTrack = (event) async {
-      this._peerConnectionStateCallback.onRemoteStreamReceive(
+      _peerConnectionStateCallback.onRemoteStreamReceive(
             _userId,
             event.streams.first,
             transceiver: event.transceiver,
@@ -89,13 +88,12 @@ class PeerConnection {
     };
 
     pc.onRemoveStream = (stream) {
-      this._peerConnectionStateCallback.onRemoteStreamRemove(_userId, stream);
+      _peerConnectionStateCallback.onRemoteStreamRemove(_userId, stream);
     };
 
     pc.onRemoveTrack = (stream, track) {
       if (track.kind == 'video' || kIsWeb) {
-        this
-            ._peerConnectionStateCallback
+        _peerConnectionStateCallback
             .onRemoteStreamRemove(_userId, stream, trackId: track.id);
       }
     };
@@ -106,8 +104,7 @@ class PeerConnection {
 
     pc.onIceGatheringState = (state) {
       log("onIceGatheringState changed to $state for opponent $_userId", TAG);
-      this
-          ._peerConnectionStateCallback
+      _peerConnectionStateCallback
           .onIceGatheringStateChanged(_userId, state);
     };
 
@@ -121,11 +118,10 @@ class PeerConnection {
       var localSdp = await pc.createOffer();
       pc.setLocalDescription(localSdp);
       log('onRenegotiationNeeded, localSdp.type: ${localSdp.type}', TAG);
-      this._peerConnectionStateCallback.onSendUpdateCall(_userId, localSdp);
+      _peerConnectionStateCallback.onSendUpdateCall(_userId, localSdp);
     };
 
-    await this
-        ._peerConnectionStateCallback
+    await _peerConnectionStateCallback
         .getLocalMediaStream(_userId)
         .then((localMediaStream) {
       setMediaStream(pc, localMediaStream);
@@ -135,7 +131,7 @@ class PeerConnection {
   }
 
   // TODO VT add possibility to use custom servers
-  Map<String, dynamic> _iceServers = {
+  final Map<String, dynamic> _iceServers = {
     'iceServers': [
       {'urls': 'stun:stun.l.google.com:19302'},
       {'urls': 'stun:turn.connectycube.com'},
@@ -169,7 +165,7 @@ class PeerConnection {
 
   void startOffer() {
     _createPeerConnection().then((pc) {
-      this._peerConnection = pc;
+      _peerConnection = pc;
 
       _createOffer(pc);
 
@@ -210,15 +206,13 @@ class PeerConnection {
 
     if (_remoteSdp == null) return;
 
-    if (_peerConnection == null) {
-      _peerConnection = await _createPeerConnection();
-    }
+    _peerConnection ??= await _createPeerConnection();
 
     setRemoteDescription();
 
     await _createAnswer();
 
-    if (this._remoteCandidates.length > 0) {
+    if (_remoteCandidates.isNotEmpty) {
       _remoteCandidates.forEach((candidate) async {
         log("startAnswer, candidate ${candidate!.toMap()}", TAG);
         if (candidate.candidate != null) {
@@ -250,11 +244,11 @@ class PeerConnection {
   }
 
   void _sendOffer(RTCSessionDescription sdp) {
-    this._peerConnectionStateCallback.onSendOffer(_userId, sdp);
+    _peerConnectionStateCallback.onSendOffer(_userId, sdp);
   }
 
   void _sendAnswer(RTCSessionDescription sdp) {
-    this._peerConnectionStateCallback.onSendAnswer(_userId, sdp);
+    _peerConnectionStateCallback.onSendAnswer(_userId, sdp);
   }
 
   void setMediaStream(RTCPeerConnection pc, MediaStream? mediaStream) {
@@ -319,11 +313,11 @@ class PeerConnection {
     return _peerConnection?.senders.then((senders) {
           senders.forEach((sender) async {
             if (sender.track?.kind == 'video') {
-              if (newStream.getVideoTracks().length > 0) {
+              if (newStream.getVideoTracks().isNotEmpty) {
                 await sender.replaceTrack(newStream.getVideoTracks()[0]);
               }
             } else if (sender.track?.kind == 'audio') {
-              if (newStream.getAudioTracks().length > 0) {
+              if (newStream.getAudioTracks().isNotEmpty) {
                 await sender.replaceTrack(newStream.getAudioTracks()[0]);
               }
             }
@@ -370,13 +364,13 @@ class PeerConnection {
           encodings = List.of([RTCRtpEncoding()]);
         }
 
-        encodings.forEach((encoding) {
+        for (var encoding in encodings) {
           if (bandwidth == null || bandwidth == 0) {
             encoding.maxBitrate = null;
           } else {
             encoding.maxBitrate = bandwidth * 1000;
           }
-        });
+        }
 
         parameters.encodings = encodings;
         sender.setParameters(parameters);

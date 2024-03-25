@@ -118,6 +118,8 @@ var mockSkillsets = <Skill>[
 ];
 
 class ProfileStudentScreen extends StatefulWidget {
+  const ProfileStudentScreen({super.key});
+
   @override
   _ProfileStudentScreenState createState() => _ProfileStudentScreenState();
 }
@@ -919,7 +921,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

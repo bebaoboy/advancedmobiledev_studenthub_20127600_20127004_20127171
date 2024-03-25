@@ -49,7 +49,7 @@ class CreateEventQuery extends AutoManagedQuery<List<CubeEvent>> {
 }
 
 class CreateEventParams {
-  Map<String, dynamic> parameters = Map();
+  Map<String, dynamic> parameters = {};
   String? notificationType;
   String? environment;
   String? eventType;

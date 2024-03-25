@@ -52,7 +52,7 @@ Future<bool> hasBackgroundExecutionPermissions() async {
 Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
   if (Platform.isAndroid) {
     var androidInfo = await DeviceInfoPlugin().androidInfo;
-    var sdkInt = androidInfo.version.sdkInt!;
+    var sdkInt = androidInfo.version.sdkInt;
 
     if (sdkInt >= 31) {
       if (sdkInt >= 34) {
@@ -67,35 +67,33 @@ Future<void> checkSystemAlertWindowPermission(BuildContext context) async {
         showDialog(
           context: context,
           builder: (BuildContext context) {
-            return Expanded(
-              child: AlertDialog(
-                title: Text(Lang.get('permission_required')),
-                content: const Text(
-                    // 'For accepting the calls in the background you should provide access to show System Alerts from the background. Would you like to do it now?'),
-                    "Please allow to display on screen for calling notificaiton"),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text(
-                      'Later',
-                    ),
+            return AlertDialog(
+              title: Text(Lang.get('permission_required')),
+              content: const Text(
+                  // 'For accepting the calls in the background you should provide access to show System Alerts from the background. Would you like to do it now?'),
+                  "Please allow to display on screen for calling notificaiton"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text(
+                    'Later',
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Permission.systemAlertWindow.request().then((status) {
-                        if (status.isGranted) {
-                          Navigator.of(context).pop();
-                        }
-                      });
-                    },
-                    child: const Text(
-                      'Allow',
-                    ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Permission.systemAlertWindow.request().then((status) {
+                      if (status.isGranted) {
+                        Navigator.of(context).pop();
+                      }
+                    });
+                  },
+                  child: const Text(
+                    'Allow',
                   ),
-                ],
-              ),
+                ),
+              ],
             );
           },
         );

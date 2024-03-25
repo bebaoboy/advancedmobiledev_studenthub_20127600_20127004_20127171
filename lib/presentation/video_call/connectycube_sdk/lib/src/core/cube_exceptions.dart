@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 class ResponseException implements Exception {
   String? _message = "";
 

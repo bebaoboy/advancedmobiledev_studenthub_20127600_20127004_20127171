@@ -137,7 +137,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
             // onStar();
             return false;
           } else {
-            return true;
+            return false;
           }
         },
         secondaryBackground: _DismissibleContainer(
@@ -160,7 +160,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
     } else if (differenceWithToday == 1) {
       createdText = 'Created 1 day ago';
     } else {
-      createdText = 'Created $differenceWithToday days ago';
+      createdText = 'Created $differenceWithToday' + Lang.get('day_ago');
     }
 
     return Padding(
@@ -188,7 +188,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                       widget.project.title,
                       style: Theme.of(context)
                           .textTheme
-                          .bodyText2!
+                          .bodyMedium!
                           .copyWith(color: Colors.green.shade400),
                     ),
                     Text(createdText,
@@ -196,12 +196,12 @@ class _MyProjectItemState extends State<MyProjectItem> {
                             .textTheme
                             .labelSmall!
                             .copyWith(fontWeight: FontWeight.w200)),
-                    Container(
+                    SizedBox(
                       width: width * 8,
                       child: AutoSizeText(widget.project.description,
                           maxLines: 5,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyText1),
+                          style: Theme.of(context).textTheme.bodyLarge),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -211,11 +211,11 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           children: [
                             Text(
                               (widget.project.proposal?.length ?? 0).toString(),
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Text(
                               'Proposals',
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             )
                           ],
                         ),
@@ -225,11 +225,11 @@ class _MyProjectItemState extends State<MyProjectItem> {
                             // Add a message length here
                             Text(
                               (widget.project.messages?.length ?? 0).toString(),
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Text(
                               'Messages',
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             )
                           ],
                         ),
@@ -238,11 +238,11 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           children: [
                             Text(
                               (widget.project.hired?.length ?? 0).toString(),
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Text(
                               'Hired',
-                              style: Theme.of(context).textTheme.bodyText1,
+                              style: Theme.of(context).textTheme.bodyLarge,
                             )
                           ],
                         )

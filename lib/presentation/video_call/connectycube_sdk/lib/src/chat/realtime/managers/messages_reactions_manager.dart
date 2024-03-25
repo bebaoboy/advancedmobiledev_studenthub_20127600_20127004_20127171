@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:collection/collection.dart' show IterableExtension;
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 import '../../models/message_reaction_model.dart';
 import '../extentions.dart';
@@ -9,14 +9,14 @@ import 'messages_manager.dart';
 import '../utils/messages_utils.dart';
 
 class MessagesReactionsManager extends MessagesManager {
-  static Map<Connection, MessagesReactionsManager> _instances = Map();
+  static final Map<Connection, MessagesReactionsManager> _instances = {};
 
   late StreamController<MessageReaction> _reactionsStreamController;
 
   Stream<MessageReaction> get reactionsStream =>
       _reactionsStreamController.stream;
 
-  MessagesReactionsManager._private(Connection connection) : super(connection) {
+  MessagesReactionsManager._private(super.connection) {
     _reactionsStreamController = StreamController.broadcast();
   }
 

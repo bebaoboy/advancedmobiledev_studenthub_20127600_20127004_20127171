@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     });
                   },
             title: Text(Lang.get('profile_question_1_choice_$i'),
-                style: Theme.of(context).textTheme.bodyText1),
+                style: Theme.of(context).textTheme.bodyLarge),
             leading: Radio<CompanySize>(
               value: CompanySize.values[i - 1],
               groupValue: _companySize,
@@ -225,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Lang.get('profile_welcome_title'),
                 style: Theme.of(context)
                     .textTheme
-                    .bodyText1
+                    .bodyLarge
                     ?.copyWith(fontWeight: FontWeight.w600),
               ),
             ),
@@ -235,7 +235,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Center(
               child: Text(
                 Lang.get('profile_common_body'),
-                style: Theme.of(context).textTheme.bodyText1,
+                style: Theme.of(context).textTheme.bodyLarge,
               ),
             ),
             const SizedBox(
@@ -243,7 +243,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Text(
               Lang.get('profile_question_title_1'),
-              style: Theme.of(context).textTheme.bodyText1,
+              style: Theme.of(context).textTheme.bodyLarge,
             ),
             _buildCompanySizeSelection(context),
             _buildCompanyNameField(context),
@@ -265,7 +265,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 // color: Colors.orange,
                 child: Text(
                   Lang.get('continue'),
-                  style: Theme.of(context).textTheme.bodyText1,
+                  style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ),
             ),

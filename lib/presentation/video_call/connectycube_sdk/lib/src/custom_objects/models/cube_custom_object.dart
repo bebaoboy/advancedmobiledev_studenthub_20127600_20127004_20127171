@@ -9,14 +9,14 @@ class CubeCustomObject extends CubeBaseCustomObject {
   dynamic parentId;
   CubeCustomObjectPermissions? permissions;
 
-  CubeCustomObject(String className) : super(className);
+  CubeCustomObject(String super.className);
 
   CubeCustomObject.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    this.id = json.remove('_id');
-    this.userId = json.remove('user_id');
-    this.parentId = json.remove('_parent_id');
-    this.createdAt = json.remove('created_at');
-    this.updatedAt = json.remove('updated_at');
+    id = json.remove('_id');
+    userId = json.remove('user_id');
+    parentId = json.remove('_parent_id');
+    createdAt = json.remove('created_at');
+    updatedAt = json.remove('updated_at');
     var permissions = json.remove('permissions');
     if (permissions != null) {
       this.permissions = CubeCustomObjectPermissions.fromJson(permissions);
@@ -25,6 +25,7 @@ class CubeCustomObject extends CubeBaseCustomObject {
     fields.addAll(json);
   }
 
+  @override
   Map<String, dynamic> toJson() {
     Map<String, dynamic> json = super.toJson();
     if (permissions != null) {

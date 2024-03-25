@@ -37,8 +37,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -229,7 +229,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
-              .caption
+              .bodySmall
               ?.copyWith(color: Colors.orangeAccent, fontSize: 12),
         ),
         onPressed: () {
@@ -335,11 +335,26 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   initCube(context) async {
-    final UserStore _userStore = getIt<UserStore>();
-    var user;
+    final UserStore userStore = getIt<UserStore>();
+    CubeUser user;
 
-    if (_userStore.user != null && _userStore.user!.type != UserType.naught) {
+    if (userStore.user != null && userStore.user!.type != UserType.naught) {
       try {
+        if (CubeChatConnection.instance.currentUser != null &&
+            !userStore.user!.email.contains(
+                CubeChatConnection.instance.currentUser!.login ?? "????")) {
+          print("change user --- LOGING OUT");
+          await SharedPreferences.getInstance().then((preference) async {
+            CallManager.instance.destroy();
+            CubeChatConnection.instance.destroy();
+            await PushNotificationsManager.instance.unsubscribe();
+
+            await SharedPrefs.deleteUserData();
+            await signOut();
+
+            // await userStore.logout();
+          });
+        }
         // CallManager.instance.destroy();
         // CubeChatConnection.instance.destroy();
         // // await PushNotificationsManager.instance.unsubscribe();
@@ -351,9 +366,9 @@ class _LoginScreenState extends State<LoginScreen> {
       // user = _userStore.user!.type == UserType.student
       //     ? utils.users[0]
       //     : utils.users[1];
-      user = _userStore.user!.email == "user@1.com"
+      user = userStore.user!.email == "user1@gmail.com"
           ? utils.users[0]
-          : _userStore.user!.email == "user@2.com"
+          : userStore.user!.email == "user2@gmail.com"
               ? utils.users[1]
               : utils.users[2];
       await createSession(user).then(
@@ -364,11 +379,12 @@ class _LoginScreenState extends State<LoginScreen> {
             SharedPrefs.saveNewUser(cubeUser);
             log(cubeUser.toString(), "BEBAOBOY");
             if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null)
+                CubeChatConnection.instance.currentUser != null) {
               log(
                   (CubeSessionManager.instance.activeSession!.user == null)
                       .toString(),
                   "BEBAOBOY");
+            }
 
             initForegroundService();
             checkSystemAlertWindowPermission(context);
@@ -377,13 +393,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
             await CallManager.instance.init(context);
 
-            await PushNotificationsManager.instance.init();
+            PushNotificationsManager.instance.init();
 
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute2(
                     routeName:
-                        _userStore.isLoggedIn ? Routes.home : Routes.login));
+                        userStore.isLoggedIn ? Routes.home : Routes.login));
           }).catchError((exception) {
             //_processLoginError(exception);
 
@@ -413,7 +429,7 @@ class _LoginScreenState extends State<LoginScreen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

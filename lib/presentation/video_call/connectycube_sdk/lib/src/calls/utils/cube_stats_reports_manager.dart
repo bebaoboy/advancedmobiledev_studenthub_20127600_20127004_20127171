@@ -28,8 +28,8 @@ class CubeStatsReportsManager {
   Stream<CubeVideoBitrateEvent> get videoBitrateStream =>
       _videoBitrateStreamController.stream;
 
-  Map<int, int?> _lastUserTimeStamps = {};
-  Map<int, int?> _lastUserBytesReceived = {};
+  final Map<int, int?> _lastUserTimeStamps = {};
+  final Map<int, int?> _lastUserBytesReceived = {};
 
   init(BaseSession callSession) {
     this.callSession = callSession;
@@ -47,7 +47,7 @@ class CubeStatsReportsManager {
   }
 
   dispose() {
-    this.callSession = null;
+    callSession = null;
     _micLevelStreamController.close();
     _videoBitrateStreamController.close();
 
@@ -56,11 +56,11 @@ class CubeStatsReportsManager {
   }
 
   void calculateMicLevel(CubeStatsReport report) {
-    report.stats.forEach((statsReport) {
+    for (var statsReport in report.stats) {
       var micLevel;
-      var trackId;
-      var trackIdentifier;
-      var statsUserId;
+      String? trackId;
+      String? trackIdentifier;
+      int? statsUserId;
 
       if (statsReport.type == 'inbound-rtp') {
         if (MEDIA_TYPE_AUDIO == statsReport.values['mediaType'] ||
@@ -75,32 +75,22 @@ class CubeStatsReportsManager {
         if (MEDIA_TYPE_AUDIO == statsReport.values['mediaType']) {
           var volume = statsReport.values['audioOutputLevel'];
 
-          if (micLevel == null && volume != null) {
+          if (volume != null) {
             micLevel = int.parse(volume) / MIC_CORRECTION_COEFFICIENT;
-            if (trackId == null) {
-              trackId = statsReport.values['trackId']?.toString();
-            }
+            trackId ??= statsReport.values['trackId']?.toString();
 
-            if (trackIdentifier == null) {
-              trackIdentifier =
-                  statsReport.values['trackIdentifier']?.toString();
-            }
+            trackIdentifier ??= statsReport.values['trackIdentifier']?.toString();
           }
         }
       } else if (statsReport.type == 'media-source') {
         if (MEDIA_TYPE_AUDIO == statsReport.values['kind']) {
           var volume = statsReport.values['audioLevel'];
 
-          if (micLevel == null && volume != null) {
+          if (volume != null) {
             micLevel = double.parse(volume.toString());
-            if (trackId == null) {
-              trackId = statsReport.values['trackId']?.toString();
-            }
+            trackId ??= statsReport.values['trackId']?.toString();
 
-            if (trackIdentifier == null) {
-              trackIdentifier =
-                  statsReport.values['trackIdentifier']?.toString();
-            }
+            trackIdentifier ??= statsReport.values['trackIdentifier']?.toString();
           }
           statsUserId = CubeSessionManager.instance.activeSession?.userId;
         }
@@ -117,15 +107,15 @@ class CubeStatsReportsManager {
               .add(CubeMicLevelEvent(userId, micLevel ?? 0.0));
         }
       }
-    });
+    }
   }
 
   void calculateVideoBitrate(CubeStatsReport report) {
-    report.stats.forEach((statsReport) {
+    for (var statsReport in report.stats) {
       var timeStamp;
-      var finalBytesReceived;
-      var trackId;
-      var trackIdentifier;
+      int finalBytesReceived = 0;
+      String? trackId;
+      String? trackIdentifier;
 
       if (statsReport.type == 'inbound-rtp') {
         if (MEDIA_TYPE_VIDEO == statsReport.values['mediaType'] ||
@@ -141,39 +131,29 @@ class CubeStatsReportsManager {
         if (MEDIA_TYPE_VIDEO == statsReport.values['mediaType']) {
           var bytesReceived = statsReport.values['bytesReceived'];
 
-          if (finalBytesReceived == null && bytesReceived != null) {
+          if (bytesReceived != null) {
             finalBytesReceived = int.parse(bytesReceived.toString());
             timeStamp = statsReport.timestamp.floor();
-            if (trackId == null) {
-              trackId = statsReport.values['trackId']?.toString();
-            }
+            trackId ??= statsReport.values['trackId']?.toString();
 
-            if (trackIdentifier == null) {
-              trackIdentifier =
-                  statsReport.values['trackIdentifier']?.toString();
-            }
+            trackIdentifier ??= statsReport.values['trackIdentifier']?.toString();
           }
         }
       } else if (statsReport.type == 'media-source') {
         if (MEDIA_TYPE_VIDEO == statsReport.values['kind']) {
           var bytesReceived = statsReport.values['bytesReceived'];
 
-          if (finalBytesReceived == null && bytesReceived != null) {
+          if (bytesReceived != null) {
             finalBytesReceived = int.parse(bytesReceived.toString());
             timeStamp = statsReport.timestamp.floor();
-            if (trackId == null) {
-              trackId = statsReport.values['trackId']?.toString();
-            }
+            trackId ??= statsReport.values['trackId']?.toString();
 
-            if (trackIdentifier == null) {
-              trackIdentifier =
-                  statsReport.values['trackIdentifier']?.toString();
-            }
+            trackIdentifier ??= statsReport.values['trackIdentifier']?.toString();
           }
         }
       } else if (statsReport.type == 'track') {}
 
-      if (finalBytesReceived != null && finalBytesReceived != 0) {
+      if (finalBytesReceived != 0) {
         var userId = trackId == null && trackIdentifier == null
             ? report.userId
             : callSession?.getUserIdForStream(
@@ -193,7 +173,7 @@ class CubeStatsReportsManager {
           } else if (finalBytesReceived >= previousBytesReceived) {
             var timePassed = timeStamp - previousTimestamp;
 
-            var bitRate;
+            int bitRate;
 
             try {
               bitRate = (((finalBytesReceived - previousBytesReceived) * 8) /
@@ -212,7 +192,7 @@ class CubeStatsReportsManager {
           }
         }
       }
-    });
+    }
   }
 }
 

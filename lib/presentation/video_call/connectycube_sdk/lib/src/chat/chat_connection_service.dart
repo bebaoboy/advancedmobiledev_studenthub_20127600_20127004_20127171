@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
-import 'package:xmpp_stone/xmpp_stone.dart' as xmpp;
-import 'package:xmpp_stone/src/elements/stanzas/IqStanza.dart';
-import 'package:xmpp_stone/src/features/ConnectionNegotatiorManager.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart' as xmpp;
+import 'package:boilerplate/core/widgets/xmpp/elements/stanzas/IqStanza.dart';
+import 'package:boilerplate/core/widgets/xmpp/features/ConnectionNegotatiorManager.dart';
 
 import '../../connectycube_core.dart';
 
@@ -31,7 +31,7 @@ class CubeChatConnection {
   static CubeChatConnection get instance => _singleton;
 
   // ignore: non_constant_identifier_names
-  static final String TAG = "CubeChatConnection";
+  static const String TAG = "CubeChatConnection";
 
   CubeUser? _currentUser;
 
@@ -65,7 +65,7 @@ class CubeChatConnection {
 
   CubeChatConnectionState get chatConnectionState => _chatConnectionState;
 
-  StreamController<CubeChatConnectionState> _connectionStateStreamController =
+  final StreamController<CubeChatConnectionState> _connectionStateStreamController =
       StreamController.broadcast();
 
   Stream<CubeChatConnectionState> get connectionStateStream {
@@ -398,7 +398,7 @@ class CubeChatConnection {
   }
 
   Stream<LastActivitySubscriptionEvent>? get lastActivityStream =>
-      lastActivityManager?.lastActivityStream ?? null;
+      lastActivityManager?.lastActivityStream;
 
   Future<void> markInactive() {
     return _enableMobileOptimisation(true);

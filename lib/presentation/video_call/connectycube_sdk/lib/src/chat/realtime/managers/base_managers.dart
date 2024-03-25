@@ -1,7 +1,7 @@
-import 'package:xmpp_stone/xmpp_stone.dart';
+import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';
 
 abstract class Manager {
-  Connection _chatConnection;
+  final Connection _chatConnection;
 
   Manager(this._chatConnection);
 

@@ -6,7 +6,7 @@ import '../../rest/request/rest_request.dart';
 import '../../utils/consts.dart';
 
 class CreateUserQuery extends AutoManagedQuery<CubeUser> {
-  CubeUser _user;
+  final CubeUser _user;
 
   CreateUserQuery(this._user);
 

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/constants/strings.dart';
 import 'package:boilerplate/core/widgets/animated_theme_app.dart';
@@ -9,6 +11,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -18,14 +21,34 @@ class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  // Create your store as a final variable in a base Widget. This works better
-  // with Hot Reload than creating it directly in the `build` function.
-  final ThemeStore _themeStore = getIt<ThemeStore>();
-  final LanguageStore _languageStore = getIt<LanguageStore>();
-
+class MyApp extends StatefulWidget {
   MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  // This widget is the root of your application.
+  final ThemeStore _themeStore = getIt<ThemeStore>();
+
+  final LanguageStore _languageStore = getIt<LanguageStore>();
+  late final onGenerateRoute;
+  late final builder;
+
+  @override
+  void initState() {
+    onGenerateRoute = (settings) {
+      // print((settings.name ?? "") + settings.arguments.toString());
+      return MaterialPageRoute2(
+          routeName: settings.name ?? Routes.home,
+          arguments: settings.arguments);
+    };
+    builder = (context, child) => Container(
+        color: Theme.of(context).colorScheme.primary,
+        child: SafeArea(child: child ?? const SizedBox()));
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +57,7 @@ class MyApp extends StatelessWidget {
         return AnimatedThemeApp(
           animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
           animationDuration: const Duration(milliseconds: 500),
-          builder: (context, child) => Container(
-              color: Theme.of(context).colorScheme.primary,
-              child: SafeArea(child: child ?? const SizedBox())),
+          builder: builder,
           debugShowCheckedModeBanner: false,
           title: Strings.appName,
           theme: _themeStore.darkMode
@@ -60,12 +81,7 @@ class MyApp extends StatelessWidget {
           ],
           home: const SplashScreen(),
           navigatorKey: NavigationService.navigatorKey,
-          onGenerateRoute: (settings) {
-            print((settings.name ?? "") + settings.arguments.toString());
-            return MaterialPageRoute2(
-                routeName: settings.name ?? Routes.home,
-                arguments: settings.arguments);
-          },
+          onGenerateRoute: onGenerateRoute,
         );
       },
     );

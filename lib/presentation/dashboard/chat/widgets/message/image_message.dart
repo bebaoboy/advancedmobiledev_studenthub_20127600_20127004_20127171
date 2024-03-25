@@ -97,7 +97,7 @@ class _ImageMessageState extends State<ImageMessage> {
 
   @override
   Widget build(BuildContext context) {
-    final user = Chat.user;
+    const user = Chat.user;
 
     if (_size.aspectRatio == 0) {
       return Container(
@@ -169,7 +169,7 @@ class _ImageMessageState extends State<ImageMessage> {
     } else {
       return AspectRatio(
         aspectRatio: _size.aspectRatio > 0 ? _size.aspectRatio : 1,
-        child: Container(
+        child: SizedBox(
           height: widget.messageWidth.toDouble(),
           width: 170,
           child: Image(

@@ -69,8 +69,8 @@ class CreateWhiteboardQuery extends AutoManagedQuery<CubeWhiteboard> {
 }
 
 class UpdateWhiteboardQuery extends AutoManagedQuery<CubeWhiteboard> {
-  String _whiteboardId;
-  String _newName;
+  final String _whiteboardId;
+  final String _newName;
 
   UpdateWhiteboardQuery(this._whiteboardId, this._newName);
 
@@ -99,7 +99,7 @@ class UpdateWhiteboardQuery extends AutoManagedQuery<CubeWhiteboard> {
 }
 
 class DeleteWhiteboardQuery extends AutoManagedQuery<void> {
-  String _id;
+  final String _id;
 
   DeleteWhiteboardQuery(this._id);
 

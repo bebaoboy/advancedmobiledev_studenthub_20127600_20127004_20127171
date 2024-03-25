@@ -5,9 +5,9 @@ class CustomObjectPermissionsResult {
   String? recordId;
 
   CustomObjectPermissionsResult.fromJson(Map<String, dynamic> json) {
-    this.permissions =
+    permissions =
         CubeCustomObjectPermissions.fromJson(json['permissions']);
-    this.recordId = json['record_id'];
+    recordId = json['record_id'];
   }
 
   Map<String, dynamic> toJson() {

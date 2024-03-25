@@ -1,7 +1,9 @@
+import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -399,6 +401,7 @@ class NavbarRouter2 extends NavbarRouter {
   /// defaults to the first item in the list of [NavbarItems]
   @override
   final int initialIndex;
+  int lastIndex = 0;
 
   /// Take a look at the [readme](https://github.com/maheshmnj/navbar_router) for more information on how to use this package.
   ///
@@ -409,8 +412,8 @@ class NavbarRouter2 extends NavbarRouter {
   ///
   ///
   ///
-  final PageController pageController;
-  const NavbarRouter2(
+  final IndexController pageController;
+  NavbarRouter2(
       {super.key,
       required this.destinations,
       required this.errorBuilder,
@@ -524,6 +527,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
       clearInitialization();
       initialize(isUpdate: true);
     }
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -561,10 +565,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
         animation: fadeAnimation[index],
         builder: (context, child) {
           //print(index);
-          return IgnorePointer(
-            ignoring: index != NavbarNotifier2.currentIndex,
-            child: Opacity(opacity: fadeAnimation[index].value, child: child),
-          );
+          return Opacity(opacity: fadeAnimation[index].value, child: child);
           // return SlideTransition(
           //   position: Tween<Offset>(
           //     begin: const Offset(-1.0, 0.0),
@@ -626,8 +627,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
           final bool value = widget.onBackButtonPressed!(isExitingApp);
           setState(() {
             // NavbarNotifier2.index = NavbarNotifier2.currentIndex;
-            widget.pageController.jumpToPage(NavbarNotifier2.currentIndex);
-            print("change will pop" + NavbarNotifier2.currentIndex.toString());
+            widget.pageController
+                .move(NavbarNotifier2.currentIndex, animation: false);
+            print("change will pop${NavbarNotifier2.currentIndex}");
             if (widget.onChanged != null) {
               widget.onChanged!(NavbarNotifier2.currentIndex);
             }
@@ -644,16 +646,19 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     /// same duration as [_AnimatedNavbar]'s animation duration
                     duration: const Duration(milliseconds: 500),
                     padding: EdgeInsets.only(left: getPadding()),
-                    child: PageView(
+                    child: TransformerPageView(
+                      index: 1,
+                      duration: Duration(milliseconds: 500),
+                      transformer: DepthPageTransformer(),
+                      itemCount: NavbarNotifier2.length,
                       controller: widget.pageController,
-                      children: [
-                        for (int i = 0; i < NavbarNotifier2.length; i++)
-                          _buildIndexedStackItem(i, context)
-                      ],
+                      itemBuilder:(context, i) => 
+                        _buildIndexedStackItem(i, context)
+                      ,
                       onPageChanged: (value) {
-                        NavbarNotifier2.index = value;
+                        NavbarNotifier2.index = value ?? 0;
                         if (widget.onChanged != null) {
-                          widget.onChanged!(value);
+                          widget.onChanged!(value ?? 0);
                         }
                         _handleFadeAnimation();
                       },
@@ -689,9 +694,13 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             //   widget.onChanged!(x);
                             // }
                             // _handleFadeAnimation();
-                            widget.pageController.animateToPage(x,
-                                duration: const Duration(milliseconds: 500),
-                                curve: Curves.ease);
+                            if ((x - NavbarNotifier2.currentIndex).abs() > 1) {
+                              widget.pageController.move(x, animation: false);
+                            } else {
+                              widget.pageController.move(x);
+                              // duration: const Duration(milliseconds: 500),
+                              // curve: Curves.ease);
+                            }
                           }
                         },
                         menuItems: items),
