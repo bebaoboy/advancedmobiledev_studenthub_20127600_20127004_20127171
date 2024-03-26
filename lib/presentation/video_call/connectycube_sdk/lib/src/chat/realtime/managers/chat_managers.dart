@@ -1,3 +1,5 @@
+// ignore_for_file: collection_methods_unrelated_type
+
 import 'dart:async';
 
 import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';

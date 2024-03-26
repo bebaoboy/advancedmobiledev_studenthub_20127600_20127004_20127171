@@ -64,7 +64,7 @@ class CallEvent {
   }
 
   factory CallEvent.fromMap(Map<String, dynamic> map) {
-    print('[CallEvent.fromMap] map: $map');
+    //print('[CallEvent.fromMap] map: $map');
     return CallEvent(
       sessionId: map['session_id'] as String,
       callType: map['call_type'] as int,

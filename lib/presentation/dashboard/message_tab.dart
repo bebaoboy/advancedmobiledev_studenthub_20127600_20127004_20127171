@@ -82,11 +82,12 @@ class _MessageTabState extends State<MessageTab> {
         Expanded(
           child: ListView.separated(
             itemCount: messages.length,
-            separatorBuilder: (context, index) => const Divider(color: Colors.black),
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.black),
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  print('Tile clicked');
+                  //print('Tile clicked');
                   Navigator.of(NavigationService.navigatorKey.currentContext!)
                       .push(MaterialPageRoute2(
                           routeName: Routes.message,
@@ -96,7 +97,10 @@ class _MessageTabState extends State<MessageTab> {
                 child: ListTile(
                   leading: Icon(
                       messages[index]['icon']), // Replace with actual icons
-                  title: Text(messages[index]['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
+                  title: Text(
+                    messages[index]['name'],
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

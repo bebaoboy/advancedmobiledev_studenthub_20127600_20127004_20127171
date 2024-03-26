@@ -162,7 +162,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  final UserStore _userStore = getIt<UserStore>();
+  // final UserStore _userStore = getIt<UserStore>();
   final ThemeStore _themeStore = getIt<ThemeStore>();
   late AnimationController _controller;
   TextEditingController loadingText = TextEditingController();

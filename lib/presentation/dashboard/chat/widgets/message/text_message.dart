@@ -117,30 +117,28 @@ class TextMessage extends StatelessWidget {
         ? theme.sentEmojiMessageTextStyle
         : theme.receivedEmojiMessageTextStyle;
 
-    return Container(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (showName)
-            nameBuilder?.call(message.author) ??
-                UserName(author: message.author),
-          if (enlargeEmojis)
-            if (options.isTextSelectable)
-              SelectableText(message.text, style: emojiTextStyle)
-            else
-              Text(message.text, style: emojiTextStyle)
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (showName)
+          nameBuilder?.call(message.author) ??
+              UserName(author: message.author),
+        if (enlargeEmojis)
+          if (options.isTextSelectable)
+            SelectableText(message.text, style: emojiTextStyle)
           else
-            TextMessageText(
-              bodyLinkTextStyle: bodyLinkTextStyle,
-              bodyTextStyle: bodyTextStyle,
-              boldTextStyle: boldTextStyle,
-              codeTextStyle: codeTextStyle,
-              options: options,
-              text: message.text,
-              onTapCallback: onTapCallback,
-            ),
-        ],
-      ),
+            Text(message.text, style: emojiTextStyle)
+        else
+          TextMessageText(
+            bodyLinkTextStyle: bodyLinkTextStyle,
+            bodyTextStyle: bodyTextStyle,
+            boldTextStyle: boldTextStyle,
+            codeTextStyle: codeTextStyle,
+            options: options,
+            text: message.text,
+            onTapCallback: onTapCallback,
+          ),
+      ],
     );
   }
 

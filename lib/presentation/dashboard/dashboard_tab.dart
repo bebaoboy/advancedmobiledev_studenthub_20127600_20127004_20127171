@@ -13,7 +13,8 @@ import 'package:boilerplate/utils/routes/routes.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
-  const DashBoardTab({super.key, this.isAlive = true, required this.pageController});
+  const DashBoardTab(
+      {super.key, this.isAlive = true, required this.pageController});
   final bool? isAlive;
   final PageController pageController;
 
@@ -21,8 +22,7 @@ class DashBoardTab extends StatefulWidget {
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
-class _DashBoardTabState extends State<DashBoardTab>
-{
+class _DashBoardTabState extends State<DashBoardTab> {
   // late TabController tabController;
 
   @override
@@ -31,11 +31,11 @@ class _DashBoardTabState extends State<DashBoardTab>
     //tabController = TabController(length: 3, vsync: this);
     // tabController.addListener(() {
     //   if (tabController.index == 2 && tabController.offset > 0) {
-    //     print("right");
+    //     //print("right");
     //     widget.pageController.animateToPage(NavbarNotifier2.currentIndex + 1,
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   } else if (tabController.index == 0 && tabController.offset < -0) {
-    //     print("left");
+    //     //print("left");
     //     widget.pageController.animateToPage(NavbarNotifier2.currentIndex - 1,
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   }
@@ -51,7 +51,7 @@ class _DashBoardTabState extends State<DashBoardTab>
   }
 
   Widget _buildDashBoardContent() {
-    print("rebuild db tab");
+    //print("rebuild db tab");
     return Column(
       children: <Widget>[
         Padding(
@@ -122,8 +122,6 @@ class _DashBoardTabState extends State<DashBoardTab>
     );
   }
 
-  @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => widget.isAlive!;
 }
 
@@ -256,7 +254,7 @@ void showBottomSheet(Project project) {
             child: Text(Lang.get("project_start_working"),
                 style: const TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
-          print(project.title);
+          //print(project.title);
           myProjects
               .firstWhere(
                 (element) => element.objectId == project.objectId,

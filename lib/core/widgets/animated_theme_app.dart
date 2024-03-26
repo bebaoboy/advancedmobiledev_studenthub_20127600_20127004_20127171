@@ -998,8 +998,8 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
         }
 
         if (lastThemeMode != mode && key.currentState != null) {
-          print(lastThemeMode == ThemeMode.light);
-          print(mode == ThemeMode.light);
+          //print(lastThemeMode == ThemeMode.light);
+          //print(mode == ThemeMode.light);
           //key.currentState!.startAnimation();
         }
         if (key.currentState != null) {
@@ -1081,8 +1081,8 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
         break;
       case AnimationType.CIRCULAR_ANIMATED_THEME:
         // Use a light theme, dark theme, or fallback theme.
-        // print("lastThemeMode: " + (lastThemeMode == ThemeMode.dark).toString());
-        // print("themee" +
+        // //print("lastThemeMode: " + (lastThemeMode == ThemeMode.dark).toString());
+        // //print("themee" +
         //     (theme.colorScheme.primary ==
         //             AppThemeData.darkThemeData.colorScheme.primary)
         //         .toString());

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
-import 'package:another_flushbar/flushbar_helper.dart';
+// import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
 import 'package:boilerplate/presentation/setting/widgets/student_account_widget.dart';
@@ -86,19 +86,19 @@ class _SettingScreenState extends State<SettingScreen> {
       height += 75.0;
       if (element.isExpanded) {
         if (element.children.isNotEmpty) {
-          // print(element.name + ": " + height.toString());
+          // //print(element.name + ": " + height.toString());
 
           height += calculateTreeHeight(element.children);
         }
       }
-      print("${element.name}: $height");
+      //print("${element.name}: $height");
     }
     return height;
   }
 
   void calculate(List<Account> list) {
     var h = calculateTreeHeight(accountList);
-    print("TREEEEEEEEHEIGHT: $h");
+    //print("TREEEEEEEEHEIGHT: $h");
     if (h != height) {
       setState(() {
         height = h;
@@ -108,6 +108,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   final sampleTree = TreeNode<Account>.root();
 
+  // ignore: unused_field
   TreeViewController? _controller;
 
   Widget _buildAccountTree() {
@@ -129,7 +130,7 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
             indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {
-              print(item.data!.name);
+              //print(item.data!.name);
               setState(() {
                 item.data!.isExpanded = !item.data!.isExpanded;
                 calculate(accountList);
@@ -168,7 +169,7 @@ class _SettingScreenState extends State<SettingScreen> {
       return CompanyAccountWidget(
         name: account.name,
         onTap: () {
-          print(account.name);
+          //print(account.name);
           setState(() {
             account.isExpanded = !account.isExpanded;
             calculate(accountList);
@@ -261,25 +262,10 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   // General Methods:-----------------------------------------------------------
-  _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('profile_change_error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
-    }
-
-    return const SizedBox.shrink();
-  }
 
   @override
   void dispose() {
-    // TODO: implement dispose
+    // ToDO: implement dispose
     super.dispose();
   }
 }

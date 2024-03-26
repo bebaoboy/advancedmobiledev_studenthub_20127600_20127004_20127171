@@ -140,7 +140,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
-                                    //print(pickedDate);
+                                    ////print(pickedDate);
                                     setState(() {
                                       widget.filter.startDate = pickedDate;
                                       startDate.text = (DateFormat(
@@ -248,7 +248,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                           .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
-                                    //print(pickedDate);
+                                    ////print(pickedDate);
                                     setState(() {
                                       widget.filter.endDate = pickedDate;
                                       endDate.text = (DateFormat(
@@ -608,7 +608,7 @@ class _MessageScreenState extends State<MessageScreen> {
       if (!messages.contains(r)) {
         messages.add(r);
       } else {
-        //print("duplicated id: " + r.id);
+        ////print("duplicated id: " + r.id);
       }
     }
 
@@ -642,7 +642,7 @@ class _MessageScreenState extends State<MessageScreen> {
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: types.Status.delivered,
               metadata: value.toJson()));
-          //print(filter);
+          ////print(filter);
           return value;
         }
       } else {
@@ -669,7 +669,7 @@ class _MessageScreenState extends State<MessageScreen> {
         }
       }
       return null;
-      //print("cancel schedule");
+      ////print("cancel schedule");
     });
   }
 
@@ -702,7 +702,7 @@ class _MessageScreenState extends State<MessageScreen> {
           );
         },
         customMessageBuilder: (p0, {required messageWidth}) {
-          ////print(p0.metadata!["type"]);
+          //////print(p0.metadata!["type"]);
           var t = InterviewSchedule.fromJson(p0.metadata!);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
@@ -726,7 +726,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                 const TextStyle(fontWeight: FontWeight.normal),
                           )),
                       onPressed: (context) async {
-                        //print(scheduleFilter);
+                        ////print(scheduleFilter);
                         await Future.delayed(const Duration(microseconds: 500))
                             .then((value) {
                           showScheduleBottomSheet(_scaffoldKey.currentContext!,
@@ -770,10 +770,9 @@ class _MessageScreenState extends State<MessageScreen> {
               },
               scheduleFilter: InterviewSchedule(
                   isCancel: t.isCancel,
-                  endDate: t.endDate ??
-                      DateTime.now().add(const Duration(hours: 1, minutes: 1)),
-                  startDate: t.startDate ?? DateTime.now(),
-                  title: t.title ?? "New Meeting x"),
+                  endDate: t.endDate,
+                  startDate: t.startDate,
+                  title: t.title),
               message: ScheduleMessageType(
                   author: p0.author, id: p0.id, type: p0.type),
               messageWidth: messageWidth);
@@ -795,7 +794,7 @@ class _MessageScreenState extends State<MessageScreen> {
     return ChatAppBar(
       title: widget.title,
       openScheduleDialog: () async {
-        //print("schedule dialog");
+        ////print("schedule dialog");
         await Future.delayed(const Duration(microseconds: 500)).then((value) {
           showScheduleBottomSheet(_scaffoldKey.currentContext!);
         });

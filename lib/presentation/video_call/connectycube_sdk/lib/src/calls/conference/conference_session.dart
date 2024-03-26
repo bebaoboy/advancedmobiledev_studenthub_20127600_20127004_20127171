@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package, override_on_non_overriding_member, provide_deprecation_message, use_super_parameters, curly_braces_in_flow_control_structures
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -296,7 +298,7 @@ class ConferenceSession
 
   @override
   void onGetOnlineParticipants(Map<int?, bool?> participants) {
-    // TODO: implement onGetOnlineParticipants
+    // ToDO: implement onGetOnlineParticipants
   }
 
   @override
@@ -410,7 +412,7 @@ class ConferenceSession
 
   @override
   void onVideoRoomEvent(String? event) {
-    // TODO: implement onVideoRoomEvent
+    // ToDO: implement onVideoRoomEvent
     logTime("onVideoRoomEvent event= $event", _TAG);
   }
 

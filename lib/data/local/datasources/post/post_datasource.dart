@@ -51,8 +51,7 @@ class PostDataSource {
   }
 
   Future<PostList> getPostsFromDb() async {
-
-    print('Loading from database');
+    //print('Loading from database');
 
     // post list
     var postsList;
@@ -63,14 +62,14 @@ class PostDataSource {
     );
 
     // Making a List<Post> out of List<RecordSnapshot>
-    if(recordSnapshots.isNotEmpty) {
+    if (recordSnapshots.isNotEmpty) {
       postsList = PostList(
           posts: recordSnapshots.map((snapshot) {
-            final post = Post.fromMap(snapshot.value);
-            // An ID is a key of a record from the database.
-            post.id = snapshot.key;
-            return post;
-          }).toList());
+        final post = Post.fromMap(snapshot.value);
+        // An ID is a key of a record from the database.
+        post.id = snapshot.key;
+        return post;
+      }).toList());
     }
 
     return postsList;
@@ -100,5 +99,4 @@ class PostDataSource {
       _sembastClient.database,
     );
   }
-
 }

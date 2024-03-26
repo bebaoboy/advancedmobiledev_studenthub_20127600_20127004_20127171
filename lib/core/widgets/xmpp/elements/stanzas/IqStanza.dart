@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_initializing_formals
+
 import 'package:boilerplate/core/widgets/xmpp/elements/XmppAttribute.dart';
 
 import 'AbstractStanza.dart';

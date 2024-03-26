@@ -81,11 +81,12 @@ class _AlertTabState extends State<AlertTab> {
         Expanded(
           child: ListView.separated(
             itemCount: alerts.length,
-            separatorBuilder: (context, index) => const Divider(color: Colors.black),
+            separatorBuilder: (context, index) =>
+                const Divider(color: Colors.black),
             itemBuilder: (context, index) {
               return GestureDetector(
                 onTap: () {
-                  print('Tile clicked');
+                  //print('Tile clicked');
                   // You can replace the print statement with your function
                 },
                 child: ListTile(
@@ -95,7 +96,7 @@ class _AlertTabState extends State<AlertTab> {
                   trailing: alerts[index]['action'] != null
                       ? ElevatedButton(
                           onPressed: () {
-                            print('${alerts[index]['action']} button clicked');
+                            //print('${alerts[index]['action']} button clicked');
                             if (alerts[index]['action'] != null) {
                               if (alerts[index]['action'] == "Join") {
                                 Navigator.of(NavigationService

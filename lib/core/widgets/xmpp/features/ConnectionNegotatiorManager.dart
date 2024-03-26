@@ -72,7 +72,7 @@ class ConnectionNegotiatorManager {
     if (negotiatorWithData != null) {
       activeNegotiator = negotiatorWithData.negotiator;
       activeNegotiator!.negotiate(negotiatorWithData.supportedNonzas);
-      //TODO: this should be refactored
+      //ToDO: this should be refactored
       if (activeSubscription != null) activeSubscription!.cancel();
       if (activeNegotiator != null) {
         Log.d(TAG, 'ACTIVE FEATURE: ${negotiatorWithData.negotiator}');

@@ -391,14 +391,13 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       //   textController: controller,
       //   onSuffixTap: () {},
       //   onSelected: (project) {
-      //     // print(project.title);
+      //     // //print(project.title);
       //     // setState(() {
       //     //   isSuggestionTapped = true;
       //     // });
       //   },
       //   // initialText:
       //   // readOnly:
-      //   // TODO:
       //   searchTextEditingController: controller,
       //   onSuggestionCallback: (pattern) {
       //     // if (pattern.isEmpty) return [];
@@ -406,7 +405,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       //     //    Duration(milliseconds: 300),
       //     //   () => allProjects.where((product) {
       //     //     final nameLower = product.title.toLowerCase().split(' ').join('');
-      //     //     print(nameLower);
+      //     //     //print(nameLower);
       //     //     final patternLower = pattern.toLowerCase().split(' ').join('');
       //     //     return nameLower.contains(patternLower);
       //     //   }).toList(),
@@ -509,7 +508,7 @@ class _ProjectTabState extends State<ProjectTab> {
       if (value != null) {
         return value;
       }
-      print(filter);
+      //print(filter);
       return null;
     });
   }
@@ -672,7 +671,6 @@ class _ProjectTabState extends State<ProjectTab> {
                     },
                     // initialText:
                     // readOnly:
-                    // TODO:
                     searchTextEditingController: controller,
                     onSuggestionCallback: (pattern) {
                       if (pattern.isEmpty) return [];
@@ -681,7 +679,7 @@ class _ProjectTabState extends State<ProjectTab> {
                         () => allProjects.where((product) {
                           final nameLower =
                               product.title.toLowerCase().split(' ').join('');
-                          print(nameLower);
+                          //print(nameLower);
                           final patternLower =
                               pattern.toLowerCase().split(' ').join('');
                           return nameLower.contains(patternLower);

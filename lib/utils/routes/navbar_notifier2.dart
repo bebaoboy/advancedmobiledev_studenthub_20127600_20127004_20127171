@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -34,7 +36,6 @@ class NavbarNotifier2 extends ChangeNotifier {
     _keys = value;
   }
 
-  
   static void setKey(GlobalKey<NavigatorState> value, int index) {
     _keys[index] = value;
   }
@@ -77,7 +78,7 @@ class NavbarNotifier2 extends ChangeNotifier {
   static FutureOr<bool> onBackButtonPressed(
       {BackButtonBehavior behavior =
           BackButtonBehavior.rememberHistory}) async {
-    print(stackHistory);
+    //print(stackHistory);
     bool exitingApp = true;
     NavigatorState? currentState = _keys[_index!].currentState;
     if (currentState != null && currentState.canPop()) {
@@ -89,7 +90,7 @@ class NavbarNotifier2 extends ChangeNotifier {
           _navbarStackHistory.removeLast();
           _index = _navbarStackHistory.last;
           //index = _index!;
-          print("pop${_index!}");
+          //print("pop${_index!}");
           // _notifyIndexChangeListeners(_index!);
           // _singleton.notify();
           exitingApp = false;

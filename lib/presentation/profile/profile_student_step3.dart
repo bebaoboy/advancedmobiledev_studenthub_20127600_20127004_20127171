@@ -1,9 +1,8 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/constants/assets.dart';
+// import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
@@ -116,21 +115,13 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     );
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
   PlatformFile? _cv;
   PlatformFile? _transcript;
   Map<String, PreviewData?> pd = {};
 
   Widget _buildRightSide() {
-    print(isLinkCv.value);
+    //print(isLinkCv.value);
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       child: Column(
@@ -205,7 +196,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 });
                               },
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.only(bottom: 10),
+                                contentPadding:
+                                    const EdgeInsets.only(bottom: 10),
                                 hintText: Lang.get("profile_project_link"),
                               ),
                               style: const TextStyle(fontSize: 13),
@@ -258,7 +250,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       );
 
                       if (result != null) {
-                        File file = File(result.files.single.path!);
+                        // File file = File(result.files.single.path!);
                         setState(() {
                           _cv = result.files.single;
                         });
@@ -368,7 +360,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 });
                               },
                               decoration: InputDecoration(
-                                contentPadding: const EdgeInsets.only(bottom: 10),
+                                contentPadding:
+                                    const EdgeInsets.only(bottom: 10),
                                 hintText: Lang.get("profile_project_link"),
                               ),
                               style: const TextStyle(fontSize: 13),
@@ -421,7 +414,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       );
 
                       if (result != null) {
-                        File file = File(result.files.single.path!);
+                        // File file = File(result.files.single.path!);
                         setState(() {
                           _transcript = result.files.single;
                         });
@@ -535,7 +528,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
+      //print("LOADING = $loading");
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute2(routeName: Routes.home),
           (Route<dynamic> route) => false);

@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package, provide_deprecation_message
+
 import '../../../connectycube_core.dart';
 
 class CubeSubscription extends CubeEntity {

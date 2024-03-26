@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
@@ -53,7 +55,6 @@ class ScheduleMessageType extends types.Message {
   }
 
   @override
-  // TODO: implement props
   List<Object?> get props => [
         author,
         createdAt,
@@ -69,8 +70,18 @@ class ScheduleMessageType extends types.Message {
 
   @override
   Map<String, dynamic> toJson() {
-    // TODO: implement toJson
-    throw UnimplementedError();
+    return {
+      "author": author,
+      "createdAt": createdAt,
+      "id": id,
+      "metadata": metadata,
+      "remoteId": remoteId,
+      "repliedMessage": repliedMessage,
+      "roomId": roomId,
+      "showStatus": showStatus,
+      "status": status,
+      "updatedAt": updatedAt,
+    };
   }
 }
 
@@ -264,7 +275,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.35,
                         child: AutoSizeText(
-                          widget.scheduleFilter.title ?? "Untitled",
+                          widget.scheduleFilter.title,
                           maxLines: 3,
                           overflow: TextOverflow.ellipsis,
                           minFontSize: 12,
@@ -320,7 +331,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             textColor: Theme.of(context).colorScheme.primary,
                             borderColor: Theme.of(context).colorScheme.primary,
                             onPressed: () {
-                              print("hey");
+                              //print("hey");
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => SelectOpponentsScreen(
                                     CubeSessionManager

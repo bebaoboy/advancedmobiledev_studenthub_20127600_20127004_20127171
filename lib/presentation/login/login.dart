@@ -321,7 +321,7 @@ class _LoginScreenState extends State<LoginScreen> {
         prefs.setBool(Preferences.is_logged_in, true);
       });
       Future.delayed(const Duration(milliseconds: 10), () async {
-        // print("LOADING = $loading");
+        // //print("LOADING = $loading");
         log("login", "BEBAOBOY");
         await initCube(NavigationService.navigatorKey.currentContext);
 
@@ -343,7 +343,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (CubeChatConnection.instance.currentUser != null &&
             !userStore.user!.email.contains(
                 CubeChatConnection.instance.currentUser!.login ?? "????")) {
-          print("change user --- LOGING OUT");
+          //print("change user --- LOGING OUT");
           await SharedPreferences.getInstance().then((preference) async {
             CallManager.instance.destroy();
             CubeChatConnection.instance.destroy();

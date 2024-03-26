@@ -13,7 +13,7 @@ class Message {
   String? text;
   DateTime time;
 
-  //TODO: check purpose vs stanza_id
+  //ToDO: check purpose vs stanza_id
   String? _messageId;
   String? _stanzaId;
   String? _threadId;

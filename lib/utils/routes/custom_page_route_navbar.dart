@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields, must_be_immutable
+
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
@@ -564,7 +566,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
         key: ValueKey(keys[index]),
         animation: fadeAnimation[index],
         builder: (context, child) {
-          //print(index);
+          ////print(index);
           return Opacity(opacity: fadeAnimation[index].value, child: child);
           // return SlideTransition(
           //   position: Tween<Offset>(
@@ -629,7 +631,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
             // NavbarNotifier2.index = NavbarNotifier2.currentIndex;
             widget.pageController
                 .move(NavbarNotifier2.currentIndex, animation: false);
-            print("change will pop${NavbarNotifier2.currentIndex}");
+            //print("change will pop${NavbarNotifier2.currentIndex}");
             if (widget.onChanged != null) {
               widget.onChanged!(NavbarNotifier2.currentIndex);
             }
@@ -648,13 +650,12 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     padding: EdgeInsets.only(left: getPadding()),
                     child: TransformerPageView(
                       index: 1,
-                      duration: Duration(milliseconds: 500),
+                      duration: const Duration(milliseconds: 500),
                       transformer: DepthPageTransformer(),
                       itemCount: NavbarNotifier2.length,
                       controller: widget.pageController,
-                      itemBuilder:(context, i) => 
-                        _buildIndexedStackItem(i, context)
-                      ,
+                      itemBuilder: (context, i) =>
+                          _buildIndexedStackItem(i, context),
                       onPageChanged: (value) {
                         NavbarNotifier2.index = value ?? 0;
                         if (widget.onChanged != null) {
@@ -684,7 +685,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             if (widget.onCurrentTabClicked != null && !ok) {
                               setState(() {
                                 widget.onCurrentTabClicked!();
-                                print("tap");
+                                //print("tap");
                                 initialize(i: NavbarNotifier2.currentIndex);
                               });
                             }
@@ -742,7 +743,6 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
             child: FadeTransition(opacity: animation, child: child))
         // ScaleTransition(scale: animation, child: child,),
         // SharedAxisTransition(
-        //   // TODO:
         //   fillColor: Colors.transparent.withOpacity(0),
         //   animation: animation,
         //   secondaryAnimation: secondaryAnimation,

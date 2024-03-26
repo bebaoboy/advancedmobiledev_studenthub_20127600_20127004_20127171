@@ -160,7 +160,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
     } else if (differenceWithToday == 1) {
       createdText = 'Created 1 day ago';
     } else {
-      createdText = 'Created $differenceWithToday' + Lang.get('day_ago');
+      createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     }
 
     return Padding(

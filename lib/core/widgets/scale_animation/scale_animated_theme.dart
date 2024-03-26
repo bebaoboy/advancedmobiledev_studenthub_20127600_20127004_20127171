@@ -55,7 +55,7 @@ class _AnimatedThemeState extends AnimatedWidgetBaseState<ScaleAnimatedTheme> {
 
   @override
   void forEachTween(TweenVisitor<dynamic> visitor) {
-    // TODO(ianh): Use constructor tear-offs when it becomes possible
+    // ToDO(ianh): Use constructor tear-offs when it becomes possible
     _data = visitor(
             _data, widget.data, (dynamic value) => ThemeDataTween(begin: value))
         as ThemeDataTween?;

@@ -52,7 +52,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
               alignment: Alignment.topLeft,
               child: Text(
                 Lang.get("schedule_interview"),
-                style: TextStyle(fontWeight: FontWeight.normal),
+                style: const TextStyle(fontWeight: FontWeight.normal),
               )),
           onPressed: (context) {
             openScheduleDialog();

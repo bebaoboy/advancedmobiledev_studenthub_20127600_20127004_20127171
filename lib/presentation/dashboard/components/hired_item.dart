@@ -74,7 +74,8 @@ class _HiredItemState extends State<HiredItem> {
                 Text(widget.hired.title,
                     style: Theme.of(context).textTheme.bodyLarge),
                 // ToDo: need a field for expertise
-                Text(Lang.get('excellent'), style: Theme.of(context).textTheme.bodyLarge),
+                Text(Lang.get('excellent'),
+                    style: Theme.of(context).textTheme.bodyLarge),
               ],
             ),
             Padding(
@@ -104,7 +105,7 @@ class _HiredItemState extends State<HiredItem> {
                   //     if (isPending) {
                   //       return;
                   //     }
-                  //     print('send a hire notification');
+                  //     //print('send a hire notification');
                   //     showAnimatedDialog(
                   //       context: context,
                   //       barrierDismissible: true,

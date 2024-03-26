@@ -1,3 +1,5 @@
+// ignore_for_file: provide_deprecation_message
+
 import 'package:universal_io/io.dart';
 
 import 'connectycube_core.dart';

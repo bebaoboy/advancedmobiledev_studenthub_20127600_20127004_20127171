@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
@@ -12,7 +14,6 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
-import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
@@ -28,7 +29,7 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen>
     with SingleTickerProviderStateMixin {
-  int _selectedIndex = 1;
+  final int _selectedIndex = 1;
 
   final UserStore _userStore = getIt<UserStore>();
 
@@ -60,44 +61,44 @@ class _DashBoardScreenState extends State<DashBoardScreen>
               pageController: _pageController,
             ))
           : KeepAlivePage(StudentDashBoardTab(pageController: _pageController)),
-      const KeepAlivePage(const MessageTab()),
+      const KeepAlivePage(MessageTab()),
       const KeepAlivePage(AlertTab())
     ];
-          _routes = {
-        0: {
-          '/': KeepAlivePage(ProjectTab(
-            key: PageStorageKey(0),
-            scrollController: ScrollController(),
-          )),
-          Routes.favortieProject: getRoute(Routes.favortieProject, context),
-        },
-        1: {
-          '/': _userStore.user!.type == UserType.company
-              ? KeepAlivePage(DashBoardTab(
-                  key: PageStorageKey(1),
-                  pageController: _pageController,
-                ))
-              : KeepAlivePage(StudentDashBoardTab(
-                  key: PageStorageKey(1), pageController: _pageController)),
-          // Routes.projectDetails: ProjectDetailsPage(
-          //   project: Project(title: 'som', description: 'smm'),
-          // ),
-          // Routes.project_post: getRoute(Routes.project_post),
-        },
-        2: {
-          '/': const KeepAlivePage(const MessageTab(
-            key: PageStorageKey(2),
-          )),
+    _routes = {
+      0: {
+        '/': KeepAlivePage(ProjectTab(
+          key: const PageStorageKey(0),
+          scrollController: ScrollController(),
+        )),
+        Routes.favortieProject: getRoute(Routes.favortieProject, context),
+      },
+      1: {
+        '/': _userStore.user!.type == UserType.company
+            ? KeepAlivePage(DashBoardTab(
+                key: const PageStorageKey(1),
+                pageController: _pageController,
+              ))
+            : KeepAlivePage(StudentDashBoardTab(
+                key: const PageStorageKey(1), pageController: _pageController)),
+        // Routes.projectDetails: ProjectDetailsPage(
+        //   project: Project(title: 'som', description: 'smm'),
+        // ),
+        // Routes.project_post: getRoute(Routes.project_post),
+      },
+      2: {
+        '/': const KeepAlivePage(MessageTab(
+          key: PageStorageKey(2),
+        )),
 
-          // ProfileEdit.route: ProfileEdit(),
-        },
-        3: {
-          '/': const KeepAlivePage(AlertTab(
-            key: PageStorageKey(3),
-          )),
-        },
-      };
-    
+        // ProfileEdit.route: ProfileEdit(),
+      },
+      3: {
+        '/': const KeepAlivePage(AlertTab(
+          key: PageStorageKey(3),
+        )),
+      },
+    };
+
     super.initState();
   }
 
@@ -107,11 +108,11 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   //   });
   // }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  // void _onItemTapped(int index) {
+  //   setState(() {
+  //     _selectedIndex = index;
+  //   });
+  // }
 
   List<Widget> childs = [];
   List<NavbarItem> items = [];
@@ -130,7 +131,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     Colors.pink
   ];
   int selectedIndex = 0;
-  bool _colorful = false;
+  final bool _colorful = false;
   void onButtonPressed(int index) {
     if (index == selectedIndex) {
       if (index == 1) {
@@ -154,21 +155,20 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   double pageValue = 0;
   //scale factor
-  double _scaleFactor = .8;
+  final double _scaleFactor = .8;
   //view page height
-  double _height = 230.0;
+  final double _height = 230.0;
 
   @override
   void didUpdateWidget(covariant DashBoardScreen oldWidget) {
-    // TODO: implement didUpdateWidget
     if (lastLocale != _languageStore.locale) {
-      print("change locale");
+      //print("change locale");
       lastLocale = _languageStore.locale;
 
       _routes = {
         0: {
           '/': KeepAlivePage(ProjectTab(
-            key: PageStorageKey(0),
+            key: const PageStorageKey(0),
             scrollController: ScrollController(),
           )),
           Routes.favortieProject: getRoute(Routes.favortieProject, context),
@@ -176,18 +176,18 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         1: {
           '/': _userStore.user!.type == UserType.company
               ? KeepAlivePage(DashBoardTab(
-                  key: PageStorageKey(1),
+                  key: const PageStorageKey(1),
                   pageController: _pageController,
                 ))
               : KeepAlivePage(StudentDashBoardTab(
-                  key: PageStorageKey(1), pageController: _pageController)),
+                  key: const PageStorageKey(1), pageController: _pageController)),
           // Routes.projectDetails: ProjectDetailsPage(
           //   project: Project(title: 'som', description: 'smm'),
           // ),
           // Routes.project_post: getRoute(Routes.project_post),
         },
         2: {
-          '/': const KeepAlivePage(const MessageTab(
+          '/': const KeepAlivePage(MessageTab(
             key: PageStorageKey(2),
           )),
 
@@ -199,14 +199,13 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           )),
         },
       };
-    
     }
     super.didUpdateWidget(oldWidget);
   }
 
   @override
   Widget build(BuildContext context) {
-    print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
+    //print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
     items = [
       NavbarItem(
         Icons.business,
@@ -411,9 +410,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         },
         onCurrentTabClicked: () {
           setState(() {
-            allProjects.forEach((element) {
+            for (var element in allProjects) {
               element.isLoading = true;
-            });
+            }
           });
         },
         onChanged: (p0) {
@@ -471,7 +470,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 }
 
 class KeepAlivePage extends StatefulWidget {
-  const KeepAlivePage(this.child);
+  const KeepAlivePage(this.child, {super.key});
   final Widget child;
 
   @override

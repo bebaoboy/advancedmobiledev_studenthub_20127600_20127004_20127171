@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters
+
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:universal_io/io.dart';
 

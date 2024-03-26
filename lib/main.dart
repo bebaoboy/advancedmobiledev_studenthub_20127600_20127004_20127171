@@ -23,7 +23,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
   log('[onMessage] background message: ${message.data}', "bebaoboy");
-  //print("Handling a background message: ${message.messageId}");
+  ////print("Handling a background message: ${message.messageId}");
 }
 
 Future<void> main() async {
@@ -60,7 +60,7 @@ Future<void> main() async {
 
   await initConnectycube();
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 Future<void> setPreferredOrientations() {

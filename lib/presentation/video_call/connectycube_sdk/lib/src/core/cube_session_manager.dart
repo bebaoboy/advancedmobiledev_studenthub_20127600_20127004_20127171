@@ -1,3 +1,5 @@
+// ignore_for_file: provide_deprecation_message, unnecessary_getters_setters
+
 import 'auth/models/cube_session.dart';
 
 class CubeSessionManager {

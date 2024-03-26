@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, no_logic_in_create_state
+
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -365,32 +367,30 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   Widget _buildPrivateCallLayout(Orientation orientation) {
-    return Container(
-      child: Stack(children: [
-        if (primaryRenderer != null) _buildPrimaryVideoView(orientation),
-        if (minorRenderers.isNotEmpty)
-          Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: orientation == Orientation.portrait
-                    ? EdgeInsets.only(
-                        top: MediaQuery.of(context).padding.top + 10,
-                        right: MediaQuery.of(context).padding.right + 10)
-                    : EdgeInsets.only(
-                        right: MediaQuery.of(context).padding.right + 10,
-                        top: MediaQuery.of(context).padding.top + 10),
-                child: buildItems(
-                        minorRenderers,
-                        orientation == Orientation.portrait
-                            ? MediaQuery.of(context).size.width / 3
-                            : MediaQuery.of(context).size.width / 4,
-                        orientation == Orientation.portrait
-                            ? MediaQuery.of(context).size.height / 4
-                            : MediaQuery.of(context).size.height / 2.5)
-                    .first,
-              ))
-      ]),
-    );
+    return Stack(children: [
+      if (primaryRenderer != null) _buildPrimaryVideoView(orientation),
+      if (minorRenderers.isNotEmpty)
+        Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: orientation == Orientation.portrait
+                  ? EdgeInsets.only(
+                      top: MediaQuery.of(context).padding.top + 10,
+                      right: MediaQuery.of(context).padding.right + 10)
+                  : EdgeInsets.only(
+                      right: MediaQuery.of(context).padding.right + 10,
+                      top: MediaQuery.of(context).padding.top + 10),
+              child: buildItems(
+                      minorRenderers,
+                      orientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.width / 3
+                          : MediaQuery.of(context).size.width / 4,
+                      orientation == Orientation.portrait
+                          ? MediaQuery.of(context).size.height / 4
+                          : MediaQuery.of(context).size.height / 2.5)
+                  .first,
+            ))
+    ]);
   }
 
   List<Widget> renderGroupCallViews(Orientation orientation) {
@@ -1069,7 +1069,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
         })
       ]);
       // CallManager.instance.remoteStreams
-      //     .clear(); //TODO VT check concurrency issue
+      //     .clear(); //ToDO VT check concurrency issue
     }
 
     createLocalRenderer() {

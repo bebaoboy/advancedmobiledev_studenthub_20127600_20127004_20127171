@@ -121,68 +121,62 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             fit: FlexFit.loose,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-              child: Container(
-                // height: MediaQuery.of(context).size.height *
-                // (MediaQuery.of(context).orientation == Orientation.landscape
-                //     ? 1.4
-                //     : 0.5),
-                child: Column(
-                  children: [
-                    AutoSizeText(
-                      Lang.get('forget_password_main_text'),
-                      style: const TextStyle(
-                          fontSize: 15, fontWeight: FontWeight.w800),
-                      minFontSize: 10,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+              child: Column(
+                children: [
+                  AutoSizeText(
+                    Lang.get('forget_password_main_text'),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800),
+                    minFontSize: 10,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 14.0),
+              
+                  AutoSizeText(
+                    Lang.get('forget_password_main_text2'),
+                    style: const TextStyle(
+                      fontSize: 13,
                     ),
-                    const SizedBox(height: 14.0),
-
-                    AutoSizeText(
-                      Lang.get('forget_password_main_text2'),
-                      style: const TextStyle(
-                        fontSize: 13,
-                      ),
-                      minFontSize: 8,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
+                    minFontSize: 8,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                  ),
+                  // Image.asset(
+                  //   'assets/images/img_login.png',
+                  //   scale: 1.2,
+                  // ),
+                  const SizedBox(height: 44.0),
+                  // Expanded(child: _buildUserIdField()),
+                  _buildUserIdField(),
+                  // _buildPasswordField(),
+                  // _buildForgotPasswordButton(),
+                  const SizedBox(height: 44.0),
+                  _buildSignInButton(),
+                  RichText(
+                    text: TextSpan(
+                      text: Lang.get('signup_sign_up_prompt'),
+                      style: TextStyle(
+                          fontSize: 18,
+                          color: _themeStore.darkMode
+                              ? Colors.white
+                              : Colors.black),
+                      children: <TextSpan>[
+                        TextSpan(
+                            text:
+                                " ${Lang.get('signup_sign_up_prompt_action')}",
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.w600),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.of(context).pop();
+                              }),
+                      ],
                     ),
-                    // Image.asset(
-                    //   'assets/images/img_login.png',
-                    //   scale: 1.2,
-                    // ),
-                    const SizedBox(height: 44.0),
-                    // Expanded(child: _buildUserIdField()),
-                    _buildUserIdField(),
-                    // _buildPasswordField(),
-                    // _buildForgotPasswordButton(),
-                    const SizedBox(height: 44.0),
-                    _buildSignInButton(),
-                    RichText(
-                      text: TextSpan(
-                        text: Lang.get('signup_sign_up_prompt'),
-                        style: TextStyle(
-                            fontSize: 18,
-                            color: _themeStore.darkMode
-                                ? Colors.white
-                                : Colors.black),
-                        children: <TextSpan>[
-                          TextSpan(
-                              text:
-                                  " ${Lang.get('signup_sign_up_prompt_action')}",
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w600),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.of(context).pop();
-                                }),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -229,44 +223,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     );
   }
 
-  Widget _buildPasswordField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint: Lang.get('login_et_user_password'),
-          isObscure: true,
-          padding: const EdgeInsets.only(top: 16.0),
-          icon: Icons.lock,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordController,
-          focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null
-              ? null
-              : Lang.get(_formStore.formErrorStore.password),
-          onChanged: (value) {
-            _formStore.setPassword(_passwordController.text);
-          },
-        );
-      },
-    );
-  }
 
-  Widget _buildForgotPasswordButton() {
-    return Align(
-      alignment: FractionalOffset.centerRight,
-      child: MaterialButton(
-        padding: const EdgeInsets.all(0.0),
-        child: Text(
-          Lang.get('login_btn_forgot_password'),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: Colors.orangeAccent),
-        ),
-        onPressed: () {},
-      ),
-    );
-  }
 
   Widget _buildSignInButton() {
     return Container(
@@ -280,7 +237,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
             loading = true;
           });
           await Future.delayed(const Duration(seconds: 2), () {
-            print("LOADING = $loading");
+            //print("LOADING = $loading");
             loading = false;
             Navigator.of(context).pushReplacement(
                 MaterialPageRoute2(routeName: Routes.forgetPasswordSent));
@@ -301,29 +258,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('login_btn_sign_up'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            // if (_formStore.canForgetPassword) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
 
   Widget navigate(BuildContext context) {
     // SharedPreferences.getInstance().then((prefs) {

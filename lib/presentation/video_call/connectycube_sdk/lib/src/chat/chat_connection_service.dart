@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -57,7 +59,7 @@ class CubeChatConnection {
   xmpp.RosterManager? _rosterManager;
   xmpp.MessageHandler? _messageHandler;
   xmpp.PresenceManager? _presenceManager;
-  xmpp.VCardManager? _vCardManager;
+  // xmpp.VCardManager? _vCardManager;
 
   CubeChatConnectionState _chatConnectionState = CubeChatConnectionState.Idle;
 
@@ -65,8 +67,8 @@ class CubeChatConnection {
 
   CubeChatConnectionState get chatConnectionState => _chatConnectionState;
 
-  final StreamController<CubeChatConnectionState> _connectionStateStreamController =
-      StreamController.broadcast();
+  final StreamController<CubeChatConnectionState>
+      _connectionStateStreamController = StreamController.broadcast();
 
   Stream<CubeChatConnectionState> get connectionStateStream {
     return _connectionStateStreamController.stream;
@@ -138,7 +140,7 @@ class CubeChatConnection {
 
 //    _rosterManager.addRosterItem(xmpp.Buddy(receiverJid)).then((result) {
 //      if (result.description != null) {
-//        print("add roster" + result.description);
+//        //print("add roster" + result.description);
 //      }
 //    });
   }
@@ -147,27 +149,27 @@ class CubeChatConnection {
     _presenceManager = xmpp.PresenceManager.getInstance(connection);
     _presenceManager!.subscriptionStream.listen((streamEvent) {
 //      if (streamEvent.type == xmpp.SubscriptionEventType.REQUEST) {
-//        print("Accepting presence request");
+//        //print("Accepting presence request");
 //        presenceManager.acceptSubscription(streamEvent.jid);
 //      }
     });
   }
 
   void _initVCardManager(xmpp.Connection connection) {
-    _vCardManager = xmpp.VCardManager(connection);
+    // _vCardManager = xmpp.VCardManager(connection);
 //    _vCardManager.getSelfVCard().then((vCard) {
 //      if (vCard != null) {
-//        print("Your info" + vCard.buildXmlString());
+//        //print("Your info" + vCard.buildXmlString());
 //      }
 //    });
 
 //    _vCardManager.getVCardFor(receiverJid).then((vCard) {
 //      if (vCard != null) {
-//        print("Receiver info" + vCard.buildXmlString());
+//        //print("Receiver info" + vCard.buildXmlString());
 //        if (vCard != null && vCard.image != null) {
 ////            var file = File('test456789.jpg')
 ////              ..writeAsBytesSync(image.encodeJpg(vCard.image));
-////            print("IMAGE SAVED TO: ${file.path}");
+////            //print("IMAGE SAVED TO: ${file.path}");
 //        }
 //      }
 //    });
@@ -340,7 +342,7 @@ class CubeChatConnection {
     _rosterManager = null;
     _messageHandler = null;
     _presenceManager = null;
-    _vCardManager = null;
+    // _vCardManager = null;
 
     _closeManagerStreams(_privateChatManager);
     _closeManagerStreams(_groupChatManager);
