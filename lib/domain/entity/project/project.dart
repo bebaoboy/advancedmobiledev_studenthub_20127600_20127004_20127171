@@ -1,9 +1,13 @@
+// ignore_for_file: overridden_fields
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
   String objectId = const Uuid().v4();
-  MyObject({required this.objectId});
+  MyObject({objectId}) {
+    this.objectId = const Uuid().v4();
+  }
 }
 
 // ------------------- STUDENT PROFILE ------------------------------
@@ -99,7 +103,7 @@ class ProjectExperience extends MyObject {
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class UserObject extends MyObject {
-  UserObject({super.objectId = ""});
+  UserObject();
 }
 
 class Student extends UserObject {
@@ -426,7 +430,8 @@ class InterviewSchedule extends MyObject {
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = json["isCancel"] ?? false, super(objectId: "");
+        isCancel = json["isCancel"] ?? false,
+        super(objectId: "");
 
   Map<String, dynamic> toJson() => {
         "title": title,

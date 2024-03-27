@@ -80,13 +80,15 @@ class FilePreview {
               ),
               errorWidget: (context, url, error) {
                 changeValue(true, isCV);
-                return Center(child: Padding(
-                  padding: const EdgeInsets.all(13.0),
-                  child: Text(filePath),
-                ),);
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(13.0),
+                    child: Text(filePath),
+                  ),
+                );
               },
               errorListener: (value) {
-                print("error");
+                //print("error");
               },
             );
           } catch (e) {

@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
@@ -135,8 +137,8 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
         isPlaying = false;
       });
     }
-    print(player.duration);
-    print(player.position);
+    //print(player.duration);
+    //print(player.position);
     player.play();
 
     player.positionStream.listen((duration) {

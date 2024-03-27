@@ -16,7 +16,7 @@ import '../logger/Log.dart';
 class StanzaParser {
   static const TAG = 'StanzaParser';
 
-  //TODO: Improve this!
+  //ToDO: Improve this!
   static AbstractStanza? parseStanza(xml.XmlElement element) {
     AbstractStanza? stanza;
     var id = element.getAttribute('id');

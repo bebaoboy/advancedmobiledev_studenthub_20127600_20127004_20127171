@@ -6,6 +6,7 @@ import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
@@ -162,7 +163,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  final UserStore _userStore = getIt<UserStore>();
+  // final UserStore _userStore = getIt<UserStore>();
   final ThemeStore _themeStore = getIt<ThemeStore>();
   late AnimationController _controller;
   TextEditingController loadingText = TextEditingController();
@@ -206,65 +207,74 @@ class _SplashScreenState extends State<SplashScreen>
           : userStore.user!.email == "user2@gmail.com"
               ? utils.users[1]
               : utils.users[2];
-      await createSession(user).then(
-        (value) async {
-          CubeSessionManager.instance.activeSession = value;
-          loadingText.text =
-              "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
+      Future.delayed(Duration(seconds: 0), () {
+        Future.delayed(Duration(seconds: 1));
+        loadingText.text =
+            "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
+        createSession(user).then(
+          (value) async {
+            CubeSessionManager.instance.activeSession = value;
 
-          await CubeChatConnection.instance.login(user).then((cubeUser) async {
-            SharedPrefs.saveNewUser(cubeUser);
-            log(cubeUser.toString(), "BEBAOBOY");
-            if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null) {
-              log(
-                  (CubeSessionManager.instance.activeSession!.user == null)
-                      .toString(),
-                  "BEBAOBOY");
-            }
+            CallManager.instance.init(context);
 
-            initForegroundService();
-            loadingText.text = "Almost done...";
-            checkSystemAlertWindowPermission(context);
+            CubeChatConnection.instance.login(user).then((cubeUser) async {
+              SharedPrefs.saveNewUser(cubeUser);
+              log(cubeUser.toString(), "BEBAOBOY");
+              if (CubeChatConnection.instance.isAuthenticated() &&
+                  CubeChatConnection.instance.currentUser != null) {
+                log(
+                    (CubeSessionManager.instance.activeSession!.user == null)
+                        .toString(),
+                    "BEBAOBOY");
+                initForegroundService();
+                loadingText.text = "Almost done...";
+                checkSystemAlertWindowPermission(context);
 
-            requestNotificationsPermission();
+                requestNotificationsPermission();
+                PushNotificationsManager.instance.init();
 
-            await CallManager.instance.init(context);
-
-            PushNotificationsManager.instance.init();
-
+                deleteSessionsExceptCurrent()
+                    .then((voidResult) {})
+                    .catchError((error) {});
+              }
+            }).catchError((exception) {
+              //_processLoginError(exception);
+          //     try {
+          //   _controller.stop();
+          // } catch (e) {}
+          //     Navigator.pushReplacement(
+          //         context,
+          //         MaterialPageRoute2(
+          //             routeName:
+          //                 userStore.isLoggedIn ? Routes.home : Routes.login));
+              log(exception.toString(), "BEBAOBOY");
+            });
+          },
+        ).catchError((exception) {
+          //_processLoginError(exception);
+          // try {
+          //   _controller.stop();
+          // } catch (e) {}
+          // Navigator.pushReplacement(
+          //     context,
+          //     MaterialPageRoute2(
+          //         routeName:
+          //             userStore.isLoggedIn ? Routes.home : Routes.login));
+          log(exception.toString(), "BEBAOBOY");
+        });
+        Future.delayed(Duration(seconds: 3), () {
+          try {
             _controller.stop();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        userStore.isLoggedIn ? Routes.home : Routes.login));
-          }).catchError((exception) {
-            //_processLoginError(exception);
-            _controller.stop();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        userStore.isLoggedIn ? Routes.home : Routes.login));
-            log(exception.toString(), "BEBAOBOY");
-          });
-          // _controller.stop();
-        },
-      ).catchError((exception) {
-        //_processLoginError(exception);
-        _controller.stop();
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
-        log(exception.toString(), "BEBAOBOY");
+          } catch (e) {}
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute2(
+                  routeName:
+                      userStore.isLoggedIn ? Routes.home : Routes.login));
+        });
       });
-      deleteSessionsExceptCurrent()
-          .then((voidResult) {})
-          .catchError((error) {});
     } else {
-      user = utils.users[2];
+      // user = utils.users[2];
       Future.delayed(const Duration(seconds: 2), () {
         Navigator.pushReplacement(
             context,
@@ -279,7 +289,7 @@ class _SplashScreenState extends State<SplashScreen>
       _controller.forward().onError(
             (error, stackTrace) => null,
           );
-     // await Future.delayed(const Duration(seconds: 15));
+      // await Future.delayed(const Duration(seconds: 15));
 //      await controller.reverse().orCancel;
     } on TickerCanceled {
       // the animation got canceled, probably because we were disposed
@@ -307,9 +317,7 @@ class _SplashScreenState extends State<SplashScreen>
       backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
       body: FancyBackgroundApp(
         child: GestureDetector(
-          onTap: () {
-            
-          },
+          onTap: () {},
           child: Center(
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),

@@ -4,10 +4,8 @@ import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
-import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -32,7 +30,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
-  final ThemeStore _themeStore = getIt<ThemeStore>();
+  // final ThemeStore _themeStore = getIt<ThemeStore>();
   final FormStore _formStore = getIt<FormStore>();
   final UserStore _userStore = getIt<UserStore>();
 
@@ -157,69 +155,8 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
     );
   }
 
-  Widget _buildUserIdField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint: Lang.get('login_et_user_email'),
-          inputType: TextInputType.emailAddress,
-          icon: Icons.person,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _userEmailController,
-          inputAction: TextInputAction.next,
-          autoFocus: false,
-          onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
-          },
-          onFieldSubmitted: (value) {
-            FocusScope.of(context).requestFocus(_passwordFocusNode);
-          },
-          errorText: _formStore.formErrorStore.userEmail == null
-              ? null
-              : Lang.get(_formStore.formErrorStore.userEmail),
-        );
-      },
-    );
-  }
 
-  Widget _buildPasswordField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint: Lang.get('login_et_user_password'),
-          isObscure: true,
-          padding: const EdgeInsets.only(top: 16.0),
-          icon: Icons.lock,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordController,
-          focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null
-              ? null
-              : Lang.get(_formStore.formErrorStore.password),
-          onChanged: (value) {
-            _formStore.setPassword(_passwordController.text);
-          },
-        );
-      },
-    );
-  }
 
-  Widget _buildForgotPasswordButton() {
-    return Align(
-      alignment: FractionalOffset.centerRight,
-      child: MaterialButton(
-        padding: const EdgeInsets.all(0.0),
-        child: Text(
-          Lang.get('login_btn_forgot_password'),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: Colors.orangeAccent),
-        ),
-        onPressed: () {},
-      ),
-    );
-  }
 
   Widget _buildSignInButton() {
     return Container(
@@ -248,31 +185,6 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
     );
   }
 
-  Widget _buildSignUpButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('login_btn_sign_up'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            Navigator.of(context)
-                .push(MaterialPageRoute2(routeName: Routes.signUp));
-            // if (_formStore.canForgetPasswordSent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
 
   Widget navigate(BuildContext context) {
     SharedPreferences.getInstance().then((prefs) {
@@ -280,7 +192,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
+      //print("LOADING = $loading");
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute2(routeName: Routes.home),
           (Route<dynamic> route) => false);

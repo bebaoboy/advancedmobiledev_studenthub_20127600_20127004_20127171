@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
 import 'package:dio/dio.dart';
@@ -31,8 +33,8 @@ class RetryInterceptor extends Interceptor {
       ..addAll(extra.toExtra());
 
     if (shouldLog) {
-      print(
-          '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
+      //print(
+          // '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
     }
     // We retry with the updated options
     await dio

@@ -131,6 +131,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
         ),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.endToStart) {
+            // TODO: bỏ vô archive
             // if (onStarredInbox) {
             //   return true;
             // }
@@ -160,7 +161,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
     } else if (differenceWithToday == 1) {
       createdText = 'Created 1 day ago';
     } else {
-      createdText = 'Created $differenceWithToday' + Lang.get('day_ago');
+      createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     }
 
     return Padding(

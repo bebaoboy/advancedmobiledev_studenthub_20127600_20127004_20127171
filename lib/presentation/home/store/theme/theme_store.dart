@@ -38,14 +38,19 @@ abstract class _ThemeStore with Store {
 
   // general methods:-----------------------------------------------------------
   Future init() async {
-    var brightness = SchedulerBinding.instance.platformDispatcher.platformBrightness;
-    _darkMode = _repository.isDarkMode || brightness == Brightness.dark;
+    try {
+      var brightness =
+          SchedulerBinding.instance.platformDispatcher.platformBrightness;
+      _darkMode = _repository.isDarkMode || brightness == Brightness.dark;
+    } catch (e) {
+      _darkMode = _repository.isDarkMode;
+    }
   }
 
   bool isPlatformDark(BuildContext context) =>
       MediaQuery.platformBrightnessOf(context) == Brightness.dark;
 
   // dispose:-------------------------------------------------------------------
-  @override
-  dispose() {}
+  // @override
+  // dispose() {}
 }

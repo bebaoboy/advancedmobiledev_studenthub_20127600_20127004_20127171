@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -53,19 +54,56 @@ class _MessageTabState extends State<MessageTab> {
   }
 
   Widget _buildMessageContent() {
-    return Column(
+    return Stack(
       children: <Widget>[
-// <<<<<<< sprint3-demovideocall
-//         Center(
-//             child: RoundedButtonWidget(
-//               buttonColor: Colors.black,
-//           buttonText: "Open Chat",
-//           onPressed: () {
-//             Navigator.of(NavigationService.navigatorKey.currentContext!)
-//                 .push(MaterialPageRoute2(routeName: Routes.message, arguments: "Demo User Name"));
-//           },
-//         )),
-// =======
+        Positioned.fill(
+          top: 0,
+          child: PlaneIndicator(
+            child: Stack(
+              
+              children: [
+
+                Positioned.fill(
+                  top: 80,
+                  child: ListView.separated(
+                  itemCount: messages.length,
+                  separatorBuilder: (context, index) =>
+                      const Divider(color: Colors.black),
+                  itemBuilder: (context, index) {
+                    return InkWell(
+                      onTap: () {
+                        //print('Tile clicked');
+                        Navigator.of(
+                                NavigationService.navigatorKey.currentContext!)
+                            .push(MaterialPageRoute2(
+                                routeName: Routes.message,
+                                arguments: messages[index]['name']));
+                        // You can replace the print statement with your function
+                      },
+                      child: ListTile(
+                        tileColor: Colors.transparent,
+                        leading: Icon(
+                            messages[index]['icon']), // Replace with actual icons
+                        title: Text(
+                          messages[index]['name'],
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(messages[index]['role']),
+                            Text(messages[index]['message']),
+                          ],
+                        ),
+                        trailing: Text(messages[index]['date']),
+                      ),
+                    );
+                  },
+                                ),
+                ),]
+            ),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
@@ -77,37 +115,6 @@ class _MessageTabState extends State<MessageTab> {
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),
               ),
             ),
-          ),
-        ),
-        Expanded(
-          child: ListView.separated(
-            itemCount: messages.length,
-            separatorBuilder: (context, index) => const Divider(color: Colors.black),
-            itemBuilder: (context, index) {
-              return GestureDetector(
-                onTap: () {
-                  print('Tile clicked');
-                  Navigator.of(NavigationService.navigatorKey.currentContext!)
-                      .push(MaterialPageRoute2(
-                          routeName: Routes.message,
-                          arguments: messages[index]['name']));
-                  // You can replace the print statement with your function
-                },
-                child: ListTile(
-                  leading: Icon(
-                      messages[index]['icon']), // Replace with actual icons
-                  title: Text(messages[index]['name'], style: const TextStyle(fontWeight: FontWeight.bold),),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(messages[index]['role']),
-                      Text(messages[index]['message']),
-                    ],
-                  ),
-                  trailing: Text(messages[index]['date']),
-                ),
-              );
-            },
           ),
         ),
       ],

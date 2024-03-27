@@ -16,7 +16,7 @@ class UserRepositoryImpl extends UserRepository {
   // Login:---------------------------------------------------------------------
   @override
   Future<User?> login(LoginParams params) async {
-    print('usertype ${params.userType.toString()}');
+    //print('usertype ${params.userType.toString()}');
     return await Future.delayed(
         const Duration(seconds: 2),
         () => User(
@@ -35,6 +35,6 @@ class UserRepositoryImpl extends UserRepository {
   Future<void> changeUserData(User? user) => _sharedPrefsHelper.saveUser(user);
 
   @override
-  // TODO: implement user
+  // ToDO: implement user
   Future<User> get user => _sharedPrefsHelper.user;
 }

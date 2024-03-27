@@ -1,3 +1,5 @@
+// ignore_for_file: library_prefixes
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -316,7 +318,7 @@ class Connection {
         xmlResponse = xml.XmlElement(xml.XmlName('error'));
       }
 
-      //TODO: Improve parser for children only
+      // ToDO: Improve parser for children only
       xmlResponse!.descendants
           .whereType<xml.XmlElement>()
           .where((element) => startMatcher(element))
@@ -333,7 +335,7 @@ class Connection {
           .forEach((feature) =>
               connectionNegotatiorManager.negotiateFeatureList(feature));
 
-      //TODO: Probably will introduce bugs!!!
+      //ToDO: Probably will introduce bugs!!!
       xmlResponse.childElements
           .where((element) => nonzaMatcher(element))
           .map((xmlElement) => Nonza.parse(xmlElement))

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
@@ -80,7 +79,7 @@ class SearchDropdown extends StatelessWidget {
         );
       },
       onListChanged: (value) {
-        print('changing value to: $value');
+        //print('changing value to: $value');
       },
       validateOnChange: true,
       listValidator: (p0) {
@@ -210,11 +209,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   }
 
   void _onChipTapped(Skill profile) {
-    print('$profile');
+    //print('$profile');
   }
 
   void _onChanged(List<Skill> data) {
-    print('onChanged $data');
+    //print('onChanged $data');
   }
 
   Future<List<Skill>> _findSuggestions(String query) async {
@@ -228,14 +227,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     }
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -903,7 +894,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
+      //print("LOADING = $loading");
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute2(routeName: Routes.home),
           (Route<dynamic> route) => false);

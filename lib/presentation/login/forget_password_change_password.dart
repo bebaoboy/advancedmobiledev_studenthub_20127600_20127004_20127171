@@ -30,7 +30,8 @@ class _ForgetPasswordChangePasswordcreenState
   //text controllers:-----------------------------------------------------------
   final TextEditingController _userEmailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmController = TextEditingController();
+  final TextEditingController _passwordConfirmController =
+      TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -196,30 +197,6 @@ class _ForgetPasswordChangePasswordcreenState
     );
   }
 
-  Widget _buildUserIdField() {
-    return Observer(
-      builder: (context) {
-        return TextFieldWidget(
-          hint: Lang.get('login_et_user_email'),
-          inputType: TextInputType.emailAddress,
-          icon: Icons.person,
-          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _userEmailController,
-          inputAction: TextInputAction.next,
-          autoFocus: false,
-          onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
-          },
-          onFieldSubmitted: (value) {
-            FocusScope.of(context).requestFocus(_passwordFocusNode);
-          },
-          errorText: _formStore.formErrorStore.userEmail == null
-              ? null
-              : Lang.get(_formStore.formErrorStore.userEmail),
-        );
-      },
-    );
-  }
 
   Widget _buildPasswordField() {
     return Observer(
@@ -264,22 +241,6 @@ class _ForgetPasswordChangePasswordcreenState
     );
   }
 
-  Widget _buildForgotPasswordButton() {
-    return Align(
-      alignment: FractionalOffset.centerRight,
-      child: MaterialButton(
-        padding: const EdgeInsets.all(0.0),
-        child: Text(
-          Lang.get('login_btn_forgot_password'),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: Colors.orangeAccent),
-        ),
-        onPressed: () {},
-      ),
-    );
-  }
 
   Widget _buildSignInButton() {
     return Container(
@@ -293,7 +254,7 @@ class _ForgetPasswordChangePasswordcreenState
               loading = true;
             });
             await Future.delayed(const Duration(seconds: 1), () {
-              print("LOADING = $loading");
+              //print("LOADING = $loading");
               loading = false;
               Navigator.of(context).pushReplacement(
                   MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
@@ -311,29 +272,6 @@ class _ForgetPasswordChangePasswordcreenState
     );
   }
 
-  Widget _buildSignUpButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24),
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('forget_password_change_password'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            // if (_formStore.canForgetPassword) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
 
   Widget navigate(BuildContext context) {
     // SharedPreferences.getInstance().then((prefs) {

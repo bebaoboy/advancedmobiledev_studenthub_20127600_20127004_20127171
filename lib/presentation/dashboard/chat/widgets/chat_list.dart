@@ -133,7 +133,7 @@ class _ChatListState extends State<ChatList>
 
   Widget _newMessageBuilder(int index) {
     try {
-      // print(index);
+      // //print(index);
       final item = _oldData[index];
 
       return Container(
@@ -314,8 +314,8 @@ class _ChatListState extends State<ChatList>
                       final newIndex = widget.items.indexWhere(
                         (v) => _valueKeyForItem(v) == key,
                       );
-                      // print("new: ${widget.items.length}" + newIndex.toString());
-                      // print(widget.items.length);
+                      // //print("new: ${widget.items.length}" + newIndex.toString());
+                      // //print(widget.items.length);
                       if (newIndex != -1) {
                         return newIndex;
                       }
@@ -327,7 +327,7 @@ class _ChatListState extends State<ChatList>
                 // itemCount: widget.items.length,
                 key: _listKey,
                 // itemBuilder: (_, index) {
-                //   //print("build item");
+                //   ////print("build item");
 
                 // }
               ),

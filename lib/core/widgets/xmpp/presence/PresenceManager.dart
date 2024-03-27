@@ -167,7 +167,7 @@ class PresenceManager implements PresenceApi {
           _presenceStreamController.add(PresenceData(PresenceShowElement.XA, 'Unavailable', presenceStanza.fromJid));
           break;
         case null:
-          // TODO: Handle this case.
+          // ToDO: Handle this case.
       }
     }
   }
@@ -189,7 +189,7 @@ class PresenceManager implements PresenceApi {
   }
 
   void _handleErrorEvent(PresenceStanza presenceStanza) {
-    //TODO Add more handling
+    //ToDO Add more handling
     var errorEvent = PresenceErrorEvent();
     errorEvent.presenceStanza = presenceStanza;
     var errorTypeString = presenceStanza.getChild('error')?.getAttribute('type')?.value;

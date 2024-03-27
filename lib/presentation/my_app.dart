@@ -11,7 +11,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
+// import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -22,7 +22,7 @@ class NavigationService {
 }
 
 class MyApp extends StatefulWidget {
-  MyApp({super.key});
+  const MyApp({super.key});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     onGenerateRoute = (settings) {
-      // print((settings.name ?? "") + settings.arguments.toString());
+      // //print((settings.name ?? "") + settings.arguments.toString());
       return MaterialPageRoute2(
           routeName: settings.name ?? Routes.home,
           arguments: settings.arguments);

@@ -300,72 +300,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     );
   }
 
-  Widget _buildForgotPasswordButton() {
-    return Align(
-      alignment: FractionalOffset.centerRight,
-      child: MaterialButton(
-        padding: const EdgeInsets.all(0.0),
-        child: Text(
-          Lang.get('login_btn_forgot_password'),
-          style: Theme.of(context)
-              .textTheme
-              .bodySmall
-              ?.copyWith(color: Colors.orangeAccent),
-        ),
-        onPressed: () {},
-      ),
-    );
-  }
 
-  Widget _buildSignInButton() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50),
-      child: RoundedButtonWidget(
-        buttonText: Lang.get('login_btn_sign_in'),
-        buttonColor: Colors.orangeAccent,
-        textColor: Colors.white,
-        onPressed: () async {
-          loading = true;
-          // if (_formStore.canSignUpCompany) {
-          //   DeviceUtils.hideKeyboard(context);
-          //   _userStore.login(
-          //       _userEmailController.text, _passwordController.text);
-          // } else {
-          //   _showErrorMessage(AppLocalizations.of(context)
-          //       .translate('login_error_missing_fields'));
-          // }
-        },
-      ),
-    );
-  }
 
-  Widget _buildFooterText() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 24),
-      child: Row(children: <Widget>[
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-        Text(
-          Lang.get('login_btn_sign_up_prompt'),
-          style: const TextStyle(fontSize: 12),
-        ),
-        Expanded(
-          child: Container(
-              margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-              child: const Divider(
-                color: Colors.black,
-                height: 36,
-              )),
-        ),
-      ]),
-    );
-  }
 
   Widget _buildSignUpCompanyButton() {
     return RoundedButtonWidget(
@@ -393,7 +329,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
+      //print("LOADING = $loading");
       // Navigator.of(context)
       //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
       //       (Route<dynamic> route) => false);

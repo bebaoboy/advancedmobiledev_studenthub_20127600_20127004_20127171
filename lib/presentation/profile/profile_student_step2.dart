@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
@@ -80,7 +79,7 @@ class SearchDropdown extends StatelessWidget {
         );
       },
       onListChanged: (value) {
-        print('changing value to: $value');
+        //print('changing value to: $value');
       },
       validateOnChange: true,
       listValidator: (p0) {
@@ -223,24 +222,24 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
   }
 
   void _onChipTapped(Skill profile) {
-    print('$profile');
+    //print('$profile');
   }
 
   // void onChanged(List<Skill> data, {int? index}) {
-  //   print('onChanged $data');
+  //   //print('onChanged $data');
   //   if (index != null) {
   //     try {
   //       setState(() {
   //         _projects[index!].skills =
   //             data.map((e) => e.name).toList(growable: true);
-  //         print("data: " + data.toString());
+  //         //print("data: " + data.toString());
   //       });
   //     } catch (e) {}
   //   }
   // }
 
   // void _onChanged(List<Skill> data) {
-  //   print('onChanged $data');
+  //   //print('onChanged $data');
   // }
 
   Future<List<Skill>> _findSuggestions(String query) async {
@@ -254,14 +253,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     }
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -603,12 +594,12 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                                       2100));
 
                                                       if (pickedDate != null) {
-                                                        print(
-                                                            pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                        //print(
+                                                            // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                         // String formattedDate =
                                                         //     DateFormat('yyyy-MM-dd')
                                                         //         .format(pickedDate);
-                                                        // print(
+                                                        // //print(
                                                         //     formattedDate); //formatted date output using intl package =>  2021-03-16
                                                         setState(() {
                                                           _projects[index]
@@ -705,12 +696,12 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                                       2100));
 
                                                       if (pickedDate != null) {
-                                                        print(
-                                                            pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                        //print(
+                                                            // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                         // String formattedDate =
                                                         //     DateFormat('yyyy-MM-dd')
                                                         //         .format(pickedDate);
-                                                        // print(
+                                                        // //print(
                                                         //     formattedDate); //formatted date output using intl package =>  2021-03-16
                                                         setState(() {
                                                           _projects[index]
@@ -1207,7 +1198,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
+      //print("LOADING = $loading");
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute2(routeName: Routes.home),
           (Route<dynamic> route) => false);

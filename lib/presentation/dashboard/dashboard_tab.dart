@@ -1,3 +1,5 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
@@ -13,7 +15,8 @@ import 'package:boilerplate/utils/routes/routes.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
-  const DashBoardTab({super.key, this.isAlive = true, required this.pageController});
+  const DashBoardTab(
+      {super.key, this.isAlive = true, required this.pageController});
   final bool? isAlive;
   final PageController pageController;
 
@@ -21,8 +24,7 @@ class DashBoardTab extends StatefulWidget {
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
-class _DashBoardTabState extends State<DashBoardTab>
-{
+class _DashBoardTabState extends State<DashBoardTab> {
   // late TabController tabController;
 
   @override
@@ -31,11 +33,11 @@ class _DashBoardTabState extends State<DashBoardTab>
     //tabController = TabController(length: 3, vsync: this);
     // tabController.addListener(() {
     //   if (tabController.index == 2 && tabController.offset > 0) {
-    //     print("right");
+    //     //print("right");
     //     widget.pageController.animateToPage(NavbarNotifier2.currentIndex + 1,
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   } else if (tabController.index == 0 && tabController.offset < -0) {
-    //     print("left");
+    //     //print("left");
     //     widget.pageController.animateToPage(NavbarNotifier2.currentIndex - 1,
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   }
@@ -51,7 +53,7 @@ class _DashBoardTabState extends State<DashBoardTab>
   }
 
   Widget _buildDashBoardContent() {
-    print("rebuild db tab");
+    //print("rebuild db tab");
     return Column(
       children: <Widget>[
         Padding(
@@ -122,8 +124,6 @@ class _DashBoardTabState extends State<DashBoardTab>
     );
   }
 
-  @override
-  // TODO: implement wantKeepAlive
   bool get wantKeepAlive => widget.isAlive!;
 }
 
@@ -256,7 +256,7 @@ void showBottomSheet(Project project) {
             child: Text(Lang.get("project_start_working"),
                 style: const TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
-          print(project.title);
+          //print(project.title);
           myProjects
               .firstWhere(
                 (element) => element.objectId == project.objectId,
@@ -312,14 +312,34 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
+  
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.projects?.length ?? 0,
-      itemBuilder: (context, index) => MyProjectItem(
-        project: myProjects[index],
-        onShowBottomSheet: showBottomSheet,
-      ),
+    return ImplicitlyAnimatedList<Project>(
+      items: myProjects,
+      areItemsTheSame: (oldItem, newItem) {
+        return oldItem.title == newItem.title &&
+            oldItem.objectId == newItem.objectId;
+      },
+      itemBuilder: (context, animation, item, i) {
+        return SizeFadeTransition(
+            sizeFraction: 0.7,
+            curve: Curves.easeInOut,
+            animation: animation,
+            child: MyProjectItem(
+              project: myProjects[i],
+              onShowBottomSheet: showBottomSheet,
+            ));
+      },
+      removeItemBuilder: (context, animation, oldItem) {
+        return SizeTransition(
+          sizeFactor: animation,
+          child: MyProjectItem(
+            project: oldItem,
+            onShowBottomSheet: showBottomSheet,
+          ),
+        );
+      },
     );
   }
 }

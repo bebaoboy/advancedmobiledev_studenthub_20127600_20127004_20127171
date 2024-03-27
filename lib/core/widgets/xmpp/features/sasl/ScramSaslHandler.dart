@@ -8,7 +8,7 @@ import 'package:crypto/crypto.dart' as crypto;
 import 'package:boilerplate/core/widgets/xmpp/Connection.dart';
 import 'package:boilerplate/core/widgets/xmpp/elements/XmppAttribute.dart';
 import 'package:boilerplate/core/widgets/xmpp/elements/nonzas/Nonza.dart';
-import 'package:unorm_dart/unorm_dart.dart' as unorm;
+// import 'package:unorm_dart/unorm_dart.dart' as unorm;
 import 'package:boilerplate/core/widgets/xmpp/features/sasl/AbstractSaslHandler.dart';
 import 'package:boilerplate/core/widgets/xmpp/features/sasl/SaslAuthenticationFeature.dart';
 
@@ -66,7 +66,7 @@ class ScramSaslHandler implements AbstractSaslHandler {
   }
 
   void sendInitialMessage() {
-    _initialMessage = 'n=${saslEscape(normalize(_username!))},r=$_clientNonce';
+    _initialMessage = 'n=${saslEscape(_username!)},r=$_clientNonce';
     var bytes = utf8.encode('n,,$_initialMessage');
     var message = CryptoUtils.bytesToBase64(bytes, false, false);
     var nonza = Nonza();
@@ -107,9 +107,9 @@ class ScramSaslHandler implements AbstractSaslHandler {
     return input.replaceAll('=', '=2C').replaceAll(',', '=3D');
   }
 
-  static String normalize(String input) {
-    return unorm.nfkd(input);
-  }
+  // static String normalize(String input) {
+  //   return unorm.nfkd(input);
+  // }
 
   static List<String> tokenizeGS2header(var list) {
     return utf8.decode(list).split(',').map((i) => i.trim()).toList();

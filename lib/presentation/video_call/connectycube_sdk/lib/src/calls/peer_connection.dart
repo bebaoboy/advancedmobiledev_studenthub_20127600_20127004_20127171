@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_function_literals_in_foreach_calls
+
 import 'dart:async';
 import 'dart:math';
 
@@ -130,7 +132,7 @@ class PeerConnection {
     return pc;
   }
 
-  // TODO VT add possibility to use custom servers
+  //ToDO VT add possibility to use custom servers
   final Map<String, dynamic> _iceServers = {
     'iceServers': [
       {'urls': 'stun:stun.l.google.com:19302'},

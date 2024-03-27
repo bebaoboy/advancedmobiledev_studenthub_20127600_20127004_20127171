@@ -86,7 +86,7 @@ abstract class _UserStore with Store {
   @action
   Future login(String email, String password) async {
     // TODO change userType to debug company or student
-    // print(UserType.company.name);
+    // //print(UserType.company.name);
     final LoginParams loginParams = LoginParams(
         username: email,
         password: password,
@@ -105,7 +105,7 @@ abstract class _UserStore with Store {
         _user = value;
       }
     }).catchError((e) {
-      print(e);
+      //print(e);
       isLoggedIn = false;
       success = false;
       throw e;

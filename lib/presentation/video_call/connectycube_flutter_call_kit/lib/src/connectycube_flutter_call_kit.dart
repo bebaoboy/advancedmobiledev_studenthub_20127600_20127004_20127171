@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, deprecated_member_use_from_same_package
+
 import 'dart:async';
 import 'dart:ui';
 
@@ -92,6 +94,9 @@ class ConnectycubeFlutterCallKit {
     }
   }
 
+  static CallEventHandler? get onCallRejectedWhenTerminated =>
+      _onCallRejectedWhenTerminated;
+
   /// Set a accept call handler function which is called when the app is in the
   /// background or terminated.
   ///
@@ -145,7 +150,7 @@ class ConnectycubeFlutterCallKit {
 
   static void initEventsHandler() {
     _eventChannel.receiveBroadcastStream().listen((rawData) {
-      print('[initEventsHandler] rawData: $rawData');
+      //print('[initEventsHandler] rawData: $rawData');
       final eventData = Map<String, dynamic>.from(rawData);
 
       _processEvent(eventData);

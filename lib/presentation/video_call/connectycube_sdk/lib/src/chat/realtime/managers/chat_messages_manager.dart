@@ -1,3 +1,5 @@
+// ignore_for_file: library_prefixes
+
 import 'dart:async';
 
 import 'package:boilerplate/core/widgets/xmpp/xmpp_stone.dart';

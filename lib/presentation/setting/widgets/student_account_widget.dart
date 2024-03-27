@@ -18,7 +18,6 @@ class StudentAccountWidget extends StatelessWidget {
       leading: profileIcon,
       title: titleWidget,
       subtitle: subtitleWidget,
-      onTap: (() => print(name)),
     );
   }
 }

@@ -1,21 +1,9 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/presentation/home/store/language/language_store.dart';
-import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
-import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
-import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:material_dialog/material_dialog.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 // class DarkTransition extends StatefulWidget {
 //   const DarkTransition(
@@ -118,7 +106,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //   @override
 //   void didChangeDependencies() {
-//     // TODO: implement didChangeDependencies
 //     super.didChangeDependencies();
 //     _updateRadius();
 //   }
@@ -195,8 +182,8 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
 
 class _MainAppBarState extends State<MainAppBar> {
   //stores:---------------------------------------------------------------------
-  final ThemeStore _themeStore = getIt<ThemeStore>();
-  final LanguageStore _languageStore = getIt<LanguageStore>();
+  // final ThemeStore _themeStore = getIt<ThemeStore>();
+  // final LanguageStore _languageStore = getIt<LanguageStore>();
   bool isDark = false;
 
   Widget _buildProfileButton() {
@@ -210,48 +197,48 @@ class _MainAppBarState extends State<MainAppBar> {
   }
 
   // darkCB() {
-  //   print("dark");
+  //   //print("dark");
   //   setState(() {
   //     isDark = !isDark;
   //   });
   // }
 
-  Widget _buildThemeButton() {
-    return Observer(
-      builder: (context) {
-        return IconButton(
-          onPressed: () async {
-            // if (!isDark) {
-            //   darkCB();
-            //   await Future.delayed(Duration(milliseconds: 200)).then((value) {
-            //     _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-            //   });
-            // } else {
-            //   await _themeStore
-            //       .changeBrightnessToDark(!_themeStore.darkMode)
-            //       .then((value) {
-            //     darkCB();
-            //   });
-            // }
-            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-          },
-          icon: Icon(
-            _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-          ),
-        );
-      },
-    );
-  }
+  // Widget _buildThemeButton() {
+  //   return Observer(
+  //     builder: (context) {
+  //       return IconButton(
+  //         onPressed: () async {
+  //           // if (!isDark) {
+  //           //   darkCB();
+  //           //   await Future.delayed(Duration(milliseconds: 200)).then((value) {
+  //           //     _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+  //           //   });
+  //           // } else {
+  //           //   await _themeStore
+  //           //       .changeBrightnessToDark(!_themeStore.darkMode)
+  //           //       .then((value) {
+  //           //     darkCB();
+  //           //   });
+  //           // }
+  //           _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+  //         },
+  //         icon: Icon(
+  //           _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
+  //         ),
+  //       );
+  //     },
+  //   );
+  // }
 
   Widget _buildLogoutButton() {
-    final UserStore userStore = getIt<UserStore>();
+    // final UserStore userStore = getIt<UserStore>();
 
     return widget.isHomePage
         ? IconButton(
             onPressed: () {
               Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute2(routeName: Routes.login),
-                    (Route<dynamic> route) => false);
+                  MaterialPageRoute2(routeName: Routes.login),
+                  (Route<dynamic> route) => false);
             },
             icon: const Icon(
               Icons.power_settings_new,
@@ -260,73 +247,73 @@ class _MainAppBarState extends State<MainAppBar> {
         : const SizedBox();
   }
 
-  Widget _buildLanguageButton() {
-    return IconButton(
-      onPressed: () {
-        _buildLanguageDialog();
-      },
-      icon: const Icon(
-        Icons.language,
-      ),
-    );
-  }
+  // Widget _buildLanguageButton() {
+  //   return IconButton(
+  //     onPressed: () {
+  //       _buildLanguageDialog();
+  //     },
+  //     icon: const Icon(
+  //       Icons.language,
+  //     ),
+  //   );
+  // }
 
-  _buildLanguageDialog() {
-    _showDialog<String>(
-      context: context,
-      child: MaterialDialog(
-        borderRadius: 5.0,
-        enableFullWidth: true,
-        title: Text(
-          Lang.get('home_tv_choose_language'),
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16.0,
-          ),
-        ),
-        headerColor: Theme.of(context).primaryColor,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        closeButtonColor: Colors.white,
-        enableCloseButton: true,
-        enableBackButton: false,
-        onCloseButtonClicked: () {
-          Navigator.of(context).pop();
-        },
-        children: _languageStore.supportedLanguages
-            .map(
-              (object) => ListTile(
-                dense: true,
-                contentPadding: const EdgeInsets.all(0.0),
-                title: Text(
-                  object.language,
-                  style: TextStyle(
-                    color: _languageStore.locale == object.locale
-                        ? Theme.of(context).primaryColor
-                        : _themeStore.darkMode
-                            ? Colors.white
-                            : Colors.black,
-                  ),
-                ),
-                onTap: () {
-                  Navigator.of(context).pop();
-                  // change user language based on selected locale
-                  _languageStore.changeLanguage(object.locale);
-                },
-              ),
-            )
-            .toList(),
-      ),
-    );
-  }
+  // _buildLanguageDialog() {
+  //   _showDialog<String>(
+  //     context: context,
+  //     child: MaterialDialog(
+  //       borderRadius: 5.0,
+  //       enableFullWidth: true,
+  //       title: Text(
+  //         Lang.get('home_tv_choose_language'),
+  //         style: const TextStyle(
+  //           color: Colors.white,
+  //           fontSize: 16.0,
+  //         ),
+  //       ),
+  //       headerColor: Theme.of(context).primaryColor,
+  //       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+  //       closeButtonColor: Colors.white,
+  //       enableCloseButton: true,
+  //       enableBackButton: false,
+  //       onCloseButtonClicked: () {
+  //         Navigator.of(context).pop();
+  //       },
+  //       children: _languageStore.supportedLanguages
+  //           .map(
+  //             (object) => ListTile(
+  //               dense: true,
+  //               contentPadding: const EdgeInsets.all(0.0),
+  //               title: Text(
+  //                 object.language,
+  //                 style: TextStyle(
+  //                   color: _languageStore.locale == object.locale
+  //                       ? Theme.of(context).primaryColor
+  //                       : _themeStore.darkMode
+  //                           ? Colors.white
+  //                           : Colors.black,
+  //                 ),
+  //               ),
+  //               onTap: () {
+  //                 Navigator.of(context).pop();
+  //                 // change user language based on selected locale
+  //                 _languageStore.changeLanguage(object.locale);
+  //               },
+  //             ),
+  //           )
+  //           .toList(),
+  //     ),
+  //   );
+  // }
 
-  _showDialog<T>({required BuildContext context, required Widget child}) {
-    showDialog<T>(
-      context: context,
-      builder: (BuildContext context) => child,
-    ).then<void>((T? value) {
-      // The value passed to Navigator.pop() or null.
-    });
-  }
+  // _showDialog<T>({required BuildContext context, required Widget child}) {
+  //   showDialog<T>(
+  //     context: context,
+  //     builder: (BuildContext context) => child,
+  //   ).then<void>((T? value) {
+  //     // The value passed to Navigator.pop() or null.
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -344,7 +331,11 @@ class _MainAppBarState extends State<MainAppBar> {
       // ],)),
       title: Container(
           margin: const EdgeInsets.only(left: 20),
-          child: Text(Lang.get('appbar_title'))),
+          child: GestureDetector(onTap: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute2(routeName: Routes.home),
+                  (Route<dynamic> route) => false);
+          }, child: Text(Lang.get('appbar_title')))),
       actions: [
         // _buildLanguageButton(),
         // _buildThemeButton(),

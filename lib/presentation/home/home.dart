@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/presentation/dashboard/what.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -59,6 +60,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: RoundedButtonWidget(
                           onPressed: () {
                             // Handle your action
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (context) => const What(),),
+                            );
                           },
                           buttonText: Lang.get('student'),
                           buttonColor: Theme.of(context).colorScheme.primary,

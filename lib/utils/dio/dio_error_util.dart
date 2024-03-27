@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, unreachable_switch_case
+
 import 'package:dio/dio.dart';
 
 class DioErrorUtil {

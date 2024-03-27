@@ -631,7 +631,7 @@ class ChatState extends State<Chat> {
                           BuildContext context,
                           BoxConstraints constraints,
                         ) {
-                          print("rebuild");
+                          //print("rebuild");
                           return ChatList(
                             bottomWidget: widget.listBottomWidget,
                             bubbleRtlAlignment: widget.bubbleRtlAlignment!,

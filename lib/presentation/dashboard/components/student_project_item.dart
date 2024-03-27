@@ -53,7 +53,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
       } else if (differenceWithToday == 1) {
         submittedText = 'Created 1 day ago';
       } else {
-        submittedText = 'Created $differenceWithToday' + Lang.get('day_ago');
+        submittedText = 'Created $differenceWithToday${Lang.get('day_ago')}';
       }
 
       return Container(
@@ -67,7 +67,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
         child: Card(
           child: InkWell(
             onTap: () {
-              print('navigate to student project detail');
+              //print('navigate to student project detail');
               Navigator.of(NavigationService.navigatorKey.currentContext!)
                   .pushNamed(Routes.projectDetailsStudent,
                       arguments: widget.project);

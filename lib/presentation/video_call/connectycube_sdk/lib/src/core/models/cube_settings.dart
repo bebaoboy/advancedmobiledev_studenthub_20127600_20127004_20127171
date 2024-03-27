@@ -90,7 +90,7 @@ class CubeSettings {
     if (resourceId == null) {
       resourceId = const Uuid().v4();
     } else {
-      resourceId = base64Encode(utf8.encode(resourceId ?? ''));
+      resourceId = base64Encode(utf8.encode(resourceId));
     }
 
     chatDefaultResource = "${PREFIX_CHAT_RESOURCE}_$resourceId";

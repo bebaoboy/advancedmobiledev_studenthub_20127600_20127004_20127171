@@ -1,3 +1,5 @@
+// ignore_for_file: provide_deprecation_message, unnecessary_getters_setters
+
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 class CubeSessionManager {

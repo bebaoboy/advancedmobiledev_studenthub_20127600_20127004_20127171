@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -84,7 +86,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   @override
   void initState() {
     _chips = Set<T>.from(widget.initialChips);
-    print(_chips);
+    //print(_chips);
     super.initState();
     _focusNode.addListener(_onFocusChanged);
   }
@@ -93,7 +95,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     if (_focusNode.hasFocus) {
       _openInputConnection();
     } else {
-      // print("out");
+      // //print("out");
       _closeInputConnectionIfNeeded();
       _suggestions = [];
     }
@@ -266,9 +268,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 }
 
 class _TextCaret extends StatefulWidget {
-  const _TextCaret({
-    this.resumed = false, this.duration = Duration.zero
-  });
+  const _TextCaret({this.resumed = false, this.duration = Duration.zero});
 
   final Duration duration;
   final bool resumed;
