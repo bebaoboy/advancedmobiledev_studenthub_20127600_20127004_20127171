@@ -156,6 +156,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
   }
 
   void _updateImage(ImageInfo info, bool _) {
+    print("add schl image");
     setState(() {
       _size = Size(
         info.image.width.toDouble(),

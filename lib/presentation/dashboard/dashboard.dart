@@ -164,6 +164,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     if (lastLocale != _languageStore.locale) {
       // print("change locale");
       lastLocale = _languageStore.locale;
+      initItems();
       // _routes = [
       //   ..._routes.sublist(0, NavbarNotifier2.currentIndex),
       //   ...List.from(_routes.mapIndexed((i, e) {

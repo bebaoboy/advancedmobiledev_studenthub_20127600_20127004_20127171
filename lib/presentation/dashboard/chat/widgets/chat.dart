@@ -610,7 +610,7 @@ class ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    logg("build chat", "BEBAOBOY");
+    // logg("build chat", "BEBAOBOY");
     return Stack(
       children: [
         Container(

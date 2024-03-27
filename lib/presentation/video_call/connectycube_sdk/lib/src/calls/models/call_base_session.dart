@@ -293,10 +293,13 @@ abstract class BaseSession<C, P extends PeerConnection>
     this.desktopCapturerSource = desktopCapturerSource;
     this.useIOSBroadcasting = useIOSBroadcasting;
     this.requestAudioForScreenSharing = requestAudioForScreenSharing;
-
-    return _createStream(enable).then((mediaStream) {
-      return replaceMediaStream(mediaStream);
-    });
+    try {
+      return _createStream(enable).then((mediaStream) {
+        return replaceMediaStream(mediaStream);
+      });
+    } catch (e) {
+      return Future.value();
+    }
   }
 
   @override

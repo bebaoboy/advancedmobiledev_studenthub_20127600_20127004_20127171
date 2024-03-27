@@ -430,13 +430,13 @@ class InterviewSchedule extends MyObject {
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = json["isCancel"] ?? false,
+        isCancel = bool.tryParse(json["isCancel"] ?? "false") ?? false,
         super(objectId: "");
 
   Map<String, dynamic> toJson() => {
         "title": title,
         "startDate": startDate,
         "endDate": endDate,
-        "isCancel": isCancel,
+        "isCancel": "$isCancel",
       };
 }

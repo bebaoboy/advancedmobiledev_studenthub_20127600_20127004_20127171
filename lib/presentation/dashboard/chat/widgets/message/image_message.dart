@@ -73,6 +73,7 @@ class _ImageMessageState extends State<ImageMessage> {
   }
 
   void _updateImage(ImageInfo info, bool _) {
+    print("update image");
     setState(() {
       _size = Size(
         info.image.width.toDouble(),

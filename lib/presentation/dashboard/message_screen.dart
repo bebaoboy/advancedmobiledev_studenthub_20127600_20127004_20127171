@@ -49,6 +49,44 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             .toString();
   }
 
+  Future<DateTime?> showDateTimePicker({
+    required BuildContext context,
+    DateTime? initialDate,
+    DateTime? firstDate,
+    DateTime? lastDate,
+  }) async {
+    initialDate ??= DateTime.now();
+    firstDate ??= initialDate.subtract(const Duration(days: 365 * 100));
+    lastDate ??= firstDate.add(const Duration(days: 365 * 200));
+
+    final DateTime? selectedDate = await showDatePicker(
+      context: context,
+      initialDatePickerMode: DatePickerMode.day,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+    );
+
+    if (selectedDate == null) return null;
+
+    if (!context.mounted) return selectedDate;
+
+    final TimeOfDay? selectedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    return selectedTime == null
+        ? selectedDate
+        : DateTime(
+            selectedDate.year,
+            selectedDate.month,
+            selectedDate.day,
+            selectedTime.hour,
+            selectedTime.minute,
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScrollableSheet(
@@ -129,15 +167,14 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                           Expanded(
                             child: TextFieldWidget(
                                 onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                      initialDatePickerMode:
-                                          DatePickerMode.year,
-                                      context: context,
-                                      initialDate: widget.filter.startDate,
-                                      firstDate: widget.filter.startDate,
-                                      //DateTime.now() - not to allow to choose before today.
-                                      lastDate: widget.filter.startDate
-                                          .add(const Duration(days: 1)));
+                                  DateTime? pickedDate =
+                                      await showDateTimePicker(
+                                          context: context,
+                                          initialDate: widget.filter.startDate,
+                                          firstDate: widget.filter.startDate,
+                                          //DateTime.now() - not to allow to choose before today.
+                                          lastDate: widget.filter.startDate
+                                              .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     ////print(pickedDate);
@@ -237,15 +274,14 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                           Expanded(
                             child: TextFieldWidget(
                                 onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                      initialDatePickerMode:
-                                          DatePickerMode.year,
-                                      context: context,
-                                      initialDate: widget.filter.endDate,
-                                      firstDate: widget.filter.endDate,
-                                      //DateTime.now() - not to allow to choose before today.
-                                      lastDate: widget.filter.endDate
-                                          .add(const Duration(days: 1)));
+                                  DateTime? pickedDate =
+                                      await showDateTimePicker(
+                                          context: context,
+                                          initialDate: widget.filter.endDate,
+                                          firstDate: widget.filter.endDate,
+                                          //DateTime.now() - not to allow to choose before today.
+                                          lastDate: widget.filter.endDate
+                                              .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     ////print(pickedDate);
@@ -372,13 +408,12 @@ class _MessageScreenState extends State<MessageScreen> {
   final _user = const types.User(
     id: '1',
   );
-  late InterviewSchedule filter;
 
   @override
   void initState() {
     super.initState();
-    filter = InterviewSchedule(
-        endDate: DateTime.now(), startDate: DateTime.now(), title: "");
+    // filter = InterviewSchedule(
+    // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
     _loadMessages();
   }
 
@@ -580,7 +615,7 @@ class _MessageScreenState extends State<MessageScreen> {
     final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
       previewData: previewData,
     );
-
+    print("update");
     setState(() {
       logg("loaded preview");
       _messages[index] = updatedMessage;
@@ -677,10 +712,12 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print("build chat");
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Chat(
+        scrollPhysics: ClampingScrollPhysics(),
         typingIndicatorOptions: const TypingIndicatorOptions(typingUsers: [
           types.User(id: "123", firstName: "Lam", lastName: "Quan")
         ]),
