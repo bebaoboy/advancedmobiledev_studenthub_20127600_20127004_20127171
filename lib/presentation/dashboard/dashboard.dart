@@ -64,15 +64,15 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       const KeepAlivePage(MessageTab()),
       const KeepAlivePage(AlertTab())
     ];
-    _routes = {
-      0: {
+    _routes = [
+      {
         '/': KeepAlivePage(ProjectTab(
           key: const PageStorageKey(0),
           scrollController: ScrollController(),
         )),
         Routes.favortieProject: getRoute(Routes.favortieProject, context),
       },
-      1: {
+      {
         '/': _userStore.user!.type == UserType.company
             ? KeepAlivePage(DashBoardTab(
                 key: const PageStorageKey(1),
@@ -85,19 +85,19 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         // ),
         // Routes.project_post: getRoute(Routes.project_post),
       },
-      2: {
+      {
         '/': const KeepAlivePage(MessageTab(
           key: PageStorageKey(2),
         )),
 
         // ProfileEdit.route: ProfileEdit(),
       },
-      3: {
+      {
         '/': const KeepAlivePage(AlertTab(
           key: PageStorageKey(3),
         )),
       },
-    };
+    ];
 
     super.initState();
   }
@@ -116,7 +116,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   List<Widget> childs = [];
   List<NavbarItem> items = [];
-  Map<int, Map<String, Widget>> _routes = {};
+  List<Map<String, Widget>> _routes = [];
   DateTime oldTime = DateTime.now();
   final _pageController2 = IndexController();
   final _pageController = PageController(initialPage: 1);
@@ -162,50 +162,23 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   @override
   void didUpdateWidget(covariant DashBoardScreen oldWidget) {
     if (lastLocale != _languageStore.locale) {
-      //print("change locale");
+      // print("change locale");
       lastLocale = _languageStore.locale;
-
-      _routes = {
-        0: {
-          '/': KeepAlivePage(ProjectTab(
-            key: const PageStorageKey(0),
-            scrollController: ScrollController(),
-          )),
-          Routes.favortieProject: getRoute(Routes.favortieProject, context),
-        },
-        1: {
-          '/': _userStore.user!.type == UserType.company
-              ? KeepAlivePage(DashBoardTab(
-                  key: const PageStorageKey(1),
-                  pageController: _pageController,
-                ))
-              : KeepAlivePage(StudentDashBoardTab(
-                  key: const PageStorageKey(1), pageController: _pageController)),
-          // Routes.projectDetails: ProjectDetailsPage(
-          //   project: Project(title: 'som', description: 'smm'),
-          // ),
-          // Routes.project_post: getRoute(Routes.project_post),
-        },
-        2: {
-          '/': const KeepAlivePage(MessageTab(
-            key: PageStorageKey(2),
-          )),
-
-          // ProfileEdit.route: ProfileEdit(),
-        },
-        3: {
-          '/': const KeepAlivePage(AlertTab(
-            key: PageStorageKey(3),
-          )),
-        },
-      };
+      // _routes = [
+      //   ..._routes.sublist(0, NavbarNotifier2.currentIndex),
+      //   ...List.from(_routes.mapIndexed((i, e) {
+      //     if (i == NavbarNotifier2.currentIndex) return e;
+      //   })),
+      //   ..._routes.sublist(
+      //       (NavbarNotifier2.currentIndex + 1)
+      //           .clamp(0, NavbarNotifier2.length - 1),
+      //       NavbarNotifier2.length)
+      // ];
     }
     super.didUpdateWidget(oldWidget);
   }
 
-  @override
-  Widget build(BuildContext context) {
-    //print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
+  initItems() {
     items = [
       NavbarItem(
         Icons.business,
@@ -228,6 +201,16 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         backgroundColor: Theme.of(context).colorScheme.onSecondary,
       ),
     ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    //print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
+    if (items.isEmpty || lastLocale != _languageStore.locale) {
+      initItems();
+      // print("change locale");
+      lastLocale = _languageStore.locale;
+    }
 // final Color unselectedColor = colors[currentPage].computeLuminance() < 0.5
     //     ? Colors.black
     //     : Colors.white;
@@ -450,13 +433,13 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             DestinationRouter(
               navbarItem: items[i],
               destinations: [
-                for (int j = 0; j < _routes[i]!.keys.length; j++)
+                for (int j = 0; j < _routes[i].keys.length; j++)
                   Destination(
-                    route: _routes[i]!.keys.elementAt(j),
-                    widget: _routes[i]!.values.elementAt(j),
+                    route: _routes[i].keys.elementAt(j),
+                    widget: _routes[i].values.elementAt(j),
                   ),
               ],
-              initialRoute: _routes[i]!.keys.first,
+              initialRoute: _routes[i].keys.first,
             ),
         ],
       ),

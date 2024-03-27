@@ -331,7 +331,11 @@ class _MainAppBarState extends State<MainAppBar> {
       // ],)),
       title: Container(
           margin: const EdgeInsets.only(left: 20),
-          child: Text(Lang.get('appbar_title'))),
+          child: GestureDetector(onTap: () {
+            Navigator.of(context).pushAndRemoveUntil(
+                  MaterialPageRoute2(routeName: Routes.home),
+                  (Route<dynamic> route) => false);
+          }, child: Text(Lang.get('appbar_title')))),
       actions: [
         // _buildLanguageButton(),
         // _buildThemeButton(),

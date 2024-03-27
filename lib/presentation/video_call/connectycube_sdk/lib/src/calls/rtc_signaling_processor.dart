@@ -27,7 +27,8 @@ class RTCSignalingProcessor {
     _rtcSignalingManager = CubeChatConnection.instance.rtcSignalingManager;
 
     _subscription = _rtcSignalingManager?.signalingMessagesStream
-            .listen(_processSignalingMessage);
+        .listen(_processSignalingMessage);
+    print("");
   }
 
   void dispose() {

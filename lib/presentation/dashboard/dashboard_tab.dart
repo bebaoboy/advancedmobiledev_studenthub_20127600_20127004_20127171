@@ -1,3 +1,5 @@
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
@@ -310,14 +312,34 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
+  
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: widget.projects?.length ?? 0,
-      itemBuilder: (context, index) => MyProjectItem(
-        project: myProjects[index],
-        onShowBottomSheet: showBottomSheet,
-      ),
+    return ImplicitlyAnimatedList<Project>(
+      items: myProjects,
+      areItemsTheSame: (oldItem, newItem) {
+        return oldItem.title == newItem.title &&
+            oldItem.objectId == newItem.objectId;
+      },
+      itemBuilder: (context, animation, item, i) {
+        return SizeFadeTransition(
+            sizeFraction: 0.7,
+            curve: Curves.easeInOut,
+            animation: animation,
+            child: MyProjectItem(
+              project: myProjects[i],
+              onShowBottomSheet: showBottomSheet,
+            ));
+      },
+      removeItemBuilder: (context, animation, oldItem) {
+        return SizeTransition(
+          sizeFactor: animation,
+          child: MyProjectItem(
+            project: oldItem,
+            onShowBottomSheet: showBottomSheet,
+          ),
+        );
+      },
     );
   }
 }

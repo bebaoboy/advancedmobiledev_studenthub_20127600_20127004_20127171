@@ -94,6 +94,9 @@ class ConnectycubeFlutterCallKit {
     }
   }
 
+  static CallEventHandler? get onCallRejectedWhenTerminated =>
+      _onCallRejectedWhenTerminated;
+
   /// Set a accept call handler function which is called when the app is in the
   /// background or terminated.
   ///

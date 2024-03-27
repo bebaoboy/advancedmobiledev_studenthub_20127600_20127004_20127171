@@ -101,8 +101,8 @@ dependencies:
   equatable: ^2.0.5
   visibility_detector: ^0.4.0+2
   flutter_chat_types: 
-  # connectycube_sdk:
-  # connectycube_flutter_call_kit: 
+  connectycube_sdk:
+  connectycube_flutter_call_kit: 
   web_browser_detect: ^2.0.3
   flutter_background: ^1.2.0
   flutter_speed_dial: ^6.2.0
@@ -136,6 +136,12 @@ dependencies:
   cryptoutils: 
   # unorm_dart: 
   vector_math: 
+
+  animated_list_plus:
+  custom_refresh_indicator:
+  draggable_home:
+  rxdart: ^0.27.7
+
 
 dev_dependencies:
   flutter_test:
@@ -172,6 +178,8 @@ flutter:
     - assets/icons/
     - assets/lang/
     - assets/animations/
+    - assets/plane_indicator/
+    - assets/ice_cream_indicator/
     - assets/messages.json
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -237,7 +237,7 @@ class NavbarNotifier2 extends ChangeNotifier {
       double? bottom,
       String? actionLabel,
       bool showCloseIcon = true,
-      Duration duration = const Duration(seconds: 3),
+      Duration duration = const Duration(seconds: 1),
       Function? onActionPressed,
       Function? onClosed}) {
     _showMessage(

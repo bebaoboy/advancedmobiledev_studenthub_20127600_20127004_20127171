@@ -131,6 +131,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
         ),
         confirmDismiss: (direction) async {
           if (direction == DismissDirection.endToStart) {
+            // TODO: bỏ vô archive
             // if (onStarredInbox) {
             //   return true;
             // }
