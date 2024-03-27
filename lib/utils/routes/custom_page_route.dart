@@ -33,13 +33,15 @@ import 'package:flutter/material.dart';
 class MaterialPageRoute2 extends PageRouteBuilder {
   final String routeName;
   final Object? arguments;
+  final Widget? child;
 
-  MaterialPageRoute2({required this.routeName, this.arguments})
+  MaterialPageRoute2({this.routeName = "/", this.arguments, this.child})
       : super(
+            settings: RouteSettings(name: routeName, arguments: arguments),
             transitionDuration:
                 Duration(milliseconds: arguments != null ? 300 : 500),
             pageBuilder: (context, animation, secondaryAnimation) =>
-                getRoute(routeName, context, arguments: arguments),
+                child ?? getRoute(routeName, context, arguments: arguments),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
               return

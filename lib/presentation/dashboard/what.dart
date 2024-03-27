@@ -1,5 +1,9 @@
-// ignore_for_file: unused_field, must_be_immutable, prefer_final_fields, prefer_const_declarations, prefer_const_literals_to_create_immutables
+// ignore_for_file: unused_field, must_be_immutable, prefer_final_fields, prefer_const_declarations, prefer_const_literals_to_create_immutables, sort_child_properties_last
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
+import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
+import 'package:boilerplate/core/widgets/pip/pip_params.dart';
+import 'package:boilerplate/core/widgets/pip/pip_view_corner.dart';
+import 'package:boilerplate/core/widgets/pip/pip_widget.dart';
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -12,6 +16,7 @@ import 'package:boilerplate/presentation/dashboard/project_tab.dart';
 import 'package:boilerplate/presentation/dashboard/student_dashboard_tab.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/welcome/pip_test.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
@@ -227,14 +232,8 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
                   child: Stack(children: [
                     for (final cloud in _clouds.sublist(1))
                       Transform.translate(
-                        offset: Offset(
-                            ((screenWidth) - cloud.width) * cloud.r2,
-                            (scale3 == 1
-                                ? -1 *
-                                    (700 *
-                                        CurveTween(curve: Curves.easeInOut)
-                                            .transform(0))
-                                : cloud.dry * cloud.r)),
+                        offset: Offset(((screenWidth) - cloud.width) * cloud.r2,
+                            (cloud.dry * cloud.r)),
                         child: OverflowBox(
                           minWidth: cloud.wR.truncateToDouble(),
                           minHeight: cloud.wR.truncateToDouble(),
@@ -270,14 +269,8 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
                   children: [
                     for (final cloud in _clouds2)
                       Transform.translate(
-                        offset: Offset(
-                            ((screenWidth) - cloud.width) * cloud.r2,
-                            (scale3 == 1
-                                ? -1 *
-                                    (700 *
-                                        CurveTween(curve: Curves.easeInOut)
-                                            .transform(0))
-                                : cloud.dry * cloud.r)),
+                        offset: Offset(((screenWidth) - cloud.width) * cloud.r2,
+                            (cloud.dry * cloud.r)),
                         child: OverflowBox(
                           minWidth: cloud.wR.truncateToDouble(),
                           minHeight: cloud.wR.truncateToDouble(),
@@ -360,6 +353,79 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
                 ),
               ),
 
+              AnimatedOpacity(
+                opacity: scale3,
+                duration: const Duration(seconds: 5),
+                child: Center(
+                  child: Text(
+                    "Thanks for your patience!\nNow press back",
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ),
+
+              Positioned(
+                top: MediaQuery.of(context).size.width * 0.25,
+                left: MediaQuery.of(context).size.width * 0.2,
+                child: Text(
+                  Lang.get('appbar_title'),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 30,
+                  ),
+                ),
+              ),
+
+              AnimatedOpacity(
+                duration: const Duration(seconds: 4),
+                opacity: scale3,
+                child: Stack(
+                  children: [
+                    for (final cloud in _clouds3)
+                      Transform.translate(
+                        offset: Offset(((screenWidth) - cloud.width) * cloud.r2,
+                            (cloud.dry * cloud.r)),
+                        child: OverflowBox(
+                          minWidth: cloud.wR.truncateToDouble(),
+                          minHeight: cloud.wR.truncateToDouble(),
+                          maxHeight: cloud.wR.truncateToDouble(),
+                          maxWidth: cloud.wR.truncateToDouble(),
+                          alignment: Alignment.topLeft,
+                          child: Image(
+                            color: cloud.color,
+                            image: cloud.image,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+
+              open
+                  ? Positioned(
+                      bottom: MediaQuery.of(context).size.width * 0.25,
+                      left: MediaQuery.of(context).size.width * 0.27,
+                      child: AnimatedOpacity(
+                        opacity: op1,
+                        duration: const Duration(seconds: 3),
+                        child: Text(
+                          "Hold the airplane",
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox(),
+
               /// plane
               Center(
                 child: AnimatedOpacity(
@@ -408,85 +474,6 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-
-              AnimatedOpacity(
-                opacity: scale3,
-                duration: const Duration(seconds: 5),
-                child: Center(
-                  child: Text(
-                    "Thanks for your patience!",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-              ),
-
-              Positioned(
-                top: MediaQuery.of(context).size.width * 0.25,
-                left: MediaQuery.of(context).size.width * 0.2,
-                child: Text(
-                  Lang.get('appbar_title'),
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w900,
-                    fontSize: 30,
-                  ),
-                ),
-              ),
-
-              AnimatedOpacity(
-                duration: const Duration(seconds: 4),
-                opacity: scale3,
-                child: Stack(
-                  children: [
-                    for (final cloud in _clouds3)
-                      Transform.translate(
-                        offset: Offset(
-                            ((screenWidth) - cloud.width) * cloud.r2,
-                            (scale3 == 1
-                                ? -1 *
-                                    (700 *
-                                        CurveTween(curve: Curves.easeInOut)
-                                            .transform(0))
-                                : cloud.dry * cloud.r)),
-                        child: OverflowBox(
-                          minWidth: cloud.wR.truncateToDouble(),
-                          minHeight: cloud.wR.truncateToDouble(),
-                          maxHeight: cloud.wR.truncateToDouble(),
-                          maxWidth: cloud.wR.truncateToDouble(),
-                          alignment: Alignment.topLeft,
-                          child: Image(
-                            color: cloud.color,
-                            image: cloud.image,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
-
-              open
-                  ? Positioned(
-                      bottom: MediaQuery.of(context).size.width * 0.25,
-                      left: MediaQuery.of(context).size.width * 0.27,
-                      child: AnimatedOpacity(
-                        opacity: op1,
-                        duration: const Duration(seconds: 3),
-                        child: Text(
-                          "Hold the airplane",
-                          style: TextStyle(
-                            color: Theme.of(context).colorScheme.primary,
-                            fontWeight: FontWeight.w900,
-                            fontSize: 15,
-                          ),
-                        ),
-                      ),
-                    )
-                  : const SizedBox(),
             ],
           ),
         ),
@@ -514,22 +501,48 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
               onBackButtonPressed: (isExiting) {
                 if (isExiting) {
                   var newTime = DateTime.now();
+                  // ignore: unused_local_variable
                   int difference = newTime.difference(oldTime).inMilliseconds;
                   oldTime = newTime;
-                  if (difference < 1000) {
+                  if (true) {
                     NavbarNotifier2.hideSnackBar(context);
-                    return true;
-                  } else {
-                    NavbarNotifier2.showSnackBar(
-                      context,
-                      "Press Back again to exit",
-
-                      /// offset from bottom of the screen
-                      ///
+                    PictureInPicture.updatePiPParams(
+                      pipParams: const PiPParams(
+                        pipWindowHeight: 200,
+                        pipWindowWidth: 100,
+                        bottomSpace: 64,
+                        leftSpace: 64,
+                        rightSpace: 64,
+                        topSpace: 64,
+                        minSize: Size(100, 200),
+                        maxSize: Size(350, 900),
+                        movable: true,
+                        resizable: true,
+                        initialCorner: PIPViewCorner.bottomRight,
+                      ),
                     );
-                    oldTime = DateTime.now();
-                    return false;
+                    PictureInPicture.startPiP(
+                        pipWidget: PiPWidget(
+                      child: const PiPTestScreen(), //Optional
+
+                      onPiPClose: () {
+                        //Handle closing events e.g. dispose controllers.
+                      },
+                      elevation: 10, //Optional
+                      pipBorderRadius: 10, //Optional
+                    ));
+                    return true;
                   }
+                  // else {
+                  //   NavbarNotifier2.showSnackBar(
+                  //     context,
+                  //     "Press Back again to exit",
+                  //     /// offset from bottom of the screen
+                  //     ///
+                  //   );
+                  //   oldTime = DateTime.now();
+                  //   return false;
+                  // }
                 } else {
                   return isExiting;
                 }

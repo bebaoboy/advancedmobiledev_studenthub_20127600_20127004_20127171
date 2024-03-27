@@ -141,6 +141,7 @@ dependencies:
   custom_refresh_indicator:
   draggable_home:
   rxdart: ^0.27.7
+  # flutter_in_app_pip:
 
 
 dev_dependencies:

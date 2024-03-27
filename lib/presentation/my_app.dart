@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Observer(
       builder: (context) {
-        return AnimatedThemeApp(
+        return PiPMaterialApp(
           animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
           animationDuration: const Duration(milliseconds: 500),
           builder: builder,
