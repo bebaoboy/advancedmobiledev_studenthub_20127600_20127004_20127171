@@ -16,7 +16,12 @@ class UserRepositoryImpl extends UserRepository {
   // Login:---------------------------------------------------------------------
   @override
   Future<User?> login(LoginParams params) async {
-    return await Future.delayed(const Duration(seconds: 2), () => User());
+    //print('usertype ${params.userType.toString()}');
+    return await Future.delayed(
+        const Duration(seconds: 2),
+        () => User(
+            type: getUserType(params.userType ?? 'company'),
+            email: params.username));
   }
 
   @override
@@ -25,4 +30,11 @@ class UserRepositoryImpl extends UserRepository {
 
   @override
   Future<bool> get isLoggedIn => _sharedPrefsHelper.isLoggedIn;
+
+  @override
+  Future<void> changeUserData(User? user) => _sharedPrefsHelper.saveUser(user);
+
+  @override
+  // ToDO: implement user
+  Future<User> get user => _sharedPrefsHelper.user;
 }

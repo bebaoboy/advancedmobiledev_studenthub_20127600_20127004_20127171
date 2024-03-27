@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ThemeButton extends StatelessWidget {
-    final ThemeStore _themeStore = getIt<ThemeStore>();
+  final ThemeStore _themeStore = getIt<ThemeStore>();
 
   ThemeButton({super.key});
 

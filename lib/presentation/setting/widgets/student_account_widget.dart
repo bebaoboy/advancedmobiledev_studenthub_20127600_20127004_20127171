@@ -1,3 +1,4 @@
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class StudentAccountWidget extends StatelessWidget {
@@ -10,14 +11,13 @@ class StudentAccountWidget extends StatelessWidget {
     Widget titleWidget =
         Text(name, style: Theme.of(context).textTheme.bodySmall);
     Widget subtitleWidget =
-        Text('Student', style: Theme.of(context).textTheme.bodyText1);
+        Text(Lang.get('student'), style: Theme.of(context).textTheme.bodyLarge);
     Icon profileIcon = const Icon(Icons.person);
 
     return ListTile(
       leading: profileIcon,
       title: titleWidget,
       subtitle: subtitleWidget,
-      onTap: (() => print(name)),
     );
   }
 }

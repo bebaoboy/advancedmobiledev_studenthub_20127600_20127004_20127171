@@ -1,13 +1,15 @@
-import 'package:animations/animations.dart';
+// ignore_for_file: overridden_fields, must_be_immutable
+
+import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:navbar_router/navbar_router.dart';
 
 const double kM3NavbarHeight = kBottomNavigationBarHeight;
@@ -20,14 +22,12 @@ double kNavbarHeight = 0.0;
 
 class _AnimatedNavBar extends StatefulWidget {
   const _AnimatedNavBar(
-      {Key? key,
-      this.decoration,
+      {this.decoration,
       required this.model,
       this.isDesktop = false,
       this.navbarType = NavbarType.standard,
       required this.menuItems,
-      required this.onItemTapped})
-      : super(key: key);
+      required this.onItemTapped});
   final List<NavbarItem> menuItems;
   final NavbarNotifier2 model;
   final Function(int) onItemTapped;
@@ -134,10 +134,10 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
       labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
     );
 
-    final foregroundColor =
-        defaultDecoration.backgroundColor!.computeLuminance() > 0.5
-            ? Colors.black
-            : Colors.white;
+    // final foregroundColor =
+    //     defaultDecoration.backgroundColor!.computeLuminance() > 0.5
+    //         ? Colors.black
+    //         : Colors.white;
 
     NavbarBase buildNavBar() {
       switch (widget.navbarType) {
@@ -230,7 +230,7 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
 }
 
 abstract class NavbarBase extends StatefulWidget {
-  const NavbarBase({Key? key}) : super(key: key);
+  const NavbarBase({super.key});
   NavbarDecoration get decoration;
 
   double? get elevation;
@@ -244,14 +244,13 @@ abstract class NavbarBase extends StatefulWidget {
 
 class StandardNavbar extends NavbarBase {
   const StandardNavbar(
-      {Key? key,
+      {super.key,
       required this.navBarDecoration,
       required this.navBarElevation,
       required this.onTap,
       this.navbarHeight,
       this.index = 0,
-      required this.items})
-      : super(key: key);
+      required this.items});
 
   final List<NavbarItem> items;
   final Function(int) onTap;
@@ -390,6 +389,7 @@ class NavbarRouter2 extends NavbarRouter {
   /// For
   /// NavbarType.standard use [NavbarDecoration]
   /// NavbarType.notched use [NotchedDecoration]
+  @override
   final NavbarType type;
 
   /// Whether the back button pressed should pop the current route and switch to the previous route,
@@ -403,6 +403,7 @@ class NavbarRouter2 extends NavbarRouter {
   /// defaults to the first item in the list of [NavbarItems]
   @override
   final int initialIndex;
+  int lastIndex = 0;
 
   /// Take a look at the [readme](https://github.com/maheshmnj/navbar_router) for more information on how to use this package.
   ///
@@ -413,8 +414,8 @@ class NavbarRouter2 extends NavbarRouter {
   ///
   ///
   ///
-  final PageController pageController;
-  const NavbarRouter2(
+  final IndexController pageController;
+  NavbarRouter2(
       {super.key,
       required this.destinations,
       required this.errorBuilder,
@@ -464,6 +465,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
   }
 
   void initialize({bool isUpdate = false, int? i}) {
+    // widget.pageController.addListener(() {
+    //   if (widget.pageController.)
+    // })
     if (i != null) {
       final navbaritem = widget.destinations[i].navbarItem;
       keys[i] = GlobalKey<NavigatorState>(debugLabel: navbaritem.text);
@@ -481,13 +485,15 @@ class _NavbarRouterState extends State<NavbarRouter2>
       initAnimation();
       NavbarNotifier2.index = widget.initialIndex;
     }
+    widget.pageController.move(NavbarNotifier2.currentIndex);
   }
 
   void initAnimation() {
     fadeAnimation = items.map<AnimationController>((NavbarItem item) {
       return AnimationController(
+          lowerBound: 0.5,
           vsync: this,
-          value: item == items[widget.initialIndex] ? 1.0 : 0.0,
+          value: item == items[widget.initialIndex] ? 1.0 : 0.5,
           duration:
               Duration(milliseconds: widget.destinationAnimationDuration));
     }).toList();
@@ -512,6 +518,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   void didUpdateWidget(covariant NavbarRouter2 oldWidget) {
+    print("update");
     if (widget.destinationAnimationCurve !=
             oldWidget.destinationAnimationCurve ||
         widget.destinationAnimationDuration !=
@@ -523,7 +530,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
         !listEquals(oldWidget.destinations, widget.destinations)) {
       clearInitialization();
       initialize(isUpdate: true);
+      initialize(i: NavbarNotifier2.currentIndex, isUpdate: true);
     }
+
     super.didUpdateWidget(oldWidget);
   }
 
@@ -555,16 +564,13 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   Widget _buildIndexedStackItem(int index, BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: AnimatedBuilder(
         key: ValueKey(keys[index]),
         animation: fadeAnimation[index],
         builder: (context, child) {
-          //print(index);
-          return IgnorePointer(
-            ignoring: index != NavbarNotifier2.currentIndex,
-            child: Opacity(opacity: fadeAnimation[index].value, child: child),
-          );
+          ////print(index);
+          return Opacity(opacity: fadeAnimation[index].value, child: child);
           // return SlideTransition(
           //   position: Tween<Offset>(
           //     begin: const Offset(-1.0, 0.0),
@@ -586,6 +592,8 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   if (settings.name == Routes.projectDetails) {
                     builder = ProjectDetailsPage(
                         project: settings.arguments as Project);
+                  } else if (settings.name == Routes.favortieProject) {
+                    builder = settings.arguments as FavoriteScreen;
                   } else {
                     builder = widget.destinations[index].destinations[j].widget;
                   }
@@ -610,20 +618,24 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   Widget build(BuildContext context) {
+    print("build nav");
+    // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
-          if (NavbarNotifier2.isNavbarHidden) {
-            NavbarNotifier2.hideBottomNavBar = false;
-            return false;
-          }
           final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
               behavior: widget.backButtonBehavior);
-
+          if (NavbarNotifier2.isCurrentNavbarHistoryStackSemiEmpty()) {
+            if (NavbarNotifier2.isNavbarHidden) {
+              NavbarNotifier2.hideBottomNavBar = false;
+              //return false;
+            }
+          }
           final bool value = widget.onBackButtonPressed!(isExitingApp);
           setState(() {
             // NavbarNotifier2.index = NavbarNotifier2.currentIndex;
-            widget.pageController.jumpToPage(NavbarNotifier2.currentIndex);
-            print("change will pop" + NavbarNotifier2.currentIndex.toString());
+            widget.pageController
+                .move(NavbarNotifier2.currentIndex, animation: false);
+            //print("change will pop${NavbarNotifier2.currentIndex}");
             if (widget.onChanged != null) {
               widget.onChanged!(NavbarNotifier2.currentIndex);
             }
@@ -640,16 +652,18 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     /// same duration as [_AnimatedNavbar]'s animation duration
                     duration: const Duration(milliseconds: 500),
                     padding: EdgeInsets.only(left: getPadding()),
-                    child: PageView(
+                    child: TransformerPageView(
+                      index: 1,
+                      duration: const Duration(milliseconds: 500),
+                      transformer: DepthPageTransformer(),
+                      itemCount: NavbarNotifier2.length,
                       controller: widget.pageController,
-                      children: [
-                        for (int i = 0; i < NavbarNotifier2.length; i++)
-                          _buildIndexedStackItem(i, context)
-                      ],
+                      itemBuilder: (context, i) =>
+                          _buildIndexedStackItem(i, context),
                       onPageChanged: (value) {
-                        NavbarNotifier2.index = value;
+                        NavbarNotifier2.index = value ?? 0;
                         if (widget.onChanged != null) {
-                          widget.onChanged!(value);
+                          widget.onChanged!(value ?? 0);
                         }
                         _handleFadeAnimation();
                       },
@@ -668,10 +682,11 @@ class _NavbarRouterState extends State<NavbarRouter2>
                         onItemTapped: (x) {
                           // User pressed  on the same tab twice
                           if (NavbarNotifier2.currentIndex == x) {
+                            bool ok = true;
                             if (widget.shouldPopToBaseRoute) {
-                              NavbarNotifier2.popAllRoutes(x);
+                              ok = NavbarNotifier2.popAllRoutes(x);
                             }
-                            if (widget.onCurrentTabClicked != null) {
+                            if (widget.onCurrentTabClicked != null && !ok) {
                               setState(() {
                                 widget.onCurrentTabClicked!();
                                 print("tap");
@@ -679,14 +694,19 @@ class _NavbarRouterState extends State<NavbarRouter2>
                               });
                             }
                           } else {
+                            print('not tap');
                             // NavbarNotifier2.index = x;
                             // if (widget.onChanged != null) {
                             //   widget.onChanged!(x);
                             // }
                             // _handleFadeAnimation();
-                            widget.pageController.animateToPage(x,
-                                duration: Duration(milliseconds: 500),
-                                curve: Curves.ease);
+                            if ((x - NavbarNotifier2.currentIndex).abs() > 1) {
+                              widget.pageController.move(x, animation: false);
+                            } else {
+                              widget.pageController.move(x);
+                              // duration: const Duration(milliseconds: 500),
+                              // curve: Curves.ease);
+                            }
                           }
                         },
                         menuItems: items),
@@ -703,6 +723,7 @@ const Color mediumPurple = Color.fromRGBO(79, 0, 241, 1.0);
 
 class MaterialPageRouteNavBar extends PageRouteBuilder {
   final Widget route;
+  @override
   final RouteSettings settings;
 
   MaterialPageRouteNavBar({
@@ -710,7 +731,7 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
     required this.settings,
   }) : super(
           settings: settings,
-          transitionDuration: const Duration(milliseconds: 400),
+          transitionDuration: const Duration(milliseconds: 600),
           pageBuilder: (context, animation, secondaryAnimation) => route,
         );
 
@@ -718,24 +739,21 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     return super.buildTransitions(
-      context,
-      animation,
-      secondaryAnimation,
-      // SlideTransition(
-      //   position: Tween<Offset>(
-      //     begin: const Offset(1.0, 0.0),
-      //     end: Offset.zero,
-      //   ).animate(animation),
-      //   child: child,
-      // )
-      // ScaleTransition(scale: animation, child: child,),
-      SharedAxisTransition(
-        fillColor: Theme.of(context).cardColor,
-        animation: animation,
-        secondaryAnimation: secondaryAnimation,
-        transitionType: SharedAxisTransitionType.scaled,
-        child: child,
-      ),
-    );
+        context,
+        animation,
+        secondaryAnimation,
+        ScaleTransition(
+            scale: animation.drive(Tween(begin: 0.0, end: 1.0)
+                .chain(CurveTween(curve: Curves.ease))),
+            child: FadeTransition(opacity: animation, child: child))
+        // ScaleTransition(scale: animation, child: child,),
+        // SharedAxisTransition(
+        //   fillColor: Colors.transparent.withOpacity(0),
+        //   animation: animation,
+        //   secondaryAnimation: secondaryAnimation,
+        //   transitionType: SharedAxisTransitionType.scaled,
+        //   child: child,
+        // ),
+        );
   }
 }

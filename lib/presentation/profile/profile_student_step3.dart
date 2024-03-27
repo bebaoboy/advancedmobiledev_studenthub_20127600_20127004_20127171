@@ -1,11 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/constants/assets.dart';
+// import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -14,12 +14,27 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:file_previewer/file_previewer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_types/flutter_chat_types.dart';
+import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../di/service_locator.dart';
+
+ValueNotifier<bool> isLinkCv = ValueNotifier<bool>(false);
+ValueNotifier<bool> isLinkTranscript = ValueNotifier<bool>(false);
+
+changeValue(value, isCV) async {
+  await Future.delayed(const Duration(seconds: 1));
+  if (isCV) {
+    isLinkCv.value = value;
+  } else {
+    isLinkTranscript.value = value;
+  }
+}
 
 class ProfileStudentStep3Screen extends StatefulWidget {
   const ProfileStudentStep3Screen({super.key});
@@ -39,10 +54,16 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   bool loading = false;
   Widget? _cvImage;
   Widget? _transcriptImage;
+  bool cvEnable = true, transcriptEnable = true;
+
+  TextEditingController cvController = TextEditingController();
+  TextEditingController transcriptController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
+    isLinkCv = ValueNotifier<bool>(false);
+    isLinkTranscript = ValueNotifier<bool>(false);
   }
 
   @override
@@ -94,19 +115,13 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     );
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
-  File? _cv;
-  File? _transcript;
+  PlatformFile? _cv;
+  PlatformFile? _transcript;
+  Map<String, PreviewData?> pd = {};
 
   Widget _buildRightSide() {
+    //print(isLinkCv.value);
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       child: Column(
@@ -122,8 +137,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_cv'),
+                    Lang.get('profile_welcome_cv'),
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
@@ -131,8 +145,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_text2'),
+                    Lang.get('profile_welcome_text2'),
                     style: const TextStyle(fontSize: 13),
                     minFontSize: 10,
                     maxLines: 2,
@@ -146,7 +159,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AutoSizeText(
-                      "${AppLocalizations.of(context).translate('profile_cv')} ${_cv != null ? _cv!.path : ""}",
+                      "${Lang.get('profile_cv')}:\n${_cv != null ? _cv!.name : ""}",
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
@@ -154,21 +167,95 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(height: 14.0),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                            height: 30,
+                            child: TextFormField(
+                              enabled: cvEnable,
+                              controller: cvController,
+                              onTapOutside: (value) async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                setState(() {
+                                  isLinkCv.value = false;
+                                });
+                                _cvImage = await FilePreview.getThumbnail(
+                                    isCV: true, cvController.text);
+                              },
+                              onFieldSubmitted: (value) async {
+                                setState(() {
+                                  isLinkCv.value = false;
+                                });
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                await FilePreview.getThumbnail(
+                                        isCV: true, cvController.text)
+                                    .then((value) {
+                                  _cvImage = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    const EdgeInsets.only(bottom: 10),
+                                hintText: Lang.get("profile_project_link"),
+                              ),
+                              style: const TextStyle(fontSize: 13),
+                            )),
+                      ),
+                      if (_cv != null || _cvImage != null)
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            color: Theme.of(context).colorScheme.primary,
+                            iconSize: 20,
+                            onPressed: () {
+                              setState(() {
+                                _cv = null;
+                                cvEnable = true;
+                                cvController.clear();
+                                _cvImage = null;
+                              });
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
                   GestureDetector(
                     onTap: () async {
+                      if (_cv != null) {
+                        await OpenFilex.open(_cv!.path);
+                        return;
+                      } else if (_cvImage != null) {
+                        final uri = Uri.parse(cvController.text);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        }
+                        return;
+                      }
+                      setState(() {
+                        cvEnable = false;
+                      });
+
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['jpg', 'pdf', 'doc', 'docx'],
+                        allowedExtensions: ['png', 'jpg', 'pdf', 'doc', 'docx'],
                       );
 
                       if (result != null) {
-                        File file = File(result.files.single.path!);
+                        // File file = File(result.files.single.path!);
                         setState(() {
-                          _cv = file;
+                          _cv = result.files.single;
                         });
                         final image = await FilePreview.getThumbnail(
+                          isCV: true,
                           result.files.single.path!,
                         );
                         setState(() {
@@ -179,36 +266,62 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                      height: 200,
-                      decoration: const BoxDecoration(
-                          color: Colors.white70,
-                          borderRadius: BorderRadius.all(Radius.circular(13))),
-                      child: _cvImage ??
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                      margin: const EdgeInsets.only(bottom: 5),
-                                      child: const Icon(
-                                        Icons.add_a_photo,
-                                      )),
-                                  const SizedBox(
-                                    width: 20,
+                        height: _cvImage != null ? 500 : 200,
+                        decoration: const BoxDecoration(
+                            color: Colors.white70,
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(13))),
+                        child: ValueListenableBuilder(
+                          valueListenable: isLinkCv,
+                          builder: (context, value, child) => isLinkCv.value ==
+                                      true &&
+                                  cvController.text.isNotEmpty
+                              ? LinkPreview(
+                                  enableAnimation: true,
+                                  textWidget: const SizedBox(),
+                                  onPreviewDataFetched: (p0) async {
+                                    setState(() {
+                                      if (p0.link != null) {
+                                        pd[p0.link!] = p0;
+                                        isLinkCv.value = true;
+                                      }
+                                    });
+                                  },
+                                  previewData: pd[cvController.text],
+                                  text: cvController.text,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                )
+                              : _cvImage ??
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 5),
+                                              child: const Icon(
+                                                Icons.add_a_photo,
+                                              )),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(Lang.get('profile_cv_add'))
+                                        ]),
                                   ),
-                                  Text(AppLocalizations.of(context)
-                                      .translate('profile_cv_add'))
-                                ]),
-                          ),
-                    ),
+                        )),
                   ),
                   const SizedBox(height: 34.0),
+
+////////////////////////////////////////////////////////////////////////////
+
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AutoSizeText(
-                      "${AppLocalizations.of(context).translate('profile_transcript')} ${_transcript != null ? _transcript!.path : ""}",
+                      "${Lang.get('profile_transcript')}:\n${_transcript != null ? _transcript!.name : ""}",
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
@@ -216,24 +329,99 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  const SizedBox(height: 14.0),
+
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                            height: 30,
+                            child: TextFormField(
+                              enabled: transcriptEnable,
+                              controller: transcriptController,
+                              onTapOutside: (value) async {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                setState(() {
+                                  isLinkTranscript.value = false;
+                                });
+                                _transcriptImage =
+                                    await FilePreview.getThumbnail(
+                                        isCV: false, transcriptController.text);
+                              },
+                              onFieldSubmitted: (value) async {
+                                setState(() {
+                                  isLinkTranscript.value = false;
+                                });
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                await FilePreview.getThumbnail(
+                                        isCV: false, transcriptController.text)
+                                    .then((value) {
+                                  _transcriptImage = value;
+                                });
+                              },
+                              decoration: InputDecoration(
+                                contentPadding:
+                                    const EdgeInsets.only(bottom: 10),
+                                hintText: Lang.get("profile_project_link"),
+                              ),
+                              style: const TextStyle(fontSize: 13),
+                            )),
+                      ),
+                      if (_transcript != null || _transcriptImage != null)
+                        SizedBox(
+                          width: 40,
+                          child: IconButton(
+                            icon: const Icon(Icons.close),
+                            color: Theme.of(context).colorScheme.primary,
+                            iconSize: 20,
+                            onPressed: () {
+                              setState(() {
+                                _transcript = null;
+                                transcriptEnable = true;
+                                transcriptController.clear();
+                                _transcriptImage = null;
+                              });
+                              FocusManager.instance.primaryFocus?.unfocus();
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 24,
+                  ),
                   GestureDetector(
                     onTap: () async {
+                      if (_transcript != null) {
+                        await OpenFilex.open(_transcript!.path);
+                        return;
+                      } else if (_transcriptImage != null) {
+                        final uri = Uri.parse(transcriptController.text);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(uri,
+                              mode: LaunchMode.externalApplication);
+                        }
+                        return;
+                      }
+                      setState(() {
+                        transcriptEnable = false;
+                      });
+
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['jpg', 'pdf', 'doc'],
+                        allowedExtensions: ['png', 'jpg', 'pdf', 'doc', 'docx'],
                       );
 
                       if (result != null) {
-                        File file = File(result.files.single.path!);
+                        // File file = File(result.files.single.path!);
                         setState(() {
-                          _transcript = file;
+                          _transcript = result.files.single;
                         });
                         final image = await FilePreview.getThumbnail(
+                          isCV: false,
                           result.files.single.path!,
                         );
-
                         setState(() {
                           _transcriptImage = image;
                         });
@@ -242,32 +430,55 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                      height: 200,
+                      height: _transcriptImage != null ? 500 : 200,
                       decoration: const BoxDecoration(
                           color: Colors.white70,
                           borderRadius: BorderRadius.all(Radius.circular(13))),
-                      child: _transcriptImage ??
-                          Align(
-                            alignment: Alignment.center,
-                            child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                      margin: const EdgeInsets.only(bottom: 5),
-                                      child: const Icon(
-                                        Icons.add_a_photo,
-                                      )),
-                                  const SizedBox(
-                                    width: 20,
-                                  ),
-                                  Text(AppLocalizations.of(context)
-                                      .translate('profile_transcript_add'))
-                                ]),
-                          ),
+                      child: ValueListenableBuilder(
+                          valueListenable: isLinkTranscript,
+                          builder: (context, value, child) => isLinkTranscript
+                                          .value ==
+                                      true &&
+                                  transcriptController.text.isNotEmpty
+                              ? LinkPreview(
+                                  enableAnimation: true,
+                                  textWidget: const SizedBox(),
+                                  onPreviewDataFetched: (p0) async {
+                                    setState(() {
+                                      if (p0.link != null) {
+                                        pd[p0.link!] = p0;
+                                        isLinkTranscript.value = true;
+                                      }
+                                    });
+                                  },
+                                  previewData: pd[transcriptController.text],
+                                  text: transcriptController.text,
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                )
+                              : _transcriptImage ??
+                                  Align(
+                                    alignment: Alignment.center,
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 5),
+                                              child: const Icon(
+                                                Icons.add_a_photo,
+                                              )),
+                                          const SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(Lang.get(
+                                              'profile_transcript_add'))
+                                        ]),
+                                  )),
                     ),
                   ),
-
                   const SizedBox(height: 34.0),
                   _buildSignInButton(),
                 ],
@@ -290,19 +501,20 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
       child: SizedBox(
         width: 200,
         child: RoundedButtonWidget(
-          buttonText: AppLocalizations.of(context).translate('profile_next'),
+          buttonText: Lang.get('next'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
             Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.home), (Route<dynamic> route) => false);
+                MaterialPageRoute2(routeName: Routes.home),
+                (Route<dynamic> route) => false);
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),
@@ -316,10 +528,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      //print("LOADING = $loading");
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();
@@ -332,9 +544,9 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }
@@ -346,6 +558,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
+    isLinkCv.dispose();
+    isLinkTranscript.dispose();
     super.dispose();
   }
 }

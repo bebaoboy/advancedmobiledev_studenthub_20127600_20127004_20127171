@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field
+
 import 'dart:async';
 
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
@@ -21,12 +23,12 @@ class PostApi {
       final res = await _dioClient.dio.get(Endpoints.getPosts);
       return PostList.fromJson(res.data);
     } catch (e) {
-      print(e.toString());
+      //print(e.toString());
       rethrow;
     }
   }
 
-/// sample api call with default rest client
+  /// sample api call with default rest client
 //  Future<PostsList> getPosts() {
 //
 //    return _restClient
@@ -34,5 +36,4 @@ class PostApi {
 //        .then((dynamic res) => PostsList.fromJson(res))
 //        .catchError((error) => throw NetworkException(message: error));
 //  }
-
 }

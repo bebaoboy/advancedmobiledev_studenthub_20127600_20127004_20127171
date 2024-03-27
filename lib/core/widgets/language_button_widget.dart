@@ -13,7 +13,8 @@ class LanguageButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    showDialogModified<T>({required BuildContext context, required Widget child}) {
+    showDialogModified<T>(
+        {required BuildContext context, required Widget child}) {
       showDialog<T>(
         context: context,
         builder: (BuildContext context) => child,
@@ -29,7 +30,7 @@ class LanguageButton extends StatelessWidget {
           borderRadius: 5.0,
           enableFullWidth: true,
           title: Text(
-            AppLocalizations.of(context).translate('home_tv_choose_language'),
+            Lang.get('home_tv_choose_language'),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 16.0,

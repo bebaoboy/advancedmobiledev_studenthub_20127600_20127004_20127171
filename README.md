@@ -1,4 +1,13 @@
-### This branch is still under development
+### Sprint 3: Update account for demo video call (in chat section)
+
+**Username:**
+- user1@gmail.com
+- user2@gmail.com
+- others: user3 
+
+**Account for company access:**
+- c@mpany.com
+- others: student
 
 ## Thông tin nhóm:
 Lưu Tuấn Quân - 20127600
@@ -13,6 +22,7 @@ Vũ Huy Hoàng - 20127171
 
 ## Link File đánh giá:
 [GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
+
 
 ## How to Use 
 **Step 1:**

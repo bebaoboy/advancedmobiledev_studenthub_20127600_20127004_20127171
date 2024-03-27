@@ -1,3 +1,5 @@
+// ignore_for_file: implementation_imports
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -34,6 +36,10 @@ class NavbarNotifier2 extends ChangeNotifier {
     _keys = value;
   }
 
+  static void setKey(GlobalKey<NavigatorState> value, int index) {
+    _keys[index] = value;
+  }
+
   static final List<Function(int)> _indexChangeListeners = [];
 
   static List<GlobalKey<NavigatorState>> get keys => _keys;
@@ -62,13 +68,17 @@ class NavbarNotifier2 extends ChangeNotifier {
     _navbarStackHistory = x;
   }
 
+  static bool isCurrentNavbarHistoryStackSemiEmpty() {
+    return _navbarStackHistory.length <= 1;
+  }
+
   // pop routes from the nested navigator stack and not the main stack
   // this is done based on the currentIndex of the bottom navbar
   // if the backButton is pressed on the initial route the app will be terminated
   static FutureOr<bool> onBackButtonPressed(
       {BackButtonBehavior behavior =
           BackButtonBehavior.rememberHistory}) async {
-    print(stackHistory);
+    //print(stackHistory);
     bool exitingApp = true;
     NavigatorState? currentState = _keys[_index!].currentState;
     if (currentState != null && currentState.canPop()) {
@@ -80,7 +90,7 @@ class NavbarNotifier2 extends ChangeNotifier {
           _navbarStackHistory.removeLast();
           _index = _navbarStackHistory.last;
           //index = _index!;
-          print("pop" + _index!.toString());
+          //print("pop${_index!}");
           // _notifyIndexChangeListeners(_index!);
           // _singleton.notify();
           exitingApp = false;
@@ -114,8 +124,16 @@ class NavbarNotifier2 extends ChangeNotifier {
     }
   }
 
+  static Future push(int x, BuildContext context, Route route) async {
+    NavigatorState? currentState;
+    currentState = _keys[x].currentState;
+    if (currentState != null) {
+      return await currentState.push(route);
+    }
+  }
+
   /// pops all routes except first, if there are more than 1 route in each navigator stack
-  static void popAllRoutes(int index) {
+  static bool popAllRoutes(int index) {
     NavigatorState? currentState;
     for (int i = 0; i < _keys.length; i++) {
       if (_index == i) {
@@ -124,7 +142,9 @@ class NavbarNotifier2 extends ChangeNotifier {
     }
     if (currentState != null && currentState.canPop()) {
       currentState.popUntil((route) => route.isFirst);
+      return true;
     }
+    return false;
   }
 
   // adds a listener to the list of listeners
@@ -217,7 +237,7 @@ class NavbarNotifier2 extends ChangeNotifier {
       double? bottom,
       String? actionLabel,
       bool showCloseIcon = true,
-      Duration duration = const Duration(seconds: 3),
+      Duration duration = const Duration(seconds: 1),
       Function? onActionPressed,
       Function? onClosed}) {
     _showMessage(
@@ -244,7 +264,7 @@ class NavbarNotifier2 extends ChangeNotifier {
     _indexChangeListeners.clear();
     _navbarStackHistory.clear();
     _keys.clear();
-    _index = null;
-    _length = null;
+    // _index = null;
+    // _length = null;
   }
 }

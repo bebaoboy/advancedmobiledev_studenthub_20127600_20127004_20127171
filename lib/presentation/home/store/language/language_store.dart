@@ -8,7 +8,7 @@ part 'language_store.g.dart';
 class LanguageStore = _LanguageStore with _$LanguageStore;
 
 abstract class _LanguageStore with Store {
-  static const String TAG = "LanguageStore";
+  // static const String TAG = "LanguageStore";
 
   // repository instance
   final SettingRepository _repository;
@@ -42,6 +42,7 @@ abstract class _LanguageStore with Store {
     _locale = value;
     _repository.changeLanguage(value).then((_) {
       // write additional logic here
+      
     });
   }
 

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
@@ -80,7 +79,7 @@ class SearchDropdown extends StatelessWidget {
         );
       },
       onListChanged: (value) {
-        print('changing value to: $value');
+        //print('changing value to: $value');
       },
       validateOnChange: true,
       listValidator: (p0) {
@@ -90,7 +89,7 @@ class SearchDropdown extends StatelessWidget {
   }
 }
 
-const mockSkillsets = <Skill>[
+var mockSkillsets = <Skill>[
   Skill('JavaScript', "Fake description", ''),
   Skill('iOS Development', "Fake description", ''),
   Skill('C', "Fake description", ''),
@@ -223,24 +222,24 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
   }
 
   void _onChipTapped(Skill profile) {
-    print('$profile');
+    //print('$profile');
   }
 
   // void onChanged(List<Skill> data, {int? index}) {
-  //   print('onChanged $data');
+  //   //print('onChanged $data');
   //   if (index != null) {
   //     try {
   //       setState(() {
   //         _projects[index!].skills =
   //             data.map((e) => e.name).toList(growable: true);
-  //         print("data: " + data.toString());
+  //         //print("data: " + data.toString());
   //       });
   //     } catch (e) {}
   //   }
   // }
 
   // void _onChanged(List<Skill> data) {
-  //   print('onChanged $data');
+  //   //print('onChanged $data');
   // }
 
   Future<List<Skill>> _findSuggestions(String query) async {
@@ -254,14 +253,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     }
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -279,8 +270,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_experiences'),
+                    Lang.get('profile_experiences'),
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
@@ -288,8 +278,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_text3'),
+                    Lang.get('profile_welcome_text3'),
                     style: const TextStyle(fontSize: 13),
                     minFontSize: 10,
                     maxLines: 2,
@@ -314,7 +303,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: AutoSizeText(
-                            "${AppLocalizations.of(context).translate('profile_projects')}: ${_projects.length}",
+                            "${Lang.get('profile_projects')}: ${_projects.length}",
                             style: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w600),
                             minFontSize: 10,
@@ -462,8 +451,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       label: _projects[index].readOnly
                                           ? null
                                           : Text(
-                                              AppLocalizations.of(context)
-                                                  .translate('profile_project'),
+                                              Lang.get('profile_project'),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w600,
                                                   color: Theme.of(context)
@@ -479,9 +467,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                           const EdgeInsets.only(top: 30),
                                       initialValue: _projects[index].name,
                                       readOnly: _projects[index].readOnly,
-                                      hint: AppLocalizations.of(context)
-                                          .translate('login_et_user_email'),
-                                      inputType: TextInputType.emailAddress,
+                                      hint: Lang.get('profile_choose_skillset'),
                                       icon: null,
                                       textController: null,
                                       inputAction: TextInputAction.next,
@@ -527,10 +513,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                 label: _projects[index].readOnly
                                                     ? null
                                                     : Text(
-                                                        AppLocalizations.of(
-                                                                context)
-                                                            .translate(
-                                                                'profile_project_start'),
+                                                        Lang.get(
+                                                            'profile_project_start'),
                                                         style: TextStyle(
                                                             fontWeight:
                                                                 FontWeight.w600,
@@ -539,25 +523,22 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                                 .colorScheme
                                                                 .primary),
                                                       ),
-                                                enabled: _projects[index]
-                                                    .enabled,
+                                                enabled:
+                                                    _projects[index].enabled,
                                                 enableInteractiveSelection:
                                                     !_projects[index].readOnly,
                                                 canRequestFocus:
                                                     !_projects[index].readOnly,
                                                 readOnly: true,
                                                 initialValue:
-                                                    "${DateFormat("yyyy/MM").format(_projects[index].startDate!)} - ${DateFormat("yyyy/MM").format(_projects[index].endDate!)} (${_projects[index].startDate!.compareTo(_projects[index].endDate!) < 0 ? (_projects[index].endDate!.difference(_projects[index].startDate!).inDays / 30.0).round() : 0} months)",
+                                                    "${DateFormat("yyyy/MM").format(_projects[index].startDate)} - ${DateFormat("yyyy/MM").format(_projects[index].endDate)} (${_projects[index].startDate.compareTo(_projects[index].endDate) < 0 ? (_projects[index].endDate.difference(_projects[index].startDate).inDays / 30.0).round() : 0} months)",
                                                 fontSize:
                                                     _projects[index].readOnly
                                                         ? 10
                                                         : 15,
-                                                hint: AppLocalizations
-                                                        .of(context)
-                                                    .translate(
-                                                        'login_et_user_email'),
-                                                inputType:
-                                                    TextInputType.emailAddress,
+                                                hint: Lang
+                                                    .get('profile_choose_skillset'),
+                                                
                                                 icon: null,
                                                 textController: null,
                                                 inputAction:
@@ -578,7 +559,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                 //             .formErrorStore.userEmail ==
                                                 //         null
                                                 //     ? null
-                                                //     : AppLocalizations.of(context).translate(
+                                                //     : AppLocalizations.of(context).get(
                                                 //         _formStore.formErrorStore.userEmail),
                                                 ),
                                           ),
@@ -613,12 +594,12 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                                       2100));
 
                                                       if (pickedDate != null) {
-                                                        print(
-                                                            pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                        //print(
+                                                            // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                         // String formattedDate =
                                                         //     DateFormat('yyyy-MM-dd')
                                                         //         .format(pickedDate);
-                                                        // print(
+                                                        // //print(
                                                         //     formattedDate); //formatted date output using intl package =>  2021-03-16
                                                         setState(() {
                                                           _projects[index]
@@ -638,10 +619,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                       _projects[index].readOnly
                                                           ? null
                                                           : Text(
-                                                              AppLocalizations.of(
-                                                                      context)
-                                                                  .translate(
-                                                                      'profile_project_start'),
+                                                              Lang.get(
+                                                                  'profile_project_start'),
                                                               style: TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
@@ -662,16 +641,12 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   initialValue:
                                                       DateFormat("yyyy/MM")
                                                           .format(_projects[index]
-                                                              .startDate!),
+                                                              .startDate),
                                                   fontSize:
                                                       _projects[index].readOnly
                                                           ? 10
                                                           : 15,
-                                                  hint: AppLocalizations.of(context)
-                                                      .translate(
-                                                          'login_et_user_email'),
-                                                  inputType: TextInputType
-                                                      .emailAddress,
+                                                 
                                                   icon: null,
                                                   textController: null,
                                                   inputAction:
@@ -692,7 +667,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   //             .formErrorStore.userEmail ==
                                                   //         null
                                                   //     ? null
-                                                  //     : AppLocalizations.of(context).translate(
+                                                  //     : AppLocalizations.of(context).get(
                                                   //         _formStore.formErrorStore.userEmail),
                                                   ),
                                             ),
@@ -721,12 +696,12 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                                       2100));
 
                                                       if (pickedDate != null) {
-                                                        print(
-                                                            pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                        //print(
+                                                            // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                         // String formattedDate =
                                                         //     DateFormat('yyyy-MM-dd')
                                                         //         .format(pickedDate);
-                                                        // print(
+                                                        // //print(
                                                         //     formattedDate); //formatted date output using intl package =>  2021-03-16
                                                         setState(() {
                                                           _projects[index]
@@ -746,10 +721,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                       _projects[index].readOnly
                                                           ? null
                                                           : Text(
-                                                              AppLocalizations.of(
-                                                                      context)
-                                                                  .translate(
-                                                                      'profile_project_end'),
+                                                              Lang.get(
+                                                                  'profile_project_end'),
                                                               style: TextStyle(
                                                                   fontWeight:
                                                                       FontWeight
@@ -764,22 +737,21 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   enableInteractiveSelection:
                                                       !_projects[index]
                                                           .readOnly,
-                                                  canRequestFocus: !_projects[index]
-                                                      .readOnly,
+                                                  canRequestFocus:
+                                                      !_projects[index]
+                                                          .readOnly,
                                                   readOnly: true,
                                                   initialValue:
                                                       DateFormat("yyyy/MM")
                                                           .format(_projects[index]
-                                                              .endDate!),
+                                                              .endDate),
                                                   fontSize:
                                                       _projects[index].readOnly
                                                           ? 10
                                                           : 15,
-                                                  hint: AppLocalizations.of(context)
-                                                      .translate(
-                                                          'login_et_user_email'),
-                                                  inputType: TextInputType
-                                                      .emailAddress,
+                                                  hint: Lang.get(
+                                                      'login_et_user_email'),
+                                                 
                                                   icon: null,
                                                   textController: null,
                                                   inputAction:
@@ -801,7 +773,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   //             .formErrorStore.userEmail ==
                                                   //         null
                                                   //     ? null
-                                                  //     : AppLocalizations.of(context).translate(
+                                                  //     : AppLocalizations.of(context).get(
                                                   //         _formStore.formErrorStore.userEmail),
                                                   ),
                                             ),
@@ -849,9 +821,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                             label: _projects[index].readOnly
                                                 ? null
                                                 : Text(
-                                                    AppLocalizations.of(context)
-                                                        .translate(
-                                                            'profile_project_link'),
+                                                    Lang.get(
+                                                        'profile_project_link'),
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -875,7 +846,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                         ? 10
                                                         : 15),
                                             inputType:
-                                                TextInputType.emailAddress,
+                                                TextInputType.url,
                                             icon: null,
                                             fontSize: _projects[index].readOnly
                                                 ? 10
@@ -925,9 +896,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       label: _projects[index].readOnly
                                           ? null
                                           : Text(
-                                              AppLocalizations.of(context)
-                                                  .translate(
-                                                      'profile_project_description'),
+                                              Lang.get(
+                                                  'profile_project_description'),
                                               style: TextStyle(
                                                   fontWeight: FontWeight.w600,
                                                   color: Theme.of(context)
@@ -946,8 +916,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       initialValue:
                                           _projects[index].description,
                                       readOnly: _projects[index].readOnly,
-                                      hint: AppLocalizations.of(context)
-                                          .translate('login_et_user_email'),
                                       inputType: TextInputType.multiline,
                                       icon: null,
                                       maxLines:
@@ -986,8 +954,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       Align(
                                         alignment: Alignment.centerLeft,
                                         child: AutoSizeText(
-                                          AppLocalizations.of(context)
-                                              .translate('profile_skillset'),
+                                          Lang.get('profile_skillset'),
                                           style: const TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.w600),
@@ -1044,9 +1011,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                             label: _projects[index].readOnly
                                                 ? null
                                                 : Text(
-                                                    AppLocalizations.of(context)
-                                                        .translate(
-                                                            'profile_skillset'),
+                                                    Lang.get(
+                                                        'profile_skillset'),
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.w600,
@@ -1072,11 +1038,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                             .toString()
                                                         : "...",
                                             readOnly: _projects[index].readOnly,
-                                            hint: AppLocalizations.of(context)
-                                                .translate(
-                                                    'login_et_user_email'),
-                                            inputType:
-                                                TextInputType.emailAddress,
+                                            hint:
+                                                Lang.get('profile_choose_skillset'),
+                                            
                                             icon: null,
                                             textController: null,
                                             inputAction: TextInputAction.next,
@@ -1127,10 +1091,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                               //     child: Icon(
                                               //       Icons.search,
                                               //     )),
-                                              hintText: AppLocalizations.of(
-                                                      context)
-                                                  .translate(
-                                                      'profile_choose_skillset'),
+                                              hintText: Lang.get(
+                                                  'profile_choose_skillset'),
                                               hintStyle: const TextStyle(
                                                 color: Colors.grey,
                                               )),
@@ -1210,19 +1172,19 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
       child: SizedBox(
         width: 200,
         child: RoundedButtonWidget(
-          buttonText: AppLocalizations.of(context).translate('profile_next'),
+          buttonText: Lang.get('next'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.profileStudentStep3));
+            Navigator.of(context).push(
+                MaterialPageRoute2(routeName: Routes.profileStudentStep3));
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),
@@ -1236,10 +1198,10 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      //print("LOADING = $loading");
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();
@@ -1252,9 +1214,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

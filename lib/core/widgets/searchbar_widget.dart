@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 library animation_search_bar;
 
 import 'dart:async';
@@ -7,8 +9,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'dart:math';
-// ignore: duplicate_import
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AnimSearchBar2 extends StatefulWidget {
@@ -52,9 +52,11 @@ class AnimSearchBar2 extends StatefulWidget {
   final Widget Function(BuildContext, Project) suggestionItemBuilder;
   final Function(Project)? onSelected;
   final FutureOr<List<Project>?> Function(String) onSuggestionCallback;
+  final bool? expandedByDefault;
+  final bool? enabled;
 
   const AnimSearchBar2(
-      {Key? key,
+      {super.key,
 
       /// The width cannot be null
       required this.width,
@@ -63,7 +65,7 @@ class AnimSearchBar2 extends StatefulWidget {
       required this.textController,
       this.suffixIcon,
       this.prefixIcon,
-      this.helpText = "Search...",
+      this.helpText = "",
 
       /// choose your custom color
       this.color = Colors.white,
@@ -104,28 +106,31 @@ class AnimSearchBar2 extends StatefulWidget {
       required this.searchTextEditingController,
       required this.suggestionItemBuilder,
       required this.onSelected,
-      required this.onSuggestionCallback})
-      : super(key: key);
+      required this.onSuggestionCallback,
+      this.expandedByDefault,
+      this.enabled});
 
   @override
   _AnimSearchBar2State createState() => _AnimSearchBar2State();
 }
-
-///toggle - 0 => false or closed
-///toggle 1 => true or open
-int toggle = 1;
 
 /// * use this variable to check current text from OnChange
 String textFieldValue = '';
 
 class _AnimSearchBar2State extends State<AnimSearchBar2>
     with SingleTickerProviderStateMixin {
+  ///toggle - 0 => false or closed
+  ///toggle 1 => true or open
+  int toggle = 1;
+
   ///initializing the AnimationController
   late AnimationController _con;
   FocusNode focusNode = FocusNode();
 
   @override
   void initState() {
+    toggle = widget.expandedByDefault ?? false ? 1 : 0;
+
     super.initState();
 
     ///Initializing the animationController which is responsible for the expanding and shrinking of the search bar
@@ -148,9 +153,11 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-                    border: toggle == 1 ? Border(
-              bottom: BorderSide(width: 0.5, color: Colors.grey),
-            ) : null,
+        border: toggle == 1
+            ? const Border(
+                bottom: BorderSide(width: 0.5, color: Colors.grey),
+              )
+            : null,
       ),
       height: 50.0,
 
@@ -233,7 +240,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                           ///closeSearchOnSuffixTap will execute if it's true
                           if (widget.closeSearchOnSuffixTap) {
                             unfocusKeyboard();
-                                  focusNode.unfocus();
+                            focusNode.unfocus();
 
                             setState(() {
                               toggle = 0;
@@ -241,16 +248,16 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                           }
                         } catch (e) {
                           ///print the error if the try block fails
-                          print(e);
+                          //print(e);
                         }
                       },
 
                       ///suffixIcon is of type Icon
                       child: widget.suffixIcon ??
                           IconButton(
-                            padding: EdgeInsets.only(left: 20),
+                            padding: const EdgeInsets.only(left: 20),
                             alignment: Alignment.centerRight,
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.close_outlined,
                               size: 20.0,
                             ),
@@ -285,7 +292,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                                 }
                               } catch (e) {
                                 ///print the error if the try block fails
-                                print(e);
+                                //print(e);
                               }
                             },
                           ),
@@ -309,7 +316,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                   alignment: Alignment.topCenter,
                   width: widget.width,
                   child: TypeAheadField<Project>(
-                    hideOnSelect: true,
+                      hideOnSelect: true,
                       focusNode: focusNode,
                       hideOnEmpty: true,
                       hideWithKeyboard: false,
@@ -339,6 +346,8 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                       itemSeparatorBuilder: null,
                       builder: (context, controller, focusNode) {
                         return TextField(
+                          enabled: widget.enabled,
+
                           ///Text Controller. you can manipulate the text inside this textField by calling this controller.
                           controller: widget.textController,
                           inputFormatters: widget.inputFormatters,
@@ -354,7 +363,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                             setState(() {
                               toggle = 0;
                             }),
-                            widget.textController.clear(),
+                            //widget.textController.clear(),
                           },
                           onEditingComplete: () {
                             /// on editing complete the keyboard will be closed and the search bar will be closed
@@ -418,9 +427,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                                 )
                               : widget.prefixIcon!
                           : Icon(
-                              toggle == 1 ? 
-                              Icons.arrow_back_ios : 
-                              Icons.search,
+                              toggle == 1 ? Icons.arrow_back_ios : Icons.search,
                               // search icon color when closed
                               color: toggle == 0
                                   ? widget.searchIconColor
@@ -435,9 +442,10 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                               toggle = 1;
                               setState(() {
                                 ///if the autoFocus is true, the keyboard will pop open, automatically
-                                if (widget.autoFocus)
+                                if (widget.autoFocus) {
                                   FocusScope.of(context)
                                       .requestFocus(focusNode);
+                                }
                               });
 
                               ///forward == expand

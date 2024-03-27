@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
@@ -54,7 +53,7 @@ class SearchDropdown extends StatelessWidget {
     return CustomDropdown<Job>.multiSelectSearch(
       noResultFoundText: "No job found!",
       maxlines: 3,
-      hintText: 'Select job role',
+      hintText: Lang.get('profile_choose_skillset'),
       items: _list,
       listItemBuilder: (context, item, isSelected, onItemSelect) {
         return SizedBox(
@@ -80,7 +79,7 @@ class SearchDropdown extends StatelessWidget {
         );
       },
       onListChanged: (value) {
-        print('changing value to: $value');
+        //print('changing value to: $value');
       },
       validateOnChange: true,
       listValidator: (p0) {
@@ -90,7 +89,7 @@ class SearchDropdown extends StatelessWidget {
   }
 }
 
-const mockSkillsets = <Skill>[
+var mockSkillsets = <Skill>[
   Skill('JavaScript', "Fake description", ''),
   Skill('iOS Development', "Fake description", ''),
   Skill('C', "Fake description", ''),
@@ -118,6 +117,8 @@ const mockSkillsets = <Skill>[
 ];
 
 class ProfileStudentScreen extends StatefulWidget {
+  const ProfileStudentScreen({super.key});
+
   @override
   _ProfileStudentScreenState createState() => _ProfileStudentScreenState();
 }
@@ -208,11 +209,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   }
 
   void _onChipTapped(Skill profile) {
-    print('$profile');
+    //print('$profile');
   }
 
   void _onChanged(List<Skill> data) {
-    print('onChanged $data');
+    //print('onChanged $data');
   }
 
   Future<List<Skill>> _findSuggestions(String query) async {
@@ -226,14 +227,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     }
   }
 
-  Widget _buildLeftSide() {
-    return SizedBox.expand(
-      child: Image.asset(
-        Assets.carBackground,
-        fit: BoxFit.cover,
-      ),
-    );
-  }
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -251,8 +244,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_text'),
+                    Lang.get('profile_welcome_text'),
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
@@ -260,8 +252,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   AutoSizeText(
-                    AppLocalizations.of(context)
-                        .translate('profile_welcome_text2'),
+                    Lang.get('profile_welcome_text2'),
                     style: const TextStyle(fontSize: 13),
                     minFontSize: 10,
                     maxLines: 2,
@@ -275,8 +266,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: AutoSizeText(
-                      AppLocalizations.of(context)
-                          .translate('profile_techstack'),
+                      Lang.get('profile_techstack'),
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600),
                       minFontSize: 10,
@@ -301,8 +291,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: AutoSizeText(
-                            AppLocalizations.of(context)
-                                .translate('profile_skillset'),
+                            Lang.get('profile_skillset'),
                             style: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w600),
                             minFontSize: 10,
@@ -339,8 +328,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         //     child: Icon(
                         //       Icons.search,
                         //     )),
-                        hintText: AppLocalizations.of(context)
-                            .translate('profile_choose_skillset'),
+                        hintText: Lang.get('profile_choose_skillset'),
                         hintStyle: const TextStyle(
                           color: Colors.grey,
                         )),
@@ -389,7 +377,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: AutoSizeText(
-                            "${AppLocalizations.of(context).translate('profile_languages')}: ${_languages.length}",
+                            "${Lang.get('profile_languages')}: ${_languages.length}",
                             style: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w600),
                             minFontSize: 10,
@@ -433,7 +421,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         Align(
                           alignment: Alignment.centerLeft,
                           child: AutoSizeText(
-                            "${AppLocalizations.of(context).translate('profile_education')}: ${_educations.length}",
+                            "${Lang.get('profile_education')}: ${_educations.length}",
                             style: const TextStyle(
                                 fontSize: 13, fontWeight: FontWeight.w600),
                             minFontSize: 10,
@@ -528,8 +516,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   label: _languages[index].readOnly
                                       ? null
                                       : Text(
-                                          AppLocalizations.of(context)
-                                              .translate('profile_language'),
+                                          Lang.get('profile_language'),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               color: Theme.of(context)
@@ -543,8 +530,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   iconMargin: const EdgeInsets.only(top: 30),
                                   initialValue: _languages[index].name,
                                   readOnly: _languages[index].readOnly,
-                                  hint: AppLocalizations.of(context)
-                                      .translate('login_et_user_email'),
+                                  hint: Lang.get('login_et_user_email'),
                                   inputType: TextInputType.emailAddress,
                                   icon: Icons.language,
                                   iconColor: _themeStore.darkMode
@@ -587,7 +573,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                     label: _languages[index].readOnly
                                         ? null
                                         : Text(
-                                            AppLocalizations.of(context).translate(
+                                            Lang.get(
                                                 'profile_language_proficiency'),
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w600,
@@ -604,8 +590,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                     initialValue: _languages[index].proficiency,
                                     fontSize:
                                         _languages[index].readOnly ? 10 : 15,
-                                    hint: AppLocalizations.of(context)
-                                        .translate('login_et_user_email'),
+                                    hint: Lang.get('login_et_user_email'),
                                     inputType: TextInputType.emailAddress,
                                     icon: null,
                                     textController: null,
@@ -626,7 +611,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                     //             .formErrorStore.userEmail ==
                                     //         null
                                     //     ? null
-                                    //     : AppLocalizations.of(context).translate(
+                                    //     : AppLocalizations.of(context).get(
                                     //         _formStore.formErrorStore.userEmail),
                                     ),
                               ),
@@ -734,8 +719,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   label: _educations[index].readOnly
                                       ? null
                                       : Text(
-                                          AppLocalizations.of(context)
-                                              .translate('profile_education'),
+                                          Lang.get('profile_education'),
                                           style: TextStyle(
                                               fontWeight: FontWeight.w600,
                                               color: Theme.of(context)
@@ -749,8 +733,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   iconMargin: const EdgeInsets.only(top: 30),
                                   initialValue: _educations[index].name,
                                   readOnly: _educations[index].readOnly,
-                                  hint: AppLocalizations.of(context)
-                                      .translate('login_et_user_email'),
+                                  hint: Lang.get('login_et_user_email'),
                                   inputType: TextInputType.emailAddress,
                                   icon: Icons.language,
                                   iconColor: _themeStore.darkMode
@@ -784,8 +767,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 label: _educations[index].readOnly
                                     ? null
                                     : Text(
-                                        AppLocalizations.of(context)
-                                            .translate('profile_year'),
+                                        Lang.get('year'),
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600,
                                             color: Theme.of(context)
@@ -799,8 +781,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 readOnly: _educations[index].readOnly,
                                 initialValue: _educations[index].year,
                                 fontSize: _educations[index].readOnly ? 10 : 15,
-                                hint: AppLocalizations.of(context)
-                                    .translate('login_et_user_email'),
+                                hint: Lang.get('login_et_user_email'),
                                 inputType: TextInputType.emailAddress,
                                 icon: null,
                                 textController: null,
@@ -887,19 +868,19 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
       child: SizedBox(
         width: 200,
         child: RoundedButtonWidget(
-          buttonText: AppLocalizations.of(context).translate('profile_next'),
+          buttonText: Lang.get('next'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.profileStudentStep2));
+            Navigator.of(context).push(
+                MaterialPageRoute2(routeName: Routes.profileStudentStep2));
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),
@@ -913,10 +894,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
-            (Route<dynamic> route) => false);
+      //print("LOADING = $loading");
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.home),
+          (Route<dynamic> route) => false);
     });
 
     return Container();
@@ -929,9 +910,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

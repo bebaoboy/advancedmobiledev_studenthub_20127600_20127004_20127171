@@ -1,24 +1,61 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
-import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project.dart';
-import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
+import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
+import 'dart:async';
+
 import 'package:smooth_sheets/smooth_sheets.dart';
 
-class _ConfirmPage extends StatefulWidget {
-  const _ConfirmPage();
+class SearchFilter {
+  Scope? scope;
+  int? studentNeeded;
+  int? proposalLessThan;
+
+  SearchFilter({this.scope, this.studentNeeded, this.proposalLessThan});
+
+  clear() {
+    scope = null;
+    studentNeeded = null;
+    proposalLessThan = null;
+  }
 
   @override
-  State<_ConfirmPage> createState() => _ConfirmPageState();
+  String toString() {
+    return "${scope != null ? scope!.title : ""}${studentNeeded != null ? "\n$studentNeeded students needed" : ""}${proposalLessThan != null ? "\nProposal less than $proposalLessThan" : ""}";
+  }
 }
 
-class _ConfirmPageState extends State<_ConfirmPage> {
+class _FilterBottomSheet extends StatefulWidget {
+  const _FilterBottomSheet({required this.filter});
+  final SearchFilter filter;
+
+  @override
+  State<_FilterBottomSheet> createState() => _FilterBottomSheetState();
+}
+
+class _FilterBottomSheetState extends State<_FilterBottomSheet> {
+  Scope? groupValue;
+  TextEditingController studentNeededController = TextEditingController();
+  TextEditingController proposalLessThanController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    groupValue = widget.filter.scope ?? Scope.tight;
+    studentNeededController.text =
+        (widget.filter.studentNeeded ?? "").toString();
+    proposalLessThanController.text =
+        (widget.filter.proposalLessThan ?? "").toString();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SheetDismissible(
@@ -27,9 +64,8 @@ class _ConfirmPageState extends State<_ConfirmPage> {
           isContentScrollAware: true,
         ),
         child: SheetContentScaffold(
-            requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
             appBar: AppBar(
-              title: Text("Filter by"),
+              title: Text(Lang.get("filter_title")),
             ),
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -38,17 +74,17 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     // Padding(
-                    //   padding: const EdgeInsets.only(right: 32),
+                    //   padding:  EdgeInsets.only(right: 32),
                     //   child: Text(
                     //     'Confirm your choices',
                     //   ),
                     // ),
-                    // const SizedBox(height: 24),
+                    //  SizedBox(height: 24),
                     ListTile(
-                      title: const Text('Project Length'),
+                      title: Text(Lang.get('project_length')),
                     ),
                     // Padding(
-                    //   padding: const EdgeInsets.only(right: 32),
+                    //   padding:  EdgeInsets.only(right: 32),
                     //   child: Wrap(
                     //     spacing: 10,
                     //     children: [
@@ -56,132 +92,164 @@ class _ConfirmPageState extends State<_ConfirmPage> {
                     //         FilterChip(
                     //           selected: true,
                     //           label: Text(genre),
-                    //           onSelected: (_) {},
+                    //           onSelected: () {},
                     //         ),
                     //     ],
                     //   ),
                     // ),
-                    // const Divider(height: 32),
+                    //  Divider(height: 32),
                     // ListTile(
-                    //   title: const Text('Mood'),
+                    //   title:  Text(Lang.get('Mood'),
                     //   // trailing: IconButton(
                     //   //   onPressed: () => context.go('/intro/genre/mood'),
-                    //   //   icon: const Icon(Icons.edit_outlined),
+                    //   //   icon:  Icon(Icons.edit_outlined),
                     //   // ),
                     // ),
-                    RadioListTile(
-                      title: Text("Less than one month"),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get("0-1")),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: '',
-                      groupValue: '',
-                      onChanged: (_) {},
+                      value: Scope.tight,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
-                    RadioListTile(
-                      title: Text("1 to 3 months"),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get("1-3")),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: null,
-                      groupValue: '',
-                      onChanged: (_) {},
+                      value: Scope.short,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
-                    RadioListTile(
-                      title: Text("3 to 6 months"),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get('3-6')),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: null,
-                      groupValue: '',
-                      onChanged: (_) {},
+                      value: Scope.long,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
-                    RadioListTile(
-                      title: Text("More than 6 months"),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get('6-')),
                       // secondary: Text(
                       //   _moods.first.emoji,
-                      //   style: const TextStyle(fontSize: 24),
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
                       controlAffinity: ListTileControlAffinity.trailing,
-                      value: '',
-                      groupValue: null,
-                      onChanged: (_) {},
+                      value: Scope.extended,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
                     ),
                     const Divider(height: 32),
                     // ListTile(
-                    //   title: const Text('Seed tracks'),
+                    //   title:  Text(Lang.get('Seed tracks'),
                     //   trailing: IconButton(
                     //     onPressed: () =>
                     //         context.go('/intro/genre/mood/seed-track'),
-                    //     icon: const Icon(Icons.edit_outlined),
+                    //     icon:  Icon(Icons.edit_outlined),
                     //   ),
                     // ),
                     TextField(
+                      controller: studentNeededController,
+                      keyboardType: TextInputType.number,
                       decoration: InputDecoration(
+                        hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        labelText: "Students needed",
+                        labelText: Lang.get("student_needed"),
                       ),
+                      onChanged: (value) {
+                        widget.filter.studentNeeded = int.tryParse(value) ?? 2;
+                      },
                     ),
                     const Divider(height: 32),
                     TextField(
+                      controller: proposalLessThanController,
                       decoration: InputDecoration(
+                        hintText: Lang.get("nothing_here"),
                         floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: OutlineInputBorder(
+                        border: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: OutlineInputBorder(
+                        enabledBorder: const OutlineInputBorder(
                             borderSide:
                                 BorderSide(color: Colors.black, width: 2)),
-                        labelText: "Proposal less than",
+                        labelText: Lang.get("proposal_less_than"),
                       ),
+                      onChanged: (value) {
+                        widget.filter.proposalLessThan =
+                            int.tryParse(value) ?? 0;
+                      },
                     ),
                   ],
                 ),
               ),
             ),
-            bottomBar: BottomAppBar(
-              height: 70,
-              surfaceTintColor: Colors.white,
-              child: Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Flexible(
-                    //   fit: FlexFit.tight,
-                    //   child: TextButton(
-                    //     onPressed: () {
-                    //       widget.onSheetDismissed();
-                    //     },
-                    //     child: const Text('Cancel'),
-                    //   ),
-                    // ),
-                    // const SizedBox(width: 16),
-                    RoundedButtonWidget(
-                      buttonColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {},
-                      buttonText: "Clear filter",
-                    ),
-                    const SizedBox(width: 12),
-                    RoundedButtonWidget(
-                      buttonColor: Theme.of(context).colorScheme.primary,
-                      onPressed: () {},
-                      buttonText: "Apply",
-                    ),
-                  ],
-                ),
+            bottomBar: StickyBottomBarVisibility(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Flexible(
+                  //   fit: FlexFit.tight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       widget.onSheetDismissed();
+                  //     },
+                  //     child:  Text(Lang.get('Cancel'),
+                  //   ),
+                  // ),
+                  //  SizedBox(width: 16),
+                  RoundedButtonWidget(
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      widget.filter.clear();
+                    },
+                    buttonText: Lang.get("clear_filter"),
+                  ),
+                  const SizedBox(width: 12),
+                  RoundedButtonWidget(
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+                    },
+                    buttonText: Lang.get("apply"),
+                  ),
+                ],
               ),
             )),
       ),
@@ -191,16 +259,19 @@ class _ConfirmPageState extends State<_ConfirmPage> {
 
 class SearchBottomSheet extends StatefulWidget {
   const SearchBottomSheet(
-      {required this.onSheetDismissed,
-      this.height = 750,
+      {super.key,
+      required this.onSheetDismissed,
+      this.height = 650,
       required this.onFilterTap,
       required this.searchList,
-      this.keyword});
+      this.keyword,
+      this.filter});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
   final List<Project> searchList;
   final String? keyword;
+  final SearchFilter? filter;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -228,32 +299,39 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     // SheetContentScaffold is a special Scaffold designed for use in a sheet.
     // It has slots for an app bar and a sticky bottom bar, similar to Scaffold.
     // However, it differs in that its height reduces to fit the 'body' widget.
-    final content = SheetContentScaffold(
-      backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      // The bottom bar sticks to the bottom unless the sheet extent becomes
-      // smaller than this threshold extent.
-      requiredMinExtentForStickyBottomBar: const Extent.proportional(0.5),
-      // With the following configuration, the sheet height will be
-      // 500px + (app bar height) + (bottom bar height).
-      body: Container(
-        height: widget.height,
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: isSuggestionTapped
-              ? ExampleUiLoadingAnimation(
-                  height: MediaQuery.of(context).size.height * 0.85,
-                  list: widget.searchList,
-                  firstCallback: (i) {
-                    setState(() {
-                      allProjects[i].isFavorite = !allProjects[i].isFavorite!;
-                    });
-                  },
-                )
-              : null,
+    final content = Container(
+      decoration: const ShapeDecoration(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
       ),
-      appBar: buildAppBar(context),
-      bottomBar: buildBottomBar(),
+      clipBehavior: Clip.antiAlias,
+      child: SheetContentScaffold(
+        backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+        // The bottom bar sticks to the bottom unless the sheet extent becomes
+        // smaller than this threshold extent.
+        // With the following configuration, the sheet height will be
+        // 500px + (app bar height) + (bottom bar height).
+        body: SizedBox(
+          height: widget.height * 0.85,
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: isSuggestionTapped
+                ? ExampleLoadingAnimationProjectList(
+                    height: MediaQuery.of(context).size.height * 0.85,
+                    list: widget.searchList,
+                    firstCallback: (i) {
+                      setState(() {
+                        allProjects[i].isFavorite = !allProjects[i].isFavorite;
+                      });
+                    },
+                  )
+                : null,
+          ),
+        ),
+        appBar: buildAppBar(context),
+        bottomBar: buildBottomBar(),
+      ),
     );
 
     final physics = StretchingSheetPhysics(
@@ -288,110 +366,200 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
   PreferredSizeWidget buildAppBar(BuildContext context) {
     return AppBar(
       toolbarHeight: 80,
-      titleSpacing: 0,
-      // title: const Text('Search projects'),
+      // title:  Text(Lang.get('Search projects'),
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-      title: AnimSearchBar2(
-        textFieldColor: Theme.of(context).colorScheme.surface,
-        color: Theme.of(context).colorScheme.surface,
-        onSubmitted: (p0) {},
-        width: MediaQuery.of(context).size.width,
-        textController: controller,
-        onSuffixTap: () {},
-        onSelected: (project) {
-          // print(project.title);
-          // setState(() {
-          //   isSuggestionTapped = true;
-          // });
-        },
-        // initialText:
-        // readOnly:
-        // TODO:
-        searchTextEditingController: controller,
-        onSuggestionCallback: (pattern) {
-          // if (pattern.isEmpty) return [];
-          // return Future<List<Project>>.delayed(
-          //   const Duration(milliseconds: 300),
-          //   () => allProjects.where((product) {
-          //     final nameLower = product.title.toLowerCase().split(' ').join('');
-          //     print(nameLower);
-          //     final patternLower = pattern.toLowerCase().split(' ').join('');
-          //     return nameLower.contains(patternLower);
-          //   }).toList(),
-          // );
-          return [];
-        },
-        suggestionItemBuilder: (context, project) => ListTile(
-          title: Text(project.title),
-          subtitle: Text(project.description),
-        ),
-      ),
+      title: widget.filter != null
+          ? AutoSizeText(
+              "Filter: ${widget.filter!}",
+              maxLines: 3,
+              minFontSize: 12,
+            )
+          : const SizedBox(),
+      titleTextStyle:
+          Theme.of(context).textTheme.titleSmall!.merge(const TextStyle(
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              )),
 
-      actions: [
-        IconButton(
-            onPressed: () {
-              widget.onFilterTap();
-            },
-            icon: Icon(Icons.filter_alt_outlined))
+      // AnimSearchBar2(
+      //   enabled: false,
+      //   expandedByDefault: false,
+      //   textFieldColor: Theme.of(context).colorScheme.surface,
+      //   color: Theme.of(context).colorScheme.surface,
+      //   onSubmitted: (p0) {},
+      //   width: MediaQuery.of(context).size.width,
+      //   textController: controller,
+      //   onSuffixTap: () {},
+      //   onSelected: (project) {
+      //     // //print(project.title);
+      //     // setState(() {
+      //     //   isSuggestionTapped = true;
+      //     // });
+      //   },
+      //   // initialText:
+      //   // readOnly:
+      //   searchTextEditingController: controller,
+      //   onSuggestionCallback: (pattern) {
+      //     // if (pattern.isEmpty) return [];
+      //     // return Future<List<Project>>.delayed(
+      //     //    Duration(milliseconds: 300),
+      //     //   () => allProjects.where((product) {
+      //     //     final nameLower = product.title.toLowerCase().split(' ').join('');
+      //     //     //print(nameLower);
+      //     //     final patternLower = pattern.toLowerCase().split(' ').join('');
+      //     //     return nameLower.contains(patternLower);
+      //     //   }).toList(),
+      //     // );
+      //     return [];
+      //   },
+      //   suggestionItemBuilder: (context, project) => ListTile(
+      //     title: Text(project.title),
+      //     subtitle: Text(project.description),
+      //   ),
+      // ),
+
+      actions: const [
+        // IconButton(
+        //     onPressed: () {
+        //       widget.onFilterTap();
+        //     },
+        //     icon: Icon(Icons.filter_alt_outlined))
       ],
     );
   }
 
   Widget buildBottomBar() {
-    return BottomAppBar(
-      height: 70,
-      surfaceTintColor: Colors.white,
-      child: Center(
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Flexible(
-            //   fit: FlexFit.tight,
-            //   child: TextButton(
-            //     onPressed: () {
-            //       widget.onSheetDismissed();
-            //     },
-            //     child: const Text('Cancel'),
-            //   ),
-            // ),
-            // const SizedBox(width: 16),
-            RoundedButtonWidget(
-              buttonColor: Theme.of(context).colorScheme.primary,
-              onPressed: () {
-                widget.onSheetDismissed();
-              },
-              buttonText: "OK",
-            ),
-          ],
+    return StickyBottomBarVisibility(
+      child: BottomAppBar(
+        height: 70,
+        surfaceTintColor: Colors.white,
+        child: Center(
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Flexible(
+              //   fit: FlexFit.tight,
+              //   child: TextButton(
+              //     onPressed: () {
+              //       widget.onSheetDismissed();
+              //     },
+              //     child:  Text(Lang.get('Cancel'),
+              //   ),
+              // ),
+              //  SizedBox(width: 16),
+              RoundedButtonWidget(
+                buttonColor: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  widget.onSheetDismissed();
+                },
+                buttonText: "OK",
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+bool applyFilter(SearchFilter f, Project p) {
+  bool b = true;
+  b &= (f.scope != null && f.scope! == p.scope) || (f.scope == null);
+  b &= (f.studentNeeded != null && f.studentNeeded! == p.numberOfStudents) ||
+      (f.studentNeeded == null);
+  b &= (f.proposalLessThan != null &&
+          (p.proposal != null && f.proposalLessThan! == p.proposal!.length)) ||
+      (f.studentNeeded == null) ||
+      (p.proposal == null);
+  return b;
+}
+
+// ignore: must_be_immutable
 class ProjectTab extends StatefulWidget {
-  ProjectTab({super.key, this.isAlive = true});
-  bool? isAlive;
+  const ProjectTab({super.key, this.isAlive = true, this.scrollController});
+  final bool? isAlive;
+  final ScrollController? scrollController;
 
   @override
   State<ProjectTab> createState() => _ProjectTabState();
 }
 
-class _ProjectTabState extends State<ProjectTab>
-    with AutomaticKeepAliveClientMixin {
+class _ProjectTabState extends State<ProjectTab> {
+  SearchFilter filter = SearchFilter();
   @override
   Widget build(BuildContext context) {
-    return _buildProjectContent();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 60),
+      child: _buildProjectContent(),
+    );
   }
 
-  Future<SearchBottomSheet?> showTodoEditor(BuildContext context) {
-    return Navigator.push(
+  Future<SearchFilter?> showFilterBottomSheet(BuildContext context) async {
+    return await NavbarNotifier2.push(
+      NavbarNotifier2.currentIndex,
       context,
       ModalSheetRoute(
-        builder: (context) => _ConfirmPage(),
+        builder: (context) => _FilterBottomSheet(
+          filter: filter,
+        ),
       ),
-    );
+    ).then((value) {
+      if (value != null) {
+        return value;
+      }
+      //print(filter);
+      return null;
+    });
+  }
+
+  Future<SearchBottomSheet?> showSearchBottomSheet(BuildContext context) async {
+    return await NavbarNotifier2.push(
+      NavbarNotifier2.currentIndex,
+      context,
+      ModalSheetRoute(
+        builder: (context) => SearchBottomSheet(
+          filter: filter,
+          keyword: keyword,
+          searchList: allProjects
+              .where((e) =>
+                  keyword.isNotEmpty &&
+                  e.title.toLowerCase().contains(keyword.toLowerCase()) &&
+                  applyFilter(filter, e))
+              .toList(),
+          onSheetDismissed: () {
+            setState(() {
+              NavbarNotifier2.hideBottomNavBar = false;
+              yOffset = MediaQuery.of(context).size.height;
+            });
+            final FocusScopeNode currentScope = FocusScope.of(context);
+            if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+              FocusManager.instance.primaryFocus?.unfocus();
+            }
+            NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+
+            return true;
+          },
+          onFilterTap: () async {
+            // await showFilterBottomSheet(context).then((value) {
+            //   if (value != null) {
+            //     setState(() {
+            //       filter = value;
+            //     });
+            //     NavbarNotifier2.popRoute(Navigator.currentIndex);
+            //   }
+            // });
+          },
+        ),
+      ),
+    ).then((value) {
+      setState(() {
+        NavbarNotifier2.hideBottomNavBar = false;
+        yOffset = MediaQuery.of(context).size.height;
+      });
+      FocusManager.instance.primaryFocus?.unfocus();
+      return null;
+    });
   }
 
   double yOffset = 0;
@@ -420,42 +588,89 @@ class _ProjectTabState extends State<ProjectTab>
             });
           },
         ),
-        // Text("This is project page"),
+        // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
             child: Row(
               children: [
                 Expanded(
                   child: AnimSearchBar2(
+                    helpText: Lang.get("search"),
+                    expandedByDefault: true,
                     textFieldColor: Theme.of(context).colorScheme.surface,
                     color: Theme.of(context).colorScheme.surface,
-                    onSubmitted: (p0) {
+                    onSubmitted: (p0) async {
                       setState(() {
                         keyword = p0;
-
-                        if (yOffset == MediaQuery.of(context).size.height) {
-                          NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {}
+                        NavbarNotifier2.hideBottomNavBar = true;
+                        yOffset =
+                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
                       });
+                      await showSearchBottomSheet(context);
                     },
                     width: MediaQuery.of(context).size.width,
                     textController: controller,
                     onSuffixTap: () {},
-                    onSelected: (project) {
+                    onSelected: (project) async {
                       setState(() {
                         keyword = project.title;
-                        if (yOffset == MediaQuery.of(context).size.height) {
-                          NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                        } else {}
+                        NavbarNotifier2.hideBottomNavBar = true;
+                        yOffset =
+                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
                       });
+                      await showSearchBottomSheet(context);
+                      // await showSearchBottomSheet(context);
+                      // showModalBottomSheet(
+                      //     isScrollControlled: true,
+                      //     context: context,
+                      //     builder: (context) {
+                      //       return SearchBottomSheet(
+                      //         filter: filter,
+                      //         keyword: keyword,
+                      //         searchList: allProjects
+                      //             .where((e) =>
+                      //                 keyword.isNotEmpty &&
+                      //                 e.title
+                      //                     .toLowerCase()
+                      //                     .contains(keyword.toLowerCase()) &&
+                      //                 applyFilter(filter, e))
+                      //             .toList(),
+                      //         onSheetDismissed: () {
+                      //           setState(() {
+                      //             Navigator.hideBottomNavBar = false;
+                      //             yOffset = MediaQuery.of(context).size.height;
+                      //           });
+                      //           final FocusScopeNode currentScope =
+                      //               FocusScope.of(context);
+                      //           if (!currentScope.hasPrimaryFocus &&
+                      //               currentScope.hasFocus) {
+                      //             FocusManager.instance.primaryFocus?.unfocus();
+                      //           }
+                      //           Navigator.popRoute(
+                      //               Navigator.currentIndex);
+                      //           return true;
+                      //         },
+                      //         onFilterTap: () async {
+                      //           // await showFilterBottomSheet(context).then((value) {
+                      //           //   if (value != null) {
+                      //           //     setState(() {
+                      //           //       filter = value;
+                      //           //     });
+                      //           //     NavbarNotifier2.popRoute(Navigator.currentIndex);
+                      //           //   }
+                      //           // });
+                      //         },
+                      //       );
+                      //     }).then((value) {
+                      //   setState(() {
+                      //     Navigator.hideBottomNavBar = false;
+                      //     yOffset = MediaQuery.of(context).size.height;
+                      //   });
+                      //   FocusManager.instance.primaryFocus?.unfocus();
+                      // });
                     },
                     // initialText:
                     // readOnly:
-                    // TODO:
                     searchTextEditingController: controller,
                     onSuggestionCallback: (pattern) {
                       if (pattern.isEmpty) return [];
@@ -464,7 +679,7 @@ class _ProjectTabState extends State<ProjectTab>
                         () => allProjects.where((product) {
                           final nameLower =
                               product.title.toLowerCase().split(' ').join('');
-                          print(nameLower);
+                          //print(nameLower);
                           final patternLower =
                               pattern.toLowerCase().split(' ').join('');
                           return nameLower.contains(patternLower);
@@ -478,12 +693,40 @@ class _ProjectTabState extends State<ProjectTab>
                   ),
                 ),
                 IconButton(
+                    onPressed: () async {
+                      setState(() {
+                        NavbarNotifier2.hideBottomNavBar = true;
+                        yOffset =
+                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                      });
+                      await showFilterBottomSheet(context).then((value) {
+                        NavbarNotifier2.hideBottomNavBar = false;
+                        if (value != null) {
+                          setState(() {
+                            filter = value;
+                          });
+                          NavbarNotifier2.popRoute(
+                              NavbarNotifier2.currentIndex);
+                        }
+                      });
+                    },
+                    icon: const Icon(Icons.filter_alt_outlined)),
+                IconButton(
                     onPressed: () {
-                      NavbarNotifier2.pushNamed(Routes.favortie_project,
-                          NavbarNotifier2.currentIndex, null);
+                      NavbarNotifier2.pushNamed(
+                          Routes.favortieProject,
+                          NavbarNotifier2.currentIndex,
+                          FavoriteScreen(
+                              projectList: allProjects
+                                  .where((element) => element.isFavorite)
+                                  .toList(),
+                              onFavoriteTap: (int i) {
+                                allProjects[i].isFavorite =
+                                    !allProjects[i].isFavorite;
+                              }));
                     },
                     color: Theme.of(context).colorScheme.primary,
-                    icon: const Icon(Icons.favorite_rounded))
+                    icon: const Icon(Icons.favorite_rounded)),
               ],
             )),
         // Flexible(
@@ -495,56 +738,54 @@ class _ProjectTabState extends State<ProjectTab>
         //     ),
         //   ),
         // ),
-        SizedBox(
+        const SizedBox(
           height: 100,
         ),
         Container(
-          margin: EdgeInsets.only(top: 40),
-          child: ExampleUiLoadingAnimation(
-            height: MediaQuery.of(context).size.height - 60,
+          margin: const EdgeInsets.only(top: 40),
+          child: LazyLoadingAnimationProjectList(
+            scrollController: widget.scrollController,
+            itemHeight: 230,
             list: allProjects,
             firstCallback: (i) {
               setState(() {
-                allProjects[i].isFavorite = !allProjects[i].isFavorite!;
+                allProjects[i].isFavorite = !allProjects[i].isFavorite;
               });
             },
           ),
         ),
-        AnimatedContainer(
-            curve: Easing.legacyAccelerate,
-            color: Colors.black.withOpacity(0.5),
+        // AnimatedContainer(
+        //     curve: Easing.legacyAccelerate,
+        //     color: Colors.black.withOpacity(0.5),
 
-            // color: Colors.amber,
-            alignment: Alignment.bottomCenter,
-            duration: Duration(milliseconds: 300),
-            transform: Matrix4.translationValues(0, yOffset, -1.0),
-            child: SearchBottomSheet(
-              keyword: keyword,
-              searchList: allProjects
-                  .where((e) =>
-                      keyword.isNotEmpty &&
-                      e.title.toLowerCase().contains(keyword.toLowerCase()))
-                  .toList(),
-              onSheetDismissed: () {
-                setState(() {
-                  NavbarNotifier2.hideBottomNavBar = false;
-                  yOffset = MediaQuery.of(context).size.height;
-                });
-                final FocusScopeNode currentScope = FocusScope.of(context);
-                if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-                  FocusManager.instance.primaryFocus?.unfocus();
-                }
-                return true;
-              },
-              onFilterTap: () async {
-                await showTodoEditor(context);
-              },
-            )),
+        //     // color: Colors.amber,
+        //     alignment: Alignment.bottomCenter,
+        //     duration: Duration(milliseconds: 300),
+        //     transform: Matrix4.translationValues(0, yOffset, -1.0),
+        //     child: SearchBottomSheet(
+        //       filter: filter,
+        //       keyword: keyword,
+        //       searchList: allProjects
+        //           .where((e) =>
+        //               keyword.isNotEmpty &&
+        //               e.title.toLowerCase().contains(keyword.toLowerCase()))
+        //           .toList(),
+        //       onSheetDismissed: () {
+        //         setState(() {
+        //           Navigator.hideBottomNavBar = false;
+        //           yOffset = MediaQuery.of(context).size.height;
+        //         });
+        //         final FocusScopeNode currentScope = FocusScope.of(context);
+        //         if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
+        //           FocusManager.instance.primaryFocus?.unfocus();
+        //         }
+        //         return true;
+        //       },
+        //       onFilterTap: () async {
+        //         await showFilterBottomSheet(NavigationService.navigatorKey.currentContext ?? context);
+        //       },
+        //     )),
       ],
     );
   }
-
-  @override
-  // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => widget.isAlive!;
 }

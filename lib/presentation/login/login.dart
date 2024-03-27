@@ -6,18 +6,27 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
+import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -28,8 +37,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   //text controllers:-----------------------------------------------------------
-  TextEditingController _userEmailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userEmailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
@@ -87,9 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
-                      setState(() {
-                        loading = false;
-                      });
+                      // setState(() {
+                      //   loading = false;
+                      // });
                     },
                     child: const LoadingScreen()),
               );
@@ -117,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          EmptyAppBar(),
+          const EmptyAppBar(),
           Flexible(
             flex: 1,
             fit: FlexFit.loose,
@@ -126,8 +135,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    AppLocalizations.of(context).translate('login_main_text'),
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
+                    Lang.get('login_main_text'),
+                    style: const TextStyle(
+                        fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -139,8 +149,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 24.0),
                   _buildUserIdField(),
                   _buildPasswordField(),
-                  // _buildForgotPasswordButton(),
-                  const SizedBox(height: 24.0),
+                  _buildForgotPasswordButton(),
                   _buildSignInButton(),
                 ],
               ),
@@ -168,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint: AppLocalizations.of(context).translate('login_et_user_email'),
+          hint: Lang.get('login_et_user_email'),
           inputType: TextInputType.emailAddress,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
@@ -183,8 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
           },
           errorText: _formStore.formErrorStore.userEmail == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.formErrorStore.userEmail),
         );
       },
     );
@@ -194,8 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
-          hint:
-              AppLocalizations.of(context).translate('login_et_user_password'),
+          hint: Lang.get('login_et_user_password'),
           isObscure: true,
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
@@ -204,8 +211,7 @@ class _LoginScreenState extends State<LoginScreen> {
           focusNode: _passwordFocusNode,
           errorText: _formStore.formErrorStore.password == null
               ? null
-              : AppLocalizations.of(context)
-                  .translate(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.formErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -220,13 +226,16 @@ class _LoginScreenState extends State<LoginScreen> {
       child: MaterialButton(
         padding: const EdgeInsets.all(0.0),
         child: Text(
-          AppLocalizations.of(context).translate('login_btn_forgot_password'),
+          Lang.get('login_btn_forgot_password'),
           style: Theme.of(context)
               .textTheme
-              .caption
-              ?.copyWith(color: Colors.orangeAccent),
+              .bodySmall
+              ?.copyWith(color: Colors.orangeAccent, fontSize: 12),
         ),
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute2(routeName: Routes.forgetPassword));
+        },
       ),
     );
   }
@@ -235,18 +244,17 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
-        buttonText: AppLocalizations.of(context).translate('login_btn_sign_in'),
+        buttonText: Lang.get('login_btn_sign_in'),
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          loading = true;
           if (_formStore.canLogin) {
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
                 _userEmailController.text, _passwordController.text);
+            loading = true;
           } else {
-            _showErrorMessage(AppLocalizations.of(context)
-                .translate('login_error_missing_fields'));
+            _showErrorMessage(Lang.get('login_error_missing_fields'));
           }
         },
       ),
@@ -266,7 +274,7 @@ class _LoginScreenState extends State<LoginScreen> {
               )),
         ),
         Text(
-          AppLocalizations.of(context).translate('login_btn_sign_up_prompt'),
+          Lang.get('login_btn_sign_up_prompt'),
           style: const TextStyle(fontSize: 12),
         ),
         Expanded(
@@ -287,20 +295,19 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         margin: const EdgeInsets.fromLTRB(50, 0, 50, 50),
         child: RoundedButtonWidget(
-          buttonText:
-              AppLocalizations.of(context).translate('login_btn_sign_up'),
+          buttonText: Lang.get('login_btn_sign_up'),
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
             Navigator.of(context)
-              ..push(MaterialPageRoute2(routeName: Routes.signUp));
+                .push(MaterialPageRoute2(routeName: Routes.signUp));
             // if (_formStore.canLogin) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(
             //       _userEmailController.text, _passwordController.text);
             // } else {
             //   _showErrorMessage(AppLocalizations.of(context)
-            //       .translate('login_error_missing_fields'));
+            //       .get('login_error_missing_fields'));
             // }
           },
         ),
@@ -309,18 +316,108 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
+    if (loading) {
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.setBool(Preferences.is_logged_in, true);
+      });
+      Future.delayed(const Duration(milliseconds: 10), () async {
+        // //print("LOADING = $loading");
+        log("login", "BEBAOBOY");
+        await initCube(NavigationService.navigatorKey.currentContext);
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      print("LOADING = $loading");
-      Navigator.of(context)
-        ..pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home),
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
-    });
-
+        loading = false;
+      });
+    }
     return Container();
+  }
+
+  initCube(context) async {
+    final UserStore userStore = getIt<UserStore>();
+    CubeUser user;
+
+    if (userStore.user != null && userStore.user!.type != UserType.naught) {
+      try {
+        if (CubeChatConnection.instance.currentUser != null &&
+            !userStore.user!.email.contains(
+                CubeChatConnection.instance.currentUser!.login ?? "????")) {
+          //print("change user --- LOGING OUT");
+          await SharedPreferences.getInstance().then((preference) async {
+            CallManager.instance.destroy();
+            CubeChatConnection.instance.destroy();
+            await PushNotificationsManager.instance.unsubscribe();
+
+            await SharedPrefs.deleteUserData();
+            await signOut();
+
+            // await userStore.logout();
+          });
+        }
+        // CallManager.instance.destroy();
+        // CubeChatConnection.instance.destroy();
+        // // await PushNotificationsManager.instance.unsubscribe();
+        // await SharedPrefs.deleteUserData();
+        // // await signOut();
+      } catch (e) {}
+      //CubeSessionManager.instance.isActiveSessionValid();
+
+      // user = _userStore.user!.type == UserType.student
+      //     ? utils.users[0]
+      //     : utils.users[1];
+      user = userStore.user!.email == "user1@gmail.com"
+          ? utils.users[0]
+          : userStore.user!.email == "user2@gmail.com"
+              ? utils.users[1]
+              : utils.users[2];
+      await createSession(user).then(
+        (value) async {
+          CubeSessionManager.instance.activeSession = value;
+
+          await CubeChatConnection.instance.login(user).then((cubeUser) async {
+            SharedPrefs.saveNewUser(cubeUser);
+            log(cubeUser.toString(), "BEBAOBOY");
+            if (CubeChatConnection.instance.isAuthenticated() &&
+                CubeChatConnection.instance.currentUser != null) {
+              log(
+                  (CubeSessionManager.instance.activeSession!.user == null)
+                      .toString(),
+                  "BEBAOBOY");
+            }
+
+            initForegroundService();
+            checkSystemAlertWindowPermission(context);
+
+            requestNotificationsPermission();
+
+            await CallManager.instance.init(context);
+
+            PushNotificationsManager.instance.init();
+
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute2(
+                    routeName:
+                        userStore.isLoggedIn ? Routes.home : Routes.login));
+          }).catchError((exception) {
+            //_processLoginError(exception);
+
+            log(exception.toString(), "BEBAOBOY");
+          });
+          // _controller.stop();
+        },
+      ).catchError((exception) {
+        //_processLoginError(exception);
+
+        log(exception.toString(), "BEBAOBOY");
+      });
+      deleteSessionsExceptCurrent()
+          .then((voidResult) {})
+          .catchError((error) {});
+    } else {
+      user = utils.users[2];
+    }
   }
 
   // General Methods:-----------------------------------------------------------
@@ -330,9 +427,9 @@ class _LoginScreenState extends State<LoginScreen> {
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
-            title: AppLocalizations.of(context).translate('home_tv_error'),
+            title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          )..show(context);
+          ).show(context);
         }
       });
     }

@@ -59,26 +59,29 @@ class TextFieldWidget extends StatelessWidget {
         maxLength: maxLength,
         maxLines: maxLines,
         minLines: minLines,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
         keyboardType: inputType,
-        style: Theme.of(context).textTheme.bodyText1 == null
+        style: Theme.of(context).textTheme.bodyLarge == null
             ? TextStyle(fontSize: fontSize, overflow: TextOverflow.ellipsis)
                 .merge(style)
             : Theme.of(context)
                 .textTheme
-                .bodyText1!
+                .bodyLarge!
                 .copyWith(fontSize: fontSize, overflow: TextOverflow.ellipsis)
                 .merge(style),
         magnifierConfiguration: TextMagnifierConfiguration.disabled,
         decoration: (inputDecoration ?? const InputDecoration()).copyWith(
           floatingLabelBehavior: initialValue == null ||
                   (initialValue != null && initialValue!.isEmpty)
-              ? FloatingLabelBehavior.always
+              ? FloatingLabelBehavior.never
               : floatingLabelBehavior,
           label: label,
           hintText: hint,
           hintStyle: Theme.of(context)
               .textTheme
-              .bodyText1!
+              .bodyLarge!
               .copyWith(color: hintColor)
               .merge(hintStyle),
           errorText: errorText,

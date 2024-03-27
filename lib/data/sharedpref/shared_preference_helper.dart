@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants/preferences.dart';
@@ -49,5 +50,27 @@ class SharedPreferenceHelper {
 
   Future<void> changeLanguage(String language) {
     return _sharedPreference.setString(Preferences.current_language, language);
+  }
+
+  Future<void> saveUser(User? user) {
+    if(user == null){
+       _sharedPreference.setString(Preferences.current_user_email, '');
+       return _sharedPreference.setString(
+        Preferences.current_user_role, '');
+    }
+    _sharedPreference.setString(Preferences.current_user_email, user.email);
+    return _sharedPreference.setString(
+        Preferences.current_user_role, user.type.name.toLowerCase().toString());
+  }
+
+  Future<User> get user async {
+    String userEmail =
+        _sharedPreference.getString(Preferences.current_user_email) ?? '';
+    String userRole =
+        _sharedPreference.getString(Preferences.current_user_role) ?? '';
+
+    UserType userType = getUserType(userRole);
+
+    return User(email: userEmail, type: userType);
   }
 }

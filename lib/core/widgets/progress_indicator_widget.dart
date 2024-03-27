@@ -12,8 +12,8 @@ class CustomProgressIndicatorWidget extends StatelessWidget {
       child: Container(
         height: 100,
         constraints: const BoxConstraints.expand(),
-        decoration: const BoxDecoration(
-            color: Color.fromARGB(100, 105, 105, 105)),
+        decoration:
+            const BoxDecoration(color: Color.fromARGB(100, 105, 105, 105)),
         child: FittedBox(
           fit: BoxFit.none,
           child: SizedBox(
