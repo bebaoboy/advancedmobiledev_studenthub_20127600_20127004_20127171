@@ -19,6 +19,8 @@ import 'package:flutter/material.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 
+String lastLocale = "";
+
 // ---------------------------------------------------------------------------
 class DashBoardScreen extends StatefulWidget {
   const DashBoardScreen({super.key});
@@ -121,7 +123,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   final _pageController2 = IndexController();
   final _pageController = PageController(initialPage: 1);
   final LanguageStore _languageStore = getIt<LanguageStore>();
-  String lastLocale = "";
   // late int currentPage;
   // late TabController tabController;
   final List<Color> colors = [
@@ -159,59 +160,92 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   //view page height
   final double _height = 230.0;
 
-  @override
-  void didUpdateWidget(covariant DashBoardScreen oldWidget) {
-    if (lastLocale != _languageStore.locale) {
-      // print("change locale");
-      lastLocale = _languageStore.locale;
-      initItems();
-      // _routes = [
-      //   ..._routes.sublist(0, NavbarNotifier2.currentIndex),
-      //   ...List.from(_routes.mapIndexed((i, e) {
-      //     if (i == NavbarNotifier2.currentIndex) return e;
-      //   })),
-      //   ..._routes.sublist(
-      //       (NavbarNotifier2.currentIndex + 1)
-      //           .clamp(0, NavbarNotifier2.length - 1),
-      //       NavbarNotifier2.length)
-      // ];
-    }
-    super.didUpdateWidget(oldWidget);
-  }
+  // @override
+  // void didUpdateWidget(covariant DashBoardScreen oldWidget) {
+  //   if (lastLocale != _languageStore.locale) {
+  //     //initItems();
+  //     print("change locale");
+  //     lastLocale = _languageStore.locale;
+  //     // _routes = [
+  //     //   ..._routes.sublist(0, NavbarNotifier2.currentIndex),
+  //     //   ...List.from(_routes.mapIndexed((i, e) {
+  //     //     if (i == NavbarNotifier2.currentIndex) return e;
+  //     //   })),
+  //     //   ..._routes.sublist(
+  //     //       (NavbarNotifier2.currentIndex + 1)
+  //     //           .clamp(0, NavbarNotifier2.length - 1),
+  //     //       NavbarNotifier2.length)
+  //     // ];
+  //   }
+  //   super.didUpdateWidget(oldWidget);
+  // }
 
   initItems() {
-    items = [
-      NavbarItem(
-        Icons.business,
-        'Projects',
-        backgroundColor: Theme.of(context).colorScheme.primary,
-      ),
-      NavbarItem(
-        Icons.dashboard,
-        'Dashboard',
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-      ),
-      NavbarItem(
-        Icons.message,
-        Lang.get('Dashboard_message'),
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-      ),
-      NavbarItem(
-        Icons.notifications,
-        Lang.get('Dashboard_alert'),
-        backgroundColor: Theme.of(context).colorScheme.onSecondary,
-      ),
-    ];
+      // _routes = [
+      //   {
+      //     '/': KeepAlivePage(ProjectTab(
+      //       key: const PageStorageKey(0),
+      //       scrollController: ScrollController(),
+      //     )),
+      //     Routes.favortieProject: getRoute(Routes.favortieProject, context),
+      //   },
+      //   {
+      //     '/': _userStore.user!.type == UserType.company
+      //         ? KeepAlivePage(DashBoardTab(
+      //             key: const PageStorageKey(1),
+      //             pageController: _pageController,
+      //           ))
+      //         : KeepAlivePage(StudentDashBoardTab(
+      //             key: const PageStorageKey(1), pageController: _pageController)),
+      //     // Routes.projectDetails: ProjectDetailsPage(
+      //     //   project: Project(title: 'som', description: 'smm'),
+      //     // ),
+      //     // Routes.project_post: getRoute(Routes.project_post),
+      //   },
+      //   {
+      //     '/': const KeepAlivePage(MessageTab(
+      //       key: PageStorageKey(2),
+      //     )),
+      //     // ProfileEdit.route: ProfileEdit(),
+      //   },
+      //   {
+      //     '/': const KeepAlivePage(AlertTab(
+      //       key: PageStorageKey(3),
+      //     )),
+      //   },
+      // ];
+      items = [
+        NavbarItem(
+          Icons.business,
+          'Projects',
+          backgroundColor: Theme.of(context).colorScheme.primary,
+        ),
+        NavbarItem(
+          Icons.dashboard,
+          'Dashboard',
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        ),
+        NavbarItem(
+          Icons.message,
+          Lang.get('Dashboard_message'),
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        ),
+        NavbarItem(
+          Icons.notifications,
+          Lang.get('Dashboard_alert'),
+          backgroundColor: Theme.of(context).colorScheme.onSecondary,
+        ),
+      ];
   }
 
   @override
   Widget build(BuildContext context) {
-    //print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
-    if (items.isEmpty || lastLocale != _languageStore.locale) {
-      initItems();
-      // print("change locale");
-      lastLocale = _languageStore.locale;
-    }
+    print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
+    // if (items.isEmpty || lastLocale != _languageStore.locale) {
+    initItems();
+    // print("change locale" + lastLocale);
+    lastLocale = _languageStore.locale;
+    // }
 // final Color unselectedColor = colors[currentPage].computeLuminance() < 0.5
     //     ? Colors.black
     //     : Colors.white;
@@ -449,7 +483,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar();
+    return const MainAppBar(theme: false,);
   }
 }
 

@@ -20,8 +20,8 @@ class SettingRepositoryImpl extends SettingRepository {
 
   // Language: -----------------------------------------------------------------
   @override
-  Future<void> changeLanguage(String value) =>
-      _sharedPrefsHelper.changeLanguage(value);
+  Future<void> changeLanguage(String value) async =>
+      await _sharedPrefsHelper.changeLanguage(value);
 
   @override
   String? get currentLanguage => _sharedPrefsHelper.currentLanguage;

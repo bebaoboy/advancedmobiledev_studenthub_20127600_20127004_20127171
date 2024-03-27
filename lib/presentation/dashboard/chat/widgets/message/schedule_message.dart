@@ -310,15 +310,19 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               //         : Chat.theme.receivedMessageCaptionTextStyle,
               //   ),
               // ),
-              Text(
+              AutoSizeText(
                 "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
                 style: const TextStyle(color: Colors.black, fontSize: 10),
-                textWidthBasis: TextWidthBasis.longestLine,
+                maxLines: 1,
+                minFontSize: 5,
+                // textWidthBasis: TextWidthBasis.longestLine,
               ),
-              Text(
+              AutoSizeText(
                 "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
                 style: const TextStyle(color: Colors.black, fontSize: 10),
-                textWidthBasis: TextWidthBasis.longestLine,
+                maxLines: 1,
+                minFontSize: 5,
+                // textWidthBasis: TextWidthBasis.longestLine,
               ),
               Align(
                 alignment: Alignment.centerRight,

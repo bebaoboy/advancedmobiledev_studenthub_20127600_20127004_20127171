@@ -717,7 +717,7 @@ class _MessageScreenState extends State<MessageScreen> {
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Chat(
-        scrollPhysics: ClampingScrollPhysics(),
+        scrollPhysics: const ClampingScrollPhysics(),
         typingIndicatorOptions: const TypingIndicatorOptions(typingUsers: [
           types.User(id: "123", firstName: "Lam", lastName: "Quan")
         ]),

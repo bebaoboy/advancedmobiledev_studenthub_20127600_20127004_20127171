@@ -2,17 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: deprecated_member_use_from_same_package
+// ignore_for_file: deprecated_member_use_from_same_package, deprecated_member_use
 
 import 'dart:ui' as ui;
 
-import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/core/widgets/circular_animation/circular_animated_theme.dart';
-import 'package:boilerplate/core/widgets/fade_animation/fade_animated_theme.dart';
 import 'package:boilerplate/core/widgets/pip/movable_overlay.dart';
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/core/widgets/pip/pip_params.dart';
-import 'package:boilerplate/core/widgets/scale_animation/scale_animated_theme.dart';
 import 'package:boilerplate/core/widgets/animation_type.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -611,6 +608,7 @@ class PiPMaterialAppState extends State<PiPMaterialApp> {
   Widget build(BuildContext context) {
     if (widget.routerApp == false) {
       return AnimatedThemeApp(
+        // TODO: fix
         animationDuration: widget.animationDuration,
         animationType: widget.animationType,
         actions: widget.actions,
@@ -1631,39 +1629,39 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
 
   ThemeData? lastTheme;
 
-  ThemeData _themeBuilder(BuildContext context) {
+  (ThemeData theme, ThemeData endTheme) _themeBuilder(BuildContext context) {
+    // Resolve which theme to use based on brightness and high contrast.
     final ThemeMode mode = widget.themeMode ?? ThemeMode.system;
-
+    ThemeData? theme;
     final Brightness platformBrightness =
         MediaQuery.platformBrightnessOf(context);
     final bool useDarkTheme = mode == ThemeMode.dark ||
         (mode == ThemeMode.system && platformBrightness == ui.Brightness.dark);
     final bool highContrast = MediaQuery.highContrastOf(context);
-
     if (useDarkTheme && highContrast && widget.highContrastDarkTheme != null) {
-      lastTheme = widget.highContrastDarkTheme;
+      theme = widget.highContrastDarkTheme;
     } else if (useDarkTheme && widget.darkTheme != null) {
-      lastTheme = widget.darkTheme;
+      theme = widget.darkTheme;
     } else if (highContrast && widget.highContrastTheme != null) {
-      lastTheme = widget.highContrastTheme;
+      theme = widget.highContrastTheme;
     }
-    lastTheme ??= widget.theme ?? ThemeData.light();
+    theme ??= widget.theme ?? ThemeData.light();
     ThemeData? endTheme;
 
     switch (widget.animationType) {
       case AnimationType.FADE_ANIMATED_THEME:
       case AnimationType.SCALE_ANIMATED_THEME:
-        if (widget.darkTheme != null) {
-          final ui.Brightness platformBrightness =
-              MediaQuery.platformBrightnessOf(context);
-          if (mode == ThemeMode.dark ||
-              (mode == ThemeMode.system &&
-                  platformBrightness == ui.Brightness.dark)) {
-            lastTheme = widget.darkTheme;
-          }
-        }
-        lastTheme ??= widget.theme ?? ThemeData.fallback();
-        break;
+      // if (widget.darkTheme != null) {
+      //   final ui.Brightness platformBrightness =
+      //       MediaQuery.platformBrightnessOf(context);
+      //   if (mode == ThemeMode.dark ||
+      //       (mode == ThemeMode.system &&
+      //           platformBrightness == ui.Brightness.dark)) {
+      //     lastTheme = widget.darkTheme;
+      //   }
+      // }
+      // lastTheme ??= widget.theme ?? ThemeData.fallback();
+      // break;
       case AnimationType.CIRCULAR_ANIMATED_THEME:
         if (widget.darkTheme != null) {
           final ui.Brightness platformBrightness =
@@ -1671,13 +1669,9 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           if (mode == ThemeMode.dark ||
               (mode == ThemeMode.system &&
                   platformBrightness == ui.Brightness.dark)) {
-            lastTheme = widget.theme;
-          } else {
-            lastTheme ??= widget.darkTheme ?? ThemeData.fallback();
-          }
-        } else {
-          lastTheme ??= widget.darkTheme ?? ThemeData.fallback();
-        }
+            theme = widget.theme;
+          } else {}
+        } else {}
 
         // Use a light theme, dark theme, or fallback theme.
         if (widget.darkTheme != null) {
@@ -1695,22 +1689,19 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
         }
 
         if (lastThemeMode != mode && key.currentState != null) {
-          //print(lastThemeMode == ThemeMode.light);
-          //print(mode == ThemeMode.light);
-          //key.currentState!.startAnimation();
-        }
-        if (key.currentState != null) {
           key.currentState!.startAnimation(lastThemeMode != mode);
         }
 
+        lastThemeMode = mode;
+
         break;
     }
-    endTheme ??= AppThemeData.lightThemeData;
-    return endTheme;
+    // endTheme ??= AppThemeData.lightThemeData;
+    return (theme!, endTheme);
   }
 
   Widget _materialBuilder(BuildContext context, Widget? child) {
-    final ThemeData theme = _themeBuilder(context);
+    final (theme, endTheme) = _themeBuilder(context);
     final Color effectiveSelectionColor =
         theme.textSelectionTheme.selectionColor ??
             theme.colorScheme.primary.withOpacity(0.40);
@@ -1721,61 +1712,61 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
 
     switch (widget.animationType) {
       case AnimationType.FADE_ANIMATED_THEME:
-        childWidget = ScaffoldMessenger(
-          key: widget.scaffoldMessengerKey,
-          child: FadeAnimatedTheme(
-            duration: widget.animationDuration,
-            data: theme,
-            isMaterialAppTheme: true,
-            child: widget.builder != null
-                ? Builder(
-                    builder: (BuildContext context) {
-                      // Why are we surrounding a builder with a builder?
-                      //
-                      // The widget.builder may contain code that invokes
-                      // Theme.of(), which should return the theme we selected
-                      // above in AnimatedTheme. However, if we invoke
-                      // widget.builder() directly as the child of AnimatedTheme
-                      // then there is no Context separating them, and the
-                      // widget.builder() will not find the theme. Therefore, we
-                      // surround widget.builder with yet another builder so that
-                      // a context separates them and Theme.of() correctly
-                      // resolves to the theme we passed to AnimatedTheme.
-                      return widget.builder!(context, child);
-                    },
-                  )
-                : child!,
-          ),
-        );
-        break;
+      // childWidget = ScaffoldMessenger(
+      //   key: widget.scaffoldMessengerKey,
+      //   child: FadeAnimatedTheme(
+      //     duration: widget.animationDuration,
+      //     data: theme,
+      //     isMaterialAppTheme: true,
+      //     child: widget.builder != null
+      //         ? Builder(
+      //             builder: (BuildContext context) {
+      //               // Why are we surrounding a builder with a builder?
+      //               //
+      //               // The widget.builder may contain code that invokes
+      //               // Theme.of(), which should return the theme we selected
+      //               // above in AnimatedTheme. However, if we invoke
+      //               // widget.builder() directly as the child of AnimatedTheme
+      //               // then there is no Context separating them, and the
+      //               // widget.builder() will not find the theme. Therefore, we
+      //               // surround widget.builder with yet another builder so that
+      //               // a context separates them and Theme.of() correctly
+      //               // resolves to the theme we passed to AnimatedTheme.
+      //               return widget.builder!(context, child);
+      //             },
+      //           )
+      //         : child!,
+      //   ),
+      // );
+      // break;
       case AnimationType.SCALE_ANIMATED_THEME:
-        childWidget = ScaffoldMessenger(
-          key: widget.scaffoldMessengerKey,
-          child: ScaleAnimatedTheme(
-            duration: widget.animationDuration,
-            data: theme,
-            isMaterialAppTheme: true,
-            child: widget.builder != null
-                ? Builder(
-                    builder: (BuildContext context) {
-                      // Why are we surrounding a builder with a builder?
-                      //
-                      // The widget.builder may contain code that invokes
-                      // Theme.of(), which should return the theme we selected
-                      // above in AnimatedTheme. However, if we invoke
-                      // widget.builder() directly as the child of AnimatedTheme
-                      // then there is no Context separating them, and the
-                      // widget.builder() will not find the theme. Therefore, we
-                      // surround widget.builder with yet another builder so that
-                      // a context separates them and Theme.of() correctly
-                      // resolves to the theme we passed to AnimatedTheme.
-                      return widget.builder!(context, child);
-                    },
-                  )
-                : child!,
-          ),
-        );
-        break;
+      // childWidget = ScaffoldMessenger(
+      //   key: widget.scaffoldMessengerKey,
+      //   child: ScaleAnimatedTheme(
+      //     duration: widget.animationDuration,
+      //     data: theme,
+      //     isMaterialAppTheme: true,
+      //     child: widget.builder != null
+      //         ? Builder(
+      //             builder: (BuildContext context) {
+      //               // Why are we surrounding a builder with a builder?
+      //               //
+      //               // The widget.builder may contain code that invokes
+      //               // Theme.of(), which should return the theme we selected
+      //               // above in AnimatedTheme. However, if we invoke
+      //               // widget.builder() directly as the child of AnimatedTheme
+      //               // then there is no Context separating them, and the
+      //               // widget.builder() will not find the theme. Therefore, we
+      //               // surround widget.builder with yet another builder so that
+      //               // a context separates them and Theme.of() correctly
+      //               // resolves to the theme we passed to AnimatedTheme.
+      //               return widget.builder!(context, child);
+      //             },
+      //           )
+      //         : child!,
+      //   ),
+      // );
+      // break;
       case AnimationType.CIRCULAR_ANIMATED_THEME:
         // Use a light theme, dark theme, or fallback theme.
         // //print("lastThemeMode: " + (lastThemeMode == ThemeMode.dark).toString());
@@ -1787,10 +1778,8 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           key: widget.scaffoldMessengerKey,
           child: CircularAnimatedTheme(
             key: key,
-            data: lastThemeMode == ThemeMode.dark
-                ? AppThemeData.lightThemeData
-                : AppThemeData.darkThemeData,
-            end: theme,
+            data: theme,
+            end: endTheme,
             isMaterialAppTheme: true,
             curve: Curves.easeOut,
             duration: widget.animationDuration,
@@ -1850,7 +1839,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
           );
         }
     }
-    lastThemeMode = widget.themeMode;
+    // lastThemeMode = widget.themeMode;
 
     return ScaffoldMessenger(
       key: widget.scaffoldMessengerKey,

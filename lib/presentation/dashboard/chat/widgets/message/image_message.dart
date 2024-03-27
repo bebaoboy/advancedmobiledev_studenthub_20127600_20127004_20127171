@@ -73,6 +73,7 @@ class _ImageMessageState extends State<ImageMessage> {
   }
 
   void _updateImage(ImageInfo info, bool _) {
+    // ignore: avoid_print
     print("update image");
     setState(() {
       _size = Size(

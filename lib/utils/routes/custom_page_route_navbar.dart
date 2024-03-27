@@ -485,6 +485,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
       initAnimation();
       NavbarNotifier2.index = widget.initialIndex;
     }
+    widget.pageController.move(NavbarNotifier2.currentIndex);
   }
 
   void initAnimation() {
@@ -517,6 +518,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   void didUpdateWidget(covariant NavbarRouter2 oldWidget) {
+    print("update");
     if (widget.destinationAnimationCurve !=
             oldWidget.destinationAnimationCurve ||
         widget.destinationAnimationDuration !=
@@ -528,6 +530,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
         !listEquals(oldWidget.destinations, widget.destinations)) {
       clearInitialization();
       initialize(isUpdate: true);
+      initialize(i: NavbarNotifier2.currentIndex, isUpdate: true);
     }
 
     super.didUpdateWidget(oldWidget);
@@ -615,6 +618,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   Widget build(BuildContext context) {
+    print("build nav");
     // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
@@ -685,11 +689,12 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             if (widget.onCurrentTabClicked != null && !ok) {
                               setState(() {
                                 widget.onCurrentTabClicked!();
-                                //print("tap");
+                                print("tap");
                                 initialize(i: NavbarNotifier2.currentIndex);
                               });
                             }
                           } else {
+                            print('not tap');
                             // NavbarNotifier2.index = x;
                             // if (widget.onChanged != null) {
                             //   widget.onChanged!(x);

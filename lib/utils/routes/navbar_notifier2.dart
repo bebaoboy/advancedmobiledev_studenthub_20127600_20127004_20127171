@@ -264,7 +264,7 @@ class NavbarNotifier2 extends ChangeNotifier {
     _indexChangeListeners.clear();
     _navbarStackHistory.clear();
     _keys.clear();
-    _index = null;
-    _length = null;
+    // _index = null;
+    // _length = null;
   }
 }

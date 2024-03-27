@@ -55,6 +55,7 @@ class _MyAppState extends State<MyApp> {
     return Observer(
       builder: (context) {
         return PiPMaterialApp(
+          themeAnimationDuration: const Duration(milliseconds: 500),
           animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
           animationDuration: const Duration(milliseconds: 500),
           builder: builder,

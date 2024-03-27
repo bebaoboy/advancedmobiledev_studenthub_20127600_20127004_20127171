@@ -171,8 +171,9 @@ import 'package:flutter/material.dart';
 // }
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const MainAppBar({super.key, this.isHomePage = true});
+  const MainAppBar({super.key, this.isHomePage = true, this.theme = true});
   final bool isHomePage;
+  final bool theme;
   @override
   State<MainAppBar> createState() => _MainAppBarState();
 
@@ -331,16 +332,18 @@ class _MainAppBarState extends State<MainAppBar> {
       // ],)),
       title: Container(
           margin: const EdgeInsets.only(left: 20),
-          child: GestureDetector(onTap: () {
-            Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute2(routeName: Routes.home),
-                  (Route<dynamic> route) => false);
-          }, child: Text(Lang.get('appbar_title')))),
+          child: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute2(routeName: Routes.home),
+                    (Route<dynamic> route) => false);
+              },
+              child: Text(Lang.get('appbar_title')))),
       actions: [
         // _buildLanguageButton(),
         // _buildThemeButton(),
         LanguageButton(),
-        ThemeButton(),
+        if (widget.theme) ThemeButton(),
         _buildProfileButton(),
         _buildLogoutButton(),
       ],
