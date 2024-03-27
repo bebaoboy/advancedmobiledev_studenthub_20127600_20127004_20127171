@@ -6,7 +6,6 @@ import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
@@ -207,8 +206,8 @@ class _SplashScreenState extends State<SplashScreen>
           : userStore.user!.email == "user2@gmail.com"
               ? utils.users[1]
               : utils.users[2];
-      Future.delayed(Duration(seconds: 0), () {
-        Future.delayed(Duration(seconds: 1));
+      Future.delayed(const Duration(seconds: 0), () {
+        Future.delayed(const Duration(seconds: 1));
         loadingText.text =
             "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
         createSession(user).then(
@@ -262,7 +261,7 @@ class _SplashScreenState extends State<SplashScreen>
           //             userStore.isLoggedIn ? Routes.home : Routes.login));
           log(exception.toString(), "BEBAOBOY");
         });
-        Future.delayed(Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 3), () {
           try {
             _controller.stop();
           } catch (e) {}

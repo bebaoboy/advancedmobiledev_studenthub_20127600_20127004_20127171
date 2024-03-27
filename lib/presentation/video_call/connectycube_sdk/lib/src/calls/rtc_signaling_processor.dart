@@ -28,7 +28,7 @@ class RTCSignalingProcessor {
 
     _subscription = _rtcSignalingManager?.signalingMessagesStream
         .listen(_processSignalingMessage);
-    print("");
+    //print("");
   }
 
   void dispose() {

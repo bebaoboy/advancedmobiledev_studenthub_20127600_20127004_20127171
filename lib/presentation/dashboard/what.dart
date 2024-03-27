@@ -1,7 +1,4 @@
-// ignore_for_file: unused_field
-
-import 'dart:math';
-
+// ignore_for_file: unused_field, must_be_immutable, prefer_final_fields, prefer_const_declarations, prefer_const_literals_to_create_immutables
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
@@ -20,14 +17,11 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:scroll_to_index/util.dart';
 
 // ---------------------------------------------------------------------------
 class What extends StatefulWidget {
@@ -89,19 +83,19 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
     ];
     _routes = [
       {
-        '/': Center(child: Text("????")),
+        '/': const Center(child: Text("????")),
         Routes.favortieProject: getRoute(Routes.favortieProject, context),
       },
       {
-        '/': Center(child: Text("Pull it harder")),
+        '/': const Center(child: Text("Pull it harder")),
       },
       {
-        '/': Center(child: Text("????")),
+        '/': const Center(child: Text("????")),
 
         // ProfileEdit.route: ProfileEdit(),
       },
       {
-        '/': Center(child: Text("????")),
+        '/': const Center(child: Text("????")),
       },
     ];
 
@@ -201,7 +195,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     return DraggableHome(
         fullExpandedCallback: (v) async {
-          await Future.delayed(Duration(seconds: 1));
+          await Future.delayed(const Duration(seconds: 1));
           setState(() {
             open = v;
             op1 = 1;
@@ -229,7 +223,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
             children: <Widget>[
               AnimatedOpacity(
                   opacity: scale4,
-                  duration: Duration(seconds: 3),
+                  duration: const Duration(seconds: 3),
                   child: Stack(children: [
                     for (final cloud in _clouds.sublist(1))
                       Transform.translate(
@@ -257,7 +251,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
                   ])),
               AnimatedScale(
                 scale: scale2,
-                duration: Duration(seconds: 5),
+                duration: const Duration(seconds: 5),
                 child: Center(
                   child: Text(
                     "Hold the red cloud",
@@ -271,7 +265,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
               ),
               AnimatedOpacity(
                 opacity: scale2,
-                duration: Duration(seconds: 3),
+                duration: const Duration(seconds: 3),
                 child: Stack(
                   children: [
                     for (final cloud in _clouds2)
@@ -370,7 +364,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
               Center(
                 child: AnimatedOpacity(
                   opacity: (scale1 + 0.5).clamp(0, 1),
-                  duration: Duration(seconds: 5),
+                  duration: const Duration(seconds: 5),
                   child: OverflowBox(
                     maxWidth: 172,
                     minWidth: 172,
@@ -417,7 +411,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
 
               AnimatedOpacity(
                 opacity: scale3,
-                duration: Duration(seconds: 5),
+                duration: const Duration(seconds: 5),
                 child: Center(
                   child: Text(
                     "Thanks for your patience!",
@@ -444,7 +438,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
               ),
 
               AnimatedOpacity(
-                duration: Duration(seconds: 4),
+                duration: const Duration(seconds: 4),
                 opacity: scale3,
                 child: Stack(
                   children: [
@@ -481,7 +475,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
                       left: MediaQuery.of(context).size.width * 0.27,
                       child: AnimatedOpacity(
                         opacity: op1,
-                        duration: Duration(seconds: 3),
+                        duration: const Duration(seconds: 3),
                         child: Text(
                           "Hold the airplane",
                           style: TextStyle(
@@ -561,16 +555,6 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
             ),
           ),
         ]);
-  }
-
-  Widget _buildProfileButton() {
-    return IconButton(
-      onPressed: () {
-        Navigator.of(context)
-            .push(MaterialPageRoute2(routeName: Routes.setting));
-      },
-      icon: const Icon(Icons.account_circle, size: 25),
-    );
   }
 
   Widget _buildLogoutButton() {
