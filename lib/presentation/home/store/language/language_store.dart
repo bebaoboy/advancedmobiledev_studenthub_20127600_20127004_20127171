@@ -38,10 +38,11 @@ abstract class _LanguageStore with Store {
 
   // actions:-------------------------------------------------------------------
   @action
-  void changeLanguage(String value) async {
-    await _repository.changeLanguage(value).then((_) {
+  void changeLanguage(String value) {
+    _locale = value;
+    _repository.changeLanguage(value).then((_) {
       // write additional logic here
-      _locale = value;
+      
     });
   }
 
