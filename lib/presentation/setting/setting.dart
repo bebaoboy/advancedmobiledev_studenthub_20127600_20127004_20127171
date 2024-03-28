@@ -12,6 +12,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
@@ -41,7 +42,12 @@ class _SettingScreenState extends State<SettingScreen> {
                 (element) => element.email == _userStore.user!.email,
               ) ==
               null)
-        Account(_userStore.user!, children: [], isLoggedIn: true),
+        Account(
+            _userStore.user!.email.isNotEmpty
+                ? _userStore.user!
+                : User(email: "", name: "Guest", type: UserType.naught),
+            children: [],
+            isLoggedIn: true),
       for (var u in companyAccounts)
         Account(u,
             children: List.from(_userStore.savedUsers
@@ -91,19 +97,16 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void calculate(List<Account> list) {
     var h = calculateTreeHeight(accountList);
-    //print("TREEEEEEEEHEIGHT: $h");
-    if (h != height) {
-      setState(() {
-        height = h;
-      });
-    }
+    print("TREEEEEEEEHEIGHT: $h");
+    setState(() {
+      height = h;
+    });
   }
 
   final sampleTree = TreeNode<Account>.root();
 
   // ignore: unused_field
   TreeViewController? _controller;
-
   Widget _buildAccountTree() {
     if (height == 0) calculate(accountList);
     return AnimatedContainer(
@@ -124,14 +127,64 @@ class _SettingScreenState extends State<SettingScreen> {
             indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {
               // print(item.data!.name);
+              if (item.data == null) return;
               print("tap");
-              setState(() {
-                item.data!.isExpanded = !item.data!.isExpanded;
-                calculate(accountList);
-              });
+
               if (item.data!.user.type == UserType.company) {
-                switchAccount(item.data!);
+                if (item.data!.isExpanded) {
+                  showAnimatedDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      return ClassicGeneralDialogWidget(
+                        contentText:
+                            'Do you want to switch account to ${item.data!.user.email}?',
+                        negativeText: 'Cancel',
+                        positiveText: 'Yes',
+                        onPositiveClick: () {
+                          Navigator.of(context).pop();
+
+                          switchAccount(item.data!);
+                        },
+                        onNegativeClick: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                    animationType: DialogTransitionType.size,
+                    curve: Curves.fastOutSlowIn,
+                    duration: const Duration(seconds: 1),
+                  );
+                } else {}
+                setState(() {
+                  item.data!.isExpanded = !item.data!.isExpanded;
+                });
+              } else if (item.data!.user.type == UserType.student) {
+                showAnimatedDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context) {
+                    return ClassicGeneralDialogWidget(
+                      contentText:
+                          'Do you want to switch account to ${item.data!.user.email}?',
+                      negativeText: 'Cancel',
+                      positiveText: 'Yes',
+                      onPositiveClick: () {
+                        Navigator.of(context).pop();
+
+                        switchAccount(item.data!);
+                      },
+                      onNegativeClick: () {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                  animationType: DialogTransitionType.size,
+                  curve: Curves.fastOutSlowIn,
+                  duration: const Duration(seconds: 1),
+                );
               }
+              calculate(accountList);
             },
             onTreeReady: (controller) {
               _controller = controller;
@@ -169,7 +222,7 @@ class _SettingScreenState extends State<SettingScreen> {
           MaterialPageRoute2(routeName: Routes.login),
           (Route<dynamic> route) => false);
       DeviceUtils.hideKeyboard(context);
-      Future.delayed(Duration(seconds: 1), () {
+      Future.delayed(const Duration(seconds: 1), () {
         _userStore.login(account.user.email, "", account.user.type,
             fastSwitch: true);
       });
@@ -181,21 +234,21 @@ class _SettingScreenState extends State<SettingScreen> {
       return CompanyAccountWidget(
         isLoggedIn: account.isLoggedIn,
         name: account,
-        onTap: () {
-          //print(account.name);
+        // onTap: () {
+        //   //print(account.name);
 
-          setState(() {
-            account.isExpanded = !account.isExpanded;
-            calculate(accountList);
-          });
-        },
+        //   // setState(() {
+        //   //   account.isExpanded = !account.isExpanded;
+        //   //   calculate(accountList);
+        //   // });
+        // },
       );
     } else {
       return StudentAccountWidget(
         isLoggedIn: _userStore.user != null &&
             account.user.email == _userStore.user!.email,
         name: account,
-        onTap: () => switchAccount(account),
+        // onTap: () => switchAccount(account),
       );
     }
   }
@@ -241,7 +294,12 @@ class _SettingScreenState extends State<SettingScreen> {
             ListTile(
                 onTap: () {
                   //int n = Random().nextInt(3);
-                  navigate(context, Routes.profileStep2);
+                  navigate(
+                      context,
+                      _userStore.user != null &&
+                              _userStore.user!.type == UserType.company
+                          ? Routes.profileStep2
+                          : Routes.profileStep2Student);
                 },
                 leading: const Icon(Icons.person),
                 title: Text(

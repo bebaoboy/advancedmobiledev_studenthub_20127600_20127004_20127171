@@ -148,7 +148,6 @@ class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
               iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
               textController: _companyNameController,
               inputAction: TextInputAction.next,
-              autoFocus: true,
               onChanged: (value) {
                 _formStore.setCompanyName(_companyNameController.text);
               },

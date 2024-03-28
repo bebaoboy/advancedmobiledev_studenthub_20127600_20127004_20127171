@@ -14,6 +14,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -300,9 +301,6 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     );
   }
 
-
-
-
   Widget _buildSignUpStudentButton() {
     return RoundedButtonWidget(
       buttonText: Lang.get('signup_student_sign_up'),
@@ -317,8 +315,38 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
         //   _showErrorMessage(AppLocalizations.of(context)
         //       .translate('login_error_missing_fields'));
         // }
-        Navigator.of(context)
-            .push(MaterialPageRoute2(routeName: Routes.profileStudent));
+        setState(() {
+          loading = true;
+        });
+        await Future.delayed(const Duration(seconds: 2)).then(
+          (value) {
+            setState(() {
+              loading = false;
+            });
+            showAnimatedDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext c) {
+                return ClassicGeneralDialogWidget(
+                  contentText: Lang.get('signup_email_sent'),
+                  negativeText: ':Debug:',
+                  positiveText: 'OK',
+                  onPositiveClick: () {
+                    Navigator.of(c).pop();
+                  },
+                  onNegativeClick: () {
+                    Navigator.of(c).pop();
+                    Navigator.of(context).push(
+                        MaterialPageRoute2(routeName: Routes.profileStudent));
+                  },
+                );
+              },
+              animationType: DialogTransitionType.size,
+              curve: Curves.fastOutSlowIn,
+              duration: const Duration(seconds: 1),
+            );
+          },
+        );
       },
     );
   }

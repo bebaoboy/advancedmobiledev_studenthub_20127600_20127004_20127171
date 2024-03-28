@@ -13,6 +13,7 @@ import 'package:boilerplate/presentation/login/forget_password_change_password.d
 import 'package:boilerplate/presentation/login/forget_password_done.dart';
 import 'package:boilerplate/presentation/login/forget_password_sent.dart';
 import 'package:boilerplate/presentation/login/login.dart';
+import 'package:boilerplate/presentation/profile/profile_step2%20_student.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_step2.dart';
@@ -42,6 +43,7 @@ class Routes {
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';
   static const String profileStep2 = '/profile-step2';
+  static const String profileStep2Student = '/profile-step2-student';
   static const String setting = '/settings';
   static const String projectDetails = '/projectDetails';
   static const String projectPost = '/project-post';
@@ -62,6 +64,7 @@ class Routes {
     setting: const SettingScreen(),
     profile: const ProfileScreen(),
     profileStep2: const ProfileStep2Screen(),
+    profileStep2Student: const ProfileStep2StudentScreen(),
     signUpCompany: const SignUpCompanyScreen(),
     signUpStudent: const SignUpStudentScreen(),
     home: const HomeScreen(),

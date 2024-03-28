@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          if (_formStore.canLogin) {
+          if (!loading && _formStore.canLogin) {
             loading = true;
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
@@ -345,7 +345,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   initCube(context) async {
     final UserStore userStore = getIt<UserStore>();
-    CubeUser user;
+    // CubeUser user;
 
     if (userStore.user != null && userStore.user!.type != UserType.naught) {
       try {
@@ -416,7 +416,7 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       } catch (e) {}
     } else {
-      user = utils.users[2];
+      // user = utils.users[2];
     }
   }
 

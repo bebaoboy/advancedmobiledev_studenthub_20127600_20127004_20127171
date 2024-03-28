@@ -1,5 +1,4 @@
 import 'package:boilerplate/domain/entity/account/account.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class CompanyAccountWidget extends StatelessWidget {

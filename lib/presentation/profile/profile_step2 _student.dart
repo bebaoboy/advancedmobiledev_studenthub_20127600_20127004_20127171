@@ -1,5 +1,4 @@
 import 'package:another_flushbar/flushbar_helper.dart';
-import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -10,25 +9,22 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
+import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
 
 enum CompanySize {
   single, // 1
-  small, // 2-9
-  medium, // 10-100
-  large, // 100-1000
-  xLarge // 1000+
 }
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class ProfileStep2StudentScreen extends StatefulWidget {
+  const ProfileStep2StudentScreen({super.key});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  _ProfileStep2StudentScreenState createState() => _ProfileStep2StudentScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _ProfileStep2StudentScreenState extends State<ProfileStep2StudentScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final ProfileFormStore _formStore = getIt<ProfileFormStore>();
@@ -58,14 +54,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return const MainAppBar();
+    return AppBar(
+      title: const Text(Strings.appName),
+      actions: _buildActions(context),
+    );
+  }
+
+  List<Widget> _buildActions(BuildContext context) {
+    return <Widget>[
+      IconButton(
+          onPressed: () => {
+                Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute2(routeName: Routes.login),
+                    (Route<dynamic> route) => false)
+              },
+          icon: const Icon(Icons.person_rounded))
+    ];
   }
 
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
     return Material(
       child: Stack(children: <Widget>[
-        Center(child: _buildRightSide()),
+        Container(child: _buildRightSide()),
         Observer(
           builder: (context) {
             return _userStore.success
@@ -221,7 +232,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             Center(
               child: Text(
-                Lang.get('profile_welcome_title'),
+                "${Lang.get('profile_welcome_title')}, STUDENT",
                 style: Theme.of(context)
                     .textTheme
                     .bodyLarge
@@ -229,22 +240,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
             ),
             const SizedBox(
-              height: 10,
-            ),
-            Center(
-              child: Text(
-                Lang.get('profile_common_body'),
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
+              height: 30,
             ),
             const SizedBox(
               height: 10,
             ),
-            Text(
-              Lang.get('profile_question_title_1'),
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            _buildCompanySizeSelection(context),
             _buildCompanyNameField(context),
             const SizedBox(
               height: 15,
@@ -257,15 +257,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 25,
             ),
+            _buildCompanySizeSelection(context),
+            const SizedBox(
+              height: 30,
+            ),
             Container(
               alignment: Alignment.centerRight,
-              child: MaterialButton(
-                onPressed: () => navigate(context),
-                // color: Colors.orange,
-                child: Text(
-                  Lang.get('continue'),
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  MaterialButton(
+                    onPressed: () {},
+                    // color: Colors.orange,
+                    child: Text(
+                      Lang.get('edit'),
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 15,
+                  ),
+                  MaterialButton(
+                    onPressed: () => navigate(context),
+                    // color: Colors.orange,
+                    child: Text(
+                      Lang.get('cancel'),
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(
@@ -279,9 +299,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login),
-          (Route<dynamic> route) => false);
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
+      Navigator.of(context).pop();
     });
 
     return Container();

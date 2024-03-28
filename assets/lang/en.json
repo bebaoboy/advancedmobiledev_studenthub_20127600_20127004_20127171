@@ -89,6 +89,7 @@
   "signup_student_sign_up": "Create my account",
   "signup_student_company_prompt": "Looking for employee?",
   "signup_student_company_prompt_action": "Join as company",
+  "signup_email_sent": "We have sent you a confirmation email. Please check!",
   "signup_end": "-----------------------------------------------------------------------------------",
   
   "profile_start": "Below are list of strings for student profile",

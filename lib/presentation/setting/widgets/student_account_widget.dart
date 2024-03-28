@@ -1,5 +1,5 @@
 import 'package:boilerplate/domain/entity/account/account.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:flutter/material.dart';
 
 class StudentAccountWidget extends StatelessWidget {
@@ -28,9 +28,9 @@ class StudentAccountWidget extends StatelessWidget {
           .colorScheme
           .primary
           .withOpacity(isLoggedIn ? 0.5 : 0),
-      leading: profileIcon,
+      leading: name.user.type != UserType.naught ?  profileIcon : const Icon(Icons.no_cell),
       title: titleWidget,
-      subtitle: subtitleWidget,
+      subtitle: name.user.type != UserType.naught ? subtitleWidget: null,
     );
   }
 }
