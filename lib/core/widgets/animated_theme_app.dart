@@ -11,6 +11,8 @@ import 'package:boilerplate/core/widgets/pip/movable_overlay.dart';
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/core/widgets/pip/pip_params.dart';
 import 'package:boilerplate/core/widgets/animation_type.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -1687,6 +1689,7 @@ class _MaterialAppState extends State<AnimatedThemeApp> {
         } else {
           endTheme = widget.theme ?? ThemeData.fallback();
         }
+        // print(endTheme == widget.darkTheme);
 
         if (lastThemeMode != mode && key.currentState != null) {
           key.currentState!.startAnimation(lastThemeMode != mode);

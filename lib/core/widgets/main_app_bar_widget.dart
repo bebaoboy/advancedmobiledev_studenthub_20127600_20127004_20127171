@@ -1,5 +1,7 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -184,7 +186,7 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
 class _MainAppBarState extends State<MainAppBar> {
   //stores:---------------------------------------------------------------------
   // final ThemeStore _themeStore = getIt<ThemeStore>();
-  // final LanguageStore _languageStore = getIt<LanguageStore>();
+  final UserStore _userStore = getIt<UserStore>();
   bool isDark = false;
 
   Widget _buildProfileButton() {
@@ -237,6 +239,7 @@ class _MainAppBarState extends State<MainAppBar> {
     return widget.isHomePage
         ? IconButton(
             onPressed: () {
+              _userStore.logout();
               Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute2(routeName: Routes.login),
                   (Route<dynamic> route) => false);

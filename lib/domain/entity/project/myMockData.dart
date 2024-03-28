@@ -3,25 +3,26 @@ import 'package:boilerplate/domain/entity/project/project.dart';
 var myProjects = [
   Project(
       title: "ABC",
-      description:'The ParentDataWidget Expanded(flex: 1) wants to apply ParentData of type FlexParentData to a RenderObject, which has been set up to accept ParentData of incompatible type ParentData.Usually, this means that the Expanded widget has the wrong ancestor RenderObjectWidget. Typically, Expanded widgets are placed directly inside Flex widgets.The offending Expanded is currently placed inside a AbsorbPointer widget.The ownership chain for the RenderObject that received the incompatible parent data was: Column ← Expanded ← AbsorbPointer ← Row ← Padding ← Semantics ← DefaultTextStyle ← AnimatedDefaultTextStyle ← _InkFeatures-[GlobalKey#fae7b ink renderer] ← NotificationListener<LayoutChangedNotification> ← ⋯',
+      description:
+          'The ParentDataWidget Expanded(flex: 1) wants to apply ParentData of type FlexParentData to a RenderObject, which has been set up to accept ParentData of incompatible type ParentData.Usually, this means that the Expanded widget has the wrong ancestor RenderObjectWidget. Typically, Expanded widgets are placed directly inside Flex widgets.The offending Expanded is currently placed inside a AbsorbPointer widget.The ownership chain for the RenderObject that received the incompatible parent data was: Column ← Expanded ← AbsorbPointer ← Row ← Padding ← Semantics ← DefaultTextStyle ← AnimatedDefaultTextStyle ← _InkFeatures-[GlobalKey#fae7b ink renderer] ← NotificationListener<LayoutChangedNotification> ← ⋯',
       timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      proposal: <Student>[
-        Student(
+      proposal: <StudentProfile>[
+        StudentProfile(
             name: 'Luu Tuan Quan',
             introduction: 'I am happy',
             education: '4th year students',
             title: 'Fullstack Engineer',
             yearOfExperience: 3,
             review: 'I find your project suitable'),
-        Student(
+        StudentProfile(
             name: 'Huynh Minh Bao',
             introduction: 'I am happy',
             education: '4th year students',
             title: 'Fullstack Engineer',
             yearOfExperience: 3,
             review: 'I find your project suitable'),
-        Student(
+        StudentProfile(
             name: 'Vu Huy Hoang',
             introduction: 'I am eager',
             education: '4th year students',

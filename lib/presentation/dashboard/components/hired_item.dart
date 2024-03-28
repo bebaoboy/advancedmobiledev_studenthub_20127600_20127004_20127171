@@ -4,7 +4,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class HiredItem extends StatefulWidget {
-  final Student hired;
+  final StudentProfile hired;
   final bool pending;
   // final Function? onHired;
   const HiredItem({

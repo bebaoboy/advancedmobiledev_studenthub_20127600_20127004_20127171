@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class ProposalItem extends StatefulWidget {
-  final Student proposal;
+  final StudentProfile proposal;
   final bool pending;
   final Function? onHired;
   const ProposalItem(
@@ -95,7 +95,7 @@ class _ProposalItemState extends State<ProposalItem> {
                   MaterialButton(
                     color: Colors.grey.shade400,
                     textColor: Colors.black54,
-                    onPressed: () => {}//print('send a message') 
+                    onPressed: () => {} //print('send a message')
                     ,
                     child: Text(Lang.get('message')),
                   ),

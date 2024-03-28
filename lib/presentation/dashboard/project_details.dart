@@ -90,7 +90,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 }
 
 class ProposalTabLayout extends StatelessWidget {
-  final List<Student>? proposals;
+  final List<StudentProfile>? proposals;
 
   const ProposalTabLayout(
       {super.key, required this.proposals, required this.onHired});
@@ -98,15 +98,17 @@ class ProposalTabLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (proposals?.length ?? 0) == 0 ? Center(child:  Text(Lang.get("nothing_here"))) : ListView.builder(
-      itemCount: proposals?.length ?? 0,
-      itemBuilder: (context, index) {
-        return ProposalItem(
-            proposal: proposals![index],
-            pending: false,
-            onHired: () => onHired!(index));
-      },
-    );
+    return (proposals?.length ?? 0) == 0
+        ? Center(child: Text(Lang.get("nothing_here")))
+        : ListView.builder(
+            itemCount: proposals?.length ?? 0,
+            itemBuilder: (context, index) {
+              return ProposalItem(
+                  proposal: proposals![index],
+                  pending: false,
+                  onHired: () => onHired!(index));
+            },
+          );
   }
 }
 
@@ -129,11 +131,10 @@ class DetailTabLayout extends StatelessWidget {
                 flex: 1,
                 fit: FlexFit.loose,
                 child: Container(
-                   constraints: BoxConstraints(
+                  constraints: BoxConstraints(
                       maxHeight: MediaQuery.of(context).size.height * 0.7),
                   child: Column(children: [
                     Container(
-                     
                       // margin: const EdgeInsetsDirectional.only(
                       //     top: Dimens.vertical_padding + 10),
                       width: MediaQuery.of(context).size.width,
@@ -141,10 +142,12 @@ class DetailTabLayout extends StatelessWidget {
                       decoration: const BoxDecoration(
                           border: Border(
                               top: BorderSide(width: 1, color: Colors.black),
-                              bottom: BorderSide(width: 1, color: Colors.black))),
+                              bottom:
+                                  BorderSide(width: 1, color: Colors.black))),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: SingleChildScrollView(child: Text(project.description)),
+                        child: SingleChildScrollView(
+                            child: Text(project.description)),
                       ),
                     ),
                     Padding(
@@ -193,7 +196,7 @@ class DetailTabLayout extends StatelessWidget {
                     )
                   ]),
                 )),
-                Row(
+            Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -238,7 +241,8 @@ class DetailTabLayout extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {},
-                  child: Text(Lang.get('project_edit'),
+                  child: Text(
+                    Lang.get('project_edit'),
                     style: Theme.of(context).textTheme.bodyMedium!.merge(
                         TextStyle(
                             color: Theme.of(context).colorScheme.secondary)),
@@ -246,7 +250,6 @@ class DetailTabLayout extends StatelessWidget {
                 ),
               ],
             ),
-          
           ],
         ),
       ),
@@ -255,42 +258,46 @@ class DetailTabLayout extends StatelessWidget {
 }
 
 class HiredTabLayout extends StatelessWidget {
-  final List<Student>? hired;
+  final List<StudentProfile>? hired;
 
   const HiredTabLayout({super.key, required this.hired});
 
   @override
   Widget build(BuildContext context) {
-    return (hired?.length ?? 0) == 0 ?  Center(child: Text(Lang.get("nothing_here"))) : ListView.builder(
-      itemCount: hired?.length ?? 0,
-      itemBuilder: (context, index) {
-        // return ListTile(
-        //   title: Text(hired![index].name),
-        // );
+    return (hired?.length ?? 0) == 0
+        ? Center(child: Text(Lang.get("nothing_here")))
+        : ListView.builder(
+            itemCount: hired?.length ?? 0,
+            itemBuilder: (context, index) {
+              // return ListTile(
+              //   title: Text(hired![index].name),
+              // );
 
-        return HiredItem(
-          hired: hired![index],
-          pending: false,
-        );
-      },
-    );
+              return HiredItem(
+                hired: hired![index],
+                pending: false,
+              );
+            },
+          );
   }
 }
 
 class MessageTabLayout extends StatelessWidget {
-  final List<Student>? messages;
+  final List<StudentProfile>? messages;
 
   const MessageTabLayout({super.key, required this.messages});
 
   @override
   Widget build(BuildContext context) {
-    return (messages?.length ?? 0) == 0 ? Center(child: Text(Lang.get("nothing_here"))) : ListView.builder(
-      itemCount: messages?.length ?? 0,
-      itemBuilder: (context, index) {
-        return ListTile(
-          title: Text(messages![index].name),
-        );
-      },
-    );
+    return (messages?.length ?? 0) == 0
+        ? Center(child: Text(Lang.get("nothing_here")))
+        : ListView.builder(
+            itemCount: messages?.length ?? 0,
+            itemBuilder: (context, index) {
+              return ListTile(
+                title: Text(messages![index].name),
+              );
+            },
+          );
   }
 }

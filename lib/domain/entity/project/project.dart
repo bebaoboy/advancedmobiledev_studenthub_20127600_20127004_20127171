@@ -1,12 +1,16 @@
 // ignore_for_file: overridden_fields
 
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
-  String objectId = const Uuid().v4();
-  MyObject({objectId}) {
-    this.objectId = const Uuid().v4();
+  String? objectId = const Uuid().v4();
+  DateTime createdAt = DateTime.now();
+  DateTime updatedAt = DateTime.now();
+  DateTime deletedAt = DateTime.now();
+  MyObject({this.objectId}) {
+    objectId = const Uuid().v4();
   }
 }
 
@@ -14,12 +18,9 @@ class MyObject {
 class TechStack extends MyObject {
   final String name;
   TechStack(
-    this.name,
-    // {
-    // super.objectId = "",
-
-    // }
-  ) : super(objectId: '');
+    this.name, {
+    super.objectId,
+  });
 }
 
 class Skill extends MyObject {
@@ -30,12 +31,9 @@ class Skill extends MyObject {
   Skill(
     this.name,
     this.description,
-    this.imageUrl,
-    // {
-    // super.objectId = "",
-
-    // }
-  ) : super(objectId: '');
+    this.imageUrl, {
+    super.objectId,
+  });
 
   @override
   bool operator ==(Object other) =>
@@ -58,10 +56,7 @@ class Language extends MyObject {
   bool enabled = true;
 
   Language(this.name, this.proficiency,
-      { // super.objectId = "",
-      this.readOnly = true,
-      this.enabled = true})
-      : super(objectId: '');
+      {super.objectId, this.readOnly = true, this.enabled = true});
 }
 
 class Education extends MyObject {
@@ -71,10 +66,7 @@ class Education extends MyObject {
   bool enabled = true;
 
   Education(this.name, this.year,
-      { // super.objectId = "",
-      this.readOnly = true,
-      this.enabled = true})
-      : super(objectId: '');
+      {super.objectId, this.readOnly = true, this.enabled = true});
 }
 
 class ProjectExperience extends MyObject {
@@ -88,25 +80,24 @@ class ProjectExperience extends MyObject {
   List<String>? skills = [];
 
   ProjectExperience(this.name,
-      { // super.objectId = "",
-
+      {super.objectId,
       this.description = "...",
       this.link = "",
       required this.startDate,
       required this.endDate,
       this.readOnly = true,
       this.enabled = true,
-      this.skills})
-      : super(objectId: '');
+      this.skills});
 }
 
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
-class UserObject extends MyObject {
-  UserObject();
+class Profile extends MyObject {
+  User? user;
+  Profile({super.objectId, this.user});
 }
 
-class Student extends UserObject {
+class StudentProfile extends Profile {
   String name;
   // String userId;
   String education;
@@ -117,10 +108,12 @@ class Student extends UserObject {
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
+  String transcript = "";
+  String resume = "";
 
-  Student(
-      { // super.objectId = "",
-
+  StudentProfile(
+      {super.objectId,
+      super.user,
       required this.name,
       required this.education,
       required this.introduction,
@@ -149,7 +142,7 @@ extension CompanyScopeTitle on CompanyScope {
   }
 }
 
-class Company extends UserObject {
+class CompanyProfile extends Profile {
   String userId;
   String name;
   String email;
@@ -157,9 +150,9 @@ class Company extends UserObject {
   String description;
   CompanyScope scope = CompanyScope.solo;
 
-  Company({
-    // super.objectId = "",
-
+  CompanyProfile({
+    super.objectId,
+    super.user,
     required this.userId,
     required this.name,
     required this.email,
@@ -205,13 +198,12 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   Scope scope;
 
   ProjectBase({
-    // super.objectId = "",
-
+    super.objectId,
     this.isLoading = true,
     required this.title,
     required this.description,
     this.scope = Scope.short,
-  }) : super(objectId: '');
+  });
 
   @override
   bool isLoading;
@@ -225,16 +217,15 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
 class Project extends ProjectBase {
   // var id = const Uuid().v4();
   int numberOfStudents;
-  List<Student>? hired = List.empty(growable: true);
-  List<Student>? proposal = List.empty(growable: true);
-  List<Student>? messages = List.empty(growable: true);
+  List<StudentProfile>? hired = List.empty(growable: true);
+  List<StudentProfile>? proposal = List.empty(growable: true);
+  List<StudentProfile>? messages = List.empty(growable: true);
   DateTime timeCreated = DateTime.now();
   bool isFavorite = false;
   bool isWorking = false;
 
   Project(
-      { // super.objectId = "",
-
+      {super.objectId,
       required super.title,
       required super.description,
       super.scope = Scope.short,
@@ -270,8 +261,7 @@ class StudentProject extends Project {
   }
 
   StudentProject({
-    // super.objectId = "",
-
+    super.objectId,
     required super.title,
     required super.description,
     required this.submittedTime,
@@ -306,41 +296,35 @@ enum Status { active, inactive }
 
 class Proposal extends MyObject {
   Project project;
-  Student student;
+  StudentProfile student;
   String coverLetter;
   HireStatus isHired;
   Status status;
 
   Proposal(
-      { // super.objectId = "",
-
+      {super.objectId,
       required this.project,
       required this.student,
       required this.coverLetter,
       this.isHired = HireStatus.notHire,
-      this.status = Status.inactive})
-      : super(objectId: '');
+      this.status = Status.inactive});
 }
 
 // ------------------- NOTIFICATION ------------------------------
 
 class NotifiedObject extends MyObject {
   String messageId;
-  DateTime dateCreated = DateTime.now();
-
-  UserObject receiver;
-  UserObject sender;
+  Profile receiver;
+  Profile sender;
   String content;
 
   NotifiedObject({
-    // super.objectId = "",
-
+    super.objectId,
     required this.messageId,
-    required this.dateCreated,
     required this.receiver,
     required this.sender,
     this.content = "",
-  }) : super(objectId: '');
+  });
 }
 
 enum NotificationType {
@@ -354,10 +338,8 @@ class Notification extends NotifiedObject {
   NotificationType type;
 
   Notification({
-    // super.objectId = "",
-
+    super.objectId,
     required super.messageId,
-    required super.dateCreated,
     required super.receiver,
     required super.sender,
     super.content = "",
@@ -375,10 +357,8 @@ class Message extends NotifiedObject {
   InterviewSchedule? interviewSchedule;
 
   Message({
-    // super.objectId = "",
-
+    super.objectId,
     required super.messageId,
-    required super.dateCreated,
     required super.receiver,
     required super.sender,
     super.content = "",
@@ -389,21 +369,18 @@ class Message extends NotifiedObject {
 @JsonSerializable()
 class InterviewSchedule extends MyObject {
   String title;
-  List<UserObject>? participants = List.empty(growable: true);
+  List<Profile>? participants = List.empty(growable: true);
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
   bool isCancel = false;
 
   InterviewSchedule(
-      { // super.objectId = "",
-
+      {super.objectId,
       required this.title,
       this.participants,
       required this.startDate,
       required this.endDate,
-      this.isCancel = false})
-      : super(objectId: '');
-
+      this.isCancel = false});
   clear() {
     endDate = DateTime.now();
     startDate = DateTime.now();

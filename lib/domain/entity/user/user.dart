@@ -14,6 +14,8 @@ UserType getUserType(String value) {
 class User {
   final UserType type;
   final String email;
+  String name;
+  bool isVerified;
 
-  User({required this.type, required this.email});
+  User({required this.type, required this.email, this.name = "", this.isVerified = true});
 }

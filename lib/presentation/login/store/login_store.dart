@@ -35,10 +35,20 @@ abstract class _UserStore with Store {
     _getUserDataUseCase.call(params: null).then((value) async {
       _user = value;
     });
+
+    savedUsers.add(User(
+        email: "user1@gmail.com", type: UserType.company, name: "Hai Pham"));
+    savedUsers.add(User(
+        email: "user2@gmail.com", type: UserType.company, name: "Hai Pham 2"));
+    savedUsers.add(User(
+        email: "user3@gmail.com", type: UserType.student, name: "Student 1"));
+    savedUsers.add(User(
+        email: "user4@gmail.com", type: UserType.student, name: "Student 2"));
   }
 
   // public variable
   User? get user => _user;
+  List<User> savedUsers = [];
 
   // use cases:-----------------------------------------------------------------
   final IsLoggedInUseCase _isLoggedInUseCase;
@@ -84,17 +94,24 @@ abstract class _UserStore with Store {
 
   // actions:-------------------------------------------------------------------
   @action
-  Future login(String email, String password) async {
+  Future login(String email, String password, UserType userType,
+      {fastSwitch = false}) async {
     // TODO change userType to debug company or student
     // //print(UserType.company.name);
     final LoginParams loginParams = LoginParams(
-        username: email,
-        password: password,
-        userType: email == "c@mpany.com"
-            ? UserType.company.name
-            : UserType.student.name);
+        username: email, password: password, userType: userType.name);
     final future = _loginUseCase.call(params: loginParams);
     loginFuture = ObservableFuture(future);
+
+    if (fastSwitch) {
+      var value = User(email: email, type: userType);
+      await _saveLoginStatusUseCase.call(params: true);
+      await _saveUserDataUseCase.call(params: value);
+      isLoggedIn = true;
+      success = true;
+      _user = value;
+      return;
+    }
 
     await future.then((value) async {
       if (value != null) {

@@ -52,6 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
+    _themeStore.changeBrightnessToDark(_themeStore.isPlatformDark(context));
     return Observer(
       builder: (context) {
         return PiPMaterialApp(
@@ -61,9 +62,8 @@ class _MyAppState extends State<MyApp> {
           builder: builder,
           debugShowCheckedModeBanner: false,
           title: Strings.appName,
-          theme: _themeStore.darkMode
-              ? AppThemeData.darkThemeData
-              : AppThemeData.lightThemeData,
+          theme: AppThemeData.lightThemeData,
+          darkTheme: AppThemeData.darkThemeData,
           themeMode: _themeStore.darkMode ? ThemeMode.dark : ThemeMode.light,
           // routes: Routes.routes,
           locale: Locale(_languageStore.locale),

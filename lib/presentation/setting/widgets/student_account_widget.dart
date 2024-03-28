@@ -1,20 +1,33 @@
+import 'package:boilerplate/domain/entity/account/account.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class StudentAccountWidget extends StatelessWidget {
-  final String name;
+  final Account name;
+  final bool isLoggedIn;
+  final VoidCallback? onTap;
 
-  const StudentAccountWidget({super.key, required this.name});
+  const StudentAccountWidget(
+      {super.key, required this.name, this.isLoggedIn = false, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    Widget titleWidget =
-        Text(name, style: Theme.of(context).textTheme.bodySmall);
+    Widget titleWidget = Text(name.user.name,
+        style: isLoggedIn ? Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: Theme.of(context)
+                .colorScheme
+                .primary
+                .withOpacity(0.5)) : Theme.of(context).textTheme.bodySmall);
     Widget subtitleWidget =
-        Text(Lang.get('student'), style: Theme.of(context).textTheme.bodyLarge);
+        Text(name.user.email, style: Theme.of(context).textTheme.bodyLarge);
     Icon profileIcon = const Icon(Icons.person);
 
     return ListTile(
+      onTap: onTap,
+      textColor: Theme.of(context)
+          .colorScheme
+          .primary
+          .withOpacity(isLoggedIn ? 0.5 : 0),
       leading: profileIcon,
       title: titleWidget,
       subtitle: subtitleWidget,

@@ -1,19 +1,20 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
 import 'package:boilerplate/presentation/setting/widgets/student_account_widget.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
-
-enum AccountType { company, student }
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -27,41 +28,33 @@ class _SettingScreenState extends State<SettingScreen> {
   // final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
 
-  List<Account> accountList = [
-    Account(AccountType.company, 'Hai Pham', [
-      Account(AccountType.student, 'Hai Pham Student 1', []),
-      Account(AccountType.student, 'Hai Pham Student 2', []),
-      Account(AccountType.student, 'Hai Pham Student 3', [])
-    ]),
-    Account(AccountType.company, 'Hai Pham 2', [
-      Account(AccountType.student, 'Hai Pham Student 3', []),
-      Account(AccountType.student, 'Hai Pham Student 4', []),
-      Account(AccountType.student, 'Hai Pham Student 5', []),
-      Account(AccountType.student, 'Hai Pham Student 3', []),
-      Account(AccountType.student, 'Hai Pham Student 4', []),
-      Account(AccountType.student, 'Hai Pham Student 5', []),
-      Account(AccountType.student, 'Hai Pham Student 3', []),
-      Account(AccountType.student, 'Hai Pham Student 4', []),
-      Account(AccountType.student, 'Hai Pham Student 5', []),
-      Account(AccountType.student, 'Hai Pham Student 3', []),
-      Account(AccountType.student, 'Hai Pham Student 4', []),
-      Account(AccountType.student, 'Hai Pham Student 5', []),
-      Account(AccountType.student, 'Hai Pham Student 3', []),
-      Account(AccountType.student, 'Hai Pham Student 4', []),
-      Account(AccountType.student, 'Hai Pham Student 5', [])
-    ]),
-    Account(
-      AccountType.company,
-      'Hai Pham 3',
-    ),
-    Account(
-      AccountType.company,
-      'Hai Pham 4',
-    ),
-  ];
+  List<Account> accountList = [];
 
   @override
   void initState() {
+    var companyAccounts = _userStore.savedUsers.where(
+      (element) => element.type == UserType.company,
+    );
+    accountList = [
+      if (_userStore.user != null &&
+          _userStore.savedUsers.firstWhereOrNull(
+                (element) => element.email == _userStore.user!.email,
+              ) ==
+              null)
+        Account(_userStore.user!, children: [], isLoggedIn: true),
+      for (var u in companyAccounts)
+        Account(u,
+            children: List.from(_userStore.savedUsers
+                .where(
+                  (element) => element.type == UserType.student,
+                )
+                .map(
+                  (e) => Account(e, children: []),
+                )),
+            isLoggedIn:
+                _userStore.user != null && u.email == _userStore.user!.email)
+    ];
+
     for (var element in accountList) {
       TreeNode<Account> node = TreeNode<Account>(data: element);
       node.addAll(element.children.map((e) => TreeNode<Account>(data: e)));
@@ -130,11 +123,15 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
             indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {
-              //print(item.data!.name);
+              // print(item.data!.name);
+              print("tap");
               setState(() {
                 item.data!.isExpanded = !item.data!.isExpanded;
                 calculate(accountList);
               });
+              if (item.data!.user.type == UserType.company) {
+                switchAccount(item.data!);
+              }
             },
             onTreeReady: (controller) {
               _controller = controller;
@@ -151,7 +148,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   // List<Widget> _getChildAccount(List<Account> accounts) {
   //   return accounts.map((a) {
-  //     if (a.type == AccountType.company) {
+  //     if (a.type == UserType.company) {
   //       return TreeViewChild(
   //         parent: _getComponent(account: a),
   //         children: _getChildAccount(a.children),
@@ -164,12 +161,29 @@ class _SettingScreenState extends State<SettingScreen> {
   //   }).toList();
   // }
 
+  switchAccount(Account account) {
+    if (!account.isLoggedIn) {
+      account.isLoggedIn = true;
+      _userStore.logout();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.login),
+          (Route<dynamic> route) => false);
+      DeviceUtils.hideKeyboard(context);
+      Future.delayed(Duration(seconds: 1), () {
+        _userStore.login(account.user.email, "", account.user.type,
+            fastSwitch: true);
+      });
+    }
+  }
+
   Widget _getComponent({required Account account}) {
-    if (account.type == AccountType.company) {
+    if (account.user.type == UserType.company) {
       return CompanyAccountWidget(
-        name: account.name,
+        isLoggedIn: account.isLoggedIn,
+        name: account,
         onTap: () {
           //print(account.name);
+
           setState(() {
             account.isExpanded = !account.isExpanded;
             calculate(accountList);
@@ -177,7 +191,12 @@ class _SettingScreenState extends State<SettingScreen> {
         },
       );
     } else {
-      return StudentAccountWidget(name: account.name);
+      return StudentAccountWidget(
+        isLoggedIn: _userStore.user != null &&
+            account.user.email == _userStore.user!.email,
+        name: account,
+        onTap: () => switchAccount(account),
+      );
     }
   }
 
@@ -241,7 +260,12 @@ class _SettingScreenState extends State<SettingScreen> {
               height: 3,
             ),
             ListTile(
-                onTap: () => _userStore.logout(),
+                onTap: () {
+                  _userStore.logout();
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute2(routeName: Routes.login),
+                      (Route<dynamic> route) => false);
+                },
                 leading: const Icon(Icons.logout),
                 title: Text(
                   Lang.get('logout'),

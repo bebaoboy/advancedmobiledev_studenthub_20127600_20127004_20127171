@@ -261,7 +261,7 @@ class _SplashScreenState extends State<SplashScreen>
           //             userStore.isLoggedIn ? Routes.home : Routes.login));
           log(exception.toString(), "BEBAOBOY");
         });
-        Future.delayed(const Duration(seconds: 3), () {
+        Future.delayed(const Duration(seconds: 2), () {
           try {
             _controller.stop();
           } catch (e) {}

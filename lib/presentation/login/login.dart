@@ -249,10 +249,16 @@ class _LoginScreenState extends State<LoginScreen> {
         textColor: Colors.white,
         onPressed: () async {
           if (_formStore.canLogin) {
+            loading = true;
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
-                _userEmailController.text, _passwordController.text);
-            loading = true;
+                _userEmailController.text,
+                _passwordController.text,
+                _userEmailController.text == _userStore.savedUsers[0].email ||
+                        _userEmailController.text ==
+                            _userStore.savedUsers[1].email
+                    ? UserType.company
+                    : UserType.student);
           } else {
             _showErrorMessage(Lang.get('login_error_missing_fields'));
           }
@@ -316,6 +322,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
+    if (_userStore.success && loading == false) {
+      loading = true;
+    }
     if (loading) {
       SharedPreferences.getInstance().then((prefs) {
         prefs.setBool(Preferences.is_logged_in, true);
@@ -347,74 +356,65 @@ class _LoginScreenState extends State<LoginScreen> {
           await SharedPreferences.getInstance().then((preference) async {
             CallManager.instance.destroy();
             CubeChatConnection.instance.destroy();
-            await PushNotificationsManager.instance.unsubscribe();
+            PushNotificationsManager.instance.unsubscribe();
 
-            await SharedPrefs.deleteUserData();
+            SharedPrefs.deleteUserData();
             await signOut();
-
-            // await userStore.logout();
           });
         }
-        // CallManager.instance.destroy();
-        // CubeChatConnection.instance.destroy();
-        // // await PushNotificationsManager.instance.unsubscribe();
-        // await SharedPrefs.deleteUserData();
-        // // await signOut();
+        var user = userStore.user!.email == "user1@gmail.com"
+            ? utils.users[0]
+            : userStore.user!.email == "user2@gmail.com"
+                ? utils.users[1]
+                : utils.users[2];
+        await createSession(user).then(
+          (value) async {
+            CubeSessionManager.instance.activeSession = value;
+
+            await CubeChatConnection.instance
+                .login(user)
+                .then((cubeUser) async {
+              SharedPrefs.saveNewUser(cubeUser);
+              log(cubeUser.toString(), "BEBAOBOY");
+              if (CubeChatConnection.instance.isAuthenticated() &&
+                  CubeChatConnection.instance.currentUser != null) {
+                log(
+                    (CubeSessionManager.instance.activeSession!.user == null)
+                        .toString(),
+                    "BEBAOBOY");
+              }
+
+              initForegroundService();
+              checkSystemAlertWindowPermission(context);
+
+              requestNotificationsPermission();
+
+              CallManager.instance.init(context);
+
+              PushNotificationsManager.instance.init();
+
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute2(
+                      routeName:
+                          userStore.isLoggedIn ? Routes.home : Routes.login));
+            }).catchError((exception) {
+              //_processLoginError(exception);
+
+              log(exception.toString(), "BEBAOBOY");
+            });
+            // _controller.stop();
+          },
+        ).catchError((exception) {
+          //_processLoginError(exception);
+
+          log(exception.toString(), "BEBAOBOY");
+
+          deleteSessionsExceptCurrent()
+              .then((voidResult) {})
+              .catchError((error) {});
+        });
       } catch (e) {}
-      //CubeSessionManager.instance.isActiveSessionValid();
-
-      // user = _userStore.user!.type == UserType.student
-      //     ? utils.users[0]
-      //     : utils.users[1];
-      user = userStore.user!.email == "user1@gmail.com"
-          ? utils.users[0]
-          : userStore.user!.email == "user2@gmail.com"
-              ? utils.users[1]
-              : utils.users[2];
-      await createSession(user).then(
-        (value) async {
-          CubeSessionManager.instance.activeSession = value;
-
-          await CubeChatConnection.instance.login(user).then((cubeUser) async {
-            SharedPrefs.saveNewUser(cubeUser);
-            log(cubeUser.toString(), "BEBAOBOY");
-            if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null) {
-              log(
-                  (CubeSessionManager.instance.activeSession!.user == null)
-                      .toString(),
-                  "BEBAOBOY");
-            }
-
-            initForegroundService();
-            checkSystemAlertWindowPermission(context);
-
-            requestNotificationsPermission();
-
-            await CallManager.instance.init(context);
-
-            PushNotificationsManager.instance.init();
-
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        userStore.isLoggedIn ? Routes.home : Routes.login));
-          }).catchError((exception) {
-            //_processLoginError(exception);
-
-            log(exception.toString(), "BEBAOBOY");
-          });
-          // _controller.stop();
-        },
-      ).catchError((exception) {
-        //_processLoginError(exception);
-
-        log(exception.toString(), "BEBAOBOY");
-      });
-      deleteSessionsExceptCurrent()
-          .then((voidResult) {})
-          .catchError((error) {});
     } else {
       user = utils.users[2];
     }
