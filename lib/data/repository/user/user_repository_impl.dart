@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:boilerplate/data/network/apis/user/user_api.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:dio/dio.dart';
 
 import '../../../domain/entity/user/user.dart';
 import '../../../domain/usecase/user/login_usecase.dart';
@@ -10,8 +12,10 @@ class UserRepositoryImpl extends UserRepository {
   // shared pref object
   final SharedPreferenceHelper _sharedPrefsHelper;
 
+  final UserApi _userApi;
+
   // constructor
-  UserRepositoryImpl(this._sharedPrefsHelper);
+  UserRepositoryImpl(this._sharedPrefsHelper, this._userApi);
 
   // Login:---------------------------------------------------------------------
   @override
@@ -37,4 +41,16 @@ class UserRepositoryImpl extends UserRepository {
   @override
   // ToDO: implement user
   Future<User> get user => _sharedPrefsHelper.user;
+
+  @override
+  Future<void> changePassword(String newPass) async {
+    var response = await _userApi.resetPassword(newPass);
+    return;
+  }
+
+  @override
+  Future<Response> signUp() async {
+    var response = await _userApi.signUp();
+    return response;
+  }
 }

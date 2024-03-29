@@ -5,6 +5,7 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -330,11 +331,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ));
   }
 
-
-
-
-
-
   Widget _buildSignUpButton() {
     return RoundedButtonWidget(
       buttonText: Lang.get('signup_btn_sign_up'),
@@ -345,6 +341,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             routeName: sampleData[0].isSelected
                 ? Routes.signUpStudent
                 : Routes.signUpCompany));
+
         // if (_formStore.canSignUp) {
         //   DeviceUtils.hideKeyboard(context);
         //   _userStore.login(
