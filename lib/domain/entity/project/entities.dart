@@ -1,6 +1,5 @@
 // ignore_for_file: overridden_fields
 
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,14 +14,18 @@ class MyObject {
 }
 
 // ------------------- STUDENT PROFILE ------------------------------
+@JsonSerializable()
 class TechStack extends MyObject {
   final String name;
   TechStack(
     this.name, {
     super.objectId,
   });
+
+  TechStack.fromJson(Map<String, dynamic> json) : name = json["name"] ?? "";
 }
 
+@JsonSerializable()
 class Skill extends MyObject {
   final String name;
   final String description;
@@ -47,8 +50,14 @@ class Skill extends MyObject {
   String toString() {
     return 'Profile{$name}';
   }
+
+  Skill.fromJson(Map<String, dynamic> json)
+      : name = json["name"] ?? "",
+        description = "",
+        imageUrl = "";
 }
 
+@JsonSerializable()
 class Language extends MyObject {
   String name;
   String proficiency;
@@ -57,18 +66,30 @@ class Language extends MyObject {
 
   Language(this.name, this.proficiency,
       {super.objectId, this.readOnly = true, this.enabled = true});
+
+  Language.fromJson(Map<String, dynamic> json)
+      : name = json["name"] ?? "",
+        proficiency = "";
 }
 
+@JsonSerializable()
 class Education extends MyObject {
-  String name;
+  String schoolName;
   String year;
+  DateTime startYear = DateTime.now().subtract(const Duration(days: 365));
+  DateTime endYear = DateTime.now();
   bool readOnly = true;
   bool enabled = true;
 
-  Education(this.name, this.year,
-      {super.objectId, this.readOnly = true, this.enabled = true});
+  Education(this.schoolName, this.year,
+      {super.objectId,
+      this.readOnly = true,
+      this.enabled = true,
+      required this.startYear,
+      required this.endYear});
 }
 
+@JsonSerializable()
 class ProjectExperience extends MyObject {
   String name;
   DateTime startDate = DateTime.now().subtract(const Duration(days: 1));
@@ -77,7 +98,7 @@ class ProjectExperience extends MyObject {
   String link = "";
   bool readOnly = true;
   bool enabled = true;
-  List<String>? skills = [];
+  List<Skill>? skills = [];
 
   ProjectExperience(this.name,
       {super.objectId,
@@ -93,18 +114,19 @@ class ProjectExperience extends MyObject {
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class Profile extends MyObject {
-  User? user;
-  Profile({super.objectId, this.user});
+  Profile({super.objectId});
 }
 
+@JsonSerializable()
 class StudentProfile extends Profile {
-  String name;
+  String fullName;
   // String userId;
   String education;
   String introduction;
   int yearOfExperience;
   String title; // job
   String review; // maybe enum
+  List<TechStack>? techStack;
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
@@ -113,14 +135,27 @@ class StudentProfile extends Profile {
 
   StudentProfile(
       {super.objectId,
-      super.user,
-      required this.name,
+      required this.fullName,
       required this.education,
       required this.introduction,
       required this.title,
       required this.review,
       this.yearOfExperience = 0,
       this.skillSet});
+
+  StudentProfile.fromJson(Map<String, dynamic> json)
+      : title = json["title"] ?? "",
+        fullName = json["fullName"] ?? "",
+        education = json["education"] ?? "",
+        introduction = json["introduction"] ?? "",
+        yearOfExperience = json["yearOfExperience"] ?? 0,
+        review = json["review"] ?? "",
+        techStack = (json["techStack"] as List<TechStack>),
+        skillSet = (json["skillSet"] as List<Skill>),
+        languages = (json["language"] as List<Language>),
+        educations = (json["education"] as List<Education>),
+        transcript = json["transcript"] ?? "",
+        resume = json["resume"] ?? "";
 }
 
 enum CompanyScope { solo, small, medium, large, enterprise }
@@ -142,9 +177,11 @@ extension CompanyScopeTitle on CompanyScope {
   }
 }
 
+@JsonSerializable()
 class CompanyProfile extends Profile {
   String userId;
-  String name;
+  String profileName;
+  String companyName;
   String email;
   String website;
   String description;
@@ -152,14 +189,23 @@ class CompanyProfile extends Profile {
 
   CompanyProfile({
     super.objectId,
-    super.user,
     required this.userId,
-    required this.name,
+    required this.companyName,
+    required this.profileName,
     required this.email,
     required this.website,
     required this.description,
     this.scope = CompanyScope.solo,
   });
+
+  CompanyProfile.fromJson(Map<String, dynamic> json)
+      : userId = json["userId"] ?? "",
+        profileName = json["profileName"] ?? "",
+        companyName = json["companyName"] ?? "",
+        email = json["email"] ?? "",
+        website = json["website"] ?? "",
+        description = json["description"] ?? "",
+        scope = json["scope"] ?? "";
 }
 
 //
@@ -192,6 +238,7 @@ abstract class ShimmerLoadable {
 /// For student, please refer to [StudentProject]
 /// For company project, please refer to [Project]
 ///
+@JsonSerializable()
 class ProjectBase extends MyObject implements ShimmerLoadable {
   String title;
   String description;
@@ -214,15 +261,17 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
 /// For student, please refer to [StudentProject]
 /// For general project, please refer to [ProjectBase]
 ///
+@JsonSerializable()
 class Project extends ProjectBase {
   // var id = const Uuid().v4();
   int numberOfStudents;
-  List<StudentProfile>? hired = List.empty(growable: true);
-  List<StudentProfile>? proposal = List.empty(growable: true);
-  List<StudentProfile>? messages = List.empty(growable: true);
+  List<Proposal>? hired = List.empty(growable: true);
+  List<Proposal>? proposal = List.empty(growable: true);
+  List<Proposal>? messages = List.empty(growable: true);
   DateTime timeCreated = DateTime.now();
   bool isFavorite = false;
   bool isWorking = false;
+  bool isArchived = false;
 
   Project(
       {super.objectId,
@@ -251,6 +300,7 @@ class Project extends ProjectBase {
 /// For student, please refer to [Project]
 /// For general project, please refer to [ProjectBase]
 ///
+@JsonSerializable()
 class StudentProject extends Project {
   bool isSubmitted = true;
   bool isAccepted = false;
@@ -294,8 +344,9 @@ extension HireStatusTitle on HireStatus {
 
 enum Status { active, inactive }
 
+@JsonSerializable()
 class Proposal extends MyObject {
-  Project project;
+  // Project project;
   StudentProfile student;
   String coverLetter;
   HireStatus isHired;
@@ -303,26 +354,29 @@ class Proposal extends MyObject {
 
   Proposal(
       {super.objectId,
-      required this.project,
+      // required this.project,
       required this.student,
-      required this.coverLetter,
+      this.coverLetter = "",
       this.isHired = HireStatus.notHire,
       this.status = Status.inactive});
 }
 
 // ------------------- NOTIFICATION ------------------------------
 
-class NotifiedObject extends MyObject {
-  String messageId;
+@JsonSerializable()
+class Notification extends MyObject {
+  String id;
   Profile receiver;
   Profile sender;
   String content;
+  NotificationType type;
 
-  NotifiedObject({
+  Notification({
     super.objectId,
-    required this.messageId,
+    required this.id,
     required this.receiver,
     required this.sender,
+    required this.type,
     this.content = "",
   });
 }
@@ -334,16 +388,18 @@ enum NotificationType {
   message,
 }
 
-class Notification extends NotifiedObject {
-  NotificationType type;
+@JsonSerializable()
+class OfferNotification extends Notification {
+  String projectId;
 
-  Notification({
+  OfferNotification({
     super.objectId,
-    required super.messageId,
+    required this.projectId,
+    required super.id,
     required super.receiver,
     required super.sender,
     super.content = "",
-    this.type = NotificationType.text,
+    super.type = NotificationType.text,
   });
 }
 
@@ -352,17 +408,19 @@ enum MessageType {
   message,
 }
 
-class Message extends NotifiedObject {
-  MessageType type;
+@JsonSerializable()
+class Message extends Notification {
+  MessageType messageType;
   InterviewSchedule? interviewSchedule;
 
   Message({
     super.objectId,
-    required super.messageId,
+    required super.id,
     required super.receiver,
     required super.sender,
     super.content = "",
-    this.type = MessageType.message,
+    super.type = NotificationType.message,
+    this.messageType = MessageType.message,
   });
 }
 
@@ -414,6 +472,6 @@ class InterviewSchedule extends MyObject {
         "title": title,
         "startDate": startDate,
         "endDate": endDate,
-        "isCancel": "$isCancel",
+        "isCancel": isCancel,
       };
 }

@@ -149,13 +149,17 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
         startDate: DateTime(2020, 9),
         endDate: DateTime(2020, 12),
-        skills: ["React", "Android"]));
+        skills: [Skill("React", "", ""), Skill("Android", "", "")]));
     _projects.add(ProjectExperience("Community partners project",
         description:
             "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
         startDate: DateTime(2019, 12),
         endDate: DateTime(2024, 2),
-        skills: ["iOS", "Web", "Artificial Intelligent"]));
+        skills: [
+          Skill("iOS", "", ""),
+          Skill("Web", "", ""),
+          Skill("Artificial Intelligent", "", "")
+        ]));
     _projects.add(ProjectExperience("bebaoboy Project Bunny",
         description:
             "food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
@@ -252,7 +256,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
       return mockSkillsets;
     }
   }
-
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -536,9 +539,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                     _projects[index].readOnly
                                                         ? 10
                                                         : 15,
-                                                hint: Lang
-                                                    .get('profile_choose_skillset'),
-                                                
+                                                hint: Lang.get(
+                                                    'profile_choose_skillset'),
                                                 icon: null,
                                                 textController: null,
                                                 inputAction:
@@ -595,7 +597,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
 
                                                       if (pickedDate != null) {
                                                         //print(
-                                                            // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                        // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                         // String formattedDate =
                                                         //     DateFormat('yyyy-MM-dd')
                                                         //         .format(pickedDate);
@@ -609,11 +611,12 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                       } else {}
                                                     }
                                                   },
-                                                  inputDecoration: InputDecoration(
-                                                      border: _projects[index]
-                                                              .readOnly
-                                                          ? InputBorder.none
-                                                          : null),
+                                                  inputDecoration:
+                                                      InputDecoration(
+                                                          border: _projects[index]
+                                                                  .readOnly
+                                                              ? InputBorder.none
+                                                              : null),
                                                   isIcon: false,
                                                   label:
                                                       _projects[index].readOnly
@@ -630,23 +633,24 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                                       .colorScheme
                                                                       .primary),
                                                             ),
-                                                  enabled:
-                                                      _projects[index].enabled,
+                                                  enabled: _projects[index]
+                                                      .enabled,
                                                   enableInteractiveSelection:
                                                       !_projects[index]
                                                           .readOnly,
-                                                  canRequestFocus: !_projects[index]
-                                                      .readOnly,
+                                                  canRequestFocus:
+                                                      !_projects[index]
+                                                          .readOnly,
                                                   readOnly: true,
-                                                  initialValue:
-                                                      DateFormat("yyyy/MM")
-                                                          .format(_projects[index]
+                                                  initialValue: DateFormat(
+                                                          "yyyy/MM")
+                                                      .format(
+                                                          _projects[index]
                                                               .startDate),
                                                   fontSize:
                                                       _projects[index].readOnly
                                                           ? 10
                                                           : 15,
-                                                 
                                                   icon: null,
                                                   textController: null,
                                                   inputAction:
@@ -697,7 +701,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
 
                                                       if (pickedDate != null) {
                                                         //print(
-                                                            // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                                                        // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
                                                         // String formattedDate =
                                                         //     DateFormat('yyyy-MM-dd')
                                                         //         .format(pickedDate);
@@ -751,7 +755,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                           : 15,
                                                   hint: Lang.get(
                                                       'login_et_user_email'),
-                                                 
                                                   icon: null,
                                                   textController: null,
                                                   inputAction:
@@ -845,8 +848,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                     _projects[index].readOnly
                                                         ? 10
                                                         : 15),
-                                            inputType:
-                                                TextInputType.url,
+                                            inputType: TextInputType.url,
                                             icon: null,
                                             fontSize: _projects[index].readOnly
                                                 ? 10
@@ -1038,9 +1040,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                             .toString()
                                                         : "...",
                                             readOnly: _projects[index].readOnly,
-                                            hint:
-                                                Lang.get('profile_choose_skillset'),
-                                            
+                                            hint: Lang.get(
+                                                'profile_choose_skillset'),
                                             icon: null,
                                             textController: null,
                                             inputAction: TextInputAction.next,
@@ -1078,7 +1079,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                                   null
                                               ? _projects[index]
                                                   .skills!
-                                                  .map((e) => Skill(e, "",
+                                                  .map((e) => Skill(e.name, "",
                                                       "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"))
                                                   .toList()
                                               : [],
@@ -1098,9 +1099,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                               )),
                                           findSuggestions: _findSuggestions,
                                           onChanged: (value) {
-                                            _projects[index].skills = value
-                                                .map((e) => e.name)
-                                                .toList(growable: true);
+                                            _projects[index].skills = value;
                                           },
                                           chipBuilder: (BuildContext context,
                                               ChipsInputState<Skill> state,

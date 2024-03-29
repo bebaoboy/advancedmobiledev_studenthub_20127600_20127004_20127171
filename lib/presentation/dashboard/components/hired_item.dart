@@ -59,7 +59,7 @@ class _HiredItemState extends State<HiredItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.hired.name,
+                      Text(widget.hired.fullName,
                           style: Theme.of(context).textTheme.bodyLarge),
                       Text(widget.hired.education,
                           style: Theme.of(context).textTheme.bodyLarge)

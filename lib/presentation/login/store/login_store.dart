@@ -37,13 +37,13 @@ abstract class _UserStore with Store {
     });
 
     savedUsers.add(User(
-        email: "user1@gmail.com", type: UserType.company, name: "Hai Pham"));
-    savedUsers.add(User(
-        email: "user2@gmail.com", type: UserType.company, name: "Hai Pham 2"));
-    savedUsers.add(User(
-        email: "user3@gmail.com", type: UserType.student, name: "Student 1"));
-    savedUsers.add(User(
-        email: "user4@gmail.com", type: UserType.student, name: "Student 2"));
+        email: "user1@gmail.com", name: "Hai Pham", roles: [UserType.company, UserType.student], isVerified: true));
+    // savedUsers.add(User(
+    //     email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
+    // savedUsers.add(User(
+    //     email: "user3@gmail.com", name: "Hai Pham 3", roles: [], isVerified: true));
+    // savedUsers.add(User(
+    //     email: "user4@gmail.com", name: "Hai Pham 3", roles: [UserType.company]));
   }
 
   // public variable
@@ -94,17 +94,16 @@ abstract class _UserStore with Store {
 
   // actions:-------------------------------------------------------------------
   @action
-  Future login(String email, String password, UserType userType,
+  Future login(String email, String password, UserType type, List<UserType> roles,
       {fastSwitch = false}) async {
-    // TODO change userType to debug company or student
     // //print(UserType.company.name);
     final LoginParams loginParams = LoginParams(
-        username: email, password: password, userType: userType.name);
+        username: email, password: password, userType: type.name);
     final future = _loginUseCase.call(params: loginParams);
     loginFuture = ObservableFuture(future);
 
     if (fastSwitch) {
-      var value = User(email: email, type: userType);
+      var value = User(email: email, roles: roles, type: type);
       await _saveLoginStatusUseCase.call(params: true);
       await _saveUserDataUseCase.call(params: value);
       isLoggedIn = true;

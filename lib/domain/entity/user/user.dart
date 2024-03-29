@@ -1,3 +1,6 @@
+import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:json_annotation/json_annotation.dart';
+
 enum UserType { student, company, naught }
 
 UserType getUserType(String value) {
@@ -11,11 +14,44 @@ UserType getUserType(String value) {
   }
 }
 
-class User {
-  final UserType type;
+@JsonSerializable()
+class User extends MyObject {
+  // current login role
+  UserType type;
   final String email;
   String name;
   bool isVerified;
+  // all roles of user: student and company
+  List<UserType>? roles = [UserType.company];
+  StudentProfile? studentProfile;
+  CompanyProfile? companyProfile;
 
-  User({required this.type, required this.email, this.name = "", this.isVerified = true});
+  User(
+      {super.objectId,
+      this.type = UserType.naught,
+      required this.email,
+      this.name = "",
+      this.isVerified = false,
+      this.studentProfile,
+      this.companyProfile,
+      required this.roles});
+
+  User.fromJson(Map<String, dynamic> json)
+      : type = json["type"] == "0" ? UserType.student : UserType.company,
+        email = json["email"] ?? "",
+        name = json["name"] ?? "",
+        isVerified = json["isVerified"] ?? false,
+        studentProfile = null,
+        companyProfile = null,
+        roles = json["roles"] ?? [UserType.company];
+
+  Map<String, dynamic> toJson() => {
+        "type": type.name,
+        "email": email,
+        "name": name,
+        "isVerified": isVerified,
+        "studentProfile": studentProfile,
+        "companyProfile": companyProfile,
+        "role": roles,
+      };
 }

@@ -152,11 +152,14 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
     _languages.add(Language("Egyptian", "Beginner"));
     _languages.add(Language("Indian", "Native"));
     _languages.add(Language("Nadir", "Beginner"));
-    _educations.add(Education("Le Hong Phong Highschool", "2007 - 2010"));
-    _educations
-        .add(Education("Ho Chi Minh University of Science", "2010 - 2014"));
-    _educations
-        .add(Education("Ho Chi Minh University of Science", "2014 - 2018"));
+    _educations.add(Education("Le Hong Phong Highschool", "2007 - 2010",
+        startYear: DateTime(2007), endYear: DateTime(2010)));
+    _educations.add(Education(
+        "Ho Chi Minh University of Science", "2010 - 2014",
+        startYear: DateTime(2010), endYear: DateTime(2014)));
+    _educations.add(Education(
+        "Ho Chi Minh University of Science", "2014 - 2018",
+        startYear: DateTime(2014), endYear: DateTime(2018)));
   }
 
   @override
@@ -226,7 +229,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
       return mockSkillsets;
     }
   }
-
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -438,7 +440,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   _educations.insert(
                                       0,
                                       Education("School Name", "2002-2002",
-                                          readOnly: false));
+                                          readOnly: false,
+                                          startYear: DateTime(2002),
+                                          endYear: DateTime(2002)));
                                 })
                               },
                               icon: const Icon(Icons.add_circle_outline),
@@ -731,7 +735,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                       !_educations[index].readOnly,
                                   canRequestFocus: !_educations[index].readOnly,
                                   iconMargin: const EdgeInsets.only(top: 30),
-                                  initialValue: _educations[index].name,
+                                  initialValue: _educations[index].schoolName,
                                   readOnly: _educations[index].readOnly,
                                   hint: Lang.get('login_et_user_email'),
                                   inputType: TextInputType.emailAddress,
@@ -743,7 +747,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   inputAction: TextInputAction.next,
                                   autoFocus: false,
                                   onChanged: (value) {
-                                    _educations[index].name = value;
+                                    _educations[index].schoolName = value;
 
                                     // _formStore
                                     //     .setUserId(_userEmailController.text);

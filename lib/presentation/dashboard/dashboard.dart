@@ -483,7 +483,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar(theme: false,);
+    return const MainAppBar(theme: true,);
   }
 }
 

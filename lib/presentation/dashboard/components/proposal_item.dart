@@ -59,7 +59,7 @@ class _ProposalItemState extends State<ProposalItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.proposal.name,
+                      Text(widget.proposal.fullName,
                           style: Theme.of(context).textTheme.bodyLarge),
                       Text(widget.proposal.education,
                           style: Theme.of(context).textTheme.bodyLarge)
