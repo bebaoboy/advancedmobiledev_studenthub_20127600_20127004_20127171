@@ -1,7 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';

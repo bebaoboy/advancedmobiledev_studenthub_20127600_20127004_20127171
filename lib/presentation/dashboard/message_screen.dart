@@ -1,7 +1,7 @@
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';

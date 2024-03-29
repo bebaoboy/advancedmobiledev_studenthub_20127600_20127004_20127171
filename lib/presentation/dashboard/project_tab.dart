@@ -3,7 +3,7 @@ import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';

@@ -298,8 +298,8 @@ class _SettingScreenState extends State<SettingScreen> {
                       context,
                       _userStore.user != null &&
                               _userStore.user!.type == UserType.company
-                          ? Routes.profileStep2
-                          : Routes.profileStep2Student);
+                          ? Routes.viewProfileCompany
+                          : Routes.viewProfileStudent);
                 },
                 leading: const Icon(Icons.person),
                 title: Text(

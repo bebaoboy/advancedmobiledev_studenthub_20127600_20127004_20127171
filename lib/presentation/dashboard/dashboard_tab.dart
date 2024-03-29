@@ -5,7 +5,7 @@ import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';

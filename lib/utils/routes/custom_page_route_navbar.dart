@@ -1,7 +1,7 @@
 // ignore_for_file: overridden_fields, must_be_immutable
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';

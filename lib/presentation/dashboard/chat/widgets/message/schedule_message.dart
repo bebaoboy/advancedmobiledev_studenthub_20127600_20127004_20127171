@@ -2,7 +2,7 @@
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';

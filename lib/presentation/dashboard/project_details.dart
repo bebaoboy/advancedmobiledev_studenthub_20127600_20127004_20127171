@@ -1,7 +1,7 @@
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';

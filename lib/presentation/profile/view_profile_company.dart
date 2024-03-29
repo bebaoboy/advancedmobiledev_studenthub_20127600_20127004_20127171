@@ -17,14 +17,14 @@ enum CompanySize {
   single, // 1
 }
 
-class ProfileStep2Screen extends StatefulWidget {
-  const ProfileStep2Screen({super.key});
+class ViewProfileCompany extends StatefulWidget {
+  const ViewProfileCompany({super.key});
 
   @override
-  _ProfileStep2ScreenState createState() => _ProfileStep2ScreenState();
+  _ViewProfileCompanyState createState() => _ViewProfileCompanyState();
 }
 
-class _ProfileStep2ScreenState extends State<ProfileStep2Screen> {
+class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final ProfileFormStore _formStore = getIt<ProfileFormStore>();

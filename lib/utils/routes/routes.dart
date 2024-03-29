@@ -1,4 +1,4 @@
-import 'package:boilerplate/domain/entity/project/project.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
@@ -13,10 +13,10 @@ import 'package:boilerplate/presentation/login/forget_password_change_password.d
 import 'package:boilerplate/presentation/login/forget_password_done.dart';
 import 'package:boilerplate/presentation/login/forget_password_sent.dart';
 import 'package:boilerplate/presentation/login/login.dart';
-import 'package:boilerplate/presentation/profile/profile_step2%20_student.dart';
+import 'package:boilerplate/presentation/profile/view_profile_company.dart';
+import 'package:boilerplate/presentation/profile/view_profile_student.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
-import 'package:boilerplate/presentation/profile/profile_step2.dart';
 import 'package:boilerplate/presentation/profile/profile_student_step2.dart';
 import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:boilerplate/presentation/setting/setting.dart';
@@ -42,8 +42,8 @@ class Routes {
   static const String welcome = '/welcome';
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';
-  static const String profileStep2 = '/profile-step2';
-  static const String profileStep2Student = '/profile-step2-student';
+  static const String viewProfileCompany = '/view-profile-company';
+  static const String viewProfileStudent = '/view-profile-student';
   static const String setting = '/settings';
   static const String projectDetails = '/projectDetails';
   static const String projectPost = '/project-post';
@@ -63,8 +63,8 @@ class Routes {
     signUp: const SignUpScreen(),
     setting: const SettingScreen(),
     profile: const ProfileScreen(),
-    profileStep2: const ProfileStep2Screen(),
-    profileStep2Student: const ProfileStep2StudentScreen(),
+    viewProfileCompany: const ViewProfileCompany(),
+    viewProfileStudent: const ViewProfileStudent(),
     signUpCompany: const SignUpCompanyScreen(),
     signUpStudent: const SignUpStudentScreen(),
     home: const HomeScreen(),
