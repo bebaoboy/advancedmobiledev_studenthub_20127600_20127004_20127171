@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
+import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
@@ -20,6 +21,7 @@ abstract class _UserStore with Store {
     this._saveLoginStatusUseCase,
     this._loginUseCase,
     this._saveUserDataUseCase,
+    this._signUpUseCase,
     this.formErrorStore,
     this.errorStore,
     this._getUserDataUseCase,
@@ -56,6 +58,7 @@ abstract class _UserStore with Store {
   final LoginUseCase _loginUseCase;
   final SaveUserDataUsecase _saveUserDataUseCase;
   final GetUserDataUseCase _getUserDataUseCase;
+  final SignUpUseCase _signUpUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -126,6 +129,14 @@ abstract class _UserStore with Store {
       success = false;
       throw e;
     });
+  }
+
+  signUp(String email, String password, UserType userType,
+      {fastSwitch = false}) async {
+    final LoginParams loginParams = LoginParams(
+        username: email, password: password, userType: userType.name);
+    final future = _signUpUseCase.call(params: loginParams);
+    await future.then((value) => print(value.toString()));
   }
 
   logout() async {

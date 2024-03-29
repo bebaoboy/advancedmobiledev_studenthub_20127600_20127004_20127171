@@ -45,10 +45,27 @@ class User extends MyObject {
         companyProfile = null,
         roles = json["roles"] ?? [UserType.company];
 
+// <<<<<<< sprint4-signup_accountActivation_forgetPassword
+//   User(
+//       {required this.type,
+//       required this.email,
+//       this.name = "",
+//       this.isVerified = true});
+
+//   User.fromJson(Map<String, dynamic> json)
+//       : type = json["type"] == "0" ? UserType.student : UserType.company,
+//         email = json["email"] ?? "",
+//         name = json["name"] ?? "",
+//         isVerified = json["isVerified"] ?? false;
+
+// =======
   Map<String, dynamic> toJson() => {
         "type": type.name,
         "email": email,
         "name": name,
+// <<<<<<< sprint4-signup_accountActivation_forgetPassword
+//         "isVerified": isVerified
+// =======
         "isVerified": isVerified,
         "studentProfile": studentProfile,
         "companyProfile": companyProfile,
