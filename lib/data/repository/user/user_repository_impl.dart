@@ -24,8 +24,9 @@ class UserRepositoryImpl extends UserRepository {
     return await Future.delayed(
         const Duration(seconds: 2),
         () => User(
-            type: getUserType(params.userType ?? 'company'),
-            email: params.username));
+            type: getUserType(params.userType ?? 'naught'),
+            email: params.username,
+            roles: [UserType.company]));
   }
 
   @override

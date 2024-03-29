@@ -1,8 +1,9 @@
 import 'package:boilerplate/domain/entity/account/account.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-class StudentAccountWidget extends StatelessWidget {
+class StudentAccountWidget extends StatefulWidget {
   final Account name;
   final bool isLoggedIn;
   final VoidCallback? onTap;
@@ -11,26 +12,43 @@ class StudentAccountWidget extends StatelessWidget {
       {super.key, required this.name, this.isLoggedIn = false, this.onTap});
 
   @override
+  State<StudentAccountWidget> createState() => _StudentAccountWidgetState();
+}
+
+class _StudentAccountWidgetState extends State<StudentAccountWidget> {
+  @override
   Widget build(BuildContext context) {
-    Widget titleWidget = Text(name.user.name,
-        style: isLoggedIn ? Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context)
-                .colorScheme
-                .primary
-                .withOpacity(0.5)) : Theme.of(context).textTheme.bodySmall);
-    Widget subtitleWidget =
-        Text(name.user.email, style: Theme.of(context).textTheme.bodyLarge);
-    Icon profileIcon = const Icon(Icons.person);
+    Widget titleWidget = Text(
+        widget.name.user.name + (widget.name.user.isVerified ? " (*)" : ""),
+        style: widget.isLoggedIn
+            ? Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.5))
+            : Theme.of(context).textTheme.bodySmall);
+    // Widget subtitleWidget = Text(widget.name.user.email,
+    //     style: Theme.of(context).textTheme.bodyLarge);
+    Icon profileIcon = Icon(
+      Icons.person,
+      color: widget.name.user.type == UserType.student && widget.isLoggedIn
+          ? Theme.of(context).colorScheme.primary
+          : null,
+    );
 
     return ListTile(
-      onTap: onTap,
+      onTap: widget.onTap,
       textColor: Theme.of(context)
           .colorScheme
           .primary
-          .withOpacity(isLoggedIn ? 0.5 : 0),
-      leading: name.user.type != UserType.naught ?  profileIcon : const Icon(Icons.no_cell),
+          .withOpacity(widget.isLoggedIn ? 0.5 : 0),
+      leading: widget.name.type == UserType.student
+          ? widget.name.user.roles!.firstWhereOrNull(
+                      (element) => element.name == UserType.student.name) !=
+                  null
+              ? profileIcon
+              : const Icon(Icons.person_off)
+          : const Icon(Icons.no_cell),
       title: titleWidget,
-      subtitle: name.user.type != UserType.naught ? subtitleWidget: null,
+      // subtitle:
+      //     widget.name.user.type != UserType.naught ? subtitleWidget : null,
     );
   }
 }

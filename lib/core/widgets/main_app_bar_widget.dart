@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -341,7 +342,7 @@ class _MainAppBarState extends State<MainAppBar> {
                     MaterialPageRoute2(routeName: Routes.home),
                     (Route<dynamic> route) => false);
               },
-              child: Text(Lang.get('appbar_title')))),
+              child: Text(Lang.get('appbar_title') + (_userStore.user!.type == UserType.company ? "©" : "")))),
       actions: [
         // _buildLanguageButton(),
         // _buildThemeButton(),

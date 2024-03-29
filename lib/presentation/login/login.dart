@@ -254,11 +254,10 @@ class _LoginScreenState extends State<LoginScreen> {
             _userStore.login(
                 _userEmailController.text,
                 _passwordController.text,
-                _userEmailController.text == _userStore.savedUsers[0].email ||
-                        _userEmailController.text ==
-                            _userStore.savedUsers[1].email
-                    ? UserType.company
-                    : UserType.student);
+                UserType.naught,
+                _userEmailController.text == _userStore.savedUsers[0].email
+                    ? [UserType.company, UserType.student]
+                    : [UserType.company]);
           } else {
             _showErrorMessage(Lang.get('login_error_missing_fields'));
           }
@@ -325,6 +324,7 @@ class _LoginScreenState extends State<LoginScreen> {
     if (_userStore.success && loading == false) {
       loading = true;
     }
+    print("${_userStore.user!.type.name} ${_userStore.user!.email}");
     if (loading) {
       SharedPreferences.getInstance().then((prefs) {
         prefs.setBool(Preferences.is_logged_in, true);
@@ -347,7 +347,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final UserStore userStore = getIt<UserStore>();
     // CubeUser user;
 
-    if (userStore.user != null && userStore.user!.type != UserType.naught) {
+    if (userStore.user != null) {
       try {
         if (CubeChatConnection.instance.currentUser != null &&
             !userStore.user!.email.contains(

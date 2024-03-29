@@ -7,28 +7,28 @@ var myProjects = [
           'The ParentDataWidget Expanded(flex: 1) wants to apply ParentData of type FlexParentData to a RenderObject, which has been set up to accept ParentData of incompatible type ParentData.Usually, this means that the Expanded widget has the wrong ancestor RenderObjectWidget. Typically, Expanded widgets are placed directly inside Flex widgets.The offending Expanded is currently placed inside a AbsorbPointer widget.The ownership chain for the RenderObject that received the incompatible parent data was: Column ← Expanded ← AbsorbPointer ← Row ← Padding ← Semantics ← DefaultTextStyle ← AnimatedDefaultTextStyle ← _InkFeatures-[GlobalKey#fae7b ink renderer] ← NotificationListener<LayoutChangedNotification> ← ⋯',
       timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      proposal: <StudentProfile>[
-        StudentProfile(
-            name: 'Luu Tuan Quan',
+      proposal: [
+        Proposal(student: StudentProfile(
+            fullName: 'Luu Tuan Quan',
             introduction: 'I am happy',
             education: '4th year students',
             title: 'Fullstack Engineer',
             yearOfExperience: 3,
-            review: 'I find your project suitable'),
-        StudentProfile(
-            name: 'Huynh Minh Bao',
+            review: 'I find your project suitable')),
+        Proposal(student: StudentProfile(
+            fullName: 'Huynh Minh Bao',
             introduction: 'I am happy',
             education: '4th year students',
             title: 'Fullstack Engineer',
             yearOfExperience: 3,
-            review: 'I find your project suitable'),
-        StudentProfile(
-            name: 'Vu Huy Hoang',
+            review: 'I find your project suitable')),
+        Proposal(student: StudentProfile(
+            fullName: 'Vu Huy Hoang',
             introduction: 'I am eager',
             education: '4th year students',
             title: 'Fullstack Engineer',
             yearOfExperience: 3,
-            review: 'I find your project suitable')
+            review: 'I find your project suitable'))
       ]),
   Project(
       title: "XYZ",

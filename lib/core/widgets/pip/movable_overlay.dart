@@ -249,12 +249,21 @@ class MovableOverlayState extends State<MovableOverlay>
         floatingHeight = widget.topWidget != null
             ? widget.pipParams.pipWindowHeight * _scaleFactor
             : 0;
+        double w, h;
+        try {
+          w = floatingWidth.clamp(widget.pipParams.minSize.width,
+              min(widget.pipParams.maxSize.width, width));
+        } catch (e) {
+          w = min(width, widget.pipParams.minSize.width);
+        }
 
-        final floatingWidgetSize = Size(
-            floatingWidth.clamp(widget.pipParams.minSize.width,
-                min(widget.pipParams.maxSize.width, width)),
-            floatingHeight.clamp(widget.pipParams.minSize.height,
-                min(widget.pipParams.maxSize.height, height)));
+        try {
+          h = floatingHeight.clamp(widget.pipParams.minSize.height,
+              min(widget.pipParams.maxSize.height, height));
+        } catch (e) {
+          h = min(height, widget.pipParams.minSize.height);
+        }
+        final floatingWidgetSize = Size(w, h);
         print(floatingWidgetSize);
         final fullWidgetSize = Size(width, height);
 

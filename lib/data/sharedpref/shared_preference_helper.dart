@@ -53,12 +53,18 @@ class SharedPreferenceHelper {
   }
 
   Future<void> saveUser(User? user) {
-    if(user == null){
-       _sharedPreference.setString(Preferences.current_user_email, '');
-       return _sharedPreference.setString(
-        Preferences.current_user_role, '');
+    if (user == null) {
+      _sharedPreference.setString(Preferences.current_user_email, '');
+      return _sharedPreference.setString(Preferences.current_user_role, '');
     }
     _sharedPreference.setString(Preferences.current_user_email, user.email);
+    _sharedPreference.setStringList(
+        Preferences.current_user_roleList,
+        user.roles!
+            .map(
+              (e) => e.name,
+            )
+            .toList());
     return _sharedPreference.setString(
         Preferences.current_user_role, user.type.name.toLowerCase().toString());
   }
@@ -68,9 +74,16 @@ class SharedPreferenceHelper {
         _sharedPreference.getString(Preferences.current_user_email) ?? '';
     String userRole =
         _sharedPreference.getString(Preferences.current_user_role) ?? '';
+    List<UserType> userRoles =
+        (_sharedPreference.getStringList(Preferences.current_user_roleList) ??
+                ["company"])
+            .map(
+              (e) => e == "company" ? UserType.company : UserType.student,
+            )
+            .toList();
 
     UserType userType = getUserType(userRole);
 
-    return User(email: userEmail, type: userType);
+    return User(email: userEmail, type: userType, roles: userRoles);
   }
 }

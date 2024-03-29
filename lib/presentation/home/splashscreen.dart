@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
@@ -191,7 +190,7 @@ class _SplashScreenState extends State<SplashScreen>
     final UserStore userStore = getIt<UserStore>();
     CubeUser user;
 
-    if (userStore.user != null && userStore.user!.type != UserType.naught) {
+    if (userStore.user != null) {
       try {
         // CallManager.instance.destroy();
         // CubeChatConnection.instance.destroy();

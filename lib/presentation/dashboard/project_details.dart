@@ -58,7 +58,11 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                     physics: const BouncingScrollPhysics(),
                     children: [
                       ProposalTabLayout(
-                          proposals: widget.project.proposal,
+                          proposals: widget.project.proposal == null
+                              ? []
+                              : widget.project.proposal!
+                                  .map((e) => e.student)
+                                  .toList(),
                           onHired: (index) {
                             setState(() {
                               try {
@@ -75,8 +79,22 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                       DetailTabLayout(
                         project: widget.project,
                       ),
-                      MessageTabLayout(messages: widget.project.messages),
-                      HiredTabLayout(hired: widget.project.hired),
+                      MessageTabLayout(
+                          messages: widget.project.messages == null
+                              ? []
+                              : widget.project.messages!
+                                  .map(
+                                    (e) => e.student,
+                                  )
+                                  .toList()),
+                      HiredTabLayout(
+                          hired: widget.project.hired == null
+                              ? []
+                              : widget.project.hired!
+                                  .map(
+                                    (e) => e.student,
+                                  )
+                                  .toList()),
                     ],
                   ),
                 ),
@@ -295,7 +313,7 @@ class MessageTabLayout extends StatelessWidget {
             itemCount: messages?.length ?? 0,
             itemBuilder: (context, index) {
               return ListTile(
-                title: Text(messages![index].name),
+                title: Text(messages![index].fullName),
               );
             },
           );

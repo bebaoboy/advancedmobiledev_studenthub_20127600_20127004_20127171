@@ -33,10 +33,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   void initState() {
-    var companyAccounts = _userStore.savedUsers.where(
-      (element) => element.type == UserType.company,
-    );
+    print("init setting");
     accountList = [
+      // guest acc
       if (_userStore.user != null &&
           _userStore.savedUsers.firstWhereOrNull(
                 (element) => element.email == _userStore.user!.email,
@@ -45,20 +44,33 @@ class _SettingScreenState extends State<SettingScreen> {
         Account(
             _userStore.user!.email.isNotEmpty
                 ? _userStore.user!
-                : User(email: "", name: "Guest", type: UserType.naught),
+                : User(email: "", name: "Guest", roles: [UserType.naught]),
+            type: UserType.naught,
             children: [],
             isLoggedIn: true),
-      for (var u in companyAccounts)
+
+      // true acc
+      for (var u in _userStore.savedUsers)
         Account(u,
-            children: List.from(_userStore.savedUsers
-                .where(
-                  (element) => element.type == UserType.student,
-                )
-                .map(
-                  (e) => Account(e, children: []),
-                )),
-            isLoggedIn:
-                _userStore.user != null && u.email == _userStore.user!.email)
+            type: UserType.company,
+            children: [
+              Account(
+                  User(
+                      email: u.email,
+                      name: u.name,
+                      type: UserType.student,
+                      roles: u.roles,
+                      studentProfile: u.studentProfile,
+                      companyProfile: u.companyProfile,
+                      isVerified: u.isVerified),
+                  type: UserType.student,
+                  isLoggedIn: _userStore.user != null &&
+                      u.email == _userStore.user!.email &&
+                      UserType.student == _userStore.user!.type)
+            ],
+            isLoggedIn: _userStore.user != null &&
+                u.email == _userStore.user!.email &&
+                UserType.company == _userStore.user!.type)
     ];
 
     for (var element in accountList) {
@@ -130,7 +142,8 @@ class _SettingScreenState extends State<SettingScreen> {
               if (item.data == null) return;
               print("tap");
 
-              if (item.data!.user.type == UserType.company) {
+              if (item.data!.type == UserType.company &&
+                  !item.data!.isLoggedIn) {
                 if (item.data!.isExpanded) {
                   showAnimatedDialog(
                     context: context,
@@ -138,13 +151,44 @@ class _SettingScreenState extends State<SettingScreen> {
                     builder: (BuildContext context) {
                       return ClassicGeneralDialogWidget(
                         contentText:
-                            'Do you want to switch account to ${item.data!.user.email}?',
+                            'Do you want to switch account to ${item.data!.user.email} (company)?',
                         negativeText: 'Cancel',
                         positiveText: 'Yes',
                         onPositiveClick: () {
                           Navigator.of(context).pop();
+                          if (item.data!.user.roles!.firstWhereOrNull(
+                                (element) =>
+                                    element.name == item.data!.type.name,
+                              ) ==
+                              null) {
+                            showAnimatedDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return ClassicGeneralDialogWidget(
+                                  contentText:
+                                      '${item.data!.user.email} dont have company profile? Create now?',
+                                  negativeText: 'Cancel',
+                                  positiveText: 'Yes',
+                                  onPositiveClick: () {
+                                    Navigator.of(context).pop();
 
-                          switchAccount(item.data!);
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute2(
+                                            routeName: Routes.profile));
+                                  },
+                                  onNegativeClick: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              },
+                              animationType: DialogTransitionType.size,
+                              curve: Curves.fastOutSlowIn,
+                              duration: const Duration(seconds: 1),
+                            );
+                          } else {
+                            switchAccount(item.data!);
+                          }
                         },
                         onNegativeClick: () {
                           Navigator.of(context).pop();
@@ -159,30 +203,63 @@ class _SettingScreenState extends State<SettingScreen> {
                 setState(() {
                   item.data!.isExpanded = !item.data!.isExpanded;
                 });
-              } else if (item.data!.user.type == UserType.student) {
-                showAnimatedDialog(
-                  context: context,
-                  barrierDismissible: true,
-                  builder: (BuildContext context) {
-                    return ClassicGeneralDialogWidget(
-                      contentText:
-                          'Do you want to switch account to ${item.data!.user.email}?',
-                      negativeText: 'Cancel',
-                      positiveText: 'Yes',
-                      onPositiveClick: () {
-                        Navigator.of(context).pop();
+              } else if (item.data!.type == UserType.student) {
+                if (!item.data!.isLoggedIn) {
+                  showAnimatedDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      return ClassicGeneralDialogWidget(
+                        contentText:
+                            'Do you want to switch account to ${item.data!.user.email} (student)?',
+                        negativeText: 'Cancel',
+                        positiveText: 'Yes',
+                        onPositiveClick: () {
+                          Navigator.of(context).pop();
+                          if (item.data!.user.roles!.firstWhereOrNull(
+                                (element) =>
+                                    element.name == item.data!.type.name,
+                              ) ==
+                              null) {
+                            showAnimatedDialog(
+                              context: context,
+                              barrierDismissible: true,
+                              builder: (BuildContext context) {
+                                return ClassicGeneralDialogWidget(
+                                  contentText:
+                                      '${item.data!.user.email} dont have student profile? Create now?',
+                                  negativeText: 'Cancel',
+                                  positiveText: 'Yes',
+                                  onPositiveClick: () {
+                                    Navigator.of(context).pop();
 
-                        switchAccount(item.data!);
-                      },
-                      onNegativeClick: () {
-                        Navigator.of(context).pop();
-                      },
-                    );
-                  },
-                  animationType: DialogTransitionType.size,
-                  curve: Curves.fastOutSlowIn,
-                  duration: const Duration(seconds: 1),
-                );
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute2(
+                                            routeName: Routes.profileStudent));
+                                  },
+                                  onNegativeClick: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                );
+                              },
+                              animationType: DialogTransitionType.size,
+                              curve: Curves.fastOutSlowIn,
+                              duration: const Duration(seconds: 1),
+                            );
+                          } else {
+                            switchAccount(item.data!);
+                          }
+                        },
+                        onNegativeClick: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                    animationType: DialogTransitionType.size,
+                    curve: Curves.fastOutSlowIn,
+                    duration: const Duration(seconds: 1),
+                  );
+                }
               }
               calculate(accountList);
             },
@@ -214,25 +291,34 @@ class _SettingScreenState extends State<SettingScreen> {
   //   }).toList();
   // }
 
-  switchAccount(Account account) {
+  switchAccount(Account account) async {
     if (!account.isLoggedIn) {
       account.isLoggedIn = true;
-      _userStore.logout();
+      await _userStore.logout();
       Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute2(routeName: Routes.login),
           (Route<dynamic> route) => false);
       DeviceUtils.hideKeyboard(context);
       Future.delayed(const Duration(seconds: 1), () {
-        _userStore.login(account.user.email, "", account.user.type,
+        _userStore.login(
+            account.user.email, "", account.type, account.user.roles!,
             fastSwitch: true);
       });
     }
   }
 
   Widget _getComponent({required Account account}) {
-    if (account.user.type == UserType.company) {
-      return CompanyAccountWidget(
+    if (account.type != UserType.company) {
+      return StudentAccountWidget(
         isLoggedIn: account.isLoggedIn,
+        name: account,
+        // onTap: () => switchAccount(account),
+      );
+    } else {
+      return CompanyAccountWidget(
+        isLoggedIn: _userStore.user != null &&
+            account.user.email == _userStore.user!.email,
+        isLoggedInProfile: account.isLoggedIn,
         name: account,
         // onTap: () {
         //   //print(account.name);
@@ -242,13 +328,6 @@ class _SettingScreenState extends State<SettingScreen> {
         //   //   calculate(accountList);
         //   // });
         // },
-      );
-    } else {
-      return StudentAccountWidget(
-        isLoggedIn: _userStore.user != null &&
-            account.user.email == _userStore.user!.email,
-        name: account,
-        // onTap: () => switchAccount(account),
       );
     }
   }
