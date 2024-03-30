@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
 
@@ -18,5 +20,5 @@ abstract class UserRepository {
 
   Future<void> changePassword(String value);
 
-  Future<Response> signUp();
+  Future<Response> signUp(SignUpParams params);
 }

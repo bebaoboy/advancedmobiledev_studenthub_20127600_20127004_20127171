@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:boilerplate/data/network/apis/user/user_api.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:dio/dio.dart';
 
 import '../../../domain/entity/user/user.dart';
@@ -50,8 +51,8 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<Response> signUp() async {
-    var response = await _userApi.signUp();
+  Future<Response> signUp(SignUpParams params) async {
+    var response = await _userApi.signUp(params);
     return response;
   }
 }

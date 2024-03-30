@@ -131,14 +131,6 @@ abstract class _UserStore with Store {
     });
   }
 
-  signUp(String email, String password, UserType userType,
-      {fastSwitch = false}) async {
-    final LoginParams loginParams = LoginParams(
-        username: email, password: password, userType: userType.name);
-    final future = _signUpUseCase.call(params: loginParams);
-    await future.then((value) => print(value.toString()));
-  }
-
   logout() async {
     isLoggedIn = false;
     _user = null;

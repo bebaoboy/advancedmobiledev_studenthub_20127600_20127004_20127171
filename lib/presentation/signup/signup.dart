@@ -9,6 +9,7 @@ import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/signup/store/signup_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -108,31 +109,22 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  //text controllers:-----------------------------------------------------------
-  final TextEditingController _userEmailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
-  final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  final SignupStore _signupStore = getIt<SignupStore>();
 
-  //focus node:-----------------------------------------------------------------
-  late FocusNode _passwordFocusNode;
-
-  bool loading = false;
+  var type = UserType.naught;
 
   @override
   void initState() {
     super.initState();
-    _passwordFocusNode = FocusNode();
   }
 
   @override
   Widget build(BuildContext context) {
     if (sampleData.isEmpty) {
       sampleData.add(RadioModel(
-          true,
+          false,
           Icons.account_box_outlined,
           Lang.get("signup_student_role_text"),
           Theme.of(context).colorScheme.primary,
@@ -173,22 +165,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ],
                 )
               : Container(child: _buildRightSide()),
-          Observer(
-            builder: (context) {
-              return _userStore.success
-                  ? navigate(context)
-                  : _showErrorMessage(_formStore.errorStore.errorMessage);
-            },
-          ),
-          Observer(
-            builder: (context) {
-              return Visibility(
-                visible: _userStore.isLoading || loading,
-                // child: CustomProgressIndicatorWidget(),
-                child: const LoadingScreen(),
-              );
-            },
-          )
         ],
       ),
     );
@@ -298,6 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   setState(() {
                     sampleData[1].isSelected = false;
                     sampleData[0].isSelected = true;
+                    type = UserType.student;
                   });
                 },
                 child: RadioItem(sampleData[0]),
@@ -322,6 +299,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   setState(() {
                     sampleData[0].isSelected = false;
                     sampleData[1].isSelected = true;
+                    type = UserType.company;
                   });
                 },
                 child: RadioItem(sampleData[1]),
@@ -337,19 +315,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
       buttonColor: Theme.of(context).colorScheme.primary,
       textColor: Colors.white,
       onPressed: () async {
-        Navigator.of(context).push(MaterialPageRoute2(
-            routeName: sampleData[0].isSelected
-                ? Routes.signUpStudent
-                : Routes.signUpCompany));
-
-        // if (_formStore.canSignUp) {
-        //   DeviceUtils.hideKeyboard(context);
-        //   _userStore.login(
-        //       _userEmailController.text, _passwordController.text);
-        // } else {
-        //   _showErrorMessage(AppLocalizations.of(context)
-        //       .get('login_error_missing_fields'));
-        // }
+        if (type == UserType.naught) {
+          _showErrorMessage("Select a role to continue");
+        } else {
+          _signupStore.setUserType(type);
+          Navigator.of(context).push(MaterialPageRoute2(
+              routeName: sampleData[0].isSelected
+                  ? Routes.signUpStudent
+                  : Routes.signUpCompany));
+        }
       },
     );
   }
@@ -389,9 +363,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
-    _userEmailController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
     super.dispose();
   }
 }

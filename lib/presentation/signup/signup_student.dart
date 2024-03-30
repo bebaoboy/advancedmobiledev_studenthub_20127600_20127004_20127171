@@ -6,9 +6,12 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/signup/store/signup_store.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -37,8 +40,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
-  final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  final SignupStore _formStore = getIt<SignupStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -82,7 +84,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
               : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _formStore.success
                   ? navigate(context)
                   : _showErrorMessage(_formStore.errorStore.errorMessage);
             },
@@ -90,7 +92,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: _formStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
                 child: const LoadingScreen(),
               );
@@ -165,12 +167,10 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                          value: checked,
+                          value: _formStore.hasAcceptPolicy,
                           contentPadding: EdgeInsets.zero,
                           onChanged: (newValue) {
-                            setState(() {
-                              checked = newValue ?? !checked;
-                            });
+                            _formStore.changeAcceptState();
                           },
                           dense: true,
                           controlAffinity: ListTileControlAffinity
@@ -226,13 +226,13 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           textController: _userFullnameController,
           inputAction: TextInputAction.next,
           autoFocus: false,
-          // onChanged: (value) {
-          //   _formStore.setUserId(_userEmailController.text);
-          // },
-          // onFieldSubmitted: (value) {
-          //   FocusScope.of(context).requestFocus(_passwordFocusNode);
-          // },
-          errorText: null,
+          onChanged: (value) {
+            _formStore.setFullname(_userFullnameController.text);
+          },
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+          errorText: _formStore.signUpFormErrorStore.fullname,
         );
       },
     );
@@ -249,14 +249,14 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           inputAction: TextInputAction.next,
           autoFocus: false,
           onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
+            _formStore.setEmail(_userEmailController.text);
           },
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail == null
+          errorText: _formStore.signUpFormErrorStore.email == null
               ? null
-              : Lang.get(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.signUpFormErrorStore.email),
         );
       },
     );
@@ -271,9 +271,9 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           icon: Icons.lock,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null
+          errorText: _formStore.signUpFormErrorStore.password == null
               ? null
-              : Lang.get(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.signUpFormErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -290,9 +290,9 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           isObscure: true,
           icon: Icons.lock,
           textController: _passwordConfirmController,
-          errorText: _formStore.formErrorStore.confirmPassword == null
+          errorText: _formStore.signUpFormErrorStore.repeatPassword == null
               ? null
-              : Lang.get(_formStore.formErrorStore.confirmPassword),
+              : Lang.get(_formStore.signUpFormErrorStore.repeatPassword),
           onChanged: (value) {
             _formStore.setConfirmPassword(_passwordConfirmController.text);
           },
@@ -303,67 +303,81 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   Widget _buildSignUpStudentButton() {
     return RoundedButtonWidget(
-      buttonText: Lang.get('signup_student_sign_up'),
-      buttonColor: Theme.of(context).colorScheme.primary,
-      textColor: Colors.white,
-      onPressed: () async {
-        // if (_formStore.canSignUpStudent) {
-        //   DeviceUtils.hideKeyboard(context);
-        //   _userStore.login(
-        //       _userEmailController.text, _passwordController.text);
-        // } else {
-        //   _showErrorMessage(AppLocalizations.of(context)
-        //       .translate('login_error_missing_fields'));
-        // }
-        setState(() {
-          loading = true;
+        buttonText: Lang.get('signup_student_sign_up'),
+        buttonColor: Theme.of(context).colorScheme.primary,
+        textColor: Colors.white,
+        onPressed: () async {
+          if (_formStore.canRegister) {
+            DeviceUtils.hideKeyboard(context);
+            _formStore.signUp(_userFullnameController.text,
+                _userEmailController.text, _passwordController.text);
+          } else {
+            _showErrorMessage(Lang.get('login_error_missing_fields'));
+          }
+
+          // Observer(builder: (context) {
+          //   return _formStore.success
+          //       ? showAnimatedDialog(
+          //           context: context,
+          //           barrierDismissible: true,
+          //           builder: (BuildContext c) {
+          //             return ClassicGeneralDialogWidget(
+          //               contentText: Lang.get('signup_email_sent'),
+          //               negativeText: ':Debug:',
+          //               positiveText: 'OK',
+          //               onPositiveClick: () {
+          //                 Navigator.of(c).pop();
+          //               },
+          //               onNegativeClick: () {
+          //                 Navigator.of(c).pop();
+          //                 Navigator.of(context).push(MaterialPageRoute2(
+          //                     routeName: Routes.profileStudent));
+          //               },
+          //             );
+          //           },
+          //           animationType: DialogTransitionType.size,
+          //           curve: Curves.fastOutSlowIn,
+          //           duration: const Duration(seconds: 1),
+          //         )
+          //       : _showErrorMessage('Sign up failed');
+          // });
         });
-        await Future.delayed(const Duration(seconds: 2)).then(
-          (value) {
-            setState(() {
-              loading = false;
-            });
-            showAnimatedDialog(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext c) {
-                return ClassicGeneralDialogWidget(
-                  contentText: Lang.get('signup_email_sent'),
-                  negativeText: ':Debug:',
-                  positiveText: 'OK',
-                  onPositiveClick: () {
-                    Navigator.of(c).pop();
-                  },
-                  onNegativeClick: () {
-                    Navigator.of(c).pop();
-                    Navigator.of(context).push(
-                        MaterialPageRoute2(routeName: Routes.profileStudent));
-                  },
-                );
-              },
-              animationType: DialogTransitionType.size,
-              curve: Curves.fastOutSlowIn,
-              duration: const Duration(seconds: 1),
-            );
-          },
-        );
-      },
-    );
   }
 
-  Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
-
+  navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      // Navigator.of(context)
-      //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
-      //       (Route<dynamic> route) => false);
+      showAnimatedDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext c) {
+          return ClassicGeneralDialogWidget(
+            contentText: Lang.get('signup_email_sent'),
+            negativeText: ':Debug:',
+            positiveText: 'OK',
+            onPositiveClick: () {
+              Navigator.of(c).pop();
+              _formStore.success = false;
+            },
+            onNegativeClick: () {
+              Navigator.of(c).pop();
+              Navigator.of(context)
+                  .push(MaterialPageRoute2(routeName: Routes.profileStudent));
+            },
+          );
+        },
+        animationType: DialogTransitionType.size,
+        curve: Curves.fastOutSlowIn,
+        duration: const Duration(seconds: 1),
+      );
     });
+    // Future.delayed(const Duration(milliseconds: 0), () {
+    //   print("LOADING = $loading");
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute2(child: const HomeScreen()),
+    //       (Route<dynamic> route) => false);
+    // });
 
-    return Container();
+    return SizedBox();
   }
 
   // General Methods:-----------------------------------------------------------
