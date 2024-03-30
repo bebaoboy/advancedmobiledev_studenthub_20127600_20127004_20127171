@@ -1,15 +1,11 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -19,7 +15,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
@@ -151,30 +146,33 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                     _buildPasswordConfirmField(),
                     // _buildForgotPasswordButton(),
                     const SizedBox(height: 24.0),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Transform.translate(
-                        offset: const Offset(-8, 0),
-                        child: CheckboxListTile(
-                          title: Transform.translate(
-                            offset: const Offset(-10, 0),
-                            child: AutoSizeText(
-                              Lang.get('signup_company_policy_agree'),
-                              style: const TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w800),
-                              minFontSize: 10,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+
+                    Observer(
+                      builder: (context) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 0),
+                        child: Transform.translate(
+                          offset: const Offset(-8, 0),
+                          child: CheckboxListTile(
+                            title: Transform.translate(
+                              offset: const Offset(-10, 0),
+                              child: AutoSizeText(
+                                Lang.get('signup_company_policy_agree'),
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w800),
+                                minFontSize: 10,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                            value: _formStore.hasAcceptPolicy,
+                            contentPadding: EdgeInsets.zero,
+                            onChanged: (newValue) {
+                              _formStore.changeAcceptState();
+                            },
+                            dense: true,
+                            controlAffinity: ListTileControlAffinity
+                                .leading, //  <-- leading Checkbox
                           ),
-                          value: _formStore.hasAcceptPolicy,
-                          contentPadding: EdgeInsets.zero,
-                          onChanged: (newValue) {
-                            _formStore.changeAcceptState();
-                          },
-                          dense: true,
-                          controlAffinity: ListTileControlAffinity
-                              .leading, //  <-- leading Checkbox
                         ),
                       ),
                     ),
@@ -345,30 +343,32 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   }
 
   navigate(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      showAnimatedDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext c) {
-          return ClassicGeneralDialogWidget(
-            contentText: Lang.get('signup_email_sent'),
-            negativeText: ':Debug:',
-            positiveText: 'OK',
-            onPositiveClick: () {
-              Navigator.of(c).pop();
-              _formStore.success = false;
-            },
-            onNegativeClick: () {
-              Navigator.of(c).pop();
-              Navigator.of(context)
-                  .push(MaterialPageRoute2(routeName: Routes.profileStudent));
-            },
-          );
-        },
-        animationType: DialogTransitionType.size,
-        curve: Curves.fastOutSlowIn,
-        duration: const Duration(seconds: 1),
-      );
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (_formStore.success) {
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext c) {
+            return ClassicGeneralDialogWidget(
+              contentText: Lang.get('signup_email_sent'),
+              negativeText: ':Debug:',
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(c).pop();
+                _formStore.success = false;
+              },
+              onNegativeClick: () {
+                Navigator.of(c).pop();
+                Navigator.of(context)
+                    .push(MaterialPageRoute2(routeName: Routes.profileStudent));
+              },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        );
+      }
     });
     // Future.delayed(const Duration(milliseconds: 0), () {
     //   print("LOADING = $loading");

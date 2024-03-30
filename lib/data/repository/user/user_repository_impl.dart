@@ -20,14 +20,10 @@ class UserRepositoryImpl extends UserRepository {
 
   // Login:---------------------------------------------------------------------
   @override
-  Future<User?> login(LoginParams params) async {
+  Future<Response> login(LoginParams params) async {
     //print('usertype ${params.userType.toString()}');
-    return await Future.delayed(
-        const Duration(seconds: 2),
-        () => User(
-            type: getUserType(params.userType ?? 'naught'),
-            email: params.username,
-            roles: [UserType.company]));
+    var response = _userApi.login(params);
+    return response;
   }
 
   @override
@@ -54,5 +50,10 @@ class UserRepositoryImpl extends UserRepository {
   Future<Response> signUp(SignUpParams params) async {
     var response = await _userApi.signUp(params);
     return response;
+  }
+
+  @override
+  Future<bool> saveToken(String value) async {
+    return await _sharedPrefsHelper.saveAuthToken(value);
   }
 }

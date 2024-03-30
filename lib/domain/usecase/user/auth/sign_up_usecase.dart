@@ -1,6 +1,4 @@
-import 'dart:io';
 
-import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/domain/usecase/use_case.dart';

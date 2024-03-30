@@ -1,10 +1,13 @@
+import 'dart:io';
+
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
+import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
 import '../../../domain/entity/user/user.dart';
@@ -21,10 +24,10 @@ abstract class _UserStore with Store {
     this._saveLoginStatusUseCase,
     this._loginUseCase,
     this._saveUserDataUseCase,
-    this._signUpUseCase,
     this.formErrorStore,
     this.errorStore,
     this._getUserDataUseCase,
+    this._saveTokenUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -39,7 +42,10 @@ abstract class _UserStore with Store {
     });
 
     savedUsers.add(User(
-        email: "user1@gmail.com", name: "Hai Pham", roles: [UserType.company, UserType.student], isVerified: true));
+        email: "user1@gmail.com",
+        name: "Hai Pham",
+        roles: [UserType.company, UserType.student],
+        isVerified: true));
     // savedUsers.add(User(
     //     email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
     // savedUsers.add(User(
@@ -58,7 +64,7 @@ abstract class _UserStore with Store {
   final LoginUseCase _loginUseCase;
   final SaveUserDataUsecase _saveUserDataUseCase;
   final GetUserDataUseCase _getUserDataUseCase;
-  final SignUpUseCase _signUpUseCase;
+  final SaveTokenUseCase _saveTokenUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -77,7 +83,7 @@ abstract class _UserStore with Store {
   }
 
   // empty responses:-----------------------------------------------------------
-  static ObservableFuture<User?> emptyLoginResponse =
+  static ObservableFuture<Response?> emptyLoginResponse =
       ObservableFuture.value(null);
 
   // store variables:-----------------------------------------------------------
@@ -90,44 +96,63 @@ abstract class _UserStore with Store {
   User? _user;
 
   @observable
-  ObservableFuture<User?> loginFuture = emptyLoginResponse;
+  ObservableFuture<Response?> loginFuture = emptyLoginResponse;
 
   @computed
   bool get isLoading => loginFuture.status == FutureStatus.pending;
 
   // actions:-------------------------------------------------------------------
   @action
-  Future login(String email, String password, UserType type, List<UserType> roles,
+  Future login(
+      String email, String password, UserType type, List<UserType> roles,
       {fastSwitch = false}) async {
     // //print(UserType.company.name);
-    final LoginParams loginParams = LoginParams(
-        username: email, password: password, userType: type.name);
+    final LoginParams loginParams =
+        LoginParams(username: email, password: password, userType: type.name);
     final future = _loginUseCase.call(params: loginParams);
     loginFuture = ObservableFuture(future);
 
     if (fastSwitch) {
       var value = User(email: email, roles: roles, type: type);
-      await _saveLoginStatusUseCase.call(params: true);
-      await _saveUserDataUseCase.call(params: value);
       isLoggedIn = true;
       success = true;
       _user = value;
+      await _saveLoginStatusUseCase.call(params: true);
+      await _saveUserDataUseCase.call(params: value);
+
       return;
     }
 
     await future.then((value) async {
-      if (value != null) {
-        await _saveLoginStatusUseCase.call(params: true);
-        await _saveUserDataUseCase.call(params: value);
-        isLoggedIn = true;
+      if (value.statusCode == HttpStatus.accepted ||
+          value.statusCode == HttpStatus.created ||
+          value.statusCode == HttpStatus.ok) {
         success = true;
-        _user = value;
+        var userValue = User(
+          type: getUserType(type.name ?? 'naught'),
+          email: email,
+          roles: [UserType.company],
+        );
+
+        isLoggedIn = true;
+        _user = userValue;
+
+        await _saveTokenUseCase.call(params: value.data['result']['token']);
+        await _saveLoginStatusUseCase.call(params: true);
+        await _saveUserDataUseCase(
+          params: userValue,
+        );
+      } else {
+        success = false;
+        errorStore.errorMessage = value.data['errorDetails'] is List
+            ? value.data['errorDetails'][0].toString()
+            : value.data['errorDetails'].toString();
       }
     }).catchError((e) {
       //print(e);
       isLoggedIn = false;
       success = false;
-      throw e;
+      // throw e;
     });
   }
 

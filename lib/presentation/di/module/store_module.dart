@@ -4,6 +4,7 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -39,10 +40,10 @@ mixin StoreModule {
         getIt<SaveLoginStatusUseCase>(),
         getIt<LoginUseCase>(),
         getIt<SaveUserDataUsecase>(),
-        getIt<SignUpUseCase>(),
         getIt<FormErrorStore>(),
         getIt<ErrorStore>(),
         getIt<GetUserDataUseCase>(),
+        getIt<SaveTokenUseCase>(),
       ),
     );
 

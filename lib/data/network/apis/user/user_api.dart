@@ -7,7 +7,7 @@ import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 
-
+import '../../../../domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
 
 class UserApi {
@@ -37,6 +37,14 @@ class UserApi {
       "password": params.password,
       "fullname": params.fullname,
       "role": params.type?.index,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> login(LoginParams params) async {
+    return await _dioClient.dio.post(Endpoints.login, data: {
+      "email": params.username,
+      "password": params.password,
     }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }

@@ -5,7 +5,6 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -47,8 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
-
-  bool loading = false;
+  bool initializing = false;
 
   @override
   void initState() {
@@ -92,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: _userStore.isLoading || initializing,
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
@@ -248,8 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          if (!loading && _formStore.canLogin) {
-            loading = true;
+          if (_formStore.canLogin) {
             DeviceUtils.hideKeyboard(context);
             _userStore.login(
                 _userEmailController.text,
@@ -306,14 +303,6 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             Navigator.of(context)
                 .push(MaterialPageRoute2(routeName: Routes.signUp));
-            // if (_formStore.canLogin) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
           },
         ),
       ),
@@ -321,23 +310,22 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    if (_userStore.success && loading == false) {
-      loading = true;
-    }
     print("${_userStore.user!.type.name} ${_userStore.user!.email}");
-    if (loading) {
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.setBool(Preferences.is_logged_in, true);
-      });
+    if (!_userStore.isLoading || !initializing) {
       Future.delayed(const Duration(milliseconds: 10), () async {
         // //print("LOADING = $loading");
+        setState(() {
+          initializing = true;
+        });
         log("login", "BEBAOBOY");
         await initCube(NavigationService.navigatorKey.currentContext);
-
+      }).whenComplete(() {
+        setState(() {
+          initializing = false;
+        });
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
-        loading = false;
       });
     }
     return Container();
