@@ -86,7 +86,9 @@ class TextFieldWidget extends StatelessWidget {
               .merge(hintStyle),
           errorText: errorText,
           errorStyle: inputDecoration != null
-              ? inputDecoration!.errorStyle
+              ? inputDecoration!.errorStyle ?? const TextStyle(
+                  fontSize: 12.0,
+                )
               : const TextStyle(
                   fontSize: 12.0,
                 ),

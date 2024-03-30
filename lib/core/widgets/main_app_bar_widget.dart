@@ -342,7 +342,7 @@ class _MainAppBarState extends State<MainAppBar> {
                     MaterialPageRoute2(routeName: Routes.home),
                     (Route<dynamic> route) => false);
               },
-              child: Text(Lang.get('appbar_title') + (_userStore.user!.type == UserType.company ? "©" : "")))),
+              child: Text(Lang.get('appbar_title') + (_userStore.user != null && _userStore.user!.type == UserType.company ? "©" : "")))),
       actions: [
         // _buildLanguageButton(),
         // _buildThemeButton(),

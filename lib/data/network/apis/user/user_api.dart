@@ -6,6 +6,8 @@ import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
+
+
 import 'package:dio/dio.dart';
 
 class UserApi {

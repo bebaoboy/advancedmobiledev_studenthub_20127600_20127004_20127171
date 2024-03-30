@@ -4,8 +4,6 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -15,6 +13,10 @@ import 'store/form/profile_form_store.dart';
 
 enum CompanySize {
   single, // 1
+  small, // 2-9
+  medium, // 10-100
+  large, // 100-1000
+  xLarge // 1000+
 }
 
 class ViewProfileCompany extends StatefulWidget {
@@ -38,6 +40,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   late FocusNode _companyFocusNode;
 
   CompanySize _companySize = CompanySize.single;
+  bool enabled = false;
 
   @override
   void initState() {
@@ -62,13 +65,13 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(
-          onPressed: () => {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute2(routeName: Routes.login),
-                    (Route<dynamic> route) => false)
-              },
-          icon: const Icon(Icons.person_rounded))
+      // IconButton(
+      //     onPressed: () => {
+      //           Navigator.of(context).pushAndRemoveUntil(
+      //               MaterialPageRoute2(routeName: Routes.login),
+      //               (Route<dynamic> route) => false)
+      //         },
+      //     icon: const Icon(Icons.person_rounded))
     ];
   }
 
@@ -104,6 +107,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
       children: <Widget>[
         for (int i = 1; i <= length; i++)
           ListTile(
+            enabled: enabled,
             contentPadding: EdgeInsets.zero,
             onTap: i > CompanySize.values.length + 1
                 ? null
@@ -139,6 +143,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
+              enabled: enabled,
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -170,6 +175,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
+              enabled: enabled,
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -202,6 +208,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           style: Theme.of(context).textTheme.bodySmall,
         ),
         TextField(
+          enabled: enabled,
           decoration: const InputDecoration(
               border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black))),
@@ -267,10 +274,18 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (enabled) {
+                        // TODO: save profile
+                        _showErrorMessage("OK");
+                      }
+                      setState(() {
+                        enabled = !enabled;
+                      });
+                    },
                     // color: Colors.orange,
                     child: Text(
-                      Lang.get('edit'),
+                      enabled ? Lang.get("save") : Lang.get('edit'),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
