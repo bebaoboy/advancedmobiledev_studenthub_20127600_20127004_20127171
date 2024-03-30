@@ -179,7 +179,7 @@ extension CompanyScopeTitle on CompanyScope {
 
 @JsonSerializable()
 class CompanyProfile extends Profile {
-  String userId;
+  // String userId;
   String profileName;
   String companyName;
   String email;
@@ -189,7 +189,7 @@ class CompanyProfile extends Profile {
 
   CompanyProfile({
     super.objectId,
-    required this.userId,
+    // required this.userId,
     required this.companyName,
     required this.profileName,
     required this.email,
@@ -198,8 +198,8 @@ class CompanyProfile extends Profile {
     this.scope = CompanyScope.solo,
   });
 
-  CompanyProfile.fromJson(Map<String, dynamic> json)
-      : userId = json["userId"] ?? "",
+  CompanyProfile.fromJson(Map<String, dynamic> json) : 
+      // userId = json["userId"] ?? "",
         profileName = json["profileName"] ?? "",
         companyName = json["companyName"] ?? "",
         email = json["email"] ?? "",

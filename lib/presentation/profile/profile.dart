@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -38,10 +39,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _companyNameController = TextEditingController();
   final TextEditingController _websiteURLController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
   late FocusNode _companyFocusNode;
 
-  CompanySize _companySize = CompanySize.single;
+  CompanyScope _companySize = CompanyScope.solo;
 
   @override
   void initState() {
@@ -87,34 +89,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _buildCompanySizeSelection(BuildContext context) {
     int length = CompanySize.values.length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        for (int i = 1; i <= length; i++)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            onTap: i > CompanySize.values.length + 1
-                ? null
-                : () {
-                    setState(() {
-                      _companySize = CompanySize.values[i - 1];
-                    });
-                  },
-            title: Text(Lang.get('profile_question_1_choice_$i'),
-                style: Theme.of(context).textTheme.bodyLarge),
-            leading: Radio<CompanySize>(
-              value: CompanySize.values[i - 1],
-              groupValue: _companySize,
-              onChanged: i > CompanySize.values.length + 1
-                  ? null
-                  : (CompanySize? value) => {
-                        setState(() => _companySize = value!),
-                      },
-            ),
-          ),
-      ],
-    );
+    return Observer(
+        builder: (context) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                for (int i = 1; i <= length; i++)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    onTap: i > CompanyScope.values.length + 1
+                        ? null
+                        : () {
+                            setState(() {
+                              _companySize = CompanyScope.values[i - 1];
+                            });
+                          },
+                    title: Text(Lang.get('profile_question_1_choice_$i'),
+                        style: Theme.of(context).textTheme.bodyLarge),
+                    leading: Radio<CompanyScope>(
+                      value: CompanyScope.values[i - 1],
+                      groupValue: _companySize,
+                      onChanged: i > CompanyScope.values.length + 1
+                          ? null
+                          : (CompanyScope? value) {
+                              setState(() => _companySize = value!);
+                              _formStore
+                                  .setCompanyScope(value ?? CompanyScope.solo);
+                            },
+                    ),
+                  ),
+              ],
+            ));
   }
 
   Widget _buildCompanyNameField(BuildContext context) {
@@ -140,7 +145,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onChanged: (value) {
                 _formStore.setCompanyName(_companyNameController.text);
               },
-              errorText: _formStore.profileFormErrorStore.companyName,
+              errorText: _formStore.profileFormErrorStore.companyName == null
+                  ? null
+                  : Lang.get(_formStore.profileFormErrorStore.companyName),
             ),
           ],
         );
@@ -172,7 +179,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onChanged: (value) {
                 _formStore.setWebsite(_websiteURLController.text);
               },
-              errorText: _formStore.profileFormErrorStore.website,
+              errorText: _formStore.profileFormErrorStore.website == null
+                  ? null
+                  : Lang.get(_formStore.profileFormErrorStore.website),
               onFieldSubmitted: (value) =>
                   {FocusScope.of(context).requestFocus(_companyFocusNode)},
             ),
@@ -183,27 +192,65 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildDescriptionField(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          Lang.get('profile_question_title_4'),
-          style: Theme.of(context).textTheme.bodySmall,
-        ),
-        TextField(
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black))),
-          onChanged: (value) {
-            _formStore.setDescription(_descriptionController.text);
-          },
-          controller: _descriptionController,
-          onSubmitted: (value) =>
-              {FocusScope.of(context).requestFocus(_companyFocusNode)},
-          minLines: 3,
-          maxLines: 5,
-        ),
-      ],
+    return Observer(
+      builder: (context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            Lang.get('profile_question_title_4'),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          TextField(
+            decoration: const InputDecoration(
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black))),
+            onChanged: (value) {
+              _formStore.setDescription(_descriptionController.text);
+            },
+            controller: _descriptionController,
+            // onSubmitted: (value) =>
+            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+            minLines: 3,
+            maxLines: 5,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmailField(BuildContext context) {
+    return Observer(
+      builder: (context) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              Lang.get('signup_company_et_email'),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            TextFieldWidget(
+              inputDecoration: const InputDecoration(
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+              ),
+              inputType: TextInputType.emailAddress,
+              icon: Icons.web,
+              autoFocus: false,
+              iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+              textController: _emailController,
+              inputAction: TextInputAction.next,
+              onChanged: (value) {
+                _formStore.setEmail(_emailController.text);
+              },
+              errorText: _formStore.profileFormErrorStore.email == null
+                  ? null
+                  : Lang.get(_formStore.profileFormErrorStore.email),
+              // onFieldSubmitted: (value) =>
+              //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -257,10 +304,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(
               height: 25,
             ),
+            _buildEmailField(context),
+            const SizedBox(
+              height: 25,
+            ),
             Container(
               alignment: Alignment.centerRight,
               child: MaterialButton(
-                onPressed: () => navigate(context),
+                onPressed: () {
+                  if (_formStore.canContinue) {
+                    navigate(context);
+                  } else {
+                    _showErrorMessage(Lang.get('login_error_missing_fields'));
+                  }
+                },
                 // color: Colors.orange,
                 child: Text(
                   Lang.get('continue'),

@@ -5,7 +5,6 @@ import 'dart:async';
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
-import 'package:boilerplate/domain/entity/post/post_list.dart';
 import 'package:dio/dio.dart';
 
 class UserApi {

@@ -13,10 +13,6 @@ import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
 
-enum CompanySize {
-  single, // 1
-}
-
 class ViewProfileStudent extends StatefulWidget {
   const ViewProfileStudent({super.key});
 
@@ -37,7 +33,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   late FocusNode _companyFocusNode;
 
-  CompanySize _companySize = CompanySize.single;
+  bool enabled = false;
 
   @override
   void initState() {
@@ -62,13 +58,13 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   List<Widget> _buildActions(BuildContext context) {
     return <Widget>[
-      IconButton(
-          onPressed: () => {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute2(routeName: Routes.login),
-                    (Route<dynamic> route) => false)
-              },
-          icon: const Icon(Icons.person_rounded))
+      // IconButton(
+      //     onPressed: () => {
+      //           Navigator.of(context).pushAndRemoveUntil(
+      //               MaterialPageRoute2(routeName: Routes.login),
+      //               (Route<dynamic> route) => false)
+      //         },
+      //     icon: const Icon(Icons.person_rounded))
     ];
   }
 
@@ -93,38 +89,6 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
           },
         ),
       ]),
-    );
-  }
-
-  Widget _buildCompanySizeSelection(BuildContext context) {
-    int length = CompanySize.values.length;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        for (int i = 1; i <= length; i++)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            onTap: i > CompanySize.values.length + 1
-                ? null
-                : () {
-                    setState(() {
-                      _companySize = CompanySize.values[i - 1];
-                    });
-                  },
-            title: Text(Lang.get('profile_question_1_choice_$i'),
-                style: Theme.of(context).textTheme.bodyLarge),
-            leading: Radio<CompanySize>(
-              value: CompanySize.values[i - 1],
-              groupValue: _companySize,
-              onChanged: i > CompanySize.values.length + 1
-                  ? null
-                  : (CompanySize? value) => {
-                        setState(() => _companySize = value!),
-                      },
-            ),
-          ),
-      ],
     );
   }
 
@@ -257,7 +221,6 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
             const SizedBox(
               height: 25,
             ),
-            _buildCompanySizeSelection(context),
             const SizedBox(
               height: 30,
             ),
@@ -267,10 +230,18 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MaterialButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      if (enabled) {
+                        // TODO: save profile
+                        _showErrorMessage("OK");
+                      }
+                      setState(() {
+                        enabled = !enabled;
+                      });
+                    },
                     // color: Colors.orange,
                     child: Text(
-                      Lang.get('edit'),
+                      enabled ? Lang.get("save") : Lang.get('edit'),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                   ),
