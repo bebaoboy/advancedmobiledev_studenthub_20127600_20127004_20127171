@@ -4,6 +4,8 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -15,6 +17,7 @@ import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/post/store/post_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_form_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
 
 import '../../../di/service_locator.dart';
@@ -30,7 +33,18 @@ mixin StoreModule {
     getIt.registerFactory(
       () => ProfileFormErrorStore(),
     );
+    getIt.registerFactory(
+      () => ProfileStudentFormErrorStore(),
+    );
     getIt.registerFactory(() => SignUpFormErrorStore());
+
+    // getIt.registerFactory(() => ProfileFormStore(getIt<ProfileFormErrorStore>(),
+    //     getIt<ErrorStore>(), getIt<AddProfileCompanyUseCase>()));
+
+    // getIt.registerFactory(() => ProfileStudentFormStore(
+    //     getIt<ProfileStudentFormErrorStore>(),
+    //     getIt<ErrorStore>(),
+    //     getIt<AddProfileStudentUseCase>()));
 
     // stores:------------------------------------------------------------------
     getIt.registerSingleton<UserStore>(
@@ -39,7 +53,6 @@ mixin StoreModule {
         getIt<SaveLoginStatusUseCase>(),
         getIt<LoginUseCase>(),
         getIt<SaveUserDataUsecase>(),
-        getIt<SignUpUseCase>(),
         getIt<FormErrorStore>(),
         getIt<ErrorStore>(),
         getIt<GetUserDataUseCase>(),
@@ -51,8 +64,15 @@ mixin StoreModule {
           getIt<ErrorStore>()),
     );
 
-    getIt.registerFactory(() =>
-        ProfileFormStore(getIt<ProfileFormErrorStore>(), getIt<ErrorStore>()));
+    getIt.registerSingleton<ProfileFormStore>(ProfileFormStore(
+        getIt<ProfileFormErrorStore>(),
+        getIt<ErrorStore>(),
+        getIt<AddProfileCompanyUseCase>()));
+
+    getIt.registerSingleton<ProfileStudentFormStore>(ProfileStudentFormStore(
+        getIt<ProfileStudentFormErrorStore>(),
+        getIt<ErrorStore>(),
+        getIt<AddProfileStudentUseCase>()));
 
     getIt.registerSingleton<PostStore>(
       PostStore(

@@ -10,6 +10,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -50,6 +51,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   //stores:---------------------------------------------------------------------
   final FormStore _formStore = getIt<FormStore>();
   final UserStore _userStore = getIt<UserStore>();
+  final ProfileStudentFormStore _profileStudentFormStore =
+      getIt<ProfileStudentFormStore>();
 
   bool loading = false;
   Widget? _cvImage;
@@ -115,7 +118,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     );
   }
 
-
   PlatformFile? _cv;
   PlatformFile? _transcript;
   Map<String, PreviewData?> pd = {};
@@ -178,11 +180,19 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                               controller: cvController,
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                setState(() {
-                                  isLinkCv.value = false;
-                                });
-                                _cvImage = await FilePreview.getThumbnail(
-                                    isCV: true, cvController.text);
+
+                                await FilePreview.getThumbnail(
+                                        isCV: true, cvController.text)
+                                    .then(
+                                  (value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLinkCv.value = false;
+                                      });
+                                    }
+                                    _cvImage = value;
+                                  },
+                                );
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
@@ -341,12 +351,19 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                               controller: transcriptController,
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                setState(() {
-                                  isLinkTranscript.value = false;
-                                });
-                                _transcriptImage =
-                                    await FilePreview.getThumbnail(
-                                        isCV: false, transcriptController.text);
+
+                                await FilePreview.getThumbnail(
+                                        isCV: false, transcriptController.text)
+                                    .then(
+                                  (value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLinkTranscript.value = false;
+                                      });
+                                    }
+                                    _transcriptImage = value;
+                                  },
+                                );
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
@@ -505,9 +522,15 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute2(routeName: Routes.home),
-                (Route<dynamic> route) => false);
+            print(_profileStudentFormStore.techStack);
+            print(_profileStudentFormStore.skillSet);
+            print(_profileStudentFormStore.educations);
+            print(_profileStudentFormStore.languages);
+            print(_profileStudentFormStore.projectExperience);
+
+            // Navigator.of(context).pushAndRemoveUntil(
+            //     MaterialPageRoute2(routeName: Routes.home),
+            //     (Route<dynamic> route) => false);
             // if (_formStore.canProfileStudent) {
             //   DeviceUtils.hideKeyboard(context);
             //   _userStore.login(

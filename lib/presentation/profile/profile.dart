@@ -4,23 +4,21 @@ import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
 
-enum CompanySize {
-  single, // 1
-  small, // 2-9
-  medium, // 10-100
-  large, // 100-1000
-  xLarge // 1000+
-}
+// enum CompanySize {
+//   single, // 1
+//   small, // 2-9
+//   medium, // 10-100
+//   large, // 100-1000
+//   xLarge // 1000+
+// }
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -33,7 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final ProfileFormStore _formStore = getIt<ProfileFormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  // final UserStore _userStore = getIt<UserStore>();
 
   //textEdittingController
   final TextEditingController _companyNameController = TextEditingController();
@@ -70,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Center(child: _buildRightSide()),
         Observer(
           builder: (context) {
-            return _userStore.success
+            return _formStore.success
                 ? navigate(context)
                 : _showErrorMessage(_formStore.errorStore.errorMessage);
           },
@@ -78,7 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         Observer(
           builder: (context) {
             return Visibility(
-              visible: _userStore.isLoading,
+              visible: _formStore.isLoading,
               child: const CustomProgressIndicatorWidget(),
             );
           },
@@ -88,7 +86,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildCompanySizeSelection(BuildContext context) {
-    int length = CompanySize.values.length;
+    int length = CompanyScope.values.length;
     return Observer(
         builder: (context) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -313,7 +311,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: MaterialButton(
                 onPressed: () {
                   if (_formStore.canContinue) {
-                    navigate(context);
+                    _formStore.addProfileCompany(
+                        _companyNameController.text,
+                        _websiteURLController.text,
+                        _descriptionController.text,
+                        _companySize);
+                    // navigate(context);
                   } else {
                     _showErrorMessage(Lang.get('login_error_missing_fields'));
                   }
@@ -335,10 +338,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login),
-          (Route<dynamic> route) => false);
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (_formStore.success) {
+        _formStore.success = false;
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return ClassicGeneralDialogWidget(
+              contentText:
+                  '${_formStore.companyName} tạo profile thành công!',
+              negativeText: Lang.get('cancel'),
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(context).pop();
+                return;
+              },
+              onNegativeClick: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        );
+      }
+      // _formStore.addProfileCompanyFuture;
+      // Navigator.of(context).pushAndRemoveUntil(
+      //     MaterialPageRoute2(routeName: Routes.login),
+      //     (Route<dynamic> route) => false);
     });
 
     return Container();

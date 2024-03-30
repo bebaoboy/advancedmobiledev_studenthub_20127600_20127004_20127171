@@ -7,6 +7,8 @@ import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -31,6 +33,15 @@ mixin UseCaseModule {
     getIt.registerSingleton<SignUpUseCase>(
       SignUpUseCase(getIt<UserRepository>()),
     );
+
+    getIt.registerSingleton<AddProfileCompanyUseCase>(
+      AddProfileCompanyUseCase(getIt<UserRepository>()),
+    );
+
+        getIt.registerSingleton<AddProfileStudentUseCase>(
+      AddProfileStudentUseCase(getIt<UserRepository>()),
+    );
+
     getIt.registerSingleton<GetUserDataUseCase>(
         GetUserDataUseCase(getIt<UserRepository>()));
     getIt.registerSingleton<SaveUserDataUsecase>(

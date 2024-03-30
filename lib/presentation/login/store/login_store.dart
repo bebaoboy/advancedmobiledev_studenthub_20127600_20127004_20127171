@@ -1,6 +1,5 @@
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
@@ -21,7 +20,7 @@ abstract class _UserStore with Store {
     this._saveLoginStatusUseCase,
     this._loginUseCase,
     this._saveUserDataUseCase,
-    this._signUpUseCase,
+    // this._signUpUseCase,
     this.formErrorStore,
     this.errorStore,
     this._getUserDataUseCase,
@@ -40,8 +39,8 @@ abstract class _UserStore with Store {
 
     savedUsers.add(User(
         email: "user1@gmail.com", name: "Hai Pham", roles: [UserType.company, UserType.student], isVerified: true));
-    // savedUsers.add(User(
-    //     email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
+    savedUsers.add(User(
+        email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
     // savedUsers.add(User(
     //     email: "user3@gmail.com", name: "Hai Pham 3", roles: [], isVerified: true));
     // savedUsers.add(User(
@@ -58,7 +57,7 @@ abstract class _UserStore with Store {
   final LoginUseCase _loginUseCase;
   final SaveUserDataUsecase _saveUserDataUseCase;
   final GetUserDataUseCase _getUserDataUseCase;
-  final SignUpUseCase _signUpUseCase;
+  // final SignUpUseCase _signUpUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors

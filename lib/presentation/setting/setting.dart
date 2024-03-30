@@ -152,7 +152,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       return ClassicGeneralDialogWidget(
                         contentText:
                             'Do you want to switch account to ${item.data!.user.email} (company)?',
-                        negativeText: 'Cancel',
+                        negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
                         onPositiveClick: () {
                           Navigator.of(context).pop();
@@ -168,7 +168,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 return ClassicGeneralDialogWidget(
                                   contentText:
                                       '${item.data!.user.email} dont have company profile? Create now?',
-                                  negativeText: 'Cancel',
+                                  negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
                                   onPositiveClick: () {
                                     Navigator.of(context).pop();
@@ -212,7 +212,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       return ClassicGeneralDialogWidget(
                         contentText:
                             'Do you want to switch account to ${item.data!.user.email} (student)?',
-                        negativeText: 'Cancel',
+                        negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
                         onPositiveClick: () {
                           Navigator.of(context).pop();
@@ -228,7 +228,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 return ClassicGeneralDialogWidget(
                                   contentText:
                                       '${item.data!.user.email} dont have student profile? Create now?',
-                                  negativeText: 'Cancel',
+                                  negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
                                   onPositiveClick: () {
                                     Navigator.of(context).pop();

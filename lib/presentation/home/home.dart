@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return ClassicGeneralDialogWidget(
                                     contentText:
                                         'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                                    negativeText: 'Cancel',
+                                    negativeText: Lang.get('cancel'),
                                     positiveText: 'Yes',
                                     onPositiveClick: () {
                                       Navigator.of(context).pop();
@@ -128,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   return ClassicGeneralDialogWidget(
                                     contentText:
                                         'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                                    negativeText: 'Cancel',
+                                    negativeText: Lang.get('cancel'),
                                     positiveText: 'Yes',
                                     onPositiveClick: () {
                                       Navigator.of(context).pop();

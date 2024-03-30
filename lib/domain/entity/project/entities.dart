@@ -22,6 +22,11 @@ class TechStack extends MyObject {
     super.objectId,
   });
 
+  @override
+  String toString() {
+    return name;
+  }
+
   TechStack.fromJson(Map<String, dynamic> json) : name = json["name"] ?? "";
 }
 
@@ -48,7 +53,7 @@ class Skill extends MyObject {
 
   @override
   String toString() {
-    return 'Profile{$name}';
+    return name;
   }
 
   Skill.fromJson(Map<String, dynamic> json)
@@ -75,13 +80,16 @@ class Language extends MyObject {
 @JsonSerializable()
 class Education extends MyObject {
   String schoolName;
-  String year;
+  String year() {
+    return "${startYear.year} - ${endYear.year}";
+  }
+
   DateTime startYear = DateTime.now().subtract(const Duration(days: 365));
   DateTime endYear = DateTime.now();
   bool readOnly = true;
   bool enabled = true;
 
-  Education(this.schoolName, this.year,
+  Education(this.schoolName,
       {super.objectId,
       this.readOnly = true,
       this.enabled = true,
@@ -130,18 +138,26 @@ class StudentProfile extends Profile {
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
-  String transcript = "";
-  String resume = "";
+  List<ProjectExperience>? projectExperience;
+  String? transcript = "";
+  String? resume = "";
 
-  StudentProfile(
-      {super.objectId,
-      required this.fullName,
-      required this.education,
-      required this.introduction,
-      required this.title,
-      required this.review,
-      this.yearOfExperience = 0,
-      this.skillSet});
+  StudentProfile({
+    super.objectId,
+    required this.fullName,
+    required this.education,
+    required this.introduction,
+    required this.title,
+    required this.review,
+    this.yearOfExperience = 0,
+    this.skillSet,
+    this.techStack,
+    this.languages,
+    this.educations,
+    this.projectExperience,
+    this.transcript,
+    this.resume,
+  });
 
   StudentProfile.fromJson(Map<String, dynamic> json)
       : title = json["title"] ?? "",
@@ -154,6 +170,8 @@ class StudentProfile extends Profile {
         skillSet = (json["skillSet"] as List<Skill>),
         languages = (json["language"] as List<Language>),
         educations = (json["education"] as List<Education>),
+        projectExperience =
+            (json["projectExperience"] as List<ProjectExperience>),
         transcript = json["transcript"] ?? "",
         resume = json["resume"] ?? "";
 }
@@ -198,8 +216,9 @@ class CompanyProfile extends Profile {
     this.scope = CompanyScope.solo,
   });
 
-  CompanyProfile.fromJson(Map<String, dynamic> json) : 
-      // userId = json["userId"] ?? "",
+  CompanyProfile.fromJson(Map<String, dynamic> json)
+      :
+        // userId = json["userId"] ?? "",
         profileName = json["profileName"] ?? "",
         companyName = json["companyName"] ?? "",
         email = json["email"] ?? "",

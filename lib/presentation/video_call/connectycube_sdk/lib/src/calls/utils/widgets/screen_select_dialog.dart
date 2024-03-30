@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
@@ -274,9 +275,9 @@ class ScreenSelectDialog extends Dialog {
               child: ButtonBar(
                 children: <Widget>[
                   MaterialButton(
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(color: Colors.black54),
+                    child: Text(
+                      Lang.get('cancel'),
+                      style: const TextStyle(color: Colors.black54),
                     ),
                     onPressed: () {
                       _cancel(context);

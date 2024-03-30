@@ -3,15 +3,13 @@ import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
-import 'store/form/profile_form_store.dart';
 
 class ViewProfileStudent extends StatefulWidget {
   const ViewProfileStudent({super.key});
@@ -23,7 +21,7 @@ class ViewProfileStudent extends StatefulWidget {
 class _ViewProfileStudentState extends State<ViewProfileStudent> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
-  final ProfileFormStore _formStore = getIt<ProfileFormStore>();
+  final ProfileStudentFormStore _formStore = getIt<ProfileStudentFormStore>();
   final UserStore _userStore = getIt<UserStore>();
 
   //textEdittingController
@@ -113,9 +111,9 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
               textController: _companyNameController,
               inputAction: TextInputAction.next,
               onChanged: (value) {
-                _formStore.setCompanyName(_companyNameController.text);
+                // _formStore.setCompanyName(_companyNameController.text);
               },
-              errorText: _formStore.profileFormErrorStore.companyName,
+              errorText: null,
             ),
           ],
         );
@@ -145,9 +143,9 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
               textController: _websiteURLController,
               inputAction: TextInputAction.next,
               onChanged: (value) {
-                _formStore.setWebsite(_websiteURLController.text);
+                // _formStore.setWebsite(_websiteURLController.text);
               },
-              errorText: _formStore.profileFormErrorStore.website,
+              errorText: null,
               onFieldSubmitted: (value) =>
                   {FocusScope.of(context).requestFocus(_companyFocusNode)},
             ),
@@ -170,7 +168,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
               border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black))),
           onChanged: (value) {
-            _formStore.setDescription(_descriptionController.text);
+            // _formStore.setDescription(_descriptionController.text);
           },
           controller: _descriptionController,
           onSubmitted: (value) =>

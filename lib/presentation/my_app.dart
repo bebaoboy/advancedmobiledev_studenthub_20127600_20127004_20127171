@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    _themeStore.changeBrightnessToDark(_themeStore.isPlatformDark(context));
+    // _themeStore.changeBrightnessToDark(_themeStore.isPlatformDark(context));
     return Observer(
       builder: (context) {
         return PiPMaterialApp(

@@ -142,6 +142,9 @@ dependencies:
   draggable_home:
   rxdart: ^0.27.7
   # flutter_in_app_pip:
+  another_stepper:
+  smooth_page_indicator:
+  interpolator:
 
 
 dev_dependencies:

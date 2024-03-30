@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextFieldWidget extends StatelessWidget {
+class TextFieldWidget extends StatefulWidget {
   final IconData? icon;
   final String? hint;
   final String? errorText;
@@ -37,76 +37,7 @@ class TextFieldWidget extends StatelessWidget {
   final Function()? onTap;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: TextFormField(
-        onTap: onTap,
-        textAlign: textAlign,
-        textAlignVertical: textAlignVertical,
-        enabled: enabled,
-        enableInteractiveSelection: enableInteractiveSelection,
-        canRequestFocus: canRequestFocus ?? true,
-        initialValue: initialValue,
-        readOnly: readOnly ?? false,
-        controller: textController,
-        focusNode: focusNode,
-        onFieldSubmitted: onFieldSubmitted,
-        onChanged: onChanged,
-        autofocus: autoFocus,
-        textInputAction: inputAction,
-        obscureText: isObscure,
-        maxLength: maxLength,
-        maxLines: maxLines,
-        minLines: minLines,
-        onTapOutside: (event) {
-          FocusManager.instance.primaryFocus?.unfocus();
-        },
-        keyboardType: inputType,
-        style: Theme.of(context).textTheme.bodyLarge == null
-            ? TextStyle(fontSize: fontSize, overflow: TextOverflow.ellipsis)
-                .merge(style)
-            : Theme.of(context)
-                .textTheme
-                .bodyLarge!
-                .copyWith(fontSize: fontSize, overflow: TextOverflow.ellipsis)
-                .merge(style),
-        magnifierConfiguration: TextMagnifierConfiguration.disabled,
-        decoration: (inputDecoration ?? const InputDecoration()).copyWith(
-          floatingLabelBehavior: initialValue == null ||
-                  (initialValue != null && initialValue!.isEmpty)
-              ? FloatingLabelBehavior.never
-              : floatingLabelBehavior,
-          label: label,
-          hintText: hint,
-          hintStyle: Theme.of(context)
-              .textTheme
-              .bodyLarge!
-              .copyWith(color: hintColor)
-              .merge(hintStyle),
-          errorText: errorText,
-          errorStyle: inputDecoration != null
-              ? inputDecoration!.errorStyle ?? const TextStyle(
-                  fontSize: 12.0,
-                )
-              : const TextStyle(
-                  fontSize: 12.0,
-                ),
-          counterText: '',
-          border: inputDecoration != null ? inputDecoration!.border : border,
-          // border: const OutlineInputBorder(
-          //   borderSide: BorderSide(color: Colors.black)
-          // ),
-          icon: inputDecoration != null
-              ? inputDecoration!.icon
-              : isIcon
-                  ? Container(
-                      margin: iconMargin, child: Icon(icon, color: iconColor))
-                  : null,
-        ),
-      ),
-    );
-  }
+  State<TextFieldWidget> createState() => _TextFieldWidgetState();
 
   const TextFieldWidget(
       {super.key,
@@ -144,4 +75,86 @@ class TextFieldWidget extends StatelessWidget {
       this.textAlign = TextAlign.start,
       this.textAlignVertical,
       this.onTap});
+}
+
+class _TextFieldWidgetState extends State<TextFieldWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: widget.padding,
+      child: TextFormField(
+        onTap: widget.onTap,
+        textAlign: widget.textAlign,
+        textAlignVertical: widget.textAlignVertical,
+        enabled: widget.enabled,
+        enableInteractiveSelection: widget.enableInteractiveSelection,
+        canRequestFocus: widget.canRequestFocus ?? true,
+        initialValue: widget.initialValue,
+        readOnly: widget.readOnly ?? false,
+        controller: widget.textController,
+        focusNode: widget.focusNode,
+        onFieldSubmitted: widget.onFieldSubmitted,
+        onChanged: widget.onChanged,
+        autofocus: widget.autoFocus,
+        textInputAction: widget.inputAction,
+        obscureText: widget.isObscure,
+        maxLength: widget.maxLength,
+        maxLines: widget.maxLines,
+        minLines: widget.minLines,
+        onTapOutside: (event) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        keyboardType: widget.inputType,
+        style: Theme.of(context).textTheme.bodyLarge == null
+            ? TextStyle(
+                    fontSize: widget.fontSize, overflow: TextOverflow.ellipsis)
+                .merge(widget.style)
+            : Theme.of(context)
+                .textTheme
+                .bodyLarge!
+                .copyWith(
+                    fontSize: widget.fontSize, overflow: TextOverflow.ellipsis)
+                .merge(widget.style),
+        magnifierConfiguration: TextMagnifierConfiguration.disabled,
+        decoration:
+            (widget.inputDecoration ?? const InputDecoration()).copyWith(
+          floatingLabelBehavior: widget.floatingLabelBehavior ?? (widget.initialValue == null ||
+                      (widget.initialValue != null &&
+                          widget.initialValue!.isEmpty)
+                  ? FloatingLabelBehavior.never
+                  : null),
+          label: widget.label,
+          hintText: widget.hint,
+          hintStyle: Theme.of(context)
+              .textTheme
+              .bodyLarge!
+              .copyWith(color: widget.hintColor)
+              .merge(widget.hintStyle),
+          errorText: widget.errorText,
+          errorStyle: widget.inputDecoration != null
+              ? widget.inputDecoration!.errorStyle ??
+                  const TextStyle(
+                    fontSize: 12.0,
+                  )
+              : const TextStyle(
+                  fontSize: 12.0,
+                ),
+          counterText: '',
+          border: widget.inputDecoration != null
+              ? widget.inputDecoration!.border
+              : widget.border,
+          // border: const OutlineInputBorder(
+          //   borderSide: BorderSide(color: Colors.black)
+          // ),
+          icon: widget.inputDecoration != null
+              ? widget.inputDecoration!.icon
+              : widget.isIcon
+                  ? Container(
+                      margin: widget.iconMargin,
+                      child: Icon(widget.icon, color: widget.iconColor))
+                  : null,
+        ),
+      ),
+    );
+  }
 }

@@ -39,9 +39,10 @@ abstract class _ThemeStore with Store {
   // general methods:-----------------------------------------------------------
   Future init() async {
     try {
-      var brightness =
-          SchedulerBinding.instance.platformDispatcher.platformBrightness;
-      _darkMode = _repository.isDarkMode || brightness == Brightness.dark;
+      // var brightness =
+      //     SchedulerBinding.instance.platformDispatcher.platformBrightness;
+      _darkMode = _repository.isDarkMode ;
+      // || brightness == Brightness.dark;
     } catch (e) {
       _darkMode = _repository.isDarkMode;
     }

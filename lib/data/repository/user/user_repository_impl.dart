@@ -1,8 +1,11 @@
 import 'dart:async';
 
+import 'package:boilerplate/data/network/apis/profile/profile_api.dart';
 import 'package:boilerplate/data/network/apis/user/user_api.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:dio/dio.dart';
 
@@ -14,9 +17,10 @@ class UserRepositoryImpl extends UserRepository {
   final SharedPreferenceHelper _sharedPrefsHelper;
 
   final UserApi _userApi;
+  final ProfileApi _profileApi;
 
   // constructor
-  UserRepositoryImpl(this._sharedPrefsHelper, this._userApi);
+  UserRepositoryImpl(this._sharedPrefsHelper, this._userApi, this._profileApi);
 
   // Login:---------------------------------------------------------------------
   @override
@@ -46,13 +50,24 @@ class UserRepositoryImpl extends UserRepository {
 
   @override
   Future<void> changePassword(String newPass) async {
-    var response = await _userApi.resetPassword(newPass);
+    // var response = await _userApi.resetPassword(newPass);
     return;
   }
 
   @override
   Future<Response> signUp(SignUpParams params) async {
     var response = await _userApi.signUp(params);
+    return response;
+  }
+
+  @override
+  Future<Response> addProfileCompany(AddProfileCompanyParams params) async {
+    var response = await _profileApi.addProfileCompany(params);
+    return response;
+  }
+
+  Future<Response> addProfileStudent(AddProfileStudentParams params) async {
+    var response = await _profileApi.addProfileStudent(params);
     return response;
   }
 }
