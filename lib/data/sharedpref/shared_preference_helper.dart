@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants/preferences.dart';
@@ -69,6 +71,16 @@ class SharedPreferenceHelper {
         Preferences.current_user_role, user.type.name.toLowerCase().toString());
   }
 
+  Future<void> saveRolesList(List<UserType> roles) {
+    return _sharedPreference.setStringList(
+        Preferences.current_user_roleList,
+        roles!
+            .map(
+              (e) => e.name,
+            )
+            .toList());
+  }
+
   Future<User> get user async {
     String userEmail =
         _sharedPreference.getString(Preferences.current_user_email) ?? '';
@@ -85,5 +97,52 @@ class SharedPreferenceHelper {
     UserType userType = getUserType(userRole);
 
     return User(email: userEmail, type: userType, roles: userRoles);
+  }
+
+  Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
+    if (studentProfile != null) {
+      return false;
+    }
+
+    return _sharedPreference.setString(
+        Preferences.student_profile, studentProfile!.toJson());
+  }
+
+  Future<bool> saveCompanyProfile(CompanyProfile? companyProfile) async {
+    if (companyProfile != null) {
+      return false;
+    }
+
+    return _sharedPreference.setString(
+        Preferences.company_profile, companyProfile!.toJson());
+  }
+
+  Future<StudentProfile?> get studentProfile async {
+    var data = _sharedPreference.getString(Preferences.student_profile) ?? '';
+    if (isNotBlank(data)) {
+      return StudentProfile.fromJson(data);
+    } else {
+      return null;
+    }
+  }
+
+  Future<CompanyProfile?> get companyProfile async {
+    var data = _sharedPreference.getString(Preferences.company_profile) ?? '';
+    if (isNotBlank(data)) {
+      return CompanyProfile.fromJson(data);
+    } else {
+      return null;
+    }
+  }
+
+  Future<void> deleteProfile() async {
+    await _sharedPreference.setString(Preferences.company_profile, '');
+    await _sharedPreference.setString(Preferences.student_profile, '');
+  }
+
+  Future<List<Profile?>> getCurrentProfile() async {
+    final company = await companyProfile.catchError((_) => null);
+    final student = await studentProfile.catchError((_) => null);
+    return [student, company].toList();
   }
 }

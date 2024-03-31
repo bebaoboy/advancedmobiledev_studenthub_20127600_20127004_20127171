@@ -6,11 +6,14 @@ import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/delete_profile_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -44,6 +47,9 @@ mixin StoreModule {
         getIt<ErrorStore>(),
         getIt<GetUserDataUseCase>(),
         getIt<SaveTokenUseCase>(),
+        getIt<GetProfileUseCase>(),
+        getIt<DeleteProfileUseCase>(),
+        getIt<SetUserProfileUseCase>(),
       ),
     );
 

@@ -8,4 +8,7 @@ class Preferences {
   static const String current_user_role = "current_user_role";
   static const String current_user_roleList = "current_user_roleList";
   static const String current_user_email = "current_user_email";
+
+  static const String student_profile = "student_profile";
+  static const String company_profile = "company_profile";
 }

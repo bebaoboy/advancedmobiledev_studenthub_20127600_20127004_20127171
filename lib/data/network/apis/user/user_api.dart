@@ -48,4 +48,8 @@ class UserApi {
     }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }
+
+  Future<Response> getProfile() async {
+    return await _dioClient.dio.get(Endpoints.getProfile, data: {}).onError((DioException exception, stackTrace) => Future.value(exception.response));
+  }
 }

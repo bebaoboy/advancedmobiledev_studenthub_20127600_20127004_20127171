@@ -310,7 +310,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    print("${_userStore.user!.type.name} ${_userStore.user!.email}");
+    // print("${_userStore.user!.type.name} ${_userStore.user!.email}");
     if (!_userStore.isLoading || !initializing) {
       Future.delayed(const Duration(milliseconds: 10), () async {
         // //print("LOADING = $loading");

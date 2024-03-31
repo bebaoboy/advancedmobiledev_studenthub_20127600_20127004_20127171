@@ -14,9 +14,9 @@ class Endpoints {
   static const String getPosts = "$baseUrl/posts";
 
   //auth endpoints
-  static const String getCurrentUser = "$baseUrl/api/auth/me";
   static const String signUp = "$baseUrl/api/auth/sign-up";
   static const String login = "$baseUrl/api/auth/sign-in";
+  static const String getProfile = "$baseUrl/api/auth/me";
 
   //user endpoints
   static const String resetPassword = "$baseUrl/api/user"; // require an id

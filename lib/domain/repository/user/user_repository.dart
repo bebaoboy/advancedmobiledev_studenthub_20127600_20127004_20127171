@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
 
@@ -22,4 +24,10 @@ abstract class UserRepository {
   Future<Response> signUp(SignUpParams params);
 
   Future<bool> saveToken(String value);
+
+  Future<FetchProfileResult> getProfileAndSave();
+
+  Future<void> deleteProfile();
+
+  Future<List<Profile?>> fetchProfileFromSharedPref();
 }

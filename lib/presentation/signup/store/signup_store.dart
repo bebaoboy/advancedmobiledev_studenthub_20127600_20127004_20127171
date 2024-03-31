@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
-import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validators/validators.dart';
 
@@ -67,7 +66,7 @@ abstract class _SignupStore with Store {
   bool hasAcceptPolicy = false;
 
   //usecase
-  SignUpUseCase _signUpUseCase;
+  final SignUpUseCase _signUpUseCase;
 
   @observable
   ObservableFuture<void> signUpFuture = emptySignUpResponse;

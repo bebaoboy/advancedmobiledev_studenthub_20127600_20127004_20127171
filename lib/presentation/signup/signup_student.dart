@@ -377,7 +377,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
     //       (Route<dynamic> route) => false);
     // });
 
-    return SizedBox();
+    return const SizedBox();
   }
 
   // General Methods:-----------------------------------------------------------

@@ -23,12 +23,13 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
       try {
-      if (_userStore.user != null && _userStore.user!.type != UserType.naught) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: Routes.welcome),
-        );
-      }
-      } catch(E) {}
+        if (_userStore.user != null &&
+            _userStore.user!.type != UserType.naught) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute2(routeName: Routes.welcome),
+          );
+        }
+      } catch (E) {}
     });
   }
 
@@ -36,6 +37,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(_userStore.user?.companyProfile);
+    print(_userStore.user?.studentProfile);
     return Scaffold(
       appBar: _buildAppBar(),
       body: Padding(
