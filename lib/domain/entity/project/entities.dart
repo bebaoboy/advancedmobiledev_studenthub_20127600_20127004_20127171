@@ -9,7 +9,7 @@ class MyObject {
   DateTime updatedAt = DateTime.now();
   DateTime deletedAt = DateTime.now();
   MyObject({required this.objectId}) {
-    if(objectId.isEmpty) objectId = const Uuid().v4();
+    if (objectId.isEmpty) objectId = const Uuid().v4();
   }
 }
 
@@ -30,6 +30,13 @@ class TechStack extends MyObject {
   TechStack.fromJson(Map<String, dynamic> json)
       : name = json["name"] ?? "",
         super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "id": objectId,
+    };
+  }
 }
 
 @JsonSerializable()
@@ -63,6 +70,13 @@ class Skill extends MyObject {
         description = "",
         imageUrl = "",
         super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "id": objectId,
+    };
+  }
 }
 
 @JsonSerializable()
@@ -84,6 +98,14 @@ class Language extends MyObject {
       : languageName = json["name"] ?? "",
         level = "",
         super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "languageName": languageName,
+      "level": level,
+      "id": objectId,
+    };
+  }
 }
 
 @JsonSerializable()
@@ -106,6 +128,21 @@ class Education extends MyObject {
     required this.endYear,
     String id = "",
   }) : super(objectId: id);
+
+  Education.fromJson(Map<String, dynamic> json)
+      : schoolName = json["schoolName"] ?? "",
+        startYear = json["startYear"] ?? "",
+        endYear = json["endYear"] ?? "",
+        super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "schoolName": schoolName,
+      "startYear": startYear.toString(),
+      "endYear": endYear.toString(),
+      "id": objectId,
+    };
+  }
 }
 
 @JsonSerializable()
@@ -130,14 +167,33 @@ class ProjectExperience extends MyObject {
     this.skills,
     String id = "",
   }) : super(objectId: id);
+
+  ProjectExperience.fromJson(Map<String, dynamic> json)
+      : description = json["description"] ?? "",
+        link = json["link"] ?? "",
+        startDate = json["startMonth"] ?? "",
+        endDate = json["endMonth"] ?? "",
+        skills = json["skills"] as List<Skill>,
+        name = json["title"] ?? '',
+        super(objectId: json['id']);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "description": description,
+      "title": name,
+      "startMonth": startDate.toString(),
+      "endMonth": endDate.toString(),
+      "id": objectId,
+    };
+  }
 }
 
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class Profile extends MyObject {
   Profile({
-    String id = "",
-  }) : super(objectId: id);
+    required super.objectId,
+  });
 }
 
 @JsonSerializable()
@@ -171,6 +227,7 @@ class StudentProfile extends Profile {
     this.projectExperience,
     this.transcript,
     this.resume,
+    super.objectId = "",
   });
 
   StudentProfile.fromJson(Map<String, dynamic> json)
@@ -187,7 +244,26 @@ class StudentProfile extends Profile {
         projectExperience =
             (json["projectExperience"] as List<ProjectExperience>),
         transcript = json["transcript"] ?? "",
-        resume = json["resume"] ?? "";
+        resume = json["resume"] ?? "",
+        super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'fullName': fullName,
+      'education': education,
+      'introduction': introduction,
+      'yearOfExperience': yearOfExperience,
+      'review': review,
+      'techStack': techStack,
+      'skillSet': skillSet,
+      'languages': languages,
+      'educations': educations,
+      'transcript': transcript,
+      'resume': resume,
+      "id": objectId,
+    };
+  }
 }
 
 enum CompanyScope { solo, small, medium, large, enterprise }
@@ -227,6 +303,7 @@ class CompanyProfile extends Profile {
     required this.website,
     required this.description,
     this.scope = CompanyScope.solo,
+    super.objectId = "",
   });
 
   CompanyProfile.fromJson(Map<String, dynamic> json)
@@ -237,7 +314,20 @@ class CompanyProfile extends Profile {
         email = json["email"] ?? "",
         website = json["website"] ?? "",
         description = json["description"] ?? "",
-        scope = json["scope"] ?? "";
+        scope = json["scope"] ?? "",
+        super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      'profileName': profileName,
+      'companyName': companyName,
+      'email': email,
+      'website': website,
+      'description': description,
+      'scope': scope,
+      "id": objectId,
+    };
+  }
 }
 
 //

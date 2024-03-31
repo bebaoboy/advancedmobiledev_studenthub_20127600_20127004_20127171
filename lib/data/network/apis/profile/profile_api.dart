@@ -9,8 +9,10 @@ import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.d
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
-
+import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:interpolator/interpolator.dart';
 import 'package:dio/dio.dart';
 
 class ProfileApi {
@@ -44,11 +46,51 @@ class ProfileApi {
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
+  Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
+    return await _dioClient.dio.put(Endpoints.updateProfileCompany, data: {
+      "companyName": params.companyName,
+      "website": params.website,
+      "description": params.description,
+      "size": params.size,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
   Future<Response> addProfileStudent(AddProfileStudentParams params) async {
     return await _dioClient.dio.post(Endpoints.addProfileStudent, data: {
       "techStackId": params.techStack,
       "skillSets": params.skillSet,
     }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> updateLanguage(UpdateLanguageParams params) async {
+    return await _dioClient.dio.put(
+        Interpolator(Endpoints.updateLanguage)({"studentId": params.studentId}),
+        data: {
+          "languages": params.languages,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> updateEducation(UpdateEducationParams params) async {
+    return await _dioClient.dio.put(
+        Interpolator(Endpoints.updateEducation)(
+            {"studentId": params.studentId}),
+        data: {
+          "education": params.educations,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> updateProjectExperience(
+      UpdateProjectExperienceParams params) async {
+    return await _dioClient.dio.put(
+        Interpolator(Endpoints.updateProjectExperience)(
+            {"studentId": params.studentId}),
+        data: {
+          "experience": params.projectExperiences,
+        }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
@@ -62,13 +104,6 @@ class ProfileApi {
   Future<Response> addSkillset(AddSkillsetParams params) async {
     return await _dioClient.dio.post(Endpoints.addSkillset, data: {
       "name": params.name,
-    }).onError(
-        (DioException error, stackTrace) => Future.value(error.response));
-  }
-
-    Future<Response> updateLanguage(UpdateLanguageParams params) async {
-    return await _dioClient.dio.put(Endpoints.updateLanguage, data: {
-      "languages": params.languages
     }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }

@@ -519,14 +519,23 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
+            _profileStudentFormStore.setResume(_cv!=null ? _cv!.path ?? "" : '');
+            _profileStudentFormStore.setTranscript(_transcript!=null ? _transcript!.path ?? "" : '');
             print(_profileStudentFormStore.techStack);
             print(_profileStudentFormStore.skillSet);
             print(_profileStudentFormStore.educations);
             print(_profileStudentFormStore.languages);
             print(_profileStudentFormStore.projectExperience);
+            print(_profileStudentFormStore.resume);
+            print(_profileStudentFormStore.transcript);
             _profileStudentFormStore.addProfileStudent(
                 _profileStudentFormStore.techStack,
-                _profileStudentFormStore.skillSet);
+                _profileStudentFormStore.skillSet,
+                _profileStudentFormStore.languages,
+                _profileStudentFormStore.educations,
+                _profileStudentFormStore.projectExperience,
+                _profileStudentFormStore.transcript,
+                _profileStudentFormStore.resume);
 
             // Navigator.of(context).pushAndRemoveUntil(
             //     MaterialPageRoute2(routeName: Routes.home),

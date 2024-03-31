@@ -8,7 +8,12 @@ import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.d
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -41,7 +46,6 @@ mixin StoreModule {
     );
     getIt.registerFactory(() => SignUpFormErrorStore());
 
-
     // stores:------------------------------------------------------------------
     getIt.registerSingleton<UserStore>(
       UserStore(
@@ -63,15 +67,21 @@ mixin StoreModule {
     getIt.registerSingleton<ProfileFormStore>(ProfileFormStore(
         getIt<ProfileFormErrorStore>(),
         getIt<ErrorStore>(),
-        getIt<AddProfileCompanyUseCase>()));
+        getIt<AddProfileCompanyUseCase>(),
+        getIt<UpdateProfileCompanyUseCase>()));
 
     getIt.registerSingleton<ProfileStudentFormStore>(ProfileStudentFormStore(
-        getIt<ProfileStudentFormErrorStore>(),
-        getIt<ErrorStore>(),
-        getIt<AddProfileStudentUseCase>(),
-        getIt<AddTechStackUseCase>(),
-        getIt<AddSkillsetUseCase>(),
-        getIt<UpdateLanguageUseCase>()));
+      getIt<ProfileStudentFormErrorStore>(),
+      getIt<ErrorStore>(),
+      getIt<AddProfileStudentUseCase>(),
+      getIt<AddTechStackUseCase>(),
+      getIt<AddSkillsetUseCase>(),
+      getIt<UpdateLanguageUseCase>(),
+      getIt<UpdateEducationUseCase>(),
+      getIt<UpdateProjectExperienceUseCase>(),
+      getIt<UpdateResumeUseCase>(),
+      getIt<UpdateTranscriptUseCase>(),
+    ));
 
     getIt.registerSingleton<PostStore>(
       PostStore(

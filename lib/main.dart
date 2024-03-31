@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:async';
+import 'dart:isolate';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/firebase_options.dart';
@@ -36,18 +37,6 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  
-  FlutterError.onError = (FlutterErrorDetails errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-    if (!kReleaseMode) {
-      FlutterError.reportError(errorDetails);
-    }
-  };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return !kReleaseMode;
-  };
 
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
@@ -62,6 +51,24 @@ Future<void> main() async {
   });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  FlutterError.onError = (FlutterErrorDetails errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return kReleaseMode;
+  };
+
+  Isolate.current.addErrorListener(RawReceivePort((pair) async {
+    final List<dynamic> errorAndStacktrace = pair;
+    await FirebaseCrashlytics.instance.recordError(
+      errorAndStacktrace.first,
+      errorAndStacktrace.last,
+      fatal: true,
+    );
+  }).sendPort);
 
   await initConnectycube();
 

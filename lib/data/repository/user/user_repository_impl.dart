@@ -8,7 +8,12 @@ import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.d
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:dio/dio.dart';
 
@@ -69,6 +74,12 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
+    @override
+  Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
+    var response = await _profileApi.updateProfileCompany(params);
+    return response;
+  }
+
   @override
   Future<Response> addProfileStudent(AddProfileStudentParams params) async {
     var response = await _profileApi.addProfileStudent(params);
@@ -81,15 +92,76 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
-    @override
+  @override
   Future<Response> addSkillset(AddSkillsetParams params) async {
     var response = await _profileApi.addSkillset(params);
     return response;
   }
 
-      @override
+  @override
   Future<Response> updateLanguage(UpdateLanguageParams params) async {
     var response = await _profileApi.updateLanguage(params);
     return response;
+  }
+
+  @override
+  Future<Response> updateEducation(UpdateEducationParams params) async {
+    var response = await _profileApi.updateEducation(params);
+    return response;
+  }
+
+  @override
+  Future<Response> updateProjectExperience(
+      UpdateProjectExperienceParams params) async {
+    var response = await _profileApi.updateProjectExperience(params);
+    return response;
+  }
+
+  @override
+  Future<Response> getEducation(UpdateEducationParams params) {
+    // TODO: implement getEducation
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> getLanguage(UpdateLanguageParams params) {
+    // TODO: implement getLanguage
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> getProjectExperience(UpdateProjectExperienceParams params) {
+    // TODO: implement getProjectExperience
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> getResume(UpdateResumeParams params) {
+    // TODO: implement getResume
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> getTranscript(UpdateTranscriptParams params) {
+    // TODO: implement getTranscript
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> updateProfileStudent(UpdateProfileStudentParams params) {
+    // TODO: implement updateProfileStudent
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> updateResume(UpdateResumeParams params) {
+    // TODO: implement updateResume
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Response> updateTranscript(UpdateTranscriptParams params) {
+    // TODO: implement updateTranscript
+    throw UnimplementedError();
   }
 }

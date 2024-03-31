@@ -14,8 +14,42 @@ class Endpoints {
   static const String getPosts = "$baseUrl/posts";
 
   // auth endpoints
+  // me
+  /*
+  {
+  "result": {
+    "id": 48,
+    "fullname": "bao",
+    "roles": [
+      "0",
+      "1",
+    ],
+    "student": {
+      "id": 11,
+      "createdAt": "2024-03-31T09:49:50.109Z",
+      "updatedAt": "2024-03-31T09:49:50.109Z",
+      "deletedAt": null,
+      "userId": 48,
+      "techStackId": 1,
+      "resume": null,
+      "transcript": null
+    },
+     "company": {
+      "id": 22,
+      "createdAt": "2024-03-31T11:50:11.717Z",
+      "updatedAt": "2024-03-31T11:50:11.717Z",
+      "deletedAt": null,
+      "userId": 47,
+      "companyName": "string",
+      "website": "string",
+      "size": 0,
+      "description": "string"
+    }
+  }
+} */
   static const String getCurrentUser = "$baseUrl/api/auth/me";
-  static const String signUp = "$baseUrl/api/auth/sign-up"; // done
+  static const String signUp =
+      "$baseUrl/api/auth/sign-up"; // done -> no response
 
   // user endpoints
   static const String resetPassword = "$baseUrl/api/user/{id}";
@@ -29,6 +63,42 @@ class Endpoints {
   static const String getProfileCompany =
       "$baseUrl/api/profile/company/{companyId}";
 
+  /* POST student profile
+      {
+  "result": {
+    "userId": 48,
+    "techStackId": 1,
+    "techStack": {
+      "id": 1,
+      "createdAt": "2024-03-29T14:50:35.326Z",
+      "updatedAt": "2024-03-29T14:50:35.326Z",
+      "deletedAt": null,
+      "name": "Fullstack Engineer"
+    },
+    "skillSets": [
+      {
+        "id": 1,
+        "createdAt": "2024-03-29T14:50:35.424Z",
+        "updatedAt": "2024-03-29T14:50:35.424Z",
+        "deletedAt": null,
+        "name": "C"
+      },
+      {
+        "id": 2,
+        "createdAt": "2024-03-29T14:50:35.430Z",
+        "updatedAt": "2024-03-29T14:50:35.430Z",
+        "deletedAt": null,
+        "name": "C++"
+      }
+    ],
+    "updatedAt": "2024-03-31T09:49:50.109Z",
+    "deletedAt": null,
+    "resume": null,
+    "transcript": null,
+    "id": 11, // student id
+    "createdAt": "2024-03-31T09:49:50.109Z"
+  }
+} */
   static const String addProfileStudent =
       "$baseUrl/api/profile/student"; // semi-done
   static const String updateProfileStudent =
@@ -39,17 +109,29 @@ class Endpoints {
       "$baseUrl/api/profile/student/{studentId}/techStack";
 
   static const String getLanguage =
-      "$baseUrl/language/getByStudentId/{studentId}";
+      "$baseUrl/api/language/getByStudentId/{studentId}";
   static const String updateLanguage =
-      "$baseUrl/language/updateByStudentId/{studentId}";
+      "$baseUrl/api/language/updateByStudentId/{studentId}";
   static const String getEducation =
-      "$baseUrl/education/getByStudentId/{studentId}";
+      "$baseUrl/api/education/getByStudentId/{studentId}";
   static const String updateEducation =
-      "$baseUrl/education/updateByStudentId/{studentId}";
+      "$baseUrl/api/education/updateByStudentId/{studentId}";
   static const String getProjectExperience =
-      "$baseUrl/experience/getByStudentId/{studentId}";
+      "$baseUrl/api/experience/getByStudentId/{studentId}";
   static const String updateProjectExperience =
-      "$baseUrl/experience/updateByStudentId/{studentId}";
+      "$baseUrl/api/experience/updateByStudentId/{studentId}";
+
+  static const String updateResume =
+      "$baseUrl/api/profile/student/{studentId}/resume";
+
+  static const String getResume =
+      "$baseUrl/api/profile/student/{studentId}/resume";
+
+  static const String updateTranscript =
+      "$baseUrl/api/profile/student/{studentId}/transcript";
+
+  static const String getTranscript =
+      "$baseUrl/api/profile/student/{studentId}/transcript";
 
   static const String addTechStack = "$baseUrl/api/techstack/createTechStack";
   static const String addSkillset = "$baseUrl/api/skillset/createSkillSet";

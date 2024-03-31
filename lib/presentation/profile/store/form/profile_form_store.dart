@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validators/validators.dart';
 
@@ -18,7 +19,7 @@ abstract class _ProfileFormStore with Store {
   final ErrorStore errorStore;
 
   _ProfileFormStore(this.profileFormErrorStore, this.errorStore,
-      this._addProfileCompanyUseCase) {
+      this._addProfileCompanyUseCase, this._updateProfileCompanyUseCase) {
     _setupValidations();
   }
 
@@ -58,6 +59,7 @@ abstract class _ProfileFormStore with Store {
 
   //usecase
   AddProfileCompanyUseCase _addProfileCompanyUseCase;
+  UpdateProfileCompanyUseCase _updateProfileCompanyUseCase;
 
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 
@@ -82,6 +84,33 @@ abstract class _ProfileFormStore with Store {
         description: description,
         size: size.index);
     final future = _addProfileCompanyUseCase.call(params: loginParams);
+    addProfileCompanyFuture = ObservableFuture(future);
+
+    await future.then((value) {
+      if (value.statusCode == HttpStatus.accepted ||
+          value.statusCode == HttpStatus.ok ||
+          value.statusCode == HttpStatus.created) {
+        success = true;
+        print(value.data);
+      } else {
+        success = false;
+        errorStore.errorMessage = value.data['errorDetails'] is List<String>
+            ? value.data['errorDetails'][0].toString()
+            : value.data['errorDetails'].toString();
+        // print(value.data);
+      }
+    });
+  }
+
+  @action
+  Future updateProfileCompany(String companyName, String website,
+      String description, CompanyScope size) async {
+    final AddProfileCompanyParams loginParams = AddProfileCompanyParams(
+        companyName: companyName,
+        website: website,
+        description: description,
+        size: size.index);
+    final future = _updateProfileCompanyUseCase.call(params: loginParams);
     addProfileCompanyFuture = ObservableFuture(future);
 
     await future.then((value) {

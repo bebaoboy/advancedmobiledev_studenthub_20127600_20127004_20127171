@@ -6,9 +6,11 @@ import '../../../../core/domain/usecase/use_case.dart';
 
 class UpdateLanguageParams {
   List<Language> languages;
+  String studentId;
 
   UpdateLanguageParams({
     required this.languages,
+    required this.studentId,
   });
 }
 

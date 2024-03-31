@@ -5,6 +5,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants/preferences.dart';
 
+/*
+{
+  "email": "baominkhuynh@gmail.com",
+  "password": "12345678Bao+"
+} */
+String baominkhuynh =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDgsImZ1bGxuYW1lIjoiYmFvIiwiZW1haWwiOiIxMjMrQG1haWwuY29tIiwicm9sZXMiOlsiMCJdLCJpYXQiOjE3MTE4Nzg0MzcsImV4cCI6MTcxMzA4ODAzN30.I2R9UyKH6aRp_XXSwXxBumUZ78qkKAtuYaGzeijZFOQ";
+
 class SharedPreferenceHelper {
   // shared pref instance
   final SharedPreferences _sharedPreference;
@@ -14,7 +22,7 @@ class SharedPreferenceHelper {
 
   // General Methods: ----------------------------------------------------------
   Future<String?> get authToken async {
-    return Future.value("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImZ1bGxuYW1lIjoiYmFvIiwiZW1haWwiOiJiYW9taW5raHV5bmhAZ21haWwuY29tIiwicm9sZXMiOlsiMCIsIjEiXSwiaWF0IjoxNzExODU5MDQ4LCJleHAiOjE3MTMwNjg2NDh9.VnIK6lJH0K7TYPRf6NF-0zZor5aO1HjislyCx7BPmfU");
+    return Future.value(baominkhuynh);
     return _sharedPreference.getString(Preferences.auth_token);
   }
 

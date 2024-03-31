@@ -11,7 +11,12 @@ import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.d
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -41,6 +46,10 @@ mixin UseCaseModule {
       AddProfileCompanyUseCase(getIt<UserRepository>()),
     );
 
+    getIt.registerSingleton<UpdateProfileCompanyUseCase>(
+      UpdateProfileCompanyUseCase(getIt<UserRepository>()),
+    );
+
     getIt.registerSingleton<AddProfileStudentUseCase>(
       AddProfileStudentUseCase(getIt<UserRepository>()),
     );
@@ -55,6 +64,22 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<UpdateLanguageUseCase>(
       UpdateLanguageUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateEducationUseCase>(
+      UpdateEducationUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateProjectExperienceUseCase>(
+      UpdateProjectExperienceUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateTranscriptUseCase>(
+      UpdateTranscriptUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateResumeUseCase>(
+      UpdateResumeUseCase(getIt<UserRepository>()),
     );
 
     getIt.registerSingleton<GetUserDataUseCase>(

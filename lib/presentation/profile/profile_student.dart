@@ -59,6 +59,7 @@ class SearchDropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<TechStack>.searchRequest(
+      initialItem: _list[0],
       futureRequest: (p0) {
         return Future.value(_list
             .where(
@@ -1094,6 +1095,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
             setLanguage();
             setEducation();
             _profileStudentFormStore.setFullName(widget.fullName);
+            if (_profileStudentFormStore.techStack == null ||
+                (_profileStudentFormStore.techStack != null &&
+                    _profileStudentFormStore.techStack!.isEmpty)) {
+              _profileStudentFormStore.setTechStack([_list[0]]);
+            }
             Navigator.of(context).push(
                 MaterialPageRoute2(routeName: Routes.profileStudentStep2));
             // if (_formStore.canProfileStudent) {

@@ -4,7 +4,12 @@ import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.d
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
@@ -27,8 +32,33 @@ abstract class UserRepository {
   Future<Response> signUp(SignUpParams params);
 
   Future<Response> addProfileCompany(AddProfileCompanyParams params);
+
+  Future<Response> updateProfileCompany(AddProfileCompanyParams params);
+
   Future<Response> addProfileStudent(AddProfileStudentParams params);
-  Future<Response> addTechStack(AddTechStackParams params);
-  Future<Response> addSkillset(AddSkillsetParams params);
+
+  Future<Response> updateProfileStudent(UpdateProfileStudentParams params);
+
   Future<Response> updateLanguage(UpdateLanguageParams params);
+
+  Future<Response> getLanguage(UpdateLanguageParams params);
+
+  Future<Response> updateEducation(UpdateEducationParams params);
+
+  Future<Response> getEducation(UpdateEducationParams params);
+
+  Future<Response> updateProjectExperience(
+      UpdateProjectExperienceParams params);
+
+  Future<Response> getProjectExperience(UpdateProjectExperienceParams params);
+
+  Future<Response> updateResume(UpdateResumeParams params);
+  Future<Response> getResume(UpdateResumeParams params);
+
+  Future<Response> updateTranscript(UpdateTranscriptParams params);
+  Future<Response> getTranscript(UpdateTranscriptParams params);
+
+  Future<Response> addTechStack(AddTechStackParams params);
+
+  Future<Response> addSkillset(AddSkillsetParams params);
 }
