@@ -26,15 +26,16 @@ class User extends MyObject {
   StudentProfile? studentProfile;
   CompanyProfile? companyProfile;
 
-  User(
-      {super.objectId,
-      this.type = UserType.naught,
-      required this.email,
-      this.name = "",
-      this.isVerified = false,
-      this.studentProfile,
-      this.companyProfile,
-      required this.roles});
+  User({
+    this.type = UserType.naught,
+    required this.email,
+    this.name = "",
+    this.isVerified = false,
+    this.studentProfile,
+    this.companyProfile,
+    required this.roles,
+    String id = "",
+  }) : super(objectId: id);
 
   User.fromJson(Map<String, dynamic> json)
       : type = json["type"] == "0" ? UserType.student : UserType.company,
@@ -43,7 +44,8 @@ class User extends MyObject {
         isVerified = json["isVerified"] ?? false,
         studentProfile = null,
         companyProfile = null,
-        roles = json["roles"] ?? [UserType.company];
+        roles = json["roles"] ?? [UserType.company],
+        super(objectId: json["id"]);
 
 // <<<<<<< sprint4-signup_accountActivation_forgetPassword
 //   User(

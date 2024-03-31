@@ -4,12 +4,12 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
-  String? objectId = const Uuid().v4();
+  String objectId = const Uuid().v4();
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
   DateTime deletedAt = DateTime.now();
-  MyObject({this.objectId}) {
-    objectId = const Uuid().v4();
+  MyObject({required this.objectId}) {
+    if(objectId.isEmpty) objectId = const Uuid().v4();
   }
 }
 
@@ -19,15 +19,17 @@ class TechStack extends MyObject {
   final String name;
   TechStack(
     this.name, {
-    super.objectId,
-  });
+    String id = "",
+  }) : super(objectId: id);
 
   @override
   String toString() {
     return name;
   }
 
-  TechStack.fromJson(Map<String, dynamic> json) : name = json["name"] ?? "";
+  TechStack.fromJson(Map<String, dynamic> json)
+      : name = json["name"] ?? "",
+        super(objectId: json["id"]);
 }
 
 @JsonSerializable()
@@ -40,8 +42,8 @@ class Skill extends MyObject {
     this.name,
     this.description,
     this.imageUrl, {
-    super.objectId,
-  });
+    String id = "",
+  }) : super(objectId: id);
 
   @override
   bool operator ==(Object other) =>
@@ -59,22 +61,29 @@ class Skill extends MyObject {
   Skill.fromJson(Map<String, dynamic> json)
       : name = json["name"] ?? "",
         description = "",
-        imageUrl = "";
+        imageUrl = "",
+        super(objectId: json["id"]);
 }
 
 @JsonSerializable()
 class Language extends MyObject {
-  String name;
-  String proficiency;
+  String languageName;
+  String level;
   bool readOnly = true;
   bool enabled = true;
 
-  Language(this.name, this.proficiency,
-      {super.objectId, this.readOnly = true, this.enabled = true});
+  Language(
+    this.languageName,
+    this.level, {
+    this.readOnly = true,
+    this.enabled = true,
+    String id = "",
+  }) : super(objectId: id);
 
   Language.fromJson(Map<String, dynamic> json)
-      : name = json["name"] ?? "",
-        proficiency = "";
+      : languageName = json["name"] ?? "",
+        level = "",
+        super(objectId: json["id"]);
 }
 
 @JsonSerializable()
@@ -89,12 +98,14 @@ class Education extends MyObject {
   bool readOnly = true;
   bool enabled = true;
 
-  Education(this.schoolName,
-      {super.objectId,
-      this.readOnly = true,
-      this.enabled = true,
-      required this.startYear,
-      required this.endYear});
+  Education(
+    this.schoolName, {
+    this.readOnly = true,
+    this.enabled = true,
+    required this.startYear,
+    required this.endYear,
+    String id = "",
+  }) : super(objectId: id);
 }
 
 @JsonSerializable()
@@ -108,21 +119,25 @@ class ProjectExperience extends MyObject {
   bool enabled = true;
   List<Skill>? skills = [];
 
-  ProjectExperience(this.name,
-      {super.objectId,
-      this.description = "...",
-      this.link = "",
-      required this.startDate,
-      required this.endDate,
-      this.readOnly = true,
-      this.enabled = true,
-      this.skills});
+  ProjectExperience(
+    this.name, {
+    this.description = "...",
+    this.link = "",
+    required this.startDate,
+    required this.endDate,
+    this.readOnly = true,
+    this.enabled = true,
+    this.skills,
+    String id = "",
+  }) : super(objectId: id);
 }
 
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class Profile extends MyObject {
-  Profile({super.objectId});
+  Profile({
+    String id = "",
+  }) : super(objectId: id);
 }
 
 @JsonSerializable()
@@ -143,7 +158,6 @@ class StudentProfile extends Profile {
   String? resume = "";
 
   StudentProfile({
-    super.objectId,
     required this.fullName,
     required this.education,
     required this.introduction,
@@ -206,7 +220,6 @@ class CompanyProfile extends Profile {
   CompanyScope scope = CompanyScope.solo;
 
   CompanyProfile({
-    super.objectId,
     // required this.userId,
     required this.companyName,
     required this.profileName,
@@ -264,12 +277,12 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   Scope scope;
 
   ProjectBase({
-    super.objectId,
     this.isLoading = true,
     required this.title,
     required this.description,
     this.scope = Scope.short,
-  });
+    String id = "",
+  }) : super(objectId: id);
 
   @override
   bool isLoading;
@@ -292,19 +305,20 @@ class Project extends ProjectBase {
   bool isWorking = false;
   bool isArchived = false;
 
-  Project(
-      {super.objectId,
-      required super.title,
-      required super.description,
-      super.scope = Scope.short,
-      this.numberOfStudents = 1,
-      this.hired,
-      this.proposal,
-      this.messages,
-      required this.timeCreated,
-      this.isFavorite = false,
-      this.isLoading = true,
-      this.isWorking = false});
+  Project({
+    required super.title,
+    required super.description,
+    super.scope = Scope.short,
+    this.numberOfStudents = 1,
+    this.hired,
+    this.proposal,
+    this.messages,
+    required this.timeCreated,
+    this.isFavorite = false,
+    this.isLoading = true,
+    this.isWorking = false,
+    super.id,
+  });
 
   getModifiedTimeCreated() {
     return timeCreated.difference(DateTime.now()).inDays.abs();
@@ -330,7 +344,6 @@ class StudentProject extends Project {
   }
 
   StudentProject({
-    super.objectId,
     required super.title,
     required super.description,
     required this.submittedTime,
@@ -341,6 +354,7 @@ class StudentProject extends Project {
     super.isLoading = true,
     this.isSubmitted = true,
     this.isAccepted = false,
+    super.id,
   });
 }
 
@@ -371,13 +385,14 @@ class Proposal extends MyObject {
   HireStatus isHired;
   Status status;
 
-  Proposal(
-      {super.objectId,
-      // required this.project,
-      required this.student,
-      this.coverLetter = "",
-      this.isHired = HireStatus.notHire,
-      this.status = Status.inactive});
+  Proposal({
+    // required this.project,
+    required this.student,
+    this.coverLetter = "",
+    this.isHired = HireStatus.notHire,
+    this.status = Status.inactive,
+    String id = "",
+  }) : super(objectId: id);
 }
 
 // ------------------- NOTIFICATION ------------------------------
@@ -391,13 +406,12 @@ class Notification extends MyObject {
   NotificationType type;
 
   Notification({
-    super.objectId,
     required this.id,
     required this.receiver,
     required this.sender,
     required this.type,
     this.content = "",
-  });
+  }) : super(objectId: id);
 }
 
 enum NotificationType {
@@ -412,7 +426,6 @@ class OfferNotification extends Notification {
   String projectId;
 
   OfferNotification({
-    super.objectId,
     required this.projectId,
     required super.id,
     required super.receiver,
@@ -433,7 +446,6 @@ class Message extends Notification {
   InterviewSchedule? interviewSchedule;
 
   Message({
-    super.objectId,
     required super.id,
     required super.receiver,
     required super.sender,
@@ -451,13 +463,15 @@ class InterviewSchedule extends MyObject {
   DateTime endDate = DateTime.now();
   bool isCancel = false;
 
-  InterviewSchedule(
-      {super.objectId,
-      required this.title,
-      this.participants,
-      required this.startDate,
-      required this.endDate,
-      this.isCancel = false});
+  InterviewSchedule({
+    required this.title,
+    this.participants,
+    required this.startDate,
+    required this.endDate,
+    this.isCancel = false,
+    String id = "",
+  }) : super(objectId: id);
+
   clear() {
     endDate = DateTime.now();
     startDate = DateTime.now();
@@ -485,7 +499,7 @@ class InterviewSchedule extends MyObject {
             ? DateTime.now()
             : json["startDate"] as DateTime,
         isCancel = bool.tryParse(json["isCancel"] ?? "false") ?? false,
-        super(objectId: "");
+        super(objectId: json["id"]);
 
   Map<String, dynamic> toJson() => {
         "title": title,

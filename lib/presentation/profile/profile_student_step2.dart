@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
@@ -9,7 +8,6 @@ import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
@@ -17,11 +15,9 @@ import 'package:boilerplate/presentation/profile/store/form/profile_student_form
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
@@ -524,8 +520,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       width: w / 2,
                                       child: TextFieldWidget(
                                           onTap: () {
-                                            if (_projects[index].readOnly)
+                                            if (_projects[index].readOnly) {
                                               openHintBar();
+                                            }
                                           },
                                           inputDecoration: InputDecoration(
                                               border: _projects[index].readOnly
@@ -706,8 +703,9 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                 height: _projects[index].readOnly ? 20 : null,
                                 child: GestureDetector(
                                     onTap: () {
-                                      if (_projects[index].readOnly)
+                                      if (_projects[index].readOnly) {
                                         openHintBar();
+                                      }
                                     },
                                     onDoubleTap: () {
                                       if (_projects[index].readOnly &&
@@ -717,23 +715,17 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                         });
                                       }
                                     },
-                                    child: Container(
-                                      // transform: _projects[index].readOnly
-                                      //     ? Matrix4.translationValues(
-                                      //         0.0, -10.0, 0.0)
-                                      //     : null,
-                                      child: RichText(
-                                          text: TextSpan(children: [
-                                        TextSpan(
-                                          text: _projects[index].link,
-                                          style: const TextStyle(
-                                            color: Colors.blue,
-                                            decoration:
-                                                TextDecoration.underline,
-                                          ),
-                                        )
-                                      ])),
-                                    )),
+                                    child: RichText(
+                                        text: TextSpan(children: [
+                                      TextSpan(
+                                        text: _projects[index].link,
+                                        style: const TextStyle(
+                                          color: Colors.blue,
+                                          decoration:
+                                              TextDecoration.underline,
+                                        ),
+                                      )
+                                    ]))),
                               ),
                           if (!_projects[index].readOnly)
                             SizedBox(
@@ -789,7 +781,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                 errorText: null,
                               ),
                             ),
-                          Container(
+                          SizedBox(
                             // transform: _projects[index].readOnly
                             //     ? Matrix4.translationValues(0.0, -25.0, 0.0)
                             //     : null,
@@ -812,14 +804,15 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                       child: SingleChildScrollView(
                                         child: Text(
                                           _projects[index].description,
-                                          style: TextStyle(fontSize: 12),
+                                          style: const TextStyle(fontSize: 12),
                                         ),
                                       ),
                                     )
                                   : TextFieldWidget(
                                       onTap: () {
-                                        if (_projects[index].readOnly)
+                                        if (_projects[index].readOnly) {
                                           openHintBar();
+                                        }
                                       },
                                       textAlignVertical:
                                           const TextAlignVertical(y: -1),
@@ -883,7 +876,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                 });
                               }
                             },
-                            child: Container(
+                            child: SizedBox(
                               height: 30,
                               width: w,
                               // transform: _projects[index].readOnly
@@ -930,7 +923,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                 ? const EdgeInsets.only(bottom: 60)
                                 : const EdgeInsets.only(bottom: 10),
                             child: _projects[index].readOnly
-                                ? Container(
+                                ? SizedBox(
                                     width: w * 0.8,
                                     // transform: _projects[index].readOnly
                                     //     ? Matrix4.translationValues(
@@ -1074,16 +1067,16 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
+    // SharedPreferences.getInstance().then((prefs) {
+    //   prefs.setBool(Preferences.is_logged_in, true);
+    // });
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.home),
-          (Route<dynamic> route) => false);
-    });
+    // Future.delayed(const Duration(milliseconds: 0), () {
+    //   //print("LOADING = $loading");
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute2(routeName: Routes.home),
+    //       (Route<dynamic> route) => false);
+    // });
 
     return Container();
   }

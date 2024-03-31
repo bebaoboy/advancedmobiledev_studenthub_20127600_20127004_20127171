@@ -1,7 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'dart:async';
-
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/firebase_options.dart';
 import 'package:boilerplate/presentation/my_app.dart';
@@ -9,6 +9,7 @@ import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
@@ -35,6 +36,19 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  
+  FlutterError.onError = (FlutterErrorDetails errorDetails) {
+    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    if (!kReleaseMode) {
+      FlutterError.reportError(errorDetails);
+    }
+  };
+  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return !kReleaseMode;
+  };
+
   FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
@@ -48,15 +62,6 @@ Future<void> main() async {
   });
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  // FlutterError.onError = (FlutterErrorDetails errorDetails) {
-  //   FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  // };
-  // // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  // PlatformDispatcher.instance.onError = (error, stack) {
-  //   FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-  //   return true;
-  // };
 
   await initConnectycube();
 

@@ -6,6 +6,9 @@ import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:dio/dio.dart';
 
@@ -66,8 +69,27 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
+  @override
   Future<Response> addProfileStudent(AddProfileStudentParams params) async {
     var response = await _profileApi.addProfileStudent(params);
+    return response;
+  }
+
+  @override
+  Future<Response> addTechStack(AddTechStackParams params) async {
+    var response = await _profileApi.addTechStack(params);
+    return response;
+  }
+
+    @override
+  Future<Response> addSkillset(AddSkillsetParams params) async {
+    var response = await _profileApi.addSkillset(params);
+    return response;
+  }
+
+      @override
+  Future<Response> updateLanguage(UpdateLanguageParams params) async {
+    var response = await _profileApi.updateLanguage(params);
     return response;
   }
 }

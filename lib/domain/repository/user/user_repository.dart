@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
@@ -25,4 +28,7 @@ abstract class UserRepository {
 
   Future<Response> addProfileCompany(AddProfileCompanyParams params);
   Future<Response> addProfileStudent(AddProfileStudentParams params);
+  Future<Response> addTechStack(AddTechStackParams params);
+  Future<Response> addSkillset(AddSkillsetParams params);
+  Future<Response> updateLanguage(UpdateLanguageParams params);
 }

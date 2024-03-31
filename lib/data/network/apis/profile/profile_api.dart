@@ -7,6 +7,9 @@ import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 
 import 'package:dio/dio.dart';
 
@@ -43,10 +46,29 @@ class ProfileApi {
 
   Future<Response> addProfileStudent(AddProfileStudentParams params) async {
     return await _dioClient.dio.post(Endpoints.addProfileStudent, data: {
-      "companyName": params.companyName,
-      "website": params.website,
-      "description": params.description,
-      "size": params.size,
+      "techStackId": params.techStack,
+      "skillSets": params.skillSet,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> addTechStack(AddTechStackParams params) async {
+    return await _dioClient.dio.post(Endpoints.addTechStack, data: {
+      "name": params.name,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> addSkillset(AddSkillsetParams params) async {
+    return await _dioClient.dio.post(Endpoints.addSkillset, data: {
+      "name": params.name,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+    Future<Response> updateLanguage(UpdateLanguageParams params) async {
+    return await _dioClient.dio.put(Endpoints.updateLanguage, data: {
+      "languages": params.languages
     }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }

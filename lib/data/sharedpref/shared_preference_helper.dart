@@ -14,7 +14,7 @@ class SharedPreferenceHelper {
 
   // General Methods: ----------------------------------------------------------
   Future<String?> get authToken async {
-    return Future.value("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImZ1bGxuYW1lIjoiYmFvIiwiZW1haWwiOiJiYW9taW5raHV5bmhAZ21haWwuY29tIiwicm9sZXMiOlsiMCJdLCJpYXQiOjE3MTE4MDI2NjIsImV4cCI6MTcxMzAxMjI2Mn0.UwAzn0Wq_zuNvVBI2QzD9VED1oNE6OS2fAM1zazI_o4");
+    return Future.value("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzAsImZ1bGxuYW1lIjoiYmFvIiwiZW1haWwiOiJiYW9taW5raHV5bmhAZ21haWwuY29tIiwicm9sZXMiOlsiMCIsIjEiXSwiaWF0IjoxNzExODU5MDQ4LCJleHAiOjE3MTMwNjg2NDh9.VnIK6lJH0K7TYPRf6NF-0zZor5aO1HjislyCx7BPmfU");
     return _sharedPreference.getString(Preferences.auth_token);
   }
 

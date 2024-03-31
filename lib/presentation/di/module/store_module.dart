@@ -6,6 +6,9 @@ import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -38,13 +41,6 @@ mixin StoreModule {
     );
     getIt.registerFactory(() => SignUpFormErrorStore());
 
-    // getIt.registerFactory(() => ProfileFormStore(getIt<ProfileFormErrorStore>(),
-    //     getIt<ErrorStore>(), getIt<AddProfileCompanyUseCase>()));
-
-    // getIt.registerFactory(() => ProfileStudentFormStore(
-    //     getIt<ProfileStudentFormErrorStore>(),
-    //     getIt<ErrorStore>(),
-    //     getIt<AddProfileStudentUseCase>()));
 
     // stores:------------------------------------------------------------------
     getIt.registerSingleton<UserStore>(
@@ -72,7 +68,10 @@ mixin StoreModule {
     getIt.registerSingleton<ProfileStudentFormStore>(ProfileStudentFormStore(
         getIt<ProfileStudentFormErrorStore>(),
         getIt<ErrorStore>(),
-        getIt<AddProfileStudentUseCase>()));
+        getIt<AddProfileStudentUseCase>(),
+        getIt<AddTechStackUseCase>(),
+        getIt<AddSkillsetUseCase>(),
+        getIt<UpdateLanguageUseCase>()));
 
     getIt.registerSingleton<PostStore>(
       PostStore(

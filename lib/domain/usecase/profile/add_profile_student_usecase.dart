@@ -1,20 +1,18 @@
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:dio/dio.dart';
 
 import '../../../../core/domain/usecase/use_case.dart';
 
 class AddProfileStudentParams {
-  String companyName;
-  String website;
-  String description;
-  int size = CompanyScope.solo.index;
+  /// Nullable, if not choosen -> null
+  int? techStack;
+  List<int> skillSet;
 
-  AddProfileStudentParams(
-      {required this.companyName,
-      required this.website,
-      required this.description,
-      required this.size});
+  /// techstack can be null if not choosen -> null
+  AddProfileStudentParams({
+    required this.techStack,
+    required this.skillSet,
+  });
 }
 
 class AddProfileStudentUseCase

@@ -1,12 +1,14 @@
-// ignore_for_file: prefer_final_fields
+// ignore_for_file: prefer_final_fields, unused_field
 
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:mobx/mobx.dart';
-import 'package:validators/validators.dart';
 
 part 'profile_student_form_store.g.dart';
 
@@ -18,8 +20,13 @@ abstract class _ProfileStudentFormStore with Store {
 
   final ErrorStore errorStore;
 
-  _ProfileStudentFormStore(this.profileFormErrorStore, this.errorStore,
-      this._addProfileStudentUseCase) {
+  _ProfileStudentFormStore(
+      this.profileFormErrorStore,
+      this.errorStore,
+      this._addProfileStudentUseCase,
+      this._addTechStackUseCase,
+      this._addSkillsetUseCase,
+      this._updateLanguageUseCase) {
     _setupValidations();
   }
 
@@ -29,7 +36,7 @@ abstract class _ProfileStudentFormStore with Store {
   void _setupValidations() {
     _disposers = [
       // reaction((_) => companyName, validateCompanyName)
-      ];
+    ];
   }
 
   @observable
@@ -65,7 +72,7 @@ abstract class _ProfileStudentFormStore with Store {
   @observable
   List<Education>? educations;
 
-    @observable
+  @observable
   List<ProjectExperience>? projectExperience;
 
   @observable
@@ -79,30 +86,35 @@ abstract class _ProfileStudentFormStore with Store {
 
   //usecase
   AddProfileStudentUseCase _addProfileStudentUseCase;
+  AddTechStackUseCase _addTechStackUseCase;
+  AddSkillsetUseCase _addSkillsetUseCase;
+  UpdateLanguageUseCase _updateLanguageUseCase;
 
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 
   @observable
-  ObservableFuture<void> addProfileStudentCompanyFuture = emptyResponse;
+  ObservableFuture<void> addProfileStudentFuture = emptyResponse;
 
   @computed
-  bool get isLoading =>
-      addProfileStudentCompanyFuture.status == FutureStatus.pending;
+  bool get isLoading => addProfileStudentFuture.status == FutureStatus.pending;
 
   @computed
   bool get canContinue => !profileFormErrorStore.hasErrors;
 
   @action
-  Future addProfileStudentCompany(String companyName, String website,
-      String description, CompanyScope size) async {
-    final AddProfileStudentParams loginParams =
-        AddProfileStudentParams(
-            companyName: companyName,
-            website: website,
-            description: description,
-            size: size.index);
+  Future addProfileStudent(
+      List<TechStack>? techStack, List<Skill>? skillset) async {
+    final AddProfileStudentParams loginParams = AddProfileStudentParams(
+        techStack: techStack != null
+            ? techStack.isNotEmpty
+                ? int.tryParse(techStack[0].objectId)
+                : null
+            : null,
+        skillSet: (skillSet ?? [])
+            .map((e) => int.tryParse(e.objectId) ?? 0)
+            .toList());
     final future = _addProfileStudentUseCase.call(params: loginParams);
-    addProfileStudentCompanyFuture = ObservableFuture(future);
+    addProfileStudentFuture = ObservableFuture(future);
 
     await future.then((value) {
       if (value.statusCode == HttpStatus.accepted ||

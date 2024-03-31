@@ -8,7 +8,6 @@ import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -19,25 +18,24 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
 
-class Job with CustomDropdownListFilter {
-  final String name;
-  final IconData icon;
-  const Job(this.name, this.icon);
+// class Job with CustomDropdownListFilter {
+//   final String name;
+//   final IconData icon;
+//   const Job(this.name, this.icon);
 
-  @override
-  String toString() {
-    return name;
-  }
+//   @override
+//   String toString() {
+//     return name;
+//   }
 
-  @override
-  bool filter(String query) {
-    return name.toLowerCase().contains(query.toLowerCase());
-  }
-}
+//   @override
+//   bool filter(String query) {
+//     return name.toLowerCase().contains(query.toLowerCase());
+//   }
+// }
 
 // const List<Job> _list = [
 //   Job('Developer', Icons.developer_mode),
@@ -47,19 +45,31 @@ class Job with CustomDropdownListFilter {
 // ];
 
 final List<TechStack> _list = [
-  TechStack("Designer"),
-  TechStack("Developer"),
-  TechStack("Consultant"),
-  TechStack("Student"),
+  TechStack("Designer", id: "5"),
+  TechStack("Developer", id: "1"),
+  TechStack("Consultant", id: "2"),
+  TechStack("Student", id: "3"),
+  TechStack("Backend Developer", id: "4"),
 ];
 
 class SearchDropdown extends StatelessWidget {
   const SearchDropdown({super.key, required this.onListChangedCallback});
-  final Function(List<TechStack>) onListChangedCallback;
+  final Function(TechStack) onListChangedCallback;
 
   @override
   Widget build(BuildContext context) {
-    return CustomDropdown<TechStack>.multiSelectSearch(
+    return CustomDropdown<TechStack>.searchRequest(
+      futureRequest: (p0) {
+        return Future.value(_list
+            .where(
+              (e) => e.name.toLowerCase().contains(p0.trim().toLowerCase()),
+            )
+            .toList());
+      },
+      futureRequestDelay: const Duration(seconds: 1),
+      onChanged: (p0) {
+        onListChangedCallback(p0);
+      },
       noResultFoundText: Lang.get("nothing_here"),
       maxlines: 3,
       hintText: Lang.get('profile_choose_techstack'),
@@ -78,56 +88,61 @@ class SearchDropdown extends StatelessWidget {
                 item.name,
                 textAlign: TextAlign.start,
               ),
-              const Spacer(),
-              Checkbox(
-                value: isSelected,
-                onChanged: (value) => value = isSelected,
-              )
+              // const Spacer(),
+              // Checkbox(
+              //   value: isSelected,
+              //   onChanged: (value) => value = isSelected,
+              // )
             ],
           ),
         );
       },
-      onListChanged: (value) {
-        //print('changing value to: $value');
-        onListChangedCallback(value);
-      },
-      validateOnChange: true,
-      listValidator: (p0) {
-        return p0.isEmpty ? "Must not be null" : null;
-      },
+      // onListChanged: (value) {
+      //   //print('changing value to: $value');
+      //   onListChangedCallback(value);
+      // },
+      // validateOnChange: true,
+      // validator: (p0) {
+      //   return p0.isEmpty ? "Must not be null" : null;
+      // },
     );
   }
 }
 
 var mockSkillsets = <Skill>[
-  Skill('JavaScript', "Fake description", ''),
-  Skill('iOS Development', "Fake description", ''),
-  Skill('C', "Fake description", ''),
+  Skill('JavaScript', "Fake description", '', id: "1"),
+  Skill('iOS Development', "Fake description", '', id: "2"),
+  Skill('C', "Fake description", '', id: "3"),
   Skill('Java', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('C++', "Fake description", ''),
-  Skill('Kubernetes', "Fake description", ''),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "4"),
+  Skill('C++', "Fake description", '', id: "5"),
+  Skill('Kubernetes', "Fake description", '', id: "6"),
   Skill('PostgreSQL', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Redis', "Fake description", ''),
-  Skill('Android', "Fake description", ''),
-  Skill('Node.js', "Fake description", ''),
-  Skill('Objective-C', "Fake description", ''),
-  Skill('React Native', "Fake description", ''),
-  Skill('Video', "Fake description", ''),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "7"),
+  Skill('Redis', "Fake description", '', id: "8"),
+  Skill('Android', "Fake description", '', id: "9"),
+  Skill('Node.js', "Fake description", '', id: "10"),
+  Skill('Objective-C', "Fake description", '', id: "11"),
+  Skill('React Native', "Fake description", '', id: "12"),
+  Skill('Video', "Fake description", '', id: "13"),
   Skill('Microservices', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "14"),
   Skill('Socket', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('AWS', "Fake description", ''),
-  Skill('React', "Fake description", ''),
-  Skill('Git', "Fake description", ''),
-  Skill('SQL', "Fake description", ''),
-  Skill('WebScrape', "Fake description", ''),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "15"),
+  Skill('AWS', "Fake description", '', id: "16"),
+  Skill('React', "Fake description", '', id: "17"),
+  Skill('Git', "Fake description", '', id: "18"),
+  // Skill('SQL', "Fake description", ''),
+  // Skill('WebScrape', "Fake description", ''),
 ];
 
 class ProfileStudentScreen extends StatefulWidget {
-  const ProfileStudentScreen({super.key});
+  const ProfileStudentScreen({super.key, this.fullName = ""});
+  final String fullName;
 
   @override
   _ProfileStudentScreenState createState() => _ProfileStudentScreenState();
@@ -290,7 +305,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   const SizedBox(height: 14.0),
                   SearchDropdown(
                     onListChangedCallback: (p0) {
-                      _profileStudentFormStore.setTechStack(p0);
+                      _profileStudentFormStore.setTechStack([p0]);
                     },
                   ),
                   // _buildUserIdField(),
@@ -567,7 +582,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   !_languages[index].readOnly,
                               canRequestFocus: !_languages[index].readOnly,
                               iconMargin: const EdgeInsets.only(top: 30),
-                              initialValue: _languages[index].name,
+                              initialValue: _languages[index].languageName,
                               readOnly: _languages[index].readOnly,
                               hint: Lang.get('login_et_user_email'),
                               inputType: TextInputType.emailAddress,
@@ -579,8 +594,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                               inputAction: TextInputAction.next,
                               autoFocus: false,
                               onChanged: (value) {
-                                _languages[index].name = value;
-    
+                                _languages[index].languageName = value;
+
                                 // _formStore
                                 //     .setUserId(_userEmailController.text);
                               },
@@ -628,12 +643,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 enabled: _languages[index].enabled,
                                 enableInteractiveSelection:
                                     !_languages[index].readOnly,
-                                canRequestFocus:
-                                    !_languages[index].readOnly,
+                                canRequestFocus: !_languages[index].readOnly,
                                 readOnly: _languages[index].readOnly,
-                                initialValue: _languages[index].proficiency,
-                                fontSize:
-                                    _languages[index].readOnly ? 10 : 15,
+                                initialValue: _languages[index].level,
+                                fontSize: _languages[index].readOnly ? 10 : 15,
                                 hint: Lang.get('login_et_user_email'),
                                 inputType: TextInputType.emailAddress,
                                 icon: null,
@@ -641,8 +654,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                 inputAction: TextInputAction.next,
                                 autoFocus: false,
                                 onChanged: (value) {
-                                  _languages[index].proficiency = value;
-    
+                                  _languages[index].level = value;
+
                                   // _formStore
                                   //     .setUserId(_userEmailController.text);
                                 },
@@ -799,7 +812,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                               autoFocus: false,
                               onChanged: (value) {
                                 _educations[index].schoolName = value;
-    
+
                                 // _formStore
                                 //     .setUserId(_userEmailController.text);
                               },
@@ -833,8 +846,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                   enabled: _educations[index].enabled,
                                   enableInteractiveSelection:
                                       !_educations[index].readOnly,
-                                  canRequestFocus:
-                                      !_educations[index].readOnly,
+                                  canRequestFocus: !_educations[index].readOnly,
                                   readOnly: _educations[index].readOnly,
                                   initialValue: _educations[index].year(),
                                   fontSize:
@@ -863,8 +875,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                         onTap: () {
                                           showDialog(
                                             context: context,
-                                            builder:
-                                                (BuildContext context) {
+                                            builder: (BuildContext context) {
                                               return AlertDialog(
                                                 title: Text(Lang.get(
                                                     "profile_project_start")),
@@ -874,13 +885,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                                   height: 300,
                                                   child: YearPicker(
                                                     firstDate: DateTime(
-                                                        DateTime.now()
-                                                                .year -
+                                                        DateTime.now().year -
                                                             50,
                                                         1),
                                                     lastDate: DateTime(
-                                                        DateTime.now()
-                                                                .year +
+                                                        DateTime.now().year +
                                                             50,
                                                         1),
                                                     // save the selected date to _selectedDate DateTime variable.
@@ -889,17 +898,16 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                                     selectedDate:
                                                         _educations[index]
                                                             .startYear,
-                                                    onChanged: (DateTime
-                                                        dateTime) {
+                                                    onChanged:
+                                                        (DateTime dateTime) {
                                                       setState(() {
                                                         _educations[index]
                                                                 .startYear =
                                                             dateTime;
                                                       });
                                                       // close the dialog when year is selected.
-                                                      Navigator.pop(
-                                                          context);
-    
+                                                      Navigator.pop(context);
+
                                                       // Do something with the dateTime selected.
                                                       // Remember that you need to use dateTime.year to get the year
                                                     },
@@ -916,11 +924,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              Lang.get(
-                                                  'profile_project_start'),
+                                              Lang.get('profile_project_start'),
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.w600,
+                                                  fontWeight: FontWeight.w600,
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .primary,
@@ -942,8 +948,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                         onTap: () {
                                           showDialog(
                                             context: context,
-                                            builder:
-                                                (BuildContext context) {
+                                            builder: (BuildContext context) {
                                               return AlertDialog(
                                                 title: Text(Lang.get(
                                                     "profile_project_end")),
@@ -953,13 +958,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                                   height: 300,
                                                   child: YearPicker(
                                                     firstDate: DateTime(
-                                                        DateTime.now()
-                                                                .year -
+                                                        DateTime.now().year -
                                                             50,
                                                         1),
                                                     lastDate: DateTime(
-                                                        DateTime.now()
-                                                                .year +
+                                                        DateTime.now().year +
                                                             50,
                                                         1),
                                                     // save the selected date to _selectedDate DateTime variable.
@@ -968,17 +971,15 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                                     selectedDate:
                                                         _educations[index]
                                                             .endYear,
-                                                    onChanged: (DateTime
-                                                        dateTime) {
+                                                    onChanged:
+                                                        (DateTime dateTime) {
                                                       setState(() {
                                                         _educations[index]
-                                                                .endYear =
-                                                            dateTime;
+                                                            .endYear = dateTime;
                                                       });
                                                       // close the dialog when year is selected.
-                                                      Navigator.pop(
-                                                          context);
-    
+                                                      Navigator.pop(context);
+
                                                       // Do something with the dateTime selected.
                                                       // Remember that you need to use dateTime.year to get the year
                                                     },
@@ -995,11 +996,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Text(
-                                              Lang.get(
-                                                  'profile_project_end'),
+                                              Lang.get('profile_project_end'),
                                               style: TextStyle(
-                                                  fontWeight:
-                                                      FontWeight.w600,
+                                                  fontWeight: FontWeight.w600,
                                                   color: Theme.of(context)
                                                       .colorScheme
                                                       .primary,
@@ -1094,6 +1093,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
           onPressed: () async {
             setLanguage();
             setEducation();
+            _profileStudentFormStore.setFullName(widget.fullName);
             Navigator.of(context).push(
                 MaterialPageRoute2(routeName: Routes.profileStudentStep2));
             // if (_formStore.canProfileStudent) {
@@ -1111,16 +1111,16 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
+    // SharedPreferences.getInstance().then((prefs) {
+    //   prefs.setBool(Preferences.is_logged_in, true);
+    // });
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.home),
-          (Route<dynamic> route) => false);
-    });
+    // Future.delayed(const Duration(milliseconds: 0), () {
+    //   //print("LOADING = $loading");
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute2(routeName: Routes.home),
+    //       (Route<dynamic> route) => false);
+    // });
 
     return Container();
   }

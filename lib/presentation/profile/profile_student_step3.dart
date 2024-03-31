@@ -7,20 +7,16 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:flutter_link_previewer/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:open_filex/open_filex.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../di/service_locator.dart';
@@ -50,7 +46,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
 
   //stores:---------------------------------------------------------------------
   final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  // final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
 
@@ -93,15 +89,16 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
               : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _profileStudentFormStore.success
                   ? navigate(context)
-                  : _showErrorMessage(_formStore.errorStore.errorMessage);
+                  : _showErrorMessage(
+                      _profileStudentFormStore.errorStore.errorMessage);
             },
           ),
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: _profileStudentFormStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
@@ -249,9 +246,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         }
                         return;
                       }
-                      setState(() {
-                        cvEnable = false;
-                      });
 
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
@@ -263,6 +257,9 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         // File file = File(result.files.single.path!);
                         setState(() {
                           _cv = result.files.single;
+                        });
+                        setState(() {
+                          cvEnable = false;
                         });
                         final image = await FilePreview.getThumbnail(
                           isCV: true,
@@ -420,9 +417,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         }
                         return;
                       }
-                      setState(() {
-                        transcriptEnable = false;
-                      });
 
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
@@ -434,6 +428,9 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         // File file = File(result.files.single.path!);
                         setState(() {
                           _transcript = result.files.single;
+                        });
+                        setState(() {
+                          transcriptEnable = false;
                         });
                         final image = await FilePreview.getThumbnail(
                           isCV: false,
@@ -527,6 +524,9 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
             print(_profileStudentFormStore.educations);
             print(_profileStudentFormStore.languages);
             print(_profileStudentFormStore.projectExperience);
+            _profileStudentFormStore.addProfileStudent(
+                _profileStudentFormStore.techStack,
+                _profileStudentFormStore.skillSet);
 
             // Navigator.of(context).pushAndRemoveUntil(
             //     MaterialPageRoute2(routeName: Routes.home),
@@ -546,15 +546,36 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
+    // SharedPreferences.getInstance().then((prefs) {
+    //   prefs.setBool(Preferences.is_logged_in, true);
+    // });
 
     Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.home),
-          (Route<dynamic> route) => false);
+      if (_formStore.success) {
+        _formStore.success = false;
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return ClassicGeneralDialogWidget(
+              contentText:
+                  '${_profileStudentFormStore.fullName} tạo profile thành công!',
+              negativeText: Lang.get('cancel'),
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(context).pop();
+                return;
+              },
+              onNegativeClick: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        );
+      }
     });
 
     return Container();
