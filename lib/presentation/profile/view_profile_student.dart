@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:auto_size_text/auto_size_text.dart';

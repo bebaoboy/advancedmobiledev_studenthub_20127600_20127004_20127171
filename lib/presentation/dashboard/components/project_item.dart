@@ -1,14 +1,65 @@
+import 'package:animations/animations.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
-import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+
+class _OpenContainerWrapper extends StatelessWidget {
+  const _OpenContainerWrapper({
+    required this.closedChild,
+    required this.project,
+  });
+
+  final Widget closedChild;
+  final Project project;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return OpenContainer(
+      useRootNavigator: true,
+      transitionDuration: const Duration(milliseconds: 500),
+      openBuilder: (context, closedContainer) {
+        return ProjectDetailsPage(
+          project: project,
+        );
+      },
+      openColor: theme.cardColor,
+      closedShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(0)),
+      ),
+      closedElevation: 0,
+      closedColor: theme.cardColor,
+      closedBuilder: (context, openContainer) {
+        return Container(
+            constraints: const BoxConstraints(maxHeight: 230),
+            decoration: const BoxDecoration(
+              border: Border(
+                top: BorderSide(color: Colors.black, width: 1.0),
+                bottom: BorderSide(color: Colors.black, width: 1.0),
+              ),
+            ),
+            child: InkWell(
+              onTap: () {
+                // Provider.of<EmailStore>(
+                //   context,
+                //   listen: false,
+                // ).currentlySelectedEmailId = id;
+                openContainer();
+              },
+              child: closedChild,
+            ));
+      },
+    );
+  }
+}
 
 class ProjectItem extends StatefulWidget {
   final Project project;
 
   final Function onFavoriteTap;
-  const ProjectItem({super.key, required this.project, required this.onFavoriteTap});
+  const ProjectItem(
+      {super.key, required this.project, required this.onFavoriteTap});
 
   @override
   _ProjectItemState createState() => _ProjectItemState();
@@ -58,7 +109,7 @@ class _ProjectItemState extends State<ProjectItem> {
       } else if (differenceWithToday == 1) {
         createdText = 'Created 1 day ago';
       } else {
-      createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+        createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
       }
 
       var proposalText = 'Proposals: ';
@@ -73,14 +124,7 @@ class _ProjectItemState extends State<ProjectItem> {
         proposalText += '0';
       }
 
-      return Container(
-        constraints: const BoxConstraints(maxHeight: 230),
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.black, width: 1.0),
-            bottom: BorderSide(color: Colors.black, width: 1.0),
-          ),
-        ),
+      return
 
 //       Card(
 //         child: Padding(
@@ -106,49 +150,86 @@ class _ProjectItemState extends State<ProjectItem> {
 //                     Text(widget.project.description),
 //                     Text(proposalText),
 //                   ],
-        child: Card(
-          child: InkWell(
-            onTap: () {
-              //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
-              Navigator.of(NavigationService.navigatorKey.currentContext!)
-                  .pushNamed(Routes.projectDetailsStudent,
-                      arguments: widget.project);
-            },
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 9,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(createdText),
-                          Text(widget.project.title),
-                          Text(
-                            'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-                          ),
-                          Text(widget.project.description),
-                          Text(proposalText),
-                        ],
+
+          _OpenContainerWrapper(
+        project: widget.project,
+        closedChild: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 9,
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(createdText),
+                      Text(widget.project.title),
+                      Text(
+                        'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
                       ),
-                    ),
+                      Text(widget.project.description),
+                      Text(proposalText),
+                    ],
                   ),
-                  IconButton(
-                    color: Theme.of(context).colorScheme.primary,
-                    onPressed: () {
-                      setState(() {
-                        widget.onFavoriteTap();
-                      });
-                    },
-                    icon: icon,
-                  ),
-                ],
+                ),
               ),
-            ),
+              IconButton(
+                color: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  setState(() {
+                    widget.onFavoriteTap();
+                  });
+                },
+                icon: icon,
+              ),
+            ],
           ),
         ),
+
+        //  Card(
+        //   child: InkWell(
+        //     onTap: () {
+        //       //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
+        //       Navigator.of(NavigationService.navigatorKey.currentContext!)
+        //           .pushNamed(Routes.projectDetailsStudent,
+        //               arguments: widget.project);
+        //     },
+        //     child: Padding(
+        //       padding: const EdgeInsets.all(8.0),
+        //       child: Row(
+        //         children: [
+        //           Expanded(
+        //             flex: 9,
+        //             child: SingleChildScrollView(
+        //               child: Column(
+        //                 crossAxisAlignment: CrossAxisAlignment.start,
+        //                 children: [
+        //                   Text(createdText),
+        //                   Text(widget.project.title),
+        //                   Text(
+        //                     'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+        //                   ),
+        //                   Text(widget.project.description),
+        //                   Text(proposalText),
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //           IconButton(
+        //             color: Theme.of(context).colorScheme.primary,
+        //             onPressed: () {
+        //               setState(() {
+        //                 widget.onFavoriteTap();
+        //               });
+        //             },
+        //             icon: icon,
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //   ),
+        // ),
       );
     }
   }

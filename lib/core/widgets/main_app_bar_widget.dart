@@ -7,6 +7,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 // class DarkTransition extends StatefulWidget {
 //   const DarkTransition(
@@ -326,7 +327,7 @@ class _MainAppBarState extends State<MainAppBar> {
     //     isDark: isDark,
     //     offset: Offset(MediaQuery.of(context).size.width * 0.7, 20),
     //     childBuilder: (context, x) =>
-    return AppBar(
+    return MorphingAppBar(
       leadingWidth: 30,
       titleSpacing: 0,
       toolbarHeight: 250,

@@ -73,12 +73,31 @@ class ProfileApi {
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
+    Future<Response> getLanguage(UpdateLanguageParams params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getLanguage)({"studentId": params.studentId}),
+        data: {
+          // "languages": params.languages,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
   Future<Response> updateEducation(UpdateEducationParams params) async {
     return await _dioClient.dio.put(
         Interpolator(Endpoints.updateEducation)(
             {"studentId": params.studentId}),
         data: {
           "education": params.educations,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> getEducation(UpdateEducationParams params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getEducation)(
+            {"studentId": params.studentId}),
+        data: {
+          // "education": params.educations,
         }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }
@@ -90,6 +109,17 @@ class ProfileApi {
             {"studentId": params.studentId}),
         data: {
           "experience": params.projectExperiences,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+    Future<Response> getProjectExperience(
+      UpdateProjectExperienceParams params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getProjectExperience)(
+            {"studentId": params.studentId}),
+        data: {
+          // "experience": params.projectExperiences,
         }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }

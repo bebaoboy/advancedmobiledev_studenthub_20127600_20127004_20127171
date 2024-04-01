@@ -144,6 +144,7 @@ dependencies:
   # flutter_in_app_pip:
   smooth_page_indicator:
   interpolator:
+  swipeable_page_route:
 
 
 dev_dependencies:

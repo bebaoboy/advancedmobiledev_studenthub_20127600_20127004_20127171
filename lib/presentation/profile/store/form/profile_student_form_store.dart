@@ -126,15 +126,15 @@ abstract class _ProfileStudentFormStore with Store {
     final AddProfileStudentParams loginParams = AddProfileStudentParams(
         techStack: techStack != null
             ? techStack.isNotEmpty
-                ? int.tryParse(techStack[0].objectId)
+                ? int.tryParse(techStack[0].objectId ?? "1")
                 : 1
             : 1,
         skillSet: (skillSet ?? [])
-            .map((e) => int.tryParse(e.objectId) ?? 0)
+            .map((e) => int.tryParse(e.objectId ?? "1") ?? 0)
             .toList());
     final future = _addProfileStudentUseCase.call(params: loginParams);
     addProfileStudentFuture = ObservableFuture(future);
-    String studentId = "3";
+    String studentId = "11";
 
     await future.then((value) {
       if (value.statusCode == HttpStatus.accepted ||

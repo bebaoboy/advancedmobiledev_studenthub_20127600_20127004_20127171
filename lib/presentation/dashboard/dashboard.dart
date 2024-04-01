@@ -434,7 +434,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           });
         },
         onChanged: (p0) {
-          setState(() {});
+          // setState(() {});
         },
         onBackButtonPressed: (isExiting) {
           if (isExiting) {

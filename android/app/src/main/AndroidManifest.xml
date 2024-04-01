@@ -46,7 +46,6 @@
         android:icon="@mipmap/ic_launcher"
         android:label="StudentHub"
         android:name="${applicationName}"
-        android:enableOnBackInvokedCallback="true"
         android:usesCleartextTraffic="true">
         <activity
             android:name=".MainActivity"

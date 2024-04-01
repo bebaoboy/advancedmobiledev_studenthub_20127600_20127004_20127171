@@ -696,7 +696,7 @@ class _MessageScreenState extends State<MessageScreen> {
                     "title": value.title,
                     "endDate": value.endDate,
                     "startDate": value.startDate,
-                    "isCancel": "false",
+                    "isCancel": false,
                   });
               _sortMessages();
             });
@@ -739,8 +739,9 @@ class _MessageScreenState extends State<MessageScreen> {
           );
         },
         customMessageBuilder: (p0, {required messageWidth}) {
-          //////print(p0.metadata!["type"]);
           var t = InterviewSchedule.fromJson(p0.metadata!);
+          print(t);
+          print(t.objectId);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
                 showAdaptiveActionSheet(
@@ -795,7 +796,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                     DateTime.now().millisecondsSinceEpoch,
                                 metadata: {
                                   ..._messages[i].metadata!,
-                                  "isCancel": "true",
+                                  "isCancel": true,
                                 });
                             _sortMessages();
                           });

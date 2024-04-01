@@ -5,13 +5,14 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const EmptyAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
+    return MorphingAppBar(
       leadingWidth: 30,
       titleSpacing: 0,
       title: Container(

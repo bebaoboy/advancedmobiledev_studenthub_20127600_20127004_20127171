@@ -353,29 +353,28 @@ class _ExampleLoadingAnimationProjectListState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Shimmer(
-        linearGradient: _shimmerGradient,
-        child: Scrollbar(
-          child: widget.list.isEmpty
-              ? Text(Lang.get("nothing_here"))
-              : ListView(
-                  physics: const ClampingScrollPhysics(),
-                  children: [
-                    // _buildTopRowList(),
-                    const SizedBox(height: 16),
-                    _buildList(),
-                  ],
-                ),
-        ),
+    return Shimmer(
+      linearGradient: _shimmerGradient,
+      child: Scrollbar(
+        child: widget.list.isEmpty
+            ? Center(child: Text(Lang.get("nothing_here")))
+            : ListView(
+                physics: const ClampingScrollPhysics(),
+                children: [
+                  // _buildTopRowList(),
+                  const SizedBox(height: 16),
+                  _buildList(),
+                ],
+              ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _toggleLoading,
-      //   child: Icon(
-      //     _isLoading ? Icons.hourglass_full : Icons.hourglass_bottom,
-      //   ),
-      // ),
-    );
+    )
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: _toggleLoading,
+        //   child: Icon(
+        //     _isLoading ? Icons.hourglass_full : Icons.hourglass_bottom,
+        //   ),
+        // ),
+        ;
   }
 
   Widget _buildTopRowList() {
@@ -428,7 +427,7 @@ class _ExampleLoadingAnimationProjectListState
       isLoading: w.isLoading,
       child: ProjectItem(
         project: w as Project,
-        onFavoriteTap: () => widget.firstCallback(index),
+        onFavoriteTap: () => widget.firstCallback(w.objectId),
       ),
     );
   }
@@ -540,125 +539,124 @@ class _LazyLoadingAnimationProjectListState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Shimmer(
-        linearGradient: _shimmerGradient,
-        child: Scrollbar(
-          child:
-              // ListView(
-              //   physics: ClampingScrollPhysics(),
-              //   children: [
-              //     // _buildTopRowList(),
-              //     const SizedBox(height: 16),
-              //     _buildList(),
-              //   ],
-              // ),
-
-              EnhancedPaginatedView<Project>(
-            scrollController: widget.scrollController,
-            shouldDeduplicate: false,
-            listOfData: initList,
-            itemsPerPage: maxItems,
-            showLoading: isLoading,
-            isMaxReached: isMaxReached,
-            onLoadMore: loadMore,
-            loadingWidget:
-                // const Center(child: CircularProgressIndicator()),
-                Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Lottie.asset(
-                      'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                      fit: BoxFit.cover,
-                      width: 60, // Adjust the width and height as needed
-                      height: 60,
-                      repeat:
-                          true, // Set to true if you want the animation to loop
-                    ),
-                  ),
-                  Center(
-                    child: Text(
-                      Lang.get("loading"),
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blueAccent),
-                    ),
-                  )
-                ],
-              ),
-            ),
-
-            /// [showErrorWidget] is a boolean that will be used
-            /// to control the error widget
-            /// this boolean will be set to true when an error occurs
-            showError: false,
-            errorWidget: (page) => Center(
-              child: Column(
-                children: [
-                  Text(Lang.get('nothing_here')),
-                  ElevatedButton(
-                    onPressed: () => loadMore(page),
-                    child: Text(Lang.get('Reload')),
-                  )
-                ],
-              ),
-            ),
-            // header: Padding(
-            //   padding: const EdgeInsets.all(8.0),
-            //   child: Column(
-            //     children: [
-            //       Text(
-            //         'Header',
-            //         style: Theme.of(context).textTheme.headlineLarge,
-            //       ),
-            //       const SizedBox(height: 16),
-            //       OutlinedButton(
-            //         onPressed: () {},
-            //         child: const Text(Lang.get('Bloc Example'),
-            //       ),
-            //     ],
-            //   ),
+    return Shimmer(
+      linearGradient: _shimmerGradient,
+      child: Scrollbar(
+        child:
+            // ListView(
+            //   physics: ClampingScrollPhysics(),
+            //   children: [
+            //     // _buildTopRowList(),
+            //     const SizedBox(height: 16),
+            //     _buildList(),
+            //   ],
             // ),
 
-            /// the `reverse` parameter is a boolean that will be used
-            /// to reverse the list and its children
-            /// it code be handy when you are building a chat app for example
-            /// and you want to reverse the list to show the latest messages
-
-            builder: (physics, items, shrinkWrap, reverse) {
-              return ListView.builder(
-                // here we must pass the physics, items and shrinkWrap
-                // that came from the builder function
-                reverse: false,
-                physics: physics,
-                shrinkWrap: true,
-                itemCount: items.length,
-                // separatorBuilder: (BuildContext context, int index) {
-                //   return const Divider(
-                //     height: 16,
-                //   );
-                // },
-                itemBuilder: (BuildContext context, int index) {
-                  return SizedBox(
-                      width: 100,
-                      height: widget.itemHeight,
-                      child: _buildListItem(widget.list[index], index));
-                },
-              );
-            },
+            EnhancedPaginatedView<Project>(
+          scrollController: widget.scrollController,
+          shouldDeduplicate: false,
+          listOfData: initList,
+          itemsPerPage: maxItems,
+          showLoading: isLoading,
+          isMaxReached: isMaxReached,
+          onLoadMore: loadMore,
+          loadingWidget:
+              // const Center(child: CircularProgressIndicator()),
+              Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Lottie.asset(
+                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                    fit: BoxFit.cover,
+                    width: 60, // Adjust the width and height as needed
+                    height: 60,
+                    repeat:
+                        true, // Set to true if you want the animation to loop
+                  ),
+                ),
+                Center(
+                  child: Text(
+                    Lang.get("loading"),
+                    style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blueAccent),
+                  ),
+                )
+              ],
+            ),
           ),
+
+          /// [showErrorWidget] is a boolean that will be used
+          /// to control the error widget
+          /// this boolean will be set to true when an error occurs
+          showError: false,
+          errorWidget: (page) => Center(
+            child: Column(
+              children: [
+                Text(Lang.get('nothing_here')),
+                ElevatedButton(
+                  onPressed: () => loadMore(page),
+                  child: Text(Lang.get('Reload')),
+                )
+              ],
+            ),
+          ),
+          // header: Padding(
+          //   padding: const EdgeInsets.all(8.0),
+          //   child: Column(
+          //     children: [
+          //       Text(
+          //         'Header',
+          //         style: Theme.of(context).textTheme.headlineLarge,
+          //       ),
+          //       const SizedBox(height: 16),
+          //       OutlinedButton(
+          //         onPressed: () {},
+          //         child: const Text(Lang.get('Bloc Example'),
+          //       ),
+          //     ],
+          //   ),
+          // ),
+
+          /// the `reverse` parameter is a boolean that will be used
+          /// to reverse the list and its children
+          /// it code be handy when you are building a chat app for example
+          /// and you want to reverse the list to show the latest messages
+
+          builder: (physics, items, shrinkWrap, reverse) {
+            return ListView.builder(
+              // here we must pass the physics, items and shrinkWrap
+              // that came from the builder function
+              reverse: false,
+              physics: physics,
+              shrinkWrap: true,
+              itemCount: items.length,
+              // separatorBuilder: (BuildContext context, int index) {
+              //   return const Divider(
+              //     height: 16,
+              //   );
+              // },
+              itemBuilder: (BuildContext context, int index) {
+                return SizedBox(
+                    width: 100,
+                    height: widget.itemHeight,
+                    child: _buildListItem(widget.list[index], index));
+              },
+            );
+          },
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _toggleLoading,
-      //   child: Icon(
-      //     _isLoading ? Icons.hourglass_full : Icons.hourglass_bottom,
-      //   ),
-      // ),
-    );
+    )
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: _toggleLoading,
+        //   child: Icon(
+        //     _isLoading ? Icons.hourglass_full : Icons.hourglass_bottom,
+        //   ),
+        // ),
+        ;
   }
 
   Widget _buildTopRowList() {
@@ -826,7 +824,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
     }
   }
 
-  double opacity = 0;
+  double opacity = 0.5;
 
   @override
   void dispose() {
@@ -850,9 +848,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading> {
   @override
   Widget build(BuildContext context) {
     if (!widget.isLoading) {
-      return AnimatedOpacity(
-        opacity: opacity,
-        duration: const Duration(seconds: 1),
+      return AnimatedScale(
+        scale: opacity,
+        duration: const Duration(milliseconds: 500),
         child: widget.child,
       );
     }

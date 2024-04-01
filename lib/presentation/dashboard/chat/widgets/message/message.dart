@@ -1,7 +1,9 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
 import '../../conditional/conditional.dart';
@@ -53,6 +55,7 @@ class Message extends StatefulWidget {
     required this.usePreviewData,
     this.userAgent,
     this.videoMessageBuilder,
+    this.errorMessageBuilder,
   });
 
   /// Build an audio message inside predefined bubble.
@@ -81,6 +84,10 @@ class Message extends StatefulWidget {
   /// Build a custom message inside predefined bubble.
   final Widget Function(types.CustomMessage, {required int messageWidth})?
       customMessageBuilder;
+
+  /// Build an error message inside predefined bubble.
+  final Widget Function(String error, {required int messageWidth})?
+      errorMessageBuilder;
 
   /// Build a custom status widgets.
   final Widget Function(types.Message message, {required BuildContext context})?
@@ -215,41 +222,50 @@ class _MessageState extends State<Message> {
             onAvatarTap: widget.onAvatarTap,
           )
       : const SizedBox(width: 40);
-
+  bool builtSuccessfully = true;
   Widget _bubbleBuilder(
     BuildContext context,
     BorderRadius borderRadius,
     bool currentUserIsAuthor,
     bool enlargeEmojis,
   ) {
+    final msgBuilder = _messageBuilder();
     final defaultMessage = (enlargeEmojis &&
             widget.hideBackgroundOnEmojiMessages)
-        ? _messageBuilder()
+        ? msgBuilder
         : Container(
             decoration: BoxDecoration(
               borderRadius: borderRadius,
               border: (widget.message.type != types.MessageType.custom)
                   ? null
-                  : Border.all(
-                      color: Theme.of(context).colorScheme.primary, width: 3),
-              color: !currentUserIsAuthor ||
-                      widget.message.type == types.MessageType.image
-                  ? (dateVisibility
-                      ? Theme.of(context).colorScheme.primary.withOpacity(0.5)
-                      : Chat.theme.secondaryColor)
-                  : (widget.message.type != types.MessageType.custom &&
-                          widget.message.type != types.MessageType.audio)
-                      ? Theme.of(context).colorScheme.primary
-                      : Chat.theme.secondaryColor,
+                  : !builtSuccessfully
+                      ? null
+                      : Border.all(
+                          color: Theme.of(context).colorScheme.primary,
+                          width: 3),
+              color: (currentUserIsAuthor && !builtSuccessfully)
+                  ? Theme.of(context).colorScheme.primary
+                  : !currentUserIsAuthor ||
+                          widget.message.type == types.MessageType.image
+                      ? (dateVisibility
+                          ? Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.5)
+                          : Chat.theme.secondaryColor)
+                      : (widget.message.type != types.MessageType.custom &&
+                              widget.message.type != types.MessageType.audio)
+                          ? Theme.of(context).colorScheme.primary
+                          : Chat.theme.secondaryColor,
             ),
             child: ClipRRect(
               borderRadius: borderRadius,
-              child: _messageBuilder(),
+              child: msgBuilder,
             ),
           );
     return widget.bubbleBuilder != null
         ? widget.bubbleBuilder!(
-            _messageBuilder(),
+            msgBuilder,
             message: widget.message,
             nextMessageInGroup: widget.roundBorder,
           )
@@ -257,69 +273,98 @@ class _MessageState extends State<Message> {
   }
 
   Widget _messageBuilder() {
-    switch (widget.message.type) {
-      case types.MessageType.audio:
-        final audioMessage = widget.message as types.AudioMessage;
-        return widget.audioMessageBuilder != null
-            ? widget.audioMessageBuilder!(audioMessage,
-                messageWidth: widget.messageWidth)
-            : const SizedBox();
-      case types.MessageType.custom:
-        final customMessage = widget.message as types.CustomMessage;
-        return widget.customMessageBuilder != null
-            ? widget.customMessageBuilder!(customMessage,
-                messageWidth: widget.messageWidth)
-            : const SizedBox();
-      case types.MessageType.file:
-        final fileMessage = widget.message as types.FileMessage;
-        return widget.fileMessageBuilder != null
-            ? widget.fileMessageBuilder!(fileMessage,
-                messageWidth: widget.messageWidth)
-            : FileMessage(message: fileMessage);
-      case types.MessageType.image:
-        final imageMessage = widget.message as types.ImageMessage;
-        return widget.imageMessageBuilder != null
-            ? widget.imageMessageBuilder!(imageMessage,
-                messageWidth: widget.messageWidth)
-            : ImageMessage(
-                imageHeaders: widget.imageHeaders,
-                imageProviderBuilder: widget.imageProviderBuilder,
-                message: imageMessage,
-                messageWidth: widget.messageWidth,
-              );
-      case types.MessageType.text:
-        final textMessage = widget.message as types.TextMessage;
-        return widget.textMessageBuilder != null
-            ? widget.textMessageBuilder!(
-                textMessage,
-                messageWidth: widget.messageWidth,
-                showName: widget.showName,
-              )
-            : TextMessage(
-                emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
-                hideBackgroundOnEmojiMessages:
-                    widget.hideBackgroundOnEmojiMessages,
-                message: textMessage,
-                nameBuilder: widget.nameBuilder,
-                onPreviewDataFetched: widget.onPreviewDataFetched,
-                options: widget.textMessageOptions,
-                showName: widget.showName,
-                usePreviewData: widget.usePreviewData,
-                userAgent: widget.userAgent,
-                onTapCallback: () {
-                  setState(() {
-                    dateVisibility = !dateVisibility;
-                  });
-                },
-              );
-      case types.MessageType.video:
-        final videoMessage = widget.message as types.VideoMessage;
-        return widget.videoMessageBuilder != null
-            ? widget.videoMessageBuilder!(videoMessage,
-                messageWidth: widget.messageWidth)
-            : const SizedBox();
-      default:
-        return const SizedBox();
+    try {
+      switch (widget.message.type) {
+        case types.MessageType.audio:
+          final audioMessage = widget.message as types.AudioMessage;
+          return widget.audioMessageBuilder != null
+              ? widget.audioMessageBuilder!(audioMessage,
+                  messageWidth: widget.messageWidth)
+              : const SizedBox();
+        case types.MessageType.custom:
+          final customMessage = widget.message as types.CustomMessage;
+          return widget.customMessageBuilder != null
+              ? widget.customMessageBuilder!(customMessage,
+                  messageWidth: widget.messageWidth)
+              : const SizedBox();
+        case types.MessageType.file:
+          final fileMessage = widget.message as types.FileMessage;
+          return widget.fileMessageBuilder != null
+              ? widget.fileMessageBuilder!(fileMessage,
+                  messageWidth: widget.messageWidth)
+              : FileMessage(message: fileMessage);
+        case types.MessageType.image:
+          final imageMessage = widget.message as types.ImageMessage;
+          return widget.imageMessageBuilder != null
+              ? widget.imageMessageBuilder!(imageMessage,
+                  messageWidth: widget.messageWidth)
+              : ImageMessage(
+                  imageHeaders: widget.imageHeaders,
+                  imageProviderBuilder: widget.imageProviderBuilder,
+                  message: imageMessage,
+                  messageWidth: widget.messageWidth,
+                );
+        case types.MessageType.text:
+          final textMessage = widget.message as types.TextMessage;
+          return widget.textMessageBuilder != null
+              ? widget.textMessageBuilder!(
+                  textMessage,
+                  messageWidth: widget.messageWidth,
+                  showName: widget.showName,
+                )
+              : TextMessage(
+                  emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
+                  hideBackgroundOnEmojiMessages:
+                      widget.hideBackgroundOnEmojiMessages,
+                  message: textMessage,
+                  nameBuilder: widget.nameBuilder,
+                  onPreviewDataFetched: widget.onPreviewDataFetched,
+                  options: widget.textMessageOptions,
+                  showName: widget.showName,
+                  usePreviewData: widget.usePreviewData,
+                  userAgent: widget.userAgent,
+                  onTapCallback: () {
+                    setState(() {
+                      dateVisibility = !dateVisibility;
+                    });
+                  },
+                );
+        case types.MessageType.video:
+          final videoMessage = widget.message as types.VideoMessage;
+          return widget.videoMessageBuilder != null
+              ? widget.videoMessageBuilder!(videoMessage,
+                  messageWidth: widget.messageWidth)
+              : const SizedBox();
+        default:
+          return const SizedBox();
+      }
+    } catch (e) {
+      builtSuccessfully = false;
+      return widget.errorMessageBuilder != null
+          ? widget.errorMessageBuilder!(
+              Lang.get("error"),
+              messageWidth: widget.messageWidth,
+            )
+          : TextMessage(
+              emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
+              hideBackgroundOnEmojiMessages:
+                  widget.hideBackgroundOnEmojiMessages,
+              message: types.TextMessage(
+                  text: "<${Lang.get("error")}>\n${e.toString()}",
+                  id: const Uuid().v4(),
+                  author: widget.message.author),
+              nameBuilder: widget.nameBuilder,
+              onPreviewDataFetched: widget.onPreviewDataFetched,
+              options: widget.textMessageOptions,
+              showName: widget.showName,
+              usePreviewData: widget.usePreviewData,
+              userAgent: widget.userAgent,
+              onTapCallback: () {
+                setState(() {
+                  dateVisibility = !dateVisibility;
+                });
+              },
+            );
     }
   }
 

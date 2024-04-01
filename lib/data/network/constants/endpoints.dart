@@ -61,7 +61,7 @@ class Endpoints {
   static const String updateProfileCompany =
       "$baseUrl/api/profile/company/{id}";
   static const String getProfileCompany =
-      "$baseUrl/api/profile/company/{companyId}";
+      "$baseUrl/api/profile/company/{companyId}"; // done
 
   /* POST student profile
       {
@@ -104,31 +104,31 @@ class Endpoints {
   static const String updateProfileStudent =
       "$baseUrl/api/profile/student/{id}";
   static const String getProfileStudent =
-      "$baseUrl/api/profile/student/{studentId}";
+      "$baseUrl/api/profile/student/{studentId}"; // done
   static const String getProfileStudentTechStack =
       "$baseUrl/api/profile/student/{studentId}/techStack";
 
   static const String getLanguage =
       "$baseUrl/api/language/getByStudentId/{studentId}";
   static const String updateLanguage =
-      "$baseUrl/api/language/updateByStudentId/{studentId}";
+      "$baseUrl/api/language/updateByStudentId/{studentId}"; // done
   static const String getEducation =
       "$baseUrl/api/education/getByStudentId/{studentId}";
   static const String updateEducation =
-      "$baseUrl/api/education/updateByStudentId/{studentId}";
+      "$baseUrl/api/education/updateByStudentId/{studentId}"; // done
   static const String getProjectExperience =
       "$baseUrl/api/experience/getByStudentId/{studentId}";
   static const String updateProjectExperience =
-      "$baseUrl/api/experience/updateByStudentId/{studentId}";
+      "$baseUrl/api/experience/updateByStudentId/{studentId}"; // done
 
   static const String updateResume =
-      "$baseUrl/api/profile/student/{studentId}/resume";
+      "$baseUrl/api/profile/student/{studentId}/resume"; // semidone
 
   static const String getResume =
       "$baseUrl/api/profile/student/{studentId}/resume";
 
   static const String updateTranscript =
-      "$baseUrl/api/profile/student/{studentId}/transcript";
+      "$baseUrl/api/profile/student/{studentId}/transcript"; // semidone
 
   static const String getTranscript =
       "$baseUrl/api/profile/student/{studentId}/transcript";

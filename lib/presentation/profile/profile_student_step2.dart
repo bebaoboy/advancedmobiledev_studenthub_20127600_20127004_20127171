@@ -89,30 +89,34 @@ class SearchDropdown extends StatelessWidget {
 }
 
 var mockSkillsets = <Skill>[
-  Skill('JavaScript', "Fake description", ''),
-  Skill('iOS Development', "Fake description", ''),
-  Skill('C', "Fake description", ''),
+  Skill('JavaScript', "Fake description", '', id: "1"),
+  Skill('iOS Development', "Fake description", '', id: "2"),
+  Skill('C', "Fake description", '', id: "3"),
   Skill('Java', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('C++', "Fake description", ''),
-  Skill('Kubernetes', "Fake description", ''),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "4"),
+  Skill('C++', "Fake description", '', id: "5"),
+  Skill('Kubernetes', "Fake description", '', id: "6"),
   Skill('PostgreSQL', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('Redis', "Fake description", ''),
-  Skill('Android', "Fake description", ''),
-  Skill('Node.js', "Fake description", ''),
-  Skill('Objective-C', "Fake description", ''),
-  Skill('React Native', "Fake description", ''),
-  Skill('Video', "Fake description", ''),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "7"),
+  Skill('Redis', "Fake description", '', id: "8"),
+  Skill('Android', "Fake description", '', id: "9"),
+  Skill('Node.js', "Fake description", '', id: "10"),
+  Skill('Objective-C', "Fake description", '', id: "11"),
+  Skill('React Native', "Fake description", '', id: "12"),
+  Skill('Video', "Fake description", '', id: "13"),
   Skill('Microservices', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "14"),
   Skill('Socket', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png'),
-  Skill('AWS', "Fake description", ''),
-  Skill('React', "Fake description", ''),
-  Skill('Git', "Fake description", ''),
-  Skill('SQL', "Fake description", ''),
-  Skill('WebScrape', "Fake description", ''),
+      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+      id: "15"),
+  Skill('AWS', "Fake description", '', id: "16"),
+  Skill('React', "Fake description", '', id: "17"),
+  Skill('Git', "Fake description", '', id: "18"),
+  // Skill('SQL', "Fake description", ''),
+  // Skill('WebScrape', "Fake description", ''),
 ];
 
 class ProfileStudentStep2Screen extends StatefulWidget {
@@ -150,16 +154,16 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
         startDate: DateTime(2020, 9),
         endDate: DateTime(2020, 12),
-        skills: [Skill("React", "", ""), Skill("Android", "", "")]));
+        skills: [Skill("React", "", "", id: "10"), Skill("Android", "", "", id: "2")]));
     _projects.add(ProjectExperience("Community partners project",
         description:
             "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
         startDate: DateTime(2019, 12),
         endDate: DateTime(2024, 2),
         skills: [
-          Skill("iOS", "", ""),
-          Skill("Web", "", ""),
-          Skill("Artificial Intelligent", "", "")
+          Skill("iOS", "", "", id: "5"),
+          Skill("Web", "", "", id: "4"),
+          Skill("Artificial Intelligent", "", "", id: "3")
         ]));
     _projects.add(ProjectExperience("bebaoboy Project Bunny",
         description:

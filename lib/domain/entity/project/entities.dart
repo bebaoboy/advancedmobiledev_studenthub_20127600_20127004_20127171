@@ -4,12 +4,12 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
-  String objectId = const Uuid().v4();
+  String? objectId = const Uuid().v4();
   DateTime createdAt = DateTime.now();
   DateTime updatedAt = DateTime.now();
   DateTime deletedAt = DateTime.now();
-  MyObject({required this.objectId}) {
-    if (objectId.isEmpty) objectId = const Uuid().v4();
+  MyObject({this.objectId}) {
+    objectId ??= const Uuid().v4();
   }
 }
 
@@ -103,7 +103,7 @@ class Language extends MyObject {
     return {
       "languageName": languageName,
       "level": level,
-      "id": objectId,
+      if (objectId != "") "id": objectId,
     };
   }
 }
@@ -140,7 +140,7 @@ class Education extends MyObject {
       "schoolName": schoolName,
       "startYear": startYear.toString(),
       "endYear": endYear.toString(),
-      "id": objectId,
+      if (objectId != "") "id": objectId,
     };
   }
 }
@@ -183,7 +183,12 @@ class ProjectExperience extends MyObject {
       "title": name,
       "startMonth": startDate.toString(),
       "endMonth": endDate.toString(),
-      "id": objectId,
+      "skillSets": skills == null
+          ? ["1"]
+          : skills!.isEmpty
+              ? ["1"]
+              : skills!.map((e) => e.objectId).toList(),
+      if (objectId != "") "id": objectId,
     };
   }
 }
@@ -588,8 +593,8 @@ class InterviewSchedule extends MyObject {
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = bool.tryParse(json["isCancel"] ?? "false") ?? false,
-        super(objectId: json["id"]);
+        isCancel = json["isCancel"] ?? false,
+        super(objectId: json["id"] ?? const Uuid().v4());
 
   Map<String, dynamic> toJson() => {
         "title": title,
