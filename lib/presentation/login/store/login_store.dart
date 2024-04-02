@@ -72,7 +72,8 @@ abstract class _UserStore with Store {
         email: "user2@gmail.com",
         name: "Hai Pham 2",
         roles: [],
-        isVerified: true));
+        isVerified: true,
+        objectId: "hai"));
 
     // savedUsers.add(User(
     //     email: "user3@gmail.com", name: "Hai Pham 3", roles: [], isVerified: true));
@@ -164,7 +165,8 @@ abstract class _UserStore with Store {
           value.statusCode == HttpStatus.ok) {
         success = true;
 
-        if (value.data['result']['token'] != null) {
+        if (value.data['result'] is! String &&
+            value.data['result']['token'] != null) {
           await _saveTokenUseCase.call(params: value.data['result']['token']);
           await _saveLoginStatusUseCase.call(params: true);
 

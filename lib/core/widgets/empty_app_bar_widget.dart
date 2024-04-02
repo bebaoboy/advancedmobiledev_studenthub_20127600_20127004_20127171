@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
+import 'package:boilerplate/core/widgets/shared_preference_view.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/presentation/dashboard/what.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -18,12 +19,16 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
       title: Container(
           margin: const EdgeInsets.only(left: 20),
           child: GestureDetector(
-              onLongPress: () {
+              onDoubleTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => const What(),
                   ),
                 );
+              },
+              onLongPress: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute2(child: const SharedPreferenceView()));
               },
               child: Text(Lang.get('appbar_title')))),
       actions: [

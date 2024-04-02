@@ -73,4 +73,37 @@ class User extends MyObject {
         "companyProfile": companyProfile,
         "role": roles,
       };
+
+//   @override
+//   String toString() {
+//     return {
+//         "type": type.name,
+//         "email": email,
+//         "name": name,
+// // <<<<<<< sprint4-signup_accountActivation_forgetPassword
+// //         "isVerified": isVerified
+// // =======
+//         "isVerified": isVerified,
+//         "studentProfile": studentProfile != null ? studentProfile!.toJson() : "",
+//         "companyProfile": companyProfile != null ? companyProfile!.toJson() : "",
+//         "role": roles,
+//         "id": objectId
+//       }.toString();
+//   }
+
+  Map<String, dynamic> toMap() {
+    return {
+        "type": type.name,
+        "email": email,
+        "name": name,
+// <<<<<<< sprint4-signup_accountActivation_forgetPassword
+//         "isVerified": isVerified
+// =======
+        "isVerified": isVerified,
+        "studentProfile": studentProfile != null ? studentProfile!.toMap() : "",
+        "companyProfile": companyProfile != null ? companyProfile!.toMap() : "",
+        "role": roles,
+        "id": objectId
+      };
+  }
 }

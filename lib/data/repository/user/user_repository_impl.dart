@@ -84,6 +84,8 @@ class UserRepositoryImpl extends UserRepository {
         studentProfile = null;
       }
 
+      print("student $studentData");
+
       var companyData = response.data["result"]["company"];
       CompanyProfile? companyProfile;
 
@@ -92,6 +94,9 @@ class UserRepositoryImpl extends UserRepository {
       } else {
         companyProfile = null;
       }
+
+      print("student $companyData");
+
 
       var roleData = response.data["result"]["roles"];
       List<UserType> userRoles;
@@ -121,8 +126,8 @@ class UserRepositoryImpl extends UserRepository {
       _sharedPrefsHelper.saveStudentProfile(studentProfile);
 
       try {
-        return FetchProfileResult(
-            true, [studentProfile, companyProfile], userRoles, id, name, true);
+        return FetchProfileResult(true, [studentProfile, companyProfile],
+            userRoles, id.toString(), name, true);
       } catch (e) {
         return FetchProfileResult(false, [null, null], [], "", "", false);
       }

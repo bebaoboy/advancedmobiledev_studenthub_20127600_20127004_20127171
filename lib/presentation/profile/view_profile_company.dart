@@ -1,6 +1,7 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -11,13 +12,13 @@ import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
 
-enum CompanySize {
-  single, // 1
-  small, // 2-9
-  medium, // 10-100
-  large, // 100-1000
-  xLarge // 1000+
-}
+// enum CompanyScope {
+//   single, // 1
+//   small, // 2-9
+//   medium, // 10-100
+//   large, // 100-1000
+//   xLarge // 1000+
+// }
 
 class ViewProfileCompany extends StatefulWidget {
   const ViewProfileCompany({super.key});
@@ -37,13 +38,23 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   final TextEditingController _websiteURLController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
 
-  late FocusNode _companyFocusNode;
+  final FocusNode _companyFocusNode = FocusNode();
 
-  CompanySize _companySize = CompanySize.single;
+  CompanyScope _companySize = CompanyScope.solo;
   bool enabled = false;
 
   @override
   void initState() {
+    if (_userStore.user != null) {
+      if (_userStore.user!.companyProfile != null) {
+        _companySize = _userStore.user!.companyProfile!.scope;
+        _companyNameController.text =
+            _userStore.user!.companyProfile!.companyName;
+        _websiteURLController.text = _userStore.user!.companyProfile!.website;
+        _descriptionController.text =
+            _userStore.user!.companyProfile!.description;
+      }
+    }
     super.initState();
   }
 
@@ -99,35 +110,37 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
     );
   }
 
-  Widget _buildCompanySizeSelection(BuildContext context) {
-    int length = CompanySize.values.length;
+  Widget _buildCompanyScopeSelection(BuildContext context) {
+    int length = CompanyScope.values.length;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         for (int i = 1; i <= length; i++)
-          ListTile(
-            enabled: enabled,
-            contentPadding: EdgeInsets.zero,
-            onTap: i > CompanySize.values.length + 1
-                ? null
-                : () {
-                    setState(() {
-                      _companySize = CompanySize.values[i - 1];
-                    });
-                  },
-            title: Text(Lang.get('profile_question_1_choice_$i'),
-                style: Theme.of(context).textTheme.bodyLarge),
-            leading: Radio<CompanySize>(
-              value: CompanySize.values[i - 1],
-              groupValue: _companySize,
-              onChanged: i > CompanySize.values.length + 1
-                  ? null
-                  : (CompanySize? value) => {
-                        setState(() => _companySize = value!),
-                      },
+          if (_companySize.name == CompanyScope.values[i - 1].name)
+            ListTile(
+              enabled: enabled,
+              contentPadding: EdgeInsets.zero,
+              // onTap: i > CompanyScope.values.length + 1
+              //     ? null
+              //     : () {
+              //         setState(() {
+              //           _companySize = CompanyScope.values[i - 1];
+              //         });
+              //       },
+              title: Text(Lang.get('profile_question_1_choice_$i'),
+                  style: Theme.of(context).textTheme.bodyLarge),
+              leading: Radio<CompanyScope>(
+                toggleable: false,
+                value: CompanyScope.values[i - 1],
+                groupValue: _companySize,
+                onChanged: i > CompanyScope.values.length + 1
+                    ? null
+                    : (CompanyScope? value) => {
+                          setState(() => _companySize = value!),
+                        },
+              ),
             ),
-          ),
       ],
     );
   }
@@ -207,20 +220,42 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           Lang.get('profile_question_title_4'),
           style: Theme.of(context).textTheme.bodySmall,
         ),
-        TextField(
+        TextFieldWidget(
+          errorText: _formStore.profileFormErrorStore.description,
+
           enabled: enabled,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.black))),
+          inputDecoration: const InputDecoration(
+            border:
+                OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          ),
+          inputType: TextInputType.name,
+          icon: Icons.person,
+          iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+          inputAction: TextInputAction.next,
           onChanged: (value) {
             _formStore.setDescription(_descriptionController.text);
           },
-          controller: _descriptionController,
-          onSubmitted: (value) =>
-              {FocusScope.of(context).requestFocus(_companyFocusNode)},
+          textController: _descriptionController,
+          // onSubmitted: (value) =>
+          //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
           minLines: 3,
           maxLines: 5,
+          maxLength: 500,
         ),
+        // TextField(
+        //   enabled: enabled,
+        //   decoration: const InputDecoration(
+        //       border: OutlineInputBorder(
+        //           borderSide: BorderSide(color: Colors.black))),
+        //   onChanged: (value) {
+        //     _formStore.setDescription(_descriptionController.text);
+        //   },
+        //   controller: _descriptionController,
+        //   onSubmitted: (value) =>
+        //       {FocusScope.of(context).requestFocus(_companyFocusNode)},
+        //   minLines: 3,
+        //   maxLines: 5,
+        // ),
       ],
     );
   }
@@ -231,7 +266,6 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(
           mainAxisSize: MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             const SizedBox(
@@ -264,7 +298,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
             const SizedBox(
               height: 25,
             ),
-            _buildCompanySizeSelection(context),
+            _buildCompanyScopeSelection(context),
             const SizedBox(
               height: 30,
             ),
@@ -277,8 +311,19 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                     onPressed: () {
                       if (enabled) {
                         // TODO: save profile
-                        _showErrorMessage("OK");
+                        print("save profile");
+                        var id = _userStore.user!.companyProfile!.objectId!;
+                        if (_formStore.canContinue) {
+                          _formStore.updateProfileCompany(
+                              _companyNameController.text,
+                              _websiteURLController.text,
+                              _descriptionController.text,
+                              _companySize,
+                              int.tryParse(id) ?? -1);
+                        }
+                        // _showErrorMessage("OK");
                       }
+
                       setState(() {
                         enabled = !enabled;
                       });
@@ -343,6 +388,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
+    _companyFocusNode.dispose();
     _descriptionController.dispose();
     _companyNameController.dispose();
     _websiteURLController.dispose();

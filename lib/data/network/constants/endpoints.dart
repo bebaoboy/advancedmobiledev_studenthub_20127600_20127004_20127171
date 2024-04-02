@@ -14,10 +14,10 @@ class Endpoints {
   static const String getPosts = "$baseUrl/posts";
 
   //auth endpoints
-  static const String signUp = "$baseUrl/api/auth/sign-up";
-  static const String login = "$baseUrl/api/auth/sign-in";
-  static const String getProfile = "$baseUrl/api/auth/me";
-  static const String logout = "$baseUrl/api/auth/logout";
+  static const String signUp = "$baseUrl/api/auth/sign-up"; // done
+  static const String login = "$baseUrl/api/auth/sign-in"; // done
+  static const String getProfile = "$baseUrl/api/auth/me"; // done
+  static const String logout = "$baseUrl/api/auth/logout"; // done
   // auth endpoints
   // me
   /*
@@ -54,16 +54,16 @@ class Endpoints {
 } */
 
   // user endpoints
-  static const String resetPassword = "$baseUrl/api/user/{id}";
-  static const String getUsers = "$baseUrl/api/user";
-  static const String changePassword = "$baseUrl/api/user/changePassword";
-  static const String forgetPassword = "$baseUrl/api/user/forgotPassword";
+  static const String resetPassword = "$baseUrl/api/user/{id}"; // done
+  static const String getUsers = "$baseUrl/api/user"; // done
+  static const String changePassword = "$baseUrl/api/user/changePassword"; // done
+  static const String forgetPassword = "$baseUrl/api/user/forgotPassword"; // done
 
   // profile
   static const String addProfileCompany =
       "$baseUrl/api/profile/company"; // done
   static const String updateProfileCompany =
-      "$baseUrl/api/profile/company/{id}";
+      "$baseUrl/api/profile/company/{id}"; // done
   static const String getProfileCompany =
       "$baseUrl/api/profile/company/{companyId}"; // done
 

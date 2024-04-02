@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
@@ -10,6 +11,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,7 +30,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.of(context).pushReplacement(MaterialPageRoute2(
               routeName: Routes.forgetPasswordChangePassword));
         } else if (_userStore.user != null &&
-            _userStore.user!.type != UserType.naught  && _userStore.user!.email.isNotEmpty) {
+            _userStore.user!.type != UserType.naught &&
+            _userStore.user!.email.isNotEmpty) {
+          print("switch account navigate home");
           Navigator.of(context).pushReplacement(
             MaterialPageRoute2(routeName: Routes.welcome),
           );
@@ -72,7 +76,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ) !=
                                 null) {
                               _userStore.user!.type = UserType.company;
-                              Navigator.of(context).push(
+                              if (_userStore.user != null) {
+                                SharedPreferences.getInstance().then(
+                                  (value) {
+                                    value.setString(
+                                        Preferences.current_user_role,
+                                        _userStore.user!.type.name
+                                            .toLowerCase()
+                                            .toString());
+                                  },
+                                );
+                              }
+                              Navigator.of(context).pushReplacement(
                                 MaterialPageRoute2(routeName: Routes.welcome),
                               );
                             } else {
@@ -123,7 +138,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ) !=
                                 null) {
                               _userStore.user!.type = UserType.student;
-                              Navigator.of(context).push(
+                              if (_userStore.user != null) {
+                                SharedPreferences.getInstance().then(
+                                  (value) {
+                                    value.setString(
+                                        Preferences.current_user_role,
+                                        _userStore.user!.type.name
+                                            .toLowerCase()
+                                            .toString());
+                                  },
+                                );
+                              }
+                              Navigator.of(context).pushReplacement(
                                 MaterialPageRoute2(routeName: Routes.welcome),
                               );
                             } else {

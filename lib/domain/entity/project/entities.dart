@@ -75,7 +75,6 @@ class Skill extends MyObject {
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(
         map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '');
-        
   }
 
   Map<String, dynamic> toJson() {
@@ -105,7 +104,6 @@ class Language extends MyObject {
       : languageName = json["name"] ?? "",
         level = "",
         super(objectId: json["id"]);
-
 
   factory Language.fromMap(Map<String, dynamic> map) {
     return Language(map['name'] ?? '', map['proficiency'] ?? '');
@@ -155,12 +153,11 @@ class Education extends MyObject {
       if (objectId != "") "id": objectId,
     };
   }
-    
+
   factory Education.fromMap(Map<String, dynamic> map) {
-    return Education(map['schoolName'] ?? '', 
+    return Education(map['schoolName'] ?? '',
         startYear: map['startYear'] ?? '', endYear: map['endYear'] ?? '');
   }
-
 }
 
 @JsonSerializable()
@@ -189,7 +186,6 @@ class ProjectExperience extends MyObject {
   ProjectExperience.fromJson(Map<String, dynamic> json)
       : description = json["description"] ?? "",
         link = json["link"] ?? "",
-
         startDate = json["startMonth"] ?? "",
         endDate = json["endMonth"] ?? "",
         skills = json["skills"] as List<Skill>,
@@ -215,7 +211,6 @@ class ProjectExperience extends MyObject {
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class Profile extends MyObject {
-
   Profile.fromJson(Map<String, dynamic> json);
   Profile({
     required super.objectId,
@@ -254,8 +249,8 @@ class StudentProfile extends Profile {
     this.projectExperience,
     this.transcript,
     this.resume,
-    int id = 1,
-  }) : super(objectId: id.toString());
+    super.objectId = "",
+  });
 
 //   StudentProfile.fromJson(Map<String, dynamic> json)
 //       : title = json["title"] ?? "",
@@ -290,8 +285,8 @@ class StudentProfile extends Profile {
 //       'resume': resume,
 //     };
 //   }
-  
-    Map<String, dynamic> toMap() {
+
+  Map<String, dynamic> toMap() {
     return {
       'title': title,
       'fullName': fullName,
@@ -305,6 +300,7 @@ class StudentProfile extends Profile {
       'educations': educations,
       'transcript': transcript,
       'resume': resume,
+      "id": int.tryParse(objectId ?? "-1"),
     };
   }
 
@@ -331,6 +327,7 @@ class StudentProfile extends Profile {
           : [],
       transcript: map['transcript'] ?? '',
       resume: map['resume'] ?? '',
+      objectId: map["id"].toString(),
     );
   }
 
@@ -338,7 +335,6 @@ class StudentProfile extends Profile {
 
   factory StudentProfile.fromJson(String source) =>
       StudentProfile.fromMap(json.decode(source));
-
 }
 
 enum CompanyScope { solo, small, medium, large, enterprise }
@@ -381,7 +377,6 @@ class CompanyProfile extends Profile {
     super.objectId = "",
   });
 
-
 //   CompanyProfile.fromJson(Map<String, dynamic> json)
 //       :
 //         // userId = json["userId"] ?? "",
@@ -412,17 +407,19 @@ class CompanyProfile extends Profile {
       website: map['website'] ?? '',
       description: map['description'] ?? '',
       scope: CompanyScope.values[map['size'] ?? 0],
+      objectId: map["id"].toString(),
     );
   }
-  
-   Map<String, dynamic> toMap() {
+
+  Map<String, dynamic> toMap() {
     return {
       'profileName': profileName,
       'companyName': companyName,
       'email': email,
       'website': website,
       'description': description,
-      'scope': scope,
+      'size': scope.index,
+      "id": int.tryParse(objectId ?? "-1"),
     };
   }
 
@@ -577,7 +574,6 @@ class Proposal extends MyObject {
   HireStatus isHired;
   Status status;
 
-
   Proposal.fromJson(Map<String, dynamic> json)
       : student = StudentProfile.fromJson(json["student"] ?? ""),
         coverLetter = json["coverLetter"] ?? "",
@@ -608,15 +604,14 @@ class Notification extends MyObject {
     required this.receiver,
     required this.sender,
     required this.type,
-    this.content = "", 
+    this.content = "",
   }) : super(objectId: id);
-Notification.fromJson(Map<String, dynamic> json)
+  Notification.fromJson(Map<String, dynamic> json)
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
         content = json['content'] ?? '',
         type = NotificationType.values[json['type'] ?? 0];
- 
 }
 
 enum NotificationType {

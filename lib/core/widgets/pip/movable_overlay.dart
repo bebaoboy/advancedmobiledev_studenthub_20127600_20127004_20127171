@@ -264,7 +264,7 @@ class MovableOverlayState extends State<MovableOverlay>
           h = min(height, widget.pipParams.minSize.height);
         }
         final floatingWidgetSize = Size(w, h);
-        print(floatingWidgetSize);
+        // print(floatingWidgetSize);
         final fullWidgetSize = Size(width, height);
 
         _updateCornersOffsets(

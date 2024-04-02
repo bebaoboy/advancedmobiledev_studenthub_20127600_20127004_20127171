@@ -9,12 +9,14 @@ class AddProfileCompanyParams {
   String website;
   String description;
   int size = CompanyScope.solo.index;
+  int id;
 
   AddProfileCompanyParams(
       {required this.companyName,
       required this.website,
       required this.description,
-      required this.size});
+      required this.size,
+      required this.id});
 }
 
 class AddProfileCompanyUseCase

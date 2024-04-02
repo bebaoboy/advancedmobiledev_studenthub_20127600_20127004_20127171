@@ -2,7 +2,6 @@ import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:boilerplate/presentation/login/login.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
@@ -111,7 +110,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   void calculate(List<Account> list) {
     var h = calculateTreeHeight(accountList);
-    print("TREEEEEEEEHEIGHT: $h");
+    // print("TREEEEEEEEHEIGHT: $h");
     setState(() {
       height = h;
     });
@@ -297,6 +296,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   /// switch from student to company
   switchAccount(Account account) async {
+    print("switch account");
     if (!account.isLoggedIn) {
       account.isLoggedIn = true;
       // await _userStore.logout();
@@ -309,11 +309,11 @@ class _SettingScreenState extends State<SettingScreen> {
         // _userStore.login(
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
+        _userStore.success = true;
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(
-                child: LoginScreen(
-              email: account.user.email,
-            )),
+              routeName: Routes.welcome,
+            ),
             (Route<dynamic> route) => false);
       });
     }
@@ -385,12 +385,15 @@ class _SettingScreenState extends State<SettingScreen> {
             ListTile(
                 onTap: () {
                   //int n = Random().nextInt(3);
-                  navigate(
-                      context,
-                      _userStore.user != null &&
-                              _userStore.user!.type == UserType.company
-                          ? Routes.viewProfileCompany
-                          : Routes.viewProfileStudent);
+                  if (_userStore.user != null &&
+                      _userStore.user!.type != UserType.naught) {
+                    navigate(
+                        context,
+                        _userStore.user != null &&
+                                _userStore.user!.type == UserType.company
+                            ? Routes.viewProfileCompany
+                            : Routes.viewProfileStudent);
+                  }
                 },
                 leading: const Icon(Icons.person),
                 title: Text(

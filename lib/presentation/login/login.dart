@@ -313,7 +313,6 @@ class _LoginScreenState extends State<LoginScreen> {
     // print("${_userStore.user!.type.name} ${_userStore.user!.email}");
     if (_userStore.notification.isNotEmpty) {
       _showNotificationMessage(_userStore.notification);
-      _userStore.notification = '';
       return Container();
     }
 
@@ -335,7 +334,7 @@ class _LoginScreenState extends State<LoginScreen> {
           initializing = true;
         });
         log("login", "BEBAOBOY");
-        await initCube(NavigationService.navigatorKey.currentContext);
+        initCube(NavigationService.navigatorKey.currentContext);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);

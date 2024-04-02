@@ -3,9 +3,11 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:mobx/mobx.dart';
 import 'package:validators/validators.dart';
 
@@ -71,9 +73,7 @@ abstract class _ProfileFormStore with Store {
 
   @computed
   bool get canContinue =>
-      !profileFormErrorStore.hasErrors &&
-      companyName.isNotEmpty &&
-      email.isNotEmpty;
+      !profileFormErrorStore.hasErrors && companyName.isNotEmpty;
 
   @action
   Future addProfileCompany(String companyName, String website,
@@ -82,7 +82,8 @@ abstract class _ProfileFormStore with Store {
         companyName: companyName,
         website: website,
         description: description,
-        size: size.index);
+        size: size.index,
+        id: -1);
     final future = _addProfileCompanyUseCase.call(params: loginParams);
     addProfileCompanyFuture = ObservableFuture(future);
 
@@ -104,12 +105,13 @@ abstract class _ProfileFormStore with Store {
 
   @action
   Future updateProfileCompany(String companyName, String website,
-      String description, CompanyScope size) async {
+      String description, CompanyScope size, int id) async {
     final AddProfileCompanyParams loginParams = AddProfileCompanyParams(
         companyName: companyName,
         website: website,
         description: description,
-        size: size.index);
+        size: size.index,
+        id: id);
     final future = _updateProfileCompanyUseCase.call(params: loginParams);
     addProfileCompanyFuture = ObservableFuture(future);
 
@@ -119,12 +121,15 @@ abstract class _ProfileFormStore with Store {
           value.statusCode == HttpStatus.created) {
         success = true;
         print(value.data);
+        UserStore userStore = getIt<UserStore>();
+        userStore.user!.companyProfile = CompanyProfile.fromMap(value.data["result"]);
+        // TODO: save profile to sharedpref
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
-        // print(value.data);
+        print(value.data);
       }
     });
   }
@@ -231,5 +236,5 @@ abstract class _ProfileFormErrorStore with Store {
   bool get hasErrorsInEmail => email != null;
 
   @computed
-  bool get hasErrors => hasErrorsInCompanyName || hasErrorsInEmail;
+  bool get hasErrors => hasErrorsInCompanyName;
 }

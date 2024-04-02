@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
+import 'package:boilerplate/core/widgets/shared_preference_view.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -343,7 +344,15 @@ class _MainAppBarState extends State<MainAppBar> {
                     MaterialPageRoute2(routeName: Routes.home),
                     (Route<dynamic> route) => false);
               },
-              child: Text(Lang.get('appbar_title') + (_userStore.user != null && _userStore.user!.type == UserType.company ? "©" : "")))),
+              onLongPress: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute2(child: const SharedPreferenceView()));
+              },
+              child: Text(Lang.get('appbar_title') +
+                  (_userStore.user != null &&
+                          _userStore.user!.type == UserType.company
+                      ? "©"
+                      : "")))),
       actions: [
         // _buildLanguageButton(),
         // _buildThemeButton(),

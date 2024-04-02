@@ -96,8 +96,9 @@ class SharedPreferenceHelper {
         _sharedPreference.getString(Preferences.current_user_email) ?? '';
     String userRole =
         _sharedPreference.getString(Preferences.current_user_role) ?? '';
+    var r = _sharedPreference.getStringList(Preferences.current_user_roleList);
     List<UserType> userRoles =
-        (_sharedPreference.getStringList(Preferences.current_user_roleList) ??
+        (r ??
                 ["company"])
             .map(
               (e) => e == "company" ? UserType.company : UserType.student,
