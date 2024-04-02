@@ -328,7 +328,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (!_userStore.isLoading || !initializing) {
-      Future.delayed(const Duration(milliseconds: 10), () async {
+      Future.delayed(const Duration(milliseconds: 1000), () async {
         // //print("LOADING = $loading");
         setState(() {
           initializing = true;
