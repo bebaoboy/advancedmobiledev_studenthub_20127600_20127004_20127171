@@ -34,8 +34,8 @@ class User extends MyObject {
     this.studentProfile,
     this.companyProfile,
     required this.roles,
-    String id = "",
-  }) : super(objectId: id);
+    String objectId = "",
+  }) : super(objectId: objectId);
 
   User.fromJson(Map<String, dynamic> json)
       : type = json["type"] == "0" ? UserType.student : UserType.company,

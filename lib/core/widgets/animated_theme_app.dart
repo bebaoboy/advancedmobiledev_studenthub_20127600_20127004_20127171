@@ -608,7 +608,6 @@ class PiPMaterialAppState extends State<PiPMaterialApp> {
   Widget build(BuildContext context) {
     if (widget.routerApp == false) {
       return AnimatedThemeApp(
-        // TODO: fix
         animationDuration: widget.animationDuration,
         animationType: widget.animationType,
         actions: widget.actions,

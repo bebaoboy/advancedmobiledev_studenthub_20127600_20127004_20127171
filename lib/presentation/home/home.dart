@@ -10,7 +10,6 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -26,11 +25,10 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(const Duration(seconds: 1), () {
       try {
         if (_passwordStore.hasToChangePass) {
-          Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword));
-        }
-        else if (_userStore.user != null &&
-            _userStore.user!.type != UserType.naught) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute2(
+              routeName: Routes.forgetPasswordChangePassword));
+        } else if (_userStore.user != null &&
+            _userStore.user!.type != UserType.naught  && _userStore.user!.email.isNotEmpty) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute2(routeName: Routes.welcome),
           );
@@ -48,7 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -91,28 +88,26 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onPositiveClick: () {
                                       Navigator.of(context).pop();
 
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute2(
-                                                routeName: Routes.profile));
-                                        return;
-                                      },
-                                      onNegativeClick: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    );
-                                  },
-                                  animationType: DialogTransitionType.size,
-                                  curve: Curves.fastOutSlowIn,
-                                  duration: const Duration(seconds: 1),
-                                );
-                              }
-                            },
-                            buttonText: Lang.get('company'),
-                            buttonColor: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
-                          ),
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute2(
+                                              routeName: Routes.profile));
+                                      return;
+                                    },
+                                    onNegativeClick: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                },
+                                animationType: DialogTransitionType.size,
+                                curve: Curves.fastOutSlowIn,
+                                duration: const Duration(seconds: 1),
+                              );
+                            }
+                          },
+                          buttonText: Lang.get('company'),
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
                         ),
-
                       ),
                       const SizedBox(height: 10),
                       SizedBox(
@@ -144,37 +139,35 @@ class _HomeScreenState extends State<HomeScreen> {
                                     onPositiveClick: () {
                                       Navigator.of(context).pop();
 
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute2(
-                                                routeName:
-                                                    Routes.profileStudent));
-                                        return;
-                                      },
-                                      onNegativeClick: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    );
-                                  },
-                                  animationType: DialogTransitionType.size,
-                                  curve: Curves.fastOutSlowIn,
-                                  duration: const Duration(seconds: 1),
-                                );
-                              }
-                            },
-                            buttonText: Lang.get('student'),
-                            buttonColor: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
-                          ),
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute2(
+                                              routeName:
+                                                  Routes.profileStudent));
+                                      return;
+                                    },
+                                    onNegativeClick: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  );
+                                },
+                                animationType: DialogTransitionType.size,
+                                curve: Curves.fastOutSlowIn,
+                                duration: const Duration(seconds: 1),
+                              );
+                            }
+                          },
+                          buttonText: Lang.get('student'),
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
                         ),
-                        const SizedBox(height: 25),
-                      ],
-                    )),
-                Text(Lang.get('home_description')),
-              ],
-            ),
+                      ),
+                      const SizedBox(height: 25),
+                    ],
+                  )),
+              Text(Lang.get('home_description')),
+            ],
           ),
-          
-        ]),
+        ),
       ),
     );
   }

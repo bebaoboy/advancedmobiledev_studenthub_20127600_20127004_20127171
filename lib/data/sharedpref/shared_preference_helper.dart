@@ -24,7 +24,7 @@ class SharedPreferenceHelper {
 
   // General Methods: ----------------------------------------------------------
   Future<String?> get authToken async {
-    return Future.value(baominkhuynh);
+    // return Future.value(baominkhuynh);
     return _sharedPreference.getString(Preferences.auth_token);
   }
 
@@ -119,7 +119,7 @@ class SharedPreferenceHelper {
       return false;
     }
 
-    print(studentProfile!.toJson().toString());
+    print(studentProfile.toJson().toString());
 
     return _sharedPreference.setString(
         Preferences.student_profile, studentProfile.toJson());
@@ -130,7 +130,7 @@ class SharedPreferenceHelper {
       return false;
     }
 
-    print(companyProfile!.toJson().toString());
+    print(companyProfile.toJson().toString());
 
     return _sharedPreference.setString(
         Preferences.company_profile, companyProfile.toJson());

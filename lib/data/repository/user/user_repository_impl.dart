@@ -58,7 +58,6 @@ class UserRepositoryImpl extends UserRepository {
   Future<User> get user => _sharedPrefsHelper.user;
 
   @override
-
   @override
   Future<Response> signUp(SignUpParams params) async {
     var response = await _userApi.signUp(params);
@@ -176,12 +175,13 @@ class UserRepositoryImpl extends UserRepository {
     return HasToChangePassParams(pass, isRequired);
   }
 
+  @override
   Future<Response> addProfileCompany(AddProfileCompanyParams params) async {
     var response = await _profileApi.addProfileCompany(params);
     return response;
   }
 
-    @override
+  @override
   Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
     var response = await _profileApi.updateProfileCompany(params);
     return response;

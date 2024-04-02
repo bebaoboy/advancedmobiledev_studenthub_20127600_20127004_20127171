@@ -75,9 +75,7 @@ class Skill extends MyObject {
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(
         map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '');
-        imageUrl = "",
-        super(objectId: json["id"]);
-    );
+        
   }
 
   Map<String, dynamic> toJson() {
@@ -156,9 +154,10 @@ class Education extends MyObject {
       "endYear": endYear.toString(),
       if (objectId != "") "id": objectId,
     };
+  }
     
   factory Education.fromMap(Map<String, dynamic> map) {
-    return Education(map['schoolName'] ?? '', map['year'] ?? '',
+    return Education(map['schoolName'] ?? '', 
         startYear: map['startYear'] ?? '', endYear: map['endYear'] ?? '');
   }
 
@@ -225,7 +224,6 @@ class Profile extends MyObject {
 
 @JsonSerializable()
 class StudentProfile extends Profile {
-  int id;
   String fullName;
   // String userId;
   String education;
@@ -256,8 +254,8 @@ class StudentProfile extends Profile {
     this.projectExperience,
     this.transcript,
     this.resume,
-    super.objectId = "",
-  });
+    int id = 1,
+  }) : super(objectId: id.toString());
 
 //   StudentProfile.fromJson(Map<String, dynamic> json)
 //       : title = json["title"] ?? "",
@@ -312,7 +310,6 @@ class StudentProfile extends Profile {
 
   factory StudentProfile.fromMap(Map<String, dynamic> map) {
     return StudentProfile(
-      id: map['id'] ?? 0,
       title: map['title'] ?? '',
       fullName: map['fullName'] ?? '',
       education: map['education'] ?? '',
@@ -341,9 +338,7 @@ class StudentProfile extends Profile {
 
   factory StudentProfile.fromJson(String source) =>
       StudentProfile.fromMap(json.decode(source));
-      "id": objectId,
-    };
-  }
+
 }
 
 enum CompanyScope { solo, small, medium, large, enterprise }
@@ -435,9 +430,6 @@ class CompanyProfile extends Profile {
 
   factory CompanyProfile.fromJson(String source) =>
       CompanyProfile.fromMap(json.decode(source));
-      "id": objectId,
-    };
-  }
 }
 
 //

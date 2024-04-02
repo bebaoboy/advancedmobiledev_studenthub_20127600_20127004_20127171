@@ -190,7 +190,7 @@ class _SplashScreenState extends State<SplashScreen>
     final UserStore userStore = getIt<UserStore>();
     CubeUser user;
 
-    if (userStore.user != null) {
+    if (userStore.user != null && userStore.user!.email.isNotEmpty) {
       userStore.savedUsers.add(userStore.user!);
       try {
         // CallManager.instance.destroy();

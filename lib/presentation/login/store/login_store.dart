@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_null_comparison
+
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
@@ -66,8 +68,11 @@ abstract class _UserStore with Store {
     //     name: "Hai Pham",
     //     roles: [UserType.company, UserType.student],
     //     isVerified: true));
-    // savedUsers.add(User(
-    //     email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
+    savedUsers.add(User(
+        email: "user2@gmail.com",
+        name: "Hai Pham 2",
+        roles: [],
+        isVerified: true));
 
     // savedUsers.add(User(
     //     email: "user3@gmail.com", name: "Hai Pham 3", roles: [], isVerified: true));
@@ -164,7 +169,7 @@ abstract class _UserStore with Store {
           await _saveLoginStatusUseCase.call(params: true);
 
           var userValue = User(
-              type: getUserType(type.name ?? 'naught'),
+              type: getUserType(type.name ?? UserType.naught.name),
               email: email,
               roles: [],
               isVerified: true);
