@@ -1,13 +1,13 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -17,26 +17,24 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../di/service_locator.dart';
 
-class ForgetPasswordChangePasswordcreen extends StatefulWidget {
-  const ForgetPasswordChangePasswordcreen({super.key});
+class ForgetPasswordChangePasswordScreen extends StatefulWidget {
+  const ForgetPasswordChangePasswordScreen({super.key});
 
   @override
-  _ForgetPasswordChangePasswordcreenState createState() =>
-      _ForgetPasswordChangePasswordcreenState();
+  _ForgetPasswordChangePasswordScreenState createState() =>
+      _ForgetPasswordChangePasswordScreenState();
 }
 
-class _ForgetPasswordChangePasswordcreenState
-    extends State<ForgetPasswordChangePasswordcreen> {
+class _ForgetPasswordChangePasswordScreenState
+    extends State<ForgetPasswordChangePasswordScreen> {
   //text controllers:-----------------------------------------------------------
-  final TextEditingController _userEmailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _passwordConfirmController =
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController =
       TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
-  final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  final ForgetPasswordStore _formStore = getIt<ForgetPasswordStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -77,7 +75,7 @@ class _ForgetPasswordChangePasswordcreenState
               : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _formStore.changePassSuccess
                   ? navigate(context)
                   : _showErrorMessage(_formStore.errorStore.errorMessage);
             },
@@ -85,7 +83,7 @@ class _ForgetPasswordChangePasswordcreenState
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: loading,
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
@@ -148,8 +146,8 @@ class _ForgetPasswordChangePasswordcreenState
                   // ),
                   const SizedBox(height: 44.0),
                   // _buildUserIdField(),
-                  _buildPasswordField(),
-                  _buildPasswordConfirmField(),
+                  _buildNewPasswordField(),
+                  _buildConfirmNewPasswordField(),
                   // _buildForgotPasswordButton(),
                   const SizedBox(height: 44.0),
                   _buildSignInButton(),
@@ -197,8 +195,7 @@ class _ForgetPasswordChangePasswordcreenState
     );
   }
 
-
-  Widget _buildPasswordField() {
+  Widget _buildNewPasswordField() {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
@@ -207,20 +204,20 @@ class _ForgetPasswordChangePasswordcreenState
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordController,
+          textController: _newPasswordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null
+          errorText: _formStore.formErrorStore.newPassword == null
               ? null
-              : Lang.get(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.formErrorStore.newPassword),
           onChanged: (value) {
-            _formStore.setPassword(_passwordController.text);
+            _formStore.setNewPassword(_newPasswordController.text);
           },
         );
       },
     );
   }
 
-  Widget _buildPasswordConfirmField() {
+  Widget _buildConfirmNewPasswordField() {
     return Observer(
       builder: (context) {
         return TextFieldWidget(
@@ -229,18 +226,18 @@ class _ForgetPasswordChangePasswordcreenState
           padding: const EdgeInsets.only(top: 16.0),
           icon: Icons.lock,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          textController: _passwordConfirmController,
-          errorText: _formStore.formErrorStore.confirmPassword == null
+          textController: _confirmNewPasswordController,
+          errorText: _formStore.formErrorStore.confirmNewPassword == null
               ? null
-              : Lang.get(_formStore.formErrorStore.confirmPassword),
+              : Lang.get(_formStore.formErrorStore.confirmNewPassword),
           onChanged: (value) {
-            _formStore.setConfirmPassword(_passwordConfirmController.text);
+            _formStore
+                .setNewConfirmPassword(_confirmNewPasswordController.text);
           },
         );
       },
     );
   }
-
 
   Widget _buildSignInButton() {
     return Container(
@@ -253,30 +250,23 @@ class _ForgetPasswordChangePasswordcreenState
             setState(() {
               loading = true;
             });
-            await Future.delayed(const Duration(seconds: 1), () {
-              //print("LOADING = $loading");
-              loading = false;
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
-            });
-            //   if (_formStore.canForgetPassword) {
-            //     DeviceUtils.hideKeyboard(context);
-            //     _userStore.login(
-            //         _userEmailController.text, _passwordController.text);
-            //         // loading = true;
-            //   } else {
-            //     _showErrorMessage(AppLocalizations.of(context)
-            //         .get('login_error_missing_fields'));
-            //   }
+            if (_formStore.canResetPassword) {
+              DeviceUtils.hideKeyboard(context);
+              _formStore.changePassword();
+            } else {
+              _showErrorMessage(Lang.get('login_error_missing_fields'));
+            }
           }),
     );
   }
 
-
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
+    Future.delayed(const Duration(seconds: 1), () {
+      //print("LOADING = $loading");
+      loading = false;
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
+    });
 
     return Container();
   }
@@ -284,7 +274,10 @@ class _ForgetPasswordChangePasswordcreenState
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
+      Future.delayed(const Duration(milliseconds: 200), () {
+        setState(() {
+          loading = false;
+        });
         if (message.isNotEmpty) {
           FlushbarHelper.createError(
             message: message,
@@ -302,8 +295,8 @@ class _ForgetPasswordChangePasswordcreenState
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
-    _userEmailController.dispose();
-    _passwordController.dispose();
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
     _passwordFocusNode.dispose();
     super.dispose();
   }

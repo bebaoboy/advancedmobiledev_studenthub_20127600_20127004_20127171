@@ -9,4 +9,9 @@ class DBConstants {
 
   // Fields
   static const FIELD_ID = 'id';
+
+  // DB profile
+  static const PROFILE_DB = 'profile.db';
+  static const PRIMARY_KEY = 'id';
+  static const FOREIGN_KEY = 'userId';
 }

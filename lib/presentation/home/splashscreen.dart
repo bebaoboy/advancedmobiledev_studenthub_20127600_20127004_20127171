@@ -190,7 +190,8 @@ class _SplashScreenState extends State<SplashScreen>
     final UserStore userStore = getIt<UserStore>();
     CubeUser user;
 
-    if (userStore.user != null) {
+    if (userStore.user != null && userStore.user!.email.isNotEmpty) {
+      userStore.savedUsers.add(userStore.user!);
       try {
         // CallManager.instance.destroy();
         // CubeChatConnection.instance.destroy();
@@ -237,14 +238,14 @@ class _SplashScreenState extends State<SplashScreen>
               }
             }).catchError((exception) {
               //_processLoginError(exception);
-          //     try {
-          //   _controller.stop();
-          // } catch (e) {}
-          //     Navigator.pushReplacement(
-          //         context,
-          //         MaterialPageRoute2(
-          //             routeName:
-          //                 userStore.isLoggedIn ? Routes.home : Routes.login));
+              //     try {
+              //   _controller.stop();
+              // } catch (e) {}
+              //     Navigator.pushReplacement(
+              //         context,
+              //         MaterialPageRoute2(
+              //             routeName:
+              //                 userStore.isLoggedIn ? Routes.home : Routes.login));
               log(exception.toString(), "BEBAOBOY");
             });
           },

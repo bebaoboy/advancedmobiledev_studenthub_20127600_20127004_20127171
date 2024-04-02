@@ -146,30 +146,33 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                     _buildPasswordConfirmField(),
                     // _buildForgotPasswordButton(),
                     const SizedBox(height: 24.0),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Transform.translate(
-                        offset: const Offset(-8, 0),
-                        child: CheckboxListTile(
-                          title: Transform.translate(
-                            offset: const Offset(-10, 0),
-                            child: AutoSizeText(
-                              Lang.get('signup_company_policy_agree'),
-                              style: const TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w800),
-                              minFontSize: 10,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+
+                    Observer(
+                      builder: (context) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 0),
+                        child: Transform.translate(
+                          offset: const Offset(-8, 0),
+                          child: CheckboxListTile(
+                            title: Transform.translate(
+                              offset: const Offset(-10, 0),
+                              child: AutoSizeText(
+                                Lang.get('signup_company_policy_agree'),
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w800),
+                                minFontSize: 10,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                            value: _formStore.hasAcceptPolicy,
+                            contentPadding: EdgeInsets.zero,
+                            onChanged: (newValue) {
+                              _formStore.changeAcceptState();
+                            },
+                            dense: true,
+                            controlAffinity: ListTileControlAffinity
+                                .leading, //  <-- leading Checkbox
                           ),
-                          value: _formStore.hasAcceptPolicy,
-                          contentPadding: EdgeInsets.zero,
-                          onChanged: (newValue) {
-                            _formStore.changeAcceptState();
-                          },
-                          dense: true,
-                          controlAffinity: ListTileControlAffinity
-                              .leading, //  <-- leading Checkbox
                         ),
                       ),
                     ),
@@ -340,30 +343,32 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   }
 
   navigate(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      showAnimatedDialog(
-        context: context,
-        barrierDismissible: true,
-        builder: (BuildContext c) {
-          return ClassicGeneralDialogWidget(
-            contentText: Lang.get('signup_email_sent'),
-            negativeText: ':Debug:',
-            positiveText: 'OK',
-            onPositiveClick: () {
-              Navigator.of(c).pop();
-              _formStore.success = false;
-            },
-            onNegativeClick: () {
-              Navigator.of(c).pop();
-              Navigator.of(context)
-                  .push(MaterialPageRoute2(routeName: Routes.profileStudent));
-            },
-          );
-        },
-        animationType: DialogTransitionType.size,
-        curve: Curves.fastOutSlowIn,
-        duration: const Duration(seconds: 1),
-      );
+    Future.delayed(const Duration(milliseconds: 1000), () {
+      if (_formStore.success) {
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext c) {
+            return ClassicGeneralDialogWidget(
+              contentText: Lang.get('signup_email_sent'),
+              negativeText: ':Debug:',
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(c).pop();
+                _formStore.success = false;
+              },
+              onNegativeClick: () {
+                Navigator.of(c).pop();
+                Navigator.of(context)
+                    .push(MaterialPageRoute2(routeName: Routes.profileStudent));
+              },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        );
+      }
     });
     // Future.delayed(const Duration(milliseconds: 0), () {
     //   print("LOADING = $loading");

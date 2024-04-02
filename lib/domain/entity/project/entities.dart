@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:convert';
+
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -68,8 +70,13 @@ class Skill extends MyObject {
   Skill.fromJson(Map<String, dynamic> json)
       : name = json["name"] ?? "",
         description = "",
-        imageUrl = "",
-        super(objectId: json["id"]);
+        imageUrl = "";
+
+  factory Skill.fromMap(Map<String, dynamic> map) {
+    return Skill(
+        map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '');
+        
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -98,6 +105,11 @@ class Language extends MyObject {
       : languageName = json["name"] ?? "",
         level = "",
         super(objectId: json["id"]);
+
+
+  factory Language.fromMap(Map<String, dynamic> map) {
+    return Language(map['name'] ?? '', map['proficiency'] ?? '');
+  }
 
   Map<String, dynamic> toJson() {
     return {
@@ -143,6 +155,12 @@ class Education extends MyObject {
       if (objectId != "") "id": objectId,
     };
   }
+    
+  factory Education.fromMap(Map<String, dynamic> map) {
+    return Education(map['schoolName'] ?? '', 
+        startYear: map['startYear'] ?? '', endYear: map['endYear'] ?? '');
+  }
+
 }
 
 @JsonSerializable()
@@ -171,6 +189,7 @@ class ProjectExperience extends MyObject {
   ProjectExperience.fromJson(Map<String, dynamic> json)
       : description = json["description"] ?? "",
         link = json["link"] ?? "",
+
         startDate = json["startMonth"] ?? "",
         endDate = json["endMonth"] ?? "",
         skills = json["skills"] as List<Skill>,
@@ -196,6 +215,8 @@ class ProjectExperience extends MyObject {
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class Profile extends MyObject {
+
+  Profile.fromJson(Map<String, dynamic> json);
   Profile({
     required super.objectId,
   });
@@ -214,6 +235,7 @@ class StudentProfile extends Profile {
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
+
   List<ProjectExperience>? projectExperience;
   String? transcript = "";
   String? resume = "";
@@ -232,27 +254,44 @@ class StudentProfile extends Profile {
     this.projectExperience,
     this.transcript,
     this.resume,
-    super.objectId = "",
-  });
+    int id = 1,
+  }) : super(objectId: id.toString());
 
-  StudentProfile.fromJson(Map<String, dynamic> json)
-      : title = json["title"] ?? "",
-        fullName = json["fullName"] ?? "",
-        education = json["education"] ?? "",
-        introduction = json["introduction"] ?? "",
-        yearOfExperience = json["yearOfExperience"] ?? 0,
-        review = json["review"] ?? "",
-        techStack = (json["techStack"] as List<TechStack>),
-        skillSet = (json["skillSet"] as List<Skill>),
-        languages = (json["language"] as List<Language>),
-        educations = (json["education"] as List<Education>),
-        projectExperience =
-            (json["projectExperience"] as List<ProjectExperience>),
-        transcript = json["transcript"] ?? "",
-        resume = json["resume"] ?? "",
-        super(objectId: json["id"]);
+//   StudentProfile.fromJson(Map<String, dynamic> json)
+//       : title = json["title"] ?? "",
+//         fullName = json["fullName"] ?? "",
+//         education = json["education"] ?? "",
+//         introduction = json["introduction"] ?? "",
+//         yearOfExperience = json["yearOfExperience"] ?? 0,
+//         review = json["review"] ?? "",
+//         techStack = (json["techStack"] as List<TechStack>),
+//         skillSet = (json["skillSet"] as List<Skill>),
+//         languages = (json["language"] as List<Language>),
+//         educations = (json["education"] as List<Education>),
+//         projectExperience =
+//             (json["projectExperience"] as List<ProjectExperience>),
+//         transcript = json["transcript"] ?? "",
+//         resume = json["resume"] ?? "",
+//         super(objectId: json["id"]);
 
-  Map<String, dynamic> toJson() {
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'title': title,
+//       'fullName': fullName,
+//       'education': education,
+//       'introduction': introduction,
+//       'yearOfExperience': yearOfExperience,
+//       'review': review,
+//       'techStack': techStack,
+//       'skillSet': skillSet,
+//       'languages': languages,
+//       'educations': educations,
+//       'transcript': transcript,
+//       'resume': resume,
+//     };
+//   }
+  
+    Map<String, dynamic> toMap() {
     return {
       'title': title,
       'fullName': fullName,
@@ -266,9 +305,40 @@ class StudentProfile extends Profile {
       'educations': educations,
       'transcript': transcript,
       'resume': resume,
-      "id": objectId,
     };
   }
+
+  factory StudentProfile.fromMap(Map<String, dynamic> map) {
+    return StudentProfile(
+      title: map['title'] ?? '',
+      fullName: map['fullName'] ?? '',
+      education: map['education'] ?? '',
+      introduction: map['introduction'] ?? '',
+      yearOfExperience: map['yearOfExperience'] ?? 0,
+      review: map['review'] ?? '',
+      techStack: map['techStack'],
+      skillSet: (map['skillSet'] != null)
+          ? List<Skill>.from((map['skillSet'] as List<dynamic>)
+              .map((e) => Skill.fromMap(e as Map<String, dynamic>)))
+          : [],
+      languages: (map['languages'] != null)
+          ? List<Language>.from((map['languages'] as List<dynamic>)
+              .map((e) => Language.fromMap(e as Map<String, dynamic>)))
+          : [],
+      educations: (map['educations'] != null)
+          ? List<Education>.from((map['educations'] as List<dynamic>)
+              .map((e) => Education.fromMap(e as Map<String, dynamic>)))
+          : [],
+      transcript: map['transcript'] ?? '',
+      resume: map['resume'] ?? '',
+    );
+  }
+
+  String toJson() => json.encode(toMap());
+
+  factory StudentProfile.fromJson(String source) =>
+      StudentProfile.fromMap(json.decode(source));
+
 }
 
 enum CompanyScope { solo, small, medium, large, enterprise }
@@ -311,18 +381,41 @@ class CompanyProfile extends Profile {
     super.objectId = "",
   });
 
-  CompanyProfile.fromJson(Map<String, dynamic> json)
-      :
-        // userId = json["userId"] ?? "",
-        profileName = json["profileName"] ?? "",
-        companyName = json["companyName"] ?? "",
-        email = json["email"] ?? "",
-        website = json["website"] ?? "",
-        description = json["description"] ?? "",
-        scope = json["scope"] ?? "",
-        super(objectId: json["id"]);
 
-  Map<String, dynamic> toJson() {
+//   CompanyProfile.fromJson(Map<String, dynamic> json)
+//       :
+//         // userId = json["userId"] ?? "",
+//         profileName = json["profileName"] ?? "",
+//         companyName = json["companyName"] ?? "",
+//         email = json["email"] ?? "",
+//         website = json["website"] ?? "",
+//         description = json["description"] ?? "",
+//         scope = json["scope"] ?? "",
+//         super(objectId: json["id"]);
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'profileName': profileName,
+//       'companyName': companyName,
+//       'email': email,
+//       'website': website,
+//       'description': description,
+//       'scope': scope,
+//     };
+//   }
+
+  factory CompanyProfile.fromMap(Map<String, dynamic> map) {
+    return CompanyProfile(
+      profileName: map['profileName'] ?? '',
+      companyName: map['companyName'] ?? '',
+      email: map['email'] ?? '',
+      website: map['website'] ?? '',
+      description: map['description'] ?? '',
+      scope: CompanyScope.values[map['size'] ?? 0],
+    );
+  }
+  
+   Map<String, dynamic> toMap() {
     return {
       'profileName': profileName,
       'companyName': companyName,
@@ -330,9 +423,13 @@ class CompanyProfile extends Profile {
       'website': website,
       'description': description,
       'scope': scope,
-      "id": objectId,
     };
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory CompanyProfile.fromJson(String source) =>
+      CompanyProfile.fromMap(json.decode(source));
 }
 
 //
@@ -480,6 +577,12 @@ class Proposal extends MyObject {
   HireStatus isHired;
   Status status;
 
+
+  Proposal.fromJson(Map<String, dynamic> json)
+      : student = StudentProfile.fromJson(json["student"] ?? ""),
+        coverLetter = json["coverLetter"] ?? "",
+        status = Status.values[json["status"] ?? 0],
+        isHired = HireStatus.values[json["isHired"] ?? 0];
   Proposal({
     // required this.project,
     required this.student,
@@ -505,8 +608,15 @@ class Notification extends MyObject {
     required this.receiver,
     required this.sender,
     required this.type,
-    this.content = "",
+    this.content = "", 
   }) : super(objectId: id);
+Notification.fromJson(Map<String, dynamic> json)
+      : id = json["id"] ?? "",
+        receiver = Profile.fromJson(json['receiver'] ?? ''),
+        sender = Profile.fromJson(json["sender"] ?? ''),
+        content = json['content'] ?? '',
+        type = NotificationType.values[json['type'] ?? 0];
+ 
 }
 
 enum NotificationType {

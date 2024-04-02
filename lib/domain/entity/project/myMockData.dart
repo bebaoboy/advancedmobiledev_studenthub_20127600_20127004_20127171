@@ -8,27 +8,33 @@ var myProjects = [
       timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
       proposal: [
-        Proposal(student: StudentProfile(
-            fullName: 'Luu Tuan Quan',
-            introduction: 'I am happy',
-            education: '4th year students',
-            title: 'Fullstack Engineer',
-            yearOfExperience: 3,
-            review: 'I find your project suitable')),
-        Proposal(student: StudentProfile(
-            fullName: 'Huynh Minh Bao',
-            introduction: 'I am happy',
-            education: '4th year students',
-            title: 'Fullstack Engineer',
-            yearOfExperience: 3,
-            review: 'I find your project suitable')),
-        Proposal(student: StudentProfile(
-            fullName: 'Vu Huy Hoang',
-            introduction: 'I am eager',
-            education: '4th year students',
-            title: 'Fullstack Engineer',
-            yearOfExperience: 3,
-            review: 'I find your project suitable'))
+        Proposal(
+            student: StudentProfile(
+                fullName: 'Luu Tuan Quan',
+                introduction: 'I am happy',
+                education: '4th year students',
+                title: 'Fullstack Engineer',
+                yearOfExperience: 3,
+                review: 'I find your project suitable',
+                id: 1)),
+        Proposal(
+            student: StudentProfile(
+                fullName: 'Huynh Minh Bao',
+                introduction: 'I am happy',
+                education: '4th year students',
+                title: 'Fullstack Engineer',
+                yearOfExperience: 3,
+                review: 'I find your project suitable',
+                id: 2)),
+        Proposal(
+            student: StudentProfile(
+                fullName: 'Vu Huy Hoang',
+                introduction: 'I am eager',
+                education: '4th year students',
+                title: 'Fullstack Engineer',
+                yearOfExperience: 3,
+                review: 'I find your project suitable',
+                id: 3))
       ]),
   Project(
       title: "XYZ",

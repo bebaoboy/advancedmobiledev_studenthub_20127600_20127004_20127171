@@ -68,7 +68,7 @@ abstract class _SignupStore with Store {
   bool hasAcceptPolicy = false;
 
   //usecase
-  SignUpUseCase _signUpUseCase;
+  final SignUpUseCase _signUpUseCase;
 
   @observable
   ObservableFuture<void> signUpFuture = emptySignUpResponse;

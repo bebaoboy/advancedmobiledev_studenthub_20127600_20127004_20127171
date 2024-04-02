@@ -1,4 +1,5 @@
 class Preferences {
+
   Preferences._();
 
   static const String is_logged_in = "isLoggedIn";
@@ -8,4 +9,12 @@ class Preferences {
   static const String current_user_role = "current_user_role";
   static const String current_user_roleList = "current_user_roleList";
   static const String current_user_email = "current_user_email";
+  static const String current_user_name = "current_user_name";
+  static const String current_user_id = "current_user_id";
+  static const String encrypted_pass = "encrypted";
+
+  static const String required_pass_change = "required_pass_change";
+
+  static const String student_profile = "student_profile";
+  static const String company_profile = "company_profile";
 }

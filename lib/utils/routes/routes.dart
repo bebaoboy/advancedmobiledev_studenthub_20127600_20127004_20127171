@@ -79,7 +79,7 @@ class Routes {
     projectDetailsStudent: const Placeholder(),
     forgetPassword: const ForgetPasswordScreen(),
     forgetPasswordSent: const ForgetPasswordSentScreen(),
-    forgetPasswordChangePassword: const ForgetPasswordChangePasswordcreen(),
+    forgetPasswordChangePassword: const ForgetPasswordChangePasswordScreen(),
     forgetPasswordDone: const ForgetPasswordDoneScreen(),
     submitProposal: const Placeholder(),
     message: const Placeholder(),

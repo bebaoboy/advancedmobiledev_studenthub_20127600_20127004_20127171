@@ -2,6 +2,7 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -23,16 +24,21 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
       try {
-      if (_userStore.user != null && _userStore.user!.type != UserType.naught) {
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: Routes.welcome),
-        );
-      }
-      } catch(E) {}
+        if (_passwordStore.hasToChangePass) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute2(
+              routeName: Routes.forgetPasswordChangePassword));
+        } else if (_userStore.user != null &&
+            _userStore.user!.type != UserType.naught  && _userStore.user!.email.isNotEmpty) {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute2(routeName: Routes.welcome),
+          );
+        }
+      } catch (E) {}
     });
   }
 
   final UserStore _userStore = getIt<UserStore>();
+  final ForgetPasswordStore _passwordStore = getIt<ForgetPasswordStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -164,6 +170,15 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  navigate(BuildContext context) {
+    Future.delayed(const Duration(seconds: 1), () {
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword));
+    });
+
+    return Container();
   }
 
   // app bar methods:-----------------------------------------------------------

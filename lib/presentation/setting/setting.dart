@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/login/login.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
@@ -294,18 +295,26 @@ class _SettingScreenState extends State<SettingScreen> {
   //   }).toList();
   // }
 
+  /// switch from student to company
   switchAccount(Account account) async {
     if (!account.isLoggedIn) {
       account.isLoggedIn = true;
-      await _userStore.logout();
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login),
-          (Route<dynamic> route) => false);
+      // await _userStore.logout();
+      if (_userStore.user != null) {
+        _userStore.user!.type = account.type;
+      }
+
       DeviceUtils.hideKeyboard(context);
       Future.delayed(const Duration(seconds: 1), () {
-        _userStore.login(
-            account.user.email, "", account.type, account.user.roles!,
-            fastSwitch: true);
+        // _userStore.login(
+        //     account.user.email, "", account.type, account.user.roles!,
+        //     fastSwitch: true);
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute2(
+                child: LoginScreen(
+              email: account.user.email,
+            )),
+            (Route<dynamic> route) => false);
       });
     }
   }

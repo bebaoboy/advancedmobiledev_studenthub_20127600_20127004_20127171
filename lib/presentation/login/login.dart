@@ -5,10 +5,10 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
@@ -29,7 +29,8 @@ import 'package:boilerplate/presentation/video_call/utils/configs.dart'
     as utils;
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, this.email = ""});
+  final String? email;
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -43,17 +44,18 @@ class _LoginScreenState extends State<LoginScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final FormStore _formStore = getIt<FormStore>();
+  final ForgetPasswordStore _forgetPasswordStore = getIt<ForgetPasswordStore>();
   final UserStore _userStore = getIt<UserStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
-
-  bool loading = false;
+  bool initializing = false;
 
   @override
   void initState() {
     super.initState();
     _passwordFocusNode = FocusNode();
+    _userEmailController.text = widget.email ?? "";
   }
 
   @override
@@ -86,13 +88,13 @@ class _LoginScreenState extends State<LoginScreen> {
             builder: (context) {
               return _userStore.success
                   ? navigate(context)
-                  : _showErrorMessage(_formStore.errorStore.errorMessage);
+                  : _showErrorMessage(_userStore.errorStore.errorMessage);
             },
           ),
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: _userStore.isLoading,
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
@@ -248,16 +250,11 @@ class _LoginScreenState extends State<LoginScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          if (!loading && _formStore.canLogin) {
-            loading = true;
+          if (_formStore.canLogin) {
             DeviceUtils.hideKeyboard(context);
-            _userStore.login(
-                _userEmailController.text,
-                _passwordController.text,
-                UserType.naught,
-                _userEmailController.text == _userStore.savedUsers[0].email
-                    ? [UserType.company, UserType.student]
-                    : [UserType.company]);
+            await _userStore.login(_userEmailController.text,
+                _passwordController.text, UserType.naught, []);
+            _forgetPasswordStore.setOldPassword(_passwordController.text);
           } else {
             _showErrorMessage(Lang.get('login_error_missing_fields'));
           }
@@ -306,14 +303,6 @@ class _LoginScreenState extends State<LoginScreen> {
           onPressed: () async {
             Navigator.of(context)
                 .push(MaterialPageRoute2(routeName: Routes.signUp));
-            // if (_formStore.canLogin) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
           },
         ),
       ),
@@ -321,23 +310,35 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    if (_userStore.success && loading == false) {
-      loading = true;
+    // print("${_userStore.user!.type.name} ${_userStore.user!.email}");
+    if (_userStore.notification.isNotEmpty) {
+      _showNotificationMessage(_userStore.notification);
+      _userStore.notification = '';
+      return Container();
     }
-    print("${_userStore.user!.type.name} ${_userStore.user!.email}");
-    if (loading) {
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.setBool(Preferences.is_logged_in, true);
-      });
+
+    if (_forgetPasswordStore.mailSentSuccess) {
+      _forgetPasswordStore.saveShouldChangePass();
       Future.delayed(const Duration(milliseconds: 10), () async {
         // //print("LOADING = $loading");
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword),
+            (Route<dynamic> route) => false);
+      });
+      return Container();
+    }
+
+    if (!_userStore.isLoading || !initializing) {
+      Future.delayed(const Duration(milliseconds: 10), () async {
+        // //print("LOADING = $loading");
+        setState(() {
+          initializing = true;
+        });
         log("login", "BEBAOBOY");
         await initCube(NavigationService.navigatorKey.currentContext);
-
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
-        loading = false;
       });
     }
     return Container();
@@ -429,11 +430,24 @@ class _LoginScreenState extends State<LoginScreen> {
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          ).show(context);
+          ).show(NavigationService.navigatorKey.currentContext!);
         }
       });
     }
 
+    return const SizedBox.shrink();
+  }
+
+  _showNotificationMessage(String message) {
+    Future.delayed(const Duration(milliseconds: 0), () {
+      if (message.isNotEmpty) {
+        FlushbarHelper.createInformation(
+          message: message,
+          title: Lang.get('notification'),
+          duration: const Duration(seconds: 3),
+        ).show(NavigationService.navigatorKey.currentContext!);
+      }
+    });
     return const SizedBox.shrink();
   }
 
