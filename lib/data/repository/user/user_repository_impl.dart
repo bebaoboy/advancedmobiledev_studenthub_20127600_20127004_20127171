@@ -97,7 +97,6 @@ class UserRepositoryImpl extends UserRepository {
 
       print("student $companyData");
 
-
       var roleData = response.data["result"]["roles"];
       List<UserType> userRoles;
 
@@ -230,21 +229,22 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<Response> getEducation(UpdateEducationParams params) {
-    // TODO: implement getEducation
-    throw UnimplementedError();
+  Future<Response> getEducation(UpdateEducationParams params) async {
+    var response = await _profileApi.getEducation(params);
+    return response;
   }
 
   @override
-  Future<Response> getLanguage(UpdateLanguageParams params) {
-    // TODO: implement getLanguage
-    throw UnimplementedError();
+  Future<Response> getLanguage(UpdateLanguageParams params) async {
+    var response = await _profileApi.getLanguage(params);
+    return response;
   }
 
   @override
-  Future<Response> getProjectExperience(UpdateProjectExperienceParams params) {
-    // TODO: implement getProjectExperience
-    throw UnimplementedError();
+  Future<Response> getProjectExperience(
+      UpdateProjectExperienceParams params) async {
+    var response = await _profileApi.getProjectExperience(params);
+    return response;
   }
 
   @override

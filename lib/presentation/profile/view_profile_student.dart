@@ -15,6 +15,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -38,6 +39,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final ProfileStudentFormStore _formStore = getIt<ProfileStudentFormStore>();
   final UserStore _userStore = getIt<UserStore>();
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //textEdittingController
   final TextEditingController _companyNameController = TextEditingController();
@@ -50,11 +52,15 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   @override
   void initState() {
+    _infoStore.setStudentId(_userStore.user!.studentProfile!.objectId!);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_infoStore.isEmpty) {
+      _infoStore.getInfo();
+    }
     if (children.isEmpty) {
       children = [
         const KeepAlivePage(ProfileStudentScreenWidget()),
@@ -434,6 +440,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
   final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //focus node:-----------------------------------------------------------------
 
@@ -444,24 +451,27 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
   @override
   void initState() {
     super.initState();
-    _languages.add(Language("English", "Native or Bilingual"));
-    _languages.add(Language("Spanish", "Beginner"));
-    _languages.add(Language("Cupkkake", "Intermediate"));
-    _languages.add(Language("VN", "Null"));
-    _languages.add(Language("Monkeyish", "Beginner"));
-    _languages.add(Language("Floptropican", "Intermediate"));
-    _languages.add(Language("Spanish 2.0", "Native"));
-    _languages.add(Language("AHHH", "Beginner"));
-    _languages.add(Language("Papi", "Native"));
-    _languages.add(Language("Egyptian", "Beginner"));
-    _languages.add(Language("Indian", "Native"));
-    _languages.add(Language("Nadir", "Beginner"));
-    _educations.add(Education("Le Hong Phong Highschool",
-        startYear: DateTime(2007), endYear: DateTime(2010)));
-    _educations.add(Education("Ho Chi Minh University of Science",
-        startYear: DateTime(2010), endYear: DateTime(2014)));
-    _educations.add(Education("Ho Chi Minh University of Science",
-        startYear: DateTime(2014), endYear: DateTime(2018)));
+    _languages.addAll(_infoStore.currentLanguage ?? []);
+    _educations.addAll(_infoStore.currentEducation ?? []);
+    
+    // _languages.add(Language("English", "Native or Bilingual"));
+    // _languages.add(Language("Spanish", "Beginner"));
+    // _languages.add(Language("Cupkkake", "Intermediate"));
+    // _languages.add(Language("VN", "Null"));
+    // _languages.add(Language("Monkeyish", "Beginner"));
+    // _languages.add(Language("Floptropican", "Intermediate"));
+    // _languages.add(Language("Spanish 2.0", "Native"));
+    // _languages.add(Language("AHHH", "Beginner"));
+    // _languages.add(Language("Papi", "Native"));
+    // _languages.add(Language("Egyptian", "Beginner"));
+    // _languages.add(Language("Indian", "Native"));
+    // _languages.add(Language("Nadir", "Beginner"));
+    // _educations.add(Education("Le Hong Phong Highschool",
+    //     startYear: DateTime(2007), endYear: DateTime(2010)));
+    // _educations.add(Education("Ho Chi Minh University of Science",
+    //     startYear: DateTime(2010), endYear: DateTime(2014)));
+    // _educations.add(Education("Ho Chi Minh University of Science",
+    //     startYear: DateTime(2014), endYear: DateTime(2018)));
   }
 
   @override
