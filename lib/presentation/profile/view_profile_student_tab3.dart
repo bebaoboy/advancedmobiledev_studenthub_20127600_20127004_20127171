@@ -4,7 +4,6 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -33,15 +32,14 @@ changeValue(value, isCV) async {
   }
 }
 
-class ProfileStudentStep3Screen extends StatefulWidget {
-  const ProfileStudentStep3Screen({super.key});
+class ViewProfileStudentTab3 extends StatefulWidget {
+  const ViewProfileStudentTab3({super.key});
 
   @override
-  _ProfileStudentStep3ScreenState createState() =>
-      _ProfileStudentStep3ScreenState();
+  _ViewProfileStudentTab3State createState() => _ViewProfileStudentTab3State();
 }
 
-class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
+class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
@@ -128,7 +126,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const EmptyAppBar(),
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
@@ -543,10 +540,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            // _profileStudentFormStore
-            //     .setResume(_cv != null ? _cv!.path ?? "" : '');
-            // _profileStudentFormStore.setTranscript(
-            //     _transcript != null ? _transcript!.path ?? "" : '');
+            _profileStudentFormStore
+                .setResume(_cv != null ? _cv!.path ?? "" : '');
+            _profileStudentFormStore.setTranscript(
+                _transcript != null ? _transcript!.path ?? "" : '');
             print(_profileStudentFormStore.techStack);
             print(_profileStudentFormStore.skillSet);
             print(_profileStudentFormStore.educations);

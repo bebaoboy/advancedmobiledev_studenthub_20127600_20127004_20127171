@@ -13,7 +13,7 @@ class SharedPreferenceView extends StatefulWidget {
 }
 
 class _SharedPreferenceViewState extends State<SharedPreferenceView> {
-  UserStore _userStore = getIt<UserStore>();
+  final UserStore _userStore = getIt<UserStore>();
 
   Future<List<Widget>> getAllPrefs() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -55,8 +55,9 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
             child: FutureBuilder<List<Widget>>(
                 future: getAllPrefs(),
                 builder: (context, snapshot) {
-                  if (!snapshot.hasData || snapshot.data == null)
+                  if (!snapshot.hasData || snapshot.data == null) {
                     return Container();
+                  }
                   var data = List<Widget>.from([getUser(), ...snapshot.data!]);
                   return ListView(
                     children: data,
