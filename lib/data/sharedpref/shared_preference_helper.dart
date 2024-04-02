@@ -54,6 +54,7 @@ class SharedPreferenceHelper {
     return _sharedPreference.setString(Preferences.current_language, language);
   }
 
+  // user
   Future<void> saveUser(User? user) {
     if (user == null) {
       _sharedPreference.setString(Preferences.current_user_email, '');
@@ -74,7 +75,7 @@ class SharedPreferenceHelper {
   Future<void> saveRolesList(List<UserType> roles) {
     return _sharedPreference.setStringList(
         Preferences.current_user_roleList,
-        roles!
+        roles
             .map(
               (e) => e.name,
             )
@@ -96,25 +97,34 @@ class SharedPreferenceHelper {
 
     UserType userType = getUserType(userRole);
 
-    return User(email: userEmail, type: userType, roles: userRoles);
+    String name =
+        _sharedPreference.getString(Preferences.current_user_name) ?? '';
+
+    int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
+
+    return User(email: userEmail, type: userType, roles: userRoles, name: name, objectId: id.toString());
   }
 
   Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
-    if (studentProfile != null) {
+    if (studentProfile == null) {
       return false;
     }
 
+    print(studentProfile!.toJson().toString());
+
     return _sharedPreference.setString(
-        Preferences.student_profile, studentProfile!.toJson());
+        Preferences.student_profile, studentProfile.toJson());
   }
 
   Future<bool> saveCompanyProfile(CompanyProfile? companyProfile) async {
-    if (companyProfile != null) {
+    if (companyProfile == null) {
       return false;
     }
 
+    print(companyProfile!.toJson().toString());
+
     return _sharedPreference.setString(
-        Preferences.company_profile, companyProfile!.toJson());
+        Preferences.company_profile, companyProfile.toJson());
   }
 
   Future<StudentProfile?> get studentProfile async {
@@ -143,6 +153,49 @@ class SharedPreferenceHelper {
   Future<List<Profile?>> getCurrentProfile() async {
     final company = await companyProfile.catchError((_) => null);
     final student = await studentProfile.catchError((_) => null);
-    return [student, company].toList();
+    return [student, company];
+  }
+
+  Future<void> removeUser() async {
+    await _sharedPreference.setString(Preferences.current_user_email, "");
+    await _sharedPreference.setString(Preferences.current_user_role, "");
+    await _sharedPreference
+        .setStringList(Preferences.current_user_roleList, []);
+    await _sharedPreference.setString(Preferences.current_user_name, "");
+  }
+
+  Future saveName(String name) async {
+    await _sharedPreference.setString(Preferences.current_user_name, name);
+  }
+
+  Future saveId(int id) async {
+    await _sharedPreference.setInt(Preferences.current_user_id, id);
+  }
+
+  // forget password
+
+  Future<String> get oldPass async {
+    int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
+    return _sharedPreference.getString("${Preferences.encrypted_pass}_$id") ??
+        '';
+  }
+
+  Future<bool> get requiredChangePass async {
+    int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
+    return _sharedPreference
+            .getBool("${Preferences.required_pass_change}_$id") ??
+        false;
+  }
+
+  Future saveOldPassEncrypted(String oldPass) async {
+    int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
+    await _sharedPreference.setString(
+        "${Preferences.encrypted_pass}_$id", oldPass);
+  }
+
+  Future saveHasToChangePass(bool value) async {
+    int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
+    await _sharedPreference.setBool(
+        "${Preferences.required_pass_change}_$id", value);
   }
 }

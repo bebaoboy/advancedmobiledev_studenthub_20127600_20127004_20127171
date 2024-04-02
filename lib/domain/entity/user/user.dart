@@ -1,8 +1,6 @@
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user.g.dart';
-
 enum UserType { student, company, naught }
 
 UserType getUserType(String value) {

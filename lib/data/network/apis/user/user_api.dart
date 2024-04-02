@@ -50,6 +50,31 @@ class UserApi {
   }
 
   Future<Response> getProfile() async {
-    return await _dioClient.dio.get(Endpoints.getProfile, data: {}).onError((DioException exception, stackTrace) => Future.value(exception.response));
+    return await _dioClient.dio.get(Endpoints.getProfile, data: {}).onError(
+        (DioException exception, stackTrace) =>
+            Future.value(exception.response));
+  }
+
+  Future<void> logout() async {
+    try {
+      await _dioClient.dio.post(Endpoints.logout, data: {});
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<Response> sendResetPasswordMail(String email) async {
+    return await _dioClient.dio
+        .post(Endpoints.forgetPassword, data: {"email": email}).onError(
+            (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> changePassword(
+      String newPassword, String oldPassword) async {
+    return await _dioClient.dio.put(Endpoints.changePassword, data: {
+      "oldPassword": oldPassword,
+      "newPassword": newPassword,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
   }
 }

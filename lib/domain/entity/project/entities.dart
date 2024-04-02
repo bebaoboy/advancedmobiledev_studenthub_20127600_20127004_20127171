@@ -5,8 +5,6 @@ import 'dart:convert';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
-part 'entities.g.dart';
-
 class MyObject {
   String? objectId = const Uuid().v4();
   DateTime createdAt = DateTime.now();

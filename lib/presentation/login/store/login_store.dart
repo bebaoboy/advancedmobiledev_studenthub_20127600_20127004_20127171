@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
-import 'package:boilerplate/domain/usecase/user/delete_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -33,7 +33,7 @@ abstract class _UserStore with Store {
     this._getUserDataUseCase,
     this._saveTokenUseCase,
     this._getProfileUseCase,
-    this._deleteProfileUseCase,
+    this._logoutUseCase,
     this._setUserProfileUseCase,
   ) {
     // setting up disposers
@@ -60,11 +60,11 @@ abstract class _UserStore with Store {
       }
     });
 
-    savedUsers.add(User(
-        email: "user1@gmail.com",
-        name: "Hai Pham",
-        roles: [UserType.company, UserType.student],
-        isVerified: true));
+    // savedUsers.add(User(
+    //     email: "user1@gmail.com",
+    //     name: "Hai Pham",
+    //     roles: [UserType.company, UserType.student],
+    //     isVerified: true));
     // savedUsers.add(User(
     //     email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
     // savedUsers.add(User(
@@ -85,8 +85,8 @@ abstract class _UserStore with Store {
   final GetUserDataUseCase _getUserDataUseCase;
   final SaveTokenUseCase _saveTokenUseCase;
   final GetProfileUseCase _getProfileUseCase;
-  final DeleteProfileUseCase _deleteProfileUseCase;
   final SetUserProfileUseCase _setUserProfileUseCase;
+  final LogoutUseCase _logoutUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -115,7 +115,11 @@ abstract class _UserStore with Store {
   bool success = false;
 
   @observable
-  FetchProfileResult profileResult = FetchProfileResult(false, [], []);
+  String notification = "";
+
+  @observable
+  FetchProfileResult profileResult =
+      FetchProfileResult(false, [], [], "", "", false);
 
   @observable
   User? _user;
@@ -144,8 +148,6 @@ abstract class _UserStore with Store {
       _user = value;
       await _saveLoginStatusUseCase.call(params: true);
       await _saveUserDataUseCase.call(params: value);
-
-      return;
     }
 
     await future.then((value) async {
@@ -154,37 +156,44 @@ abstract class _UserStore with Store {
           value.statusCode == HttpStatus.ok) {
         success = true;
 
-        await _saveTokenUseCase.call(params: value.data['result']['token']);
-        await _saveLoginStatusUseCase.call(params: true);
+        if (value.data['result']['token'] != null) {
+          await _saveTokenUseCase.call(params: value.data['result']['token']);
+          await _saveLoginStatusUseCase.call(params: true);
 
-        var userValue = User(
-            type: getUserType(type.name ?? 'naught'),
-            email: email,
-            roles: [],
-            isVerified: true);
+          var userValue = User(
+              type: getUserType(type.name ?? 'naught'),
+              email: email,
+              roles: [],
+              isVerified: true);
 
-        isLoggedIn = true;
+          isLoggedIn = true;
 
-        profileResult = await _getProfileUseCase(params: true);
+          profileResult = await _getProfileUseCase(params: true);
 
-        if (profileResult.status) {
-          userValue.companyProfile = profileResult.result[1] != null
-              ? profileResult.result[1] as CompanyProfile
-              : null;
-          userValue.studentProfile = profileResult.result[0] != null
-              ? profileResult.result[0] as StudentProfile
-              : null;
-          userValue.roles = profileResult.roles;
+          if (profileResult.status) {
+            userValue.companyProfile = profileResult.result[1] != null
+                ? profileResult.result[1] as CompanyProfile
+                : null;
+            userValue.studentProfile = profileResult.result[0] != null
+                ? profileResult.result[0] as StudentProfile
+                : null;
+            userValue.roles = profileResult.roles;
+            userValue.isVerified = profileResult.isVerified;
+            userValue.name = profileResult.name;
+            userValue.objectId = profileResult.id;
+          }
+
+          // print(profileResult);
+
+          _user = userValue;
+          await _saveUserDataUseCase(
+            params: _user,
+          );
+
+          savedUsers.add(_user!);
+        } else {
+          notification = value.data['result'];
         }
-
-        print(profileResult);
-
-        _user = userValue;
-        await _saveUserDataUseCase(
-          params: _user,
-        );
-
-        savedUsers.add(_user!);
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List
@@ -199,12 +208,14 @@ abstract class _UserStore with Store {
     });
   }
 
-  logout() async {
+  Future logout() async {
     isLoggedIn = false;
+    if (_user != null) {
+      savedUsers.removeWhere((e) => e.objectId == _user!.objectId);
+    }
     _user = null;
-    await _saveLoginStatusUseCase.call(params: false);
-    await _saveUserDataUseCase.call(params: null);
-    await _deleteProfileUseCase.call(params: true);
+
+    await _logoutUseCase.call(params: true);
   }
 
   // general methods:-----------------------------------------------------------

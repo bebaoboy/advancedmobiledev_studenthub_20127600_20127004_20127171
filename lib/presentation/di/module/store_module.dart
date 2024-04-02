@@ -4,9 +4,13 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
-import 'package:boilerplate/domain/usecase/user/delete_profile_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/change_password_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/has_to_change_pass_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/send_reset_password_mail_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -16,6 +20,7 @@ import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/post/store/post_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_form_store.dart';
@@ -31,6 +36,7 @@ mixin StoreModule {
     getIt.registerFactory(
       () => FormStore(getIt<FormErrorStore>(), getIt<ErrorStore>()),
     );
+    getIt.registerFactory(() => ForgetPasswordFormErrorStore());
     getIt.registerFactory(
       () => ProfileFormErrorStore(),
     );
@@ -48,7 +54,7 @@ mixin StoreModule {
         getIt<GetUserDataUseCase>(),
         getIt<SaveTokenUseCase>(),
         getIt<GetProfileUseCase>(),
-        getIt<DeleteProfileUseCase>(),
+        getIt<LogoutUseCase>(),
         getIt<SetUserProfileUseCase>(),
       ),
     );
@@ -57,6 +63,15 @@ mixin StoreModule {
       SignupStore(getIt<SignUpUseCase>(), getIt<SignUpFormErrorStore>(),
           getIt<ErrorStore>()),
     );
+
+    getIt.registerSingleton<ForgetPasswordStore>(ForgetPasswordStore(
+      getIt<ForgetPasswordFormErrorStore>(),
+      getIt<ErrorStore>(),
+      getIt<ChangePasswordUseCase>(),
+      getIt<SendResetPasswordMailUseCase>(),
+      getIt<GetMustChangePassUseCase>(),
+      getIt<HasToChangePassUseCase>(),
+    ));
 
     getIt.registerFactory(() =>
         ProfileFormStore(getIt<ProfileFormErrorStore>(), getIt<ErrorStore>()));

@@ -1,13 +1,13 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -27,22 +27,16 @@ class ForgetPasswordScreen extends StatefulWidget {
 class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   //text controllers:-----------------------------------------------------------
   final TextEditingController _userEmailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
-  final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
-
-  //focus node:-----------------------------------------------------------------
-  late FocusNode _passwordFocusNode;
+  final ForgetPasswordStore _formStore = getIt<ForgetPasswordStore>();
 
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    _passwordFocusNode = FocusNode();
   }
 
   @override
@@ -73,7 +67,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _formStore.mailSentSuccess
                   ? navigate(context)
                   : _showErrorMessage(_formStore.errorStore.errorMessage);
             },
@@ -81,15 +75,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: loading,
                 // child: CustomProgressIndicatorWidget(),
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        loading = false;
-                      });
-                    },
-                    child: const LoadingScreen()),
+                child: const LoadingScreen(),
               );
             },
           )
@@ -132,7 +120,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 14.0),
-              
                   AutoSizeText(
                     Lang.get('forget_password_main_text2'),
                     style: const TextStyle(
@@ -143,17 +130,10 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.center,
                   ),
-                  // Image.asset(
-                  //   'assets/images/img_login.png',
-                  //   scale: 1.2,
-                  // ),
                   const SizedBox(height: 44.0),
-                  // Expanded(child: _buildUserIdField()),
                   _buildUserIdField(),
-                  // _buildPasswordField(),
-                  // _buildForgotPasswordButton(),
                   const SizedBox(height: 44.0),
-                  _buildSignInButton(),
+                  _buildSendEmailButton(),
                   RichText(
                     text: TextSpan(
                       text: Lang.get('signup_sign_up_prompt'),
@@ -180,19 +160,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
               ),
             ),
           ),
-          // Align(
-          //   heightFactor: 2,
-          //   alignment: Alignment.bottomCenter,
-          //   child: Column(
-          //     children: [
-          //       _buildFooterText(),
-          //       const SizedBox(
-          //         height: 14,
-          //       ),
-          //       _buildSignUpButton(),
-          //     ],
-          //   ),
-          // )
         ],
       ),
     );
@@ -210,22 +177,17 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
           inputAction: TextInputAction.next,
           autoFocus: false,
           onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
+            _formStore.setEmail(_userEmailController.text);
           },
-          onFieldSubmitted: (value) {
-            FocusScope.of(context).requestFocus(_passwordFocusNode);
-          },
-          errorText: _formStore.formErrorStore.userEmail == null
+          errorText: _formStore.formErrorStore.email == null
               ? null
-              : Lang.get(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.formErrorStore.email),
         );
       },
     );
   }
 
-
-
-  Widget _buildSignInButton() {
+  Widget _buildSendEmailButton() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 50),
       child: RoundedButtonWidget(
@@ -233,37 +195,26 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          setState(() {
-            loading = true;
-          });
-          await Future.delayed(const Duration(seconds: 2), () {
-            //print("LOADING = $loading");
-            loading = false;
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute2(routeName: Routes.forgetPasswordSent));
-          });
-          //         Navigator.of(context)
-          // .push(MaterialPageRoute2(routeName: Routes.forgetPasswordSent));
-          //   if (_formStore.canForgetPassword) {
-          //     DeviceUtils.hideKeyboard(context);
-          //     _userStore.login(
-          //         _userEmailController.text, _passwordController.text);
-          //         // loading = true;
-          //   } else {
-          //     _showErrorMessage(AppLocalizations.of(context)
-          //         .get('login_error_missing_fields'));
-          //   }
+          if (_formStore.canSendEmail) {
+            DeviceUtils.hideKeyboard(context);
+            _formStore.sendMail();
+            setState(() {
+              loading = true;
+            });
+          }
         },
       ),
     );
   }
 
-
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
-
+    if (loading) {
+      Future.delayed(const Duration(seconds: 2), () {
+        loading = false;
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute2(routeName: Routes.forgetPasswordSent));
+      });
+    }
     return Container();
   }
 
@@ -289,8 +240,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
     _userEmailController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
     super.dispose();
   }
 }

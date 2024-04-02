@@ -9,8 +9,11 @@ class FetchProfileResult {
   bool status;
   List<Profile?> result;
   List<UserType>? roles;
+  String id;
+  String name;
+  bool isVerified;
 
-  FetchProfileResult(this.status, this.result, this.roles);
+  FetchProfileResult(this.status, this.result, this.roles, this.id, this.name, this.isVerified);
 }
 
 class GetProfileUseCase extends UseCase<FetchProfileResult, bool> {
@@ -23,6 +26,6 @@ class GetProfileUseCase extends UseCase<FetchProfileResult, bool> {
     if (params) {
       return _userRepository.getProfileAndSave();
     }
-    return Future.value(FetchProfileResult(false, [null, null].toList(), []));
+    return Future.value(FetchProfileResult(false, [null, null], [],  "", "", false));
   }
 }

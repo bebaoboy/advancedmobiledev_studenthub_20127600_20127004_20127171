@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/change_password_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:dio/dio.dart';
@@ -19,7 +21,7 @@ abstract class UserRepository {
 
   Future<User> get user;
 
-  Future<void> changePassword(String value);
+  Future<Response> changePassword(ChangePasswordParams value);
 
   Future<Response> signUp(SignUpParams params);
 
@@ -30,4 +32,12 @@ abstract class UserRepository {
   Future<void> deleteProfile();
 
   Future<List<Profile?>> fetchProfileFromSharedPref();
+
+  Future<void> logout();
+
+  Future<Response> sendResetPasswordMail(String params);
+
+  void saveHasToChangePass(String oldPass, bool bool);
+
+  Future<HasToChangePassParams> getRequired();
 }

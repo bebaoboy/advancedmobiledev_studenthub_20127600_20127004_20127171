@@ -7,9 +7,13 @@ import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
-import 'package:boilerplate/domain/usecase/user/delete_profile_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/change_password_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/has_to_change_pass_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/send_reset_password_mail_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -47,13 +51,25 @@ mixin UseCaseModule {
     getIt.registerSingleton<SetUserProfileUseCase>(
       SetUserProfileUseCase(getIt<UserRepository>()),
     );
-    getIt.registerSingleton<DeleteProfileUseCase>(
-      DeleteProfileUseCase(getIt<UserRepository>()),
-    );
     getIt.registerSingleton<GetProfileUseCase>(
       GetProfileUseCase(getIt<UserRepository>()),
     );
-    
+    getIt.registerSingleton<LogoutUseCase>(
+      LogoutUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<ChangePasswordUseCase>(
+      ChangePasswordUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SendResetPasswordMailUseCase>(
+      SendResetPasswordMailUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<GetMustChangePassUseCase>(
+      GetMustChangePassUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<HasToChangePassUseCase>(
+      HasToChangePassUseCase(getIt<UserRepository>()),
+    );
+
     // post:--------------------------------------------------------------------
     getIt.registerSingleton<GetPostUseCase>(
       GetPostUseCase(getIt<PostRepository>()),
