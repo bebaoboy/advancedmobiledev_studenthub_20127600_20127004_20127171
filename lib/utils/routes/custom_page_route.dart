@@ -1,6 +1,7 @@
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 // class TransitionPageWrapper extends Page {
 //   const TransitionPageWrapper(
@@ -30,20 +31,21 @@ import 'package:flutter/material.dart';
 //   }
 // }
 
-class MaterialPageRoute2 extends PageRouteBuilder {
+class MaterialPageRoute2 extends SwipeablePageRoute {
   final String routeName;
   final Object? arguments;
   final Widget? child;
 
   MaterialPageRoute2({this.routeName = "/", this.arguments, this.child})
       : super(
+            canOnlySwipeFromEdge: true,
             settings: RouteSettings(name: routeName, arguments: arguments),
             transitionDuration:
                 Duration(milliseconds: arguments != null ? 300 : 500),
-            pageBuilder: (context, animation, secondaryAnimation) =>
+            builder: (context) =>
                 child ?? getRoute(routeName, context, arguments: arguments),
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) {
+            transitionBuilder:
+                (context, animation, secondaryAnimation, b, child) {
               return
                   // SharedAxisTransition(
                   //   fillColor: Theme.of(context).colorScheme.onBackground.withOpacity(0.01),
@@ -52,10 +54,15 @@ class MaterialPageRoute2 extends PageRouteBuilder {
                   //   transitionType: SharedAxisTransitionType.scaled,
                   //   child: child,
                   // );
-                  ScaleTransition(
-                      scale: animation.drive(Tween(begin: 0.0, end: 1.0)
-                          .chain(CurveTween(curve: Curves.ease))),
-                      child: child);
+                  SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(1, 0),
+                        end: Offset.zero,
+                      ).animate(animation),
+                      child: FadeTransition(
+                        opacity: animation.drive(Tween(begin: 0.9, end: 1.0)),
+                        child: child,
+                      ));
               // FadeTransition(
               //   opacity: animation,
               //   child: child,
@@ -66,27 +73,41 @@ class MaterialPageRoute2 extends PageRouteBuilder {
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
     return super.buildTransitions(
-        context,
-        animation,
-        secondaryAnimation,
-        // SlideTransition(
-        //   position: Tween<Offset>(
-        //     begin: Offset(0, 1),
-        //     end: Offset.zero,
-        //   ).animate(animation),
-        //   child: child,
-        // )
-        // ScaleTransition(scale: animation, child: child,),
-        // SharedAxisTransition(
-        //   fillColor: Theme.of(context).cardColor,
-        //   animation: animation,
-        //   secondaryAnimation: secondaryAnimation,
-        //   transitionType: SharedAxisTransitionType.scaled,
-        //   child: child,
-        // ),
-        ScaleTransition(
-            scale: animation.drive(Tween(begin: 0.0, end: 1.0)
-                .chain(CurveTween(curve: Curves.ease))),
-            child: child));
+      context,
+      animation,
+      secondaryAnimation,
+      // SlideTransition(
+      //   position: Tween<Offset>(
+      //     begin: Offset(0, 1),
+      //     end: Offset.zero,
+      //   ).animate(animation),
+      //   child: child,
+      // )
+      // ScaleTransition(scale: animation, child: child,),
+      // SharedAxisTransition(
+      //   fillColor: Theme.of(context).cardColor,
+      //   animation: animation,
+      //   secondaryAnimation: secondaryAnimation,
+      //   transitionType: SharedAxisTransitionType.scaled,
+      //   child: child,
+      // ),
+      SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(animation),
+          child: FadeTransition(
+            opacity: animation.drive(Tween(begin: 0.9, end: 1.0)),
+            child: child,
+          )),
+      // )
+      // ScaleTransition(
+      //     scale: animation.drive(Tween(begin: 1.5, end: 1.0)
+      //         .chain(CurveTween(curve: Curves.ease))),
+      //     child: FadeTransition(
+      //       opacity: animation.drive(Tween(begin: 0.0, end: 1.0)),
+      //       child: child,
+      //     ))
+    );
   }
 }

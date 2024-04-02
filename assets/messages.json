@@ -7,7 +7,7 @@
       "lastName": "Doe"
     },
     "createdAt": 1655648404000,
-    "id": "c67ed376-52bf-4d4e-ba2a-7a0f8467b22a",
+    "id": "c67ed376-52bf-4d4e-ba2a-0007a0f8467b22a",
     "status": "seen",
     "text": "Ooowww ☺️",
     "type": "text"
@@ -18,7 +18,7 @@
       "lastName": "Doe"
     },
     "createdAt": 1655648404000,
-    "id": "c67ed376-52bf-4d4e-ba2a-7a0f84679999",
+    "id": "c67ed376-52bf-4d4e-ba2a-7anj0f84679999",
     "status": "seen",
     "text": "Ooowww ☺️",
     "type": "custom",
@@ -50,6 +50,22 @@
       "imageUrl": "https://i.pravatar.cc/300?u=e52552f4-835d-4dbe-ba77-b076e659774d",
       "lastName": "King"
     },
+    "createdAt": 1655648404008,
+    "id": "c67ed376-52bf-4d4e-ba2ajbjbb-7a0f84679999",
+    "status": "seen",
+    "text": "Ooowww ☺️",
+    "type": "custom",
+    "metadata": {
+      "type": "schedule"
+    }
+  },
+  {
+    "author": {
+      "firstName": "Janice",
+      "id": "e52552f4-835d-4dbe-ba77-b076e659774d",
+      "imageUrl": "https://i.pravatar.cc/300?u=e52552f4-835d-4dbe-ba77-b076e659774d",
+      "lastName": "King"
+    },
     "createdAt": 1255648402000,
     "id": "4e048753-2d60-4144-bc28-9967050aaf12",
     "status": "seen",
@@ -63,7 +79,7 @@
       "lastName": "White"
     },
     "createdAt": 1655648401000,
-    "id": "64747b28-df19-4a0c-8c47-316dc3546e3c",
+    "id": "64747b28-df19-4a0c-8c47j-316dc3546e3c",
     "status": "seen",
     "text": "Here you go buddy! 💪",
     "type": "text"

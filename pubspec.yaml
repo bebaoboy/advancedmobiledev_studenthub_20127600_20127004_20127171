@@ -41,7 +41,7 @@ dependencies:
   flutter_mobx: ^2.0.6+5
   # file_previewer:
   firebase_core: ^2.24.2
-  firebase_crashlytics: ^3.4.9
+  firebase_crashlytics: 
   firebase_analytics: ^10.8.0
   flutter_animated_dialog: 
   # flutter_riverpod:
@@ -142,6 +142,9 @@ dependencies:
   draggable_home:
   rxdart: ^0.27.7
   # flutter_in_app_pip:
+  smooth_page_indicator:
+  interpolator:
+  swipeable_page_route:
 
 
 dev_dependencies:

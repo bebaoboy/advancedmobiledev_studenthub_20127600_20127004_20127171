@@ -7,6 +7,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'constants/preferences.dart';
 
+/*
+{
+  "email": "baominkhuynh@gmail.com",
+  "password": "12345678Bao+"
+} */
+String baominkhuynh =
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NDgsImZ1bGxuYW1lIjoiYmFvIiwiZW1haWwiOiIxMjMrQG1haWwuY29tIiwicm9sZXMiOlsiMCJdLCJpYXQiOjE3MTE4Nzg0MzcsImV4cCI6MTcxMzA4ODAzN30.I2R9UyKH6aRp_XXSwXxBumUZ78qkKAtuYaGzeijZFOQ";
+
 class SharedPreferenceHelper {
   // shared pref instance
   final SharedPreferences _sharedPreference;
@@ -16,6 +24,7 @@ class SharedPreferenceHelper {
 
   // General Methods: ----------------------------------------------------------
   Future<String?> get authToken async {
+    return Future.value(baominkhuynh);
     return _sharedPreference.getString(Preferences.auth_token);
   }
 

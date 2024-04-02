@@ -320,9 +320,14 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                 ? ExampleLoadingAnimationProjectList(
                     height: MediaQuery.of(context).size.height * 0.85,
                     list: widget.searchList,
-                    firstCallback: (i) {
+                    firstCallback: (id) {
                       setState(() {
-                        allProjects[i].isFavorite = !allProjects[i].isFavorite;
+                        for (int i = 0; i < allProjects.length; i++) {
+                          if (allProjects[i].objectId == id) {
+                            allProjects[i].isFavorite =
+                                !allProjects[i].isFavorite;
+                          }
+                        }
                       });
                     },
                   )

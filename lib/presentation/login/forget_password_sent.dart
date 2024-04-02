@@ -3,10 +3,13 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 
 class ForgetPasswordSentScreen extends StatefulWidget {
@@ -123,6 +126,18 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
     Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword),
         (Route<dynamic> route) => false);
+// =======
+//     // SharedPreferences.getInstance().then((prefs) {
+//     //   prefs.setBool(Preferences.is_logged_in, true);
+//     // });
+
+//     Future.delayed(const Duration(milliseconds: 0), () {
+//       //print("LOADING = $loading");
+//       Navigator.of(context).pushAndRemoveUntil(
+//           MaterialPageRoute2(routeName: Routes.home),
+//           (Route<dynamic> route) => false);
+//     });
+//
 
     return Container();
   }

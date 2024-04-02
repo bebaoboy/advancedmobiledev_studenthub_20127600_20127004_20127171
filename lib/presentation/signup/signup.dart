@@ -3,7 +3,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
@@ -325,15 +324,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    SharedPreferences.getInstance().then((prefs) {
-      prefs.setBool(Preferences.is_logged_in, true);
-    });
+    // SharedPreferences.getInstance().then((prefs) {
+    //   prefs.setBool(Preferences.is_logged_in, true);
+    // });
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.home),
-          (Route<dynamic> route) => false);
-    });
+    // Future.delayed(const Duration(milliseconds: 0), () {
+    //   Navigator.of(context).pushAndRemoveUntil(
+    //       MaterialPageRoute2(routeName: Routes.home),
+    //       (Route<dynamic> route) => false);
+    // });
 
     return Container();
   }

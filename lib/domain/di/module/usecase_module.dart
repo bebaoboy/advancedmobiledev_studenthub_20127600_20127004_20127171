@@ -9,6 +9,16 @@ import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/update_education.dart';
+import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/forgetPass/change_password_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
@@ -42,6 +52,47 @@ mixin UseCaseModule {
     getIt.registerSingleton<SaveTokenUseCase>(
       SaveTokenUseCase(getIt<UserRepository>()),
     );
+
+    getIt.registerSingleton<AddProfileCompanyUseCase>(
+      AddProfileCompanyUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateProfileCompanyUseCase>(
+      UpdateProfileCompanyUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<AddProfileStudentUseCase>(
+      AddProfileStudentUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<AddTechStackUseCase>(
+      AddTechStackUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<AddSkillsetUseCase>(
+      AddSkillsetUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateLanguageUseCase>(
+      UpdateLanguageUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateEducationUseCase>(
+      UpdateEducationUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateProjectExperienceUseCase>(
+      UpdateProjectExperienceUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateTranscriptUseCase>(
+      UpdateTranscriptUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateResumeUseCase>(
+      UpdateResumeUseCase(getIt<UserRepository>()),
+    );
+
     getIt.registerSingleton<GetUserDataUseCase>(
       GetUserDataUseCase(getIt<UserRepository>()),
     );

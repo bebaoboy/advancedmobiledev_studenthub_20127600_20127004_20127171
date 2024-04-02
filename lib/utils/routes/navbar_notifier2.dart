@@ -245,7 +245,7 @@ class NavbarNotifier2 extends ChangeNotifier {
       message,
       showCloseIcon: showCloseIcon,
       actionLabel: actionLabel,
-      bottom: bottom ?? kNavbarHeight,
+      bottom: bottom ?? 58,
       duration: duration,
       onPressed: () {
         if (onActionPressed != null) {

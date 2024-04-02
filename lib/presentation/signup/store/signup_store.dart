@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_final_fields
+
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';

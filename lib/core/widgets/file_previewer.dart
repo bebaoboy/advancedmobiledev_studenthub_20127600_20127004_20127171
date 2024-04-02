@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' show extension;
 import 'package:pdf_image_renderer/pdf_image_renderer.dart';
+import 'package:validators/validators.dart';
 
 class FilePreview {
   static const MethodChannel _channel = MethodChannel('file_preview');
@@ -31,71 +32,115 @@ class FilePreview {
     //     filePath.startsWith('www')) {
 
     // }
-    switch (extension(filePath.toLowerCase())) {
-      case ".pdf":
-        return await generatePDFPreview(
-          filePath,
-          height: height ?? 400,
-          width: width ?? 200,
-          defaultImage: defaultImage,
-        );
-      case ".jpg":
-      case ".jpeg":
-      case ".png":
-      case ".gif":
-        return Image.file(
-          File(filePath),
+    if (isURL(filePath)) {
+      try {
+        return CachedNetworkImage(
           width: width,
           height: height,
-        );
-      default:
-        if (Platform.isIOS) {
-          final Uint8List byteList =
-              await _channel.invokeMethod('getThumbnail', filePath);
-          return Image.memory(byteList);
-        } else {
-          try {
-            return CachedNetworkImage(
-              width: width,
-              height: height,
-              imageUrl: filePath,
-              imageBuilder: (context, imageProvider) => Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: imageProvider,
-                    fit: BoxFit.scaleDown,
-                    // colorFilter:
-                    //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
-                  ),
-                ),
+          imageUrl: filePath,
+          imageBuilder: (context, imageProvider) => Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: imageProvider,
+                fit: BoxFit.scaleDown,
+                // colorFilter:
+                //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
               ),
-              placeholder: (context, url) => Center(
-                child: Lottie.asset(
-                  'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                  fit: BoxFit.cover,
-                  width: 80, // Adjust the width and height as needed
-                  height: 80,
-                  repeat: true, // Set to true if you want the animation to loop
-                ),
+            ),
+          ),
+          placeholder: (context, url) => Center(
+            child: Lottie.asset(
+              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+              fit: BoxFit.cover,
+              width: 80, // Adjust the width and height as needed
+              height: 80,
+              repeat: true, // Set to true if you want the animation to loop
+            ),
+          ),
+          errorWidget: (context, url, error) {
+            changeValue(true, isCV);
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(13.0),
+                child: Text(filePath),
               ),
-              errorWidget: (context, url, error) {
-                changeValue(true, isCV);
-                return Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(13.0),
-                    child: Text(filePath),
-                  ),
-                );
-              },
-              errorListener: (value) {
-                //print("error");
-              },
             );
-          } catch (e) {
-            return null;
+          },
+          errorListener: (value) {
+            //print("error");
+          },
+        );
+      } catch (e) {
+        return null;
+      }
+    } else {
+      switch (extension(filePath.toLowerCase())) {
+        case ".pdf":
+          return await generatePDFPreview(
+            filePath,
+            height: height ?? 400,
+            width: width ?? 200,
+            defaultImage: defaultImage,
+          );
+        case ".jpg":
+        case ".jpeg":
+        case ".png":
+        case ".gif":
+          return Image.file(
+            File(filePath),
+            width: width,
+            height: height,
+          );
+        default:
+          if (Platform.isIOS) {
+            final Uint8List byteList =
+                await _channel.invokeMethod('getThumbnail', filePath);
+            return Image.memory(byteList);
+          } else {
+            try {
+              return CachedNetworkImage(
+                width: width,
+                height: height,
+                imageUrl: filePath,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.scaleDown,
+                      // colorFilter:
+                      //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+                    ),
+                  ),
+                ),
+                placeholder: (context, url) => Center(
+                  child: Lottie.asset(
+                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                    fit: BoxFit.cover,
+                    width: 80, // Adjust the width and height as needed
+                    height: 80,
+                    repeat:
+                        true, // Set to true if you want the animation to loop
+                  ),
+                ),
+                errorWidget: (context, url, error) {
+                  changeValue(true, isCV);
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(13.0),
+                      child: Text(filePath),
+                    ),
+                  );
+                },
+                errorListener: (value) {
+                  //print("error");
+                },
+              );
+            } catch (e) {
+              return null;
+            }
+            // return null;
           }
-          // return null;
-        }
+      }
     }
   }
 

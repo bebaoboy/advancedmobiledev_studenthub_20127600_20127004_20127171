@@ -115,7 +115,7 @@ class _ProposalItemState extends State<ProposalItem> {
                             titleText: 'Hired offer',
                             contentText:
                                 'Do you really want to send hired offer for student to do this project',
-                            negativeText: 'Cancel',
+                            negativeText: Lang.get('cancel'),
                             positiveText: 'Send',
                             onPositiveClick: () {
                               setState(() {

@@ -48,48 +48,48 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: _buildAppBar(),
       body: Padding(
         padding: const EdgeInsets.all(30.0),
-        child: Stack(children: [
-          SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Flexible(
-                    fit: FlexFit.loose,
-                    child: Column(
-                      children: [
-                        Text(Lang.get('home_title')),
-                        const SizedBox(height: 30),
-                        Text(Lang.get('home_intro')),
-                        const SizedBox(height: 25),
-                        SizedBox(
-                          width: 200,
-                          height: 50,
-                          child: RoundedButtonWidget(
-                            onPressed: () {
-                              // Handle your action
-                              if (_userStore.user == null) return;
-                              if (_userStore.user!.roles!.firstWhereOrNull(
-                                    (element) =>
-                                        element.name == UserType.company.name,
-                                  ) !=
-                                  null) {
-                                _userStore.user!.type = UserType.company;
-                                Navigator.of(context).push(
-                                  MaterialPageRoute2(routeName: Routes.welcome),
-                                );
-                              } else {
-                                showAnimatedDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return ClassicGeneralDialogWidget(
-                                      contentText:
-                                          'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                                      negativeText: 'Cancel',
-                                      positiveText: 'Yes',
-                                      onPositiveClick: () {
-                                        Navigator.of(context).pop();
+
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Flexible(
+                  fit: FlexFit.loose,
+                  child: Column(
+                    children: [
+                      Text(Lang.get('home_title')),
+                      const SizedBox(height: 30),
+                      Text(Lang.get('home_intro')),
+                      const SizedBox(height: 25),
+                      SizedBox(
+                        width: 200,
+                        height: 50,
+                        child: RoundedButtonWidget(
+                          onPressed: () {
+                            // Handle your action
+                            if (_userStore.user == null) return;
+                            if (_userStore.user!.roles!.firstWhereOrNull(
+                                  (element) =>
+                                      element.name == UserType.company.name,
+                                ) !=
+                                null) {
+                              _userStore.user!.type = UserType.company;
+                              Navigator.of(context).push(
+                                MaterialPageRoute2(routeName: Routes.welcome),
+                              );
+                            } else {
+                              showAnimatedDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return ClassicGeneralDialogWidget(
+                                    contentText:
+                                        'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
+                                    negativeText: Lang.get('cancel'),
+                                    positiveText: 'Yes',
+                                    onPositiveClick: () {
+                                      Navigator.of(context).pop();
 
                                         Navigator.of(context).push(
                                             MaterialPageRoute2(
@@ -112,35 +112,37 @@ class _HomeScreenState extends State<HomeScreen> {
                             textColor: Colors.white,
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        SizedBox(
-                          width: 200,
-                          height: 50,
-                          child: RoundedButtonWidget(
-                            onPressed: () {
-                              // Handle your action
-                              if (_userStore.user == null) return;
-                              if (_userStore.user!.roles!.firstWhereOrNull(
-                                    (element) =>
-                                        element.name == UserType.student.name,
-                                  ) !=
-                                  null) {
-                                _userStore.user!.type = UserType.student;
-                                Navigator.of(context).push(
-                                  MaterialPageRoute2(routeName: Routes.welcome),
-                                );
-                              } else {
-                                showAnimatedDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return ClassicGeneralDialogWidget(
-                                      contentText:
-                                          'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                                      negativeText: 'Cancel',
-                                      positiveText: 'Yes',
-                                      onPositiveClick: () {
-                                        Navigator.of(context).pop();
+
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        width: 200,
+                        height: 50,
+                        child: RoundedButtonWidget(
+                          onPressed: () {
+                            // Handle your action
+                            if (_userStore.user == null) return;
+                            if (_userStore.user!.roles!.firstWhereOrNull(
+                                  (element) =>
+                                      element.name == UserType.student.name,
+                                ) !=
+                                null) {
+                              _userStore.user!.type = UserType.student;
+                              Navigator.of(context).push(
+                                MaterialPageRoute2(routeName: Routes.welcome),
+                              );
+                            } else {
+                              showAnimatedDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return ClassicGeneralDialogWidget(
+                                    contentText:
+                                        'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
+                                    negativeText: Lang.get('cancel'),
+                                    positiveText: 'Yes',
+                                    onPositiveClick: () {
+                                      Navigator.of(context).pop();
 
                                         Navigator.of(context).push(
                                             MaterialPageRoute2(

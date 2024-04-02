@@ -28,6 +28,7 @@ abstract class _UserStore with Store {
     this._saveLoginStatusUseCase,
     this._loginUseCase,
     this._saveUserDataUseCase,
+    // this._signUpUseCase,
     this.formErrorStore,
     this.errorStore,
     this._getUserDataUseCase,
@@ -67,6 +68,7 @@ abstract class _UserStore with Store {
     //     isVerified: true));
     // savedUsers.add(User(
     //     email: "user2@gmail.com", name: "Hai Pham 2", roles: [UserType.company], isVerified: true));
+
     // savedUsers.add(User(
     //     email: "user3@gmail.com", name: "Hai Pham 3", roles: [], isVerified: true));
     // savedUsers.add(User(
@@ -87,6 +89,7 @@ abstract class _UserStore with Store {
   final GetProfileUseCase _getProfileUseCase;
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
+  // final SignUpUseCase _signUpUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors

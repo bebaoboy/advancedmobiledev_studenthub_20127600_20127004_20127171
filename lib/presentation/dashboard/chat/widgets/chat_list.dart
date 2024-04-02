@@ -137,7 +137,7 @@ class _ChatListState extends State<ChatList>
       final item = _oldData[index];
 
       return Container(
-        key: _valueKeyForItem(item),
+        key: _valueKeyForItem(item) ?? UniqueKey(),
         // axisAlignment: -1,
         // sizeFactor: animation.drive(CurveTween(curve: Curves.easeOutQuad)),
         child: widget.itemBuilder(item, index),
@@ -149,7 +149,7 @@ class _ChatListState extends State<ChatList>
 
   Widget _removedMessageBuilder(Object item, Animation<double> animation) =>
       SizeTransition(
-        key: _valueKeyForItem(item),
+        key: _valueKeyForItem(item) ?? UniqueKey(),
         axisAlignment: -1,
         sizeFactor: animation.drive(CurveTween(curve: Curves.easeInQuad)),
         child: FadeTransition(

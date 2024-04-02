@@ -139,6 +139,11 @@
   "continue": "Tiếp tục",
   "edit": "Chỉnh sửa",
   "cancel": "Huỷ",
+  "Name can't be empty": "Tên không được trống",
+  "profile_choose_techstack": "Chọn kỹ năng",
+  "profile_enter_link": "Nhập liên kết",
+  "double_click_to_edit": "Bấm 2 lần để sửa",
+
 
 
   "setting_text": "Cài đặt",

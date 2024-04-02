@@ -20,6 +20,10 @@ class ChipsInput<T> extends StatefulWidget {
     required this.onChanged,
     required this.onChipTapped,
     required this.initialChips,
+    this.maxInputHeight = 70,
+    this.totalHeight = 500,
+    this.emptyInputHeight = 70,
+    this.nonEmptyInputHeight = 92,
   });
 
   final InputDecoration decoration;
@@ -29,6 +33,10 @@ class ChipsInput<T> extends StatefulWidget {
   final ChipsBuilder<T> chipBuilder;
   final ChipsBuilder<T> suggestionBuilder;
   final List<T> initialChips;
+  final double maxInputHeight;
+  final double emptyInputHeight;
+  final double nonEmptyInputHeight;
+  final double totalHeight;
 
   @override
   ChipsInputState<T> createState() => ChipsInputState<T>();
@@ -56,6 +64,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   void requestKeyboard() {
     if (_focusNode.hasFocus) {
       _openInputConnection();
+      _connection!.show();
     } else {
       FocusScope.of(context).requestFocus(_focusNode);
     }
@@ -86,6 +95,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   @override
   void initState() {
     _chips = Set<T>.from(widget.initialChips);
+    _openInputConnection();
     //print(_chips);
     super.initState();
     _focusNode.addListener(_onFocusChanged);
@@ -96,7 +106,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       _openInputConnection();
     } else {
       // //print("out");
-      _closeInputConnectionIfNeeded();
+      //_closeInputConnectionIfNeeded();
       _suggestions = [];
     }
     setState(() {
@@ -106,7 +116,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
   @override
   void dispose() {
-    _focusNode.dispose();
+    // _focusNode.dispose();
     _closeInputConnectionIfNeeded();
     super.dispose();
   }
@@ -116,13 +126,13 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       _connection = TextInput.attach(this, const TextInputConfiguration());
       _connection!.setEditingState(_value);
     }
-    _connection!.show();
+    //_connection!.show();
     _onSearchChanged("");
   }
 
   void _closeInputConnectionIfNeeded() {
     if (_hasInputConnection) {
-      _connection!.close();
+      //_connection!.close();
     }
   }
 
@@ -162,54 +172,53 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       ),
     );
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 500),
+      height: _focusNode.hasFocus
+          ? widget.totalHeight
+          : _chips.isEmpty
+              ? widget.emptyInputHeight
+              : widget.nonEmptyInputHeight,
       decoration: const BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(15))),
-      child: SizedBox(
-        height: _focusNode.hasFocus
-            ? 500
-            : _chips.isEmpty
-                ? 65
-                : 102,
-        child: Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            //mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              GestureDetector(
-                behavior: HitTestBehavior.opaque,
-                onTap: requestKeyboard,
-                child: InputDecorator(
-                  decoration: widget.decoration,
-                  isFocused: _focusNode.hasFocus,
-                  isEmpty: _value.text.isEmpty,
-                  child: Container(
-                    constraints: const BoxConstraints(maxHeight: 70),
-                    child: SingleChildScrollView(
-                      controller: _scrollController,
-                      reverse: true,
-                      child: Wrap(
-                        spacing: 2.0,
-                        runSpacing: 2.0,
-                        children: chipsChildren,
-                      ),
+          borderRadius: BorderRadius.all(Radius.circular(10))),
+      child: Padding(
+        padding: const EdgeInsets.all(4.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: requestKeyboard,
+              child: InputDecorator(
+                decoration: widget.decoration,
+                isFocused: _focusNode.hasFocus,
+                isEmpty: _value.text.isEmpty,
+                child: Container(
+                  constraints: BoxConstraints(maxHeight: widget.maxInputHeight),
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    reverse: true,
+                    child: Wrap(
+                      spacing: 2.0,
+                      runSpacing: 2.0,
+                      children: chipsChildren,
                     ),
                   ),
                 ),
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _suggestions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return widget.suggestionBuilder(
-                        context, this, _suggestions[index]);
-                  },
-                ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _suggestions.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return widget.suggestionBuilder(
+                      context, this, _suggestions[index]);
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -268,7 +277,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 }
 
 class _TextCaret extends StatefulWidget {
-  const _TextCaret({this.resumed = false, this.duration = Duration.zero});
+  const _TextCaret(
+      {this.resumed = false,
+      this.duration = const Duration(milliseconds: 500)});
 
   final Duration duration;
   final bool resumed;

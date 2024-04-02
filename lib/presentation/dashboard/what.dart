@@ -8,12 +8,10 @@ import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indi
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
-import 'package:boilerplate/presentation/dashboard/student_dashboard_tab.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/welcome/pip_test.dart';
@@ -78,11 +76,9 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
       KeepAlivePage(ProjectTab(
         scrollController: ScrollController(),
       )),
-      _userStore.user!.type == UserType.company
-          ? KeepAlivePage(DashBoardTab(
+      KeepAlivePage(DashBoardTab(
               pageController: _pageController,
-            ))
-          : KeepAlivePage(StudentDashBoardTab(pageController: _pageController)),
+            )),
       const KeepAlivePage(MessageTab()),
       const KeepAlivePage(AlertTab())
     ];

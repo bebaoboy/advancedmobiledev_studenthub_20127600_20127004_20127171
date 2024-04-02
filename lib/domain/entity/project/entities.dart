@@ -11,7 +11,7 @@ class MyObject {
   DateTime updatedAt = DateTime.now();
   DateTime deletedAt = DateTime.now();
   MyObject({this.objectId}) {
-    objectId = const Uuid().v4();
+    objectId ??= const Uuid().v4();
   }
 }
 
@@ -21,10 +21,24 @@ class TechStack extends MyObject {
   final String name;
   TechStack(
     this.name, {
-    super.objectId,
-  });
+    String id = "",
+  }) : super(objectId: id);
 
-  TechStack.fromJson(Map<String, dynamic> json) : name = json["name"] ?? "";
+  @override
+  String toString() {
+    return name;
+  }
+
+  TechStack.fromJson(Map<String, dynamic> json)
+      : name = json["name"] ?? "",
+        super(objectId: json["id"]);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "id": objectId,
+    };
+  }
 }
 
 @JsonSerializable()
@@ -37,8 +51,8 @@ class Skill extends MyObject {
     this.name,
     this.description,
     this.imageUrl, {
-    super.objectId,
-  });
+    String id = "",
+  }) : super(objectId: id);
 
   @override
   bool operator ==(Object other) =>
@@ -50,7 +64,7 @@ class Skill extends MyObject {
 
   @override
   String toString() {
-    return 'Profile{$name}';
+    return name;
   }
 
   Skill.fromJson(Map<String, dynamic> json)
@@ -61,54 +75,93 @@ class Skill extends MyObject {
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(
         map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '');
+        imageUrl = "",
+        super(objectId: json["id"]);
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "name": name,
+      "id": objectId,
+    };
   }
 }
 
 @JsonSerializable()
 class Language extends MyObject {
-  String name;
-  String proficiency;
+  String languageName;
+  String level;
   bool readOnly = true;
   bool enabled = true;
 
-  Language(this.name, this.proficiency,
-      {super.objectId, this.readOnly = true, this.enabled = true});
+  Language(
+    this.languageName,
+    this.level, {
+    this.readOnly = true,
+    this.enabled = true,
+    String id = "",
+  }) : super(objectId: id);
 
   Language.fromJson(Map<String, dynamic> json)
-      : name = json["name"] ?? "",
-        proficiency = "";
+      : languageName = json["name"] ?? "",
+        level = "",
+        super(objectId: json["id"]);
+
 
   factory Language.fromMap(Map<String, dynamic> map) {
     return Language(map['name'] ?? '', map['proficiency'] ?? '');
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "languageName": languageName,
+      "level": level,
+      if (objectId != "") "id": objectId,
+    };
   }
 }
 
 @JsonSerializable()
 class Education extends MyObject {
   String schoolName;
-  String year;
+  String year() {
+    return "${startYear.year} - ${endYear.year}";
+  }
+
   DateTime startYear = DateTime.now().subtract(const Duration(days: 365));
   DateTime endYear = DateTime.now();
   bool readOnly = true;
   bool enabled = true;
 
-  Education(this.schoolName, this.year,
-      {super.objectId,
-      this.readOnly = true,
-      this.enabled = true,
-      required this.startYear,
-      required this.endYear});
+  Education(
+    this.schoolName, {
+    this.readOnly = true,
+    this.enabled = true,
+    required this.startYear,
+    required this.endYear,
+    String id = "",
+  }) : super(objectId: id);
 
   Education.fromJson(Map<String, dynamic> json)
       : schoolName = json["schoolName"] ?? "",
-        year = json["year"] ?? "",
         startYear = json["startYear"] ?? "",
-        endYear = json["endYear"] ?? "";
+        endYear = json["endYear"] ?? "",
+        super(objectId: json["id"]);
 
+  Map<String, dynamic> toJson() {
+    return {
+      "schoolName": schoolName,
+      "startYear": startYear.toString(),
+      "endYear": endYear.toString(),
+      if (objectId != "") "id": objectId,
+    };
+    
   factory Education.fromMap(Map<String, dynamic> map) {
     return Education(map['schoolName'] ?? '', map['year'] ?? '',
         startYear: map['startYear'] ?? '', endYear: map['endYear'] ?? '');
   }
+
 }
 
 @JsonSerializable()
@@ -122,31 +175,52 @@ class ProjectExperience extends MyObject {
   bool enabled = true;
   List<Skill>? skills = [];
 
-  ProjectExperience(this.name,
-      {super.objectId,
-      this.description = "...",
-      this.link = "",
-      required this.startDate,
-      required this.endDate,
-      this.readOnly = true,
-      this.enabled = true,
-      this.skills});
+  ProjectExperience(
+    this.name, {
+    this.description = "...",
+    this.link = "",
+    required this.startDate,
+    required this.endDate,
+    this.readOnly = true,
+    this.enabled = true,
+    this.skills,
+    String id = "",
+  }) : super(objectId: id);
 
   ProjectExperience.fromJson(Map<String, dynamic> json)
       : description = json["description"] ?? "",
         link = json["link"] ?? "",
-        startDate = json["startDate"] ?? "",
-        endDate = json["endDate"] ?? "",
+
+        startDate = json["startMonth"] ?? "",
+        endDate = json["endMonth"] ?? "",
         skills = json["skills"] as List<Skill>,
-        name = json["name"] ?? '';
+        name = json["title"] ?? '',
+        super(objectId: json['id']);
+
+  Map<String, dynamic> toJson() {
+    return {
+      "description": description,
+      "title": name,
+      "startMonth": startDate.toString(),
+      "endMonth": endDate.toString(),
+      "skillSets": skills == null
+          ? ["1"]
+          : skills!.isEmpty
+              ? ["1"]
+              : skills!.map((e) => e.objectId).toList(),
+      if (objectId != "") "id": objectId,
+    };
+  }
 }
 
 // ------------------- PROFILE ACCOUNT ------------------------------
 @JsonSerializable()
 class Profile extends MyObject {
-  Profile({super.objectId});
 
   Profile.fromJson(Map<String, dynamic> json);
+  Profile({
+    required super.objectId,
+  });
 }
 
 @JsonSerializable()
@@ -163,27 +237,63 @@ class StudentProfile extends Profile {
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
+
+  List<ProjectExperience>? projectExperience;
   String? transcript = "";
   String? resume = "";
 
   StudentProfile({
-    super.objectId,
     required this.fullName,
     required this.education,
     required this.introduction,
     required this.title,
     required this.review,
-    required this.id,
     this.yearOfExperience = 0,
     this.skillSet,
-    this.educations,
     this.techStack,
-    this.transcript,
     this.languages,
+    this.educations,
+    this.projectExperience,
+    this.transcript,
     this.resume,
+    super.objectId = "",
   });
 
-  Map<String, dynamic> toMap() {
+//   StudentProfile.fromJson(Map<String, dynamic> json)
+//       : title = json["title"] ?? "",
+//         fullName = json["fullName"] ?? "",
+//         education = json["education"] ?? "",
+//         introduction = json["introduction"] ?? "",
+//         yearOfExperience = json["yearOfExperience"] ?? 0,
+//         review = json["review"] ?? "",
+//         techStack = (json["techStack"] as List<TechStack>),
+//         skillSet = (json["skillSet"] as List<Skill>),
+//         languages = (json["language"] as List<Language>),
+//         educations = (json["education"] as List<Education>),
+//         projectExperience =
+//             (json["projectExperience"] as List<ProjectExperience>),
+//         transcript = json["transcript"] ?? "",
+//         resume = json["resume"] ?? "",
+//         super(objectId: json["id"]);
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'title': title,
+//       'fullName': fullName,
+//       'education': education,
+//       'introduction': introduction,
+//       'yearOfExperience': yearOfExperience,
+//       'review': review,
+//       'techStack': techStack,
+//       'skillSet': skillSet,
+//       'languages': languages,
+//       'educations': educations,
+//       'transcript': transcript,
+//       'resume': resume,
+//     };
+//   }
+  
+    Map<String, dynamic> toMap() {
     return {
       'title': title,
       'fullName': fullName,
@@ -231,6 +341,9 @@ class StudentProfile extends Profile {
 
   factory StudentProfile.fromJson(String source) =>
       StudentProfile.fromMap(json.decode(source));
+      "id": objectId,
+    };
+  }
 }
 
 enum CompanyScope { solo, small, medium, large, enterprise }
@@ -263,7 +376,6 @@ class CompanyProfile extends Profile {
   CompanyScope scope = CompanyScope.solo;
 
   CompanyProfile({
-    super.objectId,
     // required this.userId,
     required this.companyName,
     required this.profileName,
@@ -271,18 +383,31 @@ class CompanyProfile extends Profile {
     required this.website,
     required this.description,
     this.scope = CompanyScope.solo,
+    super.objectId = "",
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'profileName': profileName,
-      'companyName': companyName,
-      'email': email,
-      'website': website,
-      'description': description,
-      'scope': scope,
-    };
-  }
+
+//   CompanyProfile.fromJson(Map<String, dynamic> json)
+//       :
+//         // userId = json["userId"] ?? "",
+//         profileName = json["profileName"] ?? "",
+//         companyName = json["companyName"] ?? "",
+//         email = json["email"] ?? "",
+//         website = json["website"] ?? "",
+//         description = json["description"] ?? "",
+//         scope = json["scope"] ?? "",
+//         super(objectId: json["id"]);
+
+//   Map<String, dynamic> toJson() {
+//     return {
+//       'profileName': profileName,
+//       'companyName': companyName,
+//       'email': email,
+//       'website': website,
+//       'description': description,
+//       'scope': scope,
+//     };
+//   }
 
   factory CompanyProfile.fromMap(Map<String, dynamic> map) {
     return CompanyProfile(
@@ -294,11 +419,25 @@ class CompanyProfile extends Profile {
       scope: CompanyScope.values[map['size'] ?? 0],
     );
   }
+  
+   Map<String, dynamic> toMap() {
+    return {
+      'profileName': profileName,
+      'companyName': companyName,
+      'email': email,
+      'website': website,
+      'description': description,
+      'scope': scope,
+    };
+  }
 
   String toJson() => json.encode(toMap());
 
   factory CompanyProfile.fromJson(String source) =>
       CompanyProfile.fromMap(json.decode(source));
+      "id": objectId,
+    };
+  }
 }
 
 //
@@ -338,12 +477,12 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   Scope scope;
 
   ProjectBase({
-    super.objectId,
     this.isLoading = true,
     required this.title,
     required this.description,
     this.scope = Scope.short,
-  });
+    String id = "",
+  }) : super(objectId: id);
 
   @override
   bool isLoading;
@@ -366,19 +505,20 @@ class Project extends ProjectBase {
   bool isWorking = false;
   bool isArchived = false;
 
-  Project(
-      {super.objectId,
-      required super.title,
-      required super.description,
-      super.scope = Scope.short,
-      this.numberOfStudents = 1,
-      this.hired,
-      this.proposal,
-      this.messages,
-      required this.timeCreated,
-      this.isFavorite = false,
-      this.isLoading = true,
-      this.isWorking = false});
+  Project({
+    required super.title,
+    required super.description,
+    super.scope = Scope.short,
+    this.numberOfStudents = 1,
+    this.hired,
+    this.proposal,
+    this.messages,
+    required this.timeCreated,
+    this.isFavorite = false,
+    this.isLoading = true,
+    this.isWorking = false,
+    super.id,
+  });
 
   getModifiedTimeCreated() {
     return timeCreated.difference(DateTime.now()).inDays.abs();
@@ -404,7 +544,6 @@ class StudentProject extends Project {
   }
 
   StudentProject({
-    super.objectId,
     required super.title,
     required super.description,
     required this.submittedTime,
@@ -415,6 +554,7 @@ class StudentProject extends Project {
     super.isLoading = true,
     this.isSubmitted = true,
     this.isAccepted = false,
+    super.id,
   });
 }
 
@@ -445,19 +585,20 @@ class Proposal extends MyObject {
   HireStatus isHired;
   Status status;
 
-  Proposal(
-      {super.objectId,
-      // required this.project,
-      required this.student,
-      this.coverLetter = "",
-      this.isHired = HireStatus.notHire,
-      this.status = Status.inactive});
 
   Proposal.fromJson(Map<String, dynamic> json)
       : student = StudentProfile.fromJson(json["student"] ?? ""),
         coverLetter = json["coverLetter"] ?? "",
         status = Status.values[json["status"] ?? 0],
         isHired = HireStatus.values[json["isHired"] ?? 0];
+  Proposal({
+    // required this.project,
+    required this.student,
+    this.coverLetter = "",
+    this.isHired = HireStatus.notHire,
+    this.status = Status.inactive,
+    String id = "",
+  }) : super(objectId: id);
 }
 
 // ------------------- NOTIFICATION ------------------------------
@@ -471,20 +612,19 @@ class Notification extends MyObject {
   NotificationType type;
 
   Notification({
-    super.objectId,
     required this.id,
     required this.receiver,
     required this.sender,
     required this.type,
-    this.content = "",
-  });
-
-  Notification.fromJson(Map<String, dynamic> json)
+    this.content = "", 
+  }) : super(objectId: id);
+Notification.fromJson(Map<String, dynamic> json)
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
         content = json['content'] ?? '',
         type = NotificationType.values[json['type'] ?? 0];
+ 
 }
 
 enum NotificationType {
@@ -499,7 +639,6 @@ class OfferNotification extends Notification {
   String projectId;
 
   OfferNotification({
-    super.objectId,
     required this.projectId,
     required super.id,
     required super.receiver,
@@ -520,7 +659,6 @@ class Message extends Notification {
   InterviewSchedule? interviewSchedule;
 
   Message({
-    super.objectId,
     required super.id,
     required super.receiver,
     required super.sender,
@@ -538,13 +676,15 @@ class InterviewSchedule extends MyObject {
   DateTime endDate = DateTime.now();
   bool isCancel = false;
 
-  InterviewSchedule(
-      {super.objectId,
-      required this.title,
-      this.participants,
-      required this.startDate,
-      required this.endDate,
-      this.isCancel = false});
+  InterviewSchedule({
+    required this.title,
+    this.participants,
+    required this.startDate,
+    required this.endDate,
+    this.isCancel = false,
+    String id = "",
+  }) : super(objectId: id);
+
   clear() {
     endDate = DateTime.now();
     startDate = DateTime.now();
@@ -571,8 +711,8 @@ class InterviewSchedule extends MyObject {
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = bool.tryParse(json["isCancel"] ?? "false") ?? false,
-        super(objectId: "");
+        isCancel = json["isCancel"] ?? false,
+        super(objectId: json["id"] ?? const Uuid().v4());
 
   Map<String, dynamic> toJson() => {
         "title": title,
