@@ -74,7 +74,7 @@ class Skill extends MyObject {
 
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(
-        map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '');
+        map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '', id: map['id'].toString());
   }
 
   Map<String, dynamic> toJson() {
@@ -101,12 +101,13 @@ class Language extends MyObject {
   }) : super(objectId: id);
 
   Language.fromJson(Map<String, dynamic> json)
-      : languageName = json["name"] ?? "",
-        level = "",
+      : languageName = json["languageName"] ?? "",
+        level = json['level'] ?? "",
         super(objectId: json["id"]);
 
   factory Language.fromMap(Map<String, dynamic> map) {
-    return Language(map['name'] ?? '', map['proficiency'] ?? '');
+    return Language(map['languageName'] ?? '', map['level'] ?? '',
+        id: map['id'].toString());
   }
 
   Map<String, dynamic> toJson() {
@@ -156,7 +157,9 @@ class Education extends MyObject {
 
   factory Education.fromMap(Map<String, dynamic> map) {
     return Education(map['schoolName'] ?? '',
-        startYear: map['startYear'] ?? '', endYear: map['endYear'] ?? '');
+        startYear: DateTime.parse(map['startYear'] ),
+        endYear: DateTime.parse(map['endYear']),
+        id: map['id'].toString());
   }
 }
 
@@ -205,6 +208,14 @@ class ProjectExperience extends MyObject {
               : skills!.map((e) => e.objectId).toList(),
       if (objectId != "") "id": objectId,
     };
+  }
+
+  factory ProjectExperience.fromMap(Map<String, dynamic> map) {
+    return ProjectExperience(map['title'] ?? '',
+        description: map['description'] ?? '',
+        id: map['id'].toString(),
+        startDate: DateTime.parse(map['startMonth']),
+        endDate: DateTime.parse(map['endMonth']));
   }
 }
 
