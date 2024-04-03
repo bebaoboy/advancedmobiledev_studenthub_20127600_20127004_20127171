@@ -2,8 +2,10 @@ import 'dart:math';
 
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart' show PhotoViewComputedScale;
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -99,6 +101,7 @@ class Chat extends StatefulWidget {
     this.slidableMessageBuilder,
     this.isLeftStatus = false,
     this.messageWidthRatio = 0.72,
+    this.scheduleMessageBuilder,
   });
 
   /// See [Message.audioMessageBuilder].
@@ -127,6 +130,10 @@ class Chat extends StatefulWidget {
   /// See [Message.customMessageBuilder].
   final Widget Function(types.CustomMessage, {required int messageWidth})?
       customMessageBuilder;
+
+  /// See [Message.customMessageBuilder].
+  final Widget Function(ScheduleMessageType, {required int messageWidth})?
+      scheduleMessageBuilder;
 
   /// See [Message.customStatusBuilder].
   final Widget Function(types.Message message, {required BuildContext context})?
@@ -467,7 +474,7 @@ class ChatState extends State<Chat> {
         messageWidget = widget.systemMessageBuilder?.call(message) ??
             SystemMessage(message: message.text);
       } else {
-        final maxWidth = Chat.theme.messageMaxWidth;
+        final maxWidth = message.type == types.MessageType.schedule ? (constraints.maxWidth * 0.8).round() : Chat.theme.messageMaxWidth;
         final messageWidth =
             widget.showUserAvatars && message.author.id != Chat.user.id
                 ? min(constraints.maxWidth * widget.messageWidthRatio, maxWidth)
@@ -477,6 +484,7 @@ class ChatState extends State<Chat> {
                     maxWidth,
                   ).floor();
         final Widget msgWidget = Message(
+          scheduleMessageBuilder: widget.scheduleMessageBuilder,
           audioMessageBuilder: widget.audioMessageBuilder,
           avatarBuilder: widget.avatarBuilder,
           bubbleBuilder: widget.bubbleBuilder,
@@ -508,11 +516,14 @@ class ChatState extends State<Chat> {
           onMessageVisibilityChanged: widget.onMessageVisibilityChanged,
           onPreviewDataFetched: _onPreviewDataFetched,
           roundBorder: map['nextMessageInGroup'] == true,
-          showAvatar: map['nextMessageInGroup'] == false,
+          showAvatar: map['nextMessageInGroup'] == false &&
+              message.type != types.MessageType.schedule,
           showName: map['showName'] == true,
-          showStatus: map['showStatus'] == true,
+          showStatus: map['showStatus'] == true &&
+              message.type != types.MessageType.schedule,
           isLeftStatus: widget.isLeftStatus,
-          showUserAvatars: widget.showUserAvatars,
+          showUserAvatars: widget.showUserAvatars &&
+              message.type != types.MessageType.schedule,
           textMessageBuilder: widget.textMessageBuilder,
           textMessageOptions: widget.textMessageOptions,
           usePreviewData: widget.usePreviewData,
@@ -664,6 +675,7 @@ class ChatState extends State<Chat> {
                     onFirstIconPressed: widget.onFirstIconPressed,
                     onSendPressed: widget.onSendPressed,
                     options: widget.inputOptions,
+                    scrollController: _scrollController,
                   ),
             ],
           ),

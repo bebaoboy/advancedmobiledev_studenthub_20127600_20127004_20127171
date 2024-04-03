@@ -5,15 +5,14 @@ import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart';
-import 'package:flutter_link_previewer/flutter_link_previewer.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -117,6 +116,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
   PlatformFile? _transcript;
   Map<String, PreviewData?> pd = {};
 
+
   Widget _buildRightSide() {
     //print(isLinkCv.value);
     return SingleChildScrollView(
@@ -126,6 +126,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
+          // const EmptyAppBar(),
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
@@ -175,29 +176,38 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
 
-                                await FilePreview.getThumbnail(
-                                        isCV: true, cvController.text)
-                                    .then(
-                                  (value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLinkCv.value = false;
-                                      });
-                                    }
-                                    _cvImage = value;
-                                  },
-                                );
+                                if (cvController.text.isNotEmpty) {
+                                  await FilePreview.getThumbnail(
+                                          isCV: true, cvController.text)
+                                      .then(
+                                    (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          isLinkCv.value = false;
+                                        });
+                                        _cvImage = value;
+                                      }
+                                    },
+                                  );
+                                }
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
                                   isLinkCv.value = false;
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                await FilePreview.getThumbnail(
-                                        isCV: true, cvController.text)
-                                    .then((value) {
-                                  _cvImage = value;
-                                });
+                                if (cvController.text.isNotEmpty) {
+                                  await FilePreview.getThumbnail(
+                                          isCV: true, cvController.text)
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLinkCv.value = false;
+                                      });
+                                      _cvImage = value;
+                                    }
+                                  });
+                                }
                               },
                               decoration: InputDecoration(
                                 contentPadding:
@@ -357,30 +367,40 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                               controller: transcriptController,
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
-
-                                await FilePreview.getThumbnail(
-                                        isCV: false, transcriptController.text)
-                                    .then(
-                                  (value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLinkTranscript.value = false;
-                                      });
-                                    }
-                                    _transcriptImage = value;
-                                  },
-                                );
+                                if (transcriptController.text.isNotEmpty) {
+                                  await FilePreview.getThumbnail(
+                                          isCV: false,
+                                          transcriptController.text)
+                                      .then(
+                                    (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          isLinkTranscript.value = false;
+                                        });
+                                        _transcriptImage = value;
+                                      }
+                                    },
+                                  );
+                                }
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
                                   isLinkTranscript.value = false;
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                await FilePreview.getThumbnail(
-                                        isCV: false, transcriptController.text)
-                                    .then((value) {
-                                  _transcriptImage = value;
-                                });
+                                if (transcriptController.text.isNotEmpty) {
+                                  await FilePreview.getThumbnail(
+                                          isCV: false,
+                                          transcriptController.text)
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLinkTranscript.value = false;
+                                      });
+                                      _transcriptImage = value;
+                                    }
+                                  });
+                                }
                               },
                               decoration: InputDecoration(
                                 contentPadding:
@@ -515,7 +535,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                     ),
                   ),
                   const SizedBox(height: 34.0),
-                  _buildSignInButton(),
+                  // _buildSignInButton(),
                 ],
               ),
             ),
@@ -530,52 +550,52 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
     );
   }
 
-  Widget _buildSignInButton() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: 200,
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('next'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            _profileStudentFormStore
-                .setResume(_cv != null ? _cv!.path ?? "" : '');
-            _profileStudentFormStore.setTranscript(
-                _transcript != null ? _transcript!.path ?? "" : '');
-            print(_profileStudentFormStore.techStack);
-            print(_profileStudentFormStore.skillSet);
-            print(_profileStudentFormStore.educations);
-            print(_profileStudentFormStore.languages);
-            print(_profileStudentFormStore.projectExperience);
-            print(_profileStudentFormStore.resume);
-            print(_profileStudentFormStore.transcript);
-            _profileStudentFormStore.addProfileStudent(
-                _profileStudentFormStore.techStack,
-                _profileStudentFormStore.skillSet,
-                _profileStudentFormStore.languages,
-                _profileStudentFormStore.educations,
-                _profileStudentFormStore.projectExperience,
-                _profileStudentFormStore.transcript,
-                _profileStudentFormStore.resume);
+  // Widget _buildSignInButton() {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: SizedBox(
+  //       width: 200,
+  //       child: RoundedButtonWidget(
+  //         buttonText: Lang.get('next'),
+  //         buttonColor: Theme.of(context).colorScheme.primary,
+  //         textColor: Colors.white,
+  //         onPressed: () async {
+  //           _profileStudentFormStore
+  //               .setResume(_cv != null ? _cv!.path ?? "" : '');
+  //           _profileStudentFormStore.setTranscript(
+  //               _transcript != null ? _transcript!.path ?? "" : '');
+  //           print(_profileStudentFormStore.techStack);
+  //           print(_profileStudentFormStore.skillSet);
+  //           print(_profileStudentFormStore.educations);
+  //           print(_profileStudentFormStore.languages);
+  //           print(_profileStudentFormStore.projectExperience);
+  //           print(_profileStudentFormStore.resume);
+  //           print(_profileStudentFormStore.transcript);
+  //           _profileStudentFormStore.addProfileStudent(
+  //               _profileStudentFormStore.techStack,
+  //               _profileStudentFormStore.skillSet,
+  //               _profileStudentFormStore.languages,
+  //               _profileStudentFormStore.educations,
+  //               _profileStudentFormStore.projectExperience,
+  //               _profileStudentFormStore.transcript,
+  //               _profileStudentFormStore.resume);
 
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     MaterialPageRoute2(routeName: Routes.home),
-            //     (Route<dynamic> route) => false);
-            // if (_formStore.canProfileStudent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
+  //           // Navigator.of(context).pushAndRemoveUntil(
+  //           //     MaterialPageRoute2(routeName: Routes.home),
+  //           //     (Route<dynamic> route) => false);
+  //           // if (_formStore.canProfileStudent) {
+  //           //   DeviceUtils.hideKeyboard(context);
+  //           //   _userStore.login(
+  //           //       _userEmailController.text, _passwordController.text);
+  //           // } else {
+  //           //   _showErrorMessage(AppLocalizations.of(context)
+  //           //       .get('login_error_missing_fields'));
+  //           // }
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget navigate(BuildContext context) {
     // SharedPreferences.getInstance().then((prefs) {

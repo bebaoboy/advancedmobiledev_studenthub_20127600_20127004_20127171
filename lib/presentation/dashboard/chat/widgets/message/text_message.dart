@@ -2,8 +2,9 @@ import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/input.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:flutter_link_previewer/flutter_link_previewer.dart'
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart'
     show LinkPreview, regexLink;
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 
@@ -121,8 +122,7 @@ class TextMessage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (showName)
-          nameBuilder?.call(message.author) ??
-              UserName(author: message.author),
+          nameBuilder?.call(message.author) ?? UserName(author: message.author),
         if (enlargeEmojis)
           if (options.isTextSelectable)
             SelectableText(message.text, style: emojiTextStyle)

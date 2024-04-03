@@ -8,7 +8,8 @@ import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
 import 'package:intl/intl.dart';
 
 import '../../conditional/conditional.dart';
@@ -22,6 +23,7 @@ import '../../conditional/conditional.dart';
 class ScheduleMessageType extends types.Message {
   double? width;
   double? height;
+  int messageWidth;
 
   ScheduleMessageType(
       {required super.author,
@@ -36,7 +38,8 @@ class ScheduleMessageType extends types.Message {
       super.updatedAt,
       this.width = 200,
       this.height = 100,
-      required super.type});
+      required super.type,
+      required this.messageWidth});
 
   @override
   types.Message copyWith(
@@ -51,7 +54,10 @@ class ScheduleMessageType extends types.Message {
       types.Status? status,
       int? updatedAt}) {
     return ScheduleMessageType(
-        author: author ?? const types.User(id: ""), id: id ?? "", type: type);
+        author: author ?? const types.User(id: ""),
+        id: id ?? "",
+        type: type,
+        messageWidth: messageWidth);
   }
 
   @override
@@ -82,6 +88,26 @@ class ScheduleMessageType extends types.Message {
       "status": status,
       "updatedAt": updatedAt,
     };
+  }
+
+  static types.Message fromJson(Map<String, dynamic> json) {
+    return ScheduleMessageType(
+      messageWidth: 1,
+      author: const types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
+      type: types.MessageType.schedule,
+      status: types.Status.delivered,
+      createdAt: json['createdAt'] as int?,
+      id: json['id'] as String,
+      metadata: json['metadata'] as Map<String, dynamic>?,
+      remoteId: json['remoteId'] as String?,
+      repliedMessage: json['repliedMessage'] == null
+          ? null
+          : types.Message.fromJson(
+              json['repliedMessage'] as Map<String, dynamic>),
+      roomId: json['roomId'] as String?,
+      showStatus: json['showStatus'] as bool?,
+      updatedAt: json['updatedAt'] as int?,
+    );
   }
 }
 
@@ -116,7 +142,7 @@ class ScheduleMessage extends StatefulWidget {
   final ScheduleMessageType message;
 
   /// Maximum message width.
-  final int messageWidth;
+  final double messageWidth;
 
   @override
   State<ScheduleMessage> createState() => _ScheduleMessageState();
@@ -263,37 +289,41 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
           Chat.theme.messageInsetsVertical,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Flexible(
-                  fit: FlexFit.loose,
+              LimitedBox(
+                  maxHeight: 30,
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.35,
+                      LimitedBox(
+                        maxWidth: MediaQuery.of(context).size.width * 0.5,
                         child: AutoSizeText(
                           widget.scheduleFilter.title,
-                          maxLines: 3,
+                          maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          minFontSize: 12,
+                          minFontSize: 7,
                           style: const TextStyle(
-                              color: Colors.black, fontSize: 13),
+                              color: Colors.black, fontWeight: FontWeight.w700),
                         ),
                       ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        widget.scheduleFilter.getDuration(),
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        style: Chat.theme.sentMessageCaptionTextStyle.merge(
-                            TextStyle(
-                                color: Theme.of(context).colorScheme.primary)),
+                      Flexible(
+                        fit: FlexFit.loose,
+                        child: Align(
+                          alignment: Alignment.centerRight,
+                          child: AutoSizeText(
+                            widget.scheduleFilter.getDuration(),
+                            minFontSize: 5,
+                            maxLines: 1,
+                            maxFontSize: 12,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.primary),
+                          ),
+                        ),
                       ),
                     ],
                   )),
@@ -310,25 +340,44 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               //         : Chat.theme.receivedMessageCaptionTextStyle,
               //   ),
               // ),
+              const SizedBox(
+                height: 10,
+              ),
+
               AutoSizeText(
                 "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
-                style: const TextStyle(color: Colors.black, fontSize: 10),
+                style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
                 // textWidthBasis: TextWidthBasis.longestLine,
+              ),
+              const SizedBox(
+                height: 10,
               ),
               AutoSizeText(
                 "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
-                style: const TextStyle(color: Colors.black, fontSize: 10),
+                style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
                 // textWidthBasis: TextWidthBasis.longestLine,
               ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
               Align(
                 alignment: Alignment.centerRight,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    IconButton(
+                      onPressed: () {
+                        widget.onMenuCallback(widget.scheduleFilter);
+                      },
+                      icon: Icon(
+                        Icons.expand_circle_down_outlined,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
                     !widget.scheduleFilter.isCancel
                         ? RoundedButtonWidget(
                             buttonText: Lang.get("Join"),
@@ -354,15 +403,6 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                                   color: Theme.of(context).colorScheme.primary),
                             ),
                           ),
-                    IconButton(
-                      onPressed: () {
-                        widget.onMenuCallback(widget.scheduleFilter);
-                      },
-                      icon: Icon(
-                        Icons.expand_circle_down_outlined,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    )
                   ],
                 ),
               ),

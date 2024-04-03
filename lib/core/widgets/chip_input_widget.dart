@@ -173,7 +173,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     );
 
     return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 300),
       height: _focusNode.hasFocus
           ? widget.totalHeight
           : _chips.isEmpty
