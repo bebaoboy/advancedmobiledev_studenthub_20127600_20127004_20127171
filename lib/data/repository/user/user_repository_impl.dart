@@ -168,15 +168,13 @@ class UserRepositoryImpl extends UserRepository {
   @override
   Future saveHasToChangePass(String oldPass, bool value) async {
     await _sharedPrefsHelper.saveOldPassEncrypted(oldPass);
-    await _sharedPrefsHelper.saveHasToChangePass(value);
+    await _sharedPrefsHelper.saveHasToChangePass(oldPass != '');
   }
 
   @override
   Future<HasToChangePassParams> getRequired() async {
     var pass = await _sharedPrefsHelper.oldPass;
-    var isRequired = await _sharedPrefsHelper.requiredChangePass;
-
-    return HasToChangePassParams(pass, isRequired);
+    return HasToChangePassParams(pass, pass != '');
   }
 
   @override

@@ -3,7 +3,6 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -25,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     Future.delayed(const Duration(seconds: 1), () {
       try {
-        if (_passwordStore.hasToChangePass) {
+        if (_userStore.shouldChangePass) {
           Navigator.of(context).pushReplacement(MaterialPageRoute2(
               routeName: Routes.forgetPasswordChangePassword));
         } else if (_userStore.user != null &&
@@ -41,8 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final UserStore _userStore = getIt<UserStore>();
-  final ForgetPasswordStore _passwordStore = getIt<ForgetPasswordStore>();
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -74,8 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             //           element.name == UserType.company.name,
                             //     ) !=
                             //     null)
-                            if (_userStore.user!.companyProfile != null)
-                              {
+                            if (_userStore.user!.companyProfile != null) {
                               _userStore.user!.type = UserType.company;
                               if (_userStore.user != null) {
                                 SharedPreferences.getInstance().then(
@@ -193,15 +190,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  navigate(BuildContext context) {
-    Future.delayed(const Duration(seconds: 1), () {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: Routes.forgetPasswordChangePassword));
-    });
-
-    return Container();
   }
 
   // app bar methods:-----------------------------------------------------------
