@@ -73,7 +73,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                     : widget.project.hired = [
                                         widget.project.proposal!.removeAt(index)
                                       ];
-                              } catch (e) {}
+                              } catch (e) {
+                                print("error hire student");
+                              }
                             });
                           }),
                       DetailTabLayout(

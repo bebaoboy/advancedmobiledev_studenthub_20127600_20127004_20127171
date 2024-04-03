@@ -7,6 +7,10 @@ import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -101,13 +105,17 @@ mixin StoreModule {
       getIt<ProfileStudentFormErrorStore>(),
       getIt<ErrorStore>(),
       getIt<AddProfileStudentUseCase>(),
+      getIt<GetProfileStudentUseCase>(),
+      getIt<UpdateProfileStudentUseCase>(),
       getIt<AddTechStackUseCase>(),
       getIt<AddSkillsetUseCase>(),
       getIt<UpdateLanguageUseCase>(),
       getIt<UpdateEducationUseCase>(),
       getIt<UpdateProjectExperienceUseCase>(),
       getIt<UpdateResumeUseCase>(),
+      getIt<GetResumeUseCase>(),
       getIt<UpdateTranscriptUseCase>(),
+      getIt<GetTranscriptUseCase>(),
     ));
 
     getIt.registerSingleton<ProfileStudentStore>(ProfileStudentStore(

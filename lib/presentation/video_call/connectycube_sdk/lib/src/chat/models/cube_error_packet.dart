@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'package:boilerplate/core/widgets/xmpp/elements/XmppAttribute.dart';
 import 'package:boilerplate/core/widgets/xmpp/elements/XmppElement.dart';
 

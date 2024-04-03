@@ -340,9 +340,9 @@ class _MainAppBarState extends State<MainAppBar> {
           margin: const EdgeInsets.only(left: 20),
           child: GestureDetector(
               onTap: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute2(routeName: Routes.home),
-                    (Route<dynamic> route) => false);
+                // Navigator.of(context).pushAndRemoveUntil(
+                //     MaterialPageRoute2(routeName: Routes.home),
+                //     (Route<dynamic> route) => false);
               },
               onLongPress: () {
                 Navigator.of(context)

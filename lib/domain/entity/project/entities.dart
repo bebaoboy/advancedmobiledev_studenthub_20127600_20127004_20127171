@@ -31,7 +31,7 @@ class TechStack extends MyObject {
 
   TechStack.fromJson(Map<String, dynamic> json)
       : name = json["name"] ?? "",
-        super(objectId: json["id"]);
+        super(objectId: json["id"].toString());
 
   Map<String, dynamic> toJson() {
     return {
@@ -247,11 +247,11 @@ class StudentProfile extends Profile {
   String? resume = "";
 
   StudentProfile({
-    required this.fullName,
-    required this.education,
-    required this.introduction,
-    required this.title,
-    required this.review,
+    this.fullName = "",
+    this.education= "",
+    this.introduction = "",
+    this.title = "",
+    this.review = "",
     this.yearOfExperience = 0,
     this.skillSet,
     this.techStack,

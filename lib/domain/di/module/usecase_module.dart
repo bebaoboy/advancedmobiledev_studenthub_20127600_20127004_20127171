@@ -10,6 +10,10 @@ import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -68,6 +72,14 @@ mixin UseCaseModule {
       AddProfileStudentUseCase(getIt<UserRepository>()),
     );
 
+    getIt.registerSingleton<GetProfileStudentUseCase>(
+      GetProfileStudentUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateProfileStudentUseCase>(
+      UpdateProfileStudentUseCase(getIt<UserRepository>()),
+    );
+
     getIt.registerSingleton<AddTechStackUseCase>(
       AddTechStackUseCase(getIt<UserRepository>()),
     );
@@ -103,6 +115,14 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<UpdateResumeUseCase>(
       UpdateResumeUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<GetTranscriptUseCase>(
+      GetTranscriptUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<GetResumeUseCase>(
+      GetResumeUseCase(getIt<UserRepository>()),
     );
 
     getIt.registerSingleton<GetUserDataUseCase>(

@@ -6,7 +6,6 @@ import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/stepper.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/profile/view_profile_student_tab1.dart';
@@ -32,7 +31,6 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
   // final ThemeStore _themeStore = getIt<ThemeStore>();
   final ProfileStudentFormStore _formStore = getIt<ProfileStudentFormStore>();
   final UserStore _userStore = getIt<UserStore>();
-  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //textEdittingController
   final TextEditingController _companyNameController = TextEditingController();
@@ -45,15 +43,11 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   @override
   void initState() {
-    _infoStore.setStudentId(_userStore.user!.studentProfile!.objectId!);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_infoStore.isEmpty) {
-      _infoStore.getInfo();
-    }
     if (children.isEmpty) {
       children = [
         const KeepAlivePage(ViewProfileStudentTab1()),

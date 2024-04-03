@@ -53,13 +53,13 @@ abstract class _ProfileStudentStore with Store {
   }
 
   Future getInfo() async {
-    _getEducationUseCase
+    await _getEducationUseCase
         .call(params: _studentId.toString())
         .then((value) => _educations = value);
-    _getExperienceUseCase
+    await _getExperienceUseCase
         .call(params: _studentId.toString())
         .then((value) => _experiences = value);
-    _getLanguageUseCase
+    await _getLanguageUseCase
         .call(params: _studentId.toString())
         .then((value) => _languages = value);
   }

@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use, no_logic_in_create_state
+// ignore_for_file: deprecated_member_use, no_logic_in_create_state, empty_catches
 
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';

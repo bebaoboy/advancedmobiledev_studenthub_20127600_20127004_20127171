@@ -36,7 +36,10 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute2(routeName: Routes.welcome),
           );
         }
-      } catch (E) {}
+      } catch (E) {
+        print(E.toString);
+        print("cannot redirect from home");
+      }
     });
   }
 
@@ -74,8 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             //           element.name == UserType.company.name,
                             //     ) !=
                             //     null)
-                            if (_userStore.user!.companyProfile != null)
-                              {
+                            if (_userStore.user!.companyProfile != null) {
                               _userStore.user!.type = UserType.company;
                               if (_userStore.user != null) {
                                 SharedPreferences.getInstance().then(

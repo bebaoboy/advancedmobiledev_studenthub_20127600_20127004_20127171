@@ -1,3 +1,5 @@
+// ignore_for_file: empty_catches
+
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';

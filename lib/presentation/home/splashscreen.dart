@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -178,7 +179,9 @@ class _SplashScreenState extends State<SplashScreen>
                 duration: const Duration(milliseconds: 3500));
             await Future.delayed(const Duration(seconds: 1));
             await _controller.play();
-          } catch (e) {}
+          } catch (e) {
+            print("error playing splashcreen");
+          }
         }
       });
     _playAnimation(context);
@@ -190,14 +193,19 @@ class _SplashScreenState extends State<SplashScreen>
     CubeUser user;
 
     if (userStore.user != null && userStore.user!.email.isNotEmpty) {
-      userStore.savedUsers.add(userStore.user!);
-      try {
-        // CallManager.instance.destroy();
-        // CubeChatConnection.instance.destroy();
-        // // await PushNotificationsManager.instance.unsubscribe();
-        // await SharedPrefs.deleteUserData();
-        // // await signOut();
-      } catch (e) {}
+      if (userStore.savedUsers.firstWhereOrNull(
+            (element) => element.email == userStore.user!.email,
+          ) ==
+          null) {
+        userStore.savedUsers.add(userStore.user!);
+      }
+      // try {
+      //   // CallManager.instance.destroy();
+      //   // CubeChatConnection.instance.destroy();
+      //   // // await PushNotificationsManager.instance.unsubscribe();
+      //   // await SharedPrefs.deleteUserData();
+      //   // // await signOut();
+      // } catch (e) {}
       //CubeSessionManager.instance.isActiveSessionValid();
 
       user = userStore.user!.email == "user1@gmail.com"
@@ -263,6 +271,7 @@ class _SplashScreenState extends State<SplashScreen>
         Future.delayed(const Duration(seconds: 2), () {
           try {
             _controller.stop();
+          // ignore: empty_catches
           } catch (e) {}
           Navigator.pushReplacement(
               context,

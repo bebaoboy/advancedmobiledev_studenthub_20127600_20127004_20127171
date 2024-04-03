@@ -3,9 +3,12 @@ import 'dart:math';
 import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
 import 'package:boilerplate/presentation/setting/widgets/student_account_widget.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
@@ -57,23 +60,13 @@ class _SettingScreenState extends State<SettingScreen> {
         Account(u,
             type: UserType.company,
             children: [
-              Account(
-                  User(
-                      email: u.email,
-                      name: u.name,
-                      type: UserType.student,
-                      roles: u.roles,
-                      studentProfile: u.studentProfile,
-                      companyProfile: u.companyProfile,
-                      isVerified: u.isVerified),
+              Account(u,
                   type: UserType.student,
                   isLoggedIn: _userStore.user != null &&
-                      u.email == _userStore.user!.email &&
-                      UserType.student == _userStore.user!.type)
+                      u.email == _userStore.user!.email)
             ],
-            isLoggedIn: _userStore.user != null &&
-                u.email == _userStore.user!.email &&
-                UserType.company == _userStore.user!.type)
+            isLoggedIn:
+                _userStore.user != null && u.email == _userStore.user!.email)
     ];
 
     for (var element in accountList) {
@@ -142,12 +135,14 @@ class _SettingScreenState extends State<SettingScreen> {
             indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {
               // print(item.data!.name);
-              if (item.data == null) return;
-              print("tap");
+              if (item.data == null || _userStore.user == null) return;
+              print("tap ${item.data!.type}");
 
-              if (item.data!.type == UserType.company &&
-                  !item.data!.isLoggedIn) {
-                if (item.data!.isExpanded) {
+              if (item.data!.type == UserType.company) {
+                if (item.data!.isExpanded &&
+                    (!item.data!.isLoggedIn ||
+                        (item.data!.isLoggedIn &&
+                            item.data!.type != _userStore.user!.type))) {
                   showAnimatedDialog(
                     context: context,
                     barrierDismissible: true,
@@ -159,11 +154,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         positiveText: 'Yes',
                         onPositiveClick: () {
                           Navigator.of(context).pop();
-                          if (item.data!.user.roles!.firstWhereOrNull(
-                                (element) =>
-                                    element.name == item.data!.type.name,
-                              ) ==
-                              null) {
+                          if (item.data!.user.companyProfile == null) {
                             showAnimatedDialog(
                               context: context,
                               barrierDismissible: true,
@@ -202,12 +193,15 @@ class _SettingScreenState extends State<SettingScreen> {
                     curve: Curves.fastOutSlowIn,
                     duration: const Duration(seconds: 1),
                   );
-                } else {}
+                }
                 setState(() {
                   item.data!.isExpanded = !item.data!.isExpanded;
                 });
               } else if (item.data!.type == UserType.student) {
-                if (!item.data!.isLoggedIn) {
+                if (item.data!.isExpanded &&
+                    (!item.data!.isLoggedIn ||
+                        (item.data!.isLoggedIn &&
+                            item.data!.type != _userStore.user!.type))) {
                   showAnimatedDialog(
                     context: context,
                     barrierDismissible: true,
@@ -219,11 +213,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         positiveText: 'Yes',
                         onPositiveClick: () {
                           Navigator.of(context).pop();
-                          if (item.data!.user.roles!.firstWhereOrNull(
-                                (element) =>
-                                    element.name == item.data!.type.name,
-                              ) ==
-                              null) {
+                          if (item.data!.user.studentProfile == null) {
                             showAnimatedDialog(
                               context: context,
                               barrierDismissible: true,
@@ -299,19 +289,17 @@ class _SettingScreenState extends State<SettingScreen> {
   /// switch from student to company
   switchAccount(Account account) async {
     print("switch account");
-    if (!account.isLoggedIn) {
-      account.isLoggedIn = true;
-      // await _userStore.logout();
+    account.isLoggedIn = true;
+    // await _userStore.logout();
+    if (_userStore.user != null) {
+      _userStore.user!.type = account.type;
       if (_userStore.user != null) {
-        _userStore.user!.type = account.type;
-        if (_userStore.user != null) {
-          SharedPreferences.getInstance().then(
-            (value) {
-              value.setString(Preferences.current_user_role,
-                  _userStore.user!.type.name.toLowerCase().toString());
-            },
-          );
-        }
+        SharedPreferences.getInstance().then(
+          (value) {
+            value.setString(Preferences.current_user_role,
+                _userStore.user!.type.name.toLowerCase().toString());
+          },
+        );
       }
 
       DeviceUtils.hideKeyboard(context);
@@ -334,13 +322,18 @@ class _SettingScreenState extends State<SettingScreen> {
       return StudentAccountWidget(
         isLoggedIn: account.isLoggedIn,
         name: account,
+        isLoggedInProfile: account.isLoggedIn &&
+            _userStore.user != null &&
+            account.type == _userStore.user!.type,
+
         // onTap: () => switchAccount(account),
       );
     } else {
       return CompanyAccountWidget(
-        isLoggedIn: _userStore.user != null &&
-            account.user.email == _userStore.user!.email,
-        isLoggedInProfile: account.user.companyProfile != null,
+        isLoggedIn: account.isLoggedIn,
+        isLoggedInProfile: account.isLoggedIn &&
+            _userStore.user != null &&
+            account.type == _userStore.user!.type,
         name: account,
         // onTap: () {
         //   //print(account.name);
@@ -367,13 +360,17 @@ class _SettingScreenState extends State<SettingScreen> {
     ];
   }
 
+  bool loading = false;
+
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
-    return Material(
-      child: Stack(children: <Widget>[
-        Container(child: _buildRightSide()),
-      ]),
-    );
+    return loading
+        ? const LoadingScreen()
+        : Material(
+            child: Stack(children: <Widget>[
+              Container(child: _buildRightSide()),
+            ]),
+          );
   }
 
   Widget _buildRightSide() {
@@ -393,7 +390,7 @@ class _SettingScreenState extends State<SettingScreen> {
               height: 20,
             ),
             ListTile(
-                onTap: () {
+                onTap: () async {
                   //int n = Random().nextInt(3);
                   if (_userStore.user != null &&
                       _userStore.user!.type != UserType.naught) {
@@ -424,6 +421,13 @@ class _SettingScreenState extends State<SettingScreen> {
                           curve: Curves.fastOutSlowIn,
                           duration: const Duration(seconds: 1),
                         );
+                      } else {
+                        navigate(
+                            context,
+                            _userStore.user != null &&
+                                    _userStore.user!.type == UserType.company
+                                ? Routes.viewProfileCompany
+                                : Routes.viewProfileStudent);
                       }
                     } else {
                       if (_userStore.user!.studentProfile == null) {
@@ -452,15 +456,39 @@ class _SettingScreenState extends State<SettingScreen> {
                           curve: Curves.fastOutSlowIn,
                           duration: const Duration(seconds: 1),
                         );
+                      } else {
+                        setState(() {
+                          loading = true;
+                        });
+                        final ProfileStudentStore infoStore =
+                            getIt<ProfileStudentStore>();
+
+                        infoStore.setStudentId(
+                            _userStore.user!.studentProfile!.objectId!);
+                        if (infoStore.isEmpty) {
+                          await infoStore.getInfo().then(
+                                (value) {},
+                              );
+                        }
+                        if (_userStore.user != null &&
+                            _userStore.user!.studentProfile != null &&
+                            _userStore.user!.studentProfile!.objectId != null) {
+                          final ProfileStudentFormStore formStore =
+                              getIt<ProfileStudentFormStore>();
+                          await formStore.getProfileStudent(
+                              _userStore.user!.studentProfile!.objectId!);
+                        }
+                        setState(() {
+                          loading = false;
+                        });
+                        navigate(
+                            context,
+                            _userStore.user != null &&
+                                    _userStore.user!.type == UserType.company
+                                ? Routes.viewProfileCompany
+                                : Routes.viewProfileStudent);
                       }
                     }
-
-                    navigate(
-                        context,
-                        _userStore.user != null &&
-                                _userStore.user!.type == UserType.company
-                            ? Routes.viewProfileCompany
-                            : Routes.viewProfileStudent);
                   }
                 },
                 leading: const Icon(Icons.person),
@@ -471,7 +499,6 @@ class _SettingScreenState extends State<SettingScreen> {
               height: 3,
             ),
             ListTile(
-                onTap: () => navigate(context, Routes.setting),
                 leading: const Icon(Icons.settings),
                 title: Text(
                   Lang.get('setting_text'),

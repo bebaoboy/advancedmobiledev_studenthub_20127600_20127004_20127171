@@ -198,6 +198,19 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
+  Future<Response> updateProfileStudent(
+      UpdateProfileStudentParams params) async {
+    var response = await _profileApi.updateProfileStudent(params);
+    return response;
+  }
+
+  @override
+  Future<Response> getProfileStudent(UpdateProfileStudentParams params) async {
+    var response = await _profileApi.getProfileStudent(params);
+    return response;
+  }
+
+  @override
   Future<Response> addTechStack(AddTechStackParams params) async {
     var response = await _profileApi.addTechStack(params);
     return response;
@@ -248,21 +261,15 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<Response> getResume(UpdateResumeParams params) {
-    // TODO: implement getResume
-    throw UnimplementedError();
+  Future<Response> getResume(UpdateResumeParams params) async {
+    var response = await _profileApi.getResume(params);
+    return response;
   }
 
   @override
-  Future<Response> getTranscript(UpdateTranscriptParams params) {
-    // TODO: implement getTranscript
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Response> updateProfileStudent(UpdateProfileStudentParams params) {
-    // TODO: implement updateProfileStudent
-    throw UnimplementedError();
+  Future<Response> getTranscript(UpdateTranscriptParams params) async {
+    var response = await _profileApi.getTranscript(params);
+    return response;
   }
 
   @override

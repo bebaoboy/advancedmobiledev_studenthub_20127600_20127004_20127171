@@ -93,12 +93,27 @@ abstract class _ProfileFormStore with Store {
           value.statusCode == HttpStatus.created) {
         success = true;
         print(value.data);
+        String? id;
+        try {
+          id = value.data["result"]["id"].toString();
+        } catch (e) {
+          errorStore.errorMessage = "cannot parse company id";
+        }
+        UserStore userStore = getIt<UserStore>();
+        userStore.user!.companyProfile = CompanyProfile(
+            companyName: companyName,
+            profileName: companyName,
+            email: "",
+            website: website,
+            description: description,
+            scope: scope,
+            objectId: id);
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
-        // print(value.data);
+        print(value.data);
       }
     });
   }
@@ -122,7 +137,8 @@ abstract class _ProfileFormStore with Store {
         success = true;
         print(value.data);
         UserStore userStore = getIt<UserStore>();
-        userStore.user!.companyProfile = CompanyProfile.fromMap(value.data["result"]);
+        userStore.user!.companyProfile =
+            CompanyProfile.fromMap(value.data["result"]);
         // TODO: save profile to sharedpref
       } else {
         success = false;

@@ -20,9 +20,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -160,8 +158,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     _buildSignInButton(),
                     Expanded(
                         child: Align(
-                      child: _buildFooterText(),
                       alignment: Alignment.bottomCenter,
+                      child: _buildFooterText(),
                     )),
                     const SizedBox(
                       height: 14,
@@ -417,7 +415,10 @@ class _LoginScreenState extends State<LoginScreen> {
               .then((voidResult) {})
               .catchError((error) {});
         });
-      } catch (e) {}
+      } catch (e) {
+        print(e.toString());
+        print("error init cubit login screen");
+      }
     } else {
       // user = utils.users[2];
     }

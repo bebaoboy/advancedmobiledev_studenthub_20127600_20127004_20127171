@@ -156,7 +156,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
-              enabled: enabled,
+              readOnly: !enabled,
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -188,7 +188,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               style: Theme.of(context).textTheme.bodySmall,
             ),
             TextFieldWidget(
-              enabled: enabled,
+              readOnly: !enabled,
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -223,7 +223,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
         TextFieldWidget(
           errorText: _formStore.profileFormErrorStore.description,
 
-          enabled: enabled,
+          readOnly: !enabled,
           inputDecoration: const InputDecoration(
             border:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
@@ -243,7 +243,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           maxLength: 500,
         ),
         // TextField(
-        //   enabled: enabled,
+        //   readOnly: !enabled,
         //   decoration: const InputDecoration(
         //       border: OutlineInputBorder(
         //           borderSide: BorderSide(color: Colors.black))),
@@ -310,7 +310,6 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                   MaterialButton(
                     onPressed: () {
                       if (enabled) {
-                        // TODO: save profile
                         print("save profile");
                         var id = _userStore.user!.companyProfile!.objectId!;
                         if (_formStore.canContinue) {
@@ -321,7 +320,6 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                               _companySize,
                               int.tryParse(id) ?? -1);
                         }
-                        // _showErrorMessage("OK");
                       }
 
                       setState(() {
