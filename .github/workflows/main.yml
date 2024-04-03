@@ -52,7 +52,7 @@ jobs:
 
         #6 build apk
       - name: Build APK
-        run: flutter build apk --release --split-by-abi
+        run: flutter build apk --release --split-per-abi 
 
         #7 build aab
       - name: Build appBundle
