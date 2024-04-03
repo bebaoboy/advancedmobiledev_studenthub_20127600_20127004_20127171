@@ -1,5 +1,16 @@
 [
-
+  {
+    "author": {
+      "firstName": "John",
+      "id": "4c2307ba-3d40-442f-b1ff-b271f63904ca",
+      "lastName": "Doe"
+    },
+    "createdAt": 1655648408000,
+    "id": "c67ed3dsfsdgsg76-52bf-4d4e-ba2a-0007a0f8467b22a",
+    "status": "seen",
+    "text": "Ooowww ☺️",
+    "type": "custom"
+  }, 
   {
     "author": {
       "firstName": "John",
@@ -21,7 +32,7 @@
     "id": "c67ed376-52bf-4d4e-ba2a-7anj0f84679999",
     "status": "seen",
     "text": "Ooowww ☺️",
-    "type": "custom",
+    "type": "schedule",
     "metadata": {
       "type": "schedule"
     }
@@ -54,7 +65,7 @@
     "id": "c67ed376-52bf-4d4e-ba2ajbjbb-7a0f84679999",
     "status": "seen",
     "text": "Ooowww ☺️",
-    "type": "custom",
+    "type": "schedule",
     "metadata": {
       "type": "schedule"
     }
@@ -182,7 +193,7 @@
     "id": "c67ed376-ertvetr-4d4e-ba2a-7a0f84679999",
     "status": "seen",
     "text": "Ooowww ☺️",
-    "type": "custom",
+    "type": "schedule",
     "metadata": {
       "type": "schedule"
     }

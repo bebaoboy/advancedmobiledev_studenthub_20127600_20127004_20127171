@@ -12,6 +12,8 @@ import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:interpolator/interpolator.dart';
 import 'package:dio/dio.dart';
 
@@ -123,6 +125,74 @@ class ProfileApi {
           // "experience": params.projectExperiences,
         }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> updateResume(UpdateResumeParams params) async {
+    // File file;
+    // try {
+    //   file = File.fromUri(Uri.file(params.path));
+    // } catch (e) {
+    //   return Future.value(Response(
+    //       requestOptions: RequestOptions(),
+    //       data: {"errorDetails": "File not found!"}));
+    // }
+    // var mFile = MultipartFile.fromFile(
+    //   params.path,
+    //   // contentType:
+    //   //     MediaType.parse(lookupMimeType(params.path) ?? "text/plain"),
+    //   filename: params.path.split('/').last,
+    // );
+    // try {
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          params.path,
+          // contentType:
+          //     MediaType.parse(lookupMimeType(params.path) ?? "text/plain"),
+          filename: params.path.split('/').last,
+        )
+      });
+      return await _dioClient.dio.put(
+        Interpolator(Endpoints.updateResume)({"studentId": params.studentId}),
+        data: formData,
+        onSendProgress: (count, total) {
+          print(
+              'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
+        },
+      ).onError((DioException error, stackTrace) {
+        return Future.value(error.response);
+      });
+    // } catch (e) {
+    //   return Future.value(Response(
+    //       requestOptions: RequestOptions(),
+    //       data: {"errorDetails": "File not found ${e.toString()}"}));
+    // }
+  }
+
+  Future<Response> updateTranscript(UpdateTranscriptParams params) async {
+    try {
+      FormData formData = FormData.fromMap({
+        "file": await MultipartFile.fromFile(
+          params.transcript,
+          // contentType:
+          //     MediaType.parse(lookupMimeType(params.path) ?? "text/plain"),
+          filename: params.transcript.split('/').last,
+        )
+      });
+      return await _dioClient.dio.put(
+        Interpolator(Endpoints.updateTranscript)({"studentId": params.studentId}),
+        data: formData,
+        onSendProgress: (count, total) {
+          print(
+              'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
+        },
+      ).onError((DioException error, stackTrace) {
+        return Future.value(error.response);
+      });
+    } catch (e) {
+      return Future.value(Response(
+          requestOptions: RequestOptions(),
+          data: {"errorDetails": "File not found ${e.toString()}"}));
+    }
   }
 
   Future<Response> addTechStack(AddTechStackParams params) async {

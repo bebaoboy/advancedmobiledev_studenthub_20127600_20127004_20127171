@@ -13,9 +13,10 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart';
-import 'package:flutter_link_previewer/flutter_link_previewer.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lottie/lottie.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -178,29 +179,54 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
 
-                                await FilePreview.getThumbnail(
-                                        isCV: true, cvController.text)
-                                    .then(
-                                  (value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLinkCv.value = false;
-                                      });
-                                    }
-                                    _cvImage = value;
-                                  },
-                                );
+                                if (cvController.text.isNotEmpty) {
+                                  var filePath = cvController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  cvController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                          isCV: true, cvController.text)
+                                      .then(
+                                    (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          isLinkCv.value = false;
+                                        });
+                                        _cvImage = value;
+                                      }
+                                    },
+                                  );
+                                }
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
                                   isLinkCv.value = false;
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                await FilePreview.getThumbnail(
-                                        isCV: true, cvController.text)
-                                    .then((value) {
-                                  _cvImage = value;
-                                });
+                                if (cvController.text.isNotEmpty) {
+                                  var filePath = cvController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  cvController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                          isCV: true, cvController.text)
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLinkCv.value = false;
+                                      });
+                                      _cvImage = value;
+                                    }
+                                  });
+                                }
                               },
                               decoration: InputDecoration(
                                 contentPadding:
@@ -250,18 +276,30 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['png', 'jpg', 'pdf', 'doc', 'docx'],
+                        allowedExtensions: [
+                          'png',
+                          'jpg',
+                          'pdf',
+                          'doc',
+                          'docx',
+                          'gif',
+                          'xlsx',
+                          'xls',
+                          'txt'
+                        ],
                       );
 
                       if (result != null) {
                         // File file = File(result.files.single.path!);
+                        _profileStudentFormStore
+                            .setResume(result.files.single.path!);
                         setState(() {
                           _cv = result.files.single;
                         });
                         setState(() {
                           cvEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(
+                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
                           isCV: true,
                           result.files.single.path!,
                         );
@@ -273,7 +311,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                        height: _cvImage != null ? 500 : 200,
+                        constraints: const BoxConstraints(minHeight: 200),
+                        // height: _cvImage != null ? null : 200,
                         decoration: const BoxDecoration(
                             color: Colors.white70,
                             borderRadius:
@@ -284,9 +323,20 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                       true &&
                                   cvController.text.isNotEmpty
                               ? LinkPreview(
+                                  loadingWidget: Lottie.asset(
+                                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                                    fit: BoxFit.cover,
+                                    width:
+                                        80, // Adjust the width and height as needed
+                                    height: 80,
+                                    repeat:
+                                        true, // Set to true if you want the animation to loop
+                                  ),
+                                  forceMaximize: true,
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
+                                    // print("fetch");
                                     setState(() {
                                       if (p0.link != null) {
                                         pd[p0.link!] = p0;
@@ -348,30 +398,56 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                               controller: transcriptController,
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
-
-                                await FilePreview.getThumbnail(
-                                        isCV: false, transcriptController.text)
-                                    .then(
-                                  (value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLinkTranscript.value = false;
-                                      });
-                                    }
-                                    _transcriptImage = value;
-                                  },
-                                );
+                                if (transcriptController.text.isNotEmpty) {
+                                  var filePath = transcriptController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  transcriptController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                          isCV: false,
+                                          transcriptController.text)
+                                      .then(
+                                    (value) {
+                                      if (value != null) {
+                                        setState(() {
+                                          isLinkTranscript.value = false;
+                                        });
+                                        _transcriptImage = value;
+                                      }
+                                    },
+                                  );
+                                }
                               },
                               onFieldSubmitted: (value) async {
                                 setState(() {
                                   isLinkTranscript.value = false;
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
-                                await FilePreview.getThumbnail(
-                                        isCV: false, transcriptController.text)
-                                    .then((value) {
-                                  _transcriptImage = value;
-                                });
+                                if (transcriptController.text.isNotEmpty) {
+                                  var filePath = transcriptController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  transcriptController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                          isCV: false,
+                                          transcriptController.text)
+                                      .then((value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        isLinkTranscript.value = false;
+                                      });
+                                      _transcriptImage = value;
+                                    }
+                                  });
+                                }
                               },
                               decoration: InputDecoration(
                                 contentPadding:
@@ -421,18 +497,30 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       FilePickerResult? result =
                           await FilePicker.platform.pickFiles(
                         type: FileType.custom,
-                        allowedExtensions: ['png', 'jpg', 'pdf', 'doc', 'docx'],
+                        allowedExtensions: [
+                          'png',
+                          'jpg',
+                          'pdf',
+                          'doc',
+                          'docx',
+                          'gif',
+                          'xlsx',
+                          'xls',
+                          'txt'
+                        ],
                       );
 
                       if (result != null) {
                         // File file = File(result.files.single.path!);
+                        _profileStudentFormStore
+                            .setTranscript(result.files.single.path!);
                         setState(() {
                           _transcript = result.files.single;
                         });
                         setState(() {
                           transcriptEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(
+                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
                           isCV: false,
                           result.files.single.path!,
                         );
@@ -444,7 +532,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                      height: _transcriptImage != null ? 500 : 200,
+                      constraints: const BoxConstraints(minHeight: 200),
+                      // height: _transcriptImage != null ? null : 200,
                       decoration: const BoxDecoration(
                           color: Colors.white70,
                           borderRadius: BorderRadius.all(Radius.circular(13))),
@@ -455,6 +544,16 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                       true &&
                                   transcriptController.text.isNotEmpty
                               ? LinkPreview(
+                                  loadingWidget: Lottie.asset(
+                                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                                    fit: BoxFit.cover,
+                                    width:
+                                        80, // Adjust the width and height as needed
+                                    height: 80,
+                                    repeat:
+                                        true, // Set to true if you want the animation to loop
+                                  ),
+                                  forceMaximize: true,
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
@@ -519,8 +618,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            _profileStudentFormStore.setResume(_cv!=null ? _cv!.path ?? "" : '');
-            _profileStudentFormStore.setTranscript(_transcript!=null ? _transcript!.path ?? "" : '');
+            // _profileStudentFormStore
+            //     .setResume(_cv != null ? _cv!.path ?? "" : '');
+            // _profileStudentFormStore.setTranscript(
+            //     _transcript != null ? _transcript!.path ?? "" : '');
             print(_profileStudentFormStore.techStack);
             print(_profileStudentFormStore.skillSet);
             print(_profileStudentFormStore.educations);

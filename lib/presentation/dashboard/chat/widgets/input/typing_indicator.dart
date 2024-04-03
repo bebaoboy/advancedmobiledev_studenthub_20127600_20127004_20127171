@@ -1,7 +1,8 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
 import '../../models/util.dart';
 
 class TypingIndicator extends StatefulWidget {

@@ -4,7 +4,8 @@ import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/image_gallery.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform, kIsWeb;
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
 import 'package:intl/intl.dart';
 
 import 'package:equatable/equatable.dart';

@@ -7,6 +7,9 @@ import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -77,13 +80,22 @@ mixin UseCaseModule {
       UpdateLanguageUseCase(getIt<UserRepository>()),
     );
 
+    getIt.registerSingleton<GetLanguageUseCase>(
+        GetLanguageUseCase(getIt<UserRepository>()));
+
     getIt.registerSingleton<UpdateEducationUseCase>(
       UpdateEducationUseCase(getIt<UserRepository>()),
     );
 
+    getIt.registerSingleton<GetEducationUseCase>(
+        GetEducationUseCase(getIt<UserRepository>()));
+
     getIt.registerSingleton<UpdateProjectExperienceUseCase>(
       UpdateProjectExperienceUseCase(getIt<UserRepository>()),
     );
+
+    getIt.registerSingleton<GetExperienceUseCase>(
+        GetExperienceUseCase(getIt<UserRepository>()));
 
     getIt.registerSingleton<UpdateTranscriptUseCase>(
       UpdateTranscriptUseCase(getIt<UserRepository>()),

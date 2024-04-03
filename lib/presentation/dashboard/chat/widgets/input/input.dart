@@ -2,10 +2,13 @@ import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
+import 'package:scroll_to_index/scroll_to_index.dart';
 import '../../models/util.dart';
-import 'package:flutter_link_previewer/flutter_link_previewer.dart'
+import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart'
     show regexEmail, regexLink;
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,7 +24,10 @@ class Input extends StatefulWidget {
     this.onAttachmentPressed,
     required this.onSendPressed,
     this.options = const InputOptions(),
+    required this.scrollController,
   });
+
+  final AutoScrollController scrollController;
 
   /// Whether attachment is uploading. Will replace attachment button with a
   /// [CircularProgressIndicator]. Since we don't have libraries for
@@ -67,16 +73,37 @@ class _InputState extends State<Input> {
       }
     },
   );
-
+  double visibility = 0;
   bool _sendButtonVisible = false;
   late TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
+    final buttonPadding = Chat.theme.inputPadding.copyWith(left: 16, right: 16);
+    visibility = buttonPadding.bottom + buttonPadding.top + 24;
 
     _textController =
         widget.options.textEditingController ?? InputTextFieldController();
+    widget.scrollController.addListener(
+      () {
+        final buttonPadding = Chat.theme.inputPadding.copyWith(left: 16, right: 16);
+        if (widget.scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (visibility != 0) {
+        setState(() {
+          visibility = 0;
+        });
+      }
+    }
+    if (widget.scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      if (visibility == 0) {
+        setState(() {
+          visibility = buttonPadding.bottom + buttonPadding.top + 24;
+        });
+      }
+    }
+      },
+    );
     _handleSendButtonVisibilityModeChange();
   }
 

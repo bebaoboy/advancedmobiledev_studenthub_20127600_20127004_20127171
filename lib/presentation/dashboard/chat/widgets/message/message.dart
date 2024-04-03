@@ -1,8 +1,10 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
 import 'package:uuid/uuid.dart';
 import 'package:visibility_detector/visibility_detector.dart';
 
@@ -56,6 +58,7 @@ class Message extends StatefulWidget {
     this.userAgent,
     this.videoMessageBuilder,
     this.errorMessageBuilder,
+    this.scheduleMessageBuilder,
   });
 
   /// Build an audio message inside predefined bubble.
@@ -84,6 +87,10 @@ class Message extends StatefulWidget {
   /// Build a custom message inside predefined bubble.
   final Widget Function(types.CustomMessage, {required int messageWidth})?
       customMessageBuilder;
+
+  /// Build a custom message inside predefined bubble.
+  final Widget Function(ScheduleMessageType, {required int messageWidth})?
+      scheduleMessageBuilder;
 
   /// Build an error message inside predefined bubble.
   final Widget Function(String error, {required int messageWidth})?
@@ -236,7 +243,7 @@ class _MessageState extends State<Message> {
         : Container(
             decoration: BoxDecoration(
               borderRadius: borderRadius,
-              border: (widget.message.type != types.MessageType.custom)
+              border: (widget.message.type != types.MessageType.schedule)
                   ? null
                   : !builtSuccessfully
                       ? null
@@ -253,7 +260,7 @@ class _MessageState extends State<Message> {
                               .primary
                               .withOpacity(0.5)
                           : Chat.theme.secondaryColor)
-                      : (widget.message.type != types.MessageType.custom &&
+                      : (widget.message.type != types.MessageType.schedule &&
                               widget.message.type != types.MessageType.audio)
                           ? Theme.of(context).colorScheme.primary
                           : Chat.theme.secondaryColor,
@@ -279,6 +286,12 @@ class _MessageState extends State<Message> {
           final audioMessage = widget.message as types.AudioMessage;
           return widget.audioMessageBuilder != null
               ? widget.audioMessageBuilder!(audioMessage,
+                  messageWidth: widget.messageWidth)
+              : const SizedBox();
+        case types.MessageType.schedule:
+          final customMessage = widget.message as ScheduleMessageType;
+          return widget.scheduleMessageBuilder != null
+              ? widget.scheduleMessageBuilder!(customMessage,
                   messageWidth: widget.messageWidth)
               : const SizedBox();
         case types.MessageType.custom:
@@ -416,12 +429,16 @@ class _MessageState extends State<Message> {
           )
         : BorderRadius.only(
             bottomLeft: Radius.circular(
-              currentUserIsAuthor || widget.roundBorder
+              currentUserIsAuthor ||
+                      widget.roundBorder ||
+                      widget.message.type == types.MessageType.schedule
                   ? messageBorderRadius
                   : 0,
             ),
             bottomRight: Radius.circular(
-              !currentUserIsAuthor || widget.roundBorder
+              !currentUserIsAuthor ||
+                      widget.roundBorder ||
+                      widget.message.type == types.MessageType.schedule
                   ? messageBorderRadius
                   : 0,
             ),
@@ -430,13 +447,15 @@ class _MessageState extends State<Message> {
           );
 
     return Container(
-      alignment: widget.bubbleRtlAlignment == BubbleRtlAlignment.left
-          ? currentUserIsAuthor
-              ? AlignmentDirectional.centerEnd
-              : AlignmentDirectional.centerStart
-          : currentUserIsAuthor
-              ? Alignment.centerRight
-              : Alignment.centerLeft,
+      alignment: widget.message.type == types.MessageType.schedule
+          ? AlignmentDirectional.center
+          : widget.bubbleRtlAlignment == BubbleRtlAlignment.left
+              ? currentUserIsAuthor
+                  ? AlignmentDirectional.centerEnd
+                  : AlignmentDirectional.centerStart
+              : currentUserIsAuthor
+                  ? Alignment.centerRight
+                  : Alignment.centerLeft,
       margin: widget.bubbleRtlAlignment == BubbleRtlAlignment.left
           ? EdgeInsetsDirectional.only(
               bottom: 4,
@@ -448,6 +467,7 @@ class _MessageState extends State<Message> {
               left: 20 + (isMobile ? query.padding.left : 0),
               right: isMobile ? query.padding.right : 0,
             ),
+      padding: widget.message.type == types.MessageType.schedule ? const EdgeInsets.symmetric(vertical: 20) : null,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
