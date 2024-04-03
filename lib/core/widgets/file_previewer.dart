@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -26,6 +25,7 @@ class FilePreview {
     double? width,
     Widget? defaultImage,
     required bool isCV,
+    required Function changeValue,
   }) async {
     // if (filePath.startsWith('http') ||
     //     filePath.startsWith('blob') ||

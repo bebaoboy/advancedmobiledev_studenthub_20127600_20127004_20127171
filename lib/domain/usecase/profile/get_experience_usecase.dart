@@ -2,15 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/experience_list.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
-import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
-import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
 
 class GetExperienceUseCase extends UseCase<ProjectExperienceList, String> {
-  UserRepository _userRepository;
+  final UserRepository _userRepository;
   GetExperienceUseCase(this._userRepository);
 
   @override

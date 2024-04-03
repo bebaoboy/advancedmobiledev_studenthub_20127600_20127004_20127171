@@ -3,12 +3,11 @@ import 'dart:io';
 
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
 import 'package:boilerplate/domain/entity/project/education_list.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 
 class GetEducationUseCase extends UseCase<EducationList, String> {
-  UserRepository _userRepository;
+  final UserRepository _userRepository;
   GetEducationUseCase(this._userRepository);
   @override
   Future<EducationList> call({required String params}) async {

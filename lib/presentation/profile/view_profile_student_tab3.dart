@@ -14,6 +14,7 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lottie/lottie.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -177,7 +178,15 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                 FocusManager.instance.primaryFocus?.unfocus();
 
                                 if (cvController.text.isNotEmpty) {
-                                  await FilePreview.getThumbnail(
+                                  var filePath = cvController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  cvController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: true, cvController.text)
                                       .then(
                                     (value) {
@@ -197,7 +206,15 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (cvController.text.isNotEmpty) {
-                                  await FilePreview.getThumbnail(
+                                  var filePath = cvController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  cvController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: true, cvController.text)
                                       .then((value) {
                                     if (value != null) {
@@ -280,7 +297,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                         setState(() {
                           cvEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(
+                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
                           isCV: true,
                           result.files.single.path!,
                         );
@@ -292,7 +309,8 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                       }
                     },
                     child: Container(
-                        height: _cvImage != null ? 500 : 200,
+                        constraints: const BoxConstraints(minHeight: 200),
+                        // height: _cvImage != null ? null : 200,
                         decoration: const BoxDecoration(
                             color: Colors.white70,
                             borderRadius:
@@ -303,9 +321,20 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                       true &&
                                   cvController.text.isNotEmpty
                               ? LinkPreview(
+                                  loadingWidget: Lottie.asset(
+                                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                                    fit: BoxFit.cover,
+                                    width:
+                                        80, // Adjust the width and height as needed
+                                    height: 80,
+                                    repeat:
+                                        true, // Set to true if you want the animation to loop
+                                  ),
+                                  forceMaximize: true,
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
+                                    // print("fetch");
                                     setState(() {
                                       if (p0.link != null) {
                                         pd[p0.link!] = p0;
@@ -368,7 +397,15 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (transcriptController.text.isNotEmpty) {
-                                  await FilePreview.getThumbnail(
+                                  var filePath = transcriptController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  transcriptController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then(
@@ -389,7 +426,15 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (transcriptController.text.isNotEmpty) {
-                                  await FilePreview.getThumbnail(
+                                  var filePath = transcriptController.text;
+                                  var split = filePath.split('://');
+                                  if (split.length > 1) {
+                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
+                                  } else {
+                                    filePath = "https://$filePath";
+                                  }
+                                  transcriptController.text = filePath;
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then((value) {
@@ -473,7 +518,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                         setState(() {
                           transcriptEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(
+                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
                           isCV: false,
                           result.files.single.path!,
                         );
@@ -485,7 +530,8 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                       }
                     },
                     child: Container(
-                      height: _transcriptImage != null ? 500 : 200,
+                      constraints: const BoxConstraints(minHeight: 200),
+                      // height: _transcriptImage != null ? null : 200,
                       decoration: const BoxDecoration(
                           color: Colors.white70,
                           borderRadius: BorderRadius.all(Radius.circular(13))),
@@ -496,6 +542,16 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                       true &&
                                   transcriptController.text.isNotEmpty
                               ? LinkPreview(
+                                  loadingWidget: Lottie.asset(
+                                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                                    fit: BoxFit.cover,
+                                    width:
+                                        80, // Adjust the width and height as needed
+                                    height: 80,
+                                    repeat:
+                                        true, // Set to true if you want the animation to loop
+                                  ),
+                                  forceMaximize: true,
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {

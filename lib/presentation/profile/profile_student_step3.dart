@@ -188,7 +188,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: true, cvController.text)
                                       .then(
                                     (value) {
@@ -216,7 +216,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: true, cvController.text)
                                       .then((value) {
                                     if (value != null) {
@@ -299,7 +299,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           cvEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(
+                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
                           isCV: true,
                           result.files.single.path!,
                         );
@@ -311,7 +311,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                        constraints: BoxConstraints(minHeight: 200),
+                        constraints: const BoxConstraints(minHeight: 200),
                         // height: _cvImage != null ? null : 200,
                         decoration: const BoxDecoration(
                             color: Colors.white70,
@@ -407,7 +407,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then(
@@ -436,7 +436,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(
+                                  await FilePreview.getThumbnail(changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then((value) {
@@ -520,7 +520,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           transcriptEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(
+                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
                           isCV: false,
                           result.files.single.path!,
                         );
@@ -532,7 +532,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                      constraints: BoxConstraints(minHeight: 200),
+                      constraints: const BoxConstraints(minHeight: 200),
                       // height: _transcriptImage != null ? null : 200,
                       decoration: const BoxDecoration(
                           color: Colors.white70,

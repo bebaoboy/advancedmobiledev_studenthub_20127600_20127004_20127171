@@ -2,13 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/language_list.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 
 class GetLanguageUseCase extends UseCase<LanguageList, String> {
-  UserRepository _userRepository;
+  final UserRepository _userRepository;
   GetLanguageUseCase(this._userRepository);
 
   @override

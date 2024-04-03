@@ -5,7 +5,6 @@ import 'package:boilerplate/domain/entity/project/language_list.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
-import 'package:collection/collection.dart';
 import 'package:mobx/mobx.dart';
 part 'profile_info_store.g.dart';
 
@@ -25,9 +24,9 @@ abstract class _ProfileStudentStore with Store {
     //     .then((value) => _languages = value);
   }
 
-  GetLanguageUseCase _getLanguageUseCase;
-  GetExperienceUseCase _getExperienceUseCase;
-  GetEducationUseCase _getEducationUseCase;
+  final GetLanguageUseCase _getLanguageUseCase;
+  final GetExperienceUseCase _getExperienceUseCase;
+  final GetEducationUseCase _getEducationUseCase;
 
   @computed
   bool get isEmpty => _languages.languages == null && _experiences.experiences == null && _educations.educations == null;

@@ -9,6 +9,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -99,6 +100,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
   final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //focus node:-----------------------------------------------------------------
 
@@ -109,24 +111,27 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
   @override
   void initState() {
     super.initState();
-    _languages.add(Language("English", "Native or Bilingual"));
-    _languages.add(Language("Spanish", "Beginner"));
-    _languages.add(Language("Cupkkake", "Intermediate"));
-    _languages.add(Language("VN", "Null"));
-    _languages.add(Language("Monkeyish", "Beginner"));
-    _languages.add(Language("Floptropican", "Intermediate"));
-    _languages.add(Language("Spanish 2.0", "Native"));
-    _languages.add(Language("AHHH", "Beginner"));
-    _languages.add(Language("Papi", "Native"));
-    _languages.add(Language("Egyptian", "Beginner"));
-    _languages.add(Language("Indian", "Native"));
-    _languages.add(Language("Nadir", "Beginner"));
-    _educations.add(Education("Le Hong Phong Highschool",
-        startYear: DateTime(2007), endYear: DateTime(2010)));
-    _educations.add(Education("Ho Chi Minh University of Science",
-        startYear: DateTime(2010), endYear: DateTime(2014)));
-    _educations.add(Education("Ho Chi Minh University of Science",
-        startYear: DateTime(2014), endYear: DateTime(2018)));
+    _languages.addAll(_infoStore.currentLanguage ?? []);
+    _educations.addAll(_infoStore.currentEducation ?? []);
+
+    // _languages.add(Language("English", "Native or Bilingual"));
+    // _languages.add(Language("Spanish", "Beginner"));
+    // _languages.add(Language("Cupkkake", "Intermediate"));
+    // _languages.add(Language("VN", "Null"));
+    // _languages.add(Language("Monkeyish", "Beginner"));
+    // _languages.add(Language("Floptropican", "Intermediate"));
+    // _languages.add(Language("Spanish 2.0", "Native"));
+    // _languages.add(Language("AHHH", "Beginner"));
+    // _languages.add(Language("Papi", "Native"));
+    // _languages.add(Language("Egyptian", "Beginner"));
+    // _languages.add(Language("Indian", "Native"));
+    // _languages.add(Language("Nadir", "Beginner"));
+    // _educations.add(Education("Le Hong Phong Highschool",
+    //     startYear: DateTime(2007), endYear: DateTime(2010)));
+    // _educations.add(Education("Ho Chi Minh University of Science",
+    //     startYear: DateTime(2010), endYear: DateTime(2014)));
+    // _educations.add(Education("Ho Chi Minh University of Science",
+    //     startYear: DateTime(2014), endYear: DateTime(2018)));
   }
 
   @override

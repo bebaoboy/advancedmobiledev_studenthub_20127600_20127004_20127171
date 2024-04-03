@@ -171,7 +171,8 @@ abstract class _UserStore with Store {
           await _saveLoginStatusUseCase.call(params: true);
 
           var userValue = User(
-              type: getUserType(type.name ?? UserType.naught.name),
+              // type: getUserType(type.name ?? UserType.naught.name),
+              type: getUserType(type.name),
               email: email,
               roles: [],
               isVerified: true);
