@@ -123,6 +123,7 @@ dependencies:
   # smooth_page_indicator:
   swipeable_page_route:
   # T
+
   to_string_pretty:
   tuple: 
   # tree_view_flutter: ^1.0.2
@@ -148,11 +149,6 @@ dependencies:
   # unorm_dart: 
   # flutter_in_app_pip:
   
-  
-  
-  
-
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

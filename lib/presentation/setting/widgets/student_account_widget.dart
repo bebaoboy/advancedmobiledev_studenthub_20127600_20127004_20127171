@@ -1,6 +1,5 @@
 import 'package:boilerplate/domain/entity/account/account.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class StudentAccountWidget extends StatefulWidget {
@@ -40,9 +39,7 @@ class _StudentAccountWidgetState extends State<StudentAccountWidget> {
           .primary
           .withOpacity(widget.isLoggedIn ? 0.5 : 0),
       leading: widget.name.type == UserType.student
-          ? widget.name.user.roles!.firstWhereOrNull(
-                      (element) => element.name == UserType.student.name) !=
-                  null
+          ? widget.name.user.studentProfile != null
               ? profileIcon
               : const Icon(Icons.person_off)
           : const Icon(Icons.no_cell),

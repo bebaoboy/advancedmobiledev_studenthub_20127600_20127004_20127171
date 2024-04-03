@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -51,8 +52,7 @@ class ViewProfileStudentTab2 extends StatefulWidget {
   const ViewProfileStudentTab2({super.key});
 
   @override
-  _ViewProfileStudentTab2State createState() =>
-      _ViewProfileStudentTab2State();
+  _ViewProfileStudentTab2State createState() => _ViewProfileStudentTab2State();
 }
 
 class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
@@ -66,6 +66,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
   final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -77,32 +78,36 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
   void initState() {
     super.initState();
     _passwordFocusNode = FocusNode();
-    _projects.add(ProjectExperience("Intelligent Taxi Dispatching System",
-        description:
-            "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
-        startDate: DateTime(2020, 9),
-        endDate: DateTime(2020, 12),
-        skills: [Skill("React", "", "", id: "10"), Skill("Android", "", "", id: "2")]));
-    _projects.add(ProjectExperience("Community partners project",
-        description:
-            "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
-        startDate: DateTime(2019, 12),
-        endDate: DateTime(2024, 2),
-        skills: [
-          Skill("iOS", "", "", id: "5"),
-          Skill("Web", "", "", id: "4"),
-          Skill("Artificial Intelligent", "", "", id: "3")
-        ]));
-    _projects.add(ProjectExperience("bebaoboy Project Bunny",
-        description:
-            "food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
-        startDate: DateTime(2021, 9),
-        endDate: DateTime(2021, 12)));
-    _projects.add(ProjectExperience("Coca Cola Advertisement",
-        description:
-            "Klls to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
-        startDate: DateTime(2023, 1),
-        endDate: DateTime(2024, 2)));
+    _projects.addAll(_infoStore.currentProjectExperience ?? []);
+    // _projects.add(ProjectExperience("Intelligent Taxi Dispatching System",
+    //     description:
+    //         "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
+    //     startDate: DateTime(2020, 9),
+    //     endDate: DateTime(2020, 12),
+    //     skills: [
+    //       Skill("React", "", "", id: "10"),
+    //       Skill("Android", "", "", id: "2")
+    //     ]));
+    // _projects.add(ProjectExperience("Community partners project",
+    //     description:
+    //         "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
+    //     startDate: DateTime(2019, 12),
+    //     endDate: DateTime(2024, 2),
+    //     skills: [
+    //       Skill("iOS", "", "", id: "5"),
+    //       Skill("Web", "", "", id: "4"),
+    //       Skill("Artificial Intelligent", "", "", id: "3")
+    //     ]));
+    // _projects.add(ProjectExperience("bebaoboy Project Bunny",
+    //     description:
+    //         "food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
+    //     startDate: DateTime(2021, 9),
+    //     endDate: DateTime(2021, 12)));
+    // _projects.add(ProjectExperience("Coca Cola Advertisement",
+    //     description:
+    //         "Klls to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
+    //     startDate: DateTime(2023, 1),
+    //     endDate: DateTime(2024, 2)));
   }
 
   @override
@@ -651,8 +656,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                         text: _projects[index].link,
                                         style: const TextStyle(
                                           color: Colors.blue,
-                                          decoration:
-                                              TextDecoration.underline,
+                                          decoration: TextDecoration.underline,
                                         ),
                                       )
                                     ]))),

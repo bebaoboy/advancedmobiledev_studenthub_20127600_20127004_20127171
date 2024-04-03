@@ -1,18 +1,13 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
-import 'package:boilerplate/presentation/home/loading_screen.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
 
-import '../../di/service_locator.dart';
 
 class ForgetPasswordDoneScreen extends StatefulWidget {
   const ForgetPasswordDoneScreen({super.key});
@@ -29,8 +24,8 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
 
   //stores:---------------------------------------------------------------------
   // final ThemeStore _themeStore = getIt<ThemeStore>();
-  final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  // final FormStore _formStore = getIt<FormStore>();
+  // final UserStore _userStore = getIt<UserStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -42,9 +37,9 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
     super.initState();
     _passwordFocusNode = FocusNode();
     Future.delayed(const Duration(seconds: 5)).then((value) {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.login),
-          (Route<dynamic> route) => false);
+      loading = false;
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute2(routeName: Routes.home));
     });
   }
 
@@ -74,28 +69,28 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
                   ],
                 )
               : Container(child: _buildRightSide()),
-          Observer(
-            builder: (context) {
-              return _userStore.success
-                  ? navigate(context)
-                  : _showErrorMessage(_formStore.errorStore.errorMessage);
-            },
-          ),
-          Observer(
-            builder: (context) {
-              return Visibility(
-                visible: _userStore.isLoading || loading,
-                // child: CustomProgressIndicatorWidget(),
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        loading = false;
-                      });
-                    },
-                    child: const LoadingScreen()),
-              );
-            },
-          )
+          // Observer(
+          //   builder: (context) {
+          //     return _userStore.success
+          //         ? navigate(context)
+          //         : _showErrorMessage(_formStore.errorStore.errorMessage);
+          //   },
+          // ),
+          // Observer(
+          //   builder: (context) {
+          //     return Visibility(
+          //       visible: _userStore.isLoading || loading,
+          //       // child: CustomProgressIndicatorWidget(),
+          //       child: GestureDetector(
+          //           onTap: () {
+          //             setState(() {
+          //               loading = false;
+          //             });
+          //           },
+          //           child: const LoadingScreen()),
+          //     );
+          //   },
+          // )
         ],
       ),
     );
@@ -167,11 +162,6 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
       ),
     );
   }
-
-
-
-
-
 
   Widget navigate(BuildContext context) {
     // SharedPreferences.getInstance().then((prefs) {

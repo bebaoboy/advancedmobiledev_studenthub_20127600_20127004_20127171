@@ -11,7 +11,6 @@ import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -151,28 +150,29 @@ class _ForgetPasswordChangePasswordScreenState
                   // _buildForgotPasswordButton(),
                   const SizedBox(height: 44.0),
                   _buildSignInButton(),
-                  RichText(
-                    text: TextSpan(
-                      text: Lang.get('signup_sign_up_prompt'),
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: _themeStore.darkMode
-                              ? Colors.white
-                              : Colors.black),
-                      children: <TextSpan>[
-                        TextSpan(
-                            text:
-                                " ${Lang.get('signup_sign_up_prompt_action')}",
-                            style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.w600),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                Navigator.of(context).pop();
-                              }),
-                      ],
-                    ),
-                  ),
+                  // RichText(
+                  //   text: TextSpan(
+                  //     text: Lang.get('signup_sign_up_prompt'),
+                  //     style: TextStyle(
+                  //         fontSize: 18,
+                  //         color: _themeStore.darkMode
+                  //             ? Colors.white
+                  //             : Colors.black),
+                  //     children: <TextSpan>[
+                  //       TextSpan(
+                  //           text:
+                  //               " ${Lang.get('signup_sign_up_prompt_action')}",
+                  //           style: TextStyle(
+                  //               color: Theme.of(context).colorScheme.primary,
+                  //               fontWeight: FontWeight.w600),
+                  //           recognizer: TapGestureRecognizer()
+                  //             ..onTap = () {
+                  //               Navigator.of(context).pop();
+                  //             }),
+                  //     ],
+                  //   ),
+                  // ),
+                
                 ],
               ),
             ),

@@ -2,7 +2,6 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -93,7 +92,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 34.0),
-                  _buildSignInButton(),
+                  // _buildSignInButton(),
                 ],
               ),
             ),
@@ -103,21 +102,20 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
     );
   }
 
-  Widget _buildSignInButton() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 50),
-      child: RoundedButtonWidget(
-        buttonText: "OK",
-        buttonColor: Theme.of(context).colorScheme.primary,
-        textColor: Colors.white,
-        onPressed: () async {
-          Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute2(routeName: Routes.login),
-              (Route<dynamic> route) => false);
-        },
-      ),
-    );
-  }
+  // Widget _buildSignInButton() {
+  //   return Container(
+  //     margin: const EdgeInsets.symmetric(horizontal: 50),
+  //     child: RoundedButtonWidget(
+  //       buttonText: "OK",
+  //       buttonColor: Theme.of(context).colorScheme.primary,
+  //       textColor: Colors.white,
+  //       onPressed: () async {
+  //         Navigator.of(context).pushReplacement(
+  //             MaterialPageRoute2(routeName: Routes.login));
+  //       },
+  //     ),
+  //   );
+  // }
 
   Widget navigate(BuildContext context) {
     Navigator.of(context).pushAndRemoveUntil(

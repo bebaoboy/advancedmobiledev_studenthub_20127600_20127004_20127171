@@ -8,7 +8,6 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -70,11 +69,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             // Handle your action
                             if (_userStore.user == null) return;
-                            if (_userStore.user!.roles!.firstWhereOrNull(
-                                  (element) =>
-                                      element.name == UserType.company.name,
-                                ) !=
-                                null) {
+                            // if (_userStore.user!.roles!.firstWhereOrNull(
+                            //       (element) =>
+                            //           element.name == UserType.company.name,
+                            //     ) !=
+                            //     null)
+                            if (_userStore.user!.companyProfile != null)
+                              {
                               _userStore.user!.type = UserType.company;
                               if (_userStore.user != null) {
                                 SharedPreferences.getInstance().then(
@@ -132,11 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onPressed: () {
                             // Handle your action
                             if (_userStore.user == null) return;
-                            if (_userStore.user!.roles!.firstWhereOrNull(
-                                  (element) =>
-                                      element.name == UserType.student.name,
-                                ) !=
-                                null) {
+                            if (_userStore.user!.studentProfile != null) {
                               _userStore.user!.type = UserType.student;
                               if (_userStore.user != null) {
                                 SharedPreferences.getInstance().then(

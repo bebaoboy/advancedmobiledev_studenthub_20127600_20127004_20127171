@@ -78,12 +78,27 @@ class TextFieldWidget extends StatefulWidget {
 }
 
 class _TextFieldWidgetState extends State<TextFieldWidget> {
+  late bool obscureText;
+  bool tapInside = false;
+  @override
+  void initState() {
+    super.initState();
+    obscureText = widget.isObscure;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: widget.padding,
       child: TextFormField(
-        onTap: widget.onTap,
+        onTap: () {
+          setState(() {
+            tapInside = true;
+          });
+          if (widget.onTap != null) {
+            widget.onTap!();
+          }
+        },
         textAlign: widget.textAlign,
         textAlignVertical: widget.textAlignVertical,
         enabled: widget.enabled,
@@ -97,12 +112,15 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         onChanged: widget.onChanged,
         autofocus: widget.autoFocus,
         textInputAction: widget.inputAction,
-        obscureText: widget.isObscure,
+        obscureText: obscureText,
         maxLength: widget.maxLength,
         maxLines: widget.maxLines,
         minLines: widget.minLines,
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();
+          setState(() {
+            tapInside = false;
+          });
         },
         keyboardType: widget.inputType,
         style: Theme.of(context).textTheme.bodyLarge == null
@@ -118,7 +136,8 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         magnifierConfiguration: TextMagnifierConfiguration.disabled,
         decoration:
             (widget.inputDecoration ?? const InputDecoration()).copyWith(
-          floatingLabelBehavior: widget.floatingLabelBehavior ?? (widget.initialValue == null ||
+          floatingLabelBehavior: widget.floatingLabelBehavior ??
+              (widget.initialValue == null ||
                       (widget.initialValue != null &&
                           widget.initialValue!.isEmpty)
                   ? FloatingLabelBehavior.never
@@ -153,6 +172,17 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                       margin: widget.iconMargin,
                       child: Icon(widget.icon, color: widget.iconColor))
                   : null,
+
+          suffixIcon: widget.isObscure && tapInside
+              ? IconButton(
+                  icon: const Icon(Icons.remove_red_eye),
+                  onPressed: () {
+                    setState(() {
+                      obscureText = !obscureText;
+                    });
+                  },
+                )
+              : null,
         ),
       ),
     );

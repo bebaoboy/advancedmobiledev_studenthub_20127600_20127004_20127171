@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -14,6 +15,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
@@ -302,6 +304,14 @@ class _SettingScreenState extends State<SettingScreen> {
       // await _userStore.logout();
       if (_userStore.user != null) {
         _userStore.user!.type = account.type;
+        if (_userStore.user != null) {
+          SharedPreferences.getInstance().then(
+            (value) {
+              value.setString(Preferences.current_user_role,
+                  _userStore.user!.type.name.toLowerCase().toString());
+            },
+          );
+        }
       }
 
       DeviceUtils.hideKeyboard(context);
@@ -330,7 +340,7 @@ class _SettingScreenState extends State<SettingScreen> {
       return CompanyAccountWidget(
         isLoggedIn: _userStore.user != null &&
             account.user.email == _userStore.user!.email,
-        isLoggedInProfile: account.isLoggedIn,
+        isLoggedInProfile: account.user.companyProfile != null,
         name: account,
         // onTap: () {
         //   //print(account.name);
@@ -387,6 +397,64 @@ class _SettingScreenState extends State<SettingScreen> {
                   //int n = Random().nextInt(3);
                   if (_userStore.user != null &&
                       _userStore.user!.type != UserType.naught) {
+                    if (_userStore.user!.type == UserType.company) {
+                      if (_userStore.user!.companyProfile == null) {
+                        showAnimatedDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context) {
+                            return ClassicGeneralDialogWidget(
+                              contentText:
+                                  'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
+                              negativeText: Lang.get('cancel'),
+                              positiveText: 'Yes',
+                              onPositiveClick: () {
+                                Navigator.of(context).pop();
+
+                                Navigator.of(context).push(MaterialPageRoute2(
+                                    routeName: Routes.profile));
+                                return;
+                              },
+                              onNegativeClick: () {
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          animationType: DialogTransitionType.size,
+                          curve: Curves.fastOutSlowIn,
+                          duration: const Duration(seconds: 1),
+                        );
+                      }
+                    } else {
+                      if (_userStore.user!.studentProfile == null) {
+                        showAnimatedDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context) {
+                            return ClassicGeneralDialogWidget(
+                              contentText:
+                                  'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
+                              negativeText: Lang.get('cancel'),
+                              positiveText: 'Yes',
+                              onPositiveClick: () {
+                                Navigator.of(context).pop();
+
+                                Navigator.of(context).push(MaterialPageRoute2(
+                                    routeName: Routes.profileStudent));
+                                return;
+                              },
+                              onNegativeClick: () {
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          animationType: DialogTransitionType.size,
+                          curve: Curves.fastOutSlowIn,
+                          duration: const Duration(seconds: 1),
+                        );
+                      }
+                    }
+
                     navigate(
                         context,
                         _userStore.user != null &&

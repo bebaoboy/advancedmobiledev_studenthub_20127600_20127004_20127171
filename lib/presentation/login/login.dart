@@ -20,7 +20,9 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -61,6 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const EmptyAppBar(),
       body: _buildBody(),
     );
   }
@@ -122,55 +125,54 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          const EmptyAppBar(),
-          Flexible(
-            flex: 1,
-            fit: FlexFit.loose,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 30),
-              child: Column(
-                children: [
-                  AutoSizeText(
-                    Lang.get('login_main_text'),
-                    style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w800),
-                    minFontSize: 10,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  Image.asset(
-                    'assets/images/img_login.png',
-                    scale: 1.2,
-                  ),
-                  const SizedBox(height: 24.0),
-                  _buildUserIdField(),
-                  _buildPasswordField(),
-                  _buildForgotPasswordButton(),
-                  _buildSignInButton(),
-                ],
+      child: LimitedBox(
+        maxHeight: MediaQuery.of(context).orientation == Orientation.landscape
+            ? MediaQuery.of(context).size.width * 0.9
+            : MediaQuery.of(context).size.height * 0.9,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 30, 24, 0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AutoSizeText(
+                      Lang.get('login_main_text'),
+                      style: const TextStyle(
+                          fontSize: 15, fontWeight: FontWeight.w800),
+                      minFontSize: 10,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    Expanded(
+                      child: Image.asset(
+                        'assets/images/img_login.png',
+                        scale: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 24.0),
+                    _buildUserIdField(),
+                    _buildPasswordField(),
+                    _buildForgotPasswordButton(),
+                    _buildSignInButton(),
+                    Expanded(
+                        child: Align(
+                      child: _buildFooterText(),
+                      alignment: Alignment.bottomCenter,
+                    )),
+                    const SizedBox(
+                      height: 14,
+                    ),
+                    _buildSignUpButton(),
+                  ],
+                ),
               ),
             ),
-          ),
-          Align(
-            heightFactor: 2,
-            alignment: Alignment.bottomCenter,
-            child: Column(
-              children: [
-                _buildFooterText(),
-                const SizedBox(
-                  height: 14,
-                ),
-                _buildSignUpButton(),
-              ],
-            ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -316,7 +318,8 @@ class _LoginScreenState extends State<LoginScreen> {
       return Container();
     }
 
-    if (_forgetPasswordStore.mailSentSuccess) {
+    if (_forgetPasswordStore.mailSentSuccess && !initializing) {
+      initializing = true;
       _forgetPasswordStore.saveShouldChangePass();
       Future.delayed(const Duration(milliseconds: 10), () async {
         // //print("LOADING = $loading");

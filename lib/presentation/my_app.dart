@@ -4,6 +4,7 @@ import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/constants/strings.dart';
 import 'package:boilerplate/core/widgets/animated_theme_app.dart';
 import 'package:boilerplate/core/widgets/animation_type.dart';
+import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -44,9 +45,14 @@ class _MyAppState extends State<MyApp> {
           routeName: settings.name ?? Routes.home,
           arguments: settings.arguments);
     };
-    builder = (context, child) => Container(
-        color: Theme.of(context).colorScheme.primary,
-        child: SafeArea(child: child ?? const SizedBox()));
+    builder = (context, child) {
+      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+        return ErrorPage(errorDetails: errorDetails);
+      };
+      return Container(
+          color: Theme.of(context).colorScheme.primary,
+          child: SafeArea(child: child ?? const SizedBox()));
+    };
     super.initState();
   }
 
