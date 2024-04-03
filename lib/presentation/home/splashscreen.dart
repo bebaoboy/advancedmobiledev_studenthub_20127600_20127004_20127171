@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
@@ -183,7 +182,7 @@ class _SplashScreenState extends State<SplashScreen>
         }
       });
     _playAnimation(context);
-    initCube(NavigationService.navigatorKey.currentContext);
+    initCube(context);
   }
 
   initCube(context) async {

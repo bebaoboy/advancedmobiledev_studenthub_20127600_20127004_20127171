@@ -1,302 +1,96 @@
-// ignore_for_file: unused_element
-
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
 import 'package:another_flushbar/flushbar_helper.dart';
-import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
-import 'package:boilerplate/core/widgets/stepper.dart';
-import 'package:boilerplate/presentation/dashboard/dashboard.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/stores/form/form_store.dart';
+import 'package:boilerplate/core/widgets/chip_input_widget.dart';
+import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
-import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
-
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
-import 'package:boilerplate/presentation/profile/view_profile_student_tab1.dart';
-import 'package:boilerplate/presentation/profile/view_profile_student_tab2.dart.dart';
-import 'package:boilerplate/presentation/profile/view_profile_student_tab3.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 
-class ViewProfileStudent extends StatefulWidget {
-  const ViewProfileStudent({super.key});
+final List<TechStack> _list = [
+  TechStack("Designer", id: "5"),
+  TechStack("Developer", id: "1"),
+  TechStack("Consultant", id: "2"),
+  TechStack("Student", id: "3"),
+  TechStack("Backend Developer", id: "4"),
+];
 
-  @override
-  _ViewProfileStudentState createState() => _ViewProfileStudentState();
-}
-
-class _ViewProfileStudentState extends State<ViewProfileStudent> {
-  //stores:---------------------------------------------------------------------
-  // final ThemeStore _themeStore = getIt<ThemeStore>();
-  final ProfileStudentFormStore _formStore = getIt<ProfileStudentFormStore>();
-  final UserStore _userStore = getIt<UserStore>();
-  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
-
-  //textEdittingController
-  final TextEditingController _companyNameController = TextEditingController();
-  final TextEditingController _websiteURLController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-
-  // late FocusNode _companyFocusNode;
-
-  bool enabled = false;
-
-  @override
-  void initState() {
-    _infoStore.setStudentId(_userStore.user!.studentProfile!.objectId!);
-    super.initState();
-  }
+class TechStackDropdown extends StatelessWidget {
+  const TechStackDropdown({super.key, required this.onListChangedCallback});
+  final Function(TechStack) onListChangedCallback;
 
   @override
   Widget build(BuildContext context) {
-    if (_infoStore.isEmpty) {
-      _infoStore.getInfo();
-    }
-    if (children.isEmpty) {
-      children = [
-        const KeepAlivePage(ViewProfileStudentTab1()),
-        const KeepAlivePage(ViewProfileStudentTab2()),
-        const KeepAlivePage(ViewProfileStudentTab3()),
-      ];
-    }
-    return Scaffold(
-      primary: true,
-      appBar: _buildAppBar(context),
-      body: _buildBody(),
-    );
-  }
-
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text(Strings.appName),
-      actions: _buildActions(context),
-    );
-  }
-
-  List<Widget> _buildActions(BuildContext context) {
-    return <Widget>[];
-  }
-
-  // body methods:--------------------------------------------------------------
-  Widget _buildBody() {
-    return Material(
-      child: Stack(children: <Widget>[
-        Container(child: _buildRightSide()),
-        Observer(
-          builder: (context) {
-            return _userStore.success
-                ? navigate(context)
-                : _showErrorMessage(_formStore.errorStore.errorMessage);
-          },
-        ),
-        Observer(
-          builder: (context) {
-            return Visibility(
-              visible: _userStore.isLoading,
-              child: const CustomProgressIndicatorWidget(),
-            );
-          },
-        ),
-      ]),
-    );
-  }
-
-  // REQUIRED: USED TO CONTROL THE STEPPER.
-  int activeStep = 0; // Initial step set to 0.
-
-  // OPTIONAL: can be set directly.
-  int dotCount = 3;
-
-  /// Generates jump steps for dotCount number of steps, and returns them in a row.
-  // Row steps() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: List.generate(dotCount, (index) {
-  //       return Expanded(
-  //         child: ElevatedButton(
-  //           child: Text('${index + 1}'),
-  //           onPressed: () {
-  //             setState(() {
-  //               activeStep = index;
-  //             });
-  //           },
-  //         ),
-  //       );
-  //     }),
-  //   );
-  // }
-
-  /// Returns the next button widget.
-  // Widget nextButton() {
-  //   return ElevatedButton(
-  //     child: const Text('Next'),
-  //     onPressed: () {
-  //       /// ACTIVE STEP MUST BE CHECKED FOR (dotCount - 1) AND NOT FOR dotCount To PREVENT Overflow ERROR.
-  //       if (activeStep < dotCount - 1) {
-  //         setState(() {
-  //           activeStep++;
-  //         });
-  //         pageController.move(activeStep);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // /// Returns the previous button widget.
-  // Widget previousButton() {
-  //   return ElevatedButton(
-  //     child: const Text('Prev'),
-  //     onPressed: () {
-  //       // activeStep MUST BE GREATER THAN 0 TO PREVENT OVERFLOW.
-  //       if (activeStep > 0) {
-  //         setState(() {
-  //           activeStep--;
-  //         });
-  //         pageController.move(activeStep);
-  //       }
-  //     },
-  //   );
-  // }
-
-  IndexController pageController = IndexController();
-  List<Widget> children = [];
-
-  Widget _buildRightSide() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 5.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // Center(
-            //   child: Text(
-            //     "${Lang.get('profile_welcome_title')}, STUDENT",
-            //     style: Theme.of(context)
-            //         .textTheme
-            //         .bodyLarge
-            //         ?.copyWith(fontWeight: FontWeight.w600),
-            //   ),
-            // ),
-            LimitedBox(
-              maxHeight: MediaQuery.of(context).size.height * 0.8,
-              child: TransformerPageView(
-                index: 0,
-                duration: const Duration(milliseconds: 500),
-                transformer: DepthPageTransformer(),
-                itemCount: dotCount,
-                controller: pageController,
-                itemBuilder: (context, i) => children[i],
-                onPageChanged: (value) {
-                  setState(() {
-                    activeStep = value!;
-                  });
-                },
+    return CustomDropdown<TechStack>.searchRequest(
+      initialItem: _list[0],
+      futureRequest: (p0) {
+        return Future.value(_list
+            .where(
+              (e) => e.name.toLowerCase().contains(p0.trim().toLowerCase()),
+            )
+            .toList());
+      },
+      futureRequestDelay: const Duration(seconds: 1),
+      onChanged: (p0) {
+        onListChangedCallback(p0);
+      },
+      noResultFoundText: Lang.get("nothing_here"),
+      maxlines: 3,
+      hintText: Lang.get('profile_choose_techstack'),
+      items: _list,
+      listItemBuilder: (context, item, isSelected, onItemSelect) {
+        return SizedBox(
+          height: 30,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Icon(item.icon),
+              // const SizedBox(
+              //   width: 20,
+              // ),
+              Text(
+                item.name,
+                textAlign: TextAlign.start,
               ),
-            ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: FlutterStepIndicator(
-                height: 20, // Set the height of the step indicator.
-                // Enable or disable automatic scrolling.
-                // TODO: put a list of tiles
-                list: children, // Provide a list of steps or stages to display.
-                onChange: (int index) {
-                  // Define a callback function that triggers when the active step changes.
-                  // You can perform actions based on the selected step here.
-                },
-                onClickItem: (p0) {
-                  setState(() {
-                    activeStep = p0;
-                  });
-                  pageController.move(activeStep);
-                },
-                page: activeStep, // Specify the current step or page.
-                // positiveCheck:
-                //     yourCustomCheckmarkWidget, // Optionally, use a custom checkmark widget.
-                // positiveColor:
-                //     yourColor, // Customize the color of positive (active) steps.
-                // negativeColor:
-                //     yourColor, // Customize the color of negative (disabled) steps.
-                // progressColor:
-                //     yourColor, // Customize the color of the progress indicator.
-                // durationScroller:
-                //     yourDuration, // Set the duration for scrolling animations.
-                // durationCheckBulb:
-                //     yourDuration, // Set the duration for checkmark bulb animations.
-                // division:
-                //     yourDivision, // Specify the number of divisions for rendering steps.
-              ),
-            ),
-
-            /// Jump buttons.
-            // Padding(padding: const EdgeInsets.all(18.0), child: steps()),
-
-            // Next and Previous buttons.
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [previousButton(), nextButton()],
-            // ),
-          ],
-        ),
-      ),
+              // const Spacer(),
+              // Checkbox(
+              //   value: isSelected,
+              //   onChanged: (value) => value = isSelected,
+              // )
+            ],
+          ),
+        );
+      },
+      // onListChanged: (value) {
+      //   //print('changing value to: $value');
+      //   onListChangedCallback(value);
+      // },
+      // validateOnChange: true,
+      // validator: (p0) {
+      //   return p0.isEmpty ? "Must not be null" : null;
+      // },
     );
-  }
-
-  Widget navigate(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      // Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
-      Navigator.of(context).pop();
-    });
-
-    return Container();
-  }
-
-  // General Methods:-----------------------------------------------------------
-  _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('profile_change_error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
-    }
-
-    return const SizedBox.shrink();
-  }
-
-  // dispose:-------------------------------------------------------------------
-  @override
-  void dispose() {
-    // Clean up the controller when the Widget is removed from the Widget tree
-    _descriptionController.dispose();
-    _companyNameController.dispose();
-    _websiteURLController.dispose();
-    super.dispose();
   }
 }
 
-class ProfileStudentScreenWidget extends StatefulWidget {
-  const ProfileStudentScreenWidget({super.key, this.fullName = ""});
+class ViewProfileStudentTab1 extends StatefulWidget {
+  const ViewProfileStudentTab1({super.key, this.fullName = ""});
   final String fullName;
 
   @override
   _ProfileStudentScreenState createState() => _ProfileStudentScreenState();
 }
 
-class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
+class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
@@ -305,7 +99,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
   final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
-  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //focus node:-----------------------------------------------------------------
 
@@ -316,27 +109,24 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
   @override
   void initState() {
     super.initState();
-    _languages.addAll(_infoStore.currentLanguage ?? []);
-    _educations.addAll(_infoStore.currentEducation ?? []);
-    
-    // _languages.add(Language("English", "Native or Bilingual"));
-    // _languages.add(Language("Spanish", "Beginner"));
-    // _languages.add(Language("Cupkkake", "Intermediate"));
-    // _languages.add(Language("VN", "Null"));
-    // _languages.add(Language("Monkeyish", "Beginner"));
-    // _languages.add(Language("Floptropican", "Intermediate"));
-    // _languages.add(Language("Spanish 2.0", "Native"));
-    // _languages.add(Language("AHHH", "Beginner"));
-    // _languages.add(Language("Papi", "Native"));
-    // _languages.add(Language("Egyptian", "Beginner"));
-    // _languages.add(Language("Indian", "Native"));
-    // _languages.add(Language("Nadir", "Beginner"));
-    // _educations.add(Education("Le Hong Phong Highschool",
-    //     startYear: DateTime(2007), endYear: DateTime(2010)));
-    // _educations.add(Education("Ho Chi Minh University of Science",
-    //     startYear: DateTime(2010), endYear: DateTime(2014)));
-    // _educations.add(Education("Ho Chi Minh University of Science",
-    //     startYear: DateTime(2014), endYear: DateTime(2018)));
+    _languages.add(Language("English", "Native or Bilingual"));
+    _languages.add(Language("Spanish", "Beginner"));
+    _languages.add(Language("Cupkkake", "Intermediate"));
+    _languages.add(Language("VN", "Null"));
+    _languages.add(Language("Monkeyish", "Beginner"));
+    _languages.add(Language("Floptropican", "Intermediate"));
+    _languages.add(Language("Spanish 2.0", "Native"));
+    _languages.add(Language("AHHH", "Beginner"));
+    _languages.add(Language("Papi", "Native"));
+    _languages.add(Language("Egyptian", "Beginner"));
+    _languages.add(Language("Indian", "Native"));
+    _languages.add(Language("Nadir", "Beginner"));
+    _educations.add(Education("Le Hong Phong Highschool",
+        startYear: DateTime(2007), endYear: DateTime(2010)));
+    _educations.add(Education("Ho Chi Minh University of Science",
+        startYear: DateTime(2010), endYear: DateTime(2014)));
+    _educations.add(Education("Ho Chi Minh University of Science",
+        startYear: DateTime(2014), endYear: DateTime(2018)));
   }
 
   @override
@@ -437,10 +227,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  // Image.asset(
-                  //   'assets/images/img_login.png',
-                  //   scale: 1.2,
-                  // ),
                   const SizedBox(height: 34.0),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -454,7 +240,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
                     ),
                   ),
                   const SizedBox(height: 14.0),
-                  SearchDropdown(
+                  TechStackDropdown(
                     onListChangedCallback: (p0) {
                       _profileStudentFormStore.setTechStack([p0]);
                     },
@@ -582,12 +368,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
                               },
                               icon: const Icon(Icons.add_circle_outline),
                             )),
-                        // Container(
-                        //     padding: EdgeInsets.zero,
-                        //     child: IconButton(
-                        //       onPressed: () => {},
-                        //       icon: Icon(Icons.mode_edit_outline),
-                        //     )),
                       ],
                     ),
                   ),
@@ -631,12 +411,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
                               },
                               icon: const Icon(Icons.add_circle_outline),
                             )),
-                        // Container(
-                        //     padding: EdgeInsets.zero,
-                        //     child: IconButton(
-                        //       onPressed: () => {},
-                        //       icon: Icon(Icons.mode_edit_outline),
-                        //     )),
                       ],
                     ),
                   ),
@@ -1042,9 +816,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
                                                         DateTime.now().year +
                                                             50,
                                                         1),
-                                                    // save the selected date to _selectedDate DateTime variable.
-                                                    // It's used to set the previous selected date when
-                                                    // re-showing the dialog.
                                                     selectedDate:
                                                         _educations[index]
                                                             .startYear,
@@ -1057,9 +828,6 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
                                                       });
                                                       // close the dialog when year is selected.
                                                       Navigator.pop(context);
-
-                                                      // Do something with the dateTime selected.
-                                                      // Remember that you need to use dateTime.year to get the year
                                                     },
                                                   ),
                                                 ),
@@ -1231,52 +999,41 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
     );
   }
 
-  Widget _buildSignInButton() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: 200,
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('next'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            setLanguage();
-            setEducation();
-            _profileStudentFormStore.setFullName(widget.fullName);
-            // if (_profileStudentFormStore.techStack == null ||
-            //     (_profileStudentFormStore.techStack != null &&
-            //         _profileStudentFormStore.techStack!.isEmpty)) {
-            //   _profileStudentFormStore.setTechStack([_list[0]]);
-            // }
-            Navigator.of(context).push(
-                MaterialPageRoute2(routeName: Routes.profileStudentStep2));
-            // if (_formStore.canProfileStudent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
+  // Widget _buildSignInButton() {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: SizedBox(
+  //       width: 200,
+  //       child: RoundedButtonWidget(
+  //         buttonText: Lang.get('next'),
+  //         buttonColor: Theme.of(context).colorScheme.primary,
+  //         textColor: Colors.white,
+  //         onPressed: () async {
+  //           setLanguage();
+  //           setEducation();
+  //           _profileStudentFormStore.setFullName(widget.fullName);
+  //           if (_profileStudentFormStore.techStack == null ||
+  //               (_profileStudentFormStore.techStack != null &&
+  //                   _profileStudentFormStore.techStack!.isEmpty)) {
+  //             _profileStudentFormStore.setTechStack([_list[0]]);
+  //           }
+  //           Navigator.of(context).push(
+  //               MaterialPageRoute2(routeName: Routes.profileStudentStep2));
+  //           // if (_formStore.canProfileStudent) {
+  //           //   DeviceUtils.hideKeyboard(context);
+  //           //   _userStore.login(
+  //           //       _userEmailController.text, _passwordController.text);
+  //           // } else {
+  //           //   _showErrorMessage(AppLocalizations.of(context)
+  //           //       .get('login_error_missing_fields'));
+  //           // }
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
-
-    // Future.delayed(const Duration(milliseconds: 0), () {
-    //   //print("LOADING = $loading");
-    //   Navigator.of(context).pushAndRemoveUntil(
-    //       MaterialPageRoute2(routeName: Routes.home),
-    //       (Route<dynamic> route) => false);
-    // });
-
     return Container();
   }
 
@@ -1304,4 +1061,3 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreenWidget> {
     super.dispose();
   }
 }
-

@@ -4,9 +4,7 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -16,7 +14,6 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:lottie/lottie.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -34,15 +31,14 @@ changeValue(value, isCV) async {
   }
 }
 
-class ProfileStudentStep3Screen extends StatefulWidget {
-  const ProfileStudentStep3Screen({super.key});
+class ViewProfileStudentTab3 extends StatefulWidget {
+  const ViewProfileStudentTab3({super.key});
 
   @override
-  _ProfileStudentStep3ScreenState createState() =>
-      _ProfileStudentStep3ScreenState();
+  _ViewProfileStudentTab3State createState() => _ViewProfileStudentTab3State();
 }
 
-class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
+class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
@@ -120,6 +116,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   PlatformFile? _transcript;
   Map<String, PreviewData?> pd = {};
 
+
   Widget _buildRightSide() {
     //print(isLinkCv.value);
     return SingleChildScrollView(
@@ -129,7 +126,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const EmptyAppBar(),
+          // const EmptyAppBar(),
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
@@ -180,14 +177,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 FocusManager.instance.primaryFocus?.unfocus();
 
                                 if (cvController.text.isNotEmpty) {
-                                  var filePath = cvController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  cvController.text = filePath;
                                   await FilePreview.getThumbnail(
                                           isCV: true, cvController.text)
                                       .then(
@@ -208,14 +197,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (cvController.text.isNotEmpty) {
-                                  var filePath = cvController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  cvController.text = filePath;
                                   await FilePreview.getThumbnail(
                                           isCV: true, cvController.text)
                                       .then((value) {
@@ -311,8 +292,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                        constraints: BoxConstraints(minHeight: 200),
-                        // height: _cvImage != null ? null : 200,
+                        height: _cvImage != null ? 500 : 200,
                         decoration: const BoxDecoration(
                             color: Colors.white70,
                             borderRadius:
@@ -323,20 +303,9 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                       true &&
                                   cvController.text.isNotEmpty
                               ? LinkPreview(
-                                  loadingWidget: Lottie.asset(
-                                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                                    fit: BoxFit.cover,
-                                    width:
-                                        80, // Adjust the width and height as needed
-                                    height: 80,
-                                    repeat:
-                                        true, // Set to true if you want the animation to loop
-                                  ),
-                                  forceMaximize: true,
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
-                                    // print("fetch");
                                     setState(() {
                                       if (p0.link != null) {
                                         pd[p0.link!] = p0;
@@ -399,14 +368,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (transcriptController.text.isNotEmpty) {
-                                  var filePath = transcriptController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  transcriptController.text = filePath;
                                   await FilePreview.getThumbnail(
                                           isCV: false,
                                           transcriptController.text)
@@ -428,14 +389,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                 });
                                 FocusManager.instance.primaryFocus?.unfocus();
                                 if (transcriptController.text.isNotEmpty) {
-                                  var filePath = transcriptController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  transcriptController.text = filePath;
                                   await FilePreview.getThumbnail(
                                           isCV: false,
                                           transcriptController.text)
@@ -532,8 +485,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                       }
                     },
                     child: Container(
-                      constraints: BoxConstraints(minHeight: 200),
-                      // height: _transcriptImage != null ? null : 200,
+                      height: _transcriptImage != null ? 500 : 200,
                       decoration: const BoxDecoration(
                           color: Colors.white70,
                           borderRadius: BorderRadius.all(Radius.circular(13))),
@@ -544,16 +496,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                       true &&
                                   transcriptController.text.isNotEmpty
                               ? LinkPreview(
-                                  loadingWidget: Lottie.asset(
-                                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                                    fit: BoxFit.cover,
-                                    width:
-                                        80, // Adjust the width and height as needed
-                                    height: 80,
-                                    repeat:
-                                        true, // Set to true if you want the animation to loop
-                                  ),
-                                  forceMaximize: true,
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
@@ -593,7 +535,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     ),
                   ),
                   const SizedBox(height: 34.0),
-                  _buildSignInButton(),
+                  // _buildSignInButton(),
                 ],
               ),
             ),
@@ -608,52 +550,52 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     );
   }
 
-  Widget _buildSignInButton() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: 200,
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('next'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            // _profileStudentFormStore
-            //     .setResume(_cv != null ? _cv!.path ?? "" : '');
-            // _profileStudentFormStore.setTranscript(
-            //     _transcript != null ? _transcript!.path ?? "" : '');
-            print(_profileStudentFormStore.techStack);
-            print(_profileStudentFormStore.skillSet);
-            print(_profileStudentFormStore.educations);
-            print(_profileStudentFormStore.languages);
-            print(_profileStudentFormStore.projectExperience);
-            print(_profileStudentFormStore.resume);
-            print(_profileStudentFormStore.transcript);
-            _profileStudentFormStore.addProfileStudent(
-                _profileStudentFormStore.techStack,
-                _profileStudentFormStore.skillSet,
-                _profileStudentFormStore.languages,
-                _profileStudentFormStore.educations,
-                _profileStudentFormStore.projectExperience,
-                _profileStudentFormStore.transcript,
-                _profileStudentFormStore.resume);
+  // Widget _buildSignInButton() {
+  //   return Align(
+  //     alignment: Alignment.centerRight,
+  //     child: SizedBox(
+  //       width: 200,
+  //       child: RoundedButtonWidget(
+  //         buttonText: Lang.get('next'),
+  //         buttonColor: Theme.of(context).colorScheme.primary,
+  //         textColor: Colors.white,
+  //         onPressed: () async {
+  //           _profileStudentFormStore
+  //               .setResume(_cv != null ? _cv!.path ?? "" : '');
+  //           _profileStudentFormStore.setTranscript(
+  //               _transcript != null ? _transcript!.path ?? "" : '');
+  //           print(_profileStudentFormStore.techStack);
+  //           print(_profileStudentFormStore.skillSet);
+  //           print(_profileStudentFormStore.educations);
+  //           print(_profileStudentFormStore.languages);
+  //           print(_profileStudentFormStore.projectExperience);
+  //           print(_profileStudentFormStore.resume);
+  //           print(_profileStudentFormStore.transcript);
+  //           _profileStudentFormStore.addProfileStudent(
+  //               _profileStudentFormStore.techStack,
+  //               _profileStudentFormStore.skillSet,
+  //               _profileStudentFormStore.languages,
+  //               _profileStudentFormStore.educations,
+  //               _profileStudentFormStore.projectExperience,
+  //               _profileStudentFormStore.transcript,
+  //               _profileStudentFormStore.resume);
 
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     MaterialPageRoute2(routeName: Routes.home),
-            //     (Route<dynamic> route) => false);
-            // if (_formStore.canProfileStudent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
-          },
-        ),
-      ),
-    );
-  }
+  //           // Navigator.of(context).pushAndRemoveUntil(
+  //           //     MaterialPageRoute2(routeName: Routes.home),
+  //           //     (Route<dynamic> route) => false);
+  //           // if (_formStore.canProfileStudent) {
+  //           //   DeviceUtils.hideKeyboard(context);
+  //           //   _userStore.login(
+  //           //       _userEmailController.text, _passwordController.text);
+  //           // } else {
+  //           //   _showErrorMessage(AppLocalizations.of(context)
+  //           //       .get('login_error_missing_fields'));
+  //           // }
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget navigate(BuildContext context) {
     // SharedPreferences.getInstance().then((prefs) {

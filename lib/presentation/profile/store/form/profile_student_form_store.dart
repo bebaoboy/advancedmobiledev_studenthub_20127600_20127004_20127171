@@ -84,10 +84,10 @@ abstract class _ProfileStudentFormStore with Store {
   List<ProjectExperience>? projectExperience;
 
   @observable
-  String transcript = "";
+  String? transcript;
 
   @observable
-  String resume = "";
+  String? resume;
 
   @observable
   bool success = false;
@@ -120,8 +120,8 @@ abstract class _ProfileStudentFormStore with Store {
     List<Language>? languages,
     List<Education>? educations,
     List<ProjectExperience>? projectExperiences,
-    String? transcript,
-    String? resumer,
+    String? transcripts,
+    String? resumes,
   ) async {
     final AddProfileStudentParams loginParams = AddProfileStudentParams(
         techStack: techStack != null
@@ -134,174 +134,203 @@ abstract class _ProfileStudentFormStore with Store {
             .toList());
     final future = _addProfileStudentUseCase.call(params: loginParams);
     addProfileStudentFuture = ObservableFuture(future);
-    String studentId = "11";
+    String studentId = "3";
 
     await future.then((value) {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
         success = true;
-        
+
         // TODO: get ["id"] from here
-        studentId = "";
+        try {
+          studentId = value.data["result"]["id"];
+        } catch (e) {}
       } else {
         // success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
         // print(value.data);
-      }print(value);
+      }
+      print(value);
     });
 
-    await _updateLanguageUseCase(
-            params: UpdateLanguageParams(
-                languages: languages ?? [], studentId: studentId))
-        .then(
-      (value) {
-        print(value);
-      },
-    );
+    // await _updateLanguage(languages ?? [], studentId).then(
+    //   (value) {
+    //     print(value);
+    //   },
+    // );
 
-    await _updateEducationUseCase(
-            params: UpdateEducationParams(
-                educations: educations ?? [], studentId: studentId))
-        .then(
-      (value) {
-        print(value);
-      },
-    );
+    // await _updateEducation(educations ?? [], studentId).then(
+    //   (value) {
+    //     print(value);
+    //   },
+    // );
 
-    await _updateProjectExperienceUseCase(
-            params: UpdateProjectExperienceParams(
-                projectExperiences: projectExperiences ?? [], studentId: studentId))
-        .then(
-      (value) {
-        print(value);
-      },
-    );
+    // await _updateProjectExperience(projectExperiences ?? [], studentId).then(
+    //   (value) {
+    //     print(value);
+    //   },
+    // );
+
+    if (resumes != null) {
+      await _updateResume(resumes, studentId).then(
+        (value) {
+          print(value);
+        },
+      );
+    }
+
+    if (transcripts != null) {
+      await _updateTranscript(transcripts, studentId).then(
+        (value) {
+          print(value);
+        },
+      );
+    }
   }
 
   @action
   Future<bool> _updateLanguage(
       List<Language>? languages, String studentId) async {
-    final loginParams =
-        UpdateLanguageParams(languages: languages ?? [], studentId: studentId);
-    final future = _updateLanguageUseCase.call(params: loginParams);
-    // addProfileCompanyFuture = ObservableFuture(future);
-    bool success = false;
-    await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        success = true;
-        print("language: " + value.data);
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        // print(value.data);
-      }
-    });
-    return success;
+    try {
+      final loginParams = UpdateLanguageParams(
+          languages: languages ?? [], studentId: studentId);
+      final future = _updateLanguageUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("language: ${value.data}");
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          // print(value.data);
+        }
+        return success;
+      });
+    } catch (e) {
+      return false;
+    }
   }
 
   @action
   Future<bool> _updateEducation(
       List<Education>? educations, String studentId) async {
-    final loginParams = UpdateEducationParams(
-        educations: educations ?? [], studentId: studentId);
-    final future = _updateEducationUseCase.call(params: loginParams);
-    // addProfileCompanyFuture = ObservableFuture(future);
-    bool success = false;
-    await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        success = true;
-        print("education: " + value.data);
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        // print(value.data);
-      }
-    });
-    return success;
+    try {
+      final loginParams = UpdateEducationParams(
+          educations: educations ?? [], studentId: studentId);
+      final future = _updateEducationUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("education: ${value.data}");
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          // print(value.data);
+        }
+        return success;
+      });
+    } catch (e) {
+      return false;
+    }
   }
 
   @action
   Future<bool> _updateProjectExperience(
       List<ProjectExperience>? projectexperiences, String studentId) async {
-    final loginParams = UpdateProjectExperienceParams(
-        projectExperiences: projectexperiences ?? [], studentId: studentId);
-    final future = _updateProjectExperienceUseCase.call(params: loginParams);
-    // addProfileCompanyFuture = ObservableFuture(future);
-    bool success = false;
-    await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        success = true;
-        print("exp: " + value.data);
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        // print(value.data);
-      }
-    });
-    return success;
+    try {
+      final loginParams = UpdateProjectExperienceParams(
+          projectExperiences: projectexperiences ?? [], studentId: studentId);
+      final future = _updateProjectExperienceUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("exp: ${value.data}");
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          // print(value.data);
+        }
+        return success;
+      });
+    } catch (e) {
+      return false;
+    }
   }
 
   @action
   Future<bool> _updateResume(String resume, String studentId) async {
-    final loginParams =
-        UpdateResumeParams(resume: resume, studentId: studentId);
-    final future = _updateResumeUseCase.call(params: loginParams);
-    // addProfileCompanyFuture = ObservableFuture(future);
-    bool success = false;
-    await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        success = true;
-        print("resume: " + value.data);
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        // print(value.data);
-      }
-    });
-    return success;
+    try {
+      print("resume $resume");
+      final loginParams =
+          UpdateResumeParams(path: resume, studentId: studentId);
+      final future = _updateResumeUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("resume: ${value.data}");
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data.toString();
+          print(value.data);
+        }
+        return success;
+      });
+    } catch (e) {
+      return false;
+    }
   }
 
   @action
   Future<bool> _updateTranscript(String transcript, String studentId) async {
-    final loginParams =
-        UpdateTranscriptParams(transcript: transcript, studentId: studentId);
-    final future = _updateTranscriptUseCase.call(params: loginParams);
-    // addProfileCompanyFuture = ObservableFuture(future);
-    bool success = false;
-    await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        success = true;
-        print("transcript: " + value.data);
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        // print(value.data);
-      }
-    });
-    return success;
+    try {
+      final loginParams =
+          UpdateTranscriptParams(transcript: transcript, studentId: studentId);
+      final future = _updateTranscriptUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("transcript: ${value.data}");
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          print(value.data);
+        }
+      });
+      return success;
+    } catch (e) {
+      return false;
+    }
   }
 
   // FUNCTION =======================
@@ -373,6 +402,7 @@ abstract class _ProfileStudentFormStore with Store {
 
   @action
   void setResume(String value) {
+    print("set resrume");
     resume = value;
   }
 

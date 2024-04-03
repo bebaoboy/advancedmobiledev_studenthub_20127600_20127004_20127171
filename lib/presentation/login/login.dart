@@ -327,14 +327,14 @@ class _LoginScreenState extends State<LoginScreen> {
       return Container();
     }
 
-    if (!_userStore.isLoading || !initializing) {
+    if (!_userStore.isLoading && !initializing) {
       Future.delayed(const Duration(milliseconds: 1000), () async {
-        // //print("LOADING = $loading");
+        print("LOADING = ${_userStore.isLoading}");
         setState(() {
           initializing = true;
         });
         log("login", "BEBAOBOY");
-        initCube(NavigationService.navigatorKey.currentContext);
+        initCube(context);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);

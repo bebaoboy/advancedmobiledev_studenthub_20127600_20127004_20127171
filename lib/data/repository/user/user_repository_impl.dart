@@ -266,14 +266,14 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<Response> updateResume(UpdateResumeParams params) {
-    // TODO: implement updateResume
-    throw UnimplementedError();
+  Future<Response> updateResume(UpdateResumeParams params) async {
+    var response = await _profileApi.updateResume(params);
+    return response;
   }
 
   @override
-  Future<Response> updateTranscript(UpdateTranscriptParams params) {
-    // TODO: implement updateTranscript
-    throw UnimplementedError();
+  Future<Response> updateTranscript(UpdateTranscriptParams params) async {
+    var response = await _profileApi.updateTranscript(params);
+    return response;
   }
 }

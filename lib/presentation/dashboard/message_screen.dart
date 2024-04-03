@@ -12,7 +12,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
+    as types;
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -26,7 +27,7 @@ import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({super.key, required this.filter});
-  final InterviewSchedule filter;
+  final InterviewSchedule? filter;
 
   @override
   State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
@@ -37,15 +38,22 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   TextEditingController endDate = TextEditingController();
   TextEditingController title = TextEditingController();
 
+  late final InterviewSchedule itv;
+
   @override
   void initState() {
     super.initState();
-    title.text = (widget.filter.title).toString();
+    itv = widget.filter ?? InterviewSchedule(
+                  startDate: DateTime.now(),
+                  endDate: DateTime.now(),
+                  title: "Null meeting"
+        );
+    title.text = (itv.title).toString();
     startDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.startDate))
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.startDate))
             .toString();
     endDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.filter.endDate))
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.endDate))
             .toString();
   }
 
@@ -128,8 +136,8 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                         labelText: Lang.get("title"),
                       ),
                       onChanged: (value) {
-                        widget.filter.title = value;
-                        // widget.filter.endDate = int.tryParse(value) ?? 2;
+                        itv.title = value;
+                        // itv.endDate = int.tryParse(value) ?? 2;
                       },
                     ),
                     const Divider(height: 32),
@@ -157,7 +165,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 labelText: Lang.get('profile_project_start'),
                               ),
                               onChanged: (value) {
-                                // widget.filter.endDate = int.tryParse(value) ?? 2;
+                                // itv.endDate = int.tryParse(value) ?? 2;
                               },
                             ),
                           ),
@@ -170,19 +178,19 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                   DateTime? pickedDate =
                                       await showDateTimePicker(
                                           context: context,
-                                          initialDate: widget.filter.startDate,
-                                          firstDate: widget.filter.startDate,
+                                          initialDate: itv.startDate,
+                                          firstDate: itv.startDate,
                                           //DateTime.now() - not to allow to choose before today.
-                                          lastDate: widget.filter.startDate
+                                          lastDate: itv.startDate
                                               .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     ////print(pickedDate);
                                     setState(() {
-                                      widget.filter.startDate = pickedDate;
+                                      itv.startDate = pickedDate;
                                       startDate.text = (DateFormat(
                                                   "EEEE dd/MM/yyyy HH:MM")
-                                              .format(widget.filter.startDate))
+                                              .format(itv.startDate))
                                           .toString();
                                     });
                                   }
@@ -264,7 +272,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 labelText: Lang.get('profile_project_end'),
                               ),
                               onChanged: (value) {
-                                // widget.filter.endDate = int.tryParse(value) ?? 2;
+                                // itv.endDate = int.tryParse(value) ?? 2;
                               },
                             ),
                           ),
@@ -277,19 +285,19 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                   DateTime? pickedDate =
                                       await showDateTimePicker(
                                           context: context,
-                                          initialDate: widget.filter.endDate,
-                                          firstDate: widget.filter.endDate,
+                                          initialDate: itv.endDate,
+                                          firstDate: itv.endDate,
                                           //DateTime.now() - not to allow to choose before today.
-                                          lastDate: widget.filter.endDate
+                                          lastDate: itv.endDate
                                               .add(const Duration(days: 1)));
 
                                   if (pickedDate != null) {
                                     ////print(pickedDate);
                                     setState(() {
-                                      widget.filter.endDate = pickedDate;
+                                      itv.endDate = pickedDate;
                                       endDate.text = (DateFormat(
                                                   "EEEE dd/MM/yyyy HH:MM")
-                                              .format(widget.filter.endDate))
+                                              .format(itv.endDate))
                                           .toString();
                                     });
                                   }
@@ -346,7 +354,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       ),
                     ),
                     const Divider(height: 32),
-                    Text(widget.filter.getDuration().toString()),
+                    Text(itv.getDuration().toString()),
                   ],
                 ),
               ),
@@ -373,7 +381,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       RoundedButtonWidget(
                         buttonColor: Theme.of(context).colorScheme.primary,
                         onPressed: () {
-                          widget.filter.clear();
+                          itv.clear();
                         },
                         buttonText: Lang.get("cancel"),
                       ),
@@ -381,7 +389,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       RoundedButtonWidget(
                         buttonColor: Theme.of(context).colorScheme.primary,
                         onPressed: () {
-                          Navigator.pop(context, widget.filter);
+                          Navigator.pop(context, itv);
                         },
                         buttonText: Lang.get("send"),
                       ),
@@ -659,21 +667,18 @@ class _MessageScreenState extends State<MessageScreen> {
       context,
       ModalSheetRoute(
         builder: (context) => ScheduleBottomSheet(
-          filter: flt ??
-              InterviewSchedule(
-                  startDate: DateTime.now(),
-                  endDate: DateTime.now(),
-                  title: "Null meeting"),
-        ),
-      ),
+          filter: flt,
+              
+      )),
     ).then((value) {
       if (flt == null) {
         if (value != null) {
-          _addMessage(types.CustomMessage(
+          _addMessage(ScheduleMessageType(
+              messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
               author:
                   const types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
               id: const Uuid().v4(),
-              type: types.MessageType.custom,
+              type: types.MessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: types.Status.delivered,
               metadata: value.toJson()));
@@ -685,11 +690,13 @@ class _MessageScreenState extends State<MessageScreen> {
           int i = _messages.indexWhere((element) => element.id == id);
           if (i != -1) {
             setState(() {
-              _messages[i] = types.CustomMessage(
+              _messages[i] = ScheduleMessageType(
+                  messageWidth:
+                      (MediaQuery.of(context).size.width * 0.9).round(),
                   author: const types.User(
                       id: "1", firstName: "Bao", lastName: "Doe,"),
                   id: const Uuid().v4(),
-                  type: types.MessageType.custom,
+                  type: types.MessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
                   status: types.Status.delivered,
                   metadata: {
@@ -738,9 +745,10 @@ class _MessageScreenState extends State<MessageScreen> {
             activeAudioSliderColor: Colors.red,
           );
         },
-        customMessageBuilder: (p0, {required messageWidth}) {
+        scheduleMessageBuilder: (p0, {required messageWidth}) {
           var t = InterviewSchedule.fromJson(p0.metadata!);
           print(t);
+          print(messageWidth);
           print(t.objectId);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
@@ -784,13 +792,16 @@ class _MessageScreenState extends State<MessageScreen> {
                             .indexWhere((element) => element.id == p0.id);
                         if (i != -1) {
                           setState(() {
-                            _messages[i] = types.CustomMessage(
+                            _messages[i] = ScheduleMessageType(
+                                messageWidth:
+                                    (MediaQuery.of(context).size.width * 0.9)
+                                        .round(),
                                 author: const types.User(
                                     id: "1",
                                     firstName: "Bao",
                                     lastName: "Doe,"),
                                 id: const Uuid().v4(),
-                                type: types.MessageType.custom,
+                                type: types.MessageType.schedule,
                                 status: types.Status.delivered,
                                 createdAt:
                                     DateTime.now().millisecondsSinceEpoch,
@@ -812,8 +823,20 @@ class _MessageScreenState extends State<MessageScreen> {
                   startDate: t.startDate,
                   title: t.title),
               message: ScheduleMessageType(
-                  author: p0.author, id: p0.id, type: p0.type),
-              messageWidth: messageWidth);
+                  author: p0.author,
+                  id: p0.id,
+                  type: p0.type,
+                  messageWidth:
+                      (MediaQuery.of(context).size.width * 0.9).round()),
+              messageWidth: MediaQuery.of(context).size.width * 0.9);
+        },
+        customMessageBuilder: (p0, {required messageWidth}) {
+          return const Center(
+            child: Text(
+              "custom nè",
+              style: TextStyle(fontWeight: FontWeight.w900),
+            ),
+          );
         },
         // theme: const DefaultChatTheme(
         //   // seenIcon: Text(
