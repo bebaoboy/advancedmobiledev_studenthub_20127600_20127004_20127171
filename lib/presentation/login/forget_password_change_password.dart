@@ -7,6 +7,7 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -34,6 +35,7 @@ class _ForgetPasswordChangePasswordScreenState
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final ForgetPasswordStore _formStore = getIt<ForgetPasswordStore>();
+  final UserStore _userStore = getIt<UserStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -172,7 +174,6 @@ class _ForgetPasswordChangePasswordScreenState
                   //     ],
                   //   ),
                   // ),
-                
                 ],
               ),
             ),
@@ -264,6 +265,7 @@ class _ForgetPasswordChangePasswordScreenState
     Future.delayed(const Duration(seconds: 1), () {
       //print("LOADING = $loading");
       loading = false;
+      _userStore.shouldChangePass = false;
       Navigator.of(context).pushReplacement(
           MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
     });

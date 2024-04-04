@@ -67,6 +67,7 @@ mixin StoreModule {
         getIt<SaveLoginStatusUseCase>(),
         getIt<LoginUseCase>(),
         getIt<SaveUserDataUsecase>(),
+        getIt<GetMustChangePassUseCase>(),
         getIt<FormErrorStore>(),
         getIt<ErrorStore>(),
         getIt<GetUserDataUseCase>(),
@@ -87,8 +88,8 @@ mixin StoreModule {
       getIt<ErrorStore>(),
       getIt<ChangePasswordUseCase>(),
       getIt<SendResetPasswordMailUseCase>(),
-      getIt<GetMustChangePassUseCase>(),
       getIt<HasToChangePassUseCase>(),
+      getIt<GetMustChangePassUseCase>(),
     ));
 
     getIt.registerSingleton<ProfileFormStore>(ProfileFormStore(

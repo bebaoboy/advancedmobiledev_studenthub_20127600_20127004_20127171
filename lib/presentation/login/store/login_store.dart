@@ -7,6 +7,7 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
+import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_profile_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/get_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
@@ -30,7 +31,7 @@ abstract class _UserStore with Store {
     this._saveLoginStatusUseCase,
     this._loginUseCase,
     this._saveUserDataUseCase,
-    // this._signUpUseCase,
+    this._getMustChangePassUseCase,
     this.formErrorStore,
     this.errorStore,
     this._getUserDataUseCase,
@@ -61,6 +62,10 @@ abstract class _UserStore with Store {
               value[0] != null ? value[0] as StudentProfile : null;
         }
       }
+    });
+
+    _getMustChangePassUseCase.call(params: null).then((value) {
+      shouldChangePass = value.res;
     });
 
     // savedUsers.add(User(
@@ -95,7 +100,7 @@ abstract class _UserStore with Store {
   final GetProfileUseCase _getProfileUseCase;
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
-  // final SignUpUseCase _signUpUseCase;
+  final GetMustChangePassUseCase _getMustChangePassUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -125,6 +130,9 @@ abstract class _UserStore with Store {
 
   @observable
   String notification = "";
+
+  @observable
+  bool shouldChangePass = false;
 
   @observable
   FetchProfileResult profileResult =
@@ -202,6 +210,9 @@ abstract class _UserStore with Store {
           );
 
           savedUsers.add(_user!);
+          _getMustChangePassUseCase.call(params: null).then((value) {
+            shouldChangePass = value.res;
+          });
         } else {
           notification = value.data['result'];
         }

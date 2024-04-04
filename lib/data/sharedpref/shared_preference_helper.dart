@@ -97,13 +97,11 @@ class SharedPreferenceHelper {
     String userRole =
         _sharedPreference.getString(Preferences.current_user_role) ?? '';
     var r = _sharedPreference.getStringList(Preferences.current_user_roleList);
-    List<UserType> userRoles =
-        (r ??
-                ["company"])
-            .map(
-              (e) => e == "company" ? UserType.company : UserType.student,
-            )
-            .toList();
+    List<UserType> userRoles = (r ?? ["company"])
+        .map(
+          (e) => e == "company" ? UserType.company : UserType.student,
+        )
+        .toList();
 
     UserType userType = getUserType(userRole);
 
@@ -112,7 +110,12 @@ class SharedPreferenceHelper {
 
     int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
 
-    return User(email: userEmail, type: userType, roles: userRoles, name: name, objectId: id.toString());
+    return User(
+        email: userEmail,
+        type: userType,
+        roles: userRoles,
+        name: name,
+        objectId: id.toString());
   }
 
   Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
@@ -199,8 +202,12 @@ class SharedPreferenceHelper {
 
   Future saveOldPassEncrypted(String oldPass) async {
     int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
-    await _sharedPreference.setString(
-        "${Preferences.encrypted_pass}_$id", oldPass);
+    if (oldPass == '') {
+      await _sharedPreference.remove("${Preferences.encrypted_pass}_$id");
+    } else {
+      await _sharedPreference.setString(
+          "${Preferences.encrypted_pass}_$id", oldPass);
+    }
   }
 
   Future saveHasToChangePass(bool value) async {

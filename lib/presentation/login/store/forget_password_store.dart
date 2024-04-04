@@ -21,14 +21,12 @@ abstract class _ForgetPasswordStore with Store {
       this.errorStore,
       this._changePasswordUseCase,
       this._sendResetPasswordMailUseCase,
-      this._getMustChangePassUseCase,
-      this._saveHasToChangePassUseCase) {
+      this._saveHasToChangePassUseCase,
+      this._getMustChangePassUseCase) {
     _setupDisposer();
-
-    _getMustChangePassUseCase.call(params: null).then((value) {
-      hasToChangePass = value.res;
-      _oldPassword = value.oldPass;
-    });
+    _getMustChangePassUseCase
+        .call(params: null)
+        .then((value) => {_oldPassword = value.oldPass});
   }
 
   //use case
@@ -68,9 +66,6 @@ abstract class _ForgetPasswordStore with Store {
   @observable
   bool changePassSuccess = false;
 
-  @observable
-  bool hasToChangePass = false;
-
   @computed
   bool get canSendEmail =>
       email.isNotEmpty && !formErrorStore.hasErrorInEmail();
@@ -89,7 +84,6 @@ abstract class _ForgetPasswordStore with Store {
         response.statusCode == HttpStatus.ok ||
         response.statusCode == HttpStatus.created) {
       mailSentSuccess = true;
-      hasToChangePass = true;
     } else {
       mailSentSuccess = false;
     }
@@ -105,18 +99,19 @@ abstract class _ForgetPasswordStore with Store {
         response.statusCode == HttpStatus.ok ||
         response.statusCode == HttpStatus.created) {
       changePassSuccess = true;
-      hasToChangePass = false;
+      mailSentSuccess = false;
       _saveHasToChangePassUseCase.call(params: ChangePassParams('', false));
     } else {
       changePassSuccess = false;
-      errorStore.errorMessage =
-          response.data['errorDetails'].toString();
+      errorStore.errorMessage = response.data['errorDetails'].toString();
     }
   }
 
   Future saveShouldChangePass() async {
-    var params = ChangePassParams(_oldPassword, true);
-    _saveHasToChangePassUseCase.call(params: params);
+    if (mailSentSuccess) {
+      var params = ChangePassParams(_oldPassword, true);
+      _saveHasToChangePassUseCase.call(params: params);
+    }
   }
 
   // action
