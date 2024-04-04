@@ -215,8 +215,20 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
+  Future<Response> getTechStack(AddTechStackParams params) async {
+    var response = await _profileApi.getTechStack(params);
+    return response;
+  }
+
+  @override
   Future<Response> addSkillset(AddSkillsetParams params) async {
     var response = await _profileApi.addSkillset(params);
+    return response;
+  }
+
+  @override
+  Future<Response> getSkillset(AddSkillsetParams params) async {
+    var response = await _profileApi.getSkillset(params);
     return response;
   }
 

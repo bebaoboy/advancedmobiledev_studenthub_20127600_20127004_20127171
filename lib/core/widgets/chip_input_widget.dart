@@ -71,6 +71,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   void selectSuggestion(T data) {
+    print(data);
     setState(() {
       _chips.add(data);
       _updateTextInputState();
@@ -109,9 +110,11 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
       //_closeInputConnectionIfNeeded();
       _suggestions = [];
     }
-    setState(() {
+    if (mounted) {
+      setState(() {
       // rebuild so that _TextCursor is hidden.
     });
+    }
   }
 
   @override

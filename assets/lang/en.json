@@ -214,6 +214,6 @@
   "option": "Options",
   "day_ago": " days ago",
   "clear_filter": "Clear filter",
-  "apply": "Apply"
-
+  "apply": "Apply",
+  "discard_edit": "Discard edit?"
 }

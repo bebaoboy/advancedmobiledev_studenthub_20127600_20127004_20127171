@@ -1,14 +1,16 @@
 import 'package:another_flushbar/flushbar_helper.dart';
+import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-import '../../constants/strings.dart';
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
 
@@ -45,6 +47,8 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
 
   @override
   void initState() {
+    _formStore.errorStore.errorMessage = "";
+
     if (_userStore.user != null) {
       if (_userStore.user!.companyProfile != null) {
         _companySize = _userStore.user!.companyProfile!.scope;
@@ -62,51 +66,60 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   Widget build(BuildContext context) {
     return Scaffold(
       primary: true,
-      appBar: _buildAppBar(context),
+      appBar: MainAppBar(name: "${Lang.get("edit")} ${Lang.get("profile_text")}"),
       body: _buildBody(),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
-    return AppBar(
-      title: const Text(Strings.appName),
-      actions: _buildActions(context),
-    );
-  }
-
-  List<Widget> _buildActions(BuildContext context) {
-    return <Widget>[
-      // IconButton(
-      //     onPressed: () => {
-      //           Navigator.of(context).pushAndRemoveUntil(
-      //               MaterialPageRoute2(routeName: Routes.login),
-      //               (Route<dynamic> route) => false)
-      //         },
-      //     icon: const Icon(Icons.person_rounded))
-    ];
-  }
-
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
-    return Material(
-      child: Stack(children: <Widget>[
-        Container(child: _buildRightSide()),
-        Observer(
-          builder: (context) {
-            return _userStore.success
-                ? navigate(context)
-                : _showErrorMessage(_formStore.errorStore.errorMessage);
-          },
-        ),
-        Observer(
-          builder: (context) {
-            return Visibility(
-              visible: _userStore.isLoading,
-              child: const CustomProgressIndicatorWidget(),
+    // ignore: deprecated_member_use
+    return WillPopScope(
+      onWillPop: () async {
+        bool b = false;
+        await showAnimatedDialog<bool>(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context) {
+                return ClassicGeneralDialogWidget(
+                  contentText: Lang.get("discard_edit"),
+                  negativeText: Lang.get('cancel'),
+                  positiveText: 'OK',
+                  onPositiveClick: () {
+                    b = true;
+                    Navigator.of(context).pop();
+                  },
+                  onNegativeClick: () {
+                    Navigator.of(context).pop();
+                  },
+                );
+              },
+              animationType: DialogTransitionType.size,
+              curve: Curves.fastOutSlowIn,
+              duration: const Duration(seconds: 1),
             );
-          },
-        ),
-      ]),
+        return b;
+      },
+      child: Material(
+        child: Stack(children: <Widget>[
+          Container(child: _buildRightSide()),
+          Observer(
+            builder: (context) {
+              return _userStore.success
+                  ? navigate(context)
+                  : _showErrorMessage(_formStore.errorStore.errorMessage);
+            },
+          ),
+          Observer(
+            builder: (context) {
+              return Visibility(
+                visible: _userStore.isLoading,
+                child: const CustomProgressIndicatorWidget(),
+              );
+            },
+          ),
+        ]),
+      ),
     );
   }
 
@@ -307,7 +320,11 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  MaterialButton(
+                  RoundedButtonWidget(
+                    buttonText: enabled ? Lang.get("save") : Lang.get('edit'),
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    textColor: Colors.white,
+
                     onPressed: () {
                       if (enabled) {
                         print("save profile");
@@ -327,22 +344,18 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                       });
                     },
                     // color: Colors.orange,
-                    child: Text(
-                      enabled ? Lang.get("save") : Lang.get('edit'),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
                   ),
                   const SizedBox(
                     width: 15,
                   ),
-                  MaterialButton(
-                    onPressed: () => navigate(context),
-                    // color: Colors.orange,
-                    child: Text(
-                      Lang.get('cancel'),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ),
+                  // MaterialButton(
+                  //   onPressed: () => navigate(context),
+                  //   // color: Colors.orange,
+                  //   child: Text(
+                  //     Lang.get('cancel'),
+                  //     style: Theme.of(context).textTheme.bodyLarge,
+                  //   ),
+                  // ),
                 ],
               ),
             ),
@@ -356,10 +369,32 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   }
 
   Widget navigate(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      // Navigator.of(context).pushAndRemoveUntil(
-      //     MaterialPageRoute2(routeName: Routes.setting), (Route<dynamic> route) => false);
-      Navigator.of(context).pop();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (_formStore.success) {
+        _formStore.success = false;
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return ClassicGeneralDialogWidget(
+              contentText:
+                  '${_formStore.companyName} update tạo profile thành công!',
+              negativeText: Lang.get('cancel'),
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(context).pop();
+                return;
+              },
+              onNegativeClick: () {
+                Navigator.of(context).pop();
+              },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        );
+      }
     });
 
     return Container();

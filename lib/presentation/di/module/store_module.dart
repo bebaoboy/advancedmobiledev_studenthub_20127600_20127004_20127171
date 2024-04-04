@@ -9,6 +9,8 @@ import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/get_skillset.dart';
+import 'package:boilerplate/domain/usecase/profile/get_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
@@ -123,6 +125,8 @@ mixin StoreModule {
       getIt<GetEducationUseCase>(),
       getIt<GetExperienceUseCase>(),
       getIt<GetLanguageUseCase>(),
+      getIt<GetTechStackUseCase>(),
+      getIt<GetSkillsetUseCase>(),
     ));
 
     getIt.registerSingleton<PostStore>(

@@ -465,11 +465,9 @@ class _SettingScreenState extends State<SettingScreen> {
 
                         infoStore.setStudentId(
                             _userStore.user!.studentProfile!.objectId!);
-                        if (infoStore.isEmpty) {
                           await infoStore.getInfo().then(
                                 (value) {},
                               );
-                        }
                         if (_userStore.user != null &&
                             _userStore.user!.studentProfile != null &&
                             _userStore.user!.studentProfile!.objectId != null) {

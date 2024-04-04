@@ -54,7 +54,9 @@ class FilePreview {
               }).then(
             (value) async {
               if (value != null) {
-                if(retrieveFilePathAfterDownload != null) retrieveFilePathAfterDownload(value.path);
+                if (retrieveFilePathAfterDownload != null) {
+                  retrieveFilePathAfterDownload(value.path);
+                }
                 return await FilePreview.getThumbnail(value.path,
                     isCV: isCV, changeValue: changeValue);
               }
@@ -71,16 +73,28 @@ class FilePreview {
             width: width,
             height: height,
             imageUrl: filePath,
-            imageBuilder: (context, imageProvider) => Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: imageProvider,
-                  fit: BoxFit.scaleDown,
-                  // colorFilter:
-                  //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
-                ),
-              ),
-            ),
+            imageBuilder: (context, imageProvider) {
+              try {
+                return Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: imageProvider,
+                      fit: BoxFit.scaleDown,
+                      // colorFilter:
+                      //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+                    ),
+                  ),
+                );
+              } catch (E) {
+                changeValue(true, isCV);
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(13.0),
+                    child: Text("File type not supported: $filePath"),
+                  ),
+                );
+              }
+            },
             placeholder: (context, url) => Center(
               child: Lottie.asset(
                 'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
@@ -139,16 +153,28 @@ class FilePreview {
                 width: width,
                 height: height,
                 imageUrl: filePath,
-                imageBuilder: (context, imageProvider) => Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: imageProvider,
-                      fit: BoxFit.scaleDown,
-                      // colorFilter:
-                      //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
-                    ),
-                  ),
-                ),
+                imageBuilder: (context, imageProvider) {
+                  try {
+                    return Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: imageProvider,
+                          fit: BoxFit.scaleDown,
+                          // colorFilter:
+                          //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+                        ),
+                      ),
+                    );
+                  } catch (E) {
+                    changeValue(true, isCV);
+                    return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(13.0),
+                        child: Text("File type not supported: $filePath"),
+                      ),
+                    );
+                  }
+                },
                 placeholder: (context, url) => Center(
                   child: Lottie.asset(
                     'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file

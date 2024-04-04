@@ -12,6 +12,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -44,32 +45,53 @@ import '../../di/service_locator.dart';
 //   Job('Student', Icons.school),
 // ];
 
-final List<TechStack> _list = [
-  TechStack("Designer", id: "5"),
-  TechStack("Developer", id: "1"),
-  TechStack("Consultant", id: "2"),
-  TechStack("Student", id: "3"),
-  TechStack("Backend Developer", id: "4"),
-];
-
-class SearchDropdown extends StatelessWidget {
+class SearchDropdown extends StatefulWidget {
   const SearchDropdown({super.key, required this.onListChangedCallback});
   final Function(TechStack) onListChangedCallback;
 
   @override
+  State<SearchDropdown> createState() => _SearchDropdownState();
+}
+
+class _SearchDropdownState extends State<SearchDropdown> {
+  final userStore = getIt<UserStore>();
+
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
+
+  List<TechStack> _list = [
+    TechStack("Designer", id: "5"),
+    TechStack("Developer", id: "1"),
+    TechStack("Consultant", id: "2"),
+    TechStack("Student", id: "3"),
+    TechStack("Backend Developer", id: "4"),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (_infoStore.techStack.isNotEmpty) {
+      _list = _infoStore.techStack;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return CustomDropdown<TechStack>.searchRequest(
-      initialItem: _list[0],
+      initialItem: userStore.user != null &&
+              userStore.user!.studentProfile != null &&
+              userStore.user!.studentProfile!.techStack != null
+          ? userStore.user!.studentProfile!.techStack![0]
+          : _list[0],
       futureRequest: (p0) {
-        return Future.value(_list
-            .where(
-              (e) => e.name.toLowerCase().contains(p0.trim().toLowerCase()),
-            )
-            .toList());
+        return Future.microtask(
+          () {
+            return _list;
+          },
+        );
       },
       futureRequestDelay: const Duration(seconds: 1),
       onChanged: (p0) {
-        onListChangedCallback(p0);
+        widget.onListChangedCallback(p0);
       },
       noResultFoundText: Lang.get("nothing_here"),
       maxlines: 3,
@@ -158,6 +180,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
 
   //focus node:-----------------------------------------------------------------
 
@@ -186,6 +209,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
         startYear: DateTime(2010), endYear: DateTime(2014)));
     _educations.add(Education("Ho Chi Minh University of Science",
         startYear: DateTime(2014), endYear: DateTime(2018)));
+    mockSkillsets = _infoStore.skillSet;
   }
 
   @override
@@ -396,7 +420,10 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         // ),
                         leading: const Icon(Icons.developer_mode),
                         title: Text(profile.name),
-                        subtitle: Text(profile.description),
+                        subtitle: Text(
+                          "id: ${profile.description}",
+                          style: const TextStyle(fontSize: 11),
+                        ),
                         onTap: () => state.selectSuggestion(profile),
                       );
                     },
@@ -705,6 +732,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                           padding: const EdgeInsets.only(right: 10),
                           onPressed: () {
                             try {
+                              if (_languages[index].readOnly == false) return;
+
                               if (_languages[index].enabled) {
                                 setState(() {
                                   _languages[index].enabled = false;
@@ -1050,6 +1079,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                           padding: const EdgeInsets.only(right: 10),
                           onPressed: () {
                             try {
+                              if (_educations[index].readOnly == false) return;
+
                               if (_educations[index].enabled) {
                                 setState(() {
                                   _educations[index].enabled = false;
@@ -1095,11 +1126,11 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
             setLanguage();
             setEducation();
             _profileStudentFormStore.setFullName(widget.fullName);
-            if (_profileStudentFormStore.techStack == null ||
-                (_profileStudentFormStore.techStack != null &&
-                    _profileStudentFormStore.techStack!.isEmpty)) {
-              _profileStudentFormStore.setTechStack([_list[0]]);
-            }
+            // if (_profileStudentFormStore.techStack == null ||
+            //     (_profileStudentFormStore.techStack != null &&
+            //         _profileStudentFormStore.techStack!.isEmpty)) {
+            //   _profileStudentFormStore.setTechStack([_list[0]]);
+            // }
             Navigator.of(context).push(
                 MaterialPageRoute2(routeName: Routes.profileStudentStep2));
             // if (_formStore.canProfileStudent) {

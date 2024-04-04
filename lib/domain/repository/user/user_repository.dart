@@ -81,6 +81,8 @@ abstract class UserRepository {
   Future<Response> getTranscript(UpdateTranscriptParams params);
 
   Future<Response> addTechStack(AddTechStackParams params);
+  Future<Response> getTechStack(AddTechStackParams params);
 
   Future<Response> addSkillset(AddSkillsetParams params);
+  Future<Response> getSkillset(AddSkillsetParams params);
 }

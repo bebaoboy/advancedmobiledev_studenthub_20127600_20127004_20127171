@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -8,7 +7,6 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:file_picker/file_picker.dart';
@@ -153,7 +151,6 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          // const EmptyAppBar(),
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
@@ -625,7 +622,6 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                     ),
                   ),
                   const SizedBox(height: 34.0),
-                  // _buildSignInButton(),
                 ],
               ),
             ),
@@ -639,6 +635,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
       ),
     );
   }
+
 
   // Widget _buildSignInButton() {
   //   return Align(

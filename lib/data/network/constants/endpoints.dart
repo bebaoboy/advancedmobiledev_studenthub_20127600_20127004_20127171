@@ -106,37 +106,39 @@ class Endpoints {
   static const String addProfileStudent =
       "$baseUrl/api/profile/student"; // semi-done
   static const String updateProfileStudent =
-      "$baseUrl/api/profile/student/{id}";
+      "$baseUrl/api/profile/student/{id}"; // semidone
   static const String getProfileStudent =
       "$baseUrl/api/profile/student/{studentId}"; // done
   static const String getProfileStudentTechStack =
-      "$baseUrl/api/profile/student/{studentId}/techStack";
+      "$baseUrl/api/profile/student/{studentId}/techStack"; // done above
 
   static const String getLanguage =
-      "$baseUrl/api/language/getByStudentId/{studentId}";
+      "$baseUrl/api/language/getByStudentId/{studentId}"; // done
   static const String updateLanguage =
       "$baseUrl/api/language/updateByStudentId/{studentId}"; // done
   static const String getEducation =
-      "$baseUrl/api/education/getByStudentId/{studentId}";
+      "$baseUrl/api/education/getByStudentId/{studentId}"; // done
   static const String updateEducation =
       "$baseUrl/api/education/updateByStudentId/{studentId}"; // done
   static const String getProjectExperience =
-      "$baseUrl/api/experience/getByStudentId/{studentId}";
+      "$baseUrl/api/experience/getByStudentId/{studentId}"; // done
   static const String updateProjectExperience =
       "$baseUrl/api/experience/updateByStudentId/{studentId}"; // done
 
   static const String updateResume =
-      "$baseUrl/api/profile/student/{studentId}/resume"; // semidone
+      "$baseUrl/api/profile/student/{studentId}/resume"; // done
 
   static const String getResume =
-      "$baseUrl/api/profile/student/{studentId}/resume";
+      "$baseUrl/api/profile/student/{studentId}/resume"; // done
 
   static const String updateTranscript =
       "$baseUrl/api/profile/student/{studentId}/transcript"; // semidone
 
   static const String getTranscript =
-      "$baseUrl/api/profile/student/{studentId}/transcript";
+      "$baseUrl/api/profile/student/{studentId}/transcript"; // done
 
+  static const String getTechStack = "$baseUrl/api/techstack/getAllTechStack";
+  static const String getSkillset = "$baseUrl/api/skillset/getAllSkillSet";
   static const String addTechStack = "$baseUrl/api/techstack/createTechStack";
   static const String addSkillset = "$baseUrl/api/skillset/createSkillSet";
 }

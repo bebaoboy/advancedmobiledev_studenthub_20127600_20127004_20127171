@@ -17,37 +17,6 @@ import 'package:intl/intl.dart';
 
 import '../../di/service_locator.dart';
 
-var mockSkillsets = <Skill>[
-  Skill('JavaScript', "Fake description", '', id: "1"),
-  Skill('iOS Development', "Fake description", '', id: "2"),
-  Skill('C', "Fake description", '', id: "3"),
-  Skill('Java', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-      id: "4"),
-  Skill('C++', "Fake description", '', id: "5"),
-  Skill('Kubernetes', "Fake description", '', id: "6"),
-  Skill('PostgreSQL', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-      id: "7"),
-  Skill('Redis', "Fake description", '', id: "8"),
-  Skill('Android', "Fake description", '', id: "9"),
-  Skill('Node.js', "Fake description", '', id: "10"),
-  Skill('Objective-C', "Fake description", '', id: "11"),
-  Skill('React Native', "Fake description", '', id: "12"),
-  Skill('Video', "Fake description", '', id: "13"),
-  Skill('Microservices', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-      id: "14"),
-  Skill('Socket', "Fake description",
-      'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
-      id: "15"),
-  Skill('AWS', "Fake description", '', id: "16"),
-  Skill('React', "Fake description", '', id: "17"),
-  Skill('Git', "Fake description", '', id: "18"),
-  // Skill('SQL', "Fake description", ''),
-  // Skill('WebScrape', "Fake description", ''),
-];
-
 class ViewProfileStudentTab2 extends StatefulWidget {
   const ViewProfileStudentTab2({super.key});
 
@@ -74,11 +43,44 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
   bool loading = false;
   final List<ProjectExperience> _projects = List.empty(growable: true);
 
+  var mockSkillsets = <Skill>[
+    Skill('JavaScript', "Fake description", '', id: "1"),
+    Skill('iOS Development', "Fake description", '', id: "2"),
+    Skill('C', "Fake description", '', id: "3"),
+    Skill('Java', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "4"),
+    Skill('C++', "Fake description", '', id: "5"),
+    Skill('Kubernetes', "Fake description", '', id: "6"),
+    Skill('PostgreSQL', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "7"),
+    Skill('Redis', "Fake description", '', id: "8"),
+    Skill('Android', "Fake description", '', id: "9"),
+    Skill('Node.js', "Fake description", '', id: "10"),
+    Skill('Objective-C', "Fake description", '', id: "11"),
+    Skill('React Native', "Fake description", '', id: "12"),
+    Skill('Video', "Fake description", '', id: "13"),
+    Skill('Microservices', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "14"),
+    Skill('Socket', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "15"),
+    Skill('AWS', "Fake description", '', id: "16"),
+    Skill('React', "Fake description", '', id: "17"),
+    Skill('Git', "Fake description", '', id: "18"),
+    // Skill('SQL', "Fake description", ''),
+    // Skill('WebScrape', "Fake description", ''),
+  ];
   @override
   void initState() {
     super.initState();
     _passwordFocusNode = FocusNode();
-    _projects.addAll(_infoStore.currentProjectExperience ?? []);
+    _projects.addAll(_infoStore.currentProjectExperience);
+    if (_infoStore.skillSet.isNotEmpty) mockSkillsets = _infoStore.skillSet;
+
+    setPE();
     // _projects.add(ProjectExperience("Intelligent Taxi Dispatching System",
     //     description:
     //         "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
@@ -165,6 +167,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   void _onChipTapped(Skill profile) {
     //print('$profile');
+    setPE();
   }
 
   // void onChanged(List<Skill> data, {int? index}) {
@@ -263,6 +266,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                       startDate: DateTime.now(),
                                       endDate: DateTime.now(),
                                       skills: []));
+                              setPE();
                             })
                           },
                           icon: const Icon(Icons.add_circle_outline),
@@ -359,6 +363,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                       _projects[index].enabled = true;
                                     });
                                   }
+                                  setPE();
                                 } catch (E) {
                                   setState(() {});
                                 }
@@ -889,14 +894,10 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                       maxInputHeight: 35,
                                       totalHeight: 150,
                                       nonEmptyInputHeight: 100,
-                                      initialChips: _projects[index].skills !=
-                                              null
-                                          ? _projects[index]
-                                              .skills!
-                                              .map((e) => Skill(e.name, "",
-                                                  "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png"))
-                                              .toList()
-                                          : [],
+                                      initialChips:
+                                          _projects[index].skills != null
+                                              ? _projects[index].skills!
+                                              : [],
                                       onChipTapped: _onChipTapped,
                                       decoration: InputDecoration(
                                           prefixIconConstraints:
@@ -915,6 +916,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                       findSuggestions: _findSuggestions,
                                       onChanged: (value) {
                                         _projects[index].skills = value;
+                                        setPE();
                                       },
                                       chipBuilder: (BuildContext context,
                                           ChipsInputState<Skill> state,
@@ -933,8 +935,10 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                                 ? NetworkImage(profile.imageUrl)
                                                 : null,
                                           ),
-                                          onDeleted: () =>
-                                              state.deleteChip(profile),
+                                          onDeleted: () {
+                                            state.deleteChip(profile);
+                                            setPE();
+                                          },
                                           onSelected: (_) =>
                                               _onChipTapped(profile),
                                           materialTapTargetSize:

@@ -242,9 +242,23 @@ class ProfileApi {
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
+    Future<Response> getTechStack(AddTechStackParams params) async {
+    return await _dioClient.dio.get(Endpoints.getTechStack, data: {
+      
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
   Future<Response> addSkillset(AddSkillsetParams params) async {
     return await _dioClient.dio.post(Endpoints.addSkillset, data: {
       "name": params.name,
+    }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> getSkillset(AddSkillsetParams params) async {
+    return await _dioClient.dio.get(Endpoints.getSkillset, data: {
+     
     }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }

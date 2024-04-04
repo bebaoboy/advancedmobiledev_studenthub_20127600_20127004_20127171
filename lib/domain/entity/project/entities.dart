@@ -69,12 +69,12 @@ class Skill extends MyObject {
 
   Skill.fromJson(Map<String, dynamic> json)
       : name = json["name"] ?? "",
-        description = "",
+        description = json["id"],
         imageUrl = "";
 
   factory Skill.fromMap(Map<String, dynamic> map) {
-    return Skill(
-        map['name'] ?? '', map['description'] ?? '', map['imageUrl'] ?? '', id: map['id'].toString());
+    return Skill(map['name'] ?? '', map['id'].toString(), map['imageUrl'] ?? '',
+        id: map['id'].toString());
   }
 
   Map<String, dynamic> toJson() {
@@ -114,7 +114,7 @@ class Language extends MyObject {
     return {
       "languageName": languageName,
       "level": level,
-      if (objectId != "") "id": objectId,
+      if (objectId != "") "id": int.tryParse(objectId!),
     };
   }
 }
@@ -151,13 +151,13 @@ class Education extends MyObject {
       "schoolName": schoolName,
       "startYear": startYear.toString(),
       "endYear": endYear.toString(),
-      if (objectId != "") "id": objectId,
+      if (objectId != "") "id": int.tryParse(objectId!),
     };
   }
 
   factory Education.fromMap(Map<String, dynamic> map) {
     return Education(map['schoolName'] ?? '',
-        startYear: DateTime.parse(map['startYear'] ),
+        startYear: DateTime.parse(map['startYear']),
         endYear: DateTime.parse(map['endYear']),
         id: map['id'].toString());
   }
@@ -206,7 +206,7 @@ class ProjectExperience extends MyObject {
           : skills!.isEmpty
               ? ["1"]
               : skills!.map((e) => e.objectId).toList(),
-      if (objectId != "") "id": objectId,
+      if (objectId != "") "id": int.tryParse(objectId!),
     };
   }
 
@@ -248,7 +248,7 @@ class StudentProfile extends Profile {
 
   StudentProfile({
     this.fullName = "",
-    this.education= "",
+    this.education = "",
     this.introduction = "",
     this.title = "",
     this.review = "",
@@ -311,6 +311,7 @@ class StudentProfile extends Profile {
       'educations': educations,
       'transcript': transcript,
       'resume': resume,
+      'experience': projectExperience,
       "id": int.tryParse(objectId ?? "-1"),
     };
   }
@@ -322,6 +323,10 @@ class StudentProfile extends Profile {
       education: map['education'] ?? '',
       introduction: map['introduction'] ?? '',
       yearOfExperience: map['yearOfExperience'] ?? 0,
+      projectExperience: (map['experience'] != null)
+          ? List<ProjectExperience>.from((map['experience'] as List<dynamic>)
+              .map((e) => ProjectExperience.fromMap(e as Map<String, dynamic>)))
+          : [],
       review: map['review'] ?? '',
       techStack: map['techStack'],
       skillSet: (map['skillSet'] != null)

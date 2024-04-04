@@ -8,6 +8,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 // class DarkTransition extends StatefulWidget {
@@ -176,9 +177,11 @@ import 'package:swipeable_page_route/swipeable_page_route.dart';
 // }
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
-  const MainAppBar({super.key, this.isHomePage = true, this.theme = true});
+  const MainAppBar(
+      {super.key, this.isHomePage = true, this.theme = true, this.name = ""});
   final bool isHomePage;
   final bool theme;
+  final String name;
   @override
   State<MainAppBar> createState() => _MainAppBarState();
 
@@ -242,10 +245,29 @@ class _MainAppBarState extends State<MainAppBar> {
     return widget.isHomePage
         ? IconButton(
             onPressed: () {
-              _userStore.logout();
-              Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute2(routeName: Routes.login),
-                  (Route<dynamic> route) => false);
+              showAnimatedDialog(
+                context: context,
+                barrierDismissible: true,
+                builder: (BuildContext context) {
+                  return ClassicGeneralDialogWidget(
+                    contentText: Lang.get("logout_confirm"),
+                    negativeText: Lang.get('cancel'),
+                    positiveText: 'OK',
+                    onPositiveClick: () {
+                      _userStore.logout();
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute2(routeName: Routes.login),
+                          (Route<dynamic> route) => false);
+                    },
+                    onNegativeClick: () {
+                      Navigator.of(context).pop();
+                    },
+                  );
+                },
+                animationType: DialogTransitionType.size,
+                curve: Curves.fastOutSlowIn,
+                duration: const Duration(seconds: 1),
+              );
             },
             icon: const Icon(
               Icons.power_settings_new,
@@ -345,10 +367,12 @@ class _MainAppBarState extends State<MainAppBar> {
                 //     (Route<dynamic> route) => false);
               },
               onLongPress: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute2(child: const SharedPreferenceView()));
+                Navigator.of(context).push(
+                    MaterialPageRoute2(child: const SharedPreferenceView()));
               },
-              child: Text(Lang.get('appbar_title') +
+              child: Text((widget.name.isNotEmpty
+                      ? widget.name
+                      : Lang.get('appbar_title')) +
                   (_userStore.user != null &&
                           _userStore.user!.type == UserType.company
                       ? "©"

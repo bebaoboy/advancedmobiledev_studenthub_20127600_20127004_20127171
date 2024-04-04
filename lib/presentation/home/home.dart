@@ -4,6 +4,7 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -31,6 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
             _userStore.user!.type != UserType.naught &&
             _userStore.user!.email.isNotEmpty) {
           print("switch account navigate home");
+          final ProfileStudentStore infoStore = getIt<ProfileStudentStore>();
+          if (_userStore.user!.studentProfile != null) {
+            infoStore.setStudentId(_userStore.user!.studentProfile!.objectId!);
+          }
+          infoStore.getInfo().then(
+                (value) {},
+              );
           Navigator.of(context).pushReplacement(
             MaterialPageRoute2(routeName: Routes.welcome),
           );
@@ -43,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final UserStore _userStore = getIt<UserStore>();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

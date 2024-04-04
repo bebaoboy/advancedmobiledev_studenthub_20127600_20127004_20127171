@@ -31,20 +31,21 @@ abstract class _ProfileStudentFormStore with Store {
   final ErrorStore errorStore;
 
   _ProfileStudentFormStore(
-      this.profileFormErrorStore,
-      this.errorStore,
-      this._addProfileStudentUseCase,
-      this._getProfileStudentUseCase,
-      this._updateProfileStudentUseCase,
-      this._addTechStackUseCase,
-      this._addSkillsetUseCase,
-      this._updateLanguageUseCase,
-      this._updateEducationUseCase,
-      this._updateProjectExperienceUseCase,
-      this._updateResumeUseCase,
-      this._getResumeUseCase,
-      this._updateTranscriptUseCase,
-      this._getTranscriptUseCase) {
+    this.profileFormErrorStore,
+    this.errorStore,
+    this._addProfileStudentUseCase,
+    this._getProfileStudentUseCase,
+    this._updateProfileStudentUseCase,
+    this._addTechStackUseCase,
+    this._addSkillsetUseCase,
+    this._updateLanguageUseCase,
+    this._updateEducationUseCase,
+    this._updateProjectExperienceUseCase,
+    this._updateResumeUseCase,
+    this._getResumeUseCase,
+    this._updateTranscriptUseCase,
+    this._getTranscriptUseCase,
+  ) {
     _setupValidations();
   }
 
@@ -95,9 +96,11 @@ abstract class _ProfileStudentFormStore with Store {
 
   @observable
   String? transcript;
+  String oldTranscript = "";
 
   @observable
   String? resume;
+  String oldResume = "";
 
   @observable
   bool success = false;
@@ -166,15 +169,15 @@ abstract class _ProfileStudentFormStore with Store {
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
-        print(value.data);
+        //print(value.data);
       }
-      print(value);
+      //print(value);
     });
 
     await _updateLanguage(languages ?? [], studentId).then(
       (value) {
         success &= value;
-        print(value);
+        //print(value);
       },
     );
 
@@ -182,7 +185,7 @@ abstract class _ProfileStudentFormStore with Store {
       (value) {
         success &= value;
 
-        print(value);
+        //print(value);
       },
     );
 
@@ -190,7 +193,7 @@ abstract class _ProfileStudentFormStore with Store {
       (value) {
         success &= value;
 
-        print(value);
+        //print(value);
       },
     );
 
@@ -199,7 +202,7 @@ abstract class _ProfileStudentFormStore with Store {
         (value) {
           success &= value;
 
-          print(value);
+          //print(value);
         },
       );
     }
@@ -209,7 +212,115 @@ abstract class _ProfileStudentFormStore with Store {
         (value) {
           success &= value;
 
-          print(value);
+          //print(value);
+        },
+      );
+    }
+
+    var userStore = getIt<UserStore>();
+    if (userStore.user != null) {
+      oldResume = resumes ?? "";
+      oldTranscript = transcripts ?? "";
+      userStore.user!.studentProfile = StudentProfile(
+          fullName: userStore.user!.name,
+          skillSet: skillset,
+          techStack: techStack,
+          transcript: transcripts,
+          resume: resumes,
+          languages: languages,
+          educations: educations,
+          projectExperience: projectExperiences);
+      // TODO: save to shared pref
+    }
+  }
+
+  @action
+  Future updateProfileStudent(
+    List<TechStack>? techStack,
+    List<Skill>? skillset,
+    List<Language>? languages,
+    List<Education>? educations,
+    List<ProjectExperience>? projectExperiences,
+    String? transcripts,
+    String? resumes,
+    String id,
+  ) async {
+    print(
+        "\n\n\n\n======================================\n UPDATE PROFILE\n======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n\n\n\n\n\n");
+    final UpdateProfileStudentParams loginParams = UpdateProfileStudentParams(
+        techStack: techStack != null
+            ? techStack.isNotEmpty
+                ? int.tryParse(techStack[0].objectId ?? "1")
+                : 1
+            : 1,
+        skillSet: (skillset ?? [])
+            .map((e) => int.tryParse(e.objectId ?? "1") ?? 0)
+            .toList(),
+        id: id);
+    final future = _updateProfileStudentUseCase.call(params: loginParams);
+    addProfileStudentFuture = ObservableFuture(future);
+    String studentId = id;
+
+    await future.then((value) {
+      if (value.statusCode == HttpStatus.accepted ||
+          value.statusCode == HttpStatus.ok ||
+          value.statusCode == HttpStatus.created) {
+        success = true;
+
+        // try {
+        //   studentId = value.data["result"]["id"].toString();
+        // } catch (e) {
+        //   errorStore.errorMessage = "cannot parse student id";
+        // }
+      } else {
+        success = false;
+        errorStore.errorMessage = value.data['errorDetails'] is List<String>
+            ? value.data['errorDetails'][0].toString()
+            : value.data['errorDetails'].toString();
+        print("failed");
+      }
+      //print(value);
+    });
+
+    await _updateLanguage(languages!, studentId).then(
+      (value) {
+        success &= value;
+        //print(value);
+      },
+    );
+
+    await _updateEducation(educations!, studentId).then(
+      (value) {
+        success &= value;
+
+        //print(value);
+      },
+    );
+
+    await _updateProjectExperience(projectExperiences!, studentId).then(
+      (value) {
+        success &= value;
+
+        //print(value);
+      },
+    );
+
+    if (resumes != null && oldResume != resumes) {
+      await _updateResume(resumes, studentId).then(
+        (value) {
+          success &= value;
+
+          //print(value);
+        },
+      );
+    }
+
+    if (transcripts != null && oldTranscript != transcripts) {
+      await _updateTranscript(transcripts, studentId).then(
+        (value) {
+          success &= value;
+
+          //print(value);
         },
       );
     }
@@ -217,6 +328,7 @@ abstract class _ProfileStudentFormStore with Store {
     var userStore = getIt<UserStore>();
     if (userStore.user != null) {
       userStore.user!.studentProfile = StudentProfile(
+          objectId: studentId,
           fullName: userStore.user!.name,
           skillSet: skillset,
           techStack: techStack,
@@ -233,6 +345,8 @@ abstract class _ProfileStudentFormStore with Store {
   Future getProfileStudent(
     String id,
   ) async {
+    print(
+        "\n\n\n\n======================================\n GET PROFILE========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n\n\n\n\n\n\n");
     final UpdateProfileStudentParams loginParams =
         UpdateProfileStudentParams(techStack: null, skillSet: [], id: id);
     final future = _getProfileStudentUseCase.call(params: loginParams);
@@ -243,10 +357,9 @@ abstract class _ProfileStudentFormStore with Store {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
-        success = true;
         // TODO: API này trả về full student profile
 
-        print(value);
+        //print(value);
         try {
           if (userStore.user != null &&
               userStore.user!.studentProfile != null) {
@@ -255,6 +368,7 @@ abstract class _ProfileStudentFormStore with Store {
             userStore.user!.studentProfile!.techStack = [
               TechStack.fromJson(value.data["result"]["techStack"])
             ];
+            techStack = userStore.user!.studentProfile!.techStack;
             if (value.data["result"]["skillSets"] != null) {
               var ssList = value.data["result"]["skillSets"] as List;
               userStore.user!.studentProfile!.skillSet = [];
@@ -262,6 +376,7 @@ abstract class _ProfileStudentFormStore with Store {
                 userStore.user!.studentProfile!.skillSet!
                     .add(Skill.fromMap(element));
               }
+              skillSet = userStore.user!.studentProfile!.skillSet!;
             }
             // TODO: lưu thong tin student profile
           }
@@ -273,19 +388,19 @@ abstract class _ProfileStudentFormStore with Store {
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
-        print(value.data);
+        //print(value.data);
       }
-      // print(value);
+      // //print(value);
     });
     await _getResume("", id).then(
       (value) {
-        print(value);
+        //print(value);
       },
     );
 
     await _getTranscript("", id).then(
       (value) {
-        print(value);
+        //print(value);
       },
     );
   }
@@ -304,13 +419,13 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("language: ${value.data}");
+          //print("language: ${value.data}");
         } else {
           success = false;
           errorStore.errorMessage = value.data['errorDetails'] is List<String>
               ? value.data['errorDetails'][0].toString()
               : value.data['errorDetails'].toString();
-          // print(value.data);
+          // //print(value.data);
         }
         return success;
       });
@@ -333,13 +448,13 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("education: ${value.data}");
+          //print("education: ${value.data}");
         } else {
           success = false;
           errorStore.errorMessage = value.data['errorDetails'] is List<String>
               ? value.data['errorDetails'][0].toString()
               : value.data['errorDetails'].toString();
-          // print(value.data);
+          // //print(value.data);
         }
         return success;
       });
@@ -362,13 +477,13 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("exp: ${value.data}");
+          //print("exp: ${value.data}");
         } else {
           success = false;
           errorStore.errorMessage = value.data['errorDetails'] is List<String>
               ? value.data['errorDetails'][0].toString()
               : value.data['errorDetails'].toString();
-          // print(value.data);
+          // //print(value.data);
         }
         return success;
       });
@@ -380,7 +495,7 @@ abstract class _ProfileStudentFormStore with Store {
   @action
   Future<bool> _updateResume(String resume, String studentId) async {
     try {
-      print("resume $resume");
+      //print("resume $resume");
       final loginParams =
           UpdateResumeParams(path: resume, studentId: studentId);
       final future = _updateResumeUseCase.call(params: loginParams);
@@ -391,11 +506,11 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("resume: ${value.data}");
+          //print("resume: ${value.data}");
         } else {
           success = false;
           errorStore.errorMessage = value.data.toString();
-          print(value.data);
+          //print(value.data);
         }
         return success;
       });
@@ -407,7 +522,7 @@ abstract class _ProfileStudentFormStore with Store {
   @action
   Future<bool> _getResume(String resume, String studentId) async {
     try {
-      print("resume $resume");
+      //print("resume $resume");
       final loginParams =
           UpdateResumeParams(path: resume, studentId: studentId);
       final future = _getResumeUseCase.call(params: loginParams);
@@ -418,7 +533,7 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("resume: ${value.data}");
+          //print("resume: ${value.data}");
           try {
             var userStore = getIt<UserStore>();
             if (userStore.user != null &&
@@ -431,7 +546,7 @@ abstract class _ProfileStudentFormStore with Store {
         } else {
           success = false;
           errorStore.errorMessage = value.data.toString();
-          print(value.data);
+          //print(value.data);
         }
         return success;
       });
@@ -453,13 +568,13 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("transcript: ${value.data}");
+          //print("transcript: ${value.data}");
         } else {
           success = false;
           errorStore.errorMessage = value.data['errorDetails'] is List<String>
               ? value.data['errorDetails'][0].toString()
               : value.data['errorDetails'].toString();
-          print(value.data);
+          //print(value.data);
         }
       });
       return success;
@@ -481,7 +596,7 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          print("transcript: ${value.data}");
+          //print("transcript: ${value.data}");
           try {
             var userStore = getIt<UserStore>();
             if (userStore.user != null &&
@@ -496,7 +611,7 @@ abstract class _ProfileStudentFormStore with Store {
           errorStore.errorMessage = value.data['errorDetails'] is List<String>
               ? value.data['errorDetails'][0].toString()
               : value.data['errorDetails'].toString();
-          print(value.data);
+          //print(value.data);
         }
       });
       return success;
@@ -574,7 +689,7 @@ abstract class _ProfileStudentFormStore with Store {
 
   @action
   void setResume(String value) {
-    print("set resrume");
+    //print("set resrume");
     resume = value;
   }
 

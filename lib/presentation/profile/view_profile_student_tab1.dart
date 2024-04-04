@@ -16,18 +16,34 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../di/service_locator.dart';
 
-final List<TechStack> _list = [
-  TechStack("Designer", id: "5"),
-  TechStack("Developer", id: "1"),
-  TechStack("Consultant", id: "2"),
-  TechStack("Student", id: "3"),
-  TechStack("Backend Developer", id: "4"),
-];
-
-class TechStackDropdown extends StatelessWidget {
-  TechStackDropdown({super.key, required this.onListChangedCallback});
+class TechStackDropdown extends StatefulWidget {
+  const TechStackDropdown({super.key, required this.onListChangedCallback});
   final Function(TechStack) onListChangedCallback;
+
+  @override
+  State<TechStackDropdown> createState() => _TechStackDropdownState();
+}
+
+class _TechStackDropdownState extends State<TechStackDropdown> {
   final userStore = getIt<UserStore>();
+
+  final ProfileStudentStore _infoStore = getIt<ProfileStudentStore>();
+
+  List<TechStack> _list = [
+    TechStack("Designer", id: "5"),
+    TechStack("Developer", id: "1"),
+    TechStack("Consultant", id: "2"),
+    TechStack("Student", id: "3"),
+    TechStack("Backend Developer", id: "4"),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    if (_infoStore.techStack.isNotEmpty) {
+      _list = _infoStore.techStack;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,18 +56,13 @@ class TechStackDropdown extends StatelessWidget {
       futureRequest: (p0) {
         return Future.microtask(
           () {
-            if (userStore.user != null &&
-                userStore.user!.studentProfile != null) {
-              return userStore.user!.studentProfile!.techStack ?? [];
-            } else {
-              return _list;
-            }
+            return _list;
           },
         );
       },
       futureRequestDelay: const Duration(seconds: 1),
       onChanged: (p0) {
-        onListChangedCallback(p0);
+        widget.onListChangedCallback(p0);
       },
       noResultFoundText: Lang.get("nothing_here"),
       maxlines: 3,
@@ -122,12 +133,11 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
   void initState() {
     super.initState();
 
-    _languages.addAll(_infoStore.currentLanguage ?? []);
-    _educations.addAll(_infoStore.currentEducation ?? []);
-    var userStore = getIt<UserStore>();
-    if (userStore.user != null && userStore.user!.studentProfile != null) {
-      mockSkillsets = userStore.user!.studentProfile!.skillSet ?? [];
-    }
+    _languages.addAll(_infoStore.currentLanguage);
+    _educations.addAll(_infoStore.currentEducation);
+    if (_infoStore.skillSet.isNotEmpty) mockSkillsets = _infoStore.skillSet;
+    setLanguage();
+    setEducation();
 
     // _languages.add(Language("English", "Native or Bilingual"));
     // _languages.add(Language("Spanish", "Beginner"));
@@ -200,6 +210,9 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
 
   void _onChipTapped(Skill profile) {
     //print('$profile');
+    _profileStudentFormStore.skillSet ??= [];
+    _profileStudentFormStore.skillSet!.add(profile);
+    print('onChanged $profile');
   }
 
   void _onChanged(List<Skill> data) {
@@ -387,7 +400,10 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                         // ),
                         leading: const Icon(Icons.developer_mode),
                         title: Text(profile.name),
-                        subtitle: Text(profile.description),
+                        subtitle: Text(
+                          "id: ${profile.description}",
+                          style: const TextStyle(fontSize: 11),
+                        ),
                         onTap: () => state.selectSuggestion(profile),
                       );
                     },
@@ -683,6 +699,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                           padding: const EdgeInsets.only(right: 10),
                           onPressed: () {
                             try {
+                              if (_languages[index].readOnly == false) return;
                               if (_languages[index].enabled) {
                                 setState(() {
                                   _languages[index].enabled = false;
@@ -1022,6 +1039,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                           padding: const EdgeInsets.only(right: 10),
                           onPressed: () {
                             try {
+                              if (_educations[index].readOnly == false) return;
                               if (_educations[index].enabled) {
                                 setState(() {
                                   _educations[index].enabled = false;
