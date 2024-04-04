@@ -1,14 +1,18 @@
 import 'package:boilerplate/domain/entity/account/account.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:flutter/material.dart';
 
 class StudentAccountWidget extends StatefulWidget {
   final Account name;
   final bool isLoggedIn;
+  final bool isLoggedInProfile;
   final VoidCallback? onTap;
 
   const StudentAccountWidget(
-      {super.key, required this.name, this.isLoggedIn = false, this.onTap});
+      {super.key,
+      required this.name,
+      this.isLoggedIn = false,
+      this.onTap,
+      this.isLoggedInProfile = false});
 
   @override
   State<StudentAccountWidget> createState() => _StudentAccountWidgetState();
@@ -25,9 +29,11 @@ class _StudentAccountWidgetState extends State<StudentAccountWidget> {
             : Theme.of(context).textTheme.bodySmall);
     // Widget subtitleWidget = Text(widget.name.user.email,
     //     style: Theme.of(context).textTheme.bodyLarge);
+    var icon = widget.isLoggedIn ? Icons.person : Icons.no_cell;
+    if (widget.name.user.studentProfile == null) icon = Icons.person_off;
     Icon profileIcon = Icon(
-      Icons.person,
-      color: widget.name.user.type == UserType.student && widget.isLoggedIn
+      icon,
+      color: widget.isLoggedIn && widget.isLoggedInProfile
           ? Theme.of(context).colorScheme.primary
           : null,
     );
@@ -38,11 +44,7 @@ class _StudentAccountWidgetState extends State<StudentAccountWidget> {
           .colorScheme
           .primary
           .withOpacity(widget.isLoggedIn ? 0.5 : 0),
-      leading: widget.name.type == UserType.student
-          ? widget.name.user.studentProfile != null
-              ? profileIcon
-              : const Icon(Icons.person_off)
-          : const Icon(Icons.no_cell),
+      leading: profileIcon,
       title: titleWidget,
       // subtitle:
       //     widget.name.user.type != UserType.naught ? subtitleWidget : null,

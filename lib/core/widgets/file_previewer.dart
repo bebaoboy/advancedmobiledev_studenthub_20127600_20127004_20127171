@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:lottie/lottie.dart';
 import 'package:path/path.dart' show extension;
 import 'package:pdf_image_renderer/pdf_image_renderer.dart';
@@ -26,6 +27,7 @@ class FilePreview {
     Widget? defaultImage,
     required bool isCV,
     required Function changeValue,
+    Function(String)? retrieveFilePathAfterDownload,
   }) async {
     // if (filePath.startsWith('http') ||
     //     filePath.startsWith('blob') ||
@@ -34,40 +36,74 @@ class FilePreview {
     // }
     if (isURL(filePath)) {
       try {
-        return CachedNetworkImage(
-          width: width,
-          height: height,
-          imageUrl: filePath,
-          imageBuilder: (context, imageProvider) => Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: imageProvider,
-                fit: BoxFit.scaleDown,
-                // colorFilter:
-                //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+        if (filePath.contains(
+            "https://storage.googleapis.com/20ktpm-studenthub-storage")) {
+          //You can download a single file
+          return await FileDownloader.downloadFile(
+              url: filePath,
+              name: "file_${isCV ? "resume" : "transcript"}", //(optional)
+              onProgress: (String? fileName, double progress) {
+                print('FILE fileName HAS PROGRESS $progress');
+                return "";
+              },
+              onDownloadCompleted: (String path) {
+                print('FILE DOWNLOADED TO PATH: $path');
+              },
+              onDownloadError: (String error) {
+                print('DOWNLOAD ERROR: $error');
+              }).then(
+            (value) async {
+              if (value != null) {
+                if(retrieveFilePathAfterDownload != null) retrieveFilePathAfterDownload(value.path);
+                return await FilePreview.getThumbnail(value.path,
+                    isCV: isCV, changeValue: changeValue);
+              }
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(13.0),
+                  child: Text("File type not supported: $filePath"),
+                ),
+              );
+            },
+          );
+        } else {
+          return CachedNetworkImage(
+            width: width,
+            height: height,
+            imageUrl: filePath,
+            imageBuilder: (context, imageProvider) => Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: imageProvider,
+                  fit: BoxFit.scaleDown,
+                  // colorFilter:
+                  //     ColorFilter.mode(Colors.red, BlendMode.colorBurn)
+                ),
               ),
             ),
-          ),
-          placeholder: (context, url) => Center(
-            child: Lottie.asset(
-              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-              fit: BoxFit.cover,
-              width: 80, // Adjust the width and height as needed
-              height: 80,
-              repeat: true, // Set to true if you want the animation to loop
+            placeholder: (context, url) => Center(
+              child: Lottie.asset(
+                'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                fit: BoxFit.cover,
+                width: 80, // Adjust the width and height as needed
+                height: 80,
+                repeat: true, // Set to true if you want the animation to loop
+              ),
             ),
-          ),
-          errorWidget: (context, url, error) {
-            changeValue(true, isCV);
-            return Padding(
-              padding: const EdgeInsets.all(13.0),
-              child: Center(child: Text(filePath,)),
-            );
-          },
-          errorListener: (value) {
-            //print("error");
-          },
-        );
+            errorWidget: (context, url, error) {
+              changeValue(true, isCV);
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(13.0),
+                  child: Text("File type not supported: $filePath"),
+                ),
+              );
+            },
+            errorListener: (value) {
+              //print("error");
+            },
+          );
+        }
       } catch (e) {
         return null;
       }
@@ -90,6 +126,9 @@ class FilePreview {
             height: height,
           );
         default:
+          try {} catch (e) {
+            print("File type not supported");
+          }
           if (Platform.isIOS) {
             final Uint8List byteList =
                 await _channel.invokeMethod('getThumbnail', filePath);
@@ -125,7 +164,7 @@ class FilePreview {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(13.0),
-                      child: Text(filePath),
+                      child: Text("File type not supported: $filePath"),
                     ),
                   );
                 },

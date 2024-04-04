@@ -11,6 +11,7 @@ import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
@@ -66,6 +67,26 @@ class ProfileApi {
       "skillSets": params.skillSet,
     }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> updateProfileStudent(
+      UpdateProfileStudentParams params) async {
+    return await _dioClient.dio.put(
+        Interpolator(Endpoints.updateProfileStudent)({"id": params.id}),
+        data: {
+          "techStackId": params.techStack,
+          "skillSets": params.skillSet,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> getProfileStudent(UpdateProfileStudentParams params) async {
+    return await _dioClient.dio
+        .get(
+          Interpolator(Endpoints.getProfileStudent)({"studentId": params.id}),
+        )
+        .onError(
+            (DioException error, stackTrace) => Future.value(error.response));
   }
 
   Future<Response> updateLanguage(UpdateLanguageParams params) async {
@@ -127,6 +148,15 @@ class ProfileApi {
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
+  Future<Response> getResume(UpdateResumeParams params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getResume)({"studentId": params.studentId}),
+        data: {
+          // "education": params.educations,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
   Future<Response> updateResume(UpdateResumeParams params) async {
     // File file;
     // try {
@@ -143,29 +173,38 @@ class ProfileApi {
     //   filename: params.path.split('/').last,
     // );
     // try {
-      FormData formData = FormData.fromMap({
-        "file": await MultipartFile.fromFile(
-          params.path,
-          // contentType:
-          //     MediaType.parse(lookupMimeType(params.path) ?? "text/plain"),
-          filename: params.path.split('/').last,
-        )
-      });
-      return await _dioClient.dio.put(
-        Interpolator(Endpoints.updateResume)({"studentId": params.studentId}),
-        data: formData,
-        onSendProgress: (count, total) {
-          print(
-              'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
-        },
-      ).onError((DioException error, stackTrace) {
-        return Future.value(error.response);
-      });
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(
+        params.path,
+        // contentType:
+        //     MediaType.parse(lookupMimeType(params.path) ?? "text/plain"),
+        filename: params.path.split('/').last,
+      )
+    });
+    return await _dioClient.dio.put(
+      Interpolator(Endpoints.updateResume)({"studentId": params.studentId}),
+      data: formData,
+      onSendProgress: (count, total) {
+        print(
+            'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
+      },
+    ).onError((DioException error, stackTrace) {
+      return Future.value(error.response);
+    });
     // } catch (e) {
     //   return Future.value(Response(
     //       requestOptions: RequestOptions(),
     //       data: {"errorDetails": "File not found ${e.toString()}"}));
     // }
+  }
+
+  Future<Response> getTranscript(UpdateTranscriptParams params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getTranscript)({"studentId": params.studentId}),
+        data: {
+          // "education": params.educations,
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
   }
 
   Future<Response> updateTranscript(UpdateTranscriptParams params) async {
@@ -179,7 +218,8 @@ class ProfileApi {
         )
       });
       return await _dioClient.dio.put(
-        Interpolator(Endpoints.updateTranscript)({"studentId": params.studentId}),
+        Interpolator(Endpoints.updateTranscript)(
+            {"studentId": params.studentId}),
         data: formData,
         onSendProgress: (count, total) {
           print(

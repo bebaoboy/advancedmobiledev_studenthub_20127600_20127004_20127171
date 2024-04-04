@@ -8,7 +8,6 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -26,19 +25,29 @@ final List<TechStack> _list = [
 ];
 
 class TechStackDropdown extends StatelessWidget {
-  const TechStackDropdown({super.key, required this.onListChangedCallback});
+  TechStackDropdown({super.key, required this.onListChangedCallback});
   final Function(TechStack) onListChangedCallback;
+  final userStore = getIt<UserStore>();
 
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<TechStack>.searchRequest(
-      initialItem: _list[0],
+      initialItem: userStore.user != null &&
+              userStore.user!.studentProfile != null &&
+              userStore.user!.studentProfile!.techStack != null
+          ? userStore.user!.studentProfile!.techStack![0]
+          : _list[0],
       futureRequest: (p0) {
-        return Future.value(_list
-            .where(
-              (e) => e.name.toLowerCase().contains(p0.trim().toLowerCase()),
-            )
-            .toList());
+        return Future.microtask(
+          () {
+            if (userStore.user != null &&
+                userStore.user!.studentProfile != null) {
+              return userStore.user!.studentProfile!.techStack ?? [];
+            } else {
+              return _list;
+            }
+          },
+        );
       },
       futureRequestDelay: const Duration(seconds: 1),
       onChanged: (p0) {
@@ -107,12 +116,18 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
   bool loading = false;
   final List<Language> _languages = List.empty(growable: true);
   final List<Education> _educations = List.empty(growable: true);
+  late final List<Skill> mockSkillsets;
 
   @override
   void initState() {
     super.initState();
+
     _languages.addAll(_infoStore.currentLanguage ?? []);
     _educations.addAll(_infoStore.currentEducation ?? []);
+    var userStore = getIt<UserStore>();
+    if (userStore.user != null && userStore.user!.studentProfile != null) {
+      mockSkillsets = userStore.user!.studentProfile!.skillSet ?? [];
+    }
 
     // _languages.add(Language("English", "Native or Bilingual"));
     // _languages.add(Language("Spanish", "Beginner"));
@@ -191,6 +206,37 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
     _profileStudentFormStore.setSkillSet(data);
     print('onChanged $data');
   }
+
+  var mockSkillset = <Skill>[
+    Skill('JavaScript', "Fake description", '', id: "1"),
+    Skill('iOS Development', "Fake description", '', id: "2"),
+    Skill('C', "Fake description", '', id: "3"),
+    Skill('Java', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "4"),
+    Skill('C++', "Fake description", '', id: "5"),
+    Skill('Kubernetes', "Fake description", '', id: "6"),
+    Skill('PostgreSQL', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "7"),
+    Skill('Redis', "Fake description", '', id: "8"),
+    Skill('Android', "Fake description", '', id: "9"),
+    Skill('Node.js', "Fake description", '', id: "10"),
+    Skill('Objective-C', "Fake description", '', id: "11"),
+    Skill('React Native', "Fake description", '', id: "12"),
+    Skill('Video', "Fake description", '', id: "13"),
+    Skill('Microservices', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "14"),
+    Skill('Socket', "Fake description",
+        'https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png',
+        id: "15"),
+    Skill('AWS', "Fake description", '', id: "16"),
+    Skill('React', "Fake description", '', id: "17"),
+    Skill('Git', "Fake description", '', id: "18"),
+    // Skill('SQL', "Fake description", ''),
+    // Skill('WebScrape', "Fake description", ''),
+  ];
 
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.isNotEmpty) {
@@ -293,7 +339,11 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
 
                   // Skillset
                   ChipsInput<Skill>(
-                    initialChips: const [],
+                    initialChips: _userStore.user != null &&
+                            _userStore.user!.studentProfile != null &&
+                            _userStore.user!.studentProfile!.skillSet != null
+                        ? _userStore.user!.studentProfile!.skillSet!
+                        : [],
                     onChipTapped: _onChipTapped,
                     decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(left: 13),

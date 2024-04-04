@@ -1,6 +1,5 @@
 import 'package:boilerplate/domain/entity/account/account.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class CompanyAccountWidget extends StatefulWidget {
@@ -33,8 +32,10 @@ class _CompanyAccountWidgetState extends State<CompanyAccountWidget> {
             : Theme.of(context).textTheme.bodySmall);
     Widget subtitleWidget = Text(widget.name.user.email,
         style: Theme.of(context).textTheme.bodyLarge);
+    var icon = widget.isLoggedIn ? Icons.business : Icons.no_cell;
+    if (widget.name.user.studentProfile == null) icon = Icons.tv_off;
     Icon profileIcon = Icon(
-      Icons.business,
+      icon,
       color: widget.isLoggedInProfile
           ? Theme.of(context).colorScheme.primary
           : null,
@@ -53,13 +54,7 @@ class _CompanyAccountWidgetState extends State<CompanyAccountWidget> {
               .colorScheme
               .primary
               .withOpacity(widget.isLoggedIn ? 0.5 : 0),
-          leading: widget.name.type == UserType.company
-              ? widget.name.user.roles!.firstWhereOrNull(
-                          (element) => element.name == UserType.company.name) !=
-                      null
-                  ? profileIcon
-                  : const Icon(Icons.usb_off)
-              : const Icon(Icons.no_cell),
+          leading: profileIcon,
           title: titleWidget,
           subtitle:
               widget.name.type == UserType.company ? subtitleWidget : null,

@@ -1,8 +1,5 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -23,7 +20,7 @@ class ErrorPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/error.jpg'),
+            Center(child: Image.asset('assets/images/error.jpg', width: 40, height: 40,)),
             const SizedBox(height: 12),
             Text(
               kDebugMode
@@ -39,14 +36,13 @@ class ErrorPage extends StatelessWidget {
             Expanded(
               child: Scrollbar(
                 child: SingleChildScrollView(
-                  child: AutoSizeText(
-                    minFontSize: 11,
+                  child: Text(
                     kDebugMode
                         // ? 'https://docs.flutter.dev/testing/errors'
                         ? errorDetails.stack.toString()
                         : "We encountered an error and have notified our engineering team about it. Sorry for this inconvenience :'(.",
                     textAlign: TextAlign.left,
-                    style: const TextStyle(color: Colors.black, fontSize: 12),
+                    style: const TextStyle(color: Colors.black, fontSize: 8),
                   ),
                 ),
               ),
@@ -54,9 +50,7 @@ class ErrorPage extends StatelessWidget {
             const SizedBox(height: 12),
             RoundedButtonWidget(
               onPressed: () {
-                Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute2(routeName: Routes.splash),
-                    (Route<dynamic> route) => false);
+                Navigator.of(context).pop();
               },
               buttonText: Lang.get('continue'),
               buttonColor: Theme.of(context).colorScheme.primary,

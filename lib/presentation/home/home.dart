@@ -35,7 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
             MaterialPageRoute2(routeName: Routes.welcome),
           );
         }
-      } catch (E) {}
+      } catch (E) {
+        print(E.toString);
+        print("cannot redirect from home");
+      }
     });
   }
 

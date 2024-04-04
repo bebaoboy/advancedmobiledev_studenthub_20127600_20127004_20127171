@@ -415,7 +415,10 @@ class _LoginScreenState extends State<LoginScreen> {
               .then((voidResult) {})
               .catchError((error) {});
         });
-      } catch (e) {}
+      } catch (e) {
+        print(e.toString());
+        print("error init cubit login screen");
+      }
     } else {
       // user = utils.users[2];
     }

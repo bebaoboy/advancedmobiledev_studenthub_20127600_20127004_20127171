@@ -3,15 +3,21 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
+import 'package:boilerplate/domain/usecase/profile/get_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
+import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'profile_student_form_store.g.dart';
@@ -28,13 +34,17 @@ abstract class _ProfileStudentFormStore with Store {
       this.profileFormErrorStore,
       this.errorStore,
       this._addProfileStudentUseCase,
+      this._getProfileStudentUseCase,
+      this._updateProfileStudentUseCase,
       this._addTechStackUseCase,
       this._addSkillsetUseCase,
       this._updateLanguageUseCase,
       this._updateEducationUseCase,
       this._updateProjectExperienceUseCase,
       this._updateResumeUseCase,
-      this._updateTranscriptUseCase) {
+      this._getResumeUseCase,
+      this._updateTranscriptUseCase,
+      this._getTranscriptUseCase) {
     _setupValidations();
   }
 
@@ -94,13 +104,17 @@ abstract class _ProfileStudentFormStore with Store {
 
   //usecase
   AddProfileStudentUseCase _addProfileStudentUseCase;
+  UpdateProfileStudentUseCase _updateProfileStudentUseCase;
+  GetProfileStudentUseCase _getProfileStudentUseCase;
   AddTechStackUseCase _addTechStackUseCase;
   AddSkillsetUseCase _addSkillsetUseCase;
   UpdateLanguageUseCase _updateLanguageUseCase;
   UpdateEducationUseCase _updateEducationUseCase;
   UpdateProjectExperienceUseCase _updateProjectExperienceUseCase;
   UpdateResumeUseCase _updateResumeUseCase;
+  GetResumeUseCase _getResumeUseCase;
   UpdateTranscriptUseCase _updateTranscriptUseCase;
+  GetTranscriptUseCase _getTranscriptUseCase;
 
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 
@@ -134,7 +148,7 @@ abstract class _ProfileStudentFormStore with Store {
             .toList());
     final future = _addProfileStudentUseCase.call(params: loginParams);
     addProfileStudentFuture = ObservableFuture(future);
-    String studentId = "3";
+    String studentId = "15";
 
     await future.then((value) {
       if (value.statusCode == HttpStatus.accepted ||
@@ -142,41 +156,49 @@ abstract class _ProfileStudentFormStore with Store {
           value.statusCode == HttpStatus.created) {
         success = true;
 
-        // TODO: get ["id"] from here
         try {
-          studentId = value.data["result"]["id"];
-        } catch (e) {}
+          studentId = value.data["result"]["id"].toString();
+        } catch (e) {
+          errorStore.errorMessage = "cannot parse student id";
+        }
       } else {
-        // success = false;
+        success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
-        // print(value.data);
+        print(value.data);
       }
       print(value);
     });
 
-    // await _updateLanguage(languages ?? [], studentId).then(
-    //   (value) {
-    //     print(value);
-    //   },
-    // );
+    await _updateLanguage(languages ?? [], studentId).then(
+      (value) {
+        success &= value;
+        print(value);
+      },
+    );
 
-    // await _updateEducation(educations ?? [], studentId).then(
-    //   (value) {
-    //     print(value);
-    //   },
-    // );
+    await _updateEducation(educations ?? [], studentId).then(
+      (value) {
+        success &= value;
 
-    // await _updateProjectExperience(projectExperiences ?? [], studentId).then(
-    //   (value) {
-    //     print(value);
-    //   },
-    // );
+        print(value);
+      },
+    );
+
+    await _updateProjectExperience(projectExperiences ?? [], studentId).then(
+      (value) {
+        success &= value;
+
+        print(value);
+      },
+    );
 
     if (resumes != null) {
       await _updateResume(resumes, studentId).then(
         (value) {
+          success &= value;
+
           print(value);
         },
       );
@@ -185,10 +207,87 @@ abstract class _ProfileStudentFormStore with Store {
     if (transcripts != null) {
       await _updateTranscript(transcripts, studentId).then(
         (value) {
+          success &= value;
+
           print(value);
         },
       );
     }
+
+    var userStore = getIt<UserStore>();
+    if (userStore.user != null) {
+      userStore.user!.studentProfile = StudentProfile(
+          fullName: userStore.user!.name,
+          skillSet: skillset,
+          techStack: techStack,
+          transcript: transcripts,
+          resume: resumes,
+          languages: languages,
+          educations: educations,
+          projectExperience: projectExperiences);
+      // TODO: save to shared pref
+    }
+  }
+
+  @action
+  Future getProfileStudent(
+    String id,
+  ) async {
+    final UpdateProfileStudentParams loginParams =
+        UpdateProfileStudentParams(techStack: null, skillSet: [], id: id);
+    final future = _getProfileStudentUseCase.call(params: loginParams);
+    addProfileStudentFuture = ObservableFuture(future);
+    var userStore = getIt<UserStore>();
+
+    await future.then((value) {
+      if (value.statusCode == HttpStatus.accepted ||
+          value.statusCode == HttpStatus.ok ||
+          value.statusCode == HttpStatus.created) {
+        success = true;
+        // TODO: API này trả về full student profile
+
+        print(value);
+        try {
+          if (userStore.user != null &&
+              userStore.user!.studentProfile != null) {
+            userStore.user!.studentProfile!.fullName =
+                value.data["result"]["fullname"];
+            userStore.user!.studentProfile!.techStack = [
+              TechStack.fromJson(value.data["result"]["techStack"])
+            ];
+            if (value.data["result"]["skillSets"] != null) {
+              var ssList = value.data["result"]["skillSets"] as List;
+              userStore.user!.studentProfile!.skillSet = [];
+              for (var element in ssList) {
+                userStore.user!.studentProfile!.skillSet!
+                    .add(Skill.fromMap(element));
+              }
+            }
+            // TODO: lưu thong tin student profile
+          }
+        } catch (e) {
+          errorStore.errorMessage = "cannot save student profile";
+        }
+      } else {
+        success = false;
+        errorStore.errorMessage = value.data['errorDetails'] is List<String>
+            ? value.data['errorDetails'][0].toString()
+            : value.data['errorDetails'].toString();
+        print(value.data);
+      }
+      // print(value);
+    });
+    await _getResume("", id).then(
+      (value) {
+        print(value);
+      },
+    );
+
+    await _getTranscript("", id).then(
+      (value) {
+        print(value);
+      },
+    );
   }
 
   @action
@@ -306,6 +405,42 @@ abstract class _ProfileStudentFormStore with Store {
   }
 
   @action
+  Future<bool> _getResume(String resume, String studentId) async {
+    try {
+      print("resume $resume");
+      final loginParams =
+          UpdateResumeParams(path: resume, studentId: studentId);
+      final future = _getResumeUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("resume: ${value.data}");
+          try {
+            var userStore = getIt<UserStore>();
+            if (userStore.user != null &&
+                userStore.user!.studentProfile != null) {
+              userStore.user!.studentProfile!.resume = value.data["result"];
+            }
+          } catch (e) {
+            errorStore.errorMessage = "cannot get resume";
+          }
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data.toString();
+          print(value.data);
+        }
+        return success;
+      });
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @action
   Future<bool> _updateTranscript(String transcript, String studentId) async {
     try {
       final loginParams =
@@ -319,6 +454,43 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.created) {
           success = true;
           print("transcript: ${value.data}");
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          print(value.data);
+        }
+      });
+      return success;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @action
+  Future<bool> _getTranscript(String transcript, String studentId) async {
+    try {
+      final loginParams =
+          UpdateTranscriptParams(transcript: transcript, studentId: studentId);
+      final future = _getTranscriptUseCase.call(params: loginParams);
+      // addProfileCompanyFuture = ObservableFuture(future);
+      bool success = false;
+      await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          success = true;
+          print("transcript: ${value.data}");
+          try {
+            var userStore = getIt<UserStore>();
+            if (userStore.user != null &&
+                userStore.user!.studentProfile != null) {
+              userStore.user!.studentProfile!.transcript = value.data["result"];
+            }
+          } catch (e) {
+            errorStore.errorMessage = "cannot get transcript";
+          }
         } else {
           success = false;
           errorStore.errorMessage = value.data['errorDetails'] is List<String>

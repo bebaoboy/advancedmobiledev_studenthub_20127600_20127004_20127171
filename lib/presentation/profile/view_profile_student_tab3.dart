@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -6,6 +7,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/profile_student_step3.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:file_picker/file_picker.dart';
@@ -59,8 +62,32 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
   @override
   void initState() {
     super.initState();
-    isLinkCv = ValueNotifier<bool>(false);
-    isLinkTranscript = ValueNotifier<bool>(false);
+    var userStore = getIt<UserStore>();
+    if (userStore.user != null && userStore.user!.studentProfile != null) {
+      cvController.text = userStore.user!.studentProfile!.resume ?? "";
+      transcriptController.text =
+          userStore.user!.studentProfile!.transcript ?? "";
+    } else {}
+    isLinkCv = ValueNotifier<bool>(true);
+    isLinkTranscript = ValueNotifier<bool>(true);
+    Future.delayed(Duration.zero, () async {
+      _cvImage = await FilePreview.getThumbnail(cvController.text,
+          isCV: true,
+          changeValue: changeValue,
+          retrieveFilePathAfterDownload: (s) =>
+              _cv = PlatformFile(path: s, name: s, size: 1));
+      _transcriptImage = await FilePreview.getThumbnail(
+          transcriptController.text,
+          isCV: false,
+          changeValue: changeValue,
+          retrieveFilePathAfterDownload: (s) =>
+              _transcript = PlatformFile(path: s, name: s, size: 1));
+      print(_cvImage.toString());
+      setState(() {
+        isLinkCv.value = false;
+        isLinkTranscript.value = false;
+      });
+    });
   }
 
   @override
@@ -116,7 +143,6 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
   PlatformFile? _cv;
   PlatformFile? _transcript;
   Map<String, PreviewData?> pd = {};
-
 
   Widget _buildRightSide() {
     //print(isLinkCv.value);
@@ -186,8 +212,10 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
-                                          isCV: true, cvController.text)
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
+                                          isCV: true,
+                                          cvController.text)
                                       .then(
                                     (value) {
                                       if (value != null) {
@@ -214,8 +242,10 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
-                                          isCV: true, cvController.text)
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
+                                          isCV: true,
+                                          cvController.text)
                                       .then((value) {
                                     if (value != null) {
                                       setState(() {
@@ -297,7 +327,8 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                         setState(() {
                           cvEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
+                        final image = await FilePreview.getThumbnail(
+                          changeValue: changeValue,
                           isCV: true,
                           result.files.single.path!,
                         );
@@ -405,7 +436,8 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then(
@@ -434,7 +466,8 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then((value) {
@@ -518,7 +551,8 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                         setState(() {
                           transcriptEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
+                        final image = await FilePreview.getThumbnail(
+                          changeValue: changeValue,
                           isCV: false,
                           result.files.single.path!,
                         );

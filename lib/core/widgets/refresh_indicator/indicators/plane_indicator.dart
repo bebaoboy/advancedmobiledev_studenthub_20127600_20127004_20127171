@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field, unused_element, avoid_print
+// ignore_for_file: unused_field, unused_element, avoid_print, empty_catches
 
 import 'dart:async';
 import 'dart:math';
