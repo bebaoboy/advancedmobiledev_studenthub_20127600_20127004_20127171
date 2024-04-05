@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/welcome/welcome%20copy.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -365,6 +366,8 @@ class _MainAppBarState extends State<MainAppBar> {
                 // Navigator.of(context).pushAndRemoveUntil(
                 //     MaterialPageRoute2(routeName: Routes.home),
                 //     (Route<dynamic> route) => false);
+                Navigator.of(context)
+                    .push(MaterialPageRoute2(child: const Welcome2()));
               },
               onLongPress: () {
                 Navigator.of(context).push(

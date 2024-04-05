@@ -71,6 +71,8 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   void selectSuggestion(T data) {
+    if (!_hasInputConnection) return;
+
     print(data);
     setState(() {
       _chips.add(data);
@@ -86,6 +88,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   }
 
   void deleteChip(T data) {
+    if (!_hasInputConnection) return;
     setState(() {
       _chips.remove(data);
       _updateTextInputState();
@@ -96,7 +99,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   @override
   void initState() {
     _chips = Set<T>.from(widget.initialChips);
-    _openInputConnection();
+    // _openInputConnection();
     //print(_chips);
     super.initState();
     _focusNode.addListener(_onFocusChanged);
@@ -112,8 +115,8 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     }
     if (mounted) {
       setState(() {
-      // rebuild so that _TextCursor is hidden.
-    });
+        // rebuild so that _TextCursor is hidden.
+      });
     }
   }
 
@@ -177,9 +180,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: _focusNode.hasFocus
-          ? widget.totalHeight
-          : _chips.isEmpty
+      height: _chips.isEmpty
               ? widget.emptyInputHeight
               : widget.nonEmptyInputHeight,
       decoration: const BoxDecoration(
@@ -212,13 +213,17 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                 ),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _suggestions.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return widget.suggestionBuilder(
-                      context, this, _suggestions[index]);
-                },
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              height: _focusNode.hasFocus ? 200 : 0,
+              child: Expanded(
+                child: ListView.builder(
+                  itemCount: _suggestions.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return widget.suggestionBuilder(
+                        context, this, _suggestions[index]);
+                  },
+                ),
               ),
             ),
           ],

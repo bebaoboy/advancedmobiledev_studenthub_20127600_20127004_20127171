@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -139,7 +140,9 @@ abstract class _ProfileFormStore with Store {
         UserStore userStore = getIt<UserStore>();
         userStore.user!.companyProfile =
             CompanyProfile.fromMap(value.data["result"]);
-        // TODO: save profile to sharedpref
+        var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+        sharedPrefsHelper.saveCompanyProfile(CompanyProfile.fromMap(value.data["result"]));
+        // ToDO: save profile to sharedpref
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>

@@ -280,7 +280,6 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
       );
     } else {
       return Container(
-        height: 170,
         width: MediaQuery.of(context).size.width * 0.98,
         margin: EdgeInsetsDirectional.fromSTEB(
           0,

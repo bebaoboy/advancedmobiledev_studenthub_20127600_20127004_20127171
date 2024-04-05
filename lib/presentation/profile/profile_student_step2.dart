@@ -956,8 +956,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                         : MediaQuery.of(context).size.width *
                                             0.84,
                                     child: ChipsInput<Skill>(
-                                      maxInputHeight: 35,
-                                      totalHeight: 150,
+                                      maxInputHeight: 50,
+                                      // totalHeight: 150,
                                       nonEmptyInputHeight: 100,
                                       initialChips: _projects[index].skills !=
                                               null

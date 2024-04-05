@@ -3,6 +3,7 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
@@ -229,8 +230,18 @@ abstract class _ProfileStudentFormStore with Store {
           resume: resumes,
           languages: languages,
           educations: educations,
-          projectExperience: projectExperiences);
-      // TODO: save to shared pref
+          projectExperience: projectExperiences, objectId: studentId);
+      // ToDO: save to shared pref
+      var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+      sharedPrefsHelper.saveStudentProfile(StudentProfile(
+          fullName: userStore.user!.name,
+          skillSet: skillset,
+          techStack: techStack,
+          transcript: transcripts,
+          resume: resumes,
+          languages: languages,
+          educations: educations,
+          projectExperience: projectExperiences, objectId: studentId));
     }
   }
 
@@ -337,7 +348,17 @@ abstract class _ProfileStudentFormStore with Store {
           languages: languages,
           educations: educations,
           projectExperience: projectExperiences);
-      // TODO: save to shared pref
+      // ToDO: save to shared pref
+      var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+      sharedPrefsHelper.saveStudentProfile(StudentProfile(
+          fullName: userStore.user!.name,
+          skillSet: skillset,
+          techStack: techStack,
+          transcript: transcripts,
+          resume: resumes,
+          languages: languages,
+          educations: educations,
+          projectExperience: projectExperiences, objectId: studentId));
     }
   }
 

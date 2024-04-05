@@ -1,6 +1,7 @@
 // ignore_for_file: empty_catches
 
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
 
@@ -160,11 +161,11 @@ class CallManager {
         opponentsIds: callSession.opponentsIds,
         userInfo: const {'customParameter1': 'value1'});
     await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
-    if (context != null) {
+    if (NavigationService.navigatorKey.currentContext != null) {
       Navigator.push(
-        context!,
-        MaterialPageRoute(
-          builder: (context) => IncomingCallScreen(callSession),
+        NavigationService.navigatorKey.currentContext!,
+        MaterialPageRoute2(
+          child: IncomingCallScreen(callSession),
         ),
       );
     }
@@ -184,13 +185,14 @@ class CallManager {
         if (!fromCallkit) {
           ConnectycubeFlutterCallKit.reportCallAccepted(sessionId: sessionId);
         }
-
-        Navigator.push(
-          context!,
-          MaterialPageRoute(
-            builder: (context) => ConversationCallScreen(_currentCall!, true),
+        if (NavigationService.navigatorKey.currentContext != null) {
+          Navigator.push(
+          NavigationService.navigatorKey.currentContext!,
+          MaterialPageRoute2(
+            child: ConversationCallScreen(_currentCall!, true),
           ),
         );
+        }
       }
 
       if (Platform.isIOS) {

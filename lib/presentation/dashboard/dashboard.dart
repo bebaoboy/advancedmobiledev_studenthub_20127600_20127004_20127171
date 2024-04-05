@@ -16,6 +16,7 @@ import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:navbar_router/navbar_router.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 
@@ -66,11 +67,26 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       const KeepAlivePage(MessageTab()),
       const KeepAlivePage(AlertTab())
     ];
+    List<ScrollController> sc = [
+      for (int i = 0; i < 4; i++) ScrollController()
+    ];
+    for (var element in sc) {
+      element.addListener(
+          () {
+            if (element.position.userScrollDirection ==
+                ScrollDirection.reverse) {
+              NavbarNotifier2.hideBottomNavBar = true;
+            } else {
+              NavbarNotifier2.hideBottomNavBar = false;
+            }
+          },
+        );
+    }
     _routes = [
       {
         '/': KeepAlivePage(ProjectTab(
           key: const PageStorageKey(0),
-          scrollController: ScrollController(),
+          scrollController: sc[0],
         )),
         Routes.favortieProject: getRoute(Routes.favortieProject, context),
       },
@@ -181,61 +197,61 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   // }
 
   initItems() {
-      // _routes = [
-      //   {
-      //     '/': KeepAlivePage(ProjectTab(
-      //       key: const PageStorageKey(0),
-      //       scrollController: ScrollController(),
-      //     )),
-      //     Routes.favortieProject: getRoute(Routes.favortieProject, context),
-      //   },
-      //   {
-      //     '/': _userStore.user!.type == UserType.company
-      //         ? KeepAlivePage(DashBoardTab(
-      //             key: const PageStorageKey(1),
-      //             pageController: _pageController,
-      //           ))
-      //         : KeepAlivePage(StudentDashBoardTab(
-      //             key: const PageStorageKey(1), pageController: _pageController)),
-      //     // Routes.projectDetails: ProjectDetailsPage(
-      //     //   project: Project(title: 'som', description: 'smm'),
-      //     // ),
-      //     // Routes.project_post: getRoute(Routes.project_post),
-      //   },
-      //   {
-      //     '/': const KeepAlivePage(MessageTab(
-      //       key: PageStorageKey(2),
-      //     )),
-      //     // ProfileEdit.route: ProfileEdit(),
-      //   },
-      //   {
-      //     '/': const KeepAlivePage(AlertTab(
-      //       key: PageStorageKey(3),
-      //     )),
-      //   },
-      // ];
-      items = [
-        NavbarItem(
-          Icons.business,
-          'Projects',
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-        NavbarItem(
-          Icons.dashboard,
-          'Dashboard',
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        ),
-        NavbarItem(
-          Icons.message,
-          Lang.get('Dashboard_message'),
-          backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        ),
-        NavbarItem(
-          Icons.notifications,
-          Lang.get('Dashboard_alert'),
-          backgroundColor: Theme.of(context).colorScheme.onSecondary,
-        ),
-      ];
+    // _routes = [
+    //   {
+    //     '/': KeepAlivePage(ProjectTab(
+    //       key: const PageStorageKey(0),
+    //       scrollController: ScrollController(),
+    //     )),
+    //     Routes.favortieProject: getRoute(Routes.favortieProject, context),
+    //   },
+    //   {
+    //     '/': _userStore.user!.type == UserType.company
+    //         ? KeepAlivePage(DashBoardTab(
+    //             key: const PageStorageKey(1),
+    //             pageController: _pageController,
+    //           ))
+    //         : KeepAlivePage(StudentDashBoardTab(
+    //             key: const PageStorageKey(1), pageController: _pageController)),
+    //     // Routes.projectDetails: ProjectDetailsPage(
+    //     //   project: Project(title: 'som', description: 'smm'),
+    //     // ),
+    //     // Routes.project_post: getRoute(Routes.project_post),
+    //   },
+    //   {
+    //     '/': const KeepAlivePage(MessageTab(
+    //       key: PageStorageKey(2),
+    //     )),
+    //     // ProfileEdit.route: ProfileEdit(),
+    //   },
+    //   {
+    //     '/': const KeepAlivePage(AlertTab(
+    //       key: PageStorageKey(3),
+    //     )),
+    //   },
+    // ];
+    items = [
+      NavbarItem(
+        Icons.business,
+        'Projects',
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
+      NavbarItem(
+        Icons.dashboard,
+        'Dashboard',
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      ),
+      NavbarItem(
+        Icons.message,
+        Lang.get('Dashboard_message'),
+        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+      ),
+      NavbarItem(
+        Icons.notifications,
+        Lang.get('Dashboard_alert'),
+        backgroundColor: Theme.of(context).colorScheme.onSecondary,
+      ),
+    ];
   }
 
   @override
@@ -435,6 +451,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         },
         onChanged: (p0) {
           // setState(() {});
+          NavbarNotifier2.hideBottomNavBar = false;
         },
         onBackButtonPressed: (isExiting) {
           if (isExiting) {
@@ -483,7 +500,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar(theme: true,);
+    return const MainAppBar(
+      theme: true,
+    );
   }
 }
 

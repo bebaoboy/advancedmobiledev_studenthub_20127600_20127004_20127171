@@ -33,7 +33,7 @@ class _CompanyAccountWidgetState extends State<CompanyAccountWidget> {
     Widget subtitleWidget = Text(widget.name.user.email,
         style: Theme.of(context).textTheme.bodyLarge);
     var icon = widget.isLoggedIn ? Icons.business : Icons.no_cell;
-    if (widget.name.user.studentProfile == null) icon = Icons.tv_off;
+    if (widget.name.user.companyProfile == null) icon = Icons.tv_off;
     Icon profileIcon = Icon(
       icon,
       color: widget.isLoggedInProfile

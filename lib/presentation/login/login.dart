@@ -14,6 +14,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
@@ -26,8 +27,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
-import 'package:boilerplate/presentation/video_call/utils/configs.dart'
-    as utils;
+// import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+//     as utils;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, this.email = ""});
@@ -366,50 +367,66 @@ class _LoginScreenState extends State<LoginScreen> {
             await signOut();
           });
         }
-        var user = userStore.user!.email == "user1@gmail.com"
-            ? utils.users[0]
-            : userStore.user!.email == "user2@gmail.com"
-                ? utils.users[1]
-                : utils.users[2];
-        await createSession(user).then(
-          (value) async {
-            CubeSessionManager.instance.activeSession = value;
+        // var user = userStore.user!.email == "user1@gmail.com"
+        //     ? utils.users[0]
+        //     : userStore.user!.email == "user2@gmail.com"
+        //         ? utils.users[1]
+        //         : utils.users[2];
+        var user = CubeUser(
+          login: userStore.user!.email,
+          email: userStore.user!.email,
+          fullName: userStore.user!.email.split("@").first.toUpperCase(),
+          password: DEFAULT_PASS,
+        );
+        try {
+          var value;
+          try {
+            value = await createSession(user);
+          } catch (e) {
+            log(e.toString(), "BEBAOBOY");
+            user = await signUp(user);
+            user.password ??= DEFAULT_PASS;
 
-            await CubeChatConnection.instance
-                .login(user)
-                .then((cubeUser) async {
-              SharedPrefs.saveNewUser(cubeUser);
-              log(cubeUser.toString(), "BEBAOBOY");
-              if (CubeChatConnection.instance.isAuthenticated() &&
-                  CubeChatConnection.instance.currentUser != null) {
-                log(
-                    (CubeSessionManager.instance.activeSession!.user == null)
-                        .toString(),
-                    "BEBAOBOY");
-              }
+            value = await createSession(user);
+          }
+          var cb = await getUserByLogin(user.login!);
+          if (cb != null) user = cb;
+          user.password ??= DEFAULT_PASS;
+          print(user);
+          CubeSessionManager.instance.activeSession = value;
 
-              initForegroundService();
-              checkSystemAlertWindowPermission(context);
+          await CubeChatConnection.instance.login(user).then((cubeUser) async {
+            SharedPrefs.saveNewUser(cubeUser);
+            log(cubeUser.toString(), "BEBAOBOY");
+            if (CubeChatConnection.instance.isAuthenticated() &&
+                CubeChatConnection.instance.currentUser != null) {
+              log(
+                  (CubeSessionManager.instance.activeSession!.user == null)
+                      .toString(),
+                  "BEBAOBOY");
+            }
 
-              requestNotificationsPermission();
+            initForegroundService();
+            checkSystemAlertWindowPermission(context);
 
-              CallManager.instance.init(context);
+            requestNotificationsPermission();
 
-              PushNotificationsManager.instance.init();
+            CallManager.instance.init(context);
 
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute2(
-                      routeName:
-                          userStore.isLoggedIn ? Routes.home : Routes.login));
-            }).catchError((exception) {
-              //_processLoginError(exception);
+            PushNotificationsManager.instance.init();
 
-              log(exception.toString(), "BEBAOBOY");
-            });
-            // _controller.stop();
-          },
-        ).catchError((exception) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute2(
+                    routeName:
+                        userStore.isLoggedIn ? Routes.home : Routes.login));
+          }).catchError((exception) {
+            //_processLoginError(exception);
+
+            log(exception.toString(), "BEBAOBOY");
+          });
+          // _controller.stop();
+        } catch (exception) {
           //_processLoginError(exception);
 
           log(exception.toString(), "BEBAOBOY");
@@ -417,7 +434,7 @@ class _LoginScreenState extends State<LoginScreen> {
           deleteSessionsExceptCurrent()
               .then((voidResult) {})
               .catchError((error) {});
-        });
+        }
       } catch (e) {
         print(e.toString());
         print("error init cubit login screen");

@@ -7,6 +7,7 @@ import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -209,87 +210,103 @@ class _SplashScreenState extends State<SplashScreen>
       // } catch (e) {}
       //CubeSessionManager.instance.isActiveSessionValid();
 
-      user = userStore.user!.email == "user1@gmail.com"
-          ? utils.users[0]
-          : userStore.user!.email == "user2@gmail.com"
-              ? utils.users[1]
-              : utils.users[2];
-      Future.delayed(const Duration(seconds: 0), () {
+      // user = userStore.user!.email == "user1@gmail.com"
+      //     ? utils.users[0]
+      //     : userStore.user!.email == "user2@gmail.com"
+      //         ? utils.users[1]
+      //         : utils.users[2];
+      Future.delayed(const Duration(seconds: 0), () async {
         Future.delayed(const Duration(seconds: 1));
+        user = CubeUser(
+          login: userStore.user!.email,
+          email: userStore.user!.email,
+          fullName: userStore.user!.email.split("@").first.toUpperCase(),
+          password: DEFAULT_PASS,
+        );
         loadingText.text =
             "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
-        createSession(user).then(
-          (value) async {
-            CubeSessionManager.instance.activeSession = value;
+
+        try {
+          var value;
+          try {
+            value = await createSession(user);
+          } catch (e) {
+            log(e.toString(), "BEBAOBOY");
+            user = await signUp(user);
+            user.password ??= DEFAULT_PASS;
+
+            value = await createSession(user);
+          }
+          var cb = await getUserByLogin(user.login!);
+          if (cb != null) user = cb;
+          user.password ??= DEFAULT_PASS;
+          print(user);
+          CubeSessionManager.instance.activeSession = value;
+
+          await CubeChatConnection.instance.login(user).then((cubeUser) async {
+            SharedPrefs.saveNewUser(cubeUser);
+            log(cubeUser.toString(), "BEBAOBOY");
+            if (CubeChatConnection.instance.isAuthenticated() &&
+                CubeChatConnection.instance.currentUser != null) {
+              log(
+                  (CubeSessionManager.instance.activeSession!.user == null)
+                      .toString(),
+                  "BEBAOBOY");
+            }
+
+            initForegroundService();
+            checkSystemAlertWindowPermission(context);
+
+            requestNotificationsPermission();
 
             CallManager.instance.init(context);
 
-            CubeChatConnection.instance.login(user).then((cubeUser) async {
-              SharedPrefs.saveNewUser(cubeUser);
-              log(cubeUser.toString(), "BEBAOBOY");
-              if (CubeChatConnection.instance.isAuthenticated() &&
-                  CubeChatConnection.instance.currentUser != null) {
-                log(
-                    (CubeSessionManager.instance.activeSession!.user == null)
-                        .toString(),
-                    "BEBAOBOY");
-                initForegroundService();
-                loadingText.text = "Almost done...";
-                checkSystemAlertWindowPermission(context);
+            PushNotificationsManager.instance.init();
 
-                requestNotificationsPermission();
-                PushNotificationsManager.instance.init();
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute2(
+                    routeName:
+                        userStore.isLoggedIn ? Routes.home : Routes.login));
+          }).catchError((exception) {
+            //_processLoginError(exception);
 
-                deleteSessionsExceptCurrent()
-                    .then((voidResult) {})
-                    .catchError((error) {});
-              }
-            }).catchError((exception) {
-              //_processLoginError(exception);
-              //     try {
-              //   _controller.stop();
-              // } catch (e) {}
-              //     Navigator.pushReplacement(
-              //         context,
-              //         MaterialPageRoute2(
-              //             routeName:
-              //                 userStore.isLoggedIn ? Routes.home : Routes.login));
-              log(exception.toString(), "BEBAOBOY");
-            });
-          },
-        ).catchError((exception) {
+            log(exception.toString(), "BEBAOBOY");
+          });
+          // _controller.stop();
+        } catch (exception) {
           //_processLoginError(exception);
-          // try {
-          //   _controller.stop();
-          // } catch (e) {}
-          // Navigator.pushReplacement(
-          //     context,
-          //     MaterialPageRoute2(
-          //         routeName:
-          //             userStore.isLoggedIn ? Routes.home : Routes.login));
+
           log(exception.toString(), "BEBAOBOY");
-        });
-        Future.delayed(const Duration(seconds: 2), () {
-          try {
-            _controller.stop();
-          // ignore: empty_catches
-          } catch (e) {}
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute2(
-                  routeName:
-                      userStore.isLoggedIn ? Routes.home : Routes.login));
-        });
-      });
-    } else {
-      // user = utils.users[2];
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+
+          deleteSessionsExceptCurrent()
+              .then((voidResult) {})
+              .catchError((error) {});
+        }
+        // Future.delayed(const Duration(seconds: 2), () {
+        //   try {
+        //     _controller.stop();
+        //     // ignore: empty_catches
+        //   } catch (e) {}
+        //   Navigator.pushReplacement(
+        //       context,
+        //       MaterialPageRoute2(
+        //           routeName:
+        //               userStore.isLoggedIn ? Routes.home : Routes.login));
+        // });
       });
     }
+    // user = utils.users[2];
+    Future.delayed(const Duration(seconds: 2), () {
+      try {
+        _controller.stop();
+        // ignore: empty_catches
+      } catch (e) {}
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute2(
+              routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+    });
   }
 
   Future<Null> _playAnimation(BuildContext context) async {
@@ -376,8 +393,8 @@ class _SplashScreenState extends State<SplashScreen>
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.primary,
                               ),
-                              decoration:
-                                  const InputDecoration(border: InputBorder.none),
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none),
                               enableInteractiveSelection: false,
                               readOnly: true,
                             ),
