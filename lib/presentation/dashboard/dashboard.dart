@@ -447,7 +447,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
             } else {
               NavbarNotifier2.showSnackBar(
                 context,
-                "Press Back again to exit",
+                Lang.get("exit_confirm"),
 
                 /// offset from bottom of the screen
                 ///

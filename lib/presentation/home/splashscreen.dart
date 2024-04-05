@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -320,70 +321,72 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
-      body: FancyBackgroundApp(
-        child: GestureDetector(
-          onTap: () {},
-          child: Center(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Center(
-                    child: Lottie.asset(
-                      'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
-                      fit: BoxFit.cover,
-                      width: MediaQuery.of(context).orientation ==
-                              Orientation.landscape
-                          ? 200
-                          : 400, // Adjust the width and height as needed
-                      height: MediaQuery.of(context).orientation ==
-                              Orientation.landscape
-                          ? 200
-                          : 400,
-                      repeat:
-                          true, // Set to true if you want the animation to loop
-                      controller: _controller,
+    return BackGuard(
+      child: Scaffold(
+        backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
+        body: FancyBackgroundApp(
+          child: GestureDetector(
+            onTap: () {},
+            child: Center(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Center(
+                      child: Lottie.asset(
+                        'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
+                        fit: BoxFit.cover,
+                        width: MediaQuery.of(context).orientation ==
+                                Orientation.landscape
+                            ? 200
+                            : 400, // Adjust the width and height as needed
+                        height: MediaQuery.of(context).orientation ==
+                                Orientation.landscape
+                            ? 200
+                            : 400,
+                        repeat:
+                            true, // Set to true if you want the animation to loop
+                        controller: _controller,
+                      ),
                     ),
-                  ),
-                  MediaQuery.of(context).orientation != Orientation.landscape
-                      ? Center(
-                          child: Text(
-                            "StudentHub",
-                            style: TextStyle(
-                              fontSize: 44,
-                              fontWeight: FontWeight.bold,
-                              // color: Colors.blueAccent,
-                              color: Theme.of(context).colorScheme.primary,
+                    MediaQuery.of(context).orientation != Orientation.landscape
+                        ? Center(
+                            child: Text(
+                              "StudentHub",
+                              style: TextStyle(
+                                fontSize: 44,
+                                fontWeight: FontWeight.bold,
+                                // color: Colors.blueAccent,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
                             ),
+                          )
+                        : const SizedBox(
+                            width: 0,
                           ),
-                        )
-                      : const SizedBox(
-                          width: 0,
-                        ),
-                  MediaQuery.of(context).orientation != Orientation.landscape
-                      ? Center(
-                          child: TextField(
-                            // "20127600 - 20127004 - 20127171",
-                            controller: loadingText,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: Theme.of(context).colorScheme.primary,
+                    MediaQuery.of(context).orientation != Orientation.landscape
+                        ? Center(
+                            child: TextField(
+                              // "20127600 - 20127004 - 20127171",
+                              controller: loadingText,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              decoration:
+                                  const InputDecoration(border: InputBorder.none),
+                              enableInteractiveSelection: false,
+                              readOnly: true,
                             ),
-                            decoration:
-                                const InputDecoration(border: InputBorder.none),
-                            enableInteractiveSelection: false,
-                            readOnly: true,
+                          )
+                        : const SizedBox(
+                            width: 0,
                           ),
-                        )
-                      : const SizedBox(
-                          width: 0,
-                        ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

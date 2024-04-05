@@ -2,6 +2,7 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
@@ -60,9 +61,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: const EmptyAppBar(),
-      body: _buildBody(),
+    return BackGuard(
+      child: Scaffold(
+        appBar: const EmptyAppBar(),
+        body: _buildBody(),
+      ),
     );
   }
 

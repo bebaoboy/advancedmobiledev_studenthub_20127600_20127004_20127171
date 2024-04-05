@@ -215,5 +215,6 @@
   "day_ago": " days ago",
   "clear_filter": "Clear filter",
   "apply": "Apply",
-  "discard_edit": "Discard edit?"
+  "discard_edit": "Discard edit?",
+  "exit_confirm": "Press Back again to exit"
 }

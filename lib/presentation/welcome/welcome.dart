@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -20,38 +21,40 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Align(
-          alignment: Alignment.topCenter,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              const Icon(
-                Icons.signpost_outlined,
-                size: 25,
-              ),
-              const SizedBox(height: 20.0),
-              Text(Lang.get('Welcome')),
-              Text(Lang.get('Start')),
-              const SizedBox(height: 20.0),
-              SizedBox(
-                width: 200,
-                height: 50,
-                child: RoundedButtonWidget(
-                  onPressed: () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute2(routeName: Routes.dashboard),
-                        (Route<dynamic> route) => false);
-                  },
-                  buttonText: Lang.get('Start_button'),
-                  buttonColor: Theme.of(context).colorScheme.primary,
-                  textColor: Colors.white,
+    return BackGuard(
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        body: Padding(
+          padding: const EdgeInsets.all(30.0),
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                const Icon(
+                  Icons.signpost_outlined,
+                  size: 25,
                 ),
-              ),
-            ],
+                const SizedBox(height: 20.0),
+                Text(Lang.get('Welcome')),
+                Text(Lang.get('Start')),
+                const SizedBox(height: 20.0),
+                SizedBox(
+                  width: 200,
+                  height: 50,
+                  child: RoundedButtonWidget(
+                    onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute2(routeName: Routes.dashboard),
+                          (Route<dynamic> route) => false);
+                    },
+                    buttonText: Lang.get('Start_button'),
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    textColor: Colors.white,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

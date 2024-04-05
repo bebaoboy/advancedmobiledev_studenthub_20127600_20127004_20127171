@@ -20,7 +20,7 @@ class ErrorPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: Image.asset('assets/images/error.jpg', width: 40, height: 40,)),
+            Center(child: Image.asset('assets/images/error.jpg', width: 120, height: 120,)),
             const SizedBox(height: 12),
             Text(
               kDebugMode
@@ -30,7 +30,7 @@ class ErrorPage extends StatelessWidget {
               style: const TextStyle(
                   color: kDebugMode ? Colors.red : Colors.black,
                   fontWeight: FontWeight.bold,
-                  fontSize: 21),
+                  fontSize: 18),
             ),
             const SizedBox(height: 12),
             Expanded(
@@ -42,7 +42,7 @@ class ErrorPage extends StatelessWidget {
                         ? errorDetails.stack.toString()
                         : "We encountered an error and have notified our engineering team about it. Sorry for this inconvenience :'(.",
                     textAlign: TextAlign.left,
-                    style: const TextStyle(color: Colors.black, fontSize: 8),
+                    style: const TextStyle(color: Colors.black, fontSize: 10),
                   ),
                 ),
               ),
