@@ -85,7 +85,6 @@ Future<void> setPreferredOrientations() {
 }
 
 initConnectycube() async {
-  try {
   await init(
     config.APP_ID,
     config.AUTH_KEY,
@@ -97,5 +96,4 @@ initConnectycube() async {
       });
     },
   );
-  } catch(e) {}
 }

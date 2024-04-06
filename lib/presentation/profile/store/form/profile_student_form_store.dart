@@ -296,29 +296,34 @@ abstract class _ProfileStudentFormStore with Store {
       }
       //print(value);
     });
+    if (languages != null) {
+      await _updateLanguage(languages, studentId).then(
+        (value) {
+          success &= value;
+          //print(value);
+        },
+      );
+    }
 
-    await _updateLanguage(languages!, studentId).then(
-      (value) {
-        success &= value;
-        //print(value);
-      },
-    );
+    if (educations != null) {
+      await _updateEducation(educations, studentId).then(
+        (value) {
+          success &= value;
 
-    await _updateEducation(educations!, studentId).then(
-      (value) {
-        success &= value;
+          //print(value);
+        },
+      );
+    }
 
-        //print(value);
-      },
-    );
+    if (projectExperiences != null) {
+      await _updateProjectExperience(projectExperiences, studentId).then(
+        (value) {
+          success &= value;
 
-    await _updateProjectExperience(projectExperiences!, studentId).then(
-      (value) {
-        success &= value;
-
-        //print(value);
-      },
-    );
+          //print(value);
+        },
+      );
+    }
 
     if (resumes != null && oldResume != resumes) {
       await _updateResume(resumes, studentId).then(
