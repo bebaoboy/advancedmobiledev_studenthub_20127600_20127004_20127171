@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:boilerplate/data/network/apis/profile/profile_api.dart';
 import 'package:boilerplate/data/network/apis/user/user_api.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -13,7 +13,7 @@ import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
-import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_project_experience.dart';
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/domain/usecase/user/auth/sign_up_usecase.dart';

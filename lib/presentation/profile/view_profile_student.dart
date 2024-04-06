@@ -11,7 +11,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/profile/view_profile_student_tab1.dart';
-import 'package:boilerplate/presentation/profile/view_profile_student_tab2.dart.dart';
+import 'package:boilerplate/presentation/profile/view_profile_student_tab2.dart';
 import 'package:boilerplate/presentation/profile/view_profile_student_tab3.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';

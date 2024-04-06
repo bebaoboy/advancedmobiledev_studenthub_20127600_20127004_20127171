@@ -12,7 +12,7 @@ import 'package:boilerplate/domain/usecase/profile/add_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
-import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_project_experience.dart';
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:interpolator/interpolator.dart';

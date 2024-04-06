@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
@@ -15,7 +16,7 @@ import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
-import 'package:boilerplate/domain/usecase/profile/update_projectexperience.dart';
+import 'package:boilerplate/domain/usecase/profile/update_project_experience.dart';
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -486,10 +487,10 @@ abstract class _ProfileStudentFormStore with Store {
 
   @action
   Future<bool> _updateProjectExperience(
-      List<ProjectExperience>? projectexperiences, String studentId) async {
+      List<ProjectExperience>? projectExperiences, String studentId) async {
     try {
       final loginParams = UpdateProjectExperienceParams(
-          projectExperiences: projectexperiences ?? [], studentId: studentId);
+          projectExperiences: projectExperiences ?? [], studentId: studentId);
       final future = _updateProjectExperienceUseCase.call(params: loginParams);
       // addProfileCompanyFuture = ObservableFuture(future);
       bool success = false;
@@ -710,7 +711,7 @@ abstract class _ProfileStudentFormStore with Store {
 
   @action
   void setResume(String value) {
-    //print("set resrume");
+    //print("set resume");
     resume = value;
   }
 

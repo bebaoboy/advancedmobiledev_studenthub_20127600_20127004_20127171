@@ -1,4 +1,4 @@
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:dio/dio.dart';
 

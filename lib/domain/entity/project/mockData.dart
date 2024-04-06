@@ -1,4 +1,4 @@
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 
 var allProjects = [
     Project(

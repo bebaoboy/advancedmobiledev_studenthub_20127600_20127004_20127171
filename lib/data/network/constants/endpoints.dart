@@ -10,8 +10,28 @@ class Endpoints {
   // connectTimeout
   static const int connectionTimeout = 30000;
 
-  // booking endpoints // not needed
-  static const String getPosts = "$baseUrl/posts";
+  // unused
+  static const String getPosts = "/api/posts";
+
+  // project
+
+  // all project in dashboard
+  static const String getProjects = "$baseUrl/api/project";
+  static const String getCurrentCompanyProjects =
+      "$baseUrl/project/company/{companyId}";
+  static const String addNewProject = "$baseUrl/api/project";
+  static const String deleteProject = "$baseUrl/api/project/{projectId}";
+  static const String updateProject = "$baseUrl/api/project/{projectId}";
+  static const String getUserFavoriteProjects =
+      "$baseUrl/api/favoriteProject/{studentId}";
+
+  // use to remove from favorite list
+// "{
+//   "projectId": 2,
+//   "disableFlag": 1
+// }"
+  static const String updateUserFavoriteProject =
+      "$baseUrl/api/favoriteProject/{studentId}";
 
   //auth endpoints
   static const String signUp = "$baseUrl/api/auth/sign-up"; // done
@@ -56,8 +76,10 @@ class Endpoints {
   // user endpoints
   static const String resetPassword = "$baseUrl/api/user/{id}"; // done
   static const String getUsers = "$baseUrl/api/user"; // done
-  static const String changePassword = "$baseUrl/api/user/changePassword"; // done
-  static const String forgetPassword = "$baseUrl/api/user/forgotPassword"; // done
+  static const String changePassword =
+      "$baseUrl/api/user/changePassword"; // done
+  static const String forgetPassword =
+      "$baseUrl/api/user/forgotPassword"; // done
 
   // profile
   static const String addProfileCompany =

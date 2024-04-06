@@ -1,7 +1,7 @@
 import 'package:animations/animations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -165,102 +165,97 @@ class _MyProjectItemState extends State<MyProjectItem> {
     }
 
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: Dimens.horizontal_padding),
+      padding: const EdgeInsets.symmetric(
+          horizontal: Dimens.horizontal_padding, vertical: 5),
       child: Container(
-        width: width,
-        decoration: const BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: Colors.black, width: 1.0),
-          ),
-        ),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: Dimens.horizontal_padding,
-                vertical: Dimens.vertical_padding),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.project.title,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                color: Colors.black54, width: 0.3, style: BorderStyle.solid)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+              horizontal: Dimens.horizontal_padding,
+              vertical: Dimens.vertical_padding),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    widget.project.title,
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium!
+                        .copyWith(color: Colors.green.shade400),
+                  ),
+                  Text(createdText,
                       style: Theme.of(context)
                           .textTheme
-                          .bodyMedium!
-                          .copyWith(color: Colors.green.shade400),
-                    ),
-                    Text(createdText,
-                        style: Theme.of(context)
-                            .textTheme
-                            .labelSmall!
-                            .copyWith(fontWeight: FontWeight.w200)),
-                    SizedBox(
-                      width: width * 8,
-                      child: AutoSizeText(widget.project.description,
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyLarge),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              (widget.project.proposal?.length ?? 0).toString(),
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            Text(
-                              'Proposals',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            )
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // Add a message length here
-                            Text(
-                              (widget.project.messages?.length ?? 0).toString(),
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            Text(
-                              'Messages',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            )
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              (widget.project.hired?.length ?? 0).toString(),
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            Text(
-                              'Hired',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            )
-                          ],
-                        )
-                      ],
-                    )
-                  ],
-                ),
-                // ToDo: implement show bottom sheet
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      onPressed: () =>
-                          widget.onShowBottomSheet!(widget.project),
-                      icon: const Icon(Icons.more_horiz_outlined)),
-                )
-              ],
-            ),
+                          .labelSmall!
+                          .copyWith(fontWeight: FontWeight.w200)),
+                  SizedBox(
+                    width: width * 8,
+                    child: AutoSizeText(widget.project.description,
+                        maxLines: 5,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyLarge),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (widget.project.proposal?.length ?? 0).toString(),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            'Proposals',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Add a message length here
+                          Text(
+                            (widget.project.messages?.length ?? 0).toString(),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            'Messages',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          )
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            (widget.project.hired?.length ?? 0).toString(),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          Text(
+                            'Hired',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          )
+                        ],
+                      )
+                    ],
+                  )
+                ],
+              ),
+              // ToDo: implement show bottom sheet
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                    onPressed: () => widget.onShowBottomSheet!(widget.project),
+                    icon: const Icon(Icons.more_horiz_outlined)),
+              )
+            ],
           ),
         ),
       ),

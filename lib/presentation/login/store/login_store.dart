@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';

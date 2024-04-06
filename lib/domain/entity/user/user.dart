@@ -1,3 +1,4 @@
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -47,58 +48,21 @@ class User extends MyObject {
         roles = json["roles"] ?? [UserType.company],
         super(objectId: json["id"]);
 
-// <<<<<<< sprint4-signup_accountActivation_forgetPassword
-//   User(
-//       {required this.type,
-//       required this.email,
-//       this.name = "",
-//       this.isVerified = true});
-
-//   User.fromJson(Map<String, dynamic> json)
-//       : type = json["type"] == "0" ? UserType.student : UserType.company,
-//         email = json["email"] ?? "",
-//         name = json["name"] ?? "",
-//         isVerified = json["isVerified"] ?? false;
-
-// =======
   Map<String, dynamic> toJson() => {
         "type": type.name,
         "email": email,
         "name": name,
-// <<<<<<< sprint4-signup_accountActivation_forgetPassword
-//         "isVerified": isVerified
-// =======
         "isVerified": isVerified,
         "studentProfile": studentProfile,
         "companyProfile": companyProfile,
         "role": roles,
       };
 
-//   @override
-//   String toString() {
-//     return {
-//         "type": type.name,
-//         "email": email,
-//         "name": name,
-// // <<<<<<< sprint4-signup_accountActivation_forgetPassword
-// //         "isVerified": isVerified
-// // =======
-//         "isVerified": isVerified,
-//         "studentProfile": studentProfile != null ? studentProfile!.toJson() : "",
-//         "companyProfile": companyProfile != null ? companyProfile!.toJson() : "",
-//         "role": roles,
-//         "id": objectId
-//       }.toString();
-//   }
-
   Map<String, dynamic> toMap() {
     return {
         "type": type.name,
         "email": email,
         "name": name,
-// <<<<<<< sprint4-signup_accountActivation_forgetPassword
-//         "isVerified": isVerified
-// =======
         "isVerified": isVerified,
         "studentProfile": studentProfile != null ? studentProfile!.toMap() : "",
         "companyProfile": companyProfile != null ? companyProfile!.toMap() : "",

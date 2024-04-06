@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 
 class SetUserProfileUseCase extends UseCase<List<Profile?>, void> {

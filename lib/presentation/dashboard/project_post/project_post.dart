@@ -1,6 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -33,16 +33,25 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     return Scaffold(
       appBar: _buildAppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: _startIndex == 0
-            ? _buildOneContent()
-            : _startIndex == 1
-                ? _buildTwoContent()
-                : _startIndex == 2
-                    ? _buildThreeContent()
-                    : _buildFourContent(),
+        padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
+        child: _buildBody(),
       ),
     );
+  }
+
+  Widget _buildBody() {
+    switch (_startIndex) {
+      case 0:
+        return _buildOneContent();
+      case 1:
+        return _buildTwoContent();
+      case 2:
+        return _buildThreeContent();
+      case 3:
+        return _buildFourContent();
+      default:
+        return Container();
+    }
   }
 
   Widget _buildOneContent() {
@@ -51,14 +60,11 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
       physics: const ClampingScrollPhysics(),
       child: Column(
         children: <Widget>[
-          Align(
-            alignment: Alignment.topLeft,
-            child: AutoSizeText(Lang.get('1/4'),
-                maxLines: 2,
-                minFontSize: 12,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-          ),
+          AutoSizeText(Lang.get('1/4'),
+              maxLines: 2,
+              minFontSize: 12,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(
             height: 20,
           ),
@@ -83,10 +89,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             alignment: Alignment.topLeft,
             child: Text(Lang.get('examples_title')),
           ),
-          Align(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('example_description')),
-          ),
+          Text(Lang.get('example_description')),
           const SizedBox(
             height: 10,
           ),
@@ -94,25 +97,25 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             alignment: Alignment.topRight,
             child: Padding(
                 padding: const EdgeInsets.only(top: 10.0),
-                child: SizedBox(
-                    width: 150,
-                    height: 50,
-                    child: FloatingActionButton(
-                      onPressed: () {
-                        setState(() {
-                          title = controller1.text;
-                          _startIndex++;
-                        });
-                      },
-                      child: AutoSizeText(
-                        Lang.get('scope'),
-                        minFontSize: 14,
-                        style: const TextStyle(
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ))),
+                child: MaterialButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  shape: const StadiumBorder(
+                      side: BorderSide(color: Colors.transparent)),
+                  onPressed: () {
+                    setState(() {
+                      title = controller1.text;
+                      _startIndex++;
+                    });
+                  },
+                  child: AutoSizeText(
+                    Lang.get('scope'),
+                    minFontSize: 14,
+                    style: const TextStyle(
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                )),
           ),
         ],
       ),
@@ -232,27 +235,27 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               alignment: Alignment.topRight,
               child: Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          setState(() {
-                            number = controller2.text;
-                            duration = groupValue ?? 'Not estimated yet';
-                            _startIndex++;
-                          });
-                        },
-                        child: AutoSizeText(
-                          Lang.get('Next_Description'),
-                          minFontSize: 12,
-                          maxLines: 3,
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ))),
+                  child: MaterialButton(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: const StadiumBorder(
+                        side: BorderSide(color: Colors.transparent)),
+                    onPressed: () {
+                      setState(() {
+                        number = controller2.text;
+                        duration = groupValue ?? 'Not estimated yet';
+                        _startIndex++;
+                      });
+                    },
+                    child: AutoSizeText(
+                      Lang.get('Next_Description'),
+                      minFontSize: 12,
+                      maxLines: 3,
+                      style: const TextStyle(
+                        color: Colors.white,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  )),
             ),
           ],
         ));
@@ -307,29 +310,28 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               height: 20,
             ),
             Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
-                  child: SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          setState(() {
-                            description = controller3.text;
-                            _startIndex++;
-                          });
-                        },
-                        child: AutoSizeText(
-                          Lang.get('review'),
-                          minFontSize: 14,
-                          style: const TextStyle(
-                            color: Colors.white,
-                          ),
-                          textAlign: TextAlign.center,
+                alignment: Alignment.topRight,
+                child: Padding(
+                    padding: const EdgeInsets.only(top: 10.0),
+                    child: MaterialButton(
+                      color: Theme.of(context).colorScheme.primary,
+                      shape: const StadiumBorder(
+                          side: BorderSide(color: Colors.transparent)),
+                      onPressed: () {
+                        setState(() {
+                          description = controller3.text;
+                          _startIndex++;
+                        });
+                      },
+                      child: AutoSizeText(
+                        Lang.get('review'),
+                        minFontSize: 14,
+                        style: const TextStyle(
+                          color: Colors.white,
                         ),
-                      ))),
-            ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ))),
           ],
         ));
   }
@@ -413,24 +415,24 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               alignment: Alignment.topRight,
               child: Padding(
                   padding: const EdgeInsets.only(top: 10.0),
-                  child: SizedBox(
-                      width: 150,
-                      height: 50,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          Navigator.of(context).pop<Project>(Project(
-                            title: title,
-                            description: description,
-                            scope: scope,
-                            numberOfStudents: int.tryParse(number) ?? 2,
-                            timeCreated: DateTime.now(),
-                          ));
-                        },
-                        child: Text(
-                          Lang.get('post_job'),
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                      ))),
+                  child: MaterialButton(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: const StadiumBorder(
+                        side: BorderSide(color: Colors.transparent)),
+                    onPressed: () {
+                      Navigator.of(context).pop<Project>(Project(
+                        title: title,
+                        description: description,
+                        scope: scope,
+                        numberOfStudents: int.tryParse(number) ?? 2,
+                        timeCreated: DateTime.now(),
+                      ));
+                    },
+                    child: Text(
+                      Lang.get('post_job'),
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  )),
             ),
           ],
         ));

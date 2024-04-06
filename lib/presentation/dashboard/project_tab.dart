@@ -3,7 +3,7 @@ import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -747,7 +747,7 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
-          margin: const EdgeInsets.only(top: 40),
+          margin: const EdgeInsets.only(top: 50),
           child: LazyLoadingAnimationProjectList(
             scrollController: widget.scrollController,
             itemHeight: 230,

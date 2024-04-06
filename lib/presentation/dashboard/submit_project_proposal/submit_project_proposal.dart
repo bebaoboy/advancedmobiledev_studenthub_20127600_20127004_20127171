@@ -1,6 +1,6 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 

@@ -1,7 +1,7 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -11,14 +11,6 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
-
-// enum CompanySize {
-//   single, // 1
-//   small, // 2-9
-//   medium, // 10-100
-//   large, // 100-1000
-//   xLarge // 1000+
-// }
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

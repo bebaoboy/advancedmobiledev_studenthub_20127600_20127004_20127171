@@ -3,7 +3,7 @@
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/student_project_item.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -12,14 +12,13 @@ class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
   final ScrollController? pageController;
   const StudentDashBoardTab(
-      {super.key, this.isAlive = true,  this.pageController});
+      {super.key, this.isAlive = true, this.pageController});
 
   @override
   State<StudentDashBoardTab> createState() => _StudentDashBoardTabState();
 }
 
-class _StudentDashBoardTabState extends State<StudentDashBoardTab>
-   {
+class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
   // late TabController tabController;
   @override
   void initState() {
@@ -49,9 +48,9 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab>
         Expanded(
           // ignore: prefer_const_constructors
           child: ProjectTabs(
-            // tabController: tabController,
-            // pageController: widget.pageController,
-          ),
+              // tabController: tabController,
+              // pageController: widget.pageController,
+              ),
         ),
       ],
     );
@@ -111,8 +110,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                     projects: studentProjects,
                   ),
                   WorkingProjects(
-                                      scrollController: widget.pageController,
-
+                    scrollController: widget.pageController,
                     projects: studentWorkingProjects,
                   ),
                   AllProjects(
@@ -129,7 +127,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
 class WorkingProjects extends StatefulWidget {
   final List<StudentProject>? projects;
   final ScrollController? scrollController;
-  const WorkingProjects({super.key, required this.projects, required this.scrollController});
+  const WorkingProjects(
+      {super.key, required this.projects, required this.scrollController});
 
   @override
   State<WorkingProjects> createState() => _WorkingProjectsState();
@@ -190,7 +189,8 @@ class _AllProjectsState extends State<AllProjects> {
                   padding: const EdgeInsets.only(top: 12, left: 12),
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: Text('${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
+                      child: Text(
+                          '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
                 ),
                 Flexible(
                   fit: FlexFit.loose,
@@ -220,7 +220,8 @@ class _AllProjectsState extends State<AllProjects> {
                   padding: const EdgeInsets.only(top: 12.0, left: 12.0),
                   child: Container(
                       alignment: Alignment.topLeft,
-                      child: Text('${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
+                      child: Text(
+                          '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
                 ),
                 Flexible(
                   fit: FlexFit.loose,

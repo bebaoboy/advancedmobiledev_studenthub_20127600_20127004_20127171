@@ -5,7 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_company_usecase.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';

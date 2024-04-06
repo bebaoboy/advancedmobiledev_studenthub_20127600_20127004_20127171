@@ -1,7 +1,10 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -34,15 +37,20 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             child: Text(widget.project.title),
           ),
           DefaultTabController(
+            initialIndex: 0,
             length: 4,
             child: Stack(children: [
               SegmentedTabControl(
-                height: Dimens.tab_height + 6,
+                height: Dimens.tab_height + 8,
                 radius: const Radius.circular(12),
                 indicatorColor: Theme.of(context).colorScheme.primaryContainer,
                 tabTextColor: Colors.black45,
                 selectedTabTextColor: Colors.white,
                 backgroundColor: Colors.grey.shade300,
+                textStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .copyWith(fontSize: 11.7),
                 tabs: const [
                   SegmentTab(label: 'Proposals'),
                   SegmentTab(label: 'Detail'),

@@ -1,5 +1,7 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:animations/animations.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -124,34 +126,7 @@ class _ProjectItemState extends State<ProjectItem> {
         proposalText += '0';
       }
 
-      return
-
-//       Card(
-//         child: Padding(
-//           padding: const EdgeInsets.all(8.0),
-//           child: Row(
-//             children: [
-//               Expanded(
-//                 flex: 9,
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Text(
-//                       createdText,
-//                       style: Theme.of(context).textTheme.labelSmall,
-//                     ),
-//                     Text(
-//                       widget.project.title,
-//                       style: Theme.of(context).textTheme.bodyText1,
-//                     ),
-//                     Text(
-//                       'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-//                     ),
-//                     Text(widget.project.description),
-//                     Text(proposalText),
-//                   ],
-
-          _OpenContainerWrapper(
+      return _OpenContainerWrapper(
         project: widget.project,
         closedChild: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -163,13 +138,41 @@ class _ProjectItemState extends State<ProjectItem> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(createdText),
-                      Text(widget.project.title),
+                      Text(createdText,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 12)),
+                      Text(
+                        widget.project.title == ''
+                            ? 'No title'
+                            : widget.project.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: Colors.green.shade400),
+                      ),
                       Text(
                         'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                        style: Theme.of(context).textTheme.subtitle2,
                       ),
-                      Text(widget.project.description),
-                      Text(proposalText),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Student are looking for: ",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      Text(widget.project.description == ''
+                          ? 'No description'
+                          : widget.project.description),
+                      Text(
+                        proposalText,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontSize: 14.0),
+                      ),
                     ],
                   ),
                 ),

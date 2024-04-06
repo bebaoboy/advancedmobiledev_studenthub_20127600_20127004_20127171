@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -195,9 +195,9 @@ class SharedPreferenceHelper {
 
   Future<bool> get requiredChangePass async {
     int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
-    return _sharedPreference
-            .getBool("${Preferences.required_pass_change}_$id") ??
-        false;
+    var oldPass =
+        _sharedPreference.getString("${Preferences.encrypted_pass}_$id") ?? '';
+    return oldPass != '';
   }
 
   Future saveOldPassEncrypted(String oldPass) async {

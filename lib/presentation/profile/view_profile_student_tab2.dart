@@ -8,8 +8,8 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
-import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/profile/store/profile_info_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -318,7 +318,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   Widget _buildLanguageField() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.7,
+      height: MediaQuery.of(context).size.height * 0.8,
       child: ListView.builder(
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
@@ -891,8 +891,8 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                         : MediaQuery.of(context).size.width *
                                             0.84,
                                     child: ChipsInput<Skill>(
-                                      maxInputHeight: 50,
-                                      // totalHeight: 150,
+                                      maxInputHeight: 35,
+                                      totalHeight: 150,
                                       nonEmptyInputHeight: 100,
                                       initialChips:
                                           _projects[index].skills != null

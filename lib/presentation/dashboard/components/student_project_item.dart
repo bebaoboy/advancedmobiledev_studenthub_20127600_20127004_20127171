@@ -1,4 +1,4 @@
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -56,15 +56,15 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
         submittedText = 'Created $differenceWithToday${Lang.get('day_ago')}';
       }
 
-      return Container(
-        constraints: const BoxConstraints(maxHeight: 230),
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(color: Colors.black, width: 1.0),
-            bottom: BorderSide(color: Colors.black, width: 1.0),
+      return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          constraints: const BoxConstraints(maxHeight: 230),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+                color: Colors.black54, width: 0.4, style: BorderStyle.solid),
           ),
-        ),
-        child: Card(
           child: InkWell(
             onTap: () {
               //print('navigate to student project detail');

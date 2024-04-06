@@ -1,11 +1,14 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -57,7 +60,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
     return Column(
       children: <Widget>[
         Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           child: Row(
             children: [
               Align(
@@ -66,12 +69,11 @@ class _DashBoardTabState extends State<DashBoardTab> {
               ),
               const Spacer(),
               Align(
-                alignment: Alignment.topRight,
+                alignment: Alignment.bottomRight,
                 child: SizedBox(
-                  width: 100,
+                  width: 150,
                   height: 30,
-                  child: FloatingActionButton(
-                    heroTag: "F3",
+                  child: RoundedButtonWidget(
                     onPressed: () async {
                       // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
                       await Navigator.of(
@@ -87,10 +89,9 @@ class _DashBoardTabState extends State<DashBoardTab> {
                         });
                       });
                     },
-                    child: Text(
-                      Lang.get('Dashboard_post_job'),
-                      style: const TextStyle(fontSize: 12, color: Colors.white),
-                    ),
+                    buttonText: Lang.get('Dashboard_post_job'),
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    textColor: Colors.white,
                   ),
                 ),
               ),
@@ -155,6 +156,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
             tabTextColor: Colors.black45,
             backgroundColor: Colors.grey.shade300,
             selectedTabTextColor: Colors.white,
+            textStyle:
+                Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 14),
             tabs: const [
               SegmentTab(
                 label: 'All projects',
@@ -293,13 +296,17 @@ class _WorkingProjectsState extends State<WorkingProjects> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: workingProjects?.length ?? 0,
-      itemBuilder: (context, index) => MyProjectItem(
-        project: workingProjects![index],
-        onShowBottomSheet: showBottomSheet,
-      ),
-    );
+    return workingProjects != null && workingProjects!.isNotEmpty
+        ? ListView.builder(
+            itemCount: workingProjects?.length ?? 0,
+            itemBuilder: (context, index) => MyProjectItem(
+              project: workingProjects![index],
+              onShowBottomSheet: showBottomSheet,
+            ),
+          )
+        : Container(
+            alignment: Alignment.center,
+            child: const Text("You have no working projects"));
   }
 }
 
@@ -312,7 +319,6 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
-  
   @override
   Widget build(BuildContext context) {
     return ImplicitlyAnimatedList<Project>(
