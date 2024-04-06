@@ -1,18 +1,31 @@
 // ignore_for_file: no_logic_in_create_state
 
+import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+// import 'package:sembast/sembast.dart';
 
 import 'managers/call_manager.dart';
 import 'managers/push_notifications_manager.dart';
 import 'utils/configs.dart' as utils;
 import 'utils/pref_util.dart';
 
-class SelectOpponentsScreen extends StatelessWidget {
+class SelectOpponentsScreen extends StatefulWidget {
   final CubeUser currentUser;
+  final List<CubeUser> users;
 
+  @override
+  State<SelectOpponentsScreen> createState() => _SelectOpponentsScreenState();
+
+  const SelectOpponentsScreen(this.currentUser,
+      {super.key, required this.users});
+}
+
+class _SelectOpponentsScreenState extends State<SelectOpponentsScreen> {
+  final TextEditingController _textController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,7 +44,52 @@ class SelectOpponentsScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: BodyLayout(currentUser),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 58.0),
+            child: TextFieldWidget(
+              hint: "Type in their email",
+              inputType: TextInputType.emailAddress,
+              icon: Icons.account_box,
+              textController: _textController,
+              inputAction: TextInputAction.next,
+              autoFocus: false,
+              onFieldSubmitted: (value) async {
+                await getUsers({"login": _textController.text})
+                    .then((cubeUser) => {
+                          if (cubeUser != null)
+                            // ignore: avoid_function_literals_in_foreach_calls
+                            cubeUser.items.forEach(
+                              (element) {
+                                try {
+                                  setState(() {
+                                    if (widget.users.firstWhereOrNull(
+                                          (e) => e.id == element.id,
+                                        ) ==
+                                        null) {
+                                      widget.users.add(element);
+                                    }
+                                  });
+                                  if (utils.users.firstWhereOrNull(
+                                        (e) => e.id == element.id,
+                                      ) ==
+                                      null) {
+                                    utils.users.add(element);
+                                  }
+                                } catch (e) {
+                                  print("");
+                                }
+                              },
+                            )
+                        });
+              },
+              errorText: null,
+            ),
+          ),
+          Expanded(child: BodyLayout(widget.currentUser, users: widget.users)),
+        ],
+      ),
     );
   }
 
@@ -40,7 +98,7 @@ class SelectOpponentsScreen extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title:  Text(Lang.get('logout')),
+          title: Text(Lang.get('logout')),
           content: Text(Lang.get("logout_confirm")),
           actions: <Widget>[
             TextButton(
@@ -77,19 +135,18 @@ class SelectOpponentsScreen extends StatelessWidget {
     //   (r) => false,
     // );
   }
-
-  const SelectOpponentsScreen(this.currentUser, {super.key});
 }
 
 class BodyLayout extends StatefulWidget {
   final CubeUser currentUser;
+  final List<CubeUser> users;
 
   @override
   State<StatefulWidget> createState() {
     return _BodyLayoutState(currentUser);
   }
 
-  const BodyLayout(this.currentUser, {super.key});
+  const BodyLayout(this.currentUser, {super.key, required this.users});
 }
 
 class _BodyLayoutState extends State<BodyLayout> {
@@ -148,27 +205,26 @@ class _BodyLayoutState extends State<BodyLayout> {
   }
 
   Widget _getOpponentsList(BuildContext context) {
-    CubeUser? currentUser = CubeChatConnection.instance.currentUser;
-    final users =
-        utils.users.where((user) => user.id != currentUser!.id).toList();
+    // CubeUser? currentUser = CubeChatConnection.instance.currentUser;
 
     return ListView.builder(
-      itemCount: users.length,
+      itemCount: widget.users.length,
+      shrinkWrap: true,
       itemBuilder: (context, index) {
         return Card(
           child: CheckboxListTile(
             title: Center(
               child: Text(
-                users[index].fullName!,
+                widget.users[index].fullName!,
               ),
             ),
-            value: _selectedUsers.contains(users[index].id),
+            value: _selectedUsers.contains(widget.users[index].id),
             onChanged: ((checked) {
               setState(() {
                 if (checked!) {
-                  _selectedUsers.add(users[index].id!);
+                  _selectedUsers.add(widget.users[index].id!);
                 } else {
-                  _selectedUsers.remove(users[index].id);
+                  _selectedUsers.remove(widget.users[index].id);
                 }
               });
             }),
@@ -182,5 +238,9 @@ class _BodyLayoutState extends State<BodyLayout> {
   void initState() {
     super.initState();
     _selectedUsers = {};
+    if (widget.users.isEmpty) {
+      widget.users.addAll(
+          utils.users.where((user) => user.id != currentUser.id).toList());
+    }
   }
 }

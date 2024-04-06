@@ -113,7 +113,10 @@ class StudentProfile extends Profile {
               .map((e) => ProjectExperience.fromMap(e as Map<String, dynamic>)))
           : [],
       review: map['review'] ?? '',
-      techStack: map['techStack'],
+      techStack: (map['techStack'] != null)
+          ? List<TechStack>.from((map['techStack'] as List<dynamic>)
+              .map((e) => TechStack.fromJson(e as Map<String, dynamic>)))
+          : [],
       skillSet: (map['skillSet'] != null)
           ? List<Skill>.from((map['skillSet'] as List<dynamic>)
               .map((e) => Skill.fromMap(e as Map<String, dynamic>)))

@@ -241,6 +241,8 @@ class _SplashScreenState extends State<SplashScreen>
           if (cb != null) user = cb;
           user.password ??= DEFAULT_PASS;
           print(user);
+          utils.users.add(user);
+
           CubeSessionManager.instance.activeSession = value;
 
           await CubeChatConnection.instance.login(user).then((cubeUser) async {

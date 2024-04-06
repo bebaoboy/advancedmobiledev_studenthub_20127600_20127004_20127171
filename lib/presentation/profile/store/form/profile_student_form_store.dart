@@ -20,6 +20,7 @@ import 'package:boilerplate/domain/usecase/profile/update_project_experience.dar
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'profile_student_form_store.g.dart';
@@ -231,7 +232,8 @@ abstract class _ProfileStudentFormStore with Store {
           resume: resumes,
           languages: languages,
           educations: educations,
-          projectExperience: projectExperiences, objectId: studentId);
+          projectExperience: projectExperiences,
+          objectId: studentId);
       // ToDO: save to shared pref
       var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       sharedPrefsHelper.saveStudentProfile(StudentProfile(
@@ -242,7 +244,8 @@ abstract class _ProfileStudentFormStore with Store {
           resume: resumes,
           languages: languages,
           educations: educations,
-          projectExperience: projectExperiences, objectId: studentId));
+          projectExperience: projectExperiences,
+          objectId: studentId));
     }
   }
 
@@ -293,29 +296,34 @@ abstract class _ProfileStudentFormStore with Store {
       }
       //print(value);
     });
+    if (languages != null) {
+      await _updateLanguage(languages, studentId).then(
+        (value) {
+          success &= value;
+          //print(value);
+        },
+      );
+    }
 
-    await _updateLanguage(languages!, studentId).then(
-      (value) {
-        success &= value;
-        //print(value);
-      },
-    );
+    if (educations != null) {
+      await _updateEducation(educations, studentId).then(
+        (value) {
+          success &= value;
 
-    await _updateEducation(educations!, studentId).then(
-      (value) {
-        success &= value;
+          //print(value);
+        },
+      );
+    }
 
-        //print(value);
-      },
-    );
+    if (projectExperiences != null) {
+      await _updateProjectExperience(projectExperiences, studentId).then(
+        (value) {
+          success &= value;
 
-    await _updateProjectExperience(projectExperiences!, studentId).then(
-      (value) {
-        success &= value;
-
-        //print(value);
-      },
-    );
+          //print(value);
+        },
+      );
+    }
 
     if (resumes != null && oldResume != resumes) {
       await _updateResume(resumes, studentId).then(
@@ -336,7 +344,7 @@ abstract class _ProfileStudentFormStore with Store {
         },
       );
     }
-
+    var infoStore = getIt<ProfileStudentStore>();
     var userStore = getIt<UserStore>();
     if (userStore.user != null) {
       userStore.user!.studentProfile = StudentProfile(
@@ -359,7 +367,8 @@ abstract class _ProfileStudentFormStore with Store {
           resume: resumes,
           languages: languages,
           educations: educations,
-          projectExperience: projectExperiences, objectId: studentId));
+          projectExperience: projectExperiences,
+          objectId: studentId));
     }
   }
 

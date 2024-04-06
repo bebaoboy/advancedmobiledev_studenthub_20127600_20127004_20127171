@@ -27,8 +27,8 @@ import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../di/service_locator.dart';
-// import 'package:boilerplate/presentation/video_call/utils/configs.dart'
-//     as utils;
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, this.email = ""});
@@ -393,6 +393,7 @@ class _LoginScreenState extends State<LoginScreen> {
           if (cb != null) user = cb;
           user.password ??= DEFAULT_PASS;
           print(user);
+          utils.users.add(user);
           CubeSessionManager.instance.activeSession = value;
 
           await CubeChatConnection.instance.login(user).then((cubeUser) async {

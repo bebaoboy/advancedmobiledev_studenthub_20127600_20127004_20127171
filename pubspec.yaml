@@ -33,7 +33,7 @@ dependencies:
   # B
   background_fetch:
   # C
-  connectycube_sdk:
+  # connectycube_sdk:
   connectycube_flutter_call_kit: 
   collection:
   crypto:
@@ -45,7 +45,7 @@ dependencies:
   # D
   dio: ^5.1.1
   diffutil_dart: 
-  device_info_plus: ^9.0.0
+  device_info_plus: 
   dart_webrtc:
   # draggable_home:
   # E
@@ -69,8 +69,8 @@ dependencies:
   flutter_typeahead:
   # flutter_chat_types: 
   flutter_background: ^1.2.0
-  flutter_speed_dial: ^6.2.0
-  flutter_webrtc:
+  flutter_speed_dial: ^7.0.0
+  flutter_webrtc: ^0.9.48+hotfix.1
   flutter_file_downloader:
   # G
   get_it: ^7.2.0

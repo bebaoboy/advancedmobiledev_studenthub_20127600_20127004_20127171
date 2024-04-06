@@ -74,25 +74,29 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     if (!_hasInputConnection) return;
 
     print(data);
-    setState(() {
-      _chips.add(data);
-      _updateTextInputState();
-      _suggestions.remove(data);
-      // _scrollController.animateTo(
-      //   _scrollController.position.maxScrollExtent,
-      //   duration: Duration(milliseconds: 10),
-      //   curve: Curves.ease,
-      // );
-    });
+    if (mounted) {
+      setState(() {
+        _chips.add(data);
+        _updateTextInputState();
+        _suggestions.remove(data);
+        // _scrollController.animateTo(
+        //   _scrollController.position.maxScrollExtent,
+        //   duration: Duration(milliseconds: 10),
+        //   curve: Curves.ease,
+        // );
+      });
+    }
     widget.onChanged(_chips.toList(growable: false));
   }
 
   void deleteChip(T data) {
     if (!_hasInputConnection) return;
-    setState(() {
-      _chips.remove(data);
-      _updateTextInputState();
-    });
+    if (mounted) {
+      setState(() {
+        _chips.remove(data);
+        _updateTextInputState();
+      });
+    }
     widget.onChanged(_chips.toList(growable: false));
   }
 
@@ -180,7 +184,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: _chips.isEmpty
+      height: _focusNode.hasFocus
+          ? MediaQuery.of(context).size.height * 0.4
+          : _chips.isEmpty
               ? widget.emptyInputHeight
               : widget.nonEmptyInputHeight,
       decoration: const BoxDecoration(
@@ -196,7 +202,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
               behavior: HitTestBehavior.opaque,
               onTap: requestKeyboard,
               child: InputDecorator(
-                decoration: widget.decoration,
+                decoration: widget.decoration.copyWith(
+                    hintText:
+                        _chips.isNotEmpty ? "" : widget.decoration.hintText),
                 isFocused: _focusNode.hasFocus,
                 isEmpty: _value.text.isEmpty,
                 child: Container(
@@ -213,19 +221,14 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                 ),
               ),
             ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: _focusNode.hasFocus ? 200 : 0,
-              child: Expanded(
+            Expanded(
                 child: ListView.builder(
-                  itemCount: _suggestions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return widget.suggestionBuilder(
-                        context, this, _suggestions[index]);
-                  },
-                ),
-              ),
-            ),
+              itemCount: _suggestions.length,
+              itemBuilder: (BuildContext context, int index) {
+                return widget.suggestionBuilder(
+                    context, this, _suggestions[index]);
+              },
+            )),
           ],
         ),
       ),
@@ -236,12 +239,14 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   void updateEditingValue(TextEditingValue value) {
     final oldCount = _countReplacements(_value);
     final newCount = _countReplacements(value);
-    setState(() {
-      if (newCount < oldCount) {
-        _chips = Set.from(_chips.take(newCount));
-      }
-      _value = value;
-    });
+    if (mounted) {
+      setState(() {
+        if (newCount < oldCount) {
+          _chips = Set.from(_chips.take(newCount));
+        }
+        _value = value;
+      });
+    }
     _onSearchChanged(text);
   }
 
@@ -308,7 +313,9 @@ class _TextCursorState extends State<_TextCaret>
   }
 
   void _onTimer(Timer timer) {
-    setState(() => _displayed = !_displayed);
+    if (mounted) {
+      setState(() => _displayed = !_displayed);
+    }
   }
 
   @override
