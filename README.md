@@ -228,7 +228,6 @@ class Routes {
   //static variables
   static const String splash = '/splash';
   static const String login = '/login';
-  static const String home = '/post';
 
   static final routes = <String, WidgetBuilder>{
     splash: (BuildContext context) => SplashScreen(),

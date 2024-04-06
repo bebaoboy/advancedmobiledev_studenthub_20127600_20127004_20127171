@@ -31,6 +31,7 @@ dependencies:
   animated_tree_view: ^2.1.0
   another_transformer_page_view:
   # B
+  background_fetch:
   # C
   connectycube_sdk:
   connectycube_flutter_call_kit: 
@@ -39,6 +40,7 @@ dependencies:
   cached_network_image:
   cryptoutils: 
   custom_refresh_indicator:
+  connectivity_plus:
   # cupertino_icons: ^1.0.5
   # D
   dio: ^5.1.1

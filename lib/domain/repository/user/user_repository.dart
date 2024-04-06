@@ -56,7 +56,7 @@ abstract class UserRepository {
   Future<Response> updateProfileCompany(AddProfileCompanyParams params);
 
   Future<Response> addProfileStudent(AddProfileStudentParams params);
-  
+
   Future<Response> getProfileStudent(UpdateProfileStudentParams params);
 
   Future<Response> updateProfileStudent(UpdateProfileStudentParams params);

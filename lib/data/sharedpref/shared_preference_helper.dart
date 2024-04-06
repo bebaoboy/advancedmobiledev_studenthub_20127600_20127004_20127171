@@ -111,11 +111,14 @@ class SharedPreferenceHelper {
     int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
 
     return User(
-        email: userEmail,
-        type: userType,
-        roles: userRoles,
-        name: name,
-        objectId: id.toString());
+      email: userEmail,
+      type: userType,
+      roles: userRoles,
+      name: name,
+      objectId: id.toString(),
+      companyProfile: await companyProfile,
+      studentProfile: await studentProfile,
+    );
   }
 
   Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
