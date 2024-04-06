@@ -180,7 +180,9 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
-      height: _chips.isEmpty
+      height: _focusNode.hasFocus
+          ? MediaQuery.of(context).size.height * 0.4
+          : _chips.isEmpty
               ? widget.emptyInputHeight
               : widget.nonEmptyInputHeight,
       decoration: const BoxDecoration(
@@ -196,7 +198,10 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
               behavior: HitTestBehavior.opaque,
               onTap: requestKeyboard,
               child: InputDecorator(
-                decoration: widget.decoration,
+                decoration: widget.decoration.copyWith(
+                    hintText: _chips.isNotEmpty
+                        ? ""
+                        : widget.decoration.hintText),
                 isFocused: _focusNode.hasFocus,
                 isEmpty: _value.text.isEmpty,
                 child: Container(
@@ -213,19 +218,14 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
                 ),
               ),
             ),
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              height: _focusNode.hasFocus ? 200 : 0,
-              child: Expanded(
+            Expanded(
                 child: ListView.builder(
-                  itemCount: _suggestions.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return widget.suggestionBuilder(
-                        context, this, _suggestions[index]);
-                  },
-                ),
-              ),
-            ),
+              itemCount: _suggestions.length,
+              itemBuilder: (BuildContext context, int index) {
+                return widget.suggestionBuilder(
+                    context, this, _suggestions[index]);
+              },
+            )),
           ],
         ),
       ),
