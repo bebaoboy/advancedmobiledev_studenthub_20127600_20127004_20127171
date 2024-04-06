@@ -74,25 +74,29 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
     if (!_hasInputConnection) return;
 
     print(data);
-    setState(() {
-      _chips.add(data);
-      _updateTextInputState();
-      _suggestions.remove(data);
-      // _scrollController.animateTo(
-      //   _scrollController.position.maxScrollExtent,
-      //   duration: Duration(milliseconds: 10),
-      //   curve: Curves.ease,
-      // );
-    });
+    if (mounted) {
+      setState(() {
+        _chips.add(data);
+        _updateTextInputState();
+        _suggestions.remove(data);
+        // _scrollController.animateTo(
+        //   _scrollController.position.maxScrollExtent,
+        //   duration: Duration(milliseconds: 10),
+        //   curve: Curves.ease,
+        // );
+      });
+    }
     widget.onChanged(_chips.toList(growable: false));
   }
 
   void deleteChip(T data) {
     if (!_hasInputConnection) return;
-    setState(() {
-      _chips.remove(data);
-      _updateTextInputState();
-    });
+    if (mounted) {
+      setState(() {
+        _chips.remove(data);
+        _updateTextInputState();
+      });
+    }
     widget.onChanged(_chips.toList(growable: false));
   }
 
@@ -199,9 +203,8 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
               onTap: requestKeyboard,
               child: InputDecorator(
                 decoration: widget.decoration.copyWith(
-                    hintText: _chips.isNotEmpty
-                        ? ""
-                        : widget.decoration.hintText),
+                    hintText:
+                        _chips.isNotEmpty ? "" : widget.decoration.hintText),
                 isFocused: _focusNode.hasFocus,
                 isEmpty: _value.text.isEmpty,
                 child: Container(
@@ -236,12 +239,14 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
   void updateEditingValue(TextEditingValue value) {
     final oldCount = _countReplacements(_value);
     final newCount = _countReplacements(value);
-    setState(() {
-      if (newCount < oldCount) {
-        _chips = Set.from(_chips.take(newCount));
-      }
-      _value = value;
-    });
+    if (mounted) {
+      setState(() {
+        if (newCount < oldCount) {
+          _chips = Set.from(_chips.take(newCount));
+        }
+        _value = value;
+      });
+    }
     _onSearchChanged(text);
   }
 
@@ -308,7 +313,9 @@ class _TextCursorState extends State<_TextCaret>
   }
 
   void _onTimer(Timer timer) {
-    setState(() => _displayed = !_displayed);
+    if (mounted) {
+      setState(() => _displayed = !_displayed);
+    }
   }
 
   @override
