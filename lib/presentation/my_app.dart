@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+import 'package:background_fetch/background_fetch.dart';
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/constants/strings.dart';
 import 'package:boilerplate/core/widgets/animated_theme_app.dart';
@@ -8,6 +9,7 @@ import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -34,8 +36,15 @@ class _MyAppState extends State<MyApp> {
   final ThemeStore _themeStore = getIt<ThemeStore>();
   // final UserStore _userStore = getIt<UserStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
+
+  final UserStore _userStore = getIt<UserStore>();
+
   late final onGenerateRoute;
   late final builder;
+
+  bool enabled = true;
+  int _status = 0;
+  List<DateTime> _events = [];
 
   @override
   void initState() {
@@ -53,12 +62,55 @@ class _MyAppState extends State<MyApp> {
           color: Theme.of(context).colorScheme.primary,
           child: SafeArea(child: child ?? const SizedBox()));
     };
+
+    initPlatformState();
     super.initState();
+  }
+
+  Future<void> initPlatformState() async {
+    // Configure BackgroundFetch
+    BackgroundFetch.configure(
+        BackgroundFetchConfig(
+            minimumFetchInterval: 45,
+            stopOnTerminate: false,
+            enableHeadless: true,
+            requiredNetworkType: NetworkType.ANY), (String taskId) async {
+      // <-- Event handler
+      // This is the fetch-event callback.
+      print("[BackgroundFetch] Event received $taskId");
+
+      await _userStore.fetchUserProfileIfLoggedIn();
+
+      // IMPORTANT:  You must signal completion of your task or the OS can punish your app
+      // for taking too long in the background.
+      BackgroundFetch.finish(taskId);
+    }, (String taskId) async {
+      // <-- Task timeout handler.
+      // This task has exceeded its allowed running-time.  You must stop what you're doing and immediately .finish(taskId)
+      print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
+      BackgroundFetch.finish(taskId);
+    });
+    print('[BackgroundFetch] configure success');
+
+    if (!mounted) return;
   }
 
   @override
   Widget build(BuildContext context) {
     // _themeStore.changeBrightnessToDark(_themeStore.isPlatformDark(context));
+
+    if (enabled) {
+      BackgroundFetch.start().then((int status) {
+        print('[BackgroundFetch] start success: $status');
+      }).catchError((e) {
+        print('[BackgroundFetch] start FAILURE: $e');
+      });
+    } else {
+      BackgroundFetch.stop().then((int status) {
+        print('[BackgroundFetch] stop success: $status');
+      });
+    }
+
     return Observer(
       builder: (context) {
         return PiPMaterialApp(

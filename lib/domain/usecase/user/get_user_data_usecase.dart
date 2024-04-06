@@ -11,6 +11,6 @@ class GetUserDataUseCase extends UseCase<User, void> {
 
   @override
   Future<User> call({required void params}) async {
-    return _userRepository.user;
+    return await _userRepository.user;
   }
 }

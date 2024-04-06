@@ -53,17 +53,6 @@ abstract class _UserStore with Store {
       if (_user != null) _user?.isVerified = true;
     });
 
-    _setUserProfileUseCase.call(params: null).then((value) async {
-      if (value != null) {
-        if (_user != null) {
-          _user?.companyProfile =
-              value[1] != null ? value[1] as CompanyProfile : null;
-          _user?.studentProfile =
-              value[0] != null ? value[0] as StudentProfile : null;
-        }
-      }
-    });
-
     _getMustChangePassUseCase.call(params: null).then((value) {
       shouldChangePass = value.res;
     });
@@ -227,6 +216,20 @@ abstract class _UserStore with Store {
       isLoggedIn = false;
       success = false;
       // throw e;
+    });
+  }
+
+  Future fetchUserProfileIfLoggedIn() async {
+    print('in background fetch');
+    _setUserProfileUseCase.call(params: null).then((value) async {
+      if (value != null) {
+        if (_user != null) {
+          _user?.companyProfile =
+              value[1] != null ? value[1] as CompanyProfile : null;
+          _user?.studentProfile =
+              value[0] != null ? value[0] as StudentProfile : null;
+        }
+      }
     });
   }
 

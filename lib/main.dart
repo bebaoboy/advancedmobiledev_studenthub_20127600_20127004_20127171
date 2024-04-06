@@ -2,12 +2,13 @@
 
 import 'dart:async';
 import 'dart:isolate';
+import 'package:background_fetch/background_fetch.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/firebase_options.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
@@ -28,6 +29,22 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   ////print("Handling a background message: ${message.messageId}");
 }
 
+@pragma('vm:entry-point')
+void backgroundFetchHeadlessTask(HeadlessTask task) async {
+  String taskId = task.taskId;
+  bool isTimeout = task.timeout;
+  if (isTimeout) {
+    // This task has exceeded its allowed running-time.
+    // You must stop what you're doing and immediately .finish(taskId)
+    print("[BackgroundFetch] Headless task timed-out: $taskId");
+    BackgroundFetch.finish(taskId);
+    return;
+  }
+  print('[BackgroundFetch] Headless event received.');
+  // Do your work here...
+  BackgroundFetch.finish(taskId);
+}
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
@@ -38,12 +55,13 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+  // FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
-  FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+  // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   // request permissions for showing notification in iOS
-  firebaseMessaging.requestPermission(alert: true, badge: true, sound: true);
+  FirebaseMessaging.instance
+      .requestPermission(alert: true, badge: true, sound: true);
 
   // add listener for foreground push notifications
   FirebaseMessaging.onMessage.listen((remoteMessage) {
@@ -73,6 +91,8 @@ Future<void> main() async {
   await initConnectycube();
 
   runApp(const MyApp());
+
+  BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
 Future<void> setPreferredOrientations() {
@@ -85,15 +105,20 @@ Future<void> setPreferredOrientations() {
 }
 
 initConnectycube() async {
-  await init(
-    config.APP_ID,
-    config.AUTH_KEY,
-    config.AUTH_SECRET,
-    onSessionRestore: () {
-      return SharedPrefs.getUser().then((savedUser) {
-        log(savedUser?.toString(), "BEBAOBOY");
-        return createSession(savedUser);
-      });
-    },
-  );
+  final List<ConnectivityResult> connectivityResult =
+      await (Connectivity().checkConnectivity());
+
+  if (!connectivityResult.contains(ConnectivityResult.none)) {
+    await init(
+      config.APP_ID,
+      config.AUTH_KEY,
+      config.AUTH_SECRET,
+      onSessionRestore: () {
+        return SharedPrefs.getUser().then((savedUser) {
+          log(savedUser?.toString(), "BEBAOBOY");
+          return createSession(savedUser);
+        });
+      },
+    );
+  }
 }
