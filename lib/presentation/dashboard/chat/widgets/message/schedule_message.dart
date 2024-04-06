@@ -388,7 +388,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => SelectOpponentsScreen(
                                     CubeSessionManager
-                                        .instance.activeSession!.user!),
+                                        .instance.activeSession!.user!, users: List.empty(growable: true)),
                               ));
                             },
                           )
