@@ -43,7 +43,7 @@ import 'package:boilerplate/presentation/login/store/forget_password_store.dart'
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/post/store/post_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_form_store.dart';
-import 'package:boilerplate/presentation/profile/store/profile_info_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
 
