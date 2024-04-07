@@ -43,9 +43,7 @@ class _MyAppState extends State<MyApp> {
   late final builder;
 
   bool enabled = true;
-  int _status = 0;
-  List<DateTime> _events = [];
-
+  
   @override
   void initState() {
     onGenerateRoute = (settings) {

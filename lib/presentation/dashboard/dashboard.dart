@@ -500,8 +500,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar(
+    return MainAppBar(
       theme: true,
+      name: _userStore.user != null ? _userStore.user!.name : "",
     );
   }
 }

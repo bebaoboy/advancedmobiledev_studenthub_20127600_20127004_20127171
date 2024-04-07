@@ -351,23 +351,23 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           builder: (BuildContext c) {
             return ClassicGeneralDialogWidget(
               contentText: Lang.get('signup_email_sent'),
-              negativeText: ':Debug:',
+              // negativeText: ':Debug:',
               positiveText: 'OK',
               onPositiveClick: () {
                 Navigator.of(c).pop();
                 _formStore.success = false;
               },
-              onNegativeClick: () {
-                Navigator.of(c).pop();
-                Navigator.of(context)
-                    .push(MaterialPageRoute2(routeName: Routes.profileStudent));
-              },
+              // onNegativeClick: () {
+              //   Navigator.of(c).pop();
+              //   Navigator.of(context)
+              //       .push(MaterialPageRoute2(routeName: Routes.profileStudent));
+              // },
             );
           },
           animationType: DialogTransitionType.size,
           curve: Curves.fastOutSlowIn,
           duration: const Duration(seconds: 1),
-        );
+        ).then((v) => Navigator.of(context).pop());
       }
     });
     // Future.delayed(const Duration(milliseconds: 0), () {

@@ -69,9 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: FlexFit.loose,
                     child: Column(
                       children: [
-                        Text(Lang.get('home_title')),
+                        Text(Lang.get('home_title'), textAlign: TextAlign.center,),
                         const SizedBox(height: 30),
-                        Text(Lang.get('home_intro')),
+                        Text(Lang.get('home_intro'), textAlign: TextAlign.center,),
                         const SizedBox(height: 25),
                         SizedBox(
                           width: 200,

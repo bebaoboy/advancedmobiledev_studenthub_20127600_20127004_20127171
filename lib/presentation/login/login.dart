@@ -445,16 +445,18 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool error = false;
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
+    if (message.isNotEmpty && !error) {
       Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
+          error = true;
           FlushbarHelper.createError(
             message: message,
             title: Lang.get('error'),
             duration: const Duration(seconds: 3),
-          ).show(NavigationService.navigatorKey.currentContext!);
+          ).show(NavigationService.navigatorKey.currentContext!).then((value) => error = false,);
         }
       });
     }
