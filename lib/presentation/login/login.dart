@@ -21,6 +21,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -407,7 +408,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   "BEBAOBOY");
             }
 
-            initForegroundService();
+            initForegroundService().then((value) {
+              WorkMangerHelper.registerProfileFetch();
+            });
             checkSystemAlertWindowPermission(context);
 
             requestNotificationsPermission();

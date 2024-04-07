@@ -31,7 +31,7 @@ dependencies:
   animated_tree_view: ^2.1.0
   another_transformer_page_view:
   # B
-  background_fetch:
+  # background_fetch:
   # C
   # connectycube_sdk:
   connectycube_flutter_call_kit: 
@@ -142,6 +142,7 @@ dependencies:
   web_browser_detect: ^2.0.3
   web_socket_channel:
   webrtc_interface:
+  workmanager: 
   # X
   # xmpp_stone:
   xml: 

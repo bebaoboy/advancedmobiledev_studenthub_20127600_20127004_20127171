@@ -4,7 +4,6 @@ import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-
 //
 // ------------------- PROJECT ------------------------------
 //
@@ -93,6 +92,21 @@ class Project extends ProjectBase {
   getModifiedTimeCreated() {
     return timeCreated.difference(DateTime.now()).inDays.abs();
   }
+
+  factory Project.fromMap(Map<String, dynamic> json) {
+    return Project(
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      timeCreated: json['timeCreated'] ?? DateTime.now(),
+      scope: Scope.values[json['scope'] ?? 0],
+      numberOfStudents: json['numberOfStudent'] ?? 0,
+    );
+  }
+
+  @override
+  // ignore: overridden_fields
+  bool isLoading;
+
 }
 
 ///

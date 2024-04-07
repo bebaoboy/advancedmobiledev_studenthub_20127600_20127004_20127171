@@ -219,7 +219,7 @@ abstract class _UserStore with Store {
     });
   }
 
-  Future fetchUserProfileIfLoggedIn() async {
+  Future<bool> fetchUserProfileIfLoggedIn() async {
     print('in background fetch');
     _setUserProfileUseCase.call(params: null).then((value) async {
       if (value != null) {
@@ -228,9 +228,12 @@ abstract class _UserStore with Store {
               value[1] != null ? value[1] as CompanyProfile : null;
           _user?.studentProfile =
               value[0] != null ? value[0] as StudentProfile : null;
+          return Future.value(true);
         }
       }
-    });
+      return Future.value(false);
+    }).onError((error, stackTrace) => Future.value(false));
+    return Future.value(true);
   }
 
   Future logout() async {

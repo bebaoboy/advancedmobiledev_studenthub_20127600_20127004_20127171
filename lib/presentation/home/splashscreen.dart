@@ -13,6 +13,7 @@ import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
@@ -256,7 +257,9 @@ class _SplashScreenState extends State<SplashScreen>
                   "BEBAOBOY");
             }
 
-            initForegroundService();
+            initForegroundService().then((value) {
+              WorkMangerHelper.registerProfileFetch();
+            });
             checkSystemAlertWindowPermission(context);
 
             requestNotificationsPermission();
