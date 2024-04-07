@@ -59,6 +59,7 @@ class _MessageTabState extends State<MessageTab> {
         Positioned.fill(
           top: 0,
           child: PlaneIndicator(
+            onRefresh: () => Future.delayed(const Duration(seconds: 3)),
             child: Stack(
               
               children: [

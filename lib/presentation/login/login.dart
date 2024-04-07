@@ -1,4 +1,3 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
@@ -6,12 +5,12 @@ import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
@@ -25,6 +24,7 @@ import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connect
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart'
@@ -449,31 +449,20 @@ class _LoginScreenState extends State<LoginScreen> {
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty && !error) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          error = true;
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(NavigationService.navigatorKey.currentContext!).then((value) => error = false,);
-        }
-      });
+      error = true;
+      Toastify.show(context, Lang.get('error'), message,
+          ToastificationType.error, () => error = false);
     }
 
     return const SizedBox.shrink();
   }
 
   _showNotificationMessage(String message) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      if (message.isNotEmpty) {
-        FlushbarHelper.createInformation(
-          message: message,
-          title: Lang.get('notification'),
-          duration: const Duration(seconds: 3),
-        ).show(NavigationService.navigatorKey.currentContext!);
-      }
-    });
+    if (message.isNotEmpty && !error) {
+      error = true;
+      Toastify.show(context, Lang.get('notification'), message,
+          ToastificationType.info, () => error = false);
+    }
     return const SizedBox.shrink();
   }
 

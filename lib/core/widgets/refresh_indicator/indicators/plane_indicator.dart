@@ -47,9 +47,15 @@ class Cloud {
 
 class PlaneIndicator extends StatefulWidget {
   final Widget child;
+  final bool leadingScrollIndicatorVisible;
+  final bool trailingScrollIndicatorVisible;
+  final RefreshCallback onRefresh;
   const PlaneIndicator({
     super.key,
     required this.child,
+    required this.onRefresh,
+    this.leadingScrollIndicatorVisible = false,
+    this.trailingScrollIndicatorVisible = false,
   });
 
   @override
@@ -294,7 +300,9 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
               }
             } catch (e) {}
           },
-          onRefresh: () => Future.delayed(const Duration(seconds: 3)),
+          // trailingScrollIndicatorVisible: widget.trailingScrollIndicatorVisible,
+          // leadingScrollIndicatorVisible: widget.leadingScrollIndicatorVisible,
+          onRefresh: widget.onRefresh,
           builder: (BuildContext context, Widget child,
               IndicatorController controller) {
             return AnimatedBuilder(

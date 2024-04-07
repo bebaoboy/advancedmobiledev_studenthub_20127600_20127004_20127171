@@ -1,3 +1,5 @@
+// ignore_for_file: overridden_fields
+
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -27,6 +29,7 @@ extension ScopeTitle on Scope {
 
 abstract class ShimmerLoadable {
   bool isLoading = true;
+  bool doneLoading = false;
 }
 
 ///
@@ -42,6 +45,7 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
 
   ProjectBase({
     this.isLoading = true,
+    this.doneLoading = false,
     required this.title,
     required this.description,
     this.scope = Scope.short,
@@ -50,6 +54,9 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
 
   @override
   bool isLoading;
+  
+  @override
+  bool doneLoading;
 }
 
 ///
@@ -79,7 +86,6 @@ class Project extends ProjectBase {
     this.messages,
     required this.timeCreated,
     this.isFavorite = false,
-    this.isLoading = true,
     this.isWorking = false,
     super.id,
   });
@@ -87,10 +93,6 @@ class Project extends ProjectBase {
   getModifiedTimeCreated() {
     return timeCreated.difference(DateTime.now()).inDays.abs();
   }
-
-  @override
-  // ignore: overridden_fields
-  bool isLoading;
 }
 
 ///
@@ -116,7 +118,6 @@ class StudentProject extends Project {
     super.numberOfStudents = 1,
     required super.timeCreated,
     super.isFavorite = false,
-    super.isLoading = true,
     this.isSubmitted = true,
     this.isAccepted = false,
     super.id,

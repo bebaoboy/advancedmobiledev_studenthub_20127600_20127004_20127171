@@ -317,9 +317,11 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           child: Align(
             alignment: Alignment.topCenter,
             child: isSuggestionTapped
-                ? ExampleLoadingAnimationProjectList(
-                    height: MediaQuery.of(context).size.height * 0.85,
+                ? LazyLoadingAnimationProjectList(
+                  scrollController: ScrollController(),
+                    itemHeight: MediaQuery.of(context).size.height * 0.3,
                     list: widget.searchList,
+                    skipItemLoading: true,
                     firstCallback: (id) {
                       setState(() {
                         for (int i = 0; i < allProjects.length; i++) {

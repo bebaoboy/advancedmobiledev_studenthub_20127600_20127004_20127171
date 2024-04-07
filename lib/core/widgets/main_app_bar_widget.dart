@@ -375,7 +375,7 @@ class _MainAppBarState extends State<MainAppBar> {
             },
             child: Text((_userStore.user != null &&
                         _userStore.user!.type == UserType.company
-                    ? "©"
+                    ? "© "
                     : "") +
                 (widget.name.isNotEmpty
                     ? widget.name

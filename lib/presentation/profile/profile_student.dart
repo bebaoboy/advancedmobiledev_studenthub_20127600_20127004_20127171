@@ -80,7 +80,7 @@ class _SearchDropdownState extends State<SearchDropdown> {
       initialItem: userStore.user != null &&
               userStore.user!.studentProfile != null &&
               userStore.user!.studentProfile!.techStack != null
-          ? userStore.user!.studentProfile!.techStack![0]
+          ? userStore.user!.studentProfile!.techStack!
           : _list[0],
       futureRequest: (p0) {
         return Future.microtask(
@@ -330,7 +330,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   const SizedBox(height: 14.0),
                   SearchDropdown(
                     onListChangedCallback: (p0) {
-                      _profileStudentFormStore.setTechStack([p0]);
+                      _profileStudentFormStore.setTechStack(p0);
                     },
                   ),
                   // _buildUserIdField(),

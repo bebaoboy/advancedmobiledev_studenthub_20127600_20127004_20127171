@@ -212,10 +212,10 @@ abstract class _UserStore with Store {
             : value.data['errorDetails'].toString();
       }
     }).catchError((e) {
-      //print(e);
+      print(e);
       isLoggedIn = false;
       success = false;
-      // throw e;
+      //throw e;
     });
   }
 
