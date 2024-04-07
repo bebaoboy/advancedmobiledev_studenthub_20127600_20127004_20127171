@@ -56,8 +56,10 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 40),
-          child: ExampleLoadingAnimationProjectList(
-            height: MediaQuery.of(context).size.height * 0.9,
+          child: LazyLoadingAnimationProjectList(
+            scrollController: ScrollController(),
+            skipItemLoading: true,
+            itemHeight: MediaQuery.of(context).size.height * 0.3,
             list: widget.projectList ?? [],
             firstCallback: (i) {
               setState(() {

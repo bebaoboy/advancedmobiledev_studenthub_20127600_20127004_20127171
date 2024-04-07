@@ -143,6 +143,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
   }
 
   unfocusKeyboard() {
+    focusNode.unfocus();
     final FocusScopeNode currentScope = FocusScope.of(context);
     if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
       FocusManager.instance.primaryFocus?.unfocus();
@@ -225,9 +226,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                           // * if field empty then the user trying to close bar
                           if (textFieldValue == '') {
                             unfocusKeyboard();
-                            setState(() {
-                              toggle = 0;
-                            });
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
 
                             ///reverse == close
                             _con.reverse();
@@ -242,9 +243,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                             unfocusKeyboard();
                             focusNode.unfocus();
 
-                            setState(() {
-                              toggle = 0;
-                            });
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
                           }
                         } catch (e) {
                           ///print the error if the try block fails
@@ -270,9 +271,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                                 // * if field empty then the user trying to close bar
                                 if (textFieldValue == '') {
                                   unfocusKeyboard();
-                                  setState(() {
-                                    toggle = 0;
-                                  });
+                                  // setState(() {
+                                  //   toggle = 0;
+                                  // });
 
                                   ///reverse == close
                                   _con.reverse();
@@ -286,9 +287,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                                 if (widget.closeSearchOnSuffixTap) {
                                   unfocusKeyboard();
                                   focusNode.unfocus();
-                                  setState(() {
-                                    toggle = 0;
-                                  });
+                                  // setState(() {
+                                  //   toggle = 0;
+                                  // });
                                 }
                               } catch (e) {
                                 ///print the error if the try block fails
@@ -304,7 +305,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
             AnimatedPositioned(
               duration: Duration(milliseconds: widget.animationDurationInMilli),
               left: (toggle == 0) ? 20.0 : 10,
-              right: (toggle == 0) ? 0 : 40,
+              right: 20,
               curve: Curves.easeOut,
               top: 6.0,
 
@@ -321,7 +322,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                       hideOnEmpty: true,
                       hideWithKeyboard: false,
                       hideKeyboardOnDrag: true,
-                      hideOnUnfocus: false,
+                      hideOnUnfocus: true,
                       controller: widget.searchTextEditingController,
                       suggestionsCallback: widget.onSuggestionCallback,
                       itemBuilder: widget.suggestionItemBuilder,
@@ -360,17 +361,17 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                           onSubmitted: (value) => {
                             widget.onSubmitted(value),
                             unfocusKeyboard(),
-                            setState(() {
-                              toggle = 0;
-                            }),
+                            // setState(() {
+                            //   toggle = 0;
+                            // }),
                             //widget.textController.clear(),
                           },
                           onEditingComplete: () {
                             /// on editing complete the keyboard will be closed and the search bar will be closed
                             unfocusKeyboard();
-                            setState(() {
-                              toggle = 0;
-                            });
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
                           },
 
                           ///style is of type TextStyle, the default is just a color black
@@ -378,7 +379,8 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                               const TextStyle(color: Colors.black),
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(bottom: 5),
+                            contentPadding:
+                                const EdgeInsets.only(bottom: 5, right: 100),
                             isDense: true,
                             floatingLabelBehavior: FloatingLabelBehavior.never,
                             labelText: widget.helpText,

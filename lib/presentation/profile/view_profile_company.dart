@@ -76,8 +76,9 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
     // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
-        bool b = false;
-        await showAnimatedDialog<bool>(
+        bool b = !enabled;
+        if (enabled) {
+          await showAnimatedDialog<bool>(
               context: context,
               barrierDismissible: true,
               builder: (BuildContext context) {
@@ -98,6 +99,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               curve: Curves.fastOutSlowIn,
               duration: const Duration(seconds: 1),
             );
+        }
         return b;
       },
       child: Material(

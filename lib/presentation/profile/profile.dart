@@ -338,8 +338,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           barrierDismissible: true,
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
-              contentText:
-                  '${_formStore.companyName} tạo profile thành công!',
+              contentText: '${_formStore.companyName} tạo profile thành công!',
               negativeText: Lang.get('cancel'),
               positiveText: 'OK',
               onPositiveClick: () {
@@ -354,7 +353,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           animationType: DialogTransitionType.size,
           curve: Curves.fastOutSlowIn,
           duration: const Duration(seconds: 1),
-        );
+        ).then((v) => Navigator.of(context).pop());
       }
       // _formStore.addProfileCompanyFuture;
       // Navigator.of(context).pushAndRemoveUntil(

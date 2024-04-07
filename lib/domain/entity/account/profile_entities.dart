@@ -22,7 +22,7 @@ class StudentProfile extends Profile {
   int yearOfExperience;
   String title; // job
   String review; // maybe enum
-  List<TechStack>? techStack;
+  TechStack? techStack;
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
@@ -113,10 +113,7 @@ class StudentProfile extends Profile {
               .map((e) => ProjectExperience.fromMap(e as Map<String, dynamic>)))
           : [],
       review: map['review'] ?? '',
-      techStack: (map['techStack'] != null)
-          ? List<TechStack>.from((map['techStack'] as List<dynamic>)
-              .map((e) => TechStack.fromJson(e as Map<String, dynamic>)))
-          : [],
+      techStack: map['techStack'] != null ? TechStack.fromJson(map['techStack']) : null,
       skillSet: (map['skillSet'] != null)
           ? List<Skill>.from((map['skillSet'] as List<dynamic>)
               .map((e) => Skill.fromMap(e as Map<String, dynamic>)))

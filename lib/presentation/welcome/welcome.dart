@@ -1,6 +1,8 @@
 import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -19,6 +21,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     super.initState();
   }
 
+  var userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
     return BackGuard(
@@ -36,8 +40,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   size: 25,
                 ),
                 const SizedBox(height: 20.0),
-                Text(Lang.get('Welcome')),
-                Text(Lang.get('Start')),
+                Text(
+                  "${Lang.get('Welcome')} ${userStore.user != null ? userStore.user!.name : ""}!",
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20.0),
+                Text(
+                  Lang.get('Start'),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 20.0),
                 SizedBox(
                   width: 200,

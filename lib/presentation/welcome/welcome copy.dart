@@ -32,8 +32,7 @@ class _Welcome2State extends State<Welcome2> {
             ),
             child: ClipOval(
               child: Image.network(
-                'https://docs.flutter.dev/cookbook'
-                '/img-files/effects/split-check/Avatar1.jpg',
+                'https://docs.flutter.dev/assets/images/404/dash_nest.png',
                 fit: BoxFit.cover,
               ),
             ),

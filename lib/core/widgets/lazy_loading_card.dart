@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -299,140 +300,6 @@ const _shimmerGradient = LinearGradient(
   tileMode: TileMode.clamp,
 );
 
-class ExampleLoadingAnimationProjectList extends StatefulWidget {
-  const ExampleLoadingAnimationProjectList({
-    super.key,
-    required this.height,
-    required this.list,
-    required this.firstCallback,
-  });
-
-  final double height;
-  final List<Project> list;
-  final Function firstCallback;
-
-  @override
-  State<ExampleLoadingAnimationProjectList> createState() =>
-      _ExampleLoadingAnimationProjectListState();
-}
-
-class _ExampleLoadingAnimationProjectListState
-    extends State<ExampleLoadingAnimationProjectList> {
-  final bool _isLoading = true;
-  late List<Timer?> timer;
-
-  void _toggleLoading() async {
-    for (int i = 0; i < widget.list.length; i++) {
-      bool b = widget.list[i].isLoading;
-      // print(i.toString() + ": " + b.toString());
-      timer[i] = Timer(
-          Duration(milliseconds: b ? Random().nextInt(30) + 8 : 0) * 100, () {
-        try {
-          setState(() {
-            widget.list[i].isLoading = false;
-          });
-        } catch (e) {}
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    for (var element in timer) {
-      if (element != null) element.cancel();
-    }
-    super.dispose();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    timer = List.filled(widget.list.length, null, growable: true);
-    _toggleLoading();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Shimmer(
-      linearGradient: _shimmerGradient,
-      child: Scrollbar(
-        child: widget.list.isEmpty
-            ? Center(child: Text(Lang.get("nothing_here")))
-            : ListView(
-                physics: const ClampingScrollPhysics(),
-                children: [
-                  // _buildTopRowList(),
-                  const SizedBox(height: 16),
-                  _buildList(),
-                ],
-              ),
-      ),
-    )
-        // floatingActionButton: FloatingActionButton(
-        //   onPressed: _toggleLoading,
-        //   child: Icon(
-        //     _isLoading ? Icons.hourglass_full : Icons.hourglass_bottom,
-        //   ),
-        // ),
-        ;
-  }
-
-  Widget _buildTopRowList() {
-    return SizedBox(
-      height: 72,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: 10,
-        itemBuilder: (context, index) {
-          return _buildTopRowItem();
-        },
-      ),
-    );
-  }
-
-  Widget _buildTopRowItem() {
-    return ShimmerLoading(
-      isLoading: _isLoading,
-      child: const CircleListItem(),
-    );
-  }
-
-  Widget _buildList() {
-    return Container(
-      width: 100,
-      padding: const EdgeInsets.only(bottom: 60),
-      height: widget.height - 80,
-      child: ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        itemCount: widget.list.length,
-        itemBuilder: (context, index) {
-          return _buildListItem(widget.list[index], index);
-        },
-      ),
-    );
-  }
-
-  // Widget _buildListItem() {
-  //   return ShimmerLoading(
-  //     isLoading: _isLoading,
-  //     child: CardListItem(
-  //       isLoading: _isLoading,
-  //     ),
-  //   );
-  // }
-  Widget _buildListItem(ShimmerLoadable w, int index) {
-    return ShimmerLoading(
-      isLoading: w.isLoading,
-      child: ProjectItem(
-        project: w as Project,
-        onFavoriteTap: () => widget.firstCallback(w.objectId),
-      ),
-    );
-  }
-}
-
 class LazyLoadingAnimationProjectList extends StatefulWidget {
   const LazyLoadingAnimationProjectList({
     super.key,
@@ -440,12 +307,14 @@ class LazyLoadingAnimationProjectList extends StatefulWidget {
     required this.list,
     required this.firstCallback,
     required this.scrollController,
+    this.skipItemLoading = false,
   });
 
   final double itemHeight;
   final List<Project> list;
   final Function firstCallback;
   final ScrollController? scrollController;
+  final bool skipItemLoading;
 
   @override
   State<LazyLoadingAnimationProjectList> createState() =>
@@ -460,8 +329,13 @@ class _LazyLoadingAnimationProjectListState
     for (int i = 0; i < widget.list.length; i++) {
       bool b = widget.list[i].isLoading;
       // print(i.toString() + ": " + b.toString());
-      Future.delayed(
-              Duration(milliseconds: b ? Random().nextInt(10) + 5 : 0) * 100)
+      Future.delayed(Duration(
+                  milliseconds: widget.skipItemLoading
+                      ? 0
+                      : b
+                          ? Random().nextInt(10) + 5
+                          : 0) *
+              100)
           .then((value) {
         try {
           setState(() {
@@ -504,7 +378,7 @@ class _LazyLoadingAnimationProjectListState
       });
     } catch (e) {}
 
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 2));
     // here we simulate the loading of new items
     // from the server or any other source
     // we pass the page number to the onLoadMore function
@@ -552,101 +426,97 @@ class _LazyLoadingAnimationProjectListState
             //   ],
             // ),
 
-            EnhancedPaginatedView<Project>(
-          scrollController: widget.scrollController,
-          shouldDeduplicate: false,
-          listOfData: initList,
-          itemsPerPage: maxItems,
-          showLoading: isLoading,
-          isMaxReached: isMaxReached,
-          onLoadMore: loadMore,
-          loadingWidget:
-              // const Center(child: CircularProgressIndicator()),
-              Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Lottie.asset(
-                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                    fit: BoxFit.cover,
-                    width: 60, // Adjust the width and height as needed
-                    height: 60,
-                    repeat:
-                        true, // Set to true if you want the animation to loop
+            PlaneIndicator(
+          onRefresh: () => Future.delayed(const Duration(seconds: 3), () {
+            // loadMore(startIndex);
+          }),
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: EnhancedPaginatedView<Project>(
+                  scrollController: widget.scrollController,
+                  physics: const BouncingScrollPhysics(),
+                  shouldDeduplicate: false,
+                  listOfData: initList,
+                  itemsPerPage: maxItems,
+                  showLoading: isLoading,
+                  isMaxReached: isMaxReached,
+                  onLoadMore: loadMore,
+                  loadingWidget:
+                      // const Center(child: CircularProgressIndicator()),
+                      Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: Lottie.asset(
+                            'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                            fit: BoxFit.cover,
+                            width: 60, // Adjust the width and height as needed
+                            height: 60,
+                            repeat:
+                                true, // Set to true if you want the animation to loop
+                          ),
+                        ),
+                        Center(
+                          child: Text(
+                            Lang.get("loading"),
+                            style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.blueAccent),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
+
+                  /// [showErrorWidget] is a boolean that will be used
+                  /// to control the error widget
+                  /// this boolean will be set to true when an error occurs
+                  showError: false,
+                  errorWidget: (page) => Center(
+                    child: Column(
+                      children: [
+                        Text(Lang.get('nothing_here')),
+                        ElevatedButton(
+                          onPressed: () => loadMore(page),
+                          child: Text(Lang.get('Reload')),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  /// the `reverse` parameter is a boolean that will be used
+                  /// to reverse the list and its children
+                  /// it code be handy when you are building a chat app for example
+                  /// and you want to reverse the list to show the latest messages
+
+                  builder: (physics, items, shrinkWrap, reverse) {
+                    return ListView.builder(
+                      // here we must pass the physics, items and shrinkWrap
+                      // that came from the builder function
+                      reverse: false,
+                      physics: physics,
+                      shrinkWrap: true,
+                      itemCount: items.length,
+                      // separatorBuilder: (BuildContext context, int index) {
+                      //   return const Divider(
+                      //     height: 16,
+                      //   );
+                      // },
+                      itemBuilder: (BuildContext context, int index) {
+                        return SizedBox(
+                            width: 100,
+                            height: widget.itemHeight,
+                            child: _buildListItem(widget.list[index], index));
+                      },
+                    );
+                  },
                 ),
-                Center(
-                  child: Text(
-                    Lang.get("loading"),
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent),
-                  ),
-                )
-              ],
-            ),
+              )
+            ],
           ),
-
-          /// [showErrorWidget] is a boolean that will be used
-          /// to control the error widget
-          /// this boolean will be set to true when an error occurs
-          showError: false,
-          errorWidget: (page) => Center(
-            child: Column(
-              children: [
-                Text(Lang.get('nothing_here')),
-                ElevatedButton(
-                  onPressed: () => loadMore(page),
-                  child: Text(Lang.get('Reload')),
-                )
-              ],
-            ),
-          ),
-          // header: Padding(
-          //   padding: const EdgeInsets.all(8.0),
-          //   child: Column(
-          //     children: [
-          //       Text(
-          //         'Header',
-          //         style: Theme.of(context).textTheme.headlineLarge,
-          //       ),
-          //       const SizedBox(height: 16),
-          //       OutlinedButton(
-          //         onPressed: () {},
-          //         child: const Text(Lang.get('Bloc Example'),
-          //       ),
-          //     ],
-          //   ),
-          // ),
-
-          /// the `reverse` parameter is a boolean that will be used
-          /// to reverse the list and its children
-          /// it code be handy when you are building a chat app for example
-          /// and you want to reverse the list to show the latest messages
-
-          builder: (physics, items, shrinkWrap, reverse) {
-            return ListView.builder(
-              // here we must pass the physics, items and shrinkWrap
-              // that came from the builder function
-              reverse: false,
-              physics: physics,
-              shrinkWrap: true,
-              itemCount: items.length,
-              // separatorBuilder: (BuildContext context, int index) {
-              //   return const Divider(
-              //     height: 16,
-              //   );
-              // },
-              itemBuilder: (BuildContext context, int index) {
-                return SizedBox(
-                    width: 100,
-                    height: widget.itemHeight,
-                    child: _buildListItem(widget.list[index], index));
-              },
-            );
-          },
         ),
       ),
     )
@@ -709,7 +579,7 @@ class _LazyLoadingAnimationProjectListState
       isLoading: w.isLoading,
       child: ProjectItem(
         project: w as Project,
-        onFavoriteTap: () => widget.firstCallback(index),
+        onFavoriteTap: () => widget.firstCallback(w.objectId),
       ),
     );
   }

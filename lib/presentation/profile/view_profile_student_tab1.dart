@@ -51,7 +51,7 @@ class _TechStackDropdownState extends State<TechStackDropdown> {
       initialItem: userStore.user != null &&
               userStore.user!.studentProfile != null &&
               userStore.user!.studentProfile!.techStack != null
-          ? userStore.user!.studentProfile!.techStack![0]
+          ? userStore.user!.studentProfile!.techStack!
           : _list[0],
       futureRequest: (p0) {
         return Future.microtask(
@@ -306,7 +306,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                   const SizedBox(height: 14.0),
                   TechStackDropdown(
                     onListChangedCallback: (p0) {
-                      _profileStudentFormStore.setTechStack([p0]);
+                      _profileStudentFormStore.setTechStack(p0);
                     },
                   ),
                   // _buildUserIdField(),

@@ -65,7 +65,7 @@ class AppThemeData {
     primary: Color(0xFFd21e1d),
     primaryContainer: Color(0xFF9e1718),
     secondary: Color(0xFFEFF3F3),
-    secondaryContainer: Color.fromARGB(255, 35, 42, 42),
+    secondaryContainer: Color.fromARGB(255, 255, 255, 255),
     background: Color.fromARGB(255, 245, 245, 245),
     surface: Color.fromARGB(255, 245, 245, 245),
     onBackground: Colors.white,

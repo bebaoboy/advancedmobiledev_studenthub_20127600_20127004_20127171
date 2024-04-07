@@ -317,9 +317,11 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           child: Align(
             alignment: Alignment.topCenter,
             child: isSuggestionTapped
-                ? ExampleLoadingAnimationProjectList(
-                    height: MediaQuery.of(context).size.height * 0.85,
+                ? LazyLoadingAnimationProjectList(
+                  scrollController: ScrollController(),
+                    itemHeight: MediaQuery.of(context).size.height * 0.3,
                     list: widget.searchList,
+                    skipItemLoading: true,
                     firstCallback: (id) {
                       setState(() {
                         for (int i = 0; i < allProjects.length; i++) {
@@ -495,7 +497,7 @@ class _ProjectTabState extends State<ProjectTab> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 60),
+      padding: const EdgeInsets.only(bottom: 10),
       child: _buildProjectContent(),
     );
   }
@@ -596,142 +598,146 @@ class _ProjectTabState extends State<ProjectTab> {
         // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
-            child: Row(
+            child: Stack(
               children: [
-                Expanded(
-                  child: AnimSearchBar2(
-                    helpText: Lang.get("search"),
-                    expandedByDefault: true,
-                    textFieldColor: Theme.of(context).colorScheme.surface,
-                    color: Theme.of(context).colorScheme.surface,
-                    onSubmitted: (p0) async {
-                      setState(() {
-                        keyword = p0;
-                        NavbarNotifier2.hideBottomNavBar = true;
-                        yOffset =
-                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                      });
-                      await showSearchBottomSheet(context);
-                    },
-                    width: MediaQuery.of(context).size.width,
-                    textController: controller,
-                    onSuffixTap: () {},
-                    onSelected: (project) async {
-                      setState(() {
-                        keyword = project.title;
-                        NavbarNotifier2.hideBottomNavBar = true;
-                        yOffset =
-                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                      });
-                      await showSearchBottomSheet(context);
-                      // await showSearchBottomSheet(context);
-                      // showModalBottomSheet(
-                      //     isScrollControlled: true,
-                      //     context: context,
-                      //     builder: (context) {
-                      //       return SearchBottomSheet(
-                      //         filter: filter,
-                      //         keyword: keyword,
-                      //         searchList: allProjects
-                      //             .where((e) =>
-                      //                 keyword.isNotEmpty &&
-                      //                 e.title
-                      //                     .toLowerCase()
-                      //                     .contains(keyword.toLowerCase()) &&
-                      //                 applyFilter(filter, e))
-                      //             .toList(),
-                      //         onSheetDismissed: () {
-                      //           setState(() {
-                      //             Navigator.hideBottomNavBar = false;
-                      //             yOffset = MediaQuery.of(context).size.height;
-                      //           });
-                      //           final FocusScopeNode currentScope =
-                      //               FocusScope.of(context);
-                      //           if (!currentScope.hasPrimaryFocus &&
-                      //               currentScope.hasFocus) {
-                      //             FocusManager.instance.primaryFocus?.unfocus();
-                      //           }
-                      //           Navigator.popRoute(
-                      //               Navigator.currentIndex);
-                      //           return true;
-                      //         },
-                      //         onFilterTap: () async {
-                      //           // await showFilterBottomSheet(context).then((value) {
-                      //           //   if (value != null) {
-                      //           //     setState(() {
-                      //           //       filter = value;
-                      //           //     });
-                      //           //     NavbarNotifier2.popRoute(Navigator.currentIndex);
-                      //           //   }
-                      //           // });
-                      //         },
-                      //       );
-                      //     }).then((value) {
-                      //   setState(() {
-                      //     Navigator.hideBottomNavBar = false;
-                      //     yOffset = MediaQuery.of(context).size.height;
-                      //   });
-                      //   FocusManager.instance.primaryFocus?.unfocus();
-                      // });
-                    },
-                    // initialText:
-                    // readOnly:
-                    searchTextEditingController: controller,
-                    onSuggestionCallback: (pattern) {
-                      if (pattern.isEmpty) return [];
-                      return Future<List<Project>>.delayed(
-                        const Duration(milliseconds: 300),
-                        () => allProjects.where((product) {
-                          final nameLower =
-                              product.title.toLowerCase().split(' ').join('');
-                          //print(nameLower);
-                          final patternLower =
-                              pattern.toLowerCase().split(' ').join('');
-                          return nameLower.contains(patternLower);
-                        }).toList(),
-                      );
-                    },
-                    suggestionItemBuilder: (context, project) => ListTile(
-                      title: Text(project.title),
-                      subtitle: Text(project.description),
-                    ),
+                AnimSearchBar2(
+                  helpText: Lang.get("search"),
+                  expandedByDefault: true,
+                  textFieldColor: Theme.of(context).colorScheme.surface,
+                  color: Theme.of(context).colorScheme.surface,
+                  onSubmitted: (p0) async {
+                    setState(() {
+                      keyword = p0;
+                      NavbarNotifier2.hideBottomNavBar = true;
+                      yOffset =
+                          -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                    });
+                    await showSearchBottomSheet(context);
+                  },
+                  width: MediaQuery.of(context).size.width,
+                  textController: controller,
+                  onSuffixTap: () {},
+                  onSelected: (project) async {
+                    setState(() {
+                      keyword = project.title;
+                      NavbarNotifier2.hideBottomNavBar = true;
+                      yOffset =
+                          -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                    });
+                    await showSearchBottomSheet(context);
+                    // await showSearchBottomSheet(context);
+                    // showModalBottomSheet(
+                    //     isScrollControlled: true,
+                    //     context: context,
+                    //     builder: (context) {
+                    //       return SearchBottomSheet(
+                    //         filter: filter,
+                    //         keyword: keyword,
+                    //         searchList: allProjects
+                    //             .where((e) =>
+                    //                 keyword.isNotEmpty &&
+                    //                 e.title
+                    //                     .toLowerCase()
+                    //                     .contains(keyword.toLowerCase()) &&
+                    //                 applyFilter(filter, e))
+                    //             .toList(),
+                    //         onSheetDismissed: () {
+                    //           setState(() {
+                    //             Navigator.hideBottomNavBar = false;
+                    //             yOffset = MediaQuery.of(context).size.height;
+                    //           });
+                    //           final FocusScopeNode currentScope =
+                    //               FocusScope.of(context);
+                    //           if (!currentScope.hasPrimaryFocus &&
+                    //               currentScope.hasFocus) {
+                    //             FocusManager.instance.primaryFocus?.unfocus();
+                    //           }
+                    //           Navigator.popRoute(
+                    //               Navigator.currentIndex);
+                    //           return true;
+                    //         },
+                    //         onFilterTap: () async {
+                    //           // await showFilterBottomSheet(context).then((value) {
+                    //           //   if (value != null) {
+                    //           //     setState(() {
+                    //           //       filter = value;
+                    //           //     });
+                    //           //     NavbarNotifier2.popRoute(Navigator.currentIndex);
+                    //           //   }
+                    //           // });
+                    //         },
+                    //       );
+                    //     }).then((value) {
+                    //   setState(() {
+                    //     Navigator.hideBottomNavBar = false;
+                    //     yOffset = MediaQuery.of(context).size.height;
+                    //   });
+                    //   FocusManager.instance.primaryFocus?.unfocus();
+                    // });
+                  },
+                  // initialText:
+                  // readOnly:
+                  searchTextEditingController: controller,
+                  onSuggestionCallback: (pattern) {
+                    if (pattern.isEmpty) return [];
+                    return Future<List<Project>>.delayed(
+                      const Duration(milliseconds: 300),
+                      () => allProjects.where((product) {
+                        final nameLower =
+                            product.title.toLowerCase().split(' ').join('');
+                        //print(nameLower);
+                        final patternLower =
+                            pattern.toLowerCase().split(' ').join('');
+                        return nameLower.contains(patternLower);
+                      }).toList(),
+                    );
+                  },
+                  suggestionItemBuilder: (context, project) => ListTile(
+                    title: Text(project.title),
+                    subtitle: Text(project.description),
                   ),
                 ),
-                IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        NavbarNotifier2.hideBottomNavBar = true;
-                        yOffset =
-                            -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                      });
-                      await showFilterBottomSheet(context).then((value) {
-                        NavbarNotifier2.hideBottomNavBar = false;
-                        if (value != null) {
-                          setState(() {
-                            filter = value;
-                          });
-                          NavbarNotifier2.popRoute(
-                              NavbarNotifier2.currentIndex);
-                        }
-                      });
-                    },
-                    icon: const Icon(Icons.filter_alt_outlined)),
-                IconButton(
-                    onPressed: () {
-                      NavbarNotifier2.pushNamed(
-                          Routes.favortieProject,
-                          NavbarNotifier2.currentIndex,
-                          FavoriteScreen(
-                              projectList: allProjects
-                                  .where((element) => element.isFavorite)
-                                  .toList(),
-                              onFavoriteTap: (int i) {
-                                allProjects[i].isFavorite =
-                                    !allProjects[i].isFavorite;
-                              }));
-                    },
-                    color: Theme.of(context).colorScheme.primary,
-                    icon: const Icon(Icons.favorite_rounded)),
+                Positioned(
+                  right: 30,
+                  child: IconButton(
+                      onPressed: () async {
+                        setState(() {
+                          NavbarNotifier2.hideBottomNavBar = true;
+                          yOffset =
+                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                        });
+                        await showFilterBottomSheet(context).then((value) {
+                          NavbarNotifier2.hideBottomNavBar = false;
+                          if (value != null) {
+                            setState(() {
+                              filter = value;
+                            });
+                            NavbarNotifier2.popRoute(
+                                NavbarNotifier2.currentIndex);
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.filter_alt_outlined)),
+                ),
+                Positioned(
+                  right: 60,
+                  child: IconButton(
+                      onPressed: () {
+                        NavbarNotifier2.pushNamed(
+                            Routes.favortieProject,
+                            NavbarNotifier2.currentIndex,
+                            FavoriteScreen(
+                                projectList: allProjects
+                                    .where((element) => element.isFavorite)
+                                    .toList(),
+                                onFavoriteTap: (int i) {
+                                  allProjects[i].isFavorite =
+                                      !allProjects[i].isFavorite;
+                                }));
+                      },
+                      color: Theme.of(context).colorScheme.primary,
+                      icon: const Icon(Icons.favorite_rounded)),
+                ),
               ],
             )),
         // Flexible(

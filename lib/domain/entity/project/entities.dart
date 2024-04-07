@@ -12,6 +12,7 @@ class MyObject {
   DateTime deletedAt = DateTime.now();
   MyObject({this.objectId}) {
     objectId ??= const Uuid().v4();
+    if (objectId!.isEmpty) objectId = const Uuid().v4();
   }
 }
 
@@ -234,21 +235,21 @@ class ProjectExperience extends MyObject {
 // ------------------- NOTIFICATION ------------------------------
 
 @JsonSerializable()
-class Notification extends MyObject {
+class NotificationObject extends MyObject {
   String id;
   Profile receiver;
   Profile sender;
   String content;
   NotificationType type;
 
-  Notification({
+  NotificationObject({
     required this.id,
     required this.receiver,
     required this.sender,
     required this.type,
     this.content = "",
   }) : super(objectId: id);
-  Notification.fromJson(Map<String, dynamic> json)
+  NotificationObject.fromJson(Map<String, dynamic> json)
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
@@ -264,7 +265,7 @@ enum NotificationType {
 }
 
 @JsonSerializable()
-class OfferNotification extends Notification {
+class OfferNotification extends NotificationObject {
   String projectId;
 
   OfferNotification({
@@ -283,7 +284,7 @@ enum MessageType {
 }
 
 @JsonSerializable()
-class Message extends Notification {
+class Message extends NotificationObject {
   MessageType messageType;
   InterviewSchedule? interviewSchedule;
 

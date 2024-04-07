@@ -20,7 +20,6 @@ import 'package:boilerplate/domain/usecase/profile/update_project_experience.dar
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'profile_student_form_store.g.dart';
@@ -83,7 +82,7 @@ abstract class _ProfileStudentFormStore with Store {
   String review = ""; // maybe enum
 
   @observable
-  List<TechStack>? techStack;
+  TechStack? techStack;
 
   @observable
   List<Skill>? skillSet;
@@ -135,7 +134,7 @@ abstract class _ProfileStudentFormStore with Store {
 
   @action
   Future addProfileStudent(
-    List<TechStack>? techStack,
+    TechStack? techStack,
     List<Skill>? skillset,
     List<Language>? languages,
     List<Education>? educations,
@@ -144,11 +143,8 @@ abstract class _ProfileStudentFormStore with Store {
     String? resumes,
   ) async {
     final AddProfileStudentParams loginParams = AddProfileStudentParams(
-        techStack: techStack != null
-            ? techStack.isNotEmpty
-                ? int.tryParse(techStack[0].objectId ?? "1")
-                : 1
-            : 1,
+        techStack:
+            techStack != null ? int.tryParse(techStack.objectId ?? "1") : 1,
         skillSet: (skillSet ?? [])
             .map((e) => int.tryParse(e.objectId ?? "1") ?? 0)
             .toList());
@@ -251,7 +247,7 @@ abstract class _ProfileStudentFormStore with Store {
 
   @action
   Future updateProfileStudent(
-    List<TechStack>? techStack,
+    TechStack? techStack,
     List<Skill>? skillset,
     List<Language>? languages,
     List<Education>? educations,
@@ -263,11 +259,8 @@ abstract class _ProfileStudentFormStore with Store {
     print(
         "\n\n\n\n======================================\n UPDATE PROFILE\n======================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n\n\n\n\n\n");
     final UpdateProfileStudentParams loginParams = UpdateProfileStudentParams(
-        techStack: techStack != null
-            ? techStack.isNotEmpty
-                ? int.tryParse(techStack[0].objectId ?? "1")
-                : 1
-            : 1,
+        techStack:
+            techStack != null ? int.tryParse(techStack.objectId ?? "1") : 1,
         skillSet: (skillset ?? [])
             .map((e) => int.tryParse(e.objectId ?? "1") ?? 0)
             .toList(),
@@ -344,7 +337,7 @@ abstract class _ProfileStudentFormStore with Store {
         },
       );
     }
-    var infoStore = getIt<ProfileStudentStore>();
+    // var infoStore = getIt<ProfileStudentStore>();
     var userStore = getIt<UserStore>();
     if (userStore.user != null) {
       userStore.user!.studentProfile = StudentProfile(
@@ -396,9 +389,8 @@ abstract class _ProfileStudentFormStore with Store {
               userStore.user!.studentProfile != null) {
             userStore.user!.studentProfile!.fullName =
                 value.data["result"]["fullname"];
-            userStore.user!.studentProfile!.techStack = [
-              TechStack.fromJson(value.data["result"]["techStack"])
-            ];
+            userStore.user!.studentProfile!.techStack =
+                TechStack.fromJson(value.data["result"]["techStack"]);
             techStack = userStore.user!.studentProfile!.techStack;
             if (value.data["result"]["skillSets"] != null) {
               var ssList = value.data["result"]["skillSets"] as List;
@@ -689,7 +681,7 @@ abstract class _ProfileStudentFormStore with Store {
   }
 
   @action
-  void setTechStack(List<TechStack> value) {
+  void setTechStack(TechStack value) {
     techStack = value;
   }
 

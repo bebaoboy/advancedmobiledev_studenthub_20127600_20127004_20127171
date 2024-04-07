@@ -152,7 +152,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             'Do you want to switch account to ${item.data!.user.email} (company)?',
                         negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
-                        onPositiveClick: () {
+                        onPositiveClick: () async {
                           Navigator.of(context).pop();
                           if (item.data!.user.companyProfile == null) {
                             showAnimatedDialog(
@@ -164,7 +164,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       '${item.data!.user.email} dont have company profile? Create now?',
                                   negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
-                                  onPositiveClick: () {
+                                  onPositiveClick: () async {
                                     Navigator.of(context).pop();
 
                                     Navigator.of(context).push(
@@ -211,7 +211,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             'Do you want to switch account to ${item.data!.user.email} (student)?',
                         negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
-                        onPositiveClick: () {
+                        onPositiveClick: () async {
                           Navigator.of(context).pop();
                           if (item.data!.user.studentProfile == null) {
                             showAnimatedDialog(
@@ -223,8 +223,35 @@ class _SettingScreenState extends State<SettingScreen> {
                                       '${item.data!.user.email} dont have student profile? Create now?',
                                   negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
-                                  onPositiveClick: () {
+                                  onPositiveClick: () async {
                                     Navigator.of(context).pop();
+                                    setState(() {
+                                      loading = true;
+                                    });
+
+                                    if (_userStore.user != null &&
+                                        _userStore.user!.studentProfile !=
+                                            null &&
+                                        _userStore.user!.studentProfile!
+                                                .objectId !=
+                                            null) {
+                                      final ProfileStudentStore infoStore =
+                                          getIt<ProfileStudentStore>();
+
+                                      infoStore.setStudentId(_userStore
+                                          .user!.studentProfile!.objectId!);
+                                      await infoStore.getInfo().then(
+                                            (value) {},
+                                          );
+                                      final ProfileStudentFormStore formStore =
+                                          getIt<ProfileStudentFormStore>();
+                                      await formStore.getProfileStudent(
+                                          _userStore
+                                              .user!.studentProfile!.objectId!);
+                                    }
+                                    setState(() {
+                                      loading = false;
+                                    });
 
                                     Navigator.of(context)
                                         .push(MaterialPageRoute2(
@@ -460,17 +487,18 @@ class _SettingScreenState extends State<SettingScreen> {
                         setState(() {
                           loading = true;
                         });
-                        final ProfileStudentStore infoStore =
-                            getIt<ProfileStudentStore>();
 
-                        infoStore.setStudentId(
-                            _userStore.user!.studentProfile!.objectId!);
-                          await infoStore.getInfo().then(
-                                (value) {},
-                              );
                         if (_userStore.user != null &&
                             _userStore.user!.studentProfile != null &&
                             _userStore.user!.studentProfile!.objectId != null) {
+                          final ProfileStudentStore infoStore =
+                              getIt<ProfileStudentStore>();
+
+                          infoStore.setStudentId(
+                              _userStore.user!.studentProfile!.objectId!);
+                          await infoStore.getInfo().then(
+                                (value) {},
+                              );
                           final ProfileStudentFormStore formStore =
                               getIt<ProfileStudentFormStore>();
                           await formStore.getProfileStudent(
