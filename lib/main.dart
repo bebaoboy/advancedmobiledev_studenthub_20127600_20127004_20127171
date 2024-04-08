@@ -93,7 +93,7 @@ Future<void> main() async {
           );
     }
   });
-  if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
+  ConnectycubeFlutterCallKit.instance.init();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

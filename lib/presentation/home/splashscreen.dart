@@ -225,7 +225,7 @@ class _SplashScreenState extends State<SplashScreen>
           password: DEFAULT_PASS,
         );
         loadingText.text =
-            "Loading Cube sesson (User ${user == utils.users[0] ? "1" : user == utils.users[1] ? "2" : "3"})";
+            "Loading Cube sesson (User ${userStore.user!.email})";
 
         try {
           var value;

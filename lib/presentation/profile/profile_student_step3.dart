@@ -99,7 +99,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _profileStudentFormStore.isLoading || loading,
+                visible: _profileStudentFormStore.isLoading,
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
@@ -660,7 +660,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     //   prefs.setBool(Preferences.is_logged_in, true);
     // });
 
-    Future.delayed(const Duration(milliseconds: 0), () {
+    Future.delayed(const Duration(milliseconds: 1000), () {
       if (_formStore.success) {
         _formStore.success = false;
         showAnimatedDialog(
@@ -687,7 +687,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         );
       }
     });
-
+    // TODO: back to dashboard
     return Container();
   }
 

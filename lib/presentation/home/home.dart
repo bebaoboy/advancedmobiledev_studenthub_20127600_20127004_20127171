@@ -69,9 +69,15 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: FlexFit.loose,
                     child: Column(
                       children: [
-                        Text(Lang.get('home_title'), textAlign: TextAlign.center,),
+                        Text(
+                          Lang.get('home_title'),
+                          textAlign: TextAlign.center,
+                        ),
                         const SizedBox(height: 30),
-                        Text(Lang.get('home_intro'), textAlign: TextAlign.center,),
+                        Text(
+                          Lang.get('home_intro'),
+                          textAlign: TextAlign.center,
+                        ),
                         const SizedBox(height: 25),
                         SizedBox(
                           width: 200,
@@ -105,15 +111,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 showAnimatedDialog(
                                   context: context,
                                   barrierDismissible: true,
-                                  builder: (BuildContext context) {
+                                  builder: (BuildContext ctx) {
                                     return ClassicGeneralDialogWidget(
                                       contentText:
                                           'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
                                       negativeText: Lang.get('cancel'),
                                       positiveText: 'Yes',
-                                      onPositiveClick: () {
-                                        Navigator.of(context).pop();
-      
+                                      onPositiveClick: () async {
+                                        Navigator.of(ctx).pop();
+                                        final ProfileStudentStore infoStore =
+                                            getIt<ProfileStudentStore>();
+
+                                        await infoStore.getTechStack();
+                                        await infoStore.getSkillset();
                                         Navigator.of(context).push(
                                             MaterialPageRoute2(
                                                 routeName: Routes.profile));
@@ -163,15 +173,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 showAnimatedDialog(
                                   context: context,
                                   barrierDismissible: true,
-                                  builder: (BuildContext context) {
+                                  builder: (BuildContext ctx) {
                                     return ClassicGeneralDialogWidget(
                                       contentText:
                                           'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
                                       negativeText: Lang.get('cancel'),
                                       positiveText: 'Yes',
-                                      onPositiveClick: () {
-                                        Navigator.of(context).pop();
-      
+                                      onPositiveClick: () async {
+                                        Navigator.of(ctx).pop();
+                                        final ProfileStudentStore infoStore =
+                                            getIt<ProfileStudentStore>();
+
+                                        await infoStore.getTechStack();
+                                        await infoStore.getSkillset();
                                         Navigator.of(context).push(
                                             MaterialPageRoute2(
                                                 routeName:
