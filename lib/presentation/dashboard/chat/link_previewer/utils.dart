@@ -196,6 +196,10 @@ Future<PreviewData> getPreviewData(
     final uri = Uri.parse(previewDataUrl);
     final response = await http.get(uri, headers: {
       'User-Agent': userAgent ?? 'WhatsApp/2',
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,PATCH,POST,DELETE",
+      "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept"
     }).timeout(requestTimeout ?? const Duration(seconds: 5));
     final document = parser.parse(utf8.decode(response.bodyBytes));
 

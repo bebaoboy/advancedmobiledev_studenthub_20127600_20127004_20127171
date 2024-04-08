@@ -18,18 +18,19 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
 
-class SettingScreen extends StatefulWidget {
-  const SettingScreen({super.key});
+class SettingScreenDrawer extends StatefulWidget {
+  const SettingScreenDrawer({super.key});
 
   @override
-  _SettingScreenState createState() => _SettingScreenState();
+  _SettingScreenDrawerState createState() => _SettingScreenDrawerState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
+class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
   //stores:---------------------------------------------------------------------
   // final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
@@ -78,10 +79,13 @@ class _SettingScreenState extends State<SettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      primary: true,
-      appBar: _buildAppBar(context),
-      body: _buildBody(),
+    return Drawer(
+      width: 100.w,
+      child: Scaffold(
+        primary: true,
+        appBar: _buildAppBar(context),
+        body: _buildBody(),
+      ),
     );
   }
 
@@ -375,6 +379,12 @@ class _SettingScreenState extends State<SettingScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
+      leading: IconButton(
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+      ),
       title: Text(Lang.get("profile_text")),
       actions: _buildActions(context),
     );
@@ -394,7 +404,7 @@ class _SettingScreenState extends State<SettingScreen> {
         ? const LoadingScreen()
         : Material(
             child: Stack(children: <Widget>[
-              Container(child: _buildRightSide()),
+              Container(child: _buildRightSide(),),
             ]),
           );
   }

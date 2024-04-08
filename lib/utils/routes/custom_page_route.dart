@@ -1,7 +1,7 @@
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/utils/routes/swipe_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 // class TransitionPageWrapper extends Page {
 //   const TransitionPageWrapper(

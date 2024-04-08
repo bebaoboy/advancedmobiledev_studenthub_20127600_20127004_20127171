@@ -15,6 +15,13 @@
 // export 'package:flutter/gestures.dart';
 
 // // 3rd package
+
+// export 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
+// export 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
+// export 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
+// export 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
+// export 'package:responsive_sizer/responsive_sizer.dart';
+// export 'package:size_helper/size_helper.dart';
 // export 'package:another_flushbar/flushbar_helper.dart';
 // export 'package:http/http.dart';
 // export 'package:image_picker/image_picker.dart';
@@ -165,8 +172,3 @@
 // export 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 // export 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 // export 'package:boilerplate/utils/routes/page_transformer.dart';
-
-// export 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
-// export 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
-// export 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
-// export 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';

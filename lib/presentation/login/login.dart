@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/setting/settings_drawer.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
@@ -22,9 +23,12 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:size_helper/size_helper.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
@@ -67,6 +71,9 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         appBar: const EmptyAppBar(),
         body: _buildBody(),
+        endDrawer: const SettingScreenDrawer(),
+        // drawer: const SettingScreenDrawer(),
+        drawerEdgeDragWidth: 100.w,
       ),
     );
   }
@@ -111,11 +118,31 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const LoadingScreen()),
               );
             },
-          )
+          ),
+//           Positioned(
+//             height: 1000,
+//             width: 2000,
+//             top: o.dy,
+//             left: o.dx,
+//             child: GestureDetector(
+//                 onPanUpdate: (details) => setState(() {
+//                       o += Offset(details.delta.dx, details.delta.dy);
+//                     }),
+//                 child: PageView(
+//                   children: [
+//                     Container(color: Colors.amber.withOpacity(0.1),),
+//                     AbsorbPointer(child: Container(color: Colors.blue.withOpacity(0.1),)),
+//                     Container(color: Colors.red.withOpacity(0.1),)
+// ,
+//                   ],
+//                 )),
+//           )
         ],
       ),
     );
   }
+
+  Offset o = Offset.zero;
 
   Widget _buildLeftSide() {
     return SizedBox.expand(
@@ -129,9 +156,14 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget _buildRightSide() {
     return SingleChildScrollView(
       child: LimitedBox(
-        maxHeight: MediaQuery.of(context).orientation == Orientation.landscape
-            ? MediaQuery.of(context).size.width * 0.9
-            : MediaQuery.of(context).size.height * 0.9,
+        maxHeight: SizeHelper.of(context, printScreenInfo: true).help(
+          mobileExtraLarge: 90.h,
+          desktopExtraLarge: 90.h,
+          mobileExtraLargeLandscape: 90.w,
+        ),
+        // MediaQuery.of(context).orientation == Orientation.landscape
+        //     ? MediaQuery.of(context).size.width * 0.9
+        //     : MediaQuery.of(context).size.height * 0.9,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,

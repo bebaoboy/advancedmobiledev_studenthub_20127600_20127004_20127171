@@ -8,6 +8,7 @@ import 'package:boilerplate/presentation/welcome/welcome%20copy.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
@@ -351,45 +352,86 @@ class _MainAppBarState extends State<MainAppBar> {
     //     isDark: isDark,
     //     offset: Offset(MediaQuery.of(context).size.width * 0.7, 20),
     //     childBuilder: (context, x) =>
-    return MorphingAppBar(
-      leadingWidth: 30,
-      titleSpacing: 0,
-      toolbarHeight: 250,
-      // flexibleSpace: Container(child: Column(
-      // children: [
-      //   Container(height: 900, child: Center(child: Text(Lang.get('ooooooooooooooooooooo"),),)
-      // ],)),
-      title: Container(
-          margin: const EdgeInsets.only(left: 20),
-          child: GestureDetector(
-            onTap: () {
-              // Navigator.of(context).pushAndRemoveUntil(
-              //     MaterialPageRoute2(routeName: Routes.home),
-              //     (Route<dynamic> route) => false);
-              Navigator.of(context)
-                  .push(MaterialPageRoute2(child: const Welcome2()));
-            },
-            onLongPress: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute2(child: const SharedPreferenceView()));
-            },
-            child: Text((_userStore.user != null &&
-                        _userStore.user!.type == UserType.company
-                    ? "© "
-                    : "") +
-                (widget.name.isNotEmpty
-                    ? widget.name
-                    : Lang.get('appbar_title'))),
-          )),
-      actions: [
-        // _buildLanguageButton(),
-        // _buildThemeButton(),
-        LanguageButton(),
-        if (widget.theme) ThemeButton(),
-        _buildProfileButton(),
-        _buildLogoutButton(),
-      ],
-      // )
-    );
+    return kIsWeb
+        ? AppBar(
+            leadingWidth: 30,
+            titleSpacing: 0,
+            toolbarHeight: 250,
+            // flexibleSpace: Container(child: Column(
+            // children: [
+            //   Container(height: 900, child: Center(child: Text(Lang.get('ooooooooooooooooooooo"),),)
+            // ],)),
+            title: Container(
+                margin: const EdgeInsets.only(left: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    // Navigator.of(context).pushAndRemoveUntil(
+                    //     MaterialPageRoute2(routeName: Routes.home),
+                    //     (Route<dynamic> route) => false);
+                    Navigator.of(context)
+                        .push(MaterialPageRoute2(child: const Welcome2()));
+                  },
+                  onLongPress: () {
+                    Navigator.of(context).push(MaterialPageRoute2(
+                        child: const SharedPreferenceView()));
+                  },
+                  child: Text((_userStore.user != null &&
+                              _userStore.user!.type == UserType.company
+                          ? "© "
+                          : "") +
+                      (widget.name.isNotEmpty
+                          ? widget.name
+                          : Lang.get('appbar_title'))),
+                )),
+            actions: [
+              // _buildLanguageButton(),
+              // _buildThemeButton(),
+              LanguageButton(),
+              if (widget.theme) ThemeButton(),
+              _buildProfileButton(),
+              _buildLogoutButton(),
+            ],
+            // )
+          )
+        : MorphingAppBar(
+            leadingWidth: 30,
+            titleSpacing: 0,
+            toolbarHeight: 250,
+            // flexibleSpace: Container(child: Column(
+            // children: [
+            //   Container(height: 900, child: Center(child: Text(Lang.get('ooooooooooooooooooooo"),),)
+            // ],)),
+            title: Container(
+                margin: const EdgeInsets.only(left: 20),
+                child: GestureDetector(
+                  onTap: () {
+                    // Navigator.of(context).pushAndRemoveUntil(
+                    //     MaterialPageRoute2(routeName: Routes.home),
+                    //     (Route<dynamic> route) => false);
+                    Navigator.of(context)
+                        .push(MaterialPageRoute2(child: const Welcome2()));
+                  },
+                  onLongPress: () {
+                    Navigator.of(context).push(MaterialPageRoute2(
+                        child: const SharedPreferenceView()));
+                  },
+                  child: Text((_userStore.user != null &&
+                              _userStore.user!.type == UserType.company
+                          ? "© "
+                          : "") +
+                      (widget.name.isNotEmpty
+                          ? widget.name
+                          : Lang.get('appbar_title'))),
+                )),
+            actions: [
+              // _buildLanguageButton(),
+              // _buildThemeButton(),
+              LanguageButton(),
+              if (widget.theme) ThemeButton(),
+              _buildProfileButton(),
+              _buildLogoutButton(),
+            ],
+            // )
+          );
   }
 }

@@ -83,14 +83,17 @@ void callbackDispatcher() {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
+
   await ServiceLocator.configureDependencies().then((value) {
-    Workmanager().initialize(
-        callbackDispatcher, // The top level function, aka callbackDispatcher
-        isInDebugMode:
-            true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-        );
+    if (!kIsWeb) {
+      Workmanager().initialize(
+          callbackDispatcher, // The top level function, aka callbackDispatcher
+          isInDebugMode:
+              true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+          );
+    }
   });
-  ConnectycubeFlutterCallKit.instance.init();
+  if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -101,8 +104,16 @@ Future<void> main() async {
   // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
   // request permissions for showing notification in iOS
-  FirebaseMessaging.instance
-      .requestPermission(alert: true, badge: true, sound: true);
+  var messaging = FirebaseMessaging.instance;
+  messaging.requestPermission(alert: true, badge: true, sound: true);
+
+  if (kIsWeb) {
+    // use the returned token to send messages to users from your custom server
+    var token = await messaging.getToken(
+      vapidKey:
+          "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
+    );
+  }
 
   // add listener for foreground push notifications
   FirebaseMessaging.onMessage.listen((remoteMessage) {
@@ -120,14 +131,16 @@ Future<void> main() async {
     return kReleaseMode;
   };
 
-  Isolate.current.addErrorListener(RawReceivePort((pair) async {
-    final List<dynamic> errorAndStacktrace = pair;
-    await FirebaseCrashlytics.instance.recordError(
-      errorAndStacktrace.first,
-      errorAndStacktrace.last,
-      fatal: true,
-    );
-  }).sendPort);
+  if (!kIsWeb) {
+    Isolate.current.addErrorListener(RawReceivePort((pair) async {
+      final List<dynamic> errorAndStacktrace = pair;
+      await FirebaseCrashlytics.instance.recordError(
+        errorAndStacktrace.first,
+        errorAndStacktrace.last,
+        fatal: true,
+      );
+    }).sendPort);
+  }
 
   await initConnectycube();
 
@@ -146,6 +159,9 @@ Future<void> setPreferredOrientations() {
 }
 
 initConnectycube() async {
+  // if (kIsWeb) {
+  //   return;
+  // }
   final List<ConnectivityResult> connectivityResult =
       await (Connectivity().checkConnectivity());
 

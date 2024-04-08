@@ -43,6 +43,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _buildBody(),
+      appBar: const EmptyAppBar(),
     );
   }
 
@@ -103,7 +104,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const EmptyAppBar(),
           Flexible(
             flex: 1,
             fit: FlexFit.loose,

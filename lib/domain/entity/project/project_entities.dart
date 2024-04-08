@@ -102,11 +102,6 @@ class Project extends ProjectBase {
       numberOfStudents: json['numberOfStudent'] ?? 0,
     );
   }
-
-  @override
-  // ignore: overridden_fields
-  bool isLoading;
-
 }
 
 ///
