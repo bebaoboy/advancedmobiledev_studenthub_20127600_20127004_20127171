@@ -36,6 +36,7 @@ class ErrorPage extends StatelessWidget {
             Expanded(
               child: Scrollbar(
                 child: SingleChildScrollView(
+                  controller: ScrollController(),
                   child: Text(
                     kDebugMode
                         // ? 'https://docs.flutter.dev/testing/errors'

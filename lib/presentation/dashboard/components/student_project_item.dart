@@ -79,6 +79,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
                   Expanded(
                     flex: 9,
                     child: SingleChildScrollView(
+                      controller: ScrollController(),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

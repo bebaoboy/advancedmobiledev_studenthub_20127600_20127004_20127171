@@ -71,7 +71,7 @@ dependencies:
   flutter_background: ^1.2.0
   flutter_speed_dial: ^7.0.0
   flutter_webrtc: ^0.9.48+hotfix.1
-  flutter_file_downloader:
+  flutter_file_downloader: ^1.2.2-dev.1
   # G
   get_it: ^7.2.0
   google_fonts: ^6.2.1

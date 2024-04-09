@@ -404,7 +404,9 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
         ? const LoadingScreen()
         : Material(
             child: Stack(children: <Widget>[
-              Container(child: _buildRightSide(),),
+              Container(
+                child: _buildRightSide(),
+              ),
             ]),
           );
   }
@@ -413,6 +415,7 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: SingleChildScrollView(
+        controller: ScrollController(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,

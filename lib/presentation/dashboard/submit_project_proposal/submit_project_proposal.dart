@@ -23,6 +23,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
 
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(

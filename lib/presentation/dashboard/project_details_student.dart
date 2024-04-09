@@ -33,6 +33,7 @@ class _ProjectDetailsStudentScreenState
 
   Widget _buildFourContent() {
     return SingleChildScrollView(
+        controller: ScrollController(),
         physics: const ClampingScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -68,6 +69,7 @@ class _ProjectDetailsStudentScreenState
                         child: Container(
                           constraints: const BoxConstraints(maxHeight: 400),
                           child: SingleChildScrollView(
+                            controller: ScrollController(),
                             child: Text(widget.project.description.isEmpty
                                 ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
                                     'eiusmod tempor incididunt ut labore et dolore magna aliqua.'

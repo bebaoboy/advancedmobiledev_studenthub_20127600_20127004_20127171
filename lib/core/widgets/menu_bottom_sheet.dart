@@ -266,6 +266,7 @@ Future<T?> _showMaterialBottomSheet<T>(
               maxHeight: screenHeight - (screenHeight / 10),
             ),
             child: SingleChildScrollView(
+              controller: ScrollController(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,

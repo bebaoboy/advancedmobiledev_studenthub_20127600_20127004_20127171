@@ -60,13 +60,11 @@ class _MessageTabState extends State<MessageTab> {
           top: 0,
           child: PlaneIndicator(
             onRefresh: () => Future.delayed(const Duration(seconds: 3)),
-            child: Stack(
-              
-              children: [
-
-                Positioned.fill(
-                  top: 80,
-                  child: ListView.separated(
+            child: Stack(children: [
+              Positioned.fill(
+                top: 80,
+                child: ListView.separated(
+                  controller: ScrollController(),
                   itemCount: messages.length,
                   separatorBuilder: (context, index) =>
                       const Divider(color: Colors.black),
@@ -83,8 +81,8 @@ class _MessageTabState extends State<MessageTab> {
                       },
                       child: ListTile(
                         tileColor: Colors.transparent,
-                        leading: Icon(
-                            messages[index]['icon']), // Replace with actual icons
+                        leading: Icon(messages[index]
+                            ['icon']), // Replace with actual icons
                         title: Text(
                           messages[index]['name'],
                           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -100,9 +98,9 @@ class _MessageTabState extends State<MessageTab> {
                       ),
                     );
                   },
-                                ),
-                ),]
-            ),
+                ),
+              ),
+            ]),
           ),
         ),
         Padding(

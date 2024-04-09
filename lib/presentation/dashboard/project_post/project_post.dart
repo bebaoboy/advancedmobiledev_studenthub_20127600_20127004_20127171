@@ -57,6 +57,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   Widget _buildOneContent() {
     final controller1 = TextEditingController();
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         children: <Widget>[
@@ -126,6 +127,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     final controller2 = TextEditingController();
 
     return SingleChildScrollView(
+        controller: ScrollController(),
         physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
@@ -265,6 +267,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     final controller3 = TextEditingController();
 
     return SingleChildScrollView(
+        controller: ScrollController(),
         physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
@@ -338,6 +341,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
 
   Widget _buildFourContent() {
     return SingleChildScrollView(
+        controller: ScrollController(),
         physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
@@ -368,6 +372,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               child: Container(
                 constraints: const BoxConstraints(maxHeight: 400),
                 child: SingleChildScrollView(
+                  controller: ScrollController(),
                   child: Text(description.isEmpty
                       ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
                           'eiusmod tempor incididunt ut labore et dolore magna aliqua.'

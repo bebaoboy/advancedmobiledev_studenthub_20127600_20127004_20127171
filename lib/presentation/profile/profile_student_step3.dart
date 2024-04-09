@@ -123,6 +123,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   Widget _buildRightSide() {
     //print(isLinkCv.value);
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -188,8 +189,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
-                                          isCV: true, cvController.text)
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
+                                          isCV: true,
+                                          cvController.text)
                                       .then(
                                     (value) {
                                       if (value != null) {
@@ -216,8 +219,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
-                                          isCV: true, cvController.text)
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
+                                          isCV: true,
+                                          cvController.text)
                                       .then((value) {
                                     if (value != null) {
                                       setState(() {
@@ -299,7 +304,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           cvEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
+                        final image = await FilePreview.getThumbnail(
+                          changeValue: changeValue,
                           isCV: true,
                           result.files.single.path!,
                         );
@@ -407,7 +413,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then(
@@ -436,7 +443,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then((value) {
@@ -520,7 +528,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           transcriptEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
+                        final image = await FilePreview.getThumbnail(
+                          changeValue: changeValue,
                           isCV: false,
                           result.files.single.path!,
                         );

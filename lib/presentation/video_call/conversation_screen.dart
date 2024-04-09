@@ -21,12 +21,13 @@ class ConversationCallScreen extends StatefulWidget {
     return _ConversationCallScreenState(_callSession, _isIncoming);
   }
 
-  const ConversationCallScreen(this._callSession, this._isIncoming, {super.key});
+  const ConversationCallScreen(this._callSession, this._isIncoming,
+      {super.key});
 }
 
 class _ConversationCallScreenState extends State<ConversationCallScreen>
     implements RTCSessionStateCallback<P2PSession> {
-  static  String TAG = "BEBAOBOY";
+  static String TAG = "BEBAOBOY";
   final P2PSession _callSession;
   final bool _isIncoming;
   final CubeStatsReportsManager _statsReportsManager =
@@ -185,9 +186,9 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           Align(
               alignment: Alignment.centerLeft,
               child: Container(
-                margin:  const EdgeInsets.all(8),
+                margin: const EdgeInsets.all(8),
                 child: Padding(
-                  padding:  const EdgeInsets.symmetric(
+                  padding: const EdgeInsets.symmetric(
                     vertical: 10,
                   ),
                   child: RotatedBox(
@@ -197,7 +198,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                           .where((event) => event.userId == opponentId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return  const LinearProgressIndicator(value: 0);
+                          return const LinearProgressIndicator(value: 0);
                         } else {
                           var micLevelForUser = snapshot.data!;
                           return LinearProgressIndicator(
@@ -211,18 +212,18 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           Align(
               alignment: Alignment.topCenter,
               child: Container(
-                margin:  const EdgeInsets.only(top: 8),
+                margin: const EdgeInsets.only(top: 8),
                 child: ClipRRect(
-                  borderRadius:  const BorderRadius.all(Radius.circular(12)),
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
                   child: Container(
-                    padding:  const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     color: Colors.black26,
                     child: StreamBuilder<CubeVideoBitrateEvent>(
                       stream: _statsReportsManager.videoBitrateStream
                           .where((event) => event.userId == opponentId),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return  const Text(
+                          return const Text(
                             '0 kbits/sec',
                             style: TextStyle(color: Colors.white),
                           );
@@ -230,7 +231,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                           var videoBitrateForUser = snapshot.data!;
                           return Text(
                             '${videoBitrateForUser.bitRate} kbits/sec',
-                            style:  const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.white),
                           );
                         }
                       },
@@ -328,7 +329,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                           style: const TextStyle(fontSize: 28),
                         ),
                       ),
-                       const Padding(
+                      const Padding(
                         padding: EdgeInsets.only(bottom: 12),
                         child: Text(
                           "Members:",
@@ -338,7 +339,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                       ),
                       Text(
                         _callSession.opponentsIds.join(", "),
-                        style:  const TextStyle(fontSize: 20),
+                        style: const TextStyle(fontSize: 20),
                       ),
                     ],
                   ),
@@ -419,6 +420,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
       var membersList = Expanded(
         flex: 1,
         child: ListView(
+          controller: ScrollController(),
           scrollDirection: orientation == Orientation.landscape
               ? Axis.vertical
               : Axis.horizontal,
@@ -446,7 +448,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
               child: Container(
                 width: itemWidth,
                 height: itemHeight,
-                padding:  const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(4),
                 child: Stack(
                   children: [
                     StreamBuilder<CubeMicLevelEvent>(
@@ -484,12 +486,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                       Align(
                           alignment: Alignment.topCenter,
                           child: Container(
-                            margin:  const EdgeInsets.only(top: 8),
+                            margin: const EdgeInsets.only(top: 8),
                             child: ClipRRect(
                               borderRadius:
-                                   const BorderRadius.all(Radius.circular(12)),
+                                  const BorderRadius.all(Radius.circular(12)),
                               child: Container(
-                                padding:  const EdgeInsets.all(6),
+                                padding: const EdgeInsets.all(6),
                                 color: Colors.black26,
                                 child: StreamBuilder<CubeVideoBitrateEvent>(
                                   stream: _statsReportsManager
@@ -498,7 +500,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                           (event) => event.userId == entry.key),
                                   builder: (context, snapshot) {
                                     if (!snapshot.hasData) {
-                                      return  const Text(
+                                      return const Text(
                                         '0 kbits/sec',
                                         style: TextStyle(color: Colors.white),
                                       );
@@ -506,7 +508,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                       var videoBitrateForUser = snapshot.data!;
                                       return Text(
                                         '${videoBitrateForUser.bitRate} kbits/sec',
-                                        style:  const TextStyle(
+                                        style: const TextStyle(
                                             color: Colors.white),
                                       );
                                     }
@@ -518,12 +520,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                     Align(
                       alignment: Alignment.bottomCenter,
                       child: Container(
-                        margin:  const EdgeInsets.only(bottom: 8),
+                        margin: const EdgeInsets.only(bottom: 8),
                         child: ClipRRect(
                           borderRadius:
-                               const BorderRadius.all(Radius.circular(12)),
+                              const BorderRadius.all(Radius.circular(12)),
                           child: Container(
-                            padding:  const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(6),
                             color: Colors.black26,
                             child: Text(
                               entry.key ==
@@ -535,7 +537,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                                           .first
                                           .fullName ??
                                       'Unknown',
-                              style:  const TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                         ),
@@ -574,7 +576,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   child: RotatedBox(
                     quarterTurns: -1,
                     child: ConstrainedBox(
-                      constraints:  const BoxConstraints(maxWidth: 200),
+                      constraints: const BoxConstraints(maxWidth: 200),
                       child: LinearProgressIndicator(
                         value: !snapshot.hasData ? 0 : snapshot.data!.micLevel,
                       ),
@@ -615,16 +617,16 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
               margin:
                   EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10),
               child: ClipRRect(
-                borderRadius:  const BorderRadius.all(Radius.circular(12)),
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
                 child: Container(
-                  padding:  const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(6),
                   color: Colors.black26,
                   child: StreamBuilder<CubeVideoBitrateEvent>(
                     stream: _statsReportsManager.videoBitrateStream
                         .where((event) => event.userId == primaryRenderer!.key),
                     builder: (context, snapshot) {
                       if (!snapshot.hasData) {
-                        return  const Text(
+                        return const Text(
                           '0 kbits/sec',
                           style: TextStyle(color: Colors.white),
                         );
@@ -632,7 +634,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                         var videoBitrateForUser = snapshot.data!;
                         return Text(
                           '${videoBitrateForUser.bitRate} kbits/sec',
-                          style:  const TextStyle(color: Colors.white),
+                          style: const TextStyle(color: Colors.white),
                         );
                       }
                     },
@@ -661,19 +663,19 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           left: MediaQuery.of(context).padding.left + 8,
           right: MediaQuery.of(context).padding.right + 8),
       child: ClipRRect(
-        borderRadius:  const BorderRadius.only(
+        borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(32),
             bottomRight: Radius.circular(32),
             topLeft: Radius.circular(32),
             topRight: Radius.circular(32)),
         child: Container(
-          padding:  const EdgeInsets.all(4),
+          padding: const EdgeInsets.all(4),
           color: Colors.black26,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
-                padding:  const EdgeInsets.only(right: 4),
+                padding: const EdgeInsets.only(right: 4),
                 child: FloatingActionButton(
                   elevation: 0,
                   heroTag: "Mute",
@@ -688,7 +690,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
               Visibility(
                 visible: _enableScreenSharing,
                 child: Padding(
-                  padding:  const EdgeInsets.only(right: 4),
+                  padding: const EdgeInsets.only(right: 4),
                   child: FloatingActionButton(
                     elevation: 0,
                     heroTag: "ToggleCamera",
@@ -747,7 +749,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   SpeedDialChild(
                     elevation: 0,
                     visible: kIsWeb || WebRTC.platformIsDesktop,
-                    child:  const Icon(
+                    child: const Icon(
                       Icons.record_voice_over,
                       color: Colors.white,
                     ),
@@ -770,16 +772,16 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                   ),
                 ],
               ),
-               const Expanded(
+              const Expanded(
                 flex: 1,
                 child: SizedBox(),
               ),
               Padding(
-                padding:  const EdgeInsets.only(left: 0),
+                padding: const EdgeInsets.only(left: 0),
                 child: FloatingActionButton(
                   backgroundColor: Colors.red,
                   onPressed: () => _endCall(),
-                  child:  const Icon(
+                  child: const Icon(
                     Icons.call_end,
                     color: Colors.white,
                   ),
@@ -826,13 +828,13 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return AlertDialog(
-                  content:  Text(Lang.get('no_camera')),
+                  content: Text(Lang.get('no_camera')),
                   actions: <Widget>[
                     TextButton(
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
-                      child:  Text(Lang.get('ok')),
+                      child: Text(Lang.get('ok')),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -841,7 +843,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                 );
               } else {
                 return SimpleDialog(
-                  title:  Text(Lang.get('select_camera')),
+                  title: Text(Lang.get('select_camera')),
                   children: snapshot.data?.map(
                     (mediaDeviceInfo) {
                       return SimpleDialogOption(
@@ -924,13 +926,13 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return AlertDialog(
-                  content:  Text(Lang.get('no_sound')),
+                  content: Text(Lang.get('no_sound')),
                   actions: <Widget>[
                     TextButton(
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
-                      child:  Text(Lang.get('ok')),
+                      child: Text(Lang.get('ok')),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -939,7 +941,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                 );
               } else {
                 return SimpleDialog(
-                  title:  Text(Lang.get('select_sound')),
+                  title: Text(Lang.get('select_sound')),
                   children: snapshot.data?.map(
                     (mediaDeviceInfo) {
                       return SimpleDialogOption(
@@ -988,13 +990,13 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return AlertDialog(
-                  content:  Text(Lang.get('no_mic')),
+                  content: Text(Lang.get('no_mic')),
                   actions: <Widget>[
                     TextButton(
                       style: TextButton.styleFrom(
                         textStyle: Theme.of(context).textTheme.labelLarge,
                       ),
-                      child:  Text(Lang.get('ok')),
+                      child: Text(Lang.get('ok')),
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
@@ -1003,7 +1005,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
                 );
               } else {
                 return SimpleDialog(
-                  title:  Text(Lang.get('select_mic')),
+                  title: Text(Lang.get('select_mic')),
                   children: snapshot.data?.map(
                     (mediaDeviceInfo) {
                       return SimpleDialogOption(

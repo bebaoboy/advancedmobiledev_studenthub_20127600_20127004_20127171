@@ -111,6 +111,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(

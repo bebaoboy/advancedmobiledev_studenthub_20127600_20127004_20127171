@@ -223,6 +223,7 @@ class ChipsInputState<T> extends State<ChipsInput<T>>
             ),
             Expanded(
                 child: ListView.builder(
+              controller: ScrollController(),
               itemCount: _suggestions.length,
               itemBuilder: (BuildContext context, int index) {
                 return widget.suggestionBuilder(

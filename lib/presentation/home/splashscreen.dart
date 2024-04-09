@@ -351,6 +351,7 @@ class _SplashScreenState extends State<SplashScreen>
             onTap: () {},
             child: Center(
               child: SingleChildScrollView(
+                controller: ScrollController(),
                 physics: const ClampingScrollPhysics(),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,

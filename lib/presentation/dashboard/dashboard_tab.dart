@@ -298,6 +298,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
   Widget build(BuildContext context) {
     return workingProjects != null && workingProjects!.isNotEmpty
         ? ListView.builder(
+            controller: ScrollController(),
             itemCount: workingProjects?.length ?? 0,
             itemBuilder: (context, index) => MyProjectItem(
               project: workingProjects![index],

@@ -109,6 +109,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(

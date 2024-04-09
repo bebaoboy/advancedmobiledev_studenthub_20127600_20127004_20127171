@@ -66,7 +66,8 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   Widget build(BuildContext context) {
     return Scaffold(
       primary: true,
-      appBar: MainAppBar(name: "${Lang.get("edit")} ${Lang.get("profile_text")}"),
+      appBar:
+          MainAppBar(name: "${Lang.get("edit")} ${Lang.get("profile_text")}"),
       body: _buildBody(),
     );
   }
@@ -79,26 +80,26 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
         bool b = !enabled;
         if (enabled) {
           await showAnimatedDialog<bool>(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext context) {
-                return ClassicGeneralDialogWidget(
-                  contentText: Lang.get("discard_edit"),
-                  negativeText: Lang.get('cancel'),
-                  positiveText: 'OK',
-                  onPositiveClick: () {
-                    b = true;
-                    Navigator.of(context).pop();
-                  },
-                  onNegativeClick: () {
-                    Navigator.of(context).pop();
-                  },
-                );
-              },
-              animationType: DialogTransitionType.size,
-              curve: Curves.fastOutSlowIn,
-              duration: const Duration(seconds: 1),
-            );
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              return ClassicGeneralDialogWidget(
+                contentText: Lang.get("discard_edit"),
+                negativeText: Lang.get('cancel'),
+                positiveText: 'OK',
+                onPositiveClick: () {
+                  b = true;
+                  Navigator.of(context).pop();
+                },
+                onNegativeClick: () {
+                  Navigator.of(context).pop();
+                },
+              );
+            },
+            animationType: DialogTransitionType.size,
+            curve: Curves.fastOutSlowIn,
+            duration: const Duration(seconds: 1),
+          );
         }
         return b;
       },
@@ -277,6 +278,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0),
         child: Column(

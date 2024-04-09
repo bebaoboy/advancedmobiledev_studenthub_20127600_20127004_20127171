@@ -7,7 +7,6 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
-
 class ForgetPasswordSentScreen extends StatefulWidget {
   const ForgetPasswordSentScreen({super.key});
 
@@ -69,6 +68,7 @@ class _ForgetPasswordSentScreenState extends State<ForgetPasswordSentScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,

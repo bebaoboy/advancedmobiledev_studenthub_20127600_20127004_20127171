@@ -60,6 +60,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                   }
                   var data = List<Widget>.from([getUser(), ...snapshot.data!]);
                   return ListView(
+                    controller: ScrollController(),
                     children: data,
                   );
                 }),

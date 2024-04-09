@@ -19,6 +19,7 @@ class _Welcome2State extends State<Welcome2> {
     return SizedBox(
       height: 72,
       child: ListView.builder(
+        controller: ScrollController(),
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         itemCount: 10,
@@ -48,6 +49,8 @@ class _Welcome2State extends State<Welcome2> {
       child: Scaffold(
         drawer: Drawer(
           child: ListView(
+            controller: ScrollController(),
+
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: [
@@ -116,7 +119,6 @@ class _Welcome2State extends State<Welcome2> {
                             //     style: BorderStyle.solid,
                             //   ),
                             // ),
-                          
                           ),
                         ),
                       ),
@@ -177,10 +179,7 @@ class _Welcome2State extends State<Welcome2> {
                         children: [
                           const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Explore the people"),
-                              Text("...")
-                            ],
+                            children: [Text("Explore the people"), Text("...")],
                           ),
                           const SizedBox(
                             height: 20,
@@ -190,6 +189,7 @@ class _Welcome2State extends State<Welcome2> {
                             height: 20,
                           ),
                           ListView.separated(
+                            controller: ScrollController(),
                             physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: postList.length,

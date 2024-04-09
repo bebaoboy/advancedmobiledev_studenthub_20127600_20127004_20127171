@@ -494,6 +494,8 @@ class _LazyLoadingAnimationProjectListState
 
                   builder: (physics, items, shrinkWrap, reverse) {
                     return ListView.builder(
+                      controller: ScrollController(),
+
                       // here we must pass the physics, items and shrinkWrap
                       // that came from the builder function
                       reverse: false,
@@ -533,6 +535,7 @@ class _LazyLoadingAnimationProjectListState
     return SizedBox(
       height: 72,
       child: ListView.builder(
+        controller: ScrollController(),
         scrollDirection: Axis.horizontal,
         shrinkWrap: true,
         itemCount: 10,
@@ -556,6 +559,7 @@ class _LazyLoadingAnimationProjectListState
       padding: const EdgeInsets.only(bottom: 60),
       height: widget.itemHeight - 80,
       child: ListView.builder(
+        controller: ScrollController(),
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         itemCount: widget.list.length,

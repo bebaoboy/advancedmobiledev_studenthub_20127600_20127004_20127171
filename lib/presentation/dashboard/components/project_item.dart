@@ -135,6 +135,7 @@ class _ProjectItemState extends State<ProjectItem> {
               Expanded(
                 flex: 9,
                 child: SingleChildScrollView(
+                  controller: ScrollController(),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

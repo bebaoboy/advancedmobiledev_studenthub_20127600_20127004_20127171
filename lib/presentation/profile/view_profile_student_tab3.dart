@@ -145,6 +145,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
   Widget _buildRightSide() {
     //print(isLinkCv.value);
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -635,7 +636,6 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
       ),
     );
   }
-
 
   // Widget _buildSignInButton() {
   //   return Align(

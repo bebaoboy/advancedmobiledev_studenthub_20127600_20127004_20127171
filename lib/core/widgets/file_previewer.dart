@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
@@ -40,7 +41,12 @@ class FilePreview {
             "https://storage.googleapis.com/20ktpm-studenthub-storage")) {
           //You can download a single file
           return await FileDownloader.downloadFile(
-              url: filePath,
+              url: kIsWeb ? "https://cors-anywhere.herokuapp.com/$filePath" : filePath,
+              headers: {
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type",
+                'Access-Control-Allow-Credentials': "true",
+              },
               name: "file_${isCV ? "resume" : "transcript"}", //(optional)
               onProgress: (String? fileName, double progress) {
                 print('FILE fileName HAS PROGRESS $progress');

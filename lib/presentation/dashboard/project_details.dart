@@ -29,6 +29,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 
   Widget _buildBody() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.all(Dimens.horizontal_padding),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -129,6 +130,7 @@ class ProposalTabLayout extends StatelessWidget {
     return (proposals?.length ?? 0) == 0
         ? Center(child: Text(Lang.get("nothing_here")))
         : ListView.builder(
+            controller: ScrollController(),
             itemCount: proposals?.length ?? 0,
             itemBuilder: (context, index) {
               return ProposalItem(
@@ -148,6 +150,7 @@ class DetailTabLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -175,6 +178,7 @@ class DetailTabLayout extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         child: SingleChildScrollView(
+                            controller: ScrollController(),
                             child: Text(project.description)),
                       ),
                     ),
@@ -295,6 +299,7 @@ class HiredTabLayout extends StatelessWidget {
     return (hired?.length ?? 0) == 0
         ? Center(child: Text(Lang.get("nothing_here")))
         : ListView.builder(
+            controller: ScrollController(),
             itemCount: hired?.length ?? 0,
             itemBuilder: (context, index) {
               // return ListTile(
@@ -320,6 +325,7 @@ class MessageTabLayout extends StatelessWidget {
     return (messages?.length ?? 0) == 0
         ? Center(child: Text(Lang.get("nothing_here")))
         : ListView.builder(
+            controller: ScrollController(),
             itemCount: messages?.length ?? 0,
             itemBuilder: (context, index) {
               return ListTile(

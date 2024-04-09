@@ -41,11 +41,12 @@ class _SettingScreenState extends State<SettingScreen> {
     print("init setting");
     accountList = [
       // guest acc
-      if (_userStore.user != null &&
-          _userStore.savedUsers.firstWhereOrNull(
-                (element) => element.email == _userStore.user!.email,
-              ) ==
-              null)
+      if (_userStore.user == null ||
+          (_userStore.user != null &&
+              _userStore.savedUsers.firstWhereOrNull(
+                    (element) => element.email == _userStore.user!.email,
+                  ) ==
+                  null))
         Account(
             _userStore.user!.email.isNotEmpty
                 ? _userStore.user!
@@ -204,50 +205,35 @@ class _SettingScreenState extends State<SettingScreen> {
                   showAnimatedDialog(
                     context: context,
                     barrierDismissible: true,
-                    builder: (BuildContext context) {
+                    builder: (BuildContext ctx) {
                       return ClassicGeneralDialogWidget(
                         contentText:
                             'Do you want to switch account to ${item.data!.user.email} (student)?',
                         negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
                         onPositiveClick: () async {
-                          Navigator.of(context).pop();
+                          Navigator.of(ctx).pop();
                           if (item.data!.user.studentProfile == null) {
                             showAnimatedDialog(
                               context: context,
                               barrierDismissible: true,
-                              builder: (BuildContext context) {
+                              builder: (BuildContext ctx2) {
                                 return ClassicGeneralDialogWidget(
                                   contentText:
                                       '${item.data!.user.email} dont have student profile? Create now?',
                                   negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
                                   onPositiveClick: () async {
-                                    Navigator.of(context).pop();
+                                    Navigator.of(ctx2).pop();
                                     setState(() {
                                       loading = true;
                                     });
 
-                                    if (_userStore.user != null &&
-                                        _userStore.user!.studentProfile !=
-                                            null &&
-                                        _userStore.user!.studentProfile!
-                                                .objectId !=
-                                            null) {
-                                      final ProfileStudentStore infoStore =
-                                          getIt<ProfileStudentStore>();
+                                    final ProfileStudentStore infoStore =
+                                        getIt<ProfileStudentStore>();
 
-                                      infoStore.setStudentId(_userStore
-                                          .user!.studentProfile!.objectId!);
-                                      await infoStore.getInfo().then(
-                                            (value) {},
-                                          );
-                                      final ProfileStudentFormStore formStore =
-                                          getIt<ProfileStudentFormStore>();
-                                      await formStore.getProfileStudent(
-                                          _userStore
-                                              .user!.studentProfile!.objectId!);
-                                    }
+                                    await infoStore.getTechStack();
+                                    await infoStore.getSkillset();
                                     setState(() {
                                       loading = false;
                                     });
@@ -403,6 +389,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: SingleChildScrollView(
+        controller: ScrollController(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -460,14 +447,19 @@ class _SettingScreenState extends State<SettingScreen> {
                         showAnimatedDialog(
                           context: context,
                           barrierDismissible: true,
-                          builder: (BuildContext context) {
+                          builder: (BuildContext ctx) {
                             return ClassicGeneralDialogWidget(
                               contentText:
                                   'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
                               negativeText: Lang.get('cancel'),
                               positiveText: 'Yes',
-                              onPositiveClick: () {
-                                Navigator.of(context).pop();
+                              onPositiveClick: () async {
+                                Navigator.of(ctx).pop();
+                                final ProfileStudentStore infoStore =
+                                    getIt<ProfileStudentStore>();
+
+                                await infoStore.getTechStack();
+                                await infoStore.getSkillset();
 
                                 Navigator.of(context).push(MaterialPageRoute2(
                                     routeName: Routes.profileStudent));

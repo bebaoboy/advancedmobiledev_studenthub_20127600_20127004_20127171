@@ -181,6 +181,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Column(

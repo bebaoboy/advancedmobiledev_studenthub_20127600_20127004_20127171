@@ -264,6 +264,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -528,6 +529,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: ListView.builder(
+            controller: ScrollController(),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: _languages.length,
@@ -747,6 +749,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: ListView.builder(
+            controller: ScrollController(),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: _educations.length,

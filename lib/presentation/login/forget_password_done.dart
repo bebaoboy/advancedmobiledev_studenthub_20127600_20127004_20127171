@@ -16,7 +16,6 @@ class ForgetPasswordDoneScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
-
   bool loading = false;
 
   @override
@@ -71,6 +70,7 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,

@@ -80,6 +80,7 @@ class _AlertTabState extends State<AlertTab> {
       children: <Widget>[
         Expanded(
           child: ListView.separated(
+            controller: ScrollController(),
             itemCount: alerts.length,
             separatorBuilder: (context, index) =>
                 const Divider(color: Colors.black),

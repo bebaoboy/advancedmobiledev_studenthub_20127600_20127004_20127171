@@ -200,6 +200,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -320,6 +321,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
       child: ListView.builder(
+        controller: ScrollController(),
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
         itemCount: _projects.length,
@@ -741,6 +743,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                   ? LimitedBox(
                                       maxHeight: 90,
                                       child: SingleChildScrollView(
+                                        controller: ScrollController(),
                                         child: Text(
                                           _projects[index].description,
                                           style: const TextStyle(fontSize: 12),

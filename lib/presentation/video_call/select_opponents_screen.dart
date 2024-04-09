@@ -208,6 +208,7 @@ class _BodyLayoutState extends State<BodyLayout> {
     // CubeUser? currentUser = CubeChatConnection.instance.currentUser;
 
     return ListView.builder(
+      controller: ScrollController(),
       itemCount: widget.users.length,
       shrinkWrap: true,
       itemBuilder: (context, index) {

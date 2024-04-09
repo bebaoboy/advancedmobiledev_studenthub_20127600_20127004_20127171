@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
     show PreviewData;
@@ -267,7 +268,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
     final previewData = await getPreviewData(
       text,
-      proxy: widget.corsProxy,
+      proxy: kIsWeb ? "https://cors-anywhere.herokuapp.com/" : widget.corsProxy,
       requestTimeout: widget.requestTimeout,
       userAgent: widget.userAgent,
     );
@@ -457,7 +458,8 @@ class _LinkPreviewState extends State<LinkPreview>
         );
       }
     } else {
-      return  _containerWidget(animate: false, child: Center(child: widget.loadingWidget));
+      return _containerWidget(
+          animate: false, child: Center(child: widget.loadingWidget));
     }
   }
 }

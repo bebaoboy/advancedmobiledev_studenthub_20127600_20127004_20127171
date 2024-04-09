@@ -195,6 +195,7 @@ class _AllProjectsState extends State<AllProjects> {
                 Flexible(
                   fit: FlexFit.loose,
                   child: ListView.builder(
+                    controller: ScrollController(),
                     itemCount: activeProjects?.length ?? 0,
                     itemBuilder: (context, index) {
                       activeProjects![index].isLoading = false;
@@ -226,6 +227,7 @@ class _AllProjectsState extends State<AllProjects> {
                 Flexible(
                   fit: FlexFit.loose,
                   child: ListView.builder(
+                    controller: ScrollController(),
                     itemCount: submittedProjects?.length ?? 0,
                     itemBuilder: (context, index) {
                       submittedProjects![index].isLoading = false;

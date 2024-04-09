@@ -154,6 +154,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: LimitedBox(
         maxHeight: SizeHelper.of(context, printScreenInfo: true).help(
           mobileExtraLarge: 90.h,

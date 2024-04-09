@@ -70,6 +70,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: SingleChildScrollView(
+                controller: ScrollController(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -318,7 +319,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             alignment: Alignment.topCenter,
             child: isSuggestionTapped
                 ? LazyLoadingAnimationProjectList(
-                  scrollController: ScrollController(),
+                    scrollController: ScrollController(),
                     itemHeight: MediaQuery.of(context).size.height * 0.3,
                     list: widget.searchList,
                     skipItemLoading: true,

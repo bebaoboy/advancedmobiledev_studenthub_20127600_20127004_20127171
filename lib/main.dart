@@ -119,17 +119,26 @@ Future<void> main() async {
   FirebaseMessaging.onMessage.listen((remoteMessage) {
     log('[onMessage] message: ${remoteMessage.data.toString()}', "bebaoboy");
   });
+  // if (!kIsWeb) {
+  //   // if (kDebugMode) {
+  //   //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
+  //   // } else {
+  //   //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+  //   // }
+  // }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  FlutterError.onError = (FlutterErrorDetails errorDetails) {
-    FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-  };
-  // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    return kReleaseMode;
-  };
+  if (!kIsWeb) {
+    FlutterError.onError = (FlutterErrorDetails errorDetails) {
+      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+    };
+    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return kReleaseMode;
+    };
+  }
 
   if (!kIsWeb) {
     Isolate.current.addErrorListener(RawReceivePort((pair) async {

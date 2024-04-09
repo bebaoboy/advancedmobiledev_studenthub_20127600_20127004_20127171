@@ -154,7 +154,10 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
         startDate: DateTime(2020, 9),
         endDate: DateTime(2020, 12),
-        skills: [Skill("React", "", "", id: "10"), Skill("Android", "", "", id: "2")]));
+        skills: [
+          Skill("React", "", "", id: "10"),
+          Skill("Android", "", "", id: "2")
+        ]));
     _projects.add(ProjectExperience("Community partners project",
         description:
             "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
@@ -264,6 +267,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -385,6 +389,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     return SizedBox(
       height: 500,
       child: ListView.builder(
+        controller: ScrollController(),
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
         itemCount: _projects.length,
@@ -725,8 +730,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                         text: _projects[index].link,
                                         style: const TextStyle(
                                           color: Colors.blue,
-                                          decoration:
-                                              TextDecoration.underline,
+                                          decoration: TextDecoration.underline,
                                         ),
                                       )
                                     ]))),
@@ -806,6 +810,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                   ? LimitedBox(
                                       maxHeight: 90,
                                       child: SingleChildScrollView(
+                                        controller: ScrollController(),
                                         child: Text(
                                           _projects[index].description,
                                           style: const TextStyle(fontSize: 12),
