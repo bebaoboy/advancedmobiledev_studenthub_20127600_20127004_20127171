@@ -17,7 +17,7 @@ class ProjectRepositoryImpl extends ProjectRepository {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
-        var result = ProjectList.fromJson(value.data);
+        var result = ProjectList.fromJson(value.data["result"]);
         result.projects?.forEach((project) {
           _datasource.insert(project);
         });
@@ -25,7 +25,10 @@ class ProjectRepositoryImpl extends ProjectRepository {
       } else {
         return ProjectList(projects: List.empty(growable: true));
       }
-    // ignore: invalid_return_type_for_catch_error
-    }).catchError((error) => Log.e("ProjectRepo", error.toString()));
+      // ignore: invalid_return_type_for_catch_error
+    }).onError((s, error) {
+      Log.e("ProjectRepo", error.toString());
+      return Future.value(ProjectList(projects: List.empty(growable: true)));
+    });
   }
 }

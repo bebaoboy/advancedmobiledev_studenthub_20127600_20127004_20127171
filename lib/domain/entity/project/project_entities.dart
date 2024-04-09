@@ -41,6 +41,8 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   String title;
   String description;
   Scope scope;
+  bool enabled;
+  bool isFavorite;
 
   ProjectBase({
     this.isLoading = true,
@@ -49,11 +51,13 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
     required this.description,
     this.scope = Scope.short,
     String id = "",
+    this.enabled = true,
+    this.isFavorite = false,
   }) : super(objectId: id);
 
   @override
   bool isLoading;
-  
+
   @override
   bool doneLoading;
 }
@@ -71,9 +75,9 @@ class Project extends ProjectBase {
   List<Proposal>? proposal = List.empty(growable: true);
   List<Proposal>? messages = List.empty(growable: true);
   DateTime timeCreated = DateTime.now();
-  bool isFavorite = false;
   bool isWorking = false;
   bool isArchived = false;
+  String companyId;
 
   Project({
     required super.title,
@@ -84,11 +88,15 @@ class Project extends ProjectBase {
     this.proposal,
     this.messages,
     required this.timeCreated,
-    this.isFavorite = false,
+    super.isFavorite = false,
+    super.enabled,
     this.isWorking = false,
+    this.isArchived = false,
     super.id,
+    this.companyId = "",
   });
 
+  @Deprecated("Use timeago instead")
   getModifiedTimeCreated() {
     return timeCreated.difference(DateTime.now()).inDays.abs();
   }
@@ -97,10 +105,23 @@ class Project extends ProjectBase {
     return Project(
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      timeCreated: json['timeCreated'] ?? DateTime.now(),
-      scope: Scope.values[json['scope'] ?? 0],
-      numberOfStudents: json['numberOfStudent'] ?? 0,
+      timeCreated: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+      scope: Scope.values[json['projectScopeFlag'] ?? 0],
+      numberOfStudents: json['numberOfStudents'] ?? 0,
+      isWorking: json['projectScopeFlag'] == 0,
+      isArchived: json['projectScopeFlag'] == 1,
+      id: (json["id"] ?? "").toString(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "companyId": companyId,
+      "projectScopeFlag": scope.index,
+      "title": title,
+      "description": description,
+      "typeFlag": isWorking ? 0 : 1,
+    };
   }
 }
 

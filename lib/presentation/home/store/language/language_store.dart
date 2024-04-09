@@ -2,6 +2,7 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/domain/entity/language/Language.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:mobx/mobx.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 part 'language_store.g.dart';
 
@@ -40,9 +41,16 @@ abstract class _LanguageStore with Store {
   @action
   void changeLanguage(String value) {
     _locale = value;
+    switch (_locale) {
+      case 'vi':
+        timeago.setLocaleMessages(_locale, timeago.ViMessages());
+        break;
+      default:
+        timeago.setLocaleMessages(_locale, timeago.EnMessages());
+        break;
+    }
     _repository.changeLanguage(value).then((_) {
       // write additional logic here
-      
     });
   }
 
@@ -75,6 +83,14 @@ abstract class _LanguageStore with Store {
     // getting current language from shared preference
     if (_repository.currentLanguage != null) {
       _locale = _repository.currentLanguage!;
+      switch (_locale) {
+        case 'vi':
+          timeago.setLocaleMessages(_locale, timeago.ViMessages());
+          break;
+        default:
+          timeago.setLocaleMessages(_locale, timeago.EnMessages());
+          break;
+      }
     }
   }
 

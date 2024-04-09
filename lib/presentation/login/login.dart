@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/setting/settings_drawer.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
@@ -372,7 +373,9 @@ class _LoginScreenState extends State<LoginScreen> {
           initializing = true;
         });
         log("login", "BEBAOBOY");
-        initCube(context);
+        if (NavigationService.navigatorKey.currentContext != null) {
+          initCube(NavigationService.navigatorKey.currentContext!);
+        }
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);

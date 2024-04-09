@@ -5,6 +5,7 @@ import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
@@ -188,7 +189,9 @@ class _SplashScreenState extends State<SplashScreen>
         }
       });
     _playAnimation(context);
-    initCube(context);
+    if (NavigationService.navigatorKey.currentContext != null) {
+      initCube(NavigationService.navigatorKey.currentContext!);
+    }
   }
 
   initCube(context) async {
@@ -251,10 +254,10 @@ class _SplashScreenState extends State<SplashScreen>
             log(cubeUser.toString(), "BEBAOBOY");
             if (CubeChatConnection.instance.isAuthenticated() &&
                 CubeChatConnection.instance.currentUser != null) {
-              log(
-                  (CubeSessionManager.instance.activeSession!.user == null)
-                      .toString(),
-                  "BEBAOBOY");
+              // log(
+              //     (CubeSessionManager.instance.activeSession!.user == null)
+              //         .toString(),
+              //     "BEBAOBOY");
             }
 
             initForegroundService().then((value) {
@@ -267,16 +270,11 @@ class _SplashScreenState extends State<SplashScreen>
             CallManager.instance.init(context);
 
             PushNotificationsManager.instance.init();
-
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        userStore.isLoggedIn ? Routes.home : Routes.login));
           }).catchError((exception) {
             //_processLoginError(exception);
 
             log(exception.toString(), "BEBAOBOY");
+            return;
           });
           // _controller.stop();
         } catch (exception) {
@@ -287,6 +285,7 @@ class _SplashScreenState extends State<SplashScreen>
           deleteSessionsExceptCurrent()
               .then((voidResult) {})
               .catchError((error) {});
+          return;
         }
         // Future.delayed(const Duration(seconds: 2), () {
         //   try {
@@ -300,18 +299,30 @@ class _SplashScreenState extends State<SplashScreen>
         //               userStore.isLoggedIn ? Routes.home : Routes.login));
         // });
       });
+      Future.delayed(const Duration(seconds: 3), () {
+        try {
+          _controller.stop();
+          // ignore: empty_catches
+        } catch (e) {}
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute2(
+                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+      });
     }
     // user = utils.users[2];
-    Future.delayed(const Duration(seconds: 2), () {
-      try {
-        _controller.stop();
-        // ignore: empty_catches
-      } catch (e) {}
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute2(
-              routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
-    });
+    else {
+      Future.delayed(const Duration(seconds: 2), () {
+        try {
+          _controller.stop();
+          // ignore: empty_catches
+        } catch (e) {}
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute2(
+                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+      });
+    }
   }
 
   Future<Null> _playAnimation(BuildContext context) async {

@@ -6,10 +6,12 @@ import 'package:animated_segmented_tab_control/animated_segmented_tab_control.da
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,7 @@ class DashBoardTab extends StatefulWidget {
 
 class _DashBoardTabState extends State<DashBoardTab> {
   // late TabController tabController;
+  final ProjectStore _projectStore = getIt<ProjectStore>();
 
   @override
   void initState() {
@@ -85,6 +88,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
                           if (value != null) {
                             allProjects.insert(0, value as Project);
                             myProjects.insert(0, value);
+                            _projectStore.addProject(value);
                           }
                         });
                       });

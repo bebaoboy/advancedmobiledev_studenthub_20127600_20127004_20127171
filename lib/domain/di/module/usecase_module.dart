@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:boilerplate/domain/repository/post/post_repository.dart';
+import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/post/delete_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
@@ -16,6 +17,7 @@ import 'package:boilerplate/domain/usecase/profile/get_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/get_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -161,6 +163,10 @@ mixin UseCaseModule {
     );
     getIt.registerSingleton<HasToChangePassUseCase>(
       HasToChangePassUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<GetProjectsUseCase>(
+      GetProjectsUseCase(getIt<ProjectRepository>()),
     );
 
     // post:--------------------------------------------------------------------

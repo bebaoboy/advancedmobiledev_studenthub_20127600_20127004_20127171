@@ -83,6 +83,7 @@ void callbackDispatcher() {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
+  ConnectycubeFlutterCallKit.instance.init();
 
   await ServiceLocator.configureDependencies().then((value) {
     if (!kIsWeb) {
@@ -93,7 +94,6 @@ Future<void> main() async {
           );
     }
   });
-  ConnectycubeFlutterCallKit.instance.init();
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -171,6 +171,7 @@ initConnectycube() async {
   // if (kIsWeb) {
   //   return;
   // }
+  print("check cube connectivity");
   final List<ConnectivityResult> connectivityResult =
       await (Connectivity().checkConnectivity());
 
@@ -179,12 +180,12 @@ initConnectycube() async {
       config.APP_ID,
       config.AUTH_KEY,
       config.AUTH_SECRET,
-      onSessionRestore: () {
-        return SharedPrefs.getUser().then((savedUser) {
-          log(savedUser?.toString(), "BEBAOBOY");
-          return createSession(savedUser);
-        });
-      },
+      // onSessionRestore: () {
+      //   return SharedPrefs.getUser().then((savedUser) {
+      //     log(savedUser?.toString(), "BEBAOBOY");
+      //     return createSession(savedUser);
+      //   });
+      // },
     );
   }
 }

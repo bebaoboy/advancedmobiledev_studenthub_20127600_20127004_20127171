@@ -131,6 +131,7 @@ dependencies:
   to_string_pretty:
   tuple: 
   toastification:
+  timeago:
   # tree_view_flutter: ^1.0.2
   # U
   uuid:

@@ -2,9 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -266,13 +268,15 @@ class SearchBottomSheet extends StatefulWidget {
       required this.onFilterTap,
       required this.searchList,
       this.keyword,
-      this.filter});
+      this.filter,
+      required this.favoriteCallback});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
   final List<Project> searchList;
   final String? keyword;
   final SearchFilter? filter;
+  final Function favoriteCallback;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -324,14 +328,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     list: widget.searchList,
                     skipItemLoading: true,
                     firstCallback: (id) {
-                      setState(() {
-                        for (int i = 0; i < allProjects.length; i++) {
-                          if (allProjects[i].objectId == id) {
-                            allProjects[i].isFavorite =
-                                !allProjects[i].isFavorite;
-                          }
-                        }
-                      });
+                      widget.favoriteCallback(id);
                     },
                   )
                 : null,
@@ -411,7 +408,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       //     // if (pattern.isEmpty) return [];
       //     // return Future<List<Project>>.delayed(
       //     //    Duration(milliseconds: 300),
-      //     //   () => allProjects.where((product) {
+      //     //   () => _projectStore.projects.where((product) {
       //     //     final nameLower = product.title.toLowerCase().split(' ').join('');
       //     //     //print(nameLower);
       //     //     final patternLower = pattern.toLowerCase().split(' ').join('');
@@ -495,6 +492,15 @@ class ProjectTab extends StatefulWidget {
 
 class _ProjectTabState extends State<ProjectTab> {
   SearchFilter filter = SearchFilter();
+  final ProjectStore _projectStore = getIt<ProjectStore>();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    print(_projectStore.projects);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -527,9 +533,19 @@ class _ProjectTabState extends State<ProjectTab> {
       context,
       ModalSheetRoute(
         builder: (context) => SearchBottomSheet(
+          favoriteCallback: (id) {
+            setState(() {
+              for (int i = 0; i < _projectStore.projects.length; i++) {
+                if (_projectStore.projects[i].objectId == id) {
+                  _projectStore.projects[i].isFavorite =
+                      !_projectStore.projects[i].isFavorite;
+                }
+              }
+            });
+          },
           filter: filter,
           keyword: keyword,
-          searchList: allProjects
+          searchList: _projectStore.projects
               .where((e) =>
                   keyword.isNotEmpty &&
                   e.title.toLowerCase().contains(keyword.toLowerCase()) &&
@@ -634,7 +650,7 @@ class _ProjectTabState extends State<ProjectTab> {
                     //       return SearchBottomSheet(
                     //         filter: filter,
                     //         keyword: keyword,
-                    //         searchList: allProjects
+                    //         searchList: _projectStore.projects
                     //             .where((e) =>
                     //                 keyword.isNotEmpty &&
                     //                 e.title
@@ -683,7 +699,7 @@ class _ProjectTabState extends State<ProjectTab> {
                     if (pattern.isEmpty) return [];
                     return Future<List<Project>>.delayed(
                       const Duration(milliseconds: 300),
-                      () => allProjects.where((product) {
+                      () => _projectStore.projects.where((product) {
                         final nameLower =
                             product.title.toLowerCase().split(' ').join('');
                         //print(nameLower);
@@ -728,12 +744,12 @@ class _ProjectTabState extends State<ProjectTab> {
                             Routes.favortieProject,
                             NavbarNotifier2.currentIndex,
                             FavoriteScreen(
-                                projectList: allProjects
+                                projectList: _projectStore.projects
                                     .where((element) => element.isFavorite)
                                     .toList(),
                                 onFavoriteTap: (int i) {
-                                  allProjects[i].isFavorite =
-                                      !allProjects[i].isFavorite;
+                                  _projectStore.projects[i].isFavorite =
+                                      !_projectStore.projects[i].isFavorite;
                                 }));
                       },
                       color: Theme.of(context).colorScheme.primary,
@@ -743,9 +759,9 @@ class _ProjectTabState extends State<ProjectTab> {
             )),
         // Flexible(
         //   child: ListView.builder(
-        //     itemCount: allProjects.length,
+        //     itemCount: _projectStore.projects.length,
         //     itemBuilder: (context, index) => ProjectItem(
-        //       project: allProjects[index],
+        //       project: _projectStore.projects[index],
         //       isFavorite: index % 2 == 0 ? true : false,
         //     ),
         //   ),
@@ -758,10 +774,11 @@ class _ProjectTabState extends State<ProjectTab> {
           child: LazyLoadingAnimationProjectList(
             scrollController: widget.scrollController,
             itemHeight: 230,
-            list: allProjects,
+            list: _projectStore.projects,
             firstCallback: (i) {
               setState(() {
-                allProjects[i].isFavorite = !allProjects[i].isFavorite;
+                _projectStore.projects[i].isFavorite =
+                    !_projectStore.projects[i].isFavorite;
               });
             },
           ),
@@ -777,7 +794,7 @@ class _ProjectTabState extends State<ProjectTab> {
         //     child: SearchBottomSheet(
         //       filter: filter,
         //       keyword: keyword,
-        //       searchList: allProjects
+        //       searchList: _projectStore.projects
         //           .where((e) =>
         //               keyword.isNotEmpty &&
         //               e.title.toLowerCase().contains(keyword.toLowerCase()))

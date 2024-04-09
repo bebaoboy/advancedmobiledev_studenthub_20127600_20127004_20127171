@@ -1,10 +1,13 @@
 import 'package:animations/animations.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class _OpenContainerWrapper extends StatelessWidget {
   const _OpenContainerWrapper({
@@ -153,16 +156,20 @@ class _MyProjectItemState extends State<MyProjectItem> {
     );
   }
 
+  final _languageStore = getIt<LanguageStore>();
+
   buildItem(width) {
     var createdText = '';
-    int differenceWithToday = widget.project.getModifiedTimeCreated();
-    if (differenceWithToday == 0) {
-      createdText = Lang.get("created_now");
-    } else if (differenceWithToday == 1) {
-      createdText = 'Created 1 day ago';
-    } else {
-      createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-    }
+    // int differenceWithToday = widget.project.getModifiedTimeCreated();
+    // if (differenceWithToday == 0) {
+    //   createdText = Lang.get("created_now");
+    // } else if (differenceWithToday == 1) {
+    //   createdText = 'Created 1 day ago';
+    // } else {
+    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+    // }
+    createdText = timeago.format(
+        locale: _languageStore.locale, widget.project.timeCreated);
 
     return Padding(
       padding: const EdgeInsets.symmetric(
