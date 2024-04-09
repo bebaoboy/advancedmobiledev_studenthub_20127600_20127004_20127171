@@ -83,7 +83,6 @@ void callbackDispatcher() {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setPreferredOrientations();
-  ConnectycubeFlutterCallKit.instance.init();
 
   await ServiceLocator.configureDependencies().then((value) {
     if (!kIsWeb) {
@@ -119,13 +118,13 @@ Future<void> main() async {
   FirebaseMessaging.onMessage.listen((remoteMessage) {
     log('[onMessage] message: ${remoteMessage.data.toString()}', "bebaoboy");
   });
-  // if (!kIsWeb) {
-  //   // if (kDebugMode) {
-  //   //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(false);
-  //   // } else {
-  //   //   await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-  //   // }
-  // }
+  if (!kIsWeb) {
+    if (kDebugMode) {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    } else {
+      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    }
+  }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -140,16 +139,17 @@ Future<void> main() async {
     };
   }
 
-  // if (!kIsWeb) {
-  //   Isolate.current.addErrorListener(RawReceivePort((pair) async {
-  //     final List<dynamic> errorAndStacktrace = pair;
-  //     await FirebaseCrashlytics.instance.recordError(
-  //       errorAndStacktrace.first,
-  //       errorAndStacktrace.last,
-  //       fatal: true,
-  //     );
-  //   }).sendPort);
-  // }
+  if (!kIsWeb) {
+    Isolate.current.addErrorListener(RawReceivePort((pair) async {
+      final List<dynamic> errorAndStacktrace = pair;
+      await FirebaseCrashlytics.instance.recordError(
+        errorAndStacktrace.first,
+        errorAndStacktrace.last,
+        fatal: true,
+      );
+    }).sendPort);
+  }
+  if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
 
   await initConnectycube();
 

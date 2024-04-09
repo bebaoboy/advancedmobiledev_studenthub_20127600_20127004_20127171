@@ -17,7 +17,7 @@ class Endpoints {
   // project
 
   // all project in dashboard
-  static const String getProjects = "$baseUrl/api/project";
+  static const String getProjects = "$baseUrl/api/project"; // done
   static const String getCurrentCompanyProjects =
       "$baseUrl/project/company/{companyId}";
   static const String addNewProject = "$baseUrl/api/project";

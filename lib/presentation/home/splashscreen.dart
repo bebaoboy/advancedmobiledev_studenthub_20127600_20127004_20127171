@@ -261,16 +261,17 @@ class _SplashScreenState extends State<SplashScreen>
               //     "BEBAOBOY");
             }
 
-            initForegroundService().then((value) {
-              WorkMangerHelper.registerProfileFetch();
-            });
             checkSystemAlertWindowPermission(context);
 
             if (!kIsWeb) requestNotificationsPermission();
 
             CallManager.instance.init(context);
 
-            PushNotificationsManager.instance.init();
+            await PushNotificationsManager.instance.init();
+
+            initForegroundService().then((value) {
+              WorkMangerHelper.registerProfileFetch();
+            });
           }).catchError((exception) {
             //_processLoginError(exception);
 

@@ -444,17 +444,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   "BEBAOBOY");
             }
 
-            initForegroundService().then((value) {
-              WorkMangerHelper.registerProfileFetch();
-            });
             checkSystemAlertWindowPermission(context);
 
             if (!kIsWeb) requestNotificationsPermission();
 
             CallManager.instance.init(context);
 
-            PushNotificationsManager.instance.init();
-
+            await PushNotificationsManager.instance.init();
+            initForegroundService().then((value) {
+              WorkMangerHelper.registerProfileFetch();
+            });
             Navigator.pushReplacement(
                 context,
                 MaterialPageRoute2(

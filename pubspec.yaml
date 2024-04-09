@@ -56,9 +56,9 @@ dependencies:
   file_picker:
   flutter_mobx: ^2.0.6+5
   # file_previewer:
-  firebase_core: 
+  firebase_core: ^2.24.2
   firebase_crashlytics: 
-  firebase_analytics: 
+  firebase_analytics: ^10.8.0
   firebase_messaging:
   flutter_animated_dialog: 
   # flutter_link_previewer: ^3.2.2

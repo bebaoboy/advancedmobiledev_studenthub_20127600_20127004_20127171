@@ -8,6 +8,7 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workmanager/workmanager.dart';
 
 class WorkMangerHelper {
@@ -27,8 +28,8 @@ class WorkMangerHelper {
   static final DioClient _dioClient = _initializeDioClient();
   static final UserApi _userApi = _initializeUserApi();
 
-  WorkMangerHelper._internal(){
-     SharedPreferences.getInstance().then((prefs) {
+  WorkMangerHelper._internal() {
+    SharedPreferences.getInstance().then((prefs) {
       _sharedPreferences = prefs;
     });
   }
@@ -37,8 +38,7 @@ class WorkMangerHelper {
     return DioClient(dioConfigs: WorkMangerHelper().dioConfig)
       ..addInterceptors([
         AuthInterceptor(accessToken: () async {
-          return WorkMangerHelper
-              ._sharedPreferences
+          return WorkMangerHelper._sharedPreferences
               .getString(Preferences.auth_token);
         }),
         LoggingInterceptor(),
@@ -62,7 +62,7 @@ class WorkMangerHelper {
   static registerProfileFetch() async {
     Workmanager().registerPeriodicTask(
       WorkerTask.fetchProfile.identifier,
-      WorkerTask.fetchProfile.name,
+      WorkerTask.fetchProfile.name + const Uuid().v4(),
       existingWorkPolicy: ExistingWorkPolicy.replace,
       initialDelay: SHORT_DELAY,
       // frequency: LOW_FREQUENCY,
