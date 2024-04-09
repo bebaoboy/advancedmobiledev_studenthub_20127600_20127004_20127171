@@ -16,7 +16,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
+import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
@@ -140,16 +140,16 @@ Future<void> main() async {
     };
   }
 
-  if (!kIsWeb) {
-    Isolate.current.addErrorListener(RawReceivePort((pair) async {
-      final List<dynamic> errorAndStacktrace = pair;
-      await FirebaseCrashlytics.instance.recordError(
-        errorAndStacktrace.first,
-        errorAndStacktrace.last,
-        fatal: true,
-      );
-    }).sendPort);
-  }
+  // if (!kIsWeb) {
+  //   Isolate.current.addErrorListener(RawReceivePort((pair) async {
+  //     final List<dynamic> errorAndStacktrace = pair;
+  //     await FirebaseCrashlytics.instance.recordError(
+  //       errorAndStacktrace.first,
+  //       errorAndStacktrace.last,
+  //       fatal: true,
+  //     );
+  //   }).sendPort);
+  // }
 
   await initConnectycube();
 
@@ -180,12 +180,12 @@ initConnectycube() async {
       config.APP_ID,
       config.AUTH_KEY,
       config.AUTH_SECRET,
-      // onSessionRestore: () {
-      //   return SharedPrefs.getUser().then((savedUser) {
-      //     log(savedUser?.toString(), "BEBAOBOY");
-      //     return createSession(savedUser);
-      //   });
-      // },
+      onSessionRestore: () {
+        return SharedPrefs.getUser().then((savedUser) {
+          log(savedUser?.toString(), "BEBAOBOY");
+          return createSession(savedUser);
+        });
+      },
     );
   }
 }

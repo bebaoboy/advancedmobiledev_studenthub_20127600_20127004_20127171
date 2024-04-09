@@ -5,7 +5,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
 
-import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
+import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 
 import 'call_kit_manager.dart';
@@ -123,7 +123,9 @@ class CallManager {
           remoteStreams.forEach((key, value) async {
             await value.dispose();
           });
-        } catch (e) {}
+        } catch (e) {
+          log("error");
+        }
 
         remoteStreams.clear();
         CallKitManager.instance.processCallFinished(callSession.sessionId);
@@ -187,11 +189,11 @@ class CallManager {
         }
         if (NavigationService.navigatorKey.currentContext != null) {
           Navigator.push(
-          NavigationService.navigatorKey.currentContext!,
-          MaterialPageRoute2(
-            child: ConversationCallScreen(_currentCall!, true),
-          ),
-        );
+            NavigationService.navigatorKey.currentContext!,
+            MaterialPageRoute2(
+              child: ConversationCallScreen(_currentCall!, true),
+            ),
+          );
         }
       }
 

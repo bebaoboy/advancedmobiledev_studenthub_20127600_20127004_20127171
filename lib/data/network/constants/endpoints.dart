@@ -2,7 +2,8 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "http://34.16.137.128";
+  // static const String baseUrl = "http://34.16.137.128";
+  static const String baseUrl = "https://api.studenthub.dev";
 
   // receiveTimeout
   static const int receiveTimeout = 15000;

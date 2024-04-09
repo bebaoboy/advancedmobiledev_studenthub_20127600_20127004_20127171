@@ -101,6 +101,7 @@ class UploadFileQuery extends AutoManagedQuery<CubeFile?> {
           });
         });
       }).catchError((error) {
+        log("error");
         handelError(error);
         completer.completeError(error);
       });

@@ -3,6 +3,8 @@
 import 'package:boilerplate/core/widgets/xmpp/elements/XmppAttribute.dart';
 import 'package:boilerplate/core/widgets/xmpp/elements/XmppElement.dart';
 
+import '../../core/utils/cube_logger.dart';
+
 class ErrorPacket {
   String? type;
   int? code;
@@ -27,7 +29,9 @@ class ErrorPacket {
           if (condition == null && child.name != null) {
             condition = toCondition(child.name!);
           }
-        } catch (error) {}
+        } catch (error) {
+          log("error");
+        }
       }
     }
   }

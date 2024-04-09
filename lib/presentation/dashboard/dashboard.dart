@@ -8,7 +8,6 @@ import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
-import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/dashboard/student_dashboard_tab.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';

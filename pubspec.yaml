@@ -56,9 +56,9 @@ dependencies:
   file_picker:
   flutter_mobx: ^2.0.6+5
   # file_previewer:
-  firebase_core: ^2.24.2
+  firebase_core: 
   firebase_crashlytics: 
-  firebase_analytics: ^10.8.0
+  firebase_analytics: 
   firebase_messaging:
   flutter_animated_dialog: 
   # flutter_link_previewer: ^3.2.2
@@ -70,7 +70,7 @@ dependencies:
   # flutter_chat_types: 
   flutter_background: ^1.2.0
   flutter_speed_dial: ^7.0.0
-  flutter_webrtc: ^0.9.48+hotfix.1
+  flutter_webrtc: ^0.10.3
   flutter_file_downloader: ^1.2.2-dev.1
   # G
   get_it: ^7.2.0

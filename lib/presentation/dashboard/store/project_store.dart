@@ -9,7 +9,7 @@ class ProjectStore = _ProjectStore with _$ProjectStore;
 
 abstract class _ProjectStore with Store {
   _ProjectStore(this._getProjectsUseCase) {
-    _getProjectsUseCase.call(params: null).then((value) => _projects = value);
+    getAllProject();
   }
 
   GetProjectsUseCase _getProjectsUseCase;
@@ -25,5 +25,9 @@ abstract class _ProjectStore with Store {
     } else {
       _projects.projects = [value];
     }
+  }
+
+  Future getAllProject() {
+    return _getProjectsUseCase.call(params: null).then((value) => _projects = value);
   }
 }

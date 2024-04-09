@@ -50,22 +50,22 @@ class WorkMangerHelper {
   }
 
   // frequency
-  static const Duration LOW_FREQUENCY = Duration(minutes: 60);
+  static const Duration LOW_FREQUENCY = Duration(minutes: 120);
   static const Duration MEDIUM_FREQUENCY = Duration(minutes: 30);
   static const Duration NORMAL_FREQUENCY = Duration(minutes: 15);
   static const Duration HIGH_FREQUENCY = Duration(minutes: 5);
 
   // delay
-  static const Duration SHORT_DELAY = Duration(seconds: 30);
-  static const Duration LONG_DELAY = Duration(minutes: 3);
+  static const Duration SHORT_DELAY = Duration(seconds: 3);
+  static const Duration LONG_DELAY = Duration(minutes: 30);
 
   static registerProfileFetch() async {
     Workmanager().registerPeriodicTask(
       WorkerTask.fetchProfile.identifier,
       WorkerTask.fetchProfile.name,
       existingWorkPolicy: ExistingWorkPolicy.replace,
-      initialDelay: LONG_DELAY,
-      frequency: LOW_FREQUENCY,
+      initialDelay: SHORT_DELAY,
+      // frequency: LOW_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(networkType: NetworkType.connected),
     );

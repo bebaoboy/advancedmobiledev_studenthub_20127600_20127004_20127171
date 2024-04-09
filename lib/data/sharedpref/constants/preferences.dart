@@ -17,4 +17,5 @@ class Preferences {
 
   static const String student_profile = "student_profile";
   static const String company_profile = "company_profile";
+  static const String project_search_history = "project_search_history";
 }

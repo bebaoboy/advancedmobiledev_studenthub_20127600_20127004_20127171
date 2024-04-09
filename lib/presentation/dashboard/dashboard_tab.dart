@@ -8,7 +8,6 @@ import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
-import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
@@ -58,6 +57,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
     );
   }
 
+  var projectStore = getIt<ProjectStore>();
+
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
     return Column(
@@ -87,7 +88,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
                         setState(() {
                           if (value != null) {
                             allProjects.insert(0, value as Project);
-                            myProjects.insert(0, value);
+                            projectStore.projects.insert(0, value);
                             _projectStore.addProject(value);
                           }
                         });
@@ -103,8 +104,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
           ),
         ),
 
-        // Conditional rendering based on whether myProjects is empty or not
-        myProjects.isEmpty
+        // Conditional rendering based on whether projectStore.projects is empty or not
+        projectStore.projects.isEmpty
             ? Column(
                 children: [
                   Align(
@@ -143,6 +144,8 @@ class ProjectTabs extends StatefulWidget {
 }
 
 class _ProjectTabsState extends State<ProjectTabs> {
+  var projectStore = getIt<ProjectStore>();
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -184,13 +187,13 @@ class _ProjectTabsState extends State<ProjectTabs> {
               physics: const BouncingScrollPhysics(),
               children: [
                 AllProjects(
-                  projects: myProjects,
+                  projects: projectStore.projects,
                 ),
                 WorkingProjects(
-                  projects: myProjects,
+                  projects: projectStore.projects,
                 ),
                 AllProjects(
-                  projects: myProjects,
+                  projects: projectStore.projects,
                 )
               ]),
         )
@@ -199,7 +202,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   }
 }
 
-void showBottomSheet(Project project) {
+void showBottomSheet(Project project, Function workingCallback) {
   showAdaptiveActionSheet(
     title: const Text(
       "Menu",
@@ -264,12 +267,7 @@ void showBottomSheet(Project project) {
                 style: const TextStyle(fontWeight: FontWeight.normal))),
         onPressed: (_) {
           //print(project.title);
-          myProjects
-              .firstWhere(
-                (element) => element.objectId == project.objectId,
-                orElse: () => myProjects[0],
-              )
-              .isWorking = true;
+          workingCallback();
         },
       ),
     ],
@@ -298,6 +296,8 @@ class _WorkingProjectsState extends State<WorkingProjects> {
     }
   }
 
+  var projectStore = getIt<ProjectStore>();
+
   @override
   Widget build(BuildContext context) {
     return workingProjects != null && workingProjects!.isNotEmpty
@@ -306,7 +306,14 @@ class _WorkingProjectsState extends State<WorkingProjects> {
             itemCount: workingProjects?.length ?? 0,
             itemBuilder: (context, index) => MyProjectItem(
               project: workingProjects![index],
-              onShowBottomSheet: showBottomSheet,
+              onShowBottomSheet: (p) => showBottomSheet(p, () {
+                projectStore.projects
+                    .firstWhere(
+                      (element) => element.objectId == p.objectId,
+                      orElse: () => projectStore.projects[0],
+                    )
+                    .isWorking = true;
+              }),
             ),
           )
         : Container(
@@ -324,10 +331,12 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
+  var projectStore = getIt<ProjectStore>();
+
   @override
   Widget build(BuildContext context) {
     return ImplicitlyAnimatedList<Project>(
-      items: myProjects,
+      items: projectStore.projects,
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
             oldItem.objectId == newItem.objectId;
@@ -338,8 +347,15 @@ class _AllProjectsState extends State<AllProjects> {
             curve: Curves.easeInOut,
             animation: animation,
             child: MyProjectItem(
-              project: myProjects[i],
-              onShowBottomSheet: showBottomSheet,
+              project: projectStore.projects[i],
+              onShowBottomSheet: (p) => showBottomSheet(p, () {
+                projectStore.projects
+                    .firstWhere(
+                      (element) => element.objectId == p.objectId,
+                      orElse: () => projectStore.projects[0],
+                    )
+                    .isWorking = true;
+              }),
             ));
       },
       removeItemBuilder: (context, animation, oldItem) {
@@ -347,7 +363,14 @@ class _AllProjectsState extends State<AllProjects> {
           sizeFactor: animation,
           child: MyProjectItem(
             project: oldItem,
-            onShowBottomSheet: showBottomSheet,
+            onShowBottomSheet: (p) => showBottomSheet(p, () {
+              projectStore.projects
+                  .firstWhere(
+                    (element) => element.objectId == p.objectId,
+                    orElse: () => projectStore.projects[0],
+                  )
+                  .isWorking = true;
+            }),
           ),
         );
       },

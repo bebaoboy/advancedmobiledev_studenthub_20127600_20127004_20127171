@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:http/http.dart';
 
 import '../../cube_exceptions.dart';
+import '../../utils/cube_logger.dart';
 import '../../utils/string_utils.dart';
 
 class RestResponse {
@@ -20,9 +21,11 @@ class RestResponse {
       _futureResponse.then((response) {
         completer = _handleResponse(response, completer);
       }).catchError((error) {
+        log("error");
         completer = _handleError(error, completer);
       });
     } catch (e) {
+      log("error");
       completer.completeError(e);
     }
 
@@ -43,9 +46,10 @@ class RestResponse {
 
   @override
   String toString() {
-    return "*********************************************************\n" "*** RESPONSE *** ${getResponseCode()} *** $_uuid ***\n"
-            "HEADERS\n  ${getHeaders()}\n"
-            "BODY\n  ${getBody()}\n";
+    return "*********************************************************\n"
+        "*** RESPONSE *** ${getResponseCode()} *** $_uuid ***\n"
+        "HEADERS\n  ${getHeaders()}\n"
+        "BODY\n  ${getBody()}\n";
   }
 
   Completer<RestResponse> _handleResponse(

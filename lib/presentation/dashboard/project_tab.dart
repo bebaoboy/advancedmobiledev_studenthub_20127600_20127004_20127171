@@ -3,7 +3,6 @@ import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
@@ -494,11 +493,18 @@ class _ProjectTabState extends State<ProjectTab> {
   SearchFilter filter = SearchFilter();
   final ProjectStore _projectStore = getIt<ProjectStore>();
 
+  double yOffset = 0;
+  String keyword = "";
+  TextEditingController controller = TextEditingController();
+  Set<String> searchHistory = {};
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     print(_projectStore.projects);
+    loadSearchHistory().then(
+      (value) => searchHistory = value,
+    );
   }
 
   @override
@@ -586,10 +592,6 @@ class _ProjectTabState extends State<ProjectTab> {
     });
   }
 
-  double yOffset = 0;
-  String keyword = "";
-  TextEditingController controller = TextEditingController();
-
   Widget _buildProjectContent() {
     if (yOffset == 0) {
       yOffset = MediaQuery.of(context).size.height;
@@ -597,21 +599,21 @@ class _ProjectTabState extends State<ProjectTab> {
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        IconButton(
-          icon:
-              Icon(Icons.search, size: 35, color: Colors.black.withOpacity(.7)),
-          onPressed: () {
-            setState(() {
-              if (yOffset == MediaQuery.of(context).size.height) {
-                NavbarNotifier2.hideBottomNavBar = true;
-                yOffset = -(MediaQuery.of(context).size.height) * 0.05 + 45;
-              } else {
-                NavbarNotifier2.hideBottomNavBar = false;
-                yOffset = MediaQuery.of(context).size.height;
-              }
-            });
-          },
-        ),
+        // IconButton(
+        //   icon:
+        //       Icon(Icons.search, size: 35, color: Colors.black.withOpacity(.7)),
+        //   onPressed: () {
+        //     setState(() {
+        //       if (yOffset == MediaQuery.of(context).size.height) {
+        //         NavbarNotifier2.hideBottomNavBar = true;
+        //         // yOffset = -(MediaQuery.of(context).size.height) * 0.05 + 45;
+        //       } else {
+        //         NavbarNotifier2.hideBottomNavBar = false;
+        //         yOffset = MediaQuery.of(context).size.height;
+        //       }
+        //     });
+        //   },
+        // ),
         // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
@@ -626,8 +628,10 @@ class _ProjectTabState extends State<ProjectTab> {
                     setState(() {
                       keyword = p0;
                       NavbarNotifier2.hideBottomNavBar = true;
-                      yOffset =
-                          -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                      // yOffset =
+                      //     -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                      searchHistory.add(p0.trim());
+                      saveSearchHistory(searchHistory);
                     });
                     await showSearchBottomSheet(context);
                   },
@@ -636,11 +640,13 @@ class _ProjectTabState extends State<ProjectTab> {
                   onSuffixTap: () {},
                   onSelected: (project) async {
                     setState(() {
-                      keyword = project.title;
+                      keyword = project;
                       NavbarNotifier2.hideBottomNavBar = true;
-                      yOffset =
-                          -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                      // yOffset =
+                      //     -(MediaQuery.of(context).size.height) * 0.05 + 45;
                     });
+                    searchHistory.add(project.trim());
+                    saveSearchHistory(searchHistory);
                     await showSearchBottomSheet(context);
                     // await showSearchBottomSheet(context);
                     // showModalBottomSheet(
@@ -696,22 +702,38 @@ class _ProjectTabState extends State<ProjectTab> {
                   // readOnly:
                   searchTextEditingController: controller,
                   onSuggestionCallback: (pattern) {
-                    if (pattern.isEmpty) return [];
-                    return Future<List<Project>>.delayed(
+                    if (pattern.isEmpty) return searchHistory.toList();
+                    return Future<List<String>>.delayed(
                       const Duration(milliseconds: 300),
-                      () => _projectStore.projects.where((product) {
-                        final nameLower =
-                            product.title.toLowerCase().split(' ').join('');
-                        //print(nameLower);
-                        final patternLower =
-                            pattern.toLowerCase().split(' ').join('');
-                        return nameLower.contains(patternLower);
-                      }).toList(),
+                      () =>
+                          // _projectStore.projects.where((product) {
+                          //   final nameLower =
+                          //       product.title.toLowerCase().split(' ').join('');
+                          //   //print(nameLower);
+                          //   final patternLower =
+                          //       pattern.toLowerCase().split(' ').join('');
+                          //   return nameLower.contains(patternLower);
+                          // }).toList(),
+                          searchHistory.where(
+                        (element) {
+                          return element.trim().contains(controller.text.trim());
+                        },
+                      ).toList(),
                     );
                   },
                   suggestionItemBuilder: (context, project) => ListTile(
-                    title: Text(project.title),
-                    subtitle: Text(project.description),
+                    title: Text(project),
+                    contentPadding: const EdgeInsets.only(left: 5),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        setState(() {
+                          searchHistory.remove(project);
+                        });
+                        saveSearchHistory(searchHistory);
+                      },
+                    ),
+                    // subtitle: Text(project.description),
                   ),
                 ),
                 Positioned(
@@ -720,8 +742,8 @@ class _ProjectTabState extends State<ProjectTab> {
                       onPressed: () async {
                         setState(() {
                           NavbarNotifier2.hideBottomNavBar = true;
-                          yOffset =
-                              -(MediaQuery.of(context).size.height) * 0.05 + 45;
+                          // yOffset =
+                          // -(MediaQuery.of(context).size.height) * 0.05 + 45;
                         });
                         await showFilterBottomSheet(context).then((value) {
                           NavbarNotifier2.hideBottomNavBar = false;

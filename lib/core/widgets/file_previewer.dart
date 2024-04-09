@@ -41,7 +41,7 @@ class FilePreview {
             "https://storage.googleapis.com/20ktpm-studenthub-storage")) {
           //You can download a single file
           return await FileDownloader.downloadFile(
-              url: kIsWeb ? "https://cors-anywhere.herokuapp.com/$filePath" : filePath,
+              url: filePath,
               headers: {
                 "Access-Control-Allow-Methods": "GET, OPTIONS",
                 "Access-Control-Allow-Headers": "Content-Type",

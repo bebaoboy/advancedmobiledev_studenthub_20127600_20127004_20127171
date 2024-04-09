@@ -268,7 +268,7 @@ class _LinkPreviewState extends State<LinkPreview>
 
     final previewData = await getPreviewData(
       text,
-      proxy: kIsWeb ? "https://cors-anywhere.herokuapp.com/" : widget.corsProxy,
+      proxy: widget.corsProxy,
       requestTimeout: widget.requestTimeout,
       userAgent: widget.userAgent,
     );

@@ -4,12 +4,25 @@ library animation_search_bar;
 
 import 'dart:async';
 
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> saveSearchHistory(Set<String> history) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList(Preferences.project_search_history, history.toList());
+}
+
+Future<Set<String>> loadSearchHistory() async {
+  final prefs = await SharedPreferences.getInstance();
+  final history = prefs.getStringList(Preferences.project_search_history) ?? [];
+  return history.toSet();
+}
 
 class AnimSearchBar2 extends StatefulWidget {
   ///  width - double ,isRequired : Yes
@@ -49,9 +62,9 @@ class AnimSearchBar2 extends StatefulWidget {
   final bool boxShadow;
   final Function(String) onSubmitted;
   final TextEditingController searchTextEditingController;
-  final Widget Function(BuildContext, Project) suggestionItemBuilder;
-  final Function(Project)? onSelected;
-  final FutureOr<List<Project>?> Function(String) onSuggestionCallback;
+  final Widget Function(BuildContext, String) suggestionItemBuilder;
+  final Function(String)? onSelected;
+  final FutureOr<List<String>?> Function(String) onSuggestionCallback;
   final bool? expandedByDefault;
   final bool? enabled;
 
@@ -193,7 +206,112 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
         child: Stack(
           children: [
             ///Using Animated Positioned widget to expand and shrink the widget
-            AnimatedPositioned(
+             AnimatedPositioned(
+              duration: Duration(milliseconds: widget.animationDurationInMilli),
+              left: (toggle == 0) ? 20.0 : 2,
+              right: 2,
+              curve: Curves.easeOut,
+              top: 6.0,
+
+              ///Using Animated opacity to change the opacity of th textField while expanding
+              child: AnimatedOpacity(
+                opacity: (toggle == 0) ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  width: widget.width,
+                  child: TypeAheadField<String>(
+                      hideOnSelect: true,
+                      focusNode: focusNode,
+                      hideOnEmpty: true,
+                      hideWithKeyboard: false,
+                      hideKeyboardOnDrag: true,
+                      hideOnUnfocus: true,
+                      controller: widget.searchTextEditingController,
+                      suggestionsCallback: widget.onSuggestionCallback,
+                      itemBuilder: widget.suggestionItemBuilder,
+                      onSelected: widget.onSelected,
+                      decorationBuilder: (context, child) {
+                        return Material(
+                          type: MaterialType.card,
+                          elevation: 4,
+                          borderRadius: BorderRadius.circular(8),
+                          child: child,
+                        );
+                      },
+                      offset: const Offset(0, 12),
+                      constraints: const BoxConstraints(maxHeight: 300),
+                      transitionBuilder: (context, animation, child) {
+                        return FadeTransition(
+                          opacity: CurvedAnimation(
+                              parent: animation, curve: Curves.fastOutSlowIn),
+                          child: child,
+                        );
+                      },
+                      itemSeparatorBuilder: null,
+                      builder: (context, controller, focusNode) {
+                        return TextField(
+                          enabled: widget.enabled,
+
+                          ///Text Controller. you can manipulate the text inside this textField by calling this controller.
+                          controller: widget.textController,
+                          inputFormatters: widget.inputFormatters,
+                          focusNode: focusNode,
+                          cursorRadius: const Radius.circular(10.0),
+                          cursorWidth: 2.0,
+                          onChanged: (value) {
+                            textFieldValue = value;
+                          },
+                          onSubmitted: (value) => {
+                            widget.onSubmitted(value),
+                            unfocusKeyboard(),
+                            // setState(() {
+                            //   toggle = 0;
+                            // }),
+                            //widget.textController.clear(),
+                          },
+                          onEditingComplete: () {
+                            /// on editing complete the keyboard will be closed and the search bar will be closed
+                            unfocusKeyboard();
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
+                          },
+
+                          ///style is of type TextStyle, the default is just a color black
+                          style: widget.style ??
+                              const TextStyle(color: Colors.black),
+                          cursorColor: Colors.black,
+                          decoration: InputDecoration(
+                            contentPadding:
+                                const EdgeInsets.only(bottom: 5, right: 100, left: 5),
+                            isDense: true,
+                            floatingLabelBehavior: FloatingLabelBehavior.never,
+                            labelText: widget.helpText,
+                            labelStyle: const TextStyle(
+                              color: Color(0xff5B5B5B),
+                              fontSize: 17.0,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            alignLabelWithHint: true,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                              borderSide: BorderSide.none,
+                            ),
+                            // enabledBorder: OutlineInputBorder(
+                            //   borderSide: const BorderSide(color: Colors.black, width: 2.0),
+                            // ),
+                            // focusedBorder: OutlineInputBorder(
+                            //   borderRadius: BorderRadius.circular(20.0),
+                            //   borderSide: const BorderSide(color: Colors.black, width: 2.0),
+                            // ),
+                          ),
+                        );
+                      }),
+                ),
+              ),
+            ),
+AnimatedPositioned(
               duration: Duration(milliseconds: widget.animationDurationInMilli),
               top: 1.0,
               right: 7.0,
@@ -302,112 +420,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                 ),
               ),
             ),
-            AnimatedPositioned(
-              duration: Duration(milliseconds: widget.animationDurationInMilli),
-              left: (toggle == 0) ? 20.0 : 10,
-              right: 20,
-              curve: Curves.easeOut,
-              top: 6.0,
-
-              ///Using Animated opacity to change the opacity of th textField while expanding
-              child: AnimatedOpacity(
-                opacity: (toggle == 0) ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 200),
-                child: Container(
-                  alignment: Alignment.topCenter,
-                  width: widget.width,
-                  child: TypeAheadField<Project>(
-                      hideOnSelect: true,
-                      focusNode: focusNode,
-                      hideOnEmpty: true,
-                      hideWithKeyboard: false,
-                      hideKeyboardOnDrag: true,
-                      hideOnUnfocus: true,
-                      controller: widget.searchTextEditingController,
-                      suggestionsCallback: widget.onSuggestionCallback,
-                      itemBuilder: widget.suggestionItemBuilder,
-                      onSelected: widget.onSelected,
-                      decorationBuilder: (context, child) {
-                        return Material(
-                          type: MaterialType.card,
-                          elevation: 4,
-                          borderRadius: BorderRadius.circular(8),
-                          child: child,
-                        );
-                      },
-                      offset: const Offset(0, 12),
-                      constraints: const BoxConstraints(maxHeight: 300),
-                      transitionBuilder: (context, animation, child) {
-                        return FadeTransition(
-                          opacity: CurvedAnimation(
-                              parent: animation, curve: Curves.fastOutSlowIn),
-                          child: child,
-                        );
-                      },
-                      itemSeparatorBuilder: null,
-                      builder: (context, controller, focusNode) {
-                        return TextField(
-                          enabled: widget.enabled,
-
-                          ///Text Controller. you can manipulate the text inside this textField by calling this controller.
-                          controller: widget.textController,
-                          inputFormatters: widget.inputFormatters,
-                          focusNode: focusNode,
-                          cursorRadius: const Radius.circular(10.0),
-                          cursorWidth: 2.0,
-                          onChanged: (value) {
-                            textFieldValue = value;
-                          },
-                          onSubmitted: (value) => {
-                            widget.onSubmitted(value),
-                            unfocusKeyboard(),
-                            // setState(() {
-                            //   toggle = 0;
-                            // }),
-                            //widget.textController.clear(),
-                          },
-                          onEditingComplete: () {
-                            /// on editing complete the keyboard will be closed and the search bar will be closed
-                            unfocusKeyboard();
-                            // setState(() {
-                            //   toggle = 0;
-                            // });
-                          },
-
-                          ///style is of type TextStyle, the default is just a color black
-                          style: widget.style ??
-                              const TextStyle(color: Colors.black),
-                          cursorColor: Colors.black,
-                          decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.only(bottom: 5, right: 100),
-                            isDense: true,
-                            floatingLabelBehavior: FloatingLabelBehavior.never,
-                            labelText: widget.helpText,
-                            labelStyle: const TextStyle(
-                              color: Color(0xff5B5B5B),
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.w500,
-                            ),
-                            alignLabelWithHint: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            // enabledBorder: OutlineInputBorder(
-                            //   borderSide: const BorderSide(color: Colors.black, width: 2.0),
-                            // ),
-                            // focusedBorder: OutlineInputBorder(
-                            //   borderRadius: BorderRadius.circular(20.0),
-                            //   borderSide: const BorderSide(color: Colors.black, width: 2.0),
-                            // ),
-                          ),
-                        );
-                      }),
-                ),
-              ),
-            ),
-
+           
             ///Using material widget here to get the ripple effect on the prefix icon
             Material(
               /// can add custom color or the color will be white
@@ -531,9 +544,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
 //   late Duration? duration;
 //   final TextEditingController searchTextEditingController;
 //   final Function(String) onChanged;
-//   final Widget Function(BuildContext, Project) suggestionItemBuilder;
-//   Function(Project)? onSelected;
-//   FutureOr<List<Project>?> Function(String) onSuggestionCallback;
+//   final Widget Function(BuildContext, String) suggestionItemBuilder;
+//   Function(String)? onSelected;
+//   FutureOr<List<String>?> Function(String) onSuggestionCallback;
 
 //   @override
 //   State<AnimationSearchBar> createState() => _AnimationSearchBarState();
@@ -640,7 +653,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
 //                                       .withOpacity(.2),
 //                                   width: .5),
 //                               borderRadius: BorderRadius.circular(15)),
-//                       child: TypeAheadField<Project>(
+//                       child: TypeAheadField<String>(
 //                           focusNode: focusNode,
 //                           hideWithKeyboard: false,
 //                           hideOnUnfocus: false,

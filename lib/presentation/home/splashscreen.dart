@@ -16,6 +16,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -265,7 +266,7 @@ class _SplashScreenState extends State<SplashScreen>
             });
             checkSystemAlertWindowPermission(context);
 
-            requestNotificationsPermission();
+            if (!kIsWeb) requestNotificationsPermission();
 
             CallManager.instance.init(context);
 
@@ -282,9 +283,9 @@ class _SplashScreenState extends State<SplashScreen>
 
           log(exception.toString(), "BEBAOBOY");
 
-          deleteSessionsExceptCurrent()
-              .then((voidResult) {})
-              .catchError((error) {});
+          // deleteSessionsExceptCurrent()
+          //     .then((voidResult) {})
+          //     .catchError((error) {});
           return;
         }
         // Future.delayed(const Duration(seconds: 2), () {
