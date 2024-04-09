@@ -197,7 +197,6 @@ Future<PreviewData> getPreviewData(
     final uri = Uri.parse(previewDataUrl);
     final response = await http.get(uri, headers: !kIsWeb ? {
       'User-Agent': userAgent ?? 'WhatsApp/2',} :  {
-      'User-Agent': userAgent ?? 'WhatsApp/2',
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET,PUT,PATCH,POST,DELETE",
       "Access-Control-Allow-Headers":
