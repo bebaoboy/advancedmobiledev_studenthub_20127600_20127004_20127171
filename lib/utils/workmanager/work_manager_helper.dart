@@ -8,7 +8,6 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
-import 'package:uuid/uuid.dart';
 import 'package:workmanager/workmanager.dart';
 
 class WorkMangerHelper {
@@ -62,10 +61,10 @@ class WorkMangerHelper {
   static registerProfileFetch() async {
     Workmanager().registerPeriodicTask(
       WorkerTask.fetchProfile.identifier,
-      WorkerTask.fetchProfile.name + const Uuid().v4(),
+      WorkerTask.fetchProfile.name,
       existingWorkPolicy: ExistingWorkPolicy.replace,
       initialDelay: SHORT_DELAY,
-      // frequency: LOW_FREQUENCY,
+      frequency: NORMAL_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(networkType: NetworkType.connected),
     );

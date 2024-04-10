@@ -22,7 +22,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const MainAppBar(),
+      appBar: MainAppBar(name: widget.project.objectId ?? "error id",),
       body: _buildBody(),
     );
   }

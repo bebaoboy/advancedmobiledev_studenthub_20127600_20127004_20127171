@@ -60,39 +60,39 @@ var studentProjects = [
   StudentProject(
       title: "XYZ",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-12'),
-      submittedTime: DateTime.parse('2024-03-12')),
+      // timeCreated: DateTime.parse('2023-03-12'),
+      timeCreated: DateTime.parse('2024-03-12')),
   StudentProject(
       title: "JKMM",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
+      // timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      submittedTime: DateTime.parse('2024-03-17')),
+      timeCreated: DateTime.parse('2024-03-17')),
   StudentProject(
       title: "man bhsk p",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-11'),
+      // timeCreated: DateTime.parse('2023-03-11'),
       isAccepted: true,
       isSubmitted: true,
-      submittedTime: DateTime.parse('2024-03-18')),
+      timeCreated: DateTime.parse('2024-03-18')),
   StudentProject(
       title: "JKMM",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
+      // timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      submittedTime: DateTime.parse('2024-03-17')),
+      timeCreated: DateTime.parse('2024-03-17')),
   StudentProject(
       title: "JKMM",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
+      // timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      submittedTime: DateTime.parse('2024-03-17')),
+      timeCreated: DateTime.parse('2024-03-17')),
 ];
 
 var studentWorkingProjects = [
   StudentProject(
       title: "jOa josfj á ",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
-      submittedTime: DateTime.parse('2024-03-11')),
+      // timeCreated: DateTime.parse('2023-03-13'),
+      timeCreated: DateTime.parse('2024-03-11')),
 ];

@@ -2,9 +2,10 @@
 
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/domain/entity/project/myMockData.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/student_project_item.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -67,6 +68,8 @@ class ProjectTabs extends StatefulWidget {
 }
 
 class _ProjectTabsState extends State<ProjectTabs> {
+  var userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -106,15 +109,24 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 controller: widget.tabController,
                 physics: const BouncingScrollPhysics(),
                 children: [
+                  // TODO: get student project from id from proposals
                   AllProjects(
-                    projects: studentProjects,
+                    projects: userStore.user?.studentProfile?.proposalProjects
+                        ?.map((e) => StudentProject(
+                            title: "Submitted project ${e.objectId}",
+                            description: "",
+                            timeCreated: e.createdAt))
+                        .toList(),
                   ),
                   WorkingProjects(
-                    scrollController: widget.pageController,
-                    projects: studentWorkingProjects,
-                  ),
+                      scrollController: widget.pageController, projects: null),
                   AllProjects(
-                    projects: studentProjects,
+                    projects: userStore.user?.studentProfile?.proposalProjects
+                        ?.map((e) => StudentProject(
+                            title: "Submitted project ${e.objectId}",
+                            description: "",
+                            timeCreated: e.createdAt))
+                        .toList(),
                   )
                 ]),
           ),

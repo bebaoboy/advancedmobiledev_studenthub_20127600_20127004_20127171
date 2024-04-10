@@ -16,7 +16,6 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -261,14 +260,9 @@ class _SplashScreenState extends State<SplashScreen>
               //     "BEBAOBOY");
             }
 
-            checkSystemAlertWindowPermission(context);
-
-            if (!kIsWeb) requestNotificationsPermission();
-
             CallManager.instance.init(context);
 
             await PushNotificationsManager.instance.init();
-
             initForegroundService().then((value) {
               WorkMangerHelper.registerProfileFetch();
             });

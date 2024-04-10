@@ -137,10 +137,10 @@ class Project extends ProjectBase {
         isWorking: json['projectScopeFlag'] == 0,
         isArchived: json['projectScopeFlag'] == 1,
         id: (json["id"] ?? "").toString(),
-        // proposal: (json['proposals'] != null)
-        //     ? List<Proposal>.from((json['proposals'] as List<dynamic>)
-        //         .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
-        //     : [],
+        proposal: (json['proposals'] != null)
+            ? List<Proposal>.from((json['proposals'] as List<dynamic>)
+                .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
+            : [],
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
         countHired: json["countHired"],
@@ -153,7 +153,7 @@ class Project extends ProjectBase {
       "projectScopeFlag": scope.index,
       "title": title,
       "description": description,
-      "typeFlag": isWorking ? 0 : 1,
+      "typeFlag": enabled == Status.active ? 0 : 1,
     };
   }
 }
@@ -167,29 +167,45 @@ class Project extends ProjectBase {
 class StudentProject extends Project {
   bool isSubmitted = true;
   bool isAccepted = false;
-  DateTime submittedTime;
+  // DateTime submittedTime;
+  // int numberOfStudents;
+  String projectId;
 
   getModifiedSubmittedTime() {
-    return submittedTime.difference(DateTime.now()).inDays.abs();
+    return timeCreated.difference(DateTime.now()).inDays.abs();
   }
 
   StudentProject({
     required super.title,
     required super.description,
-    required this.submittedTime,
+    required super.timeCreated,
     super.scope = Scope.short,
     super.numberOfStudents = 1,
-    required super.timeCreated,
+    // required super.timeCreated,
     super.isFavorite = false,
     this.isSubmitted = true,
     this.isAccepted = false,
     super.id,
+    super.enabled,
+    this.projectId = "", 
   });
+
+  factory StudentProject.fromMap(Map<String, dynamic> json) {
+    return StudentProject(
+        title: json['title'] ?? '',
+        description: json['description'] ?? '',
+        timeCreated: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+        scope: Scope.values[json['projectScopeFlag'] ?? 0],
+        numberOfStudents: json['numberOfStudents'] ?? 0,
+        id: (json["id"] ?? "").toString(),
+        projectId: (json["projectId"] ?? "").toString(),
+        enabled: Status.values[json["typeFlag"] ?? 0]);
+  }
 }
 
 // ------------------- PROPOSAL ------------------------------
 
-enum HireStatus { notHire, pending, hired }
+enum HireStatus { pending, offer, hired, notHired }
 
 extension HireStatusTitle on HireStatus {
   String get title {
@@ -198,6 +214,8 @@ extension HireStatusTitle on HireStatus {
         return 'Hired after sent';
       case HireStatus.hired:
         return 'Hired';
+      case HireStatus.offer:
+        return 'Offered';
       default:
         return 'Not hired';
     }
@@ -214,18 +232,42 @@ class Proposal extends MyObject {
   HireStatus hiredStatus;
   Status status;
   bool get isHired => hiredStatus == HireStatus.hired;
+  String projectId;
+  bool enabled;
 
   Proposal.fromJson(Map<String, dynamic> json)
-      : student = StudentProfile.fromJson(json["student"] ?? ""),
+      :
+        // student = StudentProfile.fromJson(json["student"] ?? ""),
+        student = StudentProfile(
+            objectId: json["studentId"].toString(),
+            fullName: "Sample Student ${json["studentId"]}"),
         coverLetter = json["coverLetter"] ?? "",
-        status = Status.values[json["status"] ?? 0],
-        hiredStatus = HireStatus.values[json["hiredStatus"] ?? 0];
+        status = Status.values[json["statusFlag"] ?? 0],
+        hiredStatus = HireStatus.values[json["hiredStatus"] ?? 0],
+        projectId = json["projectId"].toString(),
+        enabled = json["disableFlag"] != 0,
+        super(objectId: json["id"].toString());
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": objectId,
+      "coverLetter": coverLetter,
+      "hiredStatus": hiredStatus.index,
+      "student": student,
+      "disableFlag": enabled ? 0 : 1,
+      "projectId": projectId,
+      "statusFlag": status.index
+    };
+  }
+
   Proposal({
     // required this.project,
     required this.student,
     this.coverLetter = "",
-    this.hiredStatus = HireStatus.notHire,
+    this.hiredStatus = HireStatus.pending,
     this.status = Status.inactive,
+    this.projectId = "",
+    this.enabled = true,
     String id = "",
   }) : super(objectId: id);
 }

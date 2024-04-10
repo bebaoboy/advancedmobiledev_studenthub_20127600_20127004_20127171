@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
@@ -124,6 +125,6 @@ getRoute(name, context, {arguments}) {
       return Routes._route[name] ?? const HomeScreen();
     }
   } catch (e) {
-    return const HomeScreen();
+    return ErrorPage(errorDetails: e as FlutterErrorDetails,);
   }
 }

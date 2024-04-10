@@ -24,7 +24,6 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:responsive_sizer/responsive_sizer.dart';
@@ -368,18 +367,18 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (!_userStore.isLoading && !initializing) {
+      initializing = true;
+      print("LOADING = ${_userStore.isLoading}");
+      log("login", "BEBAOBOY");
       Future.delayed(const Duration(milliseconds: 1000), () async {
-        print("LOADING = ${_userStore.isLoading}");
-        setState(() {
-          initializing = true;
-        });
-        log("login", "BEBAOBOY");
-        if (NavigationService.navigatorKey.currentContext != null) {
-          initCube(NavigationService.navigatorKey.currentContext!);
-        }
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
+      });
+      Future.delayed(const Duration(milliseconds: 1200), () async {
+        if (NavigationService.navigatorKey.currentContext != null) {
+          initCube(NavigationService.navigatorKey.currentContext!);
+        }
       });
     }
     return Container();
@@ -394,7 +393,7 @@ class _LoginScreenState extends State<LoginScreen> {
         if (CubeChatConnection.instance.currentUser != null &&
             !userStore.user!.email.contains(
                 CubeChatConnection.instance.currentUser!.login ?? "????")) {
-          //print("change user --- LOGING OUT");
+          print("change user --- LOGING OUT cb");
           await SharedPreferences.getInstance().then((preference) async {
             CallManager.instance.destroy();
             CubeChatConnection.instance.destroy();
@@ -409,6 +408,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //     : userStore.user!.email == "user2@gmail.com"
         //         ? utils.users[1]
         //         : utils.users[2];
+        while (userStore.user!.email.isEmpty) {}
         var user = CubeUser(
           login: userStore.user!.email,
           email: userStore.user!.email,
@@ -438,27 +438,31 @@ class _LoginScreenState extends State<LoginScreen> {
             log(cubeUser.toString(), "BEBAOBOY");
             if (CubeChatConnection.instance.isAuthenticated() &&
                 CubeChatConnection.instance.currentUser != null) {
-              log(
-                  (CubeSessionManager.instance.activeSession!.user == null)
-                      .toString(),
-                  "BEBAOBOY");
+              // log(
+              //     (CubeSessionManager.instance.activeSession!.user == null)
+              //         .toString(),
+              //     "BEBAOBOY");
             }
 
-            checkSystemAlertWindowPermission(context);
+            // checkSystemAlertWindowPermission(context);
 
-            if (!kIsWeb) requestNotificationsPermission();
-
+            // if (!kIsWeb) requestNotificationsPermission();
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute2(
+            //         routeName:
+            //             userStore.isLoggedIn ? Routes.home : Routes.login));
             CallManager.instance.init(context);
 
             await PushNotificationsManager.instance.init();
             initForegroundService().then((value) {
               WorkMangerHelper.registerProfileFetch();
             });
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        userStore.isLoggedIn ? Routes.home : Routes.login));
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute2(
+            //         routeName:
+            //             userStore.isLoggedIn ? Routes.home : Routes.login));
           }).catchError((exception) {
             //_processLoginError(exception);
 
@@ -470,9 +474,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
           log(exception.toString(), "BEBAOBOY");
 
-          deleteSessionsExceptCurrent()
-              .then((voidResult) {})
-              .catchError((error) {});
+          // deleteSessionsExceptCurrent()
+          //     .then((voidResult) {})
+          //     .catchError((error) {});
         }
       } catch (e) {
         print(e.toString());

@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -73,6 +74,8 @@ class _MyAppState extends State<MyApp> {
                       color: Theme.of(context).colorScheme.primary,
                       child: SafeArea(child: child ?? const SizedBox()))));
     };
+
+    if (!kIsWeb) requestNotificationsPermission();
 
     // initPlatformState();
     super.initState();
