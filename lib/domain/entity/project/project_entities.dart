@@ -187,7 +187,7 @@ class StudentProject extends Project {
     this.isAccepted = false,
     super.id,
     super.enabled,
-    this.projectId = "", 
+    this.projectId = "",
   });
 
   factory StudentProject.fromMap(Map<String, dynamic> json) {
@@ -234,6 +234,7 @@ class Proposal extends MyObject {
   bool get isHired => hiredStatus == HireStatus.hired;
   String projectId;
   bool enabled;
+  StudentProject? project;
 
   Proposal.fromJson(Map<String, dynamic> json)
       :
@@ -246,6 +247,7 @@ class Proposal extends MyObject {
         hiredStatus = HireStatus.values[json["hiredStatus"] ?? 0],
         projectId = json["projectId"].toString(),
         enabled = json["disableFlag"] != 0,
+        project = json["project"] != null ? StudentProject.fromMap(json["project"]) : null,
         super(objectId: json["id"].toString());
 
   Map<String, dynamic> toJson() {
@@ -256,12 +258,13 @@ class Proposal extends MyObject {
       "student": student,
       "disableFlag": enabled ? 0 : 1,
       "projectId": projectId,
-      "statusFlag": status.index
+      "statusFlag": status.index, 
+      "project": project,
     };
   }
 
   Proposal({
-    // required this.project,
+    required this.project,
     required this.student,
     this.coverLetter = "",
     this.hiredStatus = HireStatus.pending,

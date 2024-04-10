@@ -6,6 +6,8 @@ import 'package:boilerplate/data/network/apis/project/project_api.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:dio/dio.dart';
 
 class ProjectRepositoryImpl extends ProjectRepository {
@@ -14,8 +16,8 @@ class ProjectRepositoryImpl extends ProjectRepository {
   ProjectRepositoryImpl(this._projectApi, this._datasource);
 
   @override
-  Future<ProjectList> fetchPagingProjects() async {
-    return await _projectApi.getProjects().then((value) {
+  Future<ProjectList> fetchPagingProjects(GetProjectParams params) async {
+    return await _projectApi.getProjects(params).then((value) {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
@@ -37,6 +39,12 @@ class ProjectRepositoryImpl extends ProjectRepository {
     @override
   Future<Response> getProjectByCompany(GetProjectByCompanyParams params) async {
     var response = await _projectApi.getProjectByCompany(params);
+    return response;
+  }
+
+  @override
+  Future<Response> getStudentProposalProjects(GetStudentProposalProjectsParams params) async {
+    var response = await _projectApi.getStudentProposalProjects(params);
     return response;
   }
 }

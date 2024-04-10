@@ -716,7 +716,9 @@ class _ProjectTabState extends State<ProjectTab> {
                           // }).toList(),
                           searchHistory.where(
                         (element) {
-                          return element.trim().contains(controller.text.trim());
+                          return element
+                              .trim()
+                              .contains(controller.text.trim());
                         },
                       ).toList(),
                     );
@@ -793,17 +795,19 @@ class _ProjectTabState extends State<ProjectTab> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 50),
-          child: LazyLoadingAnimationProjectList(
-            scrollController: widget.scrollController,
-            itemHeight: 230,
-            list: _projectStore.projects,
-            firstCallback: (i) {
-              setState(() {
-                _projectStore.projects[i].isFavorite =
-                    !_projectStore.projects[i].isFavorite;
-              });
-            },
-          ),
+          child: _projectStore.projects.isNotEmpty
+              ? LazyLoadingAnimationProjectList(
+                  scrollController: widget.scrollController,
+                  itemHeight: 230,
+                  list: _projectStore.projects,
+                  firstCallback: (i) {
+                    setState(() {
+                      _projectStore.projects[i].isFavorite =
+                          !_projectStore.projects[i].isFavorite;
+                    });
+                  },
+                )
+              : Center(child: Text(Lang.get("nothing_here"))),
         ),
         // AnimatedContainer(
         //     curve: Easing.legacyAccelerate,

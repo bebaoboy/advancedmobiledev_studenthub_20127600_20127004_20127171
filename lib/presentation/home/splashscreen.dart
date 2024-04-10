@@ -205,20 +205,6 @@ class _SplashScreenState extends State<SplashScreen>
           null) {
         userStore.savedUsers.add(userStore.user!);
       }
-      // try {
-      //   // CallManager.instance.destroy();
-      //   // CubeChatConnection.instance.destroy();
-      //   // // await PushNotificationsManager.instance.unsubscribe();
-      //   // await SharedPrefs.deleteUserData();
-      //   // // await signOut();
-      // } catch (e) {}
-      //CubeSessionManager.instance.isActiveSessionValid();
-
-      // user = userStore.user!.email == "user1@gmail.com"
-      //     ? utils.users[0]
-      //     : userStore.user!.email == "user2@gmail.com"
-      //         ? utils.users[1]
-      //         : utils.users[2];
       Future.delayed(const Duration(seconds: 0), () async {
         Future.delayed(const Duration(seconds: 1));
         user = CubeUser(
