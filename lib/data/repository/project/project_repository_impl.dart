@@ -5,6 +5,8 @@ import 'package:boilerplate/data/local/datasources/project/project_datasource.da
 import 'package:boilerplate/data/network/apis/project/project_api.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:dio/dio.dart';
 
 class ProjectRepositoryImpl extends ProjectRepository {
   final ProjectApi _projectApi;
@@ -30,5 +32,11 @@ class ProjectRepositoryImpl extends ProjectRepository {
       Log.e("ProjectRepo", error.toString());
       return Future.value(ProjectList(projects: List.empty(growable: true)));
     });
+  }
+
+    @override
+  Future<Response> getProjectByCompany(GetProjectByCompanyParams params) async {
+    var response = await _projectApi.getProjectByCompany(params);
+    return response;
   }
 }

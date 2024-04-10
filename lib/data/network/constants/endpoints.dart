@@ -18,8 +18,42 @@ class Endpoints {
 
   // all project in dashboard
   static const String getProjects = "$baseUrl/api/project"; // done
+  /*
+    "result": [
+    {
+      "id": 151,
+      "createdAt": "2024-04-10T04:26:40.237Z",
+      "updatedAt": "2024-04-10T04:26:40.237Z",
+      "deletedAt": null,
+      "companyId": "11",
+      "projectScopeFlag": 1,
+      "title": "Test Project 2",
+      "description": "description of the project",
+      "numberOfStudents": 1,
+      "typeFlag": 0,
+      "proposals": [],
+      "countProposals": 0,
+      "countMessages": 0,
+      "countHired": 0
+    },
+    ] */
   static const String getCurrentCompanyProjects =
-      "$baseUrl/project/company/{companyId}";
+      "$baseUrl/api/project/company/{companyId}"; // done
+  /*
+      {
+  "result": {
+    "companyId": "11",
+    "projectScopeFlag": 3,
+    "title": "Test Project 3",
+    "numberOfStudents": 1,
+    "description": "description of the project",
+    "typeFlag": 0,
+    "updatedAt": "2024-04-10T04:27:03.283Z",
+    "deletedAt": null,
+    "id": 152,
+    "createdAt": "2024-04-10T04:27:03.283Z"
+  }
+} */
   static const String addNewProject = "$baseUrl/api/project";
   static const String deleteProject = "$baseUrl/api/project/{projectId}";
   static const String updateProject = "$baseUrl/api/project/{projectId}";

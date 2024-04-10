@@ -381,7 +381,7 @@ abstract class _ProfileStudentFormStore with Store {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
-        // TODO: API này trả về full student profile
+        // ToDO: API này trả về full student profile
 
         //print(value);
         try {
@@ -401,7 +401,7 @@ abstract class _ProfileStudentFormStore with Store {
               }
               skillSet = userStore.user!.studentProfile!.skillSet!;
             }
-            // TODO: lưu thong tin student profile
+            // ToDO: lưu thong tin student profile
           }
         } catch (e) {
           errorStore.errorMessage = "cannot save student profile";

@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
+import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
@@ -88,7 +89,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
                         setState(() {
                           if (value != null) {
                             allProjects.insert(0, value as Project);
-                            projectStore.projects.insert(0, value);
+                            projectStore.companyProjects.insert(0, value);
                             _projectStore.addProject(value);
                           }
                         });
@@ -104,8 +105,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
           ),
         ),
 
-        // Conditional rendering based on whether projectStore.projects is empty or not
-        projectStore.projects.isEmpty
+        // Conditional rendering based on whether (widget.projects ?? []) is empty or not
+        projectStore.companyProjects.isEmpty
             ? Column(
                 children: [
                   Align(
@@ -187,13 +188,13 @@ class _ProjectTabsState extends State<ProjectTabs> {
               physics: const BouncingScrollPhysics(),
               children: [
                 AllProjects(
-                  projects: projectStore.projects,
+                  projects: [...projectStore.companyProjects, ...myProjects],
                 ),
-                WorkingProjects(
-                  projects: projectStore.projects,
+                const WorkingProjects(
+                  projects: [],
                 ),
                 AllProjects(
-                  projects: projectStore.projects,
+                  projects: [...projectStore.companyProjects, ...myProjects],
                 )
               ]),
         )
@@ -307,10 +308,10 @@ class _WorkingProjectsState extends State<WorkingProjects> {
             itemBuilder: (context, index) => MyProjectItem(
               project: workingProjects![index],
               onShowBottomSheet: (p) => showBottomSheet(p, () {
-                projectStore.projects
+                (widget.projects ?? [])
                     .firstWhere(
                       (element) => element.objectId == p.objectId,
-                      orElse: () => projectStore.projects[0],
+                      orElse: () => (widget.projects ?? [])[0],
                     )
                     .isWorking = true;
               }),
@@ -336,7 +337,7 @@ class _AllProjectsState extends State<AllProjects> {
   @override
   Widget build(BuildContext context) {
     return ImplicitlyAnimatedList<Project>(
-      items: projectStore.projects,
+      items: (widget.projects ?? []),
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
             oldItem.objectId == newItem.objectId;
@@ -347,12 +348,12 @@ class _AllProjectsState extends State<AllProjects> {
             curve: Curves.easeInOut,
             animation: animation,
             child: MyProjectItem(
-              project: projectStore.projects[i],
+              project: (widget.projects ?? [])[i],
               onShowBottomSheet: (p) => showBottomSheet(p, () {
-                projectStore.projects
+                (widget.projects ?? [])
                     .firstWhere(
                       (element) => element.objectId == p.objectId,
-                      orElse: () => projectStore.projects[0],
+                      orElse: () => (widget.projects ?? [])[0],
                     )
                     .isWorking = true;
               }),
@@ -364,10 +365,10 @@ class _AllProjectsState extends State<AllProjects> {
           child: MyProjectItem(
             project: oldItem,
             onShowBottomSheet: (p) => showBottomSheet(p, () {
-              projectStore.projects
+              (widget.projects ?? [])
                   .firstWhere(
                     (element) => element.objectId == p.objectId,
-                    orElse: () => projectStore.projects[0],
+                    orElse: () => (widget.projects ?? [])[0],
                   )
                   .isWorking = true;
             }),

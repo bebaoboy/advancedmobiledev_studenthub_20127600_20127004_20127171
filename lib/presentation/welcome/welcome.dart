@@ -2,6 +2,8 @@ import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -20,6 +22,23 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () async {
+      try {
+        var userStore = getIt<UserStore>();
+        if (userStore.user != null) {
+          var projectStore = getIt<ProjectStore>();
+          await projectStore.getAllProject();
+          if (userStore.user!.type == UserType.company &&
+              userStore.user!.companyProfile != null &&
+              userStore.user!.companyProfile!.objectId != null) {
+            await projectStore
+                .getProjectByCompany(userStore.user!.companyProfile!.objectId!, typeFlag: Status.active);
+          }
+        }
+      } catch (e) {
+        print("cannot get projects");
+      }
+    });
   }
 
   var userStore = getIt<UserStore>();
@@ -55,13 +74,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   width: 200,
                   height: 50,
                   child: RoundedButtonWidget(
-                    onPressed: () async {
-                      try {
-                        var projectStore = getIt<ProjectStore>();
-                        await projectStore.getAllProject();
-                      } catch (e) {
-                        print("cannot get all projects");
-                      }
+                    onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute2(routeName: Routes.dashboard),
                           (Route<dynamic> route) => false);

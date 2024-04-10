@@ -67,20 +67,18 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                     physics: const BouncingScrollPhysics(),
                     children: [
                       ProposalTabLayout(
-                          proposals: widget.project.proposal == null
-                              ? []
-                              : widget.project.proposal!
-                                  .map((e) => e.student)
-                                  .toList(),
+                          proposals: widget.project.proposal,
                           onHired: (index) {
+                            print("hired");
                             setState(() {
                               try {
+                                // TODO: use a callback, cannot access projectStore.companyProject here
                                 widget.project.hired != null
                                     ? widget.project.hired!.add(widget
                                         .project.proposal!
-                                        .removeAt(index))
+                                        .elementAt(index))
                                     : widget.project.hired = [
-                                        widget.project.proposal!.removeAt(index)
+                                        widget.project.proposal!.elementAt(index)
                                       ];
                               } catch (e) {
                                 print("error hire student");
@@ -119,7 +117,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
 }
 
 class ProposalTabLayout extends StatelessWidget {
-  final List<StudentProfile>? proposals;
+  final List<Proposal>? proposals;
 
   const ProposalTabLayout(
       {super.key, required this.proposals, required this.onHired});
@@ -135,7 +133,7 @@ class ProposalTabLayout extends StatelessWidget {
             itemBuilder: (context, index) {
               return ProposalItem(
                   proposal: proposals![index],
-                  pending: false,
+                  // pending: false,
                   onHired: () => onHired!(index));
             },
           );

@@ -161,6 +161,7 @@ class _ProjectItemState extends State<ProjectItem> {
                             .bodyText2!
                             .copyWith(color: Colors.green.shade400),
                       ),
+                      // TODO: dịch 
                       Text(
                         'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
                         style: Theme.of(context).textTheme.subtitle2,

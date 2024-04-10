@@ -208,6 +208,9 @@ class _MyProjectItemState extends State<MyProjectItem> {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyLarge),
                   ),
+                  const SizedBox(
+                    height: 8,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -215,7 +218,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (widget.project.proposal?.length ?? 0).toString(),
+                            widget.project.countProposals.toString(),
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           Text(
@@ -229,7 +232,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                         children: [
                           // Add a message length here
                           Text(
-                            (widget.project.messages?.length ?? 0).toString(),
+                            widget.project.countMessages.toString(),
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           Text(
@@ -242,7 +245,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            (widget.project.hired?.length ?? 0).toString(),
+                            widget.project.countHired.toString(),
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           Text(

@@ -41,7 +41,7 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   String title;
   String description;
   Scope scope;
-  bool enabled;
+  Status enabled;
   bool isFavorite;
 
   ProjectBase({
@@ -51,7 +51,7 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
     required this.description,
     this.scope = Scope.short,
     String id = "",
-    this.enabled = true,
+    this.enabled = Status.active,
     this.isFavorite = false,
   }) : super(objectId: id);
 
@@ -79,6 +79,16 @@ class Project extends ProjectBase {
   bool isArchived = false;
   String companyId;
 
+  int? _countProposals;
+  int? _countMessages;
+  int? _countHired;
+
+  int get countProposals =>
+      _countProposals ?? (proposal != null ? proposal!.length : 0);
+  int get countMessages =>
+      _countMessages ?? (messages != null ? messages!.length : 0);
+  int get countHired => _countHired ?? (hired != null ? hired!.length : 0);
+
   Project({
     required super.title,
     required super.description,
@@ -94,7 +104,23 @@ class Project extends ProjectBase {
     this.isArchived = false,
     super.id,
     this.companyId = "",
-  });
+    countProposals,
+    countMessages,
+    countHired,
+  }) {
+    if (countProposals != null) {
+      _countProposals = countProposals;
+      if (proposal != null) assert(_countProposals == proposal!.length);
+    }
+    if (countMessages != null) {
+      _countHired = countHired;
+      if (hired != null) assert(_countHired == hired!.length);
+    }
+    if (countHired != null) {
+      _countMessages = countMessages;
+      if (messages != null) assert(_countMessages == messages!.length);
+    }
+  }
 
   @Deprecated("Use timeago instead")
   getModifiedTimeCreated() {
@@ -103,15 +129,22 @@ class Project extends ProjectBase {
 
   factory Project.fromMap(Map<String, dynamic> json) {
     return Project(
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      timeCreated: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
-      scope: Scope.values[json['projectScopeFlag'] ?? 0],
-      numberOfStudents: json['numberOfStudents'] ?? 0,
-      isWorking: json['projectScopeFlag'] == 0,
-      isArchived: json['projectScopeFlag'] == 1,
-      id: (json["id"] ?? "").toString(),
-    );
+        title: json['title'] ?? '',
+        description: json['description'] ?? '',
+        timeCreated: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+        scope: Scope.values[json['projectScopeFlag'] ?? 0],
+        numberOfStudents: json['numberOfStudents'] ?? 0,
+        isWorking: json['projectScopeFlag'] == 0,
+        isArchived: json['projectScopeFlag'] == 1,
+        id: (json["id"] ?? "").toString(),
+        // proposal: (json['proposals'] != null)
+        //     ? List<Proposal>.from((json['proposals'] as List<dynamic>)
+        //         .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
+        //     : [],
+        countProposals: json["countProposals"],
+        countMessages: json["countMessages"],
+        countHired: json["countHired"],
+        enabled: Status.values[json["typeFlag"] ?? 0]);
   }
 
   Map<String, dynamic> toJson() {
@@ -178,19 +211,20 @@ class Proposal extends MyObject {
   // Project project;
   StudentProfile student;
   String coverLetter;
-  HireStatus isHired;
+  HireStatus hiredStatus;
   Status status;
+  bool get isHired => hiredStatus == HireStatus.hired;
 
   Proposal.fromJson(Map<String, dynamic> json)
       : student = StudentProfile.fromJson(json["student"] ?? ""),
         coverLetter = json["coverLetter"] ?? "",
         status = Status.values[json["status"] ?? 0],
-        isHired = HireStatus.values[json["isHired"] ?? 0];
+        hiredStatus = HireStatus.values[json["hiredStatus"] ?? 0];
   Proposal({
     // required this.project,
     required this.student,
     this.coverLetter = "",
-    this.isHired = HireStatus.notHire,
+    this.hiredStatus = HireStatus.notHire,
     this.status = Status.inactive,
     String id = "",
   }) : super(objectId: id);
