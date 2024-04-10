@@ -73,13 +73,13 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                             setState(() {
                               try {
                                 // TODO: use a callback, cannot access projectStore.companyProject here
-                                widget.project.hired != null
-                                    ? widget.project.hired!.add(widget
-                                        .project.proposal!
-                                        .elementAt(index))
-                                    : widget.project.hired = [
-                                        widget.project.proposal!.elementAt(index)
-                                      ];
+                                // widget.project.hired != null
+                                //     ? widget.project.hired!.add(widget
+                                //         .project.proposal!
+                                //         .elementAt(index))
+                                //     : widget.project.hired = [
+                                //         widget.project.proposal!.elementAt(index)
+                                //       ];
                               } catch (e) {
                                 print("error hire student");
                               }

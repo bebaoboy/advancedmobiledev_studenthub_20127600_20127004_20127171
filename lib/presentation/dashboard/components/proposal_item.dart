@@ -101,42 +101,43 @@ class _ProposalItemState extends State<ProposalItem> {
                   ),
                   MaterialButton(
                     enableFeedback: !widget.proposal.isHired,
-                    color: !widget.proposal.isHired ? Theme.of(context).primaryColor : Colors.grey.shade600,
+                    color: !widget.proposal.isHired
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey.shade600,
                     textColor: Colors.white,
                     onPressed: () {
-                      if (widget.proposal.isHired) {
-                        return;
+                      if (!widget.proposal.isHired) {
+                        //print('send a hire notification');
+                        showAnimatedDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context) {
+                            return ClassicGeneralDialogWidget(
+                              titleText: 'Hired offer',
+                              contentText:
+                                  'Do you really want to send hired offer for student to do this project',
+                              negativeText: Lang.get('cancel'),
+                              positiveText: 'Send',
+                              onPositiveClick: () {
+                                setState(() {
+                                  if (!widget.proposal.isHired) {
+                                    widget.proposal.hiredStatus =
+                                        HireStatus.hired;
+                                    widget.onHired!();
+                                  }
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              onNegativeClick: () {
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          animationType: DialogTransitionType.size,
+                          curve: Curves.fastOutSlowIn,
+                          duration: const Duration(seconds: 1),
+                        );
                       }
-                      //print('send a hire notification');
-                      showAnimatedDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return ClassicGeneralDialogWidget(
-                            titleText: 'Hired offer',
-                            contentText:
-                                'Do you really want to send hired offer for student to do this project',
-                            negativeText: Lang.get('cancel'),
-                            positiveText: 'Send',
-                            onPositiveClick: () {
-                              setState(() {
-                                if (!widget.proposal.isHired) {
-                                  widget.proposal.hiredStatus =
-                                      HireStatus.hired;
-                                  widget.onHired!();
-                                }
-                              });
-                              Navigator.of(context).pop();
-                            },
-                            onNegativeClick: () {
-                              Navigator.of(context).pop();
-                            },
-                          );
-                        },
-                        animationType: DialogTransitionType.size,
-                        curve: Curves.fastOutSlowIn,
-                        duration: const Duration(seconds: 1),
-                      );
                     },
                     child: Text(buttonHireText),
                   ),

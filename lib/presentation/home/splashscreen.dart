@@ -372,7 +372,7 @@ class _SplashScreenState extends State<SplashScreen>
                               controller: loadingText,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.primary,
                               ),

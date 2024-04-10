@@ -32,8 +32,10 @@ class _SelectOpponentsScreenState extends State<SelectOpponentsScreen> {
   void initState() {
     super.initState();
     try {
-    checkSystemAlertWindowPermission(context);
-    } catch(e) {}
+      checkSystemAlertWindowPermission(context);
+    } catch (e) {
+      print("error");
+    }
   }
 
   @override

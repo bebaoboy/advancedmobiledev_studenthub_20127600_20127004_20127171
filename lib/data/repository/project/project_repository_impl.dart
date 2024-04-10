@@ -27,12 +27,14 @@ class ProjectRepositoryImpl extends ProjectRepository {
         });
         return result;
       } else {
-        return ProjectList(projects: List.empty(growable: true));
+        // return ProjectList(projects: List.empty(growable: true));
+        return _datasource.getProjectsFromDb() as ProjectList;
       }
       // ignore: invalid_return_type_for_catch_error
     }).onError((s, error) {
       Log.e("ProjectRepo", error.toString());
-      return Future.value(ProjectList(projects: List.empty(growable: true)));
+      // return Future.value(ProjectList(projects: List.empty(growable: true)));
+      return _datasource.getProjectsFromDb() as ProjectList;
     });
   }
 
