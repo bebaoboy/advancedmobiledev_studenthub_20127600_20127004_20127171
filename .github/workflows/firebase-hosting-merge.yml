@@ -33,8 +33,11 @@ jobs:
       - name: Generate Packages
         run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
-      - run:  flutter build web
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: Build web
+        run:  flutter build web
+
+      - name: hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: >-
