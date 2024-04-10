@@ -167,6 +167,7 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   // final UserStore _userStore = getIt<UserStore>();
   final ThemeStore _themeStore = getIt<ThemeStore>();
+  final UserStore _userStore = getIt<UserStore>();
   late AnimationController _controller;
   TextEditingController loadingText = TextEditingController();
 
@@ -189,8 +190,45 @@ class _SplashScreenState extends State<SplashScreen>
         }
       });
     _playAnimation(context);
-    if (NavigationService.navigatorKey.currentContext != null) {
-      initCube(NavigationService.navigatorKey.currentContext!);
+    _userStore.init();
+    _handleNavigate();
+    // if (NavigationService.navigatorKey.currentContext != null) {
+    //   initCube(NavigationService.navigatorKey.currentContext!);
+    // }
+  }
+
+  _handleNavigate() {
+    if (_userStore.user != null && _userStore.user!.email.isNotEmpty) {
+      if (_userStore.savedUsers.firstWhereOrNull(
+            (element) => element.email == _userStore.user!.email,
+          ) ==
+          null) {
+        _userStore.savedUsers.add(_userStore.user!);
+        loadingText.text =
+            "Loading Cube sesson (User ${_userStore.user!.email})";
+      }
+
+      Future.delayed(const Duration(seconds: 3), () {
+        try {
+          _controller.stop();
+          // ignore: empty_catches
+        } catch (e) {}
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute2(
+                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+      });
+    } else {
+      Future.delayed(const Duration(seconds: 2), () {
+        try {
+          _controller.stop();
+          // ignore: empty_catches
+        } catch (e) {}
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute2(
+                routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
+      });
     }
   }
 

@@ -14,11 +14,23 @@ import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_chat.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
+import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
+import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../domain/entity/user/user.dart';
 import '../../../domain/usecase/user/login_usecase.dart';
+
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 part 'login_store.g.dart';
 
@@ -176,6 +188,8 @@ abstract class _UserStore with Store {
 
           isLoggedIn = true;
 
+          init();
+
           profileResult = await _getProfileUseCase(params: true);
 
           if (profileResult.status) {
@@ -244,6 +258,109 @@ abstract class _UserStore with Store {
     _user = null;
 
     await _logoutUseCase.call(params: true);
+  }
+
+  initCube(context) async {
+    if (_user != null) {
+      try {
+        if (CubeChatConnection.instance.currentUser != null &&
+            !_user!.email.contains(
+                CubeChatConnection.instance.currentUser!.login ?? "????")) {
+          print("change user --- LOGING OUT cb");
+          await SharedPreferences.getInstance().then((preference) async {
+            CallManager.instance.destroy();
+            CubeChatConnection.instance.destroy();
+            PushNotificationsManager.instance.unsubscribe();
+
+            SharedPrefs.deleteUserData();
+            await signOut();
+          });
+        }
+        // var user = userStore.user!.email == "user1@gmail.com"
+        //     ? utils.users[0]
+        //     : userStore.user!.email == "user2@gmail.com"
+        //         ? utils.users[1]
+        //         : utils.users[2];
+        var user = CubeUser(
+          login: _user!.email,
+          email: _user!.email,
+          fullName: _user!.email.split("@").first.toUpperCase(),
+          password: DEFAULT_PASS,
+        );
+        try {
+          var value;
+          try {
+            value = await createSession(user);
+          } catch (e) {
+            log(e.toString(), "BEBAOBOY");
+            user = await signUp(user);
+            user.password ??= DEFAULT_PASS;
+
+            value = await createSession(user);
+          }
+          var cb = await getUserByLogin(user.login!);
+          if (cb != null) user = cb;
+          user.password ??= DEFAULT_PASS;
+          print(user);
+          utils.users.add(user);
+          CubeSessionManager.instance.activeSession = value;
+
+          await CubeChatConnection.instance.login(user).then((cubeUser) async {
+            SharedPrefs.saveNewUser(cubeUser);
+            log(cubeUser.toString(), "BEBAOBOY");
+            if (CubeChatConnection.instance.isAuthenticated() &&
+                CubeChatConnection.instance.currentUser != null) {
+              // log(
+              //     (CubeSessionManager.instance.activeSession!.user == null)
+              //         .toString(),
+              //     "BEBAOBOY");
+            }
+
+            // checkSystemAlertWindowPermission(context);
+
+            // if (!kIsWeb) requestNotificationsPermission();
+            // Navigator.pushReplacement(
+            //     context,
+            //     MaterialPageRoute2(
+            //         routeName:
+            //             userStore.isLoggedIn ? Routes.home : Routes.login));
+            CallManager.instance.init(context);
+
+            await PushNotificationsManager.instance.init();
+            initForegroundService().then((value) {
+              WorkMangerHelper.registerProfileFetch();
+            });
+          
+          }).catchError((exception) {
+            //_processLoginError(exception);
+
+            log(exception.toString(), "BEBAOBOY");
+          });
+          // _controller.stop();
+        } catch (exception) {
+          //_processLoginError(exception);
+
+          log(exception.toString(), "BEBAOBOY");
+
+          // deleteSessionsExceptCurrent()
+          //     .then((voidResult) {})
+          //     .catchError((error) {});
+        }
+      } catch (e) {
+        print(e.toString());
+        print("error init cubit");
+      }
+    } else {
+      // user = utils.users[2];
+    }
+  }
+
+  init() async {
+    Future.delayed(const Duration(seconds: 0), () async {
+      if (NavigationService.navigatorKey.currentContext != null) {
+        initCube(NavigationService.navigatorKey.currentContext);
+      }
+    });
   }
 
   // general methods:-----------------------------------------------------------

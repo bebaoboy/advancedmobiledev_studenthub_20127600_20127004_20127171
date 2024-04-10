@@ -375,11 +375,11 @@ class _LoginScreenState extends State<LoginScreen> {
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
       });
-      Future.delayed(const Duration(milliseconds: 1200), () async {
-        if (NavigationService.navigatorKey.currentContext != null) {
-          initCube(NavigationService.navigatorKey.currentContext!);
-        }
-      });
+      // Future.delayed(const Duration(milliseconds: 1200), () async {
+      //   if (NavigationService.navigatorKey.currentContext != null) {
+      //     initCube(NavigationService.navigatorKey.currentContext!);
+      //   }
+      // });
     }
     return Container();
   }
@@ -408,7 +408,7 @@ class _LoginScreenState extends State<LoginScreen> {
         //     : userStore.user!.email == "user2@gmail.com"
         //         ? utils.users[1]
         //         : utils.users[2];
-        while (userStore.user!.email.isEmpty) {}
+        while (!userStore.isLoggedIn) {}
         var user = CubeUser(
           login: userStore.user!.email,
           email: userStore.user!.email,

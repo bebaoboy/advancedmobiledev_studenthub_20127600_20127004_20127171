@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:convert';
+
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -128,17 +130,26 @@ class Project extends ProjectBase {
   }
 
   factory Project.fromMap(Map<String, dynamic> json) {
+    var proprosal = json['proposals'];
+    var real;
+    if (proprosal is String) {
+      real = jsonDecode(proprosal);
+    } else {
+      real = json['proposal'];
+    }
     return Project(
         title: json['title'] ?? '',
         description: json['description'] ?? '',
-        timeCreated: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+        timeCreated: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+            : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
         numberOfStudents: json['numberOfStudents'] ?? 0,
         isWorking: json['projectScopeFlag'] == 0,
         isArchived: json['projectScopeFlag'] == 1,
         id: (json["id"] ?? "").toString(),
         proposal: (json['proposals'] != null)
-            ? List<Proposal>.from((json['proposals'] as List<dynamic>)
+            ? List<Proposal>.from((real as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
             : [],
         countProposals: json["countProposals"],
@@ -154,6 +165,16 @@ class Project extends ProjectBase {
       "title": title,
       "description": description,
       "typeFlag": enabled == Status.active ? 0 : 1,
+      "countHired": countHired,
+      "countMessages": countMessages,
+      "countProposals": countProposals,
+      "id": objectId,
+      "isArchived": isArchived,
+      "isWorking": isWorking,
+      "numberOfStudents": numberOfStudents,
+      "scope": scope.index,
+      "timeCreated": timeCreated.toString(),
+      "proposals": json.encode(proposal),
     };
   }
 }
@@ -187,7 +208,7 @@ class StudentProject extends Project {
     this.isAccepted = false,
     super.id,
     super.enabled,
-    this.projectId = "", 
+    this.projectId = "",
   });
 
   factory StudentProject.fromMap(Map<String, dynamic> json) {
