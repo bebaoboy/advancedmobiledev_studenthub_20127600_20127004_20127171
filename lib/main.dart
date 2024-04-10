@@ -193,6 +193,7 @@ initConnectycube() async {
       onSessionRestore: () {
         return SharedPrefs.getUser().then((savedUser) {
           log(savedUser?.toString(), "BEBAOBOY");
+          log("onSessionRestore", "BEBAOBOY");
           return createSession(savedUser);
         });
       },

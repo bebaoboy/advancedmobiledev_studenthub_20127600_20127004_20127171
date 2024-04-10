@@ -9,7 +9,6 @@ import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
-import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -194,6 +193,31 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  _loginCube(context, user) async {
+    await CubeChatConnection.instance.login(user).then((cubeUser) async {
+      SharedPrefs.saveNewUser(cubeUser);
+      log(cubeUser.toString(), "BEBAOBOY");
+      if (CubeChatConnection.instance.isAuthenticated() &&
+          CubeChatConnection.instance.currentUser != null) {
+        // log(
+        //     (CubeSessionManager.instance.activeSession!.user == null)
+        //         .toString(),
+        //     "BEBAOBOY");
+      }
+
+      CallManager.instance.init(context);
+
+      await PushNotificationsManager.instance.init();
+
+      WorkMangerHelper.registerProfileFetch();
+    }).catchError((exception) {
+      //_processLoginError(exception);
+
+      log(exception.toString(), "BEBAOBOY");
+      return;
+    });
+  }
+
   initCube(context) async {
     final UserStore userStore = getIt<UserStore>();
     CubeUser user;
@@ -206,7 +230,6 @@ class _SplashScreenState extends State<SplashScreen>
         userStore.savedUsers.add(userStore.user!);
       }
       Future.delayed(const Duration(seconds: 0), () async {
-        Future.delayed(const Duration(seconds: 1));
         user = CubeUser(
           login: userStore.user!.email,
           email: userStore.user!.email,
@@ -216,7 +239,14 @@ class _SplashScreenState extends State<SplashScreen>
         loadingText.text =
             "Loading Cube sesson (User ${userStore.user!.email})";
 
-        try {
+        if (CubeSessionManager.instance.isActiveSessionValid() &&
+            CubeSessionManager.instance.activeSession!.user != null) {
+          if (CubeChatConnection.instance.isAuthenticated()) {
+          } else {
+            _loginCube(context, user);
+          }
+        } else {
+          // create session
           var value;
           try {
             value = await createSession(user);
@@ -232,54 +262,8 @@ class _SplashScreenState extends State<SplashScreen>
           user.password ??= DEFAULT_PASS;
           print(user);
           utils.users.add(user);
-
-          CubeSessionManager.instance.activeSession = value;
-
-          await CubeChatConnection.instance.login(user).then((cubeUser) async {
-            SharedPrefs.saveNewUser(cubeUser);
-            log(cubeUser.toString(), "BEBAOBOY");
-            if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null) {
-              // log(
-              //     (CubeSessionManager.instance.activeSession!.user == null)
-              //         .toString(),
-              //     "BEBAOBOY");
-            }
-
-            CallManager.instance.init(context);
-
-            await PushNotificationsManager.instance.init();
-            initForegroundService().then((value) {
-              WorkMangerHelper.registerProfileFetch();
-            });
-          }).catchError((exception) {
-            //_processLoginError(exception);
-
-            log(exception.toString(), "BEBAOBOY");
-            return;
-          });
-          // _controller.stop();
-        } catch (exception) {
-          //_processLoginError(exception);
-
-          log(exception.toString(), "BEBAOBOY");
-
-          // deleteSessionsExceptCurrent()
-          //     .then((voidResult) {})
-          //     .catchError((error) {});
-          return;
+          _loginCube(context, user);
         }
-        // Future.delayed(const Duration(seconds: 2), () {
-        //   try {
-        //     _controller.stop();
-        //     // ignore: empty_catches
-        //   } catch (e) {}
-        //   Navigator.pushReplacement(
-        //       context,
-        //       MaterialPageRoute2(
-        //           routeName:
-        //               userStore.isLoggedIn ? Routes.home : Routes.login));
-        // });
       });
       Future.delayed(const Duration(seconds: 3), () {
         try {

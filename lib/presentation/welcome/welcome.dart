@@ -33,7 +33,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             await projectStore
                 .getProjectByCompany(userStore.user!.companyProfile!.objectId!);
           }
-          if (userStore.user!.type == UserType.company &&
+          if (userStore.user!.type == UserType.student &&
               userStore.user!.studentProfile != null) {
             await projectStore.getStudentProposalProjects(
                 userStore.user!.studentProfile!.objectId!);
