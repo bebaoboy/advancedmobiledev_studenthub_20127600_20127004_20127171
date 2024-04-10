@@ -54,6 +54,8 @@ class Endpoints {
     "createdAt": "2024-04-10T04:27:03.283Z"
   }
 } */
+  static const String getStudentProposalProjects =
+      "$baseUrl/api/proposal/project/{studentId}"; // done
   static const String addNewProject = "$baseUrl/api/project";
   static const String deleteProject = "$baseUrl/api/project/{projectId}";
   static const String updateProject = "$baseUrl/api/project/{projectId}";

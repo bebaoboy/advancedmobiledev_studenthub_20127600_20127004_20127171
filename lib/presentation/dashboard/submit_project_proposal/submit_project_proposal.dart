@@ -70,7 +70,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    // TODO: check id proposal + add cb
+                    // TODO: check id proposal + add callback
                     var newStudentProject = StudentProject(
                       title: widget.project.title,
                       description: widget.project.description,

@@ -2,7 +2,6 @@ import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -32,7 +31,12 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               userStore.user!.companyProfile != null &&
               userStore.user!.companyProfile!.objectId != null) {
             await projectStore
-                .getProjectByCompany(userStore.user!.companyProfile!.objectId!, typeFlag: Status.active);
+                .getProjectByCompany(userStore.user!.companyProfile!.objectId!);
+          }
+          if (userStore.user!.type == UserType.student &&
+              userStore.user!.studentProfile != null) {
+            await projectStore.getStudentProposalProjects(
+                userStore.user!.studentProfile!.objectId!);
           }
         }
       } catch (e) {

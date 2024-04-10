@@ -15,6 +15,7 @@ import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -154,6 +155,8 @@ mixin StoreModule {
     );
 
     getIt.registerSingleton<ProjectStore>(ProjectStore(
-        getIt<GetProjectsUseCase>(), getIt<GetProjectByCompanyUseCase>()));
+        getIt<GetProjectsUseCase>(),
+        getIt<GetProjectByCompanyUseCase>(),
+        getIt<GetStudentProposalProjectsUseCase>()));
   }
 }

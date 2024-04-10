@@ -17,7 +17,9 @@ var myProjects = [
                 title: 'Fullstack Engineer',
                 yearOfExperience: 3,
                 review: 'I find your project suitable',
-                objectId: 1.toString())),
+                objectId: 1.toString()),
+            project: StudentProject(
+                title: "", description: "", timeCreated: DateTime.now())),
         Proposal(
             student: StudentProfile(
                 fullName: 'Huynh Minh Bao',
@@ -26,16 +28,21 @@ var myProjects = [
                 title: 'Fullstack Engineer',
                 yearOfExperience: 3,
                 review: 'I find your project suitable',
-                objectId: 2.toString())),
+                objectId: 2.toString()),
+            project: StudentProject(
+                title: "", description: "", timeCreated: DateTime.now())),
         Proposal(
             student: StudentProfile(
-                fullName: 'Vu Huy Hoang',
-                introduction: 'I am eager',
-                education: '4th year students',
-                title: 'Fullstack Engineer',
-                yearOfExperience: 3,
-                review: 'I find your project suitable',
-                objectId: 3.toString()))
+              fullName: 'Vu Huy Hoang',
+              introduction: 'I am eager',
+              education: '4th year students',
+              title: 'Fullstack Engineer',
+              yearOfExperience: 3,
+              review: 'I find your project suitable',
+              objectId: 3.toString(),
+            ),
+            project: StudentProject(
+                title: "", description: "", timeCreated: DateTime.now()))
       ]),
   // Project(
   //     title: "XYZ",

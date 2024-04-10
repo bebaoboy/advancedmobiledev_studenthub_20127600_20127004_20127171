@@ -8,6 +8,7 @@ import 'package:boilerplate/presentation/dashboard/components/student_project_it
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
@@ -110,24 +111,28 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 physics: const BouncingScrollPhysics(),
                 children: [
                   // TODO: get student project from id from proposals
-                  AllProjects(
-                    projects: userStore.user?.studentProfile?.proposalProjects
-                        ?.map((e) => StudentProject(
-                            title: "Submitted project ${e.objectId}",
-                            description: "",
-                            timeCreated: e.createdAt))
-                        .toList(),
+                  Observer(
+                    builder: (context) => AllProjects(
+                      projects: userStore.user?.studentProfile?.proposalProjects
+                          ?.where((e) => e.project != null)
+                          .map(
+                            (e) => e.project!,
+                          )
+                          .toList(),
+                    ),
                   ),
                   WorkingProjects(
                       scrollController: widget.pageController, projects: null),
-                  AllProjects(
-                    projects: userStore.user?.studentProfile?.proposalProjects
-                        ?.map((e) => StudentProject(
-                            title: "Submitted project ${e.objectId}",
-                            description: "",
-                            timeCreated: e.createdAt))
-                        .toList(),
-                  )
+                  Observer(
+                    builder: (context) => AllProjects(
+                      projects: userStore.user?.studentProfile?.proposalProjects
+                          ?.where((e) => e.project != null)
+                          .map(
+                            (e) => e.project!,
+                          )
+                          .toList(),
+                    ),
+                  ),
                 ]),
           ),
         )
