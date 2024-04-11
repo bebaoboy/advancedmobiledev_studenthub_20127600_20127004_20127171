@@ -47,7 +47,9 @@ class _MessageTabState extends State<MessageTab> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildMessageContent();
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: _buildMessageContent());
   }
 
   Widget _buildMessageContent() {

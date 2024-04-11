@@ -1,9 +1,7 @@
 // ignore_for_file: overridden_fields, must_be_immutable
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
-import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -589,10 +587,11 @@ class _NavbarRouterState extends State<NavbarRouter2>
               for (int j = 0; j < nestedLength; j++) {
                 if (widget.destinations[index].destinations[j].route ==
                     settings.name) {
-                  if (settings.name == Routes.projectDetails) {
-                    builder = ProjectDetailsPage(
-                        project: settings.arguments as Project);
-                  } else if (settings.name == Routes.favortieProject) {
+                  // if (settings.name == Routes.projectDetails) {
+                  //   builder = ProjectDetailsPage(
+                  //       project: settings.arguments as Project);
+                  // } else 
+                  if (settings.name == Routes.favortieProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
                     builder = widget.destinations[index].destinations[j].widget;

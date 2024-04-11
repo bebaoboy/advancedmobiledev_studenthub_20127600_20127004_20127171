@@ -77,8 +77,8 @@ class Project extends ProjectBase {
   List<Proposal>? proposal = List.empty(growable: true);
   List<Proposal>? messages = List.empty(growable: true);
   DateTime timeCreated = DateTime.now();
-  bool isWorking = false;
-  bool isArchived = false;
+  bool get isWorking => enabled == Status.active;
+  bool get isArchived => enabled == Status.inactive;
   String companyId;
 
   int? _countProposals;
@@ -102,8 +102,6 @@ class Project extends ProjectBase {
     required this.timeCreated,
     super.isFavorite = false,
     super.enabled,
-    this.isWorking = false,
-    this.isArchived = false,
     super.id,
     this.companyId = "",
     countProposals,
@@ -145,13 +143,14 @@ class Project extends ProjectBase {
             : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
         numberOfStudents: json['numberOfStudents'] ?? 1,
-        isWorking: json['projectScopeFlag'] == 0,
-        isArchived: json['projectScopeFlag'] == 1,
-        id: (json["id"] ?? "").toString(),
+        // isWorking: json['projectScopeFlag'] == 0,
+        // isArchived: json['projectScopeFlag'] == 1,
+        id: (json["projectId"] ?? json["id"] ?? "").toString(),
         proposal: (json['proposals'] != null)
             ? List<Proposal>.from((real as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
             : [],
+        companyId: json["companyId"] ?? "",
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
         countHired: json["countHired"],

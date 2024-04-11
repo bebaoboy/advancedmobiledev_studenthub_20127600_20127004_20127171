@@ -15,6 +15,7 @@ import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -54,7 +55,10 @@ class _DashBoardTabState extends State<DashBoardTab> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildDashBoardContent();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20.0),
+      child: _buildDashBoardContent(),
+    );
   }
 
   var projectStore = getIt<ProjectStore>();
@@ -167,7 +171,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
+      initialIndex: 1,
       length: 3,
       child: Stack(children: [
         Padding(
@@ -207,177 +211,257 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 AllProjects(
                   projects: [...projectStore.companyProjects, ...myProjects],
                   scrollController: scrollController[0],
+                  showBottomSheet: (p0) => showBottomSheet(p0),
                 ),
                 WorkingProjects(
-                  projects: const [],
+                  projects: [
+                    ...projectStore.companyProjects.where(
+                      (element) => element.isWorking,
+                    )
+                  ],
                   scrollController: scrollController[1],
+                  showBottomSheet: (p0) => showBottomSheet(p0),
                 ),
-                AllProjects(
-                  projects: [...projectStore.companyProjects, ...myProjects],
+                ArchivedProjects(
+                  projects: [
+                    ...projectStore.companyProjects.where(
+                      (element) => element.isArchived,
+                    )
+                  ],
                   scrollController: scrollController[2],
+                  showBottomSheet: (p0) => showBottomSheet(p0),
                 )
               ]),
         )
       ]),
     );
   }
-}
 
-void showBottomSheet(Project project, Function workingCallback,
-    {Function? closeCallback}) {
-  showAdaptiveActionSheet(
-    title: const Text(
-      "Menu",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    context: NavigationService.navigatorKey.currentContext!,
-    isDismissible: true,
-    barrierColor: Colors.black87,
-    actions: <BottomSheetAction>[
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(
-              Lang.get('project_item_view_proposal'),
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: project.enabled == Status.inactive
-                      ? Colors.grey.shade500
-                      : null),
-            )),
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('project_item_view_message'),
-                style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: project.enabled == Status.inactive
-                        ? Colors.grey.shade500
-                        : null))),
-      ),
-      BottomSheetAction(
-        title: Container(
-          alignment: Alignment.topLeft,
-          child: Text(Lang.get('project_item_view_hired'),
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: project.enabled == Status.inactive
-                      ? Colors.grey.shade500
-                      : null)),
+  void showBottomSheet(Project project) {
+    showAdaptiveActionSheet(
+      title: const Text(
+        "Menu",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
       ),
-      BottomSheetAction(
-        title: null,
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('project_item_view_job_posting'),
-                style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: project.enabled == Status.inactive
-                        ? Colors.grey.shade500
-                        : null))),
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('project_item_edit_job_posting'),
-                style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: project.enabled == Status.inactive
-                        ? Colors.grey.shade500
-                        : null))),
-      ),
-      BottomSheetAction(
-        title: Container(
-          alignment: Alignment.topLeft,
-          child: Text(Lang.get('project_item_remove_job_posting'),
-              style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                  color: project.enabled == Status.inactive
-                      ? Colors.grey.shade500
-                      : null)),
+      context: NavigationService.navigatorKey.currentContext!,
+      isDismissible: true,
+      barrierColor: Colors.black87,
+      actions: <BottomSheetAction>[
+        BottomSheetAction(
+          title: null,
         ),
-      ),
-      BottomSheetAction(
-        title: null,
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get("project_start_working"),
-                style: TextStyle(
-                    fontWeight: FontWeight.normal,
-                    color: project.enabled == Status.inactive
-                        ? Colors.grey.shade500
-                        : null))),
-        onPressed: (_) {
-          //print(project.title);
-          workingCallback();
-        },
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(
-                project.enabled == Status.active
-                    ? Lang.get("project_close")
-                    : Lang.get("project_open"),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
-        onPressed: (_) {
-          //print(project.title);
-          if (closeCallback != null) closeCallback();
-        },
-      ),
-    ],
-  );
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  Lang.get('project_item_view_proposal'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null),
+                )),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project}));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(Lang.get('project_item_view_message'),
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: project.enabled == Status.inactive
+                            ? Colors.grey.shade500
+                            : null))),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project, "index": 2}));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+              alignment: Alignment.topLeft,
+              child: Text(Lang.get('project_item_view_hired'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null)),
+            ),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project, "index": 3}));
+              });
+            }),
+        BottomSheetAction(
+          title: null,
+        ),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(Lang.get('project_item_view_job_posting'),
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: project.enabled == Status.inactive
+                            ? Colors.grey.shade500
+                            : null))),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project, "index": 1}));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  Lang.get('project_item_edit_job_posting'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null),
+                )),
+            onPressed: (_) {
+              // TODO: view details
+              // Navigator.of(context).push(MaterialPageRoute2(
+              //     routeName: Routes.projectDetails, arguments: {"project": project, "index": 0}));
+            }),
+        BottomSheetAction(
+            title: Container(
+              alignment: Alignment.topLeft,
+              child: Text(Lang.get('project_item_remove_job_posting'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null)),
+            ),
+            onPressed: (_) {
+              // TODO: delete
+            }),
+        BottomSheetAction(
+          title: null,
+        ),
+        BottomSheetAction(
+          title: Container(
+              alignment: Alignment.topLeft,
+              child: Text(Lang.get("project_start_working"),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null))),
+          onPressed: (_) {
+            //print(project.title);
+            var p = (projectStore.companyProjects).firstWhereOrNull(
+              (element) => element.objectId == project.objectId,
+            );
+            setState(() {
+              p?.enabled = Status.active;
+            });
+          },
+        ),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    project.enabled == Status.active
+                        ? Lang.get("project_close")
+                        : Lang.get("project_open"),
+                    style: const TextStyle(fontWeight: FontWeight.normal))),
+            onPressed: (_) {
+              //print(project.title);
+              var p = (projectStore.companyProjects).firstWhereOrNull(
+                (element) => element.objectId == project.objectId,
+              );
+              setState(() {
+                p?.enabled = p.enabled == Status.active
+                    ? Status.inactive
+                    : Status.active;
+              });
+            }),
+      ],
+    );
+  }
 }
 
 class WorkingProjects extends StatefulWidget {
   final List<Project>? projects;
-  const WorkingProjects({super.key, required this.projects, required this.scrollController});
+  const WorkingProjects(
+      {super.key,
+      required this.projects,
+      required this.scrollController,
+      required this.showBottomSheet});
   final ScrollController scrollController;
-
+  final Function(Project) showBottomSheet;
   @override
   State<WorkingProjects> createState() => _WorkingProjectsState();
 }
 
 class _WorkingProjectsState extends State<WorkingProjects> {
-  late List<Project>? workingProjects;
+  @override
+  Widget build(BuildContext context) {
+    return widget.projects != null && widget.projects!.isNotEmpty
+        ? ListView.builder(
+            controller: widget.scrollController,
+            itemCount: widget.projects?.length ?? 0,
+            itemBuilder: (context, index) => MyProjectItem(
+              project: widget.projects![index],
+              onShowBottomSheet: widget.showBottomSheet,
+            ),
+          )
+        : Container(
+            alignment: Alignment.center,
+            child: const Text("You have no working projects"));
+  }
+}
+
+class ArchivedProjects extends StatefulWidget {
+  final List<Project>? projects;
+  const ArchivedProjects(
+      {super.key,
+      required this.projects,
+      required this.scrollController,
+      required this.showBottomSheet});
+  final ScrollController scrollController;
+  final Function(Project) showBottomSheet;
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.projects != null) {
-      workingProjects =
-          widget.projects!.where((element) => element.isWorking).toList();
-    } else {
-      workingProjects = List.empty(growable: true);
-    }
-  }
+  State<ArchivedProjects> createState() => _ArchivedProjectsState();
+}
 
+class _ArchivedProjectsState extends State<ArchivedProjects> {
   var projectStore = getIt<ProjectStore>();
 
   @override
   Widget build(BuildContext context) {
-    return workingProjects != null && workingProjects!.isNotEmpty
+    return widget.projects != null && widget.projects!.isNotEmpty
         ? ListView.builder(
             controller: widget.scrollController,
-            itemCount: workingProjects?.length ?? 0,
+            itemCount: widget.projects?.length ?? 0,
             itemBuilder: (context, index) => MyProjectItem(
-              project: workingProjects![index],
-              onShowBottomSheet: (p) => showBottomSheet(p, () {
-                (widget.projects ?? [])
-                    .firstWhere(
-                      (element) => element.objectId == p.objectId,
-                      orElse: () => (widget.projects ?? [])[0],
-                    )
-                    .isWorking = true;
-              }),
+              project: widget.projects![index],
+              onShowBottomSheet: widget.showBottomSheet,
             ),
           )
         : Container(
@@ -388,16 +472,19 @@ class _WorkingProjectsState extends State<WorkingProjects> {
 
 class AllProjects extends StatefulWidget {
   final List<Project>? projects;
-  const AllProjects({super.key, required this.projects, required this.scrollController});
+  const AllProjects(
+      {super.key,
+      required this.projects,
+      required this.scrollController,
+      required this.showBottomSheet});
   final ScrollController scrollController;
+  final Function(Project) showBottomSheet;
 
   @override
   State<AllProjects> createState() => _AllProjectsState();
 }
 
 class _AllProjectsState extends State<AllProjects> {
-  var projectStore = getIt<ProjectStore>();
-
   @override
   Widget build(BuildContext context) {
     return ImplicitlyAnimatedList<Project>(
@@ -413,42 +500,19 @@ class _AllProjectsState extends State<AllProjects> {
             curve: Curves.easeInOut,
             animation: animation,
             child: MyProjectItem(
-              project: (widget.projects ?? [])[i],
-              onShowBottomSheet: (p) => showBottomSheet(p, () {
-                (widget.projects ?? [])
-                    .firstWhere(
-                      (element) => element.objectId == p.objectId,
-                      orElse: () => (widget.projects ?? [])[0],
-                    )
-                    .isWorking = true;
-              }, closeCallback: () {
-                setState(() {
-                  var p1 = (widget.projects ?? []).firstWhere(
-                    (element) => element.objectId == p.objectId,
-                    orElse: () => (widget.projects ?? [])[0],
-                  );
-                  p1.enabled = p1.enabled == Status.active
-                      ? Status.inactive
-                      : Status.active;
-                });
-              }),
+              dismissable: false,
+              project: item,
+              onShowBottomSheet: widget.showBottomSheet,
             ));
       },
       removeItemBuilder: (context, animation, oldItem) {
         return SizeTransition(
-          sizeFactor: animation,
-          child: MyProjectItem(
-            project: oldItem,
-            onShowBottomSheet: (p) => showBottomSheet(p, () {
-              (widget.projects ?? [])
-                  .firstWhere(
-                    (element) => element.objectId == p.objectId,
-                    orElse: () => (widget.projects ?? [])[0],
-                  )
-                  .isWorking = true;
-            }),
-          ),
-        );
+            sizeFactor: animation,
+            child: MyProjectItem(
+              dismissable: false,
+              project: oldItem,
+              onShowBottomSheet: widget.showBottomSheet,
+            ));
       },
     );
   }

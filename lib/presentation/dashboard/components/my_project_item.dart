@@ -4,8 +4,10 @@ import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -93,7 +95,11 @@ class MyProjectItem extends StatefulWidget {
   final void Function(Project project)? onShowBottomSheet;
   final Project project;
   const MyProjectItem(
-      {super.key, required this.project, required this.onShowBottomSheet});
+      {super.key,
+      required this.project,
+      required this.onShowBottomSheet,
+      this.dismissable = true});
+  final bool dismissable;
 
   @override
   State<MyProjectItem> createState() => _MyProjectItemState();
@@ -105,63 +111,82 @@ class _MyProjectItemState extends State<MyProjectItem> {
     super.initState();
   }
 
+  var projectStore = getIt<ProjectStore>();
+
   @override
   Widget build(BuildContext context) {
     return _OpenContainerWrapper(
       project: widget.project,
-      closedChild: Dismissible(
-        key: const ObjectKey(""),
-        dismissThresholds: const {
-          DismissDirection.startToEnd: 0.8,
-          DismissDirection.endToStart: 0.4,
-        },
-        onDismissed: (direction) {
-          switch (direction) {
-            case DismissDirection.endToStart:
-              // if (onStarredInbox) {
-              //   onStar();
-              // }
-              break;
-            case DismissDirection.startToEnd:
-              // onDelete();
-              break;
-            default:
-          }
-        },
-        background: _DismissibleContainer(
-          icon: Text(Lang.get("archive"),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
-              )),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          iconColor: Colors.amber,
-          alignment: Alignment.centerLeft,
-          padding: const EdgeInsetsDirectional.only(start: 20),
-        ),
-        confirmDismiss: (direction) async {
-          if (direction == DismissDirection.endToStart) {
-            // TODO: bỏ vô archive
-            // if (onStarredInbox) {
-            //   return true;
-            // }
-            // onStar();
-            return false;
-          } else {
-            return false;
-          }
-        },
-        secondaryBackground: _DismissibleContainer(
-          icon: Text(Lang.get("archive"),
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onBackground,
-              )),
-          backgroundColor: Colors.green,
-          iconColor: Colors.amber,
-          alignment: Alignment.centerRight,
-          padding: const EdgeInsetsDirectional.only(end: 20),
-        ),
-        child: buildItem(MediaQuery.of(context).size.width),
-      ),
+      closedChild: widget.dismissable
+          ? Dismissible(
+              key: const ObjectKey(""),
+              dismissThresholds: const {
+                DismissDirection.startToEnd: 0.8,
+                DismissDirection.endToStart: 0.4,
+              },
+              direction: widget.project.isWorking
+                  ? DismissDirection.endToStart
+                  : DismissDirection.startToEnd,
+              onDismissed: (direction) {},
+              background: _DismissibleContainer(
+                icon: Text(widget.project.isWorking ? Lang.get("archive") : Lang.get("unarchive"),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onBackground,
+                    )),
+                backgroundColor: Colors.green,
+                iconColor: Colors.amber,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsetsDirectional.only(start: 20),
+              ),
+              confirmDismiss: (direction) async {
+                switch (direction) {
+                  case DismissDirection.endToStart:
+                    {
+                      var p = projectStore.companyProjects.firstWhereOrNull(
+                        (element) =>
+                            element.objectId == widget.project.objectId,
+                      );
+                      if (widget.project.isWorking) {
+                        setState(() {
+                          p?.enabled = Status.inactive;
+                        });
+                        return true;
+                      }
+                      return false;
+                    }
+                  case DismissDirection.startToEnd:
+                    {
+                      var p = projectStore.companyProjects.firstWhereOrNull(
+                        (element) =>
+                            element.objectId == widget.project.objectId,
+                      );
+                      if (widget.project.isArchived) {
+                        setState(() {
+                          p?.enabled = Status.active;
+                        });
+                        return true;
+                      }
+                      return false;
+                    }
+                  default:
+                    return false;
+                }
+              },
+              secondaryBackground: widget.project.isArchived
+                  ? null
+                  : _DismissibleContainer(
+                      icon: Text(Lang.get("archive"),
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onBackground,
+                          )),
+                      backgroundColor: Colors.green,
+                      iconColor: Colors.amber,
+                      alignment: Alignment.centerRight,
+                      padding: const EdgeInsetsDirectional.only(end: 20),
+                    ),
+              child: buildItem(MediaQuery.of(context).size.width),
+            )
+          : buildItem(MediaQuery.of(context).size.width),
     );
   }
 

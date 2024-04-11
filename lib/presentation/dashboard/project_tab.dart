@@ -9,6 +9,7 @@ import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -739,7 +740,7 @@ class _ProjectTabState extends State<ProjectTab> {
                   ),
                 ),
                 Positioned(
-                  right: 30,
+                  right: 35,
                   child: IconButton(
                       onPressed: () async {
                         setState(() {
@@ -761,7 +762,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       icon: const Icon(Icons.filter_alt_outlined)),
                 ),
                 Positioned(
-                  right: 60,
+                  right: 70,
                   child: IconButton(
                       onPressed: () {
                         NavbarNotifier2.pushNamed(
@@ -802,8 +803,14 @@ class _ProjectTabState extends State<ProjectTab> {
                   list: _projectStore.projects,
                   firstCallback: (i) {
                     setState(() {
-                      _projectStore.projects[i].isFavorite =
-                          !_projectStore.projects[i].isFavorite;
+                      var p = (_projectStore.projects).firstWhereOrNull(
+                        (element) => element.objectId == i,
+                      );
+                      setState(() {
+                        p?.isFavorite = !p.isFavorite;
+                      });
+                      // _projectStore.projects[i].isFavorite =
+                      //     !_projectStore.projects[i].isFavorite;
                     });
                   },
                 )

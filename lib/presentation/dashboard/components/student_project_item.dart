@@ -78,7 +78,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
               //print('navigate to student project detail');
               Navigator.of(NavigationService.navigatorKey.currentContext!)
                   .pushNamed(Routes.projectDetailsStudent,
-                      arguments: widget.project);
+                      arguments: {"project": widget.project});
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),

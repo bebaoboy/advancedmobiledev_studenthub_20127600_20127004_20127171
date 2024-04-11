@@ -510,7 +510,7 @@ class _LazyLoadingAnimationProjectListState
                       itemBuilder: (BuildContext context, int index) {
                         return SizedBox(
                             width: 100,
-                            height: widget.itemHeight,
+                            height: widget.itemHeight + 100,
                             child: _buildListItem(widget.list[index], index));
                       },
                     );

@@ -105,19 +105,30 @@ getRoute(name, context, {arguments}) {
   try {
     if (name == Routes.projectDetails) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
-      return ProjectDetailsPage(project: arguments as Project);
+      if (arguments != null) {
+        return ProjectDetailsPage(
+            project: arguments["project"] as Project,
+            initialIndex:
+                arguments["index"] != null ? arguments["index"]! as int : null);
+      }
     }
     if (name == Routes.submitProposal) {
-      return SubmitProjectProposal(project: arguments as Project);
+      if (arguments != null) {
+        return SubmitProjectProposal(project: arguments as Project);
+      }
     }
 
     if (name == Routes.message) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
-      return MessageScreen(title: arguments as String);
+      if (arguments != null) {
+        return MessageScreen(title: arguments as String);
+      }
     }
     if (name == Routes.projectDetailsStudent) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
-      return ProjectDetailsStudentScreen(project: arguments as Project);
+      if (arguments != null) {
+        return ProjectDetailsStudentScreen(project: arguments as Project);
+      }
     }
 
     if (name == Routes.welcome) {
@@ -129,10 +140,14 @@ getRoute(name, context, {arguments}) {
       }
     }
 
-    return Routes._route[name] ?? const HomeScreen();
+    return Routes._route[name] ??
+        ErrorPage(
+          errorDetails: FlutterErrorDetails(
+              exception: {"summary": "Wrong route!", "stack": "name=$name"}),
+        );
   } catch (e) {
     return ErrorPage(
-      errorDetails: e as FlutterErrorDetails,
-    );
+        errorDetails: FlutterErrorDetails(
+            exception: {"summary": "Wrong route!", "stack": e.toString()}));
   }
 }

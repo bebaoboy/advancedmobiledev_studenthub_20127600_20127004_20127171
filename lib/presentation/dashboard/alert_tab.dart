@@ -70,7 +70,9 @@ class _AlertTabState extends State<AlertTab> {
 
   @override
   Widget build(BuildContext context) {
-    return _buildAlertsContent();
+    return Padding(
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: _buildAlertsContent());
   }
 
   Widget _buildAlertsContent() {

@@ -221,5 +221,6 @@
   "project_close": "Close this project",
   "project_open": "Re-open this project",
   "closed": "INACTIVE",
-  "archive": "Archive"
+  "archive": "Archive",
+  "unarchive": "Unarchive"
 }
