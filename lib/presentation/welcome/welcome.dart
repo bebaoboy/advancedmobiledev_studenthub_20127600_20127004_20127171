@@ -82,10 +82,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   height: 50,
                   child: RoundedButtonWidget(
                     onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute2(routeName: Routes.dashboard),
+                          (Route<dynamic> route) => false);
                       if (widget.newRole) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute2(routeName: Routes.dashboard),
-                            (Route<dynamic> route) => false);
                         showAnimatedDialog(
                           context:
                               NavigationService.navigatorKey.currentContext ??
