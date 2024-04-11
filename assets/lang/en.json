@@ -216,5 +216,10 @@
   "clear_filter": "Clear filter",
   "apply": "Apply",
   "discard_edit": "Discard edit?",
-  "exit_confirm": "Press Back again to exit"
+  "exit_confirm": "Press Back again to exit",
+  "about": "About",
+  "project_close": "Close this project",
+  "project_open": "Re-open this project",
+  "closed": "INACTIVE",
+  "archive": "Archive"
 }

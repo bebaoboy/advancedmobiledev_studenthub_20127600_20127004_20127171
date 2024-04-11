@@ -83,8 +83,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   child: RoundedButtonWidget(
                     onPressed: () {
                       if (widget.newRole) {
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute2(routeName: Routes.dashboard),
+                            (Route<dynamic> route) => false);
                         showAnimatedDialog(
-                          context: NavigationService.navigatorKey.currentContext ?? context,
+                          context:
+                              NavigationService.navigatorKey.currentContext ??
+                                  context,
                           barrierDismissible: false,
                           builder: (BuildContext context) {
                             return ClassicGeneralDialogWidget(
@@ -102,9 +107,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           duration: const Duration(seconds: 1),
                         );
                       }
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute2(routeName: Routes.dashboard),
-                          (Route<dynamic> route) => false);
                     },
                     buttonText: Lang.get('Start_button'),
                     buttonColor: Theme.of(context).colorScheme.primary,

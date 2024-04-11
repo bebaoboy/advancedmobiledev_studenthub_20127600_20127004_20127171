@@ -70,20 +70,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return BackGuard(
       child: Scaffold(
         appBar: _buildAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: SingleChildScrollView(
-            controller: ScrollController(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Flexible(
-                    fit: FlexFit.loose,
+        body: !enabled
+            ? Center(
+                child: Text(Lang.get("loading")),
+              )
+            : Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: SingleChildScrollView(
+                    controller: ScrollController(),
                     child: Column(
-                      children: [
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
                         Text(
-                          Lang.get('home_title'),
+                          Lang.get('profile_welcome_title'),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 30),
@@ -228,19 +231,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         const SizedBox(height: 25),
+                        Text(Lang.get('home_description')),
                       ],
-                    )),
-                Text(Lang.get('home_description')),
-              ],
-            ),
-          ),
-        ),
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar();
+    return MainAppBar(
+      name: _userStore.user != null ? _userStore.user!.name : "",
+    );
   }
 }

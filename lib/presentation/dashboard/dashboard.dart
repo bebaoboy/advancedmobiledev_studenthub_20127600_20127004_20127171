@@ -55,32 +55,19 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         });
       },
     );
-    childs = [
-      KeepAlivePage(ProjectTab(
-        scrollController: ScrollController(),
-      )),
-      _userStore.user!.type == UserType.company
-          ? KeepAlivePage(DashBoardTab(
-              pageController: _pageController,
-            ))
-          : KeepAlivePage(StudentDashBoardTab(pageController: _pageController)),
-      const KeepAlivePage(MessageTab()),
-      const KeepAlivePage(AlertTab())
-    ];
     List<ScrollController> sc = [
       for (int i = 0; i < 4; i++) ScrollController()
     ];
     for (var element in sc) {
       element.addListener(
-          () {
-            if (element.position.userScrollDirection ==
-                ScrollDirection.reverse) {
-              NavbarNotifier2.hideBottomNavBar = true;
-            } else {
-              NavbarNotifier2.hideBottomNavBar = false;
-            }
-          },
-        );
+        () {
+          if (element.position.userScrollDirection == ScrollDirection.reverse) {
+            NavbarNotifier2.hideBottomNavBar = true;
+          } else {
+            NavbarNotifier2.hideBottomNavBar = false;
+          }
+        },
+      );
     }
     _routes = [
       {
@@ -104,15 +91,17 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         // Routes.project_post: getRoute(Routes.project_post),
       },
       {
-        '/': const KeepAlivePage(MessageTab(
-          key: PageStorageKey(2),
+        '/': KeepAlivePage(MessageTab(
+          key: const PageStorageKey(2),
+          scrollController: sc[2],
         )),
 
         // ProfileEdit.route: ProfileEdit(),
       },
       {
-        '/': const KeepAlivePage(AlertTab(
-          key: PageStorageKey(3),
+        '/': KeepAlivePage(AlertTab(
+          key: const PageStorageKey(3),
+          scrollController: sc[3],
         )),
       },
     ];

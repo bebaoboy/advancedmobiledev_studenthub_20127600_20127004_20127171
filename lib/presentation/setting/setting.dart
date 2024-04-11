@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
+import 'package:boilerplate/core/widgets/onboarding_screen.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -19,6 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
 
@@ -523,6 +525,25 @@ class _SettingScreenState extends State<SettingScreen> {
             const Divider(
               height: 3,
             ),
+            ListTile(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    ModalSheetRoute(
+                      builder: (context) => OnboardingSheet(
+                        height: MediaQuery.of(context).size.height,
+                        onSheetDismissed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.setBool(Preferences.first_time, true);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.help_outline),
+                title: Text(
+                  Lang.get('about'),
+                )),
             ListTile(
                 onTap: () {
                   _userStore.logout();

@@ -14,9 +14,11 @@ import 'package:boilerplate/presentation/dashboard/components/my_project_item.da
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/rendering.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
@@ -52,10 +54,7 @@ class _DashBoardTabState extends State<DashBoardTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 60),
-      child: _buildDashBoardContent(),
-    );
+    return _buildDashBoardContent();
   }
 
   var projectStore = getIt<ProjectStore>();
@@ -146,6 +145,24 @@ class ProjectTabs extends StatefulWidget {
 
 class _ProjectTabsState extends State<ProjectTabs> {
   var projectStore = getIt<ProjectStore>();
+  List<ScrollController> scrollController = [];
+
+  @override
+  void initState() {
+    super.initState();
+    scrollController.add(ScrollController());
+    scrollController.add(ScrollController());
+    scrollController.add(ScrollController());
+    for (var element in scrollController) {
+      element.addListener(() {
+        if (element.position.userScrollDirection == ScrollDirection.reverse) {
+          NavbarNotifier2.hideBottomNavBar = true;
+        } else {
+          NavbarNotifier2.hideBottomNavBar = false;
+        }
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,12 +206,15 @@ class _ProjectTabsState extends State<ProjectTabs> {
               children: [
                 AllProjects(
                   projects: [...projectStore.companyProjects, ...myProjects],
+                  scrollController: scrollController[0],
                 ),
-                const WorkingProjects(
-                  projects: [],
+                WorkingProjects(
+                  projects: const [],
+                  scrollController: scrollController[1],
                 ),
                 AllProjects(
                   projects: [...projectStore.companyProjects, ...myProjects],
+                  scrollController: scrollController[2],
                 )
               ]),
         )
@@ -203,7 +223,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
   }
 }
 
-void showBottomSheet(Project project, Function workingCallback) {
+void showBottomSheet(Project project, Function workingCallback,
+    {Function? closeCallback}) {
   showAdaptiveActionSheet(
     title: const Text(
       "Menu",
@@ -220,20 +241,32 @@ void showBottomSheet(Project project, Function workingCallback) {
             alignment: Alignment.topLeft,
             child: Text(
               Lang.get('project_item_view_proposal'),
-              style: const TextStyle(fontWeight: FontWeight.normal),
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: project.enabled == Status.inactive
+                      ? Colors.grey.shade500
+                      : null),
             )),
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
             child: Text(Lang.get('project_item_view_message'),
-                style: const TextStyle(fontWeight: FontWeight.w100))),
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: project.enabled == Status.inactive
+                        ? Colors.grey.shade500
+                        : null))),
       ),
       BottomSheetAction(
         title: Container(
           alignment: Alignment.topLeft,
           child: Text(Lang.get('project_item_view_hired'),
-              style: const TextStyle(fontWeight: FontWeight.normal)),
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: project.enabled == Status.inactive
+                      ? Colors.grey.shade500
+                      : null)),
         ),
       ),
       BottomSheetAction(
@@ -243,19 +276,31 @@ void showBottomSheet(Project project, Function workingCallback) {
         title: Container(
             alignment: Alignment.topLeft,
             child: Text(Lang.get('project_item_view_job_posting'),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: project.enabled == Status.inactive
+                        ? Colors.grey.shade500
+                        : null))),
       ),
       BottomSheetAction(
         title: Container(
             alignment: Alignment.topLeft,
             child: Text(Lang.get('project_item_edit_job_posting'),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: project.enabled == Status.inactive
+                        ? Colors.grey.shade500
+                        : null))),
       ),
       BottomSheetAction(
         title: Container(
           alignment: Alignment.topLeft,
           child: Text(Lang.get('project_item_remove_job_posting'),
-              style: const TextStyle(fontWeight: FontWeight.normal)),
+              style: TextStyle(
+                  fontWeight: FontWeight.normal,
+                  color: project.enabled == Status.inactive
+                      ? Colors.grey.shade500
+                      : null)),
         ),
       ),
       BottomSheetAction(
@@ -265,10 +310,27 @@ void showBottomSheet(Project project, Function workingCallback) {
         title: Container(
             alignment: Alignment.topLeft,
             child: Text(Lang.get("project_start_working"),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
+                style: TextStyle(
+                    fontWeight: FontWeight.normal,
+                    color: project.enabled == Status.inactive
+                        ? Colors.grey.shade500
+                        : null))),
         onPressed: (_) {
           //print(project.title);
           workingCallback();
+        },
+      ),
+      BottomSheetAction(
+        title: Container(
+            alignment: Alignment.topLeft,
+            child: Text(
+                project.enabled == Status.active
+                    ? Lang.get("project_close")
+                    : Lang.get("project_open"),
+                style: const TextStyle(fontWeight: FontWeight.normal))),
+        onPressed: (_) {
+          //print(project.title);
+          if (closeCallback != null) closeCallback();
         },
       ),
     ],
@@ -277,7 +339,8 @@ void showBottomSheet(Project project, Function workingCallback) {
 
 class WorkingProjects extends StatefulWidget {
   final List<Project>? projects;
-  const WorkingProjects({super.key, required this.projects});
+  const WorkingProjects({super.key, required this.projects, required this.scrollController});
+  final ScrollController scrollController;
 
   @override
   State<WorkingProjects> createState() => _WorkingProjectsState();
@@ -303,7 +366,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
   Widget build(BuildContext context) {
     return workingProjects != null && workingProjects!.isNotEmpty
         ? ListView.builder(
-            controller: ScrollController(),
+            controller: widget.scrollController,
             itemCount: workingProjects?.length ?? 0,
             itemBuilder: (context, index) => MyProjectItem(
               project: workingProjects![index],
@@ -325,7 +388,8 @@ class _WorkingProjectsState extends State<WorkingProjects> {
 
 class AllProjects extends StatefulWidget {
   final List<Project>? projects;
-  const AllProjects({super.key, required this.projects});
+  const AllProjects({super.key, required this.projects, required this.scrollController});
+  final ScrollController scrollController;
 
   @override
   State<AllProjects> createState() => _AllProjectsState();
@@ -337,6 +401,7 @@ class _AllProjectsState extends State<AllProjects> {
   @override
   Widget build(BuildContext context) {
     return ImplicitlyAnimatedList<Project>(
+      controller: widget.scrollController,
       items: (widget.projects ?? []),
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
@@ -356,6 +421,16 @@ class _AllProjectsState extends State<AllProjects> {
                       orElse: () => (widget.projects ?? [])[0],
                     )
                     .isWorking = true;
+              }, closeCallback: () {
+                setState(() {
+                  var p1 = (widget.projects ?? []).firstWhere(
+                    (element) => element.objectId == p.objectId,
+                    orElse: () => (widget.projects ?? [])[0],
+                  );
+                  p1.enabled = p1.enabled == Status.active
+                      ? Status.inactive
+                      : Status.active;
+                });
               }),
             ));
       },

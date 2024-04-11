@@ -20,7 +20,6 @@
 // export 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
 // export 'package:enhanced_paginated_view/src/widgets/error_widget.dart';
 // export 'package:enhanced_paginated_view/src/widgets/loading_widget.dart';
-// export 'package:responsive_sizer/responsive_sizer.dart';
 // export 'package:size_helper/size_helper.dart';
 // export 'package:another_flushbar/flushbar_helper.dart';
 // export 'package:http/http.dart';

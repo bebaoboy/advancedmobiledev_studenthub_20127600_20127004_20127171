@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
+import 'package:boilerplate/core/widgets/onboarding_screen.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -18,8 +19,8 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
 
@@ -80,7 +81,7 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      width: 100.w,
+      width: MediaQuery.of(context).size.width,
       child: Scaffold(
         primary: true,
         appBar: _buildAppBar(context),
@@ -479,9 +480,13 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                                   'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
                               negativeText: Lang.get('cancel'),
                               positiveText: 'Yes',
-                              onPositiveClick: () {
+                              onPositiveClick: () async {
                                 Navigator.of(context).pop();
+                                final ProfileStudentStore infoStore =
+                                    getIt<ProfileStudentStore>();
 
+                                await infoStore.getTechStack();
+                                await infoStore.getSkillset();
                                 Navigator.of(context).push(MaterialPageRoute2(
                                     routeName: Routes.profileStudent));
                                 return;
@@ -544,6 +549,25 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
             const Divider(
               height: 3,
             ),
+            ListTile(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    ModalSheetRoute(
+                      builder: (context) => OnboardingSheet(
+                        height: MediaQuery.of(context).size.height,
+                        onSheetDismissed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.setBool(Preferences.first_time, true);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.help_outline),
+                title: Text(
+                  Lang.get('about'),
+                )),
             ListTile(
                 onTap: () {
                   _userStore.logout();

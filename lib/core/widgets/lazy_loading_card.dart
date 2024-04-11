@@ -427,7 +427,7 @@ class _LazyLoadingAnimationProjectListState
             // ),
 
             PlaneIndicator(
-          onRefresh: () => Future.delayed(const Duration(seconds: 3), () {
+          onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
             // loadMore(startIndex);
           }),
           child: Stack(

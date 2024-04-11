@@ -5,9 +5,11 @@ import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/onboarding_screen.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -28,9 +30,9 @@ import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connect
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:size_helper/size_helper.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
@@ -65,6 +67,18 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _passwordFocusNode = FocusNode();
     _userEmailController.text = widget.email ?? "";
+    checkIntro(context);
+  }
+
+  checkIntro(context) {
+    Future.delayed(Duration.zero, () async {
+      bool firstTime = false;
+      final prefs = await SharedPreferences.getInstance();
+      firstTime = prefs.getBool(Preferences.first_time) ?? false;
+      if (!firstTime) {
+        await showIntroBottomSheet(context);
+      }
+    });
   }
 
   @override
@@ -75,7 +89,22 @@ class _LoginScreenState extends State<LoginScreen> {
         body: _buildBody(),
         endDrawer: const SettingScreenDrawer(),
         // drawer: const SettingScreenDrawer(),
-        drawerEdgeDragWidth: 100.w,
+        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
+      ),
+    );
+  }
+
+  Future showIntroBottomSheet(BuildContext context) async {
+    return await Navigator.push(
+      context,
+      ModalSheetRoute(
+        builder: (context) => OnboardingSheet(
+          height: MediaQuery.of(context).size.height,
+          onSheetDismissed: () async {
+            final prefs = await SharedPreferences.getInstance();
+            prefs.setBool(Preferences.first_time, true);
+          },
+        ),
       ),
     );
   }
@@ -121,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
               );
             },
           ),
+
 //           Positioned(
 //             height: 1000,
 //             width: 2000,
@@ -160,9 +190,9 @@ class _LoginScreenState extends State<LoginScreen> {
       controller: ScrollController(),
       child: LimitedBox(
         maxHeight: SizeHelper.of(context, printScreenInfo: true).help(
-          mobileExtraLarge: 90.h,
-          desktopExtraLarge: 90.h,
-          mobileExtraLargeLandscape: 90.w,
+          mobileExtraLarge: MediaQuery.of(context).size.height * 0.9,
+          desktopExtraLarge: MediaQuery.of(context).size.height * 0.9,
+          mobileExtraLargeLandscape: MediaQuery.of(context).size.width * 0.9,
         ),
         // MediaQuery.of(context).orientation == Orientation.landscape
         //     ? MediaQuery.of(context).size.width * 0.9
@@ -186,9 +216,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Expanded(
-                      child: Image.asset(
-                        'assets/images/img_login.png',
-                        scale: 1.2,
+                      child: Container(
+                        constraints: BoxConstraints(
+                            minHeight:
+                                MediaQuery.of(context).size.height * 0.3),
+                        child: Image.asset(
+                          'assets/images/img_login.png',
+                          scale: 1.2,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24.0),
