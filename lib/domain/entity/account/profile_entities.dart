@@ -88,7 +88,7 @@ class StudentProfile extends Profile {
   Map<String, dynamic> toMap() {
     return {
       'title': title,
-      'fullName': fullName,
+      'fullname': fullName,
       'education': education,
       'introduction': introduction,
       'yearOfExperience': yearOfExperience,
@@ -108,7 +108,7 @@ class StudentProfile extends Profile {
   factory StudentProfile.fromMap(Map<String, dynamic> map) {
     return StudentProfile(
       title: map['title'] ?? '',
-      fullName: map['fullName'] ?? '',
+      fullName: map['fullname'] ?? '',
       education: map['education'] ?? '',
       introduction: map['introduction'] ?? '',
       yearOfExperience: map['yearOfExperience'] ?? 0,

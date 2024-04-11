@@ -196,6 +196,12 @@ class Endpoints {
   static const String getTranscript =
       "$baseUrl/api/profile/student/{studentId}/transcript"; // done
 
+  static const String deleteResume =
+      "$baseUrl/api/profile/student/{studentId}/resume";
+
+  static const String deleteTranscript =
+      "$baseUrl/api/profile/student/{studentId}/transcript";
+
   static const String getTechStack = "$baseUrl/api/techstack/getAllTechStack";
   static const String getSkillset = "$baseUrl/api/skillset/getAllSkillSet";
   static const String addTechStack = "$baseUrl/api/techstack/createTechStack";

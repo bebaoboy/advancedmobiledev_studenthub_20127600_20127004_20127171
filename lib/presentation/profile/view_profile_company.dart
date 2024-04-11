@@ -382,7 +382,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
               contentText:
-                  '${_formStore.companyName} update tạo profile thành công!',
+                  '${_formStore.companyName} update profile successfully!',
               negativeText: Lang.get('cancel'),
               positiveText: 'OK',
               onPositiveClick: () {

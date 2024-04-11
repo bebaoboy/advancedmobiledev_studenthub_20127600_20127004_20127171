@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
@@ -421,9 +423,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 CubeChatConnection.instance.currentUser!.login ?? "????")) {
           print("change user --- LOGING OUT cb");
           await SharedPreferences.getInstance().then((preference) async {
+            PushNotificationsManager.instance.unsubscribe();
             CallManager.instance.destroy();
             CubeChatConnection.instance.destroy();
-            PushNotificationsManager.instance.unsubscribe();
 
             SharedPrefs.deleteUserData();
             await signOut();

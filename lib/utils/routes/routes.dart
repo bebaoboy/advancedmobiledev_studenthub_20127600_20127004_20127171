@@ -118,13 +118,21 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.projectDetailsStudent) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       return ProjectDetailsStudentScreen(project: arguments as Project);
-    } else if (name == Routes.message) {
-      // If route is projectDetails, return ProjectDetailsPage with arguments
-      return MessageScreen(title: arguments as String);
-    } else {
-      return Routes._route[name] ?? const HomeScreen();
     }
+
+    if (name == Routes.welcome) {
+      if (arguments != null) {
+        var b = arguments as bool;
+        return WelcomeScreen(
+          newRole: b,
+        );
+      }
+    }
+
+    return Routes._route[name] ?? const HomeScreen();
   } catch (e) {
-    return ErrorPage(errorDetails: e as FlutterErrorDetails,);
+    return ErrorPage(
+      errorDetails: e as FlutterErrorDetails,
+    );
   }
 }

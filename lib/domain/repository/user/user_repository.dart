@@ -85,4 +85,7 @@ abstract class UserRepository {
 
   Future<Response> addSkillset(AddSkillsetParams params);
   Future<Response> getSkillset(AddSkillsetParams params);
+
+  Future<Response> deleteResume(UpdateResumeParams params);
+  Future<Response> deleteTranscript(UpdateTranscriptParams params);
 }

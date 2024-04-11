@@ -144,7 +144,7 @@ class Project extends ProjectBase {
             ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
             : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
-        numberOfStudents: json['numberOfStudents'] ?? 0,
+        numberOfStudents: json['numberOfStudents'] ?? 1,
         isWorking: json['projectScopeFlag'] == 0,
         isArchived: json['projectScopeFlag'] == 1,
         id: (json["id"] ?? "").toString(),

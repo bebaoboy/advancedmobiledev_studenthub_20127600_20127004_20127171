@@ -4,7 +4,10 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
@@ -339,15 +342,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           barrierDismissible: true,
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
-              contentText: '${_formStore.companyName} tạo profile thành công!',
-              negativeText: Lang.get('cancel'),
+              contentText: '${_formStore.companyName} create profile successfully!',
               positiveText: 'OK',
               onPositiveClick: () {
-                Navigator.of(context).pop();
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .pushReplacement(MaterialPageRoute2(
+                        routeName: Routes.welcome, arguments: true));
                 return;
-              },
-              onNegativeClick: () {
-                Navigator.of(context).pop();
               },
             );
           },

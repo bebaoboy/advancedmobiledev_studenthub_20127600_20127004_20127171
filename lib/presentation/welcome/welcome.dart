@@ -5,13 +5,16 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class WelcomeScreen extends StatefulWidget {
-  const WelcomeScreen({super.key});
+  const WelcomeScreen({super.key, this.newRole = false});
+  final bool newRole;
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
@@ -65,7 +68,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
                 const SizedBox(height: 20.0),
                 Text(
-                  "${Lang.get('Welcome')} ${userStore.user != null ? userStore.user!.name : ""}!",
+                  "${Lang.get('Welcome')} ${userStore.user != null ? userStore.user!.name : ""}!\n${userStore.user != null ? ("(${userStore.user!.type.name})") : ""}",
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20.0),
@@ -79,6 +82,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   height: 50,
                   child: RoundedButtonWidget(
                     onPressed: () {
+                      if (widget.newRole) {
+                        showAnimatedDialog(
+                          context: NavigationService.navigatorKey.currentContext ?? context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return ClassicGeneralDialogWidget(
+                              titleText: 'Welcome to StudentHub',
+                              contentText:
+                                  'A marketplace to connect students with real-world project!',
+                              positiveText: 'OK',
+                              onPositiveClick: () async {
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          animationType: DialogTransitionType.size,
+                          curve: Curves.fastOutSlowIn,
+                          duration: const Duration(seconds: 1),
+                        );
+                      }
                       Navigator.of(context).pushAndRemoveUntil(
                           MaterialPageRoute2(routeName: Routes.dashboard),
                           (Route<dynamic> route) => false);

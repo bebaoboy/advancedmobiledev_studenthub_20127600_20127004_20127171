@@ -21,7 +21,7 @@ class StudentDashBoardTab extends StatefulWidget {
 }
 
 class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
-  // late TabController tabController;
+  //  TabController tabController;
   @override
   void initState() {
     super.initState();
@@ -174,8 +174,8 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
-  late List<StudentProject>? activeProjects;
-  late List<StudentProject>? submittedProjects;
+   List<StudentProject>? activeProjects = [];
+   List<StudentProject>? submittedProjects = [];
 
   @override
   void initState() {

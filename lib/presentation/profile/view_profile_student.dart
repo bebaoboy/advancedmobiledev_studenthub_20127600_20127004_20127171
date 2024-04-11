@@ -329,7 +329,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
               contentText:
-                  '${_formStore.fullName} update tạo profile thành công!',
+                  '${_formStore.fullName} update profile successfully!',
               negativeText: Lang.get('cancel'),
               positiveText: 'OK',
               onPositiveClick: () {

@@ -198,6 +198,21 @@ class ProfileApi {
     // }
   }
 
+  Future<Response> deleteResume(UpdateResumeParams params) async {
+    return await _dioClient.dio
+        .delete(
+      Interpolator(Endpoints.deleteResume)({"studentId": params.studentId}),
+      // data: formData,
+      // onSendProgress: (count, total) {
+      //   print(
+      //       'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
+      // },
+    )
+        .onError((DioException error, stackTrace) {
+      return Future.value(error.response);
+    });
+  }
+
   Future<Response> getTranscript(UpdateTranscriptParams params) async {
     return await _dioClient.dio.get(
         Interpolator(Endpoints.getTranscript)({"studentId": params.studentId}),
@@ -235,6 +250,35 @@ class ProfileApi {
     }
   }
 
+  Future<Response> deleteTranscript(UpdateTranscriptParams params) async {
+    // try {
+    // FormData formData = FormData.fromMap({
+    //   "file": await MultipartFile.fromFile(
+    //     params.transcript,
+    //     // contentType:
+    //     //     MediaType.parse(lookupMimeType(params.path) ?? "text/plain"),
+    //     filename: params.transcript.split('/').last,
+    //   )
+    // });
+    return await _dioClient.dio
+        .delete(
+      Interpolator(Endpoints.deleteTranscript)({"studentId": params.studentId}),
+      // data: formData,
+      // onSendProgress: (count, total) {
+      //   print(
+      //       'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
+      // },
+    )
+        .onError((DioException error, stackTrace) {
+      return Future.value(error.response);
+    });
+    // } catch (e) {
+    //   return Future.value(Response(
+    //       requestOptions: RequestOptions(),
+    //       data: {"errorDetails": "File not found ${e.toString()}"}));
+    // }
+  }
+
   Future<Response> addTechStack(AddTechStackParams params) async {
     return await _dioClient.dio.post(Endpoints.addTechStack, data: {
       "name": params.name,
@@ -242,10 +286,8 @@ class ProfileApi {
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
-    Future<Response> getTechStack(AddTechStackParams params) async {
-    return await _dioClient.dio.get(Endpoints.getTechStack, data: {
-      
-    }).onError(
+  Future<Response> getTechStack(AddTechStackParams params) async {
+    return await _dioClient.dio.get(Endpoints.getTechStack, data: {}).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
@@ -257,9 +299,7 @@ class ProfileApi {
   }
 
   Future<Response> getSkillset(AddSkillsetParams params) async {
-    return await _dioClient.dio.get(Endpoints.getSkillset, data: {
-     
-    }).onError(
+    return await _dioClient.dio.get(Endpoints.getSkillset, data: {}).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }
 }

@@ -278,7 +278,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
               child: Column(
                 children: [
                   AutoSizeText(
-                    Lang.get('profile_welcome_text'),
+                    "${Lang.get('forget_password_welcome_back')} ${_profileStudentFormStore.fullName}",
                     style: const TextStyle(
                         fontSize: 15, fontWeight: FontWeight.w800),
                     minFontSize: 10,

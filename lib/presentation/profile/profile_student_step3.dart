@@ -8,8 +8,11 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
@@ -669,24 +672,23 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     //   prefs.setBool(Preferences.is_logged_in, true);
     // });
 
-    Future.delayed(const Duration(milliseconds: 1000), () {
-      if (_formStore.success) {
-        _formStore.success = false;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_profileStudentFormStore.success) {
+        _profileStudentFormStore.success = false;
         showAnimatedDialog(
           context: context,
           barrierDismissible: true,
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
               contentText:
-                  '${_profileStudentFormStore.fullName} tạo profile thành công!',
-              negativeText: Lang.get('cancel'),
+                  '${_profileStudentFormStore.fullName} create profile successfully!',
               positiveText: 'OK',
               onPositiveClick: () {
-                Navigator.of(context).pop();
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .pushReplacement(MaterialPageRoute2(
+                        routeName: Routes.welcome, arguments: true));
                 return;
-              },
-              onNegativeClick: () {
-                Navigator.of(context).pop();
               },
             );
           },

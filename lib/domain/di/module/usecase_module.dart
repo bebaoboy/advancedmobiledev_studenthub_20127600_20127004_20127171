@@ -8,6 +8,8 @@ import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
@@ -129,6 +131,14 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<UpdateResumeUseCase>(
       UpdateResumeUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<DeleteTranscriptUseCase>(
+      DeleteTranscriptUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<DeleteResumeUseCase>(
+      DeleteResumeUseCase(getIt<UserRepository>()),
     );
 
     getIt.registerSingleton<GetTranscriptUseCase>(
