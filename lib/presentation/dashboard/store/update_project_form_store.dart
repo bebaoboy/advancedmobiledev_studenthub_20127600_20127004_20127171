@@ -61,7 +61,7 @@ abstract class _UpdateProjectFormStore with Store {
 }
 
 class UpdateProjectFormErrorStore = _UpdateProjectFormErrorStore
-    with _$UpdateProjectErrorFormStore;
+    with _$UpdateProjectFormErrorStore;
 
 abstract class _UpdateProjectFormErrorStore with Store {
   String? title;
