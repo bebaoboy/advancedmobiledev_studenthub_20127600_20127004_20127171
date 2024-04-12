@@ -829,13 +829,16 @@ class _ProjectTabState extends State<ProjectTab> {
                   );
                 } else {
                   print("loading");
-                  children = Lottie.asset(
-                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                    fit: BoxFit.cover,
-                    width: 80, // Adjust the width and height as needed
-                    height: 80,
-                    repeat:
-                        true, // Set to true if you want the animation to loop
+                  children = Align(
+                    alignment: Alignment.topCenter,
+                    child: Lottie.asset(
+                      'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                      fit: BoxFit.cover,
+                      width: 80, // Adjust the width and height as needed
+                      height: 80,
+                      repeat:
+                          true, // Set to true if you want the animation to loop
+                    ),
                   );
                 }
                 return children;
