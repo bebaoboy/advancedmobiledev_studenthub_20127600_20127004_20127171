@@ -58,15 +58,22 @@ class ProjectApi {
   }
 
   Future<Response> updateCompanyProject(UpdateProjectParams params) async {
-    return await _dioClient.dio.patch(
-        Interpolator(Endpoints.updateProject)({"projectId": params.projectId}),
-        data: {
-          'projectScopeFlag': params.projectScope,
-          'title': params.title,
-          'description': params.description,
-          'numberOfStudents': params.numberOfStudent
-        }).onError(
-        (DioException error, stackTrace) => Future.value(error.response));
+    var p = {
+      'projectScopeFlag': params.projectScope,
+      'title': params.title,
+      'description': params.description,
+      'numberOfStudents': params.numberOfStudent
+    };
+    if (params.statusFlag != null) {
+      p.putIfAbsent("typeFlag", () => params.statusFlag!);
+    }
+    return await _dioClient.dio
+        .patch(
+            Interpolator(Endpoints.updateProject)(
+                {"projectId": params.projectId}),
+            data: p)
+        .onError(
+            (DioException error, stackTrace) => Future.value(error.response));
   }
 
   // Future<Response> filterProjects() async {

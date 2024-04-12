@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -11,7 +12,6 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -72,14 +72,8 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Scaffold(
         appBar: _buildAppBar(),
         body: !enabled
-            ? Center(
-            child: Lottie.asset(
-              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-              fit: BoxFit.cover,
-              width: 80, // Adjust the width and height as needed
-              height: 80,
-              repeat: true, // Set to true if you want the animation to loop
-            ),
+            ? const Center(
+            child: LoadingScreenWidget(size: 80,),
           )
             : Align(
                 alignment: Alignment.topCenter,

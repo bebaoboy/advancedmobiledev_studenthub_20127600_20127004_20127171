@@ -36,10 +36,14 @@ abstract class _ProjectStore with Store {
 
   Future addProject(Project value, {index = 0}) async {
     if (_projects.projects != null) {
+      value.updatedAt = DateTime.now();
       _projects.projects!.insert(index, value);
     } else {
       _projects.projects = [value];
     }
+    _projects.projects?.sort(
+      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+    );
   }
 
   /// descending created date order
@@ -47,7 +51,7 @@ abstract class _ProjectStore with Store {
     return _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
       _projects = value;
       _projects.projects?.sort(
-        (a, b) => b.timeCreated.compareTo(a.timeCreated),
+        (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
       );
       return _projects;
     });
@@ -70,6 +74,9 @@ abstract class _ProjectStore with Store {
           _companyProjects = result;
 
           // TODO: lưu vào sharedpref
+          _companyProjects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
           return _companyProjects;
         } catch (e) {
           // errorStore.errorMessage = "cannot save student profile";
@@ -105,6 +112,9 @@ abstract class _ProjectStore with Store {
               userStore.user!.studentProfile != null) {
             userStore.user!.studentProfile!.proposalProjects = result.proposals;
           }
+          userStore.user!.studentProfile!.proposalProjects?.sort(
+            (a, b) => b.createdAt!.compareTo(a.createdAt!),
+          );
           return result;
 
           // TODO: lưu vào sharedpref

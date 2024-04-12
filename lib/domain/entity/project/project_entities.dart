@@ -46,16 +46,18 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   Status enabled;
   bool isFavorite;
 
-  ProjectBase({
-    this.isLoading = true,
-    this.doneLoading = false,
-    required this.title,
-    required this.description,
-    this.scope = Scope.short,
-    String id = "",
-    this.enabled = Status.active,
-    this.isFavorite = false,
-  }) : super(objectId: id);
+  ProjectBase(
+      {this.isLoading = true,
+      this.doneLoading = false,
+      required this.title,
+      required this.description,
+      this.scope = Scope.short,
+      String id = "",
+      this.enabled = Status.active,
+      this.isFavorite = false,
+      super.createdAt,
+      super.updatedAt})
+      : super(objectId: id);
 
   @override
   bool isLoading;
@@ -98,6 +100,7 @@ class Project extends ProjectBase {
     this.proposal,
     this.messages,
     required this.timeCreated,
+    super.updatedAt,
     super.isFavorite = false,
     super.enabled,
     super.id,
@@ -139,6 +142,11 @@ class Project extends ProjectBase {
         timeCreated: json['createdAt'] != null
             ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
             : DateTime.now(),
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'])
+            : json['createdAt'] != null
+                ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+                : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
         numberOfStudents: json['numberOfStudents'] ?? 1,
         id: (json["projectId"] ?? json["id"] ?? "").toString(),
@@ -267,7 +275,11 @@ class Proposal extends MyObject {
         project = json["project"] != null
             ? StudentProject.fromMap(json["project"])
             : null,
-        super(objectId: json["id"].toString());
+        super(
+            objectId: json["id"].toString(),
+            createdAt: json['createdAt'] != null
+                ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+                : DateTime.now());
 
   Map<String, dynamic> toJson() {
     return {

@@ -231,5 +231,7 @@
   "project_open": "Re-open this project",
   "closed": "INACTIVE",
   "archive": "Archive",
-  "unarchive": "Unarchive"
+  "unarchive": "Unarchive",
+  "archive_successfully": "Archive Successfully",
+  "unarchive_successfully": "Unarchive Successfully"
 }

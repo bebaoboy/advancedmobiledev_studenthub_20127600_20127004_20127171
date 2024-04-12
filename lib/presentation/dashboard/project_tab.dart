@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -323,7 +324,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           height: widget.height * 0.85,
           child: Align(
             alignment: Alignment.topCenter,
-            child: isSuggestionTapped
+            child: widget.searchList.isNotEmpty
                 ? LazyLoadingAnimationProjectList(
                     scrollController: ScrollController(),
                     itemHeight: MediaQuery.of(context).size.height * 0.3,
@@ -333,7 +334,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       widget.favoriteCallback(id);
                     },
                   )
-                : null,
+                : Center(child: Text(Lang.get("nothing_here"))),
           ),
         ),
         appBar: buildAppBar(context),
@@ -476,7 +477,7 @@ bool applyFilter(SearchFilter f, Project p) {
   b &= (f.studentNeeded != null && f.studentNeeded! == p.numberOfStudents) ||
       (f.studentNeeded == null);
   b &= (f.proposalLessThan != null &&
-          (p.proposal != null && f.proposalLessThan! == p.proposal!.length)) ||
+          (p.proposal != null && f.proposalLessThan! <= p.proposal!.length)) ||
       (f.studentNeeded == null) ||
       (p.proposal == null);
   return b;
@@ -500,6 +501,7 @@ class _ProjectTabState extends State<ProjectTab> {
   String keyword = "";
   TextEditingController controller = TextEditingController();
   Set<String> searchHistory = {};
+  late Future<ProjectList> future;
 
   @override
   void initState() {
@@ -508,6 +510,7 @@ class _ProjectTabState extends State<ProjectTab> {
     loadSearchHistory().then(
       (value) => searchHistory = value,
     );
+    future = _projectStore.getAllProject();
   }
 
   @override
@@ -633,7 +636,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       NavbarNotifier2.hideBottomNavBar = true;
                       // yOffset =
                       //     -(MediaQuery.of(context).size.height) * 0.05 + 45;
-                      searchHistory.add(p0.trim());
+                      if (p0.trim().isNotEmpty) searchHistory.add(p0.trim());
                       saveSearchHistory(searchHistory);
                     });
                     await showSearchBottomSheet(context);
@@ -648,58 +651,11 @@ class _ProjectTabState extends State<ProjectTab> {
                       // yOffset =
                       //     -(MediaQuery.of(context).size.height) * 0.05 + 45;
                     });
-                    searchHistory.add(project.trim());
+                    if (project.trim().isNotEmpty) {
+                      searchHistory.add(project.trim());
+                    }
                     saveSearchHistory(searchHistory);
                     await showSearchBottomSheet(context);
-                    // await showSearchBottomSheet(context);
-                    // showModalBottomSheet(
-                    //     isScrollControlled: true,
-                    //     context: context,
-                    //     builder: (context) {
-                    //       return SearchBottomSheet(
-                    //         filter: filter,
-                    //         keyword: keyword,
-                    //         searchList: _projectStore.projects
-                    //             .where((e) =>
-                    //                 keyword.isNotEmpty &&
-                    //                 e.title
-                    //                     .toLowerCase()
-                    //                     .contains(keyword.toLowerCase()) &&
-                    //                 applyFilter(filter, e))
-                    //             .toList(),
-                    //         onSheetDismissed: () {
-                    //           setState(() {
-                    //             Navigator.hideBottomNavBar = false;
-                    //             yOffset = MediaQuery.of(context).size.height;
-                    //           });
-                    //           final FocusScopeNode currentScope =
-                    //               FocusScope.of(context);
-                    //           if (!currentScope.hasPrimaryFocus &&
-                    //               currentScope.hasFocus) {
-                    //             FocusManager.instance.primaryFocus?.unfocus();
-                    //           }
-                    //           Navigator.popRoute(
-                    //               Navigator.currentIndex);
-                    //           return true;
-                    //         },
-                    //         onFilterTap: () async {
-                    //           // await showFilterBottomSheet(context).then((value) {
-                    //           //   if (value != null) {
-                    //           //     setState(() {
-                    //           //       filter = value;
-                    //           //     });
-                    //           //     NavbarNotifier2.popRoute(Navigator.currentIndex);
-                    //           //   }
-                    //           // });
-                    //         },
-                    //       );
-                    //     }).then((value) {
-                    //   setState(() {
-                    //     Navigator.hideBottomNavBar = false;
-                    //     yOffset = MediaQuery.of(context).size.height;
-                    //   });
-                    //   FocusManager.instance.primaryFocus?.unfocus();
-                    // });
                   },
                   // initialText:
                   // readOnly:
@@ -799,7 +755,7 @@ class _ProjectTabState extends State<ProjectTab> {
         Container(
             margin: const EdgeInsets.only(top: 50),
             child: FutureBuilder<ProjectList>(
-              future: _projectStore.getAllProject(),
+              future: future,
               builder:
                   (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
                 Widget children;

@@ -19,7 +19,7 @@ abstract class _UpdateProjectFormStore with Store {
     _setUpValidator();
   }
 
-  UpdateCompanyProject _updateProjectUseCase;
+  final UpdateCompanyProject _updateProjectUseCase;
 
   late List<ReactionDisposer> _disposers;
 
@@ -114,9 +114,9 @@ abstract class _UpdateProjectFormStore with Store {
   }
 
   Future updateProject(
-      int id, String title, String description, int number, Scope scope) async {
+      int id, String title, String description, int number, Scope scope, {int? statusFlag}) async {
     var params =
-        UpdateProjectParams(id, title, description, number, scope.index);
+        UpdateProjectParams(id, title, description, number, scope.index, statusFlag: statusFlag);
     try {
       var response = await _updateProjectUseCase.call(params: params);
       if (response.statusCode == HttpStatus.accepted ||
@@ -124,6 +124,7 @@ abstract class _UpdateProjectFormStore with Store {
           response.statusCode == HttpStatus.created) {
         updateResult = true;
         notification = "Update successfully";
+        // TODO: UPDATE THE REAL PROJECT
       } else {
         errorStore.errorMessage = response.data['errorDetails'][0];
         updateResult = false;

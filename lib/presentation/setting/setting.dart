@@ -131,8 +131,8 @@ class _SettingScreenState extends State<SettingScreen> {
             expansionIndicatorBuilder: (context, node) =>
                 ChevronIndicator.rightDown(
                   tree: node,
-                  color: Colors.blue[700],
-                  padding: const EdgeInsets.all(8),
+                  color: Theme.of(context).colorScheme.onSurface,
+                  padding: const EdgeInsets.all(2),
                 ),
             indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {

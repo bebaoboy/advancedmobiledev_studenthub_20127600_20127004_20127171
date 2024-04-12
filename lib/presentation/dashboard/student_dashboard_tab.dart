@@ -7,11 +7,11 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/student_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:lottie/lottie.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
@@ -29,10 +29,13 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
   void initState() {
     super.initState();
     // tabController = TabController(length: 3, vsync: this);
+    future = _projectStore.getStudentProposalProjects(
+          _userStore.user!.studentProfile!.objectId!);
   }
 
   final _userStore = getIt<UserStore>();
   final _projectStore = getIt<ProjectStore>();
+  late Future<ProposalList> future;
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +44,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
 
   Widget _buildDashBoardContent() {
     return FutureBuilder<ProposalList>(
-      future: _projectStore
-          .getStudentProposalProjects(_userStore.user!.studentProfile!.objectId!),
+      future: future,
       builder: (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
         Widget children;
         if (snapshot.hasData) {
@@ -90,14 +92,8 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
           );
         } else {
           print("loading");
-          children = Center(
-            child: Lottie.asset(
-              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-              fit: BoxFit.cover,
-              width: 80, // Adjust the width and height as needed
-              height: 80,
-              repeat: true, // Set to true if you want the animation to loop
-            ),
+          children = const Center(
+            child: LoadingScreenWidget(size: 80,),
           );
         }
         return children;

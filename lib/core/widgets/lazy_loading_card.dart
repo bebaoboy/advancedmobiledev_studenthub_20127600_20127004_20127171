@@ -7,9 +7,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
 
 import 'package:enhanced_paginated_view/src/enhanced_deduplication.dart';
 import 'package:enhanced_paginated_view/src/widgets/empty_widget.dart';
@@ -333,7 +333,7 @@ class _LazyLoadingAnimationProjectListState
                   milliseconds: widget.skipItemLoading
                       ? 0
                       : b
-                          ? Random().nextInt(10) + 5
+                          ? (5 + i)
                           : 0) *
               100)
           .then((value) {
@@ -367,17 +367,20 @@ class _LazyLoadingAnimationProjectListState
     // here we simulate that the list reached the end
     // and we set the isMaxReached to true to stop
     // the loading widget from showing
-    if (startIndex == widget.list.length ||
-        initList.length >= widget.list.length) {
-      setState(() => isMaxReached = true);
-      return;
-    }
+
     try {
       setState(() {
         isLoading = true;
       });
     } catch (e) {}
-
+    if (startIndex == widget.list.length ||
+        initList.length >= widget.list.length) {
+      setState(() {
+        isMaxReached = true;
+        isLoading = false;
+      });
+      return;
+    }
     await Future.delayed(const Duration(seconds: 2));
     // here we simulate the loading of new items
     // from the server or any other source
@@ -390,8 +393,7 @@ class _LazyLoadingAnimationProjectListState
       // print(i.toString() + ": " + b.toString());
       if (!states[i]) {
         states[i] = true;
-        Future.delayed(
-                Duration(milliseconds: b ? Random().nextInt(10) + 5 : 0) * 100)
+        Future.delayed(Duration(milliseconds: b ? (5 + i) : 0) * 100)
             .then((value) {
           try {
             setState(() {
@@ -444,31 +446,8 @@ class _LazyLoadingAnimationProjectListState
                   onLoadMore: loadMore,
                   loadingWidget:
                       // const Center(child: CircularProgressIndicator()),
-                      Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Center(
-                          child: Lottie.asset(
-                            'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                            fit: BoxFit.cover,
-                            width: 60, // Adjust the width and height as needed
-                            height: 60,
-                            repeat:
-                                true, // Set to true if you want the animation to loop
-                          ),
-                        ),
-                        Center(
-                          child: Text(
-                            Lang.get("loading"),
-                            style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueAccent),
-                          ),
-                        )
-                      ],
-                    ),
+                      const Center(
+                    child: LoadingScreenWidget()
                   ),
 
                   /// [showErrorWidget] is a boolean that will be used

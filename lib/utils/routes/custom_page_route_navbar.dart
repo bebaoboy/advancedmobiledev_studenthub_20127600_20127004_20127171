@@ -348,6 +348,7 @@ class NavbarRouter2 extends NavbarRouter {
   /// defaults to true.
   @override
   final bool shouldPopToBaseRoute;
+  final bool shouldRefresh;
 
   /// AnimationDuration in milliseconds for the destination animation
   /// defaults to 300 milliseconds
@@ -418,6 +419,7 @@ class NavbarRouter2 extends NavbarRouter {
       required this.destinations,
       required this.errorBuilder,
       this.shouldPopToBaseRoute = true,
+      this.shouldRefresh = true,
       this.onChanged,
       this.decoration,
       this.isDesktop = false,
@@ -590,7 +592,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   // if (settings.name == Routes.projectDetails) {
                   //   builder = ProjectDetailsPage(
                   //       project: settings.arguments as Project);
-                  // } else 
+                  // } else
                   if (settings.name == Routes.favortieProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
@@ -681,16 +683,21 @@ class _NavbarRouterState extends State<NavbarRouter2>
                         onItemTapped: (x) {
                           // User pressed  on the same tab twice
                           if (NavbarNotifier2.currentIndex == x) {
-                            bool ok = true;
+                            bool ok = widget.shouldRefresh;
                             if (widget.shouldPopToBaseRoute) {
-                              ok = NavbarNotifier2.popAllRoutes(x);
+                              if (NavbarNotifier2.popAllRoutes(x)) {
+                                print("pop nun");
+                                ok = false;
+                              }
                             }
-                            if (widget.onCurrentTabClicked != null && !ok) {
+                            if (widget.onCurrentTabClicked != null) {
                               setState(() {
                                 widget.onCurrentTabClicked!();
                                 print("tap");
-                                initialize(i: NavbarNotifier2.currentIndex);
                               });
+                            } 
+                            if (ok) {
+                              initialize(i: NavbarNotifier2.currentIndex);
                             }
                           } else {
                             print('not tap');

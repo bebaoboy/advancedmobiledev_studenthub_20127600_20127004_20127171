@@ -87,3 +87,35 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 }
+
+class LoadingScreenWidget extends StatelessWidget {
+  const LoadingScreenWidget({super.key, this.size = 60});
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Center(
+          child: Lottie.asset(
+            'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+            fit: BoxFit.cover,
+            width: size, // Adjust the width and height as needed
+            height: size,
+            repeat: true, // Set to true if you want the animation to loop
+          ),
+        ),
+        Center(
+          child: Text(
+            Lang.get("loading"),
+            style: const TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.blueAccent),
+          ),
+        )
+      ],
+    );
+  }
+}

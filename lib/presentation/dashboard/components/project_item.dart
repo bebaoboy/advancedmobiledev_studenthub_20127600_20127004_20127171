@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class _OpenContainerWrapper extends StatelessWidget {
@@ -73,9 +74,40 @@ class ProjectItem extends StatefulWidget {
 
 class _ProjectItemState extends State<ProjectItem> {
   final _languageStore = getIt<LanguageStore>();
+  var createdText = '';
+  var proposalText = 'Proposals: ';
+  var updatedText = "";
   @override
   void initState() {
     super.initState();
+    // int differenceWithToday = widget.project.getModifiedTimeCreated();
+    // if (differenceWithToday == 0) {
+    //   createdText = Lang.get("created_now");
+    // } else if (differenceWithToday == 1) {
+    //   createdText = 'Created 1 day ago';
+    // } else {
+    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+    // }
+    createdText = timeago
+        .format(locale: _languageStore.locale, widget.project.timeCreated)
+        .toTitleCase();
+
+    if (widget.project.proposal != null) {
+      if (widget.project.proposal!.length > 6) {
+        proposalText +=
+            'Less than ${widget.project.proposal!.length.toString()}';
+      } else {
+        proposalText += widget.project.proposal!.length.toString();
+      }
+    } else {
+      proposalText += '0';
+    }
+    if (widget.project.updatedAt != null &&
+        widget.project.updatedAt! != widget.project.timeCreated &&
+        widget.project.updatedAt!.day == DateTime.now().day) {
+      updatedText =
+          "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
+    }
   }
 
   Widget _buildImage() {
@@ -109,111 +141,82 @@ class _ProjectItemState extends State<ProjectItem> {
           ? const Icon(Icons.favorite)
           : const Icon(Icons.favorite_border);
 
-      var createdText = '';
-      // int differenceWithToday = widget.project.getModifiedTimeCreated();
-      // if (differenceWithToday == 0) {
-      //   createdText = Lang.get("created_now");
-      // } else if (differenceWithToday == 1) {
-      //   createdText = 'Created 1 day ago';
-      // } else {
-      //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-      // }
-      createdText = timeago
-          .format(locale: _languageStore.locale, widget.project.timeCreated)
-          .toTitleCase();
-
-      var proposalText = 'Proposals: ';
-      if (widget.project.proposal != null) {
-        if (widget.project.proposal!.length > 6) {
-          proposalText +=
-              'Less than ${widget.project.proposal!.length.toString()}';
-        } else {
-          proposalText += widget.project.proposal!.length.toString();
-        }
-      } else {
-        proposalText += '0';
-      }
-
       return _OpenContainerWrapper(
         project: widget.project,
-        closedChild: LayoutBuilder(
-          builder: (context, c) {
-            return Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      flex: 9,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(createdText,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(fontSize: 12)),
-                          Text(
-                            widget.project.title == ''
-                                ? 'No title'
-                                : widget.project.title,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText2!
-                                .copyWith(color: Colors.green.shade400),
-                          ),
-                          // TODO: dịch
-                          Text(
-                            'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-                            style: Theme.of(context).textTheme.subtitle2,
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            "Student are looking for: ",
-                            style: Theme.of(context).textTheme.bodyText1,
-                          ),
-                          SizedBox(
-                            height: c.maxHeight / 5,
-                            child: AutoSizeText(
-                              widget.project.description == ''
-                                  ? 'No description'
-                                  : widget.project.description,
-                              style: const TextStyle(
-                              ),
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.justify,
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            proposalText,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(fontSize: 14.0),
-                          ),
-                        ],
+        closedChild: LayoutBuilder(builder: (context, c) {
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 9,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(createdText + updatedText,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 12)),
+                      Text(
+                        widget.project.title == ''
+                            ? 'No title'
+                            : widget.project.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: Colors.green.shade400),
                       ),
-                    ),
-                    IconButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      onPressed: () {
-                        setState(() {
-                          widget.onFavoriteTap();
-                        });
-                      },
-                      icon: icon,
-                    ),
-                  ],
+                      // TODO: dịch
+                      Text(
+                        'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Student are looking for: ",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      SizedBox(
+                        height: c.maxHeight / 5,
+                        child: AutoSizeText(
+                          widget.project.description == ''
+                              ? 'No description'
+                              : widget.project.description,
+                          style: const TextStyle(),
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.justify,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        proposalText,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontSize: 14.0),
+                      ),
+                    ],
+                  ),
                 ),
-              );
-          }
-        ),
-        
+                IconButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    setState(() {
+                      widget.onFavoriteTap();
+                    });
+                  },
+                  icon: icon,
+                ),
+              ],
+            ),
+          );
+        }),
 
         //  Card(
         //   child: InkWell(

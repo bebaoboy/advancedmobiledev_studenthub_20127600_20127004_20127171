@@ -6,6 +6,7 @@ import 'package:animated_segmented_tab_control/animated_segmented_tab_control.da
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
@@ -13,6 +14,8 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -22,7 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/rendering.dart';
-import 'package:lottie/lottie.dart';
+import 'package:toastification/toastification.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
@@ -54,6 +57,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   }
     // });
+    future = projectStore
+        .getProjectByCompany(_userStore.user!.companyProfile!.objectId!);
   }
 
   @override
@@ -66,12 +71,12 @@ class _DashBoardTabState extends State<DashBoardTab> {
 
   var projectStore = getIt<ProjectStore>();
   final UserStore _userStore = getIt<UserStore>();
+  late Future<ProjectList> future;
 
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
     return FutureBuilder<ProjectList>(
-      future: projectStore
-          .getProjectByCompany(_userStore.user!.companyProfile!.objectId!),
+      future: future,
       builder: (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
         Widget children;
         if (snapshot.hasData) {
@@ -149,14 +154,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
           );
         } else {
           print("loading");
-          children = Center(
-            child: Lottie.asset(
-              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-              fit: BoxFit.cover,
-              width: 80, // Adjust the width and height as needed
-              height: 80,
-              repeat: true, // Set to true if you want the animation to loop
-            ),
+          children = const Center(
+            child: LoadingScreenWidget(size: 80,),
           );
         }
         return children;
@@ -179,6 +178,7 @@ class ProjectTabs extends StatefulWidget {
 
 class _ProjectTabsState extends State<ProjectTabs> {
   var projectStore = getIt<ProjectStore>();
+  var updateProjectStore = getIt<UpdateProjectFormStore>();
   List<ScrollController> scrollController = [];
 
   @override
@@ -410,6 +410,21 @@ class _ProjectTabsState extends State<ProjectTabs> {
             var p = (projectStore.companyProjects).firstWhereOrNull(
               (element) => element.objectId == project.objectId,
             );
+            // TODO: update project status flag active
+            if (p != null) {
+              Toastify.show(
+                  context,
+                  "",
+                  p.isWorking
+                      ? Lang.get("archive_successfully")
+                      : Lang.get("unarchive_successfully"),
+                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                  ToastificationType.success,
+                  () {});
+              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
+                  p.title, p.description, p.numberOfStudents, p.scope,
+                  statusFlag: Status.inactive.index);
+            }
             setState(() {
               p?.enabled = Status.active;
             });
@@ -428,6 +443,28 @@ class _ProjectTabsState extends State<ProjectTabs> {
               var p = (projectStore.companyProjects).firstWhereOrNull(
                 (element) => element.objectId == project.objectId,
               );
+              // TODO: updateCompany status flag
+
+              if (p != null) {
+                Toastify.show(
+                    context,
+                    "",
+                    p.isWorking
+                        ? Lang.get("archive_successfully")
+                        : Lang.get("unarchive_successfully"),
+                    aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                    ToastificationType.success,
+                    () {});
+                updateProjectStore.updateProject(
+                    int.tryParse(p.objectId!) ?? -1,
+                    p.title,
+                    p.description,
+                    p.numberOfStudents,
+                    p.scope,
+                    statusFlag: p.enabled == Status.active
+                        ? Status.inactive.index
+                        : Status.active.index);
+              }
               setState(() {
                 p?.enabled = p.enabled == Status.active
                     ? Status.inactive
@@ -446,9 +483,24 @@ class _ProjectTabsState extends State<ProjectTabs> {
             (element) => element.objectId == project.objectId,
           );
           if (project.isWorking) {
+            if (p != null) {
+              Toastify.show(
+                  context,
+                  "",
+                  p.isWorking
+                      ? Lang.get("archive_successfully")
+                      : Lang.get("unarchive_successfully"),
+                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                  ToastificationType.success,
+                  () {});
+              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
+                  p.title, p.description, p.numberOfStudents, p.scope,
+                  statusFlag: Status.inactive.index);
+            }
             setState(() {
               p?.enabled = Status.inactive;
             });
+            // TODO: update project status flag INactive
             return true;
           }
           return false;
@@ -459,9 +511,24 @@ class _ProjectTabsState extends State<ProjectTabs> {
             (element) => element.objectId == project.objectId,
           );
           if (project.isArchived) {
+            if (p != null) {
+              Toastify.show(
+                  context,
+                  "",
+                  p.isWorking
+                      ? Lang.get("archive_successfully")
+                      : Lang.get("unarchive_successfully"),
+                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                  ToastificationType.success,
+                  () {});
+              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
+                  p.title, p.description, p.numberOfStudents, p.scope,
+                  statusFlag: Status.active.index);
+            }
             setState(() {
               p?.enabled = Status.active;
             });
+            // TODO: update project status flag active
             return true;
           }
           return false;

@@ -35,7 +35,7 @@
   "Message_bar": "Tin nhắn",
   "Alert_bar": "Thông báo",
   "appbar_title": "StudentHub",
-  "dashboard_your_job": "Công việc của bạn",
+  "dashboard_your_job": "Công việc",
   "Dashboard_post_job": "Tạo việc",
   "Dashboard_intro": "Chào mừng, Hal!",
   "Dashboard_content": "Bạn hiện đang không có công việc",
@@ -230,5 +230,7 @@
   "project_open": "Mở lại dự án",
   "closed": "ĐÃ ĐÓNG",
   "archive": "Lưu trữ",
-  "unarchive": "Huỷ lưu trữ"
+  "unarchive": "Huỷ lưu trữ",
+  "archive_successfully": "Lưu trữ thành công",
+  "unarchive_successfully": "Huỷ lưu trữ"
 }

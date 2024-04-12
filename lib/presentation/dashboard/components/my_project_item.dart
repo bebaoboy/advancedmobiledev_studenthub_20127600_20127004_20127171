@@ -7,6 +7,7 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -107,9 +108,28 @@ class MyProjectItem extends StatefulWidget {
 }
 
 class _MyProjectItemState extends State<MyProjectItem> {
+  var createdText = '';
+  var updatedText = '';
   @override
   void initState() {
     super.initState();
+    // int differenceWithToday = widget.project.getModifiedTimeCreated();
+    // if (differenceWithToday == 0) {
+    //   createdText = Lang.get("created_now");
+    // } else if (differenceWithToday == 1) {
+    //   createdText = 'Created 1 day ago';
+    // } else {
+    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+    // }
+    createdText = timeago.format(
+        locale: _languageStore.locale, widget.project.timeCreated);
+
+    if (widget.project.updatedAt != null &&
+        widget.project.updatedAt! != widget.project.timeCreated &&
+        widget.project.updatedAt!.day == DateTime.now().day) {
+      updatedText =
+          "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
+    }
   }
 
   @override
@@ -179,18 +199,6 @@ class _MyProjectItemState extends State<MyProjectItem> {
   final _languageStore = getIt<LanguageStore>();
 
   buildItem(width) {
-    var createdText = '';
-    // int differenceWithToday = widget.project.getModifiedTimeCreated();
-    // if (differenceWithToday == 0) {
-    //   createdText = Lang.get("created_now");
-    // } else if (differenceWithToday == 1) {
-    //   createdText = 'Created 1 day ago';
-    // } else {
-    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-    // }
-    createdText = timeago.format(
-        locale: _languageStore.locale, widget.project.timeCreated);
-
     return Padding(
         padding: const EdgeInsets.symmetric(
             horizontal: Dimens.horizontal_padding, vertical: 5),
@@ -206,7 +214,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                   textSpan: TextSpan(
                       text: Lang.get("closed"),
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 8,
                         letterSpacing: 1,
                         fontWeight: FontWeight.bold,
                         shadows: [
@@ -243,7 +251,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                             .bodyMedium!
                             .copyWith(color: Colors.green.shade400),
                       ),
-                      Text(createdText,
+                      Text(createdText + updatedText,
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall!

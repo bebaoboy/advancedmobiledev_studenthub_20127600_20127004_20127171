@@ -6,14 +6,16 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class ProjectDetailsPage extends StatefulWidget {
   final Project project;
@@ -153,8 +155,31 @@ class ProposalTabLayout extends StatelessWidget {
 class DetailTabLayout extends StatelessWidget {
   final Project project;
   var userStore = getIt<UserStore>();
+  var createdText = '';
+  var createdText2 = '';
+  var updatedText = "";
+  final _languageStore = getIt<LanguageStore>();
 
-  DetailTabLayout({super.key, required this.project});
+  DetailTabLayout({super.key, required this.project}) {
+    // int differenceWithToday = widget.project.getModifiedTimeCreated();
+    // if (differenceWithToday == 0) {
+    //   createdText = Lang.get("created_now");
+    // } else if (differenceWithToday == 1) {
+    //   createdText = 'Created 1 day ago';
+    // } else {
+    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+    // }
+    createdText =
+        "Created: ${DateFormat("HH:mm").format(project.timeCreated.toLocal())}";
+    createdText2 =
+        timeago.format(locale: _languageStore.locale, project.timeCreated);
+
+    if (project.updatedAt != null &&
+        project.updatedAt! != project.timeCreated) {
+      updatedText =
+          "Edit at ${DateFormat("HH:mm").format(project.updatedAt!.toLocal())}";
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,13 +197,15 @@ class DetailTabLayout extends StatelessWidget {
                 fit: FlexFit.loose,
                 child: Container(
                   constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.7),
-                  child: Column(children: [
+                      maxHeight: MediaQuery.of(context).size.height * 0.75),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                     Container(
                       // margin: const EdgeInsetsDirectional.only(
                       //     top: Dimens.vertical_padding + 10),
                       width: MediaQuery.of(context).size.width,
-                      height: 400,
+                      constraints: const BoxConstraints(maxHeight: 350),
                       decoration: const BoxDecoration(
                           border: Border(
                               top: BorderSide(width: 1, color: Colors.black),
@@ -200,7 +227,11 @@ class DetailTabLayout extends StatelessWidget {
                             Icons.alarm,
                             size: 45,
                           ),
+                          const SizedBox(
+                            width: 10,
+                          ),
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 'Project scope',
@@ -221,7 +252,11 @@ class DetailTabLayout extends StatelessWidget {
                           Icons.people,
                           size: 45,
                         ),
+                        const SizedBox(
+                          width: 10,
+                        ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               'Student required',
@@ -234,13 +269,45 @@ class DetailTabLayout extends StatelessWidget {
                           ],
                         )
                       ],
-                    )
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const Icon(
+                            Icons.calendar_month_outlined,
+                            size: 45,
+                          ),
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                createdText2,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              Text(
+                                createdText,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              Text(
+                                updatedText.isEmpty ? "Updated: Same time" : updatedText,
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
                   ]),
                 )),
-            if (userStore.user != null &&
-                userStore.user!.companyProfile != null &&
-                userStore.user!.type == UserType.company &&
-                project.companyId == userStore.user!.companyProfile!.objectId!)
+            // if (userStore.user != null &&
+            //     userStore.user!.companyProfile != null &&
+            //     userStore.user!.type == UserType.company &&
+            //     project.companyId == userStore.user!.companyProfile!.objectId!)
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,

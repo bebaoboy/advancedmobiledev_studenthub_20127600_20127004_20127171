@@ -14,13 +14,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> saveSearchHistory(Set<String> history) async {
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList(Preferences.project_search_history, history.toList());
+  await prefs.setStringList(Preferences.project_search_history, history.where((e) =>e.trim().isNotEmpty).toList());
 }
 
 Future<Set<String>> loadSearchHistory() async {
   final prefs = await SharedPreferences.getInstance();
   final history = prefs.getStringList(Preferences.project_search_history) ?? [];
-  return history.toSet();
+  return history.where((e) =>e.trim().isNotEmpty,).toSet();
 }
 
 class AnimSearchBar2 extends StatefulWidget {

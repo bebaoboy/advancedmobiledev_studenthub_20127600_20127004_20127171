@@ -65,6 +65,8 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
         widget.project.description != _formStore.description;
   }
 
+  bool firstEnter = false;
+
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -150,14 +152,23 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
             alignment: Alignment.bottomRight,
             child: MaterialButton(
               onPressed: () {
-                if (_formStore.canUpdate && somethingChanged()) {
-                  _formStore.updateProject(
-                      int.parse(widget.project.objectId!),
-                      _titleController.text,
-                      _descriptionController.text,
-                      int.parse(_numberController.text),
-                      _projectScope);
+                try {
+                  if (_formStore.canUpdate && somethingChanged()) {
+                    _formStore.updateProject(
+                        int.parse(widget.project.objectId!),
+                        _titleController.text,
+                        _descriptionController.text,
+                        int.parse(_numberController.text),
+                        _projectScope);
+                  } else {
+                    _formStore.updateResult = false;
+                    _formStore.errorStore.errorMessage = "Wrong";
+                  }
+                } catch (e) {
+                  _formStore.updateResult = false;
+                  _formStore.errorStore.errorMessage = "Wrong";
                 }
+                firstEnter = true;
               },
               textColor: Colors.white,
               color: Theme.of(context).colorScheme.primary,
@@ -165,24 +176,26 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
             ),
           ),
           Observer(builder: (ctx) {
+            // TODO: nó hem hiện
             if (_formStore.updateResult) {
-              Future.delayed(const Duration(seconds: 0), () {
+              Future.delayed(const Duration(seconds: 100), () {
                 Toastify.show(context, "Update", _formStore.notification,
                     ToastificationType.info, () => _formStore.reset());
               });
               _formStore.reset();
               return Container();
-            } else {
-              Future.delayed(const Duration(seconds: 0), () {
+            } else if (firstEnter) {
+              Future.delayed(const Duration(seconds: 100), () {
                 Toastify.show(
                     context,
                     "Update failed",
                     _formStore.errorStore.errorMessage,
-                    ToastificationType.success,
+                    ToastificationType.error,
                     () => _formStore.reset());
               });
               return Container();
             }
+            return Container();
           })
         ],
       ),
