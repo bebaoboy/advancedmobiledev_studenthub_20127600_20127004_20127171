@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use, no_logic_in_create_state, empty_catches
 
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -171,7 +172,9 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     //     builder: (context) => LoginScreen(),
     //   ),
     // );
-    Navigator.pop(context);
+    if (NavigationService.navigatorKey.currentContext != null) {
+      Navigator.canPop(NavigationService.navigatorKey.currentContext!);
+    }
   }
 
   Widget buildMinorVideoItem(int opponentId, RTCVideoRenderer renderer) {

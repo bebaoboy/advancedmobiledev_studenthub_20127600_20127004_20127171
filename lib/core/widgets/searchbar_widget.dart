@@ -377,9 +377,9 @@ AnimatedPositioned(
                             alignment: Alignment.centerRight,
                             icon: const Icon(
                               Icons.close_outlined,
-                              size: 20.0,
+                              size: 25.0,
                             ),
-                            color: widget.textFieldIconColor,
+                            // color: widget.textFieldIconColor,
                             onPressed: () {
                               try {
                                 ///trying to execute the onSuffixTap function

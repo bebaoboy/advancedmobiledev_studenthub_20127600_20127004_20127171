@@ -6,8 +6,8 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class MessageTab extends StatefulWidget {
-  const MessageTab({super.key});
-
+  const MessageTab({super.key, required this.scrollController});
+  final ScrollController scrollController;
   @override
   State<MessageTab> createState() => _MessageTabState();
 }
@@ -48,9 +48,8 @@ class _MessageTabState extends State<MessageTab> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 60),
-      child: _buildMessageContent(),
-    );
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: _buildMessageContent());
   }
 
   Widget _buildMessageContent() {
@@ -64,7 +63,7 @@ class _MessageTabState extends State<MessageTab> {
               Positioned.fill(
                 top: 80,
                 child: ListView.separated(
-                  controller: ScrollController(),
+                  controller: widget.scrollController,
                   itemCount: messages.length,
                   separatorBuilder: (context, index) =>
                       const Divider(color: Colors.black),

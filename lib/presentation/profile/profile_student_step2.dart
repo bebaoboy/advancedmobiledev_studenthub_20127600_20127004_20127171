@@ -11,6 +11,7 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -178,6 +179,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             "Klls to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
         startDate: DateTime(2023, 1),
         endDate: DateTime(2024, 2)));
+    var infoStore = getIt<ProfileStudentStore>();
+    if (infoStore.skillSet.isNotEmpty) mockSkillsets = infoStore.skillSet;
   }
 
   @override
@@ -255,13 +258,14 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
   // }
 
   Future<List<Skill>> _findSuggestions(String query) async {
+    _profileStudentFormStore.skillSet ??= [];
     if (query.isNotEmpty) {
-      return mockSkillsets.where((profile) {
-        return profile.name.contains(query) ||
-            profile.description.contains(query);
+      return _profileStudentFormStore.skillSet!.where((profile) {
+        return profile.name.toLowerCase().contains(query.toLowerCase()) ||
+            profile.description.toLowerCase().contains(query.toLowerCase());
       }).toList(growable: true);
     } else {
-      return mockSkillsets;
+      return _profileStudentFormStore.skillSet!;
     }
   }
 
@@ -711,11 +715,11 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                 width: w,
                                 height: _projects[index].readOnly ? 20 : null,
                                 child: GestureDetector(
-                                    onTap: () {
-                                      if (_projects[index].readOnly) {
-                                        openHintBar();
-                                      }
-                                    },
+                                    // onTap: () {
+                                    //   if (_projects[index].readOnly) {
+                                    //     openHintBar();
+                                    //   }
+                                    // },
                                     onDoubleTap: () {
                                       if (_projects[index].readOnly &&
                                           _projects[index].enabled) {

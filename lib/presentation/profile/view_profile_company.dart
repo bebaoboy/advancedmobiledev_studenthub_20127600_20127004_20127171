@@ -245,10 +245,10 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
             border:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
           ),
-          inputType: TextInputType.name,
+          inputType: TextInputType.multiline,
           icon: Icons.person,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
-          inputAction: TextInputAction.next,
+          // inputAction: TextInputAction.next,
           onChanged: (value) {
             _formStore.setDescription(_descriptionController.text);
           },
@@ -257,7 +257,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
           minLines: 3,
           maxLines: 5,
-          maxLength: 500,
+          // maxLength: 500,
         ),
         // TextField(
         //   readOnly: !enabled,

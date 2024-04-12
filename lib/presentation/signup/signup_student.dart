@@ -346,6 +346,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
   navigate(BuildContext context) {
     Future.delayed(const Duration(milliseconds: 0), () {
       if (_formStore.success) {
+        _formStore.success = false;
         showAnimatedDialog(
           context: context,
           barrierDismissible: true,

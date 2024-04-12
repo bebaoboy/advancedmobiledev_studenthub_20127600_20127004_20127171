@@ -224,7 +224,11 @@
   "clear_filter": "Xoá lọc",
   "apply": "OK",
   "discard_edit": "Huỷ chỉnh sửa?",
-  "exit_confirm": "Bấm lần nữa để thoát"
-
-
+  "exit_confirm": "Bấm lần nữa để thoát",
+  "about": "Về chúng tôi",
+  "project_close": "Đóng dự án",
+  "project_open": "Mở lại dự án",
+  "closed": "ĐÃ ĐÓNG",
+  "archive": "Lưu trữ",
+  "unarchive": "Huỷ lưu trữ"
 }

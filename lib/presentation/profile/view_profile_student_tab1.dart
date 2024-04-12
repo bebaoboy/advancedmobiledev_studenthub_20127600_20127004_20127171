@@ -254,8 +254,8 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.isNotEmpty) {
       return mockSkillsets.where((profile) {
-        return profile.name.contains(query) ||
-            profile.description.contains(query);
+        return profile.name.toLowerCase().contains(query.toLowerCase()) ||
+            profile.description.toLowerCase().contains(query.toLowerCase());
       }).toList(growable: true);
     } else {
       return mockSkillsets;

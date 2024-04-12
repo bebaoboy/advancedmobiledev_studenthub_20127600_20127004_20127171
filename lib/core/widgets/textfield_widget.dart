@@ -176,7 +176,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
 
           suffixIcon: widget.isObscure && tapInside
               ? IconButton(
-                  icon: const Icon(Icons.remove_red_eye),
+                  icon: obscureText ? const Icon(Icons.remove_red_eye) : const Icon(Icons.remove_red_eye_outlined),
                   onPressed: () {
                     setState(() {
                       obscureText = !obscureText;

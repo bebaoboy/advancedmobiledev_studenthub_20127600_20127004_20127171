@@ -8,6 +8,7 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
+import 'package:uuid/uuid.dart';
 import 'package:workmanager/workmanager.dart';
 
 class WorkMangerHelper {
@@ -26,6 +27,7 @@ class WorkMangerHelper {
   static late final SharedPreferences _sharedPreferences;
   static final DioClient _dioClient = _initializeDioClient();
   static final UserApi _userApi = _initializeUserApi();
+  // static final ProjectApi _projectApi = _initializeProjectApi();
 
   WorkMangerHelper._internal() {
     SharedPreferences.getInstance().then((prefs) {
@@ -48,6 +50,10 @@ class WorkMangerHelper {
     return UserApi(dioClient: WorkMangerHelper._dioClient);
   }
 
+  // static ProjectApi _initializeProjectApi() {
+  //   return ProjectApi(WorkMangerHelper._dioClient);
+  // }
+
   // frequency
   static const Duration LOW_FREQUENCY = Duration(minutes: 120);
   static const Duration MEDIUM_FREQUENCY = Duration(minutes: 30);
@@ -61,7 +67,8 @@ class WorkMangerHelper {
   static registerProfileFetch() async {
     Workmanager().registerPeriodicTask(
       WorkerTask.fetchProfile.identifier,
-      WorkerTask.fetchProfile.name,
+      WorkerTask.fetchProfile.name + const Uuid().v4(),
+      tag: WorkerTask.fetchProfile.identifier,
       existingWorkPolicy: ExistingWorkPolicy.replace,
       initialDelay: SHORT_DELAY,
       frequency: NORMAL_FREQUENCY,
@@ -69,6 +76,19 @@ class WorkMangerHelper {
       constraints: Constraints(networkType: NetworkType.connected),
     );
   }
+
+  // static registerProjectFetch() async {
+  //   Workmanager().registerPeriodicTask(
+  //     WorkerTask.fetchProject.identifier,
+  //     WorkerTask.fetchProject.name + const Uuid().v4(),
+  //     existingWorkPolicy: ExistingWorkPolicy.replace,
+  //     initialDelay: SHORT_DELAY,
+  //     // frequency: NORMAL_FREQUENCY,
+  //     backoffPolicy: BackoffPolicy.exponential,
+  //     constraints: Constraints(
+  //         requiresDeviceIdle: true, networkType: NetworkType.connected),
+  //   );
+  // }
 
   Future<bool> fetchProfile() async {
     var response = await WorkMangerHelper._userApi.getProfile();
@@ -110,6 +130,7 @@ class WorkMangerHelper {
 
 enum WorkerTask {
   fetchProfile("periodic-profile-fetch", "profileFetchTask"),
+  // fetchProject("periodic-project-fetch", "projectFetchTask"),
   purgeProjectsData("periodic-projects-purge", "purgeProjectsTask"),
   defaultTask("simple-identifier", 'simpleTask');
 
@@ -122,6 +143,8 @@ WorkerTask getWorkerTaskFromString(String task) {
   switch (task) {
     case "profileFetchTask":
       return WorkerTask.fetchProfile;
+    // case "projectFetchTask":
+    //   return WorkerTask.fetchProject;
     case "purgeProjectsTask":
       return WorkerTask.purgeProjectsData;
     default:

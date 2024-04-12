@@ -6,7 +6,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -48,7 +50,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
-  // final UserStore _userStore = getIt<UserStore>();
+
+  final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
 
@@ -682,10 +685,15 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                   '${_profileStudentFormStore.fullName} create profile successfully!',
               positiveText: 'OK',
               onPositiveClick: () {
+                Navigator.of(context).pop();
+                _userStore.user?.type = UserType.student;
+
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
-                    .pushReplacement(MaterialPageRoute2(
-                        routeName: Routes.welcome, arguments: true));
+                    .pushAndRemoveUntil(
+                        MaterialPageRoute2(
+                            routeName: Routes.welcome, arguments: true),
+                        (Route<dynamic> route) => false);
                 return;
               },
             );

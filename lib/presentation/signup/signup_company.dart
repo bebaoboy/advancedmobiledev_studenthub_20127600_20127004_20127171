@@ -6,7 +6,6 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -37,7 +36,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final SignupStore _formStore = getIt<SignupStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  // final UserStore _userStore = getIt<UserStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -81,7 +80,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
               : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _formStore.success
                   ? navigate(context)
                   : _showErrorMessage(_formStore.errorStore.errorMessage);
             },
@@ -89,7 +88,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: _formStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
                 child: const LoadingScreen(),
               );
@@ -314,35 +313,6 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           setState(() {
             loading = true;
           });
-          await Future.delayed(const Duration(seconds: 2)).then(
-            (value) {
-              setState(() {
-                loading = false;
-              });
-              showAnimatedDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (BuildContext c) {
-                  return ClassicGeneralDialogWidget(
-                    contentText: Lang.get('signup_email_sent'),
-                    // negativeText: ':Debug:',
-                    positiveText: 'OK',
-                    onPositiveClick: () {
-                      Navigator.of(c).pop();
-                    },
-                    // onNegativeClick: () {
-                    //   Navigator.of(c).pop();
-                    //   Navigator.of(context)
-                    //       .push(MaterialPageRoute2(routeName: Routes.profile));
-                    // },
-                  );
-                },
-                animationType: DialogTransitionType.size,
-                curve: Curves.fastOutSlowIn,
-                duration: const Duration(seconds: 1),
-              ).then((v) => Navigator.of(context).pop());
-            },
-          );
         } else {
           _showErrorMessage(Lang.get('login_error_missing_fields'));
         }
@@ -365,14 +335,34 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     // SharedPreferences.getInstance().then((prefs) {
     //   prefs.setBool(Preferences.is_logged_in, true);
     // });
+      loading = false;
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      // Navigator.of(context)
-      //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
-      //       (Route<dynamic> route) => false);
-    });
-
+    Future.delayed(const Duration(seconds: 2)).then(
+      (value) {
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext c) {
+            return ClassicGeneralDialogWidget(
+              contentText: Lang.get('signup_email_sent'),
+              // negativeText: ':Debug:',
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(c).pop();
+              },
+              // onNegativeClick: () {
+              //   Navigator.of(c).pop();
+              //   Navigator.of(context)
+              //       .push(MaterialPageRoute2(routeName: Routes.profile));
+              // },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        ).then((v) => Navigator.of(context).pop());
+      },
+    );
     return Container();
   }
 

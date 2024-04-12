@@ -3,7 +3,6 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -28,18 +27,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       try {
         var userStore = getIt<UserStore>();
         if (userStore.user != null) {
-          var projectStore = getIt<ProjectStore>();
-          await projectStore.getAllProject();
+          // var projectStore = getIt<ProjectStore>();
+          // await projectStore.getAllProject();
           if (userStore.user!.type == UserType.company &&
               userStore.user!.companyProfile != null &&
               userStore.user!.companyProfile!.objectId != null) {
-            await projectStore
-                .getProjectByCompany(userStore.user!.companyProfile!.objectId!);
+            // await projectStore
+            //     .getProjectByCompany(userStore.user!.companyProfile!.objectId!);
           }
           if (userStore.user!.type == UserType.student &&
               userStore.user!.studentProfile != null) {
-            await projectStore.getStudentProposalProjects(
-                userStore.user!.studentProfile!.objectId!);
+            // await projectStore.getStudentProposalProjects(
+            //     userStore.user!.studentProfile!.objectId!);
           }
         }
       } catch (e) {
@@ -82,9 +81,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   height: 50,
                   child: RoundedButtonWidget(
                     onPressed: () {
+                      Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute2(routeName: Routes.dashboard),
+                          (Route<dynamic> route) => false);
                       if (widget.newRole) {
                         showAnimatedDialog(
-                          context: NavigationService.navigatorKey.currentContext ?? context,
+                          context:
+                              NavigationService.navigatorKey.currentContext ??
+                                  context,
                           barrierDismissible: false,
                           builder: (BuildContext context) {
                             return ClassicGeneralDialogWidget(
@@ -102,9 +106,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           duration: const Duration(seconds: 1),
                         );
                       }
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute2(routeName: Routes.dashboard),
-                          (Route<dynamic> route) => false);
                     },
                     buttonText: Lang.get('Start_button'),
                     buttonColor: Theme.of(context).colorScheme.primary,

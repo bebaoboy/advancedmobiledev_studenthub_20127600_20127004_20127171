@@ -4,11 +4,14 @@ import 'package:animated_segmented_tab_control/animated_segmented_tab_control.da
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/student_project_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lottie/lottie.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
@@ -28,33 +31,77 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
     // tabController = TabController(length: 3, vsync: this);
   }
 
+  final _userStore = getIt<UserStore>();
+  final _projectStore = getIt<ProjectStore>();
+
   @override
   Widget build(BuildContext context) {
     return _buildDashBoardContent();
   }
 
   Widget _buildDashBoardContent() {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Row(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(Lang.get('dashboard_your_job')),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          // ignore: prefer_const_constructors
-          child: ProjectTabs(
-              // tabController: tabController,
-              // pageController: widget.pageController,
-              ),
-        ),
-      ],
+    return FutureBuilder<ProposalList>(
+      future: _projectStore
+          .getStudentProposalProjects(_userStore.user!.studentProfile!.objectId!),
+      builder: (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
+        Widget children;
+        if (snapshot.hasData) {
+          children = Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Column(
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(Lang.get('dashboard_your_job')),
+                  ),
+
+                  // Conditional rendering based on whether (widget.projects ?? []) is empty or not
+                  (_userStore.user != null &&
+                          _userStore.user!.studentProfile != null &&
+                          _userStore.user!.studentProfile!.proposalProjects !=
+                              null &&
+                          _userStore
+                              .user!.studentProfile!.proposalProjects!.isEmpty)
+                      ? Column(
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(Lang.get('Dashboard_intro')),
+                            ),
+                            Align(
+                              alignment: Alignment.center,
+                              child: Text(Lang.get('Dashboard_content')),
+                            ),
+                          ],
+                        )
+                      // ignore: prefer_const_constructors
+                      : Expanded(
+                          // ignore: prefer_const_constructors
+                          child: ProjectTabs(
+                            // tabController: tabController,
+                            pageController: widget.pageController,
+                          ),
+                        ),
+                ],
+              ));
+        } else if (snapshot.hasError) {
+          children = Center(
+            child: Text(Lang.get("error")),
+          );
+        } else {
+          print("loading");
+          children = Center(
+            child: Lottie.asset(
+              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+              fit: BoxFit.cover,
+              width: 80, // Adjust the width and height as needed
+              height: 80,
+              repeat: true, // Set to true if you want the animation to loop
+            ),
+          );
+        }
+        return children;
+      },
     );
   }
 }
@@ -174,8 +221,8 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
-   List<StudentProject>? activeProjects = [];
-   List<StudentProject>? submittedProjects = [];
+  List<StudentProject>? activeProjects = [];
+  List<StudentProject>? submittedProjects = [];
 
   @override
   void initState() {

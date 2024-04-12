@@ -427,7 +427,7 @@ class _LazyLoadingAnimationProjectListState
             // ),
 
             PlaneIndicator(
-          onRefresh: () => Future.delayed(const Duration(seconds: 3), () {
+          onRefresh: () => Future.delayed(const Duration(seconds: 1), () {
             // loadMore(startIndex);
           }),
           child: Stack(
@@ -508,10 +508,7 @@ class _LazyLoadingAnimationProjectListState
                       //   );
                       // },
                       itemBuilder: (BuildContext context, int index) {
-                        return SizedBox(
-                            width: 100,
-                            height: widget.itemHeight,
-                            child: _buildListItem(widget.list[index], index));
+                        return _buildListItem(widget.list[index], index);
                       },
                     );
                   },

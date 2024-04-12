@@ -1,6 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:animations/animations.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
@@ -37,7 +38,7 @@ class _OpenContainerWrapper extends StatelessWidget {
       closedColor: theme.cardColor,
       closedBuilder: (context, openContainer) {
         return Container(
-            constraints: const BoxConstraints(maxHeight: 230),
+            constraints: const BoxConstraints(maxHeight: 250),
             decoration: const BoxDecoration(
               border: Border(
                 top: BorderSide(color: Colors.black, width: 1.0),
@@ -135,69 +136,84 @@ class _ProjectItemState extends State<ProjectItem> {
 
       return _OpenContainerWrapper(
         project: widget.project,
-        closedChild: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 9,
-                child: SingleChildScrollView(
-                  controller: ScrollController(),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(createdText,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(fontSize: 12)),
-                      Text(
-                        widget.project.title == ''
-                            ? 'No title'
-                            : widget.project.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText2!
-                            .copyWith(color: Colors.green.shade400),
+        closedChild: LayoutBuilder(
+          builder: (context, c) {
+            return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 9,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(createdText,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(fontSize: 12)),
+                          Text(
+                            widget.project.title == ''
+                                ? 'No title'
+                                : widget.project.title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText2!
+                                .copyWith(color: Colors.green.shade400),
+                          ),
+                          // TODO: dịch
+                          Text(
+                            'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                            style: Theme.of(context).textTheme.subtitle2,
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            "Student are looking for: ",
+                            style: Theme.of(context).textTheme.bodyText1,
+                          ),
+                          SizedBox(
+                            height: c.maxHeight / 5,
+                            child: AutoSizeText(
+                              widget.project.description == ''
+                                  ? 'No description'
+                                  : widget.project.description,
+                              style: const TextStyle(
+                              ),
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.justify,
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          Text(
+                            proposalText,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyText1!
+                                .copyWith(fontSize: 14.0),
+                          ),
+                        ],
                       ),
-                      // TODO: dịch 
-                      Text(
-                        'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "Student are looking for: ",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      Text(widget.project.description == ''
-                          ? 'No description'
-                          : widget.project.description),
-                      Text(
-                        proposalText,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(fontSize: 14.0),
-                      ),
-                    ],
-                  ),
+                    ),
+                    IconButton(
+                      color: Theme.of(context).colorScheme.primary,
+                      onPressed: () {
+                        setState(() {
+                          widget.onFavoriteTap();
+                        });
+                      },
+                      icon: icon,
+                    ),
+                  ],
                 ),
-              ),
-              IconButton(
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: () {
-                  setState(() {
-                    widget.onFavoriteTap();
-                  });
-                },
-                icon: icon,
-              ),
-            ],
-          ),
+              );
+          }
         ),
+        
 
         //  Card(
         //   child: InkWell(

@@ -3,10 +3,13 @@
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -14,7 +17,9 @@ import 'package:flutter/material.dart';
 
 class ProjectDetailsPage extends StatefulWidget {
   final Project project;
-  const ProjectDetailsPage({super.key, required this.project});
+  final int? initialIndex;
+  const ProjectDetailsPage(
+      {super.key, required this.project, this.initialIndex = 1});
 
   @override
   State<ProjectDetailsPage> createState() => _ProjectDetailsPageState();
@@ -42,7 +47,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             child: Text(widget.project.title),
           ),
           DefaultTabController(
-            initialIndex: 0,
+            initialIndex: widget.initialIndex ?? 0,
             length: 4,
             child: Stack(children: [
               SegmentedTabControl(
@@ -144,10 +149,12 @@ class ProposalTabLayout extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class DetailTabLayout extends StatelessWidget {
   final Project project;
+  var userStore = getIt<UserStore>();
 
-  const DetailTabLayout({super.key, required this.project});
+  DetailTabLayout({super.key, required this.project});
 
   @override
   Widget build(BuildContext context) {
@@ -230,48 +237,61 @@ class DetailTabLayout extends StatelessWidget {
                     )
                   ]),
                 )),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Flexible(
-                //   fit: FlexFit.tight,
-                //   child: TextButton(
-                //     onPressed: () {
-                //       widget.onSheetDismissed();
-                //     },
-                //     child: const Text(Lang.get('Cancel'),
-                //   ),
-                // ),
-                // const SizedBox(width: 16),
-                // ElevatedButton(
-                //   style: ElevatedButton.styleFrom(
-                //     backgroundColor:
-                //         Theme.of(context).colorScheme.primaryContainer,
-                //     surfaceTintColor: Colors.transparent,
+            if (userStore.user != null &&
+                userStore.user!.companyProfile != null &&
+                userStore.user!.type == UserType.company &&
+                project.companyId == userStore.user!.companyProfile!.objectId!)
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // Flexible(
+                  //   fit: FlexFit.tight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       widget.onSheetDismissed();
+                  //     },
+                  //     child: const Text(Lang.get('Cancel'),
+                  //   ),
+                  // ),
+                  // const SizedBox(width: 16),
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor:
+                  //         Theme.of(context).colorScheme.primaryContainer,
+                  //     surfaceTintColor: Colors.transparent,
 
-                //     minimumSize: Size(
-                //         MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
-                //     shape: RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(3),
-                //     ),
-                //   ),
-                //   onPressed: () {},
-                //   child: Text(Lang.get('Saved',
-                //     style: Theme.of(context).textTheme.bodyMedium!.merge(
-                //         TextStyle(
-                //             color: Theme.of(context).colorScheme.secondary)),
-                //   ),
-                // ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    surfaceTintColor: Colors.transparent,
-                    minimumSize: Size(
-                        MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
+                  //     minimumSize: Size(
+                  //         MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
+                  //     shape: RoundedRectangleBorder(
+                  //       borderRadius: BorderRadius.circular(3),
+                  //     ),
+                  //   ),
+                  //   onPressed: () {},
+                  //   child: Text(Lang.get('Saved',
+                  //     style: Theme.of(context).textTheme.bodyMedium!.merge(
+                  //         TextStyle(
+                  //             color: Theme.of(context).colorScheme.secondary)),
+                  //   ),
+                  // ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primaryContainer,
+                      surfaceTintColor: Colors.transparent,
+                      minimumSize: Size(
+                          MediaQuery.of(context).size.width / 2 - 48,
+                          40), // NEW
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: Text(
+                      Lang.get('project_edit'),
+                      style: Theme.of(context).textTheme.bodyMedium!.merge(
+                          TextStyle(
+                              color: Theme.of(context).colorScheme.secondary)),
                     ),
                   ),
                   onPressed: () {

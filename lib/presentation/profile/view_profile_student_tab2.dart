@@ -190,8 +190,8 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.isNotEmpty) {
       return mockSkillsets.where((profile) {
-        return profile.name.contains(query) ||
-            profile.description.contains(query);
+        return profile.name.toLowerCase().contains(query.toLowerCase()) ||
+            profile.description.toLowerCase().contains(query.toLowerCase());
       }).toList(growable: true);
     } else {
       return mockSkillsets;
@@ -644,11 +644,11 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                 width: w,
                                 height: _projects[index].readOnly ? 20 : null,
                                 child: GestureDetector(
-                                    onTap: () {
-                                      if (_projects[index].readOnly) {
-                                        openHintBar();
-                                      }
-                                    },
+                                    // onTap: () {
+                                    //   if (_projects[index].readOnly) {
+                                    //     openHintBar();
+                                    //   }
+                                    // },
                                     onDoubleTap: () {
                                       if (_projects[index].readOnly &&
                                           _projects[index].enabled) {
