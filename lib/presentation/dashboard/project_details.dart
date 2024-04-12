@@ -286,7 +286,13 @@ class DetailTabLayout extends StatelessWidget {
                         borderRadius: BorderRadius.circular(3),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute2(
+                              routeName: Routes.updateProject,
+                              arguments: project));
+                    },
                     child: Text(
                       Lang.get('project_edit'),
                       style: Theme.of(context).textTheme.bodyMedium!.merge(
@@ -294,22 +300,8 @@ class DetailTabLayout extends StatelessWidget {
                               color: Theme.of(context).colorScheme.secondary)),
                     ),
                   ),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute2(
-                            routeName: Routes.updateProject,
-                            arguments: project));
-                  },
-                  child: Text(
-                    Lang.get('project_edit'),
-                    style: Theme.of(context).textTheme.bodyMedium!.merge(
-                        TextStyle(
-                            color: Theme.of(context).colorScheme.secondary)),
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
           ],
         ),
       ),
