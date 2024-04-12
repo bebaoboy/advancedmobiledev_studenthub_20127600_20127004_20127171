@@ -65,8 +65,6 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
         widget.project.description != _formStore.description;
   }
 
-  bool firstEnter = false;
-
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
@@ -168,7 +166,6 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
                   _formStore.updateResult = false;
                   _formStore.errorStore.errorMessage = "Wrong";
                 }
-                firstEnter = true;
               },
               textColor: Colors.white,
               color: Theme.of(context).colorScheme.primary,
@@ -176,15 +173,15 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
             ),
           ),
           Observer(builder: (ctx) {
-            // TODO: nó hem hiện
-            if (_formStore.updateResult) {
+            if (_formStore.updateResult == null) return Container();
+            if (_formStore.updateResult == true) {
               Future.delayed(const Duration(seconds: 100), () {
                 Toastify.show(context, "Update", _formStore.notification,
                     ToastificationType.info, () => _formStore.reset());
               });
               _formStore.reset();
               return Container();
-            } else if (firstEnter) {
+            } else {
               Future.delayed(const Duration(seconds: 100), () {
                 Toastify.show(
                     context,
@@ -195,7 +192,6 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               });
               return Container();
             }
-            return Container();
           })
         ],
       ),

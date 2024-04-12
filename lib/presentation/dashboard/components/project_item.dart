@@ -159,6 +159,8 @@ class _ProjectItemState extends State<ProjectItem> {
                               .bodyText1!
                               .copyWith(fontSize: 12)),
                       Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         widget.project.title == ''
                             ? 'No title'
                             : widget.project.title,

@@ -486,6 +486,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
       NavbarNotifier2.index = widget.initialIndex;
     }
     widget.pageController.move(NavbarNotifier2.currentIndex);
+    refreshState = List.filled(widget.destinations.length, false);
   }
 
   void initAnimation() {
@@ -617,6 +618,8 @@ class _NavbarRouterState extends State<NavbarRouter2>
     }
   }
 
+  late List<bool> refreshState;
+
   @override
   Widget build(BuildContext context) {
     print("build nav");
@@ -683,22 +686,24 @@ class _NavbarRouterState extends State<NavbarRouter2>
                         onItemTapped: (x) {
                           // User pressed  on the same tab twice
                           if (NavbarNotifier2.currentIndex == x) {
-                            bool ok = widget.shouldRefresh;
                             if (widget.shouldPopToBaseRoute) {
                               if (NavbarNotifier2.popAllRoutes(x)) {
                                 print("pop nun");
-                                ok = false;
                               }
                             }
-                            if (widget.onCurrentTabClicked != null) {
-                              setState(() {
-                                widget.onCurrentTabClicked!();
-                                print("tap");
-                              });
-                            } 
-                            if (ok) {
+                            if (refreshState[NavbarNotifier2.currentIndex]) {
                               initialize(i: NavbarNotifier2.currentIndex);
+                              refreshState[NavbarNotifier2.currentIndex] =
+                                  false;
+                            } else if (widget.onCurrentTabClicked != null) {
+                              widget.onCurrentTabClicked!();
+                              print("tap");
+                              refreshState[NavbarNotifier2.currentIndex] = true;
+                              NavbarNotifier2.showSnackBar(
+                                  context, "Press again to refresh",
+                                  duration: const Duration(seconds: 2));
                             }
+                            // can pop
                           } else {
                             print('not tap');
                             // NavbarNotifier2.index = x;
@@ -706,6 +711,11 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             //   widget.onChanged!(x);
                             // }
                             // _handleFadeAnimation();
+                            for (int i = 0;
+                                i < widget.destinations.length;
+                                i++) {
+                              refreshState[i] = false;
+                            }
                             if ((x - NavbarNotifier2.currentIndex).abs() > 1) {
                               widget.pageController.move(x, animation: false);
                             } else {
@@ -714,6 +724,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                               // curve: Curves.ease);
                             }
                           }
+                          print(refreshState);
                         },
                         menuItems: items),
                   ),

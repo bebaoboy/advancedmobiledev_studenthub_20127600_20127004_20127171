@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'update_project_form_store.g.dart';
@@ -47,7 +49,7 @@ abstract class _UpdateProjectFormStore with Store {
   String description = "";
 
   @observable
-  bool updateResult = false;
+  bool? updateResult = false;
 
   @observable
   String notification = "";
@@ -114,9 +116,11 @@ abstract class _UpdateProjectFormStore with Store {
   }
 
   Future updateProject(
-      int id, String title, String description, int number, Scope scope, {int? statusFlag}) async {
-    var params =
-        UpdateProjectParams(id, title, description, number, scope.index, statusFlag: statusFlag);
+      int id, String title, String description, int number, Scope scope,
+      {int? statusFlag}) async {
+    var params = UpdateProjectParams(
+        id, title, description, number, scope.index,
+        statusFlag: statusFlag);
     try {
       var response = await _updateProjectUseCase.call(params: params);
       if (response.statusCode == HttpStatus.accepted ||
@@ -124,7 +128,28 @@ abstract class _UpdateProjectFormStore with Store {
           response.statusCode == HttpStatus.created) {
         updateResult = true;
         notification = "Update successfully";
-        // TODO: UPDATE THE REAL PROJECT
+        final ProjectStore projectStore = getIt<ProjectStore>();
+        try {
+          projectStore.companyProjects
+              .firstWhere((e) => e.objectId == id.toString())
+              .title = title;
+          projectStore.companyProjects
+              .firstWhere((e) => e.objectId == id.toString())
+              .description = description;
+          projectStore.companyProjects
+              .firstWhere((e) => e.objectId == id.toString())
+              .numberOfStudents = number;
+          projectStore.companyProjects
+              .firstWhere((e) => e.objectId == id.toString())
+              .scope = scope;
+          if (statusFlag != null) {
+            projectStore.companyProjects
+                .firstWhere((e) => e.objectId == id.toString())
+                .enabled = Status.values[statusFlag];
+          }
+        } catch (e) {
+          // at least we tried
+        }
       } else {
         errorStore.errorMessage = response.data['errorDetails'][0];
         updateResult = false;

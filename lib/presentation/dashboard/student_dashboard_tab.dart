@@ -153,7 +153,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 controller: widget.tabController,
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  // TODO: get student project from id from proposals
                   Observer(
                     builder: (context) => AllProjects(
                       projects: userStore.user?.studentProfile?.proposalProjects

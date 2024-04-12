@@ -155,7 +155,9 @@ class _DashBoardTabState extends State<DashBoardTab> {
         } else {
           print("loading");
           children = const Center(
-            child: LoadingScreenWidget(size: 80,),
+            child: LoadingScreenWidget(
+              size: 80,
+            ),
           );
         }
         return children;
@@ -636,7 +638,8 @@ class _AllProjectsState extends State<AllProjects> {
       items: widget.projects ?? [],
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
-            oldItem.objectId == newItem.objectId;
+            oldItem.objectId == newItem.objectId &&
+            oldItem.enabled == newItem.enabled;
       },
       itemBuilder: (context, animation, item, i) {
         return SizeFadeTransition(
