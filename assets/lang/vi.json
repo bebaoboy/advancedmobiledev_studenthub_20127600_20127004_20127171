@@ -177,6 +177,10 @@
   "project_item_remove_job_posting": "Xoá job",
   "project_start_working": "Bắt đầu làm project này",
   "project_edit": "Sửa project",
+  "project_title": "Tên project",
+  "project_description": "Mô tả project",
+  "project_students": "Số lượng sinh viên",
+  "project_update": "Cập nhập project",
 
   "project_submit_proposal": "Mô tả mong muốn khi nhận project",
   "proposal_submit": "Nộp proposal",
@@ -185,6 +189,10 @@
   "project_length": "Thời gian project",
   "0-1": "Ít hơn 1 tháng",
   "6-": "Lâu hơn 6 tháng",
+  "project_length_choice_1": "Ít hơn 1 tháng",
+  "project_length_choice_2": "Từ 1 tới 3 tháng",
+  "project_length_choice_3": "Từ 3 tới 6 tháng",
+  "project_length_choice_4": "Lâu hơn 6 tháng",
 
   "schedule_interview": "Lên lịch phỏng vấn",
   "no_camera": "Không tìm thấy camera",

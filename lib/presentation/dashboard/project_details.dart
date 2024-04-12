@@ -8,6 +8,8 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
 class ProjectDetailsPage extends StatefulWidget {
@@ -22,7 +24,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: MainAppBar(name: widget.project.objectId ?? "error id",),
+      appBar: MainAppBar(
+        name: widget.project.objectId ?? "error id",
+      ),
       body: _buildBody(),
     );
   }
@@ -270,7 +274,13 @@ class DetailTabLayout extends StatelessWidget {
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute2(
+                            routeName: Routes.updateProject,
+                            arguments: project));
+                  },
                   child: Text(
                     Lang.get('project_edit'),
                     style: Theme.of(context).textTheme.bodyMedium!.merge(

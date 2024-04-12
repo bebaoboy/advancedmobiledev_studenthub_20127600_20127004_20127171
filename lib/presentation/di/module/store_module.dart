@@ -18,6 +18,7 @@ import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecas
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -43,6 +44,7 @@ import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dar
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
@@ -71,6 +73,7 @@ mixin StoreModule {
       () => ProfileStudentFormErrorStore(),
     );
     getIt.registerFactory(() => SignUpFormErrorStore());
+    getIt.registerFactory(() => UpdateProjectFormErrorStore());
 
     // stores:------------------------------------------------------------------
     getIt.registerSingleton<UserStore>(
@@ -141,6 +144,14 @@ mixin StoreModule {
       PostStore(
         getIt<GetPostUseCase>(),
         getIt<ErrorStore>(),
+      ),
+    );
+
+    getIt.registerSingleton<UpdateProjectFormStore>(
+      UpdateProjectFormStore(
+        getIt<ErrorStore>(),
+        getIt<UpdateProjectFormErrorStore>(),
+        getIt<UpdateCompanyProject>()
       ),
     );
 

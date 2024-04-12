@@ -147,7 +147,7 @@ class Project extends ProjectBase {
         numberOfStudents: json['numberOfStudents'] ?? 1,
         isWorking: json['projectScopeFlag'] == 0,
         isArchived: json['projectScopeFlag'] == 1,
-        id: (json["id"] ?? "").toString(),
+        id: (json["id"] ?? json["projectId"] ?? "").toString(),
         proposal: (json['proposals'] != null)
             ? List<Proposal>.from((real as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))

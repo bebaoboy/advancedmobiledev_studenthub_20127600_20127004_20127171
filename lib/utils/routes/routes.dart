@@ -6,6 +6,7 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
+import 'package:boilerplate/presentation/dashboard/project_update/project_update.dart';
 import 'package:boilerplate/presentation/dashboard/submit_project_proposal/submit_project_proposal.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
@@ -57,6 +58,7 @@ class Routes {
   static const String forgetPasswordDone = '/forgetPasswordDone';
   static const String submitProposal = '/submitProposal';
   static const String message = "/message";
+  static const String updateProject = "/updateProject";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -84,6 +86,7 @@ class Routes {
     forgetPasswordDone: const ForgetPasswordDoneScreen(),
     submitProposal: const Placeholder(),
     message: const Placeholder(),
+    updateProject: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
@@ -126,6 +129,13 @@ getRoute(name, context, {arguments}) {
         return WelcomeScreen(
           newRole: b,
         );
+      }
+    }
+
+    if (name == Routes.updateProject) {
+      if (arguments != null) {
+        var b = arguments as Project;
+        return ProjectUpdateScreen(project: b);
       }
     }
 

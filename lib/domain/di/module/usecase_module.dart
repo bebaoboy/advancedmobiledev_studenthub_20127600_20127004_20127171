@@ -22,6 +22,7 @@ import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecas
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -183,6 +184,10 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<GetProjectByCompanyUseCase>(
       GetProjectByCompanyUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateCompanyProject>(
+      UpdateCompanyProject(getIt<ProjectRepository>()),
     );
 
     getIt.registerSingleton<GetStudentProposalProjectsUseCase>(
