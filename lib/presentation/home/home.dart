@@ -11,6 +11,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -72,8 +73,14 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: _buildAppBar(),
         body: !enabled
             ? Center(
-                child: Text(Lang.get("loading")),
-              )
+            child: Lottie.asset(
+              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+              fit: BoxFit.cover,
+              width: 80, // Adjust the width and height as needed
+              height: 80,
+              repeat: true, // Set to true if you want the animation to loop
+            ),
+          )
             : Align(
                 alignment: Alignment.topCenter,
                 child: Padding(

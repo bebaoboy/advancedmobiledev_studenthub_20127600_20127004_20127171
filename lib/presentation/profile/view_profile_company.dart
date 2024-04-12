@@ -256,7 +256,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
           minLines: 3,
           maxLines: 5,
-          maxLength: 500,
+          // maxLength: 500,
         ),
         // TextField(
         //   readOnly: !enabled,

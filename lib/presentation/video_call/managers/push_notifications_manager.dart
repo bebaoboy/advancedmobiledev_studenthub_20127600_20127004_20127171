@@ -111,8 +111,8 @@ class PushNotificationsManager {
     //   }
     // });
 
-    // ConnectycubeFlutterCallKit.onCallRejectedWhenTerminated =
-    //     onCallRejectedWhenTerminated;
+    ConnectycubeFlutterCallKit.onCallRejectedWhenTerminated =
+        onCallRejectedWhenTerminated;
   }
 
   subscribe(String token) async {

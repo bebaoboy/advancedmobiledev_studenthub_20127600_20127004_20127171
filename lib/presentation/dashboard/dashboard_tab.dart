@@ -10,8 +10,10 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -20,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/rendering.dart';
+import 'package:lottie/lottie.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
@@ -62,75 +65,102 @@ class _DashBoardTabState extends State<DashBoardTab> {
   }
 
   var projectStore = getIt<ProjectStore>();
+  final UserStore _userStore = getIt<UserStore>();
 
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          child: Row(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(Lang.get('dashboard_your_job')),
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: SizedBox(
-                  width: 150,
-                  height: 30,
-                  child: RoundedButtonWidget(
-                    onPressed: () async {
-                      // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                      await Navigator.of(
-                              NavigationService.navigatorKey.currentContext!)
-                          .push(
-                              MaterialPageRoute2(routeName: Routes.projectPost))
-                          .then((value) {
-                        setState(() {
-                          if (value != null) {
-                            allProjects.insert(0, value as Project);
-                            projectStore.companyProjects.insert(0, value);
-                            _projectStore.addProject(value);
-                          }
-                        });
-                      });
-                    },
-                    buttonText: Lang.get('Dashboard_post_job'),
-                    buttonColor: Theme.of(context).colorScheme.primary,
-                    textColor: Colors.white,
-                  ),
+    return FutureBuilder<ProjectList>(
+      future: projectStore
+          .getProjectByCompany(_userStore.user!.companyProfile!.objectId!),
+      builder: (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
+        Widget children;
+        if (snapshot.hasData) {
+          children = Column(
+            children: <Widget>[
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Row(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(Lang.get('dashboard_your_job')),
+                    ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: SizedBox(
+                        width: 150,
+                        height: 30,
+                        child: RoundedButtonWidget(
+                          onPressed: () async {
+                            // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
+                            await Navigator.of(NavigationService
+                                    .navigatorKey.currentContext!)
+                                .push(MaterialPageRoute2(
+                                    routeName: Routes.projectPost))
+                                .then((value) {
+                              setState(() {
+                                if (value != null) {
+                                  allProjects.insert(0, value as Project);
+                                  projectStore.companyProjects.insert(0, value);
+                                  _projectStore.addProject(value);
+                                }
+                              });
+                            });
+                          },
+                          buttonText: Lang.get('Dashboard_post_job'),
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
 
-        // Conditional rendering based on whether (widget.projects ?? []) is empty or not
-        projectStore.companyProjects.isEmpty
-            ? Column(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(Lang.get('Dashboard_intro')),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(Lang.get('Dashboard_content')),
-                  ),
-                ],
-              )
-            // ignore: prefer_const_constructors
-            : Expanded(
-                // ignore: prefer_const_constructors
-                child: ProjectTabs(
-                  // tabController: tabController,
-                  pageController: widget.pageController,
-                ),
-              ),
-      ],
+              // Conditional rendering based on whether (widget.projects ?? []) is empty or not
+              projectStore.companyProjects.isEmpty
+                  ? Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(Lang.get('Dashboard_intro')),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(Lang.get('Dashboard_content')),
+                        ),
+                      ],
+                    )
+                  // ignore: prefer_const_constructors
+                  : Expanded(
+                      // ignore: prefer_const_constructors
+                      child: ProjectTabs(
+                        // tabController: tabController,
+                        pageController: widget.pageController,
+                      ),
+                    ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          children = Center(
+            child: Text(Lang.get("error")),
+          );
+        } else {
+          print("loading");
+          children = Center(
+            child: Lottie.asset(
+              'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+              fit: BoxFit.cover,
+              width: 80, // Adjust the width and height as needed
+              height: 80,
+              repeat: true, // Set to true if you want the animation to loop
+            ),
+          );
+        }
+        return children;
+      },
     );
   }
 
@@ -171,7 +201,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 3,
       child: Stack(children: [
         Padding(
@@ -210,8 +240,10 @@ class _ProjectTabsState extends State<ProjectTabs> {
               children: [
                 AllProjects(
                   projects: [...projectStore.companyProjects, ...myProjects],
+                  // projectFuture: ,
                   scrollController: scrollController[0],
-                  showBottomSheet: (p0) => showBottomSheet(p0),
+                  showBottomSheet: showBottomSheet,
+                  onDismissed: (project, endToStart) => false,
                 ),
                 WorkingProjects(
                   projects: [
@@ -220,7 +252,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
                     )
                   ],
                   scrollController: scrollController[1],
-                  showBottomSheet: (p0) => showBottomSheet(p0),
+                  showBottomSheet: showBottomSheet,
+                  onDismissed: onDismissed,
                 ),
                 ArchivedProjects(
                   projects: [
@@ -229,7 +262,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
                     )
                   ],
                   scrollController: scrollController[2],
-                  showBottomSheet: (p0) => showBottomSheet(p0),
+                  showBottomSheet: showBottomSheet,
+                  onDismissed: onDismissed,
                 )
               ]),
         )
@@ -403,6 +437,39 @@ class _ProjectTabsState extends State<ProjectTabs> {
       ],
     );
   }
+
+  bool onDismissed(Project project, bool endToStart) {
+    switch (endToStart) {
+      case true:
+        {
+          var p = projectStore.companyProjects.firstWhereOrNull(
+            (element) => element.objectId == project.objectId,
+          );
+          if (project.isWorking) {
+            setState(() {
+              p?.enabled = Status.inactive;
+            });
+            return true;
+          }
+          return false;
+        }
+      case false:
+        {
+          var p = projectStore.companyProjects.firstWhereOrNull(
+            (element) => element.objectId == project.objectId,
+          );
+          if (project.isArchived) {
+            setState(() {
+              p?.enabled = Status.active;
+            });
+            return true;
+          }
+          return false;
+        }
+      default:
+        return false;
+    }
+  }
 }
 
 class WorkingProjects extends StatefulWidget {
@@ -411,9 +478,11 @@ class WorkingProjects extends StatefulWidget {
       {super.key,
       required this.projects,
       required this.scrollController,
-      required this.showBottomSheet});
+      required this.showBottomSheet,
+      required this.onDismissed});
   final ScrollController scrollController;
   final Function(Project) showBottomSheet;
+  final bool Function(Project project, bool endToStart) onDismissed;
   @override
   State<WorkingProjects> createState() => _WorkingProjectsState();
 }
@@ -428,6 +497,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
             itemBuilder: (context, index) => MyProjectItem(
               project: widget.projects![index],
               onShowBottomSheet: widget.showBottomSheet,
+              onDismissed: widget.onDismissed,
             ),
           )
         : Container(
@@ -442,9 +512,11 @@ class ArchivedProjects extends StatefulWidget {
       {super.key,
       required this.projects,
       required this.scrollController,
-      required this.showBottomSheet});
+      required this.showBottomSheet,
+      required this.onDismissed});
   final ScrollController scrollController;
   final Function(Project) showBottomSheet;
+  final bool Function(Project project, bool endToStart) onDismissed;
 
   @override
   State<ArchivedProjects> createState() => _ArchivedProjectsState();
@@ -462,6 +534,7 @@ class _ArchivedProjectsState extends State<ArchivedProjects> {
             itemBuilder: (context, index) => MyProjectItem(
               project: widget.projects![index],
               onShowBottomSheet: widget.showBottomSheet,
+              onDismissed: widget.onDismissed,
             ),
           )
         : Container(
@@ -472,13 +545,17 @@ class _ArchivedProjectsState extends State<ArchivedProjects> {
 
 class AllProjects extends StatefulWidget {
   final List<Project>? projects;
+  // final Future<ProjectList> projectFuture;
   const AllProjects(
       {super.key,
       required this.projects,
+      // required this.projectFuture,
       required this.scrollController,
-      required this.showBottomSheet});
+      required this.showBottomSheet,
+      required this.onDismissed});
   final ScrollController scrollController;
   final Function(Project) showBottomSheet;
+  final bool Function(Project project, bool endToStart) onDismissed;
 
   @override
   State<AllProjects> createState() => _AllProjectsState();
@@ -489,7 +566,7 @@ class _AllProjectsState extends State<AllProjects> {
   Widget build(BuildContext context) {
     return ImplicitlyAnimatedList<Project>(
       controller: widget.scrollController,
-      items: (widget.projects ?? []),
+      items: widget.projects ?? [],
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
             oldItem.objectId == newItem.objectId;

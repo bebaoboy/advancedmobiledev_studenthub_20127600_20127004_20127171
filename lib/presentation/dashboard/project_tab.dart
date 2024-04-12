@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -11,6 +12,7 @@ import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:lottie/lottie.dart';
 
 import 'dart:async';
 
@@ -795,27 +797,50 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
-          margin: const EdgeInsets.only(top: 50),
-          child: _projectStore.projects.isNotEmpty
-              ? LazyLoadingAnimationProjectList(
-                  scrollController: widget.scrollController,
-                  itemHeight: 230,
-                  list: _projectStore.projects,
-                  firstCallback: (i) {
-                    setState(() {
-                      var p = (_projectStore.projects).firstWhereOrNull(
-                        (element) => element.objectId == i,
-                      );
-                      setState(() {
-                        p?.isFavorite = !p.isFavorite;
-                      });
-                      // _projectStore.projects[i].isFavorite =
-                      //     !_projectStore.projects[i].isFavorite;
-                    });
-                  },
-                )
-              : Center(child: Text(Lang.get("nothing_here"))),
-        ),
+            margin: const EdgeInsets.only(top: 50),
+            child: FutureBuilder<ProjectList>(
+              future: _projectStore.getAllProject(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
+                Widget children;
+                if (snapshot.hasData) {
+                  children = _projectStore.projects.isNotEmpty
+                      ? LazyLoadingAnimationProjectList(
+                          scrollController: widget.scrollController,
+                          itemHeight: 230,
+                          list: _projectStore.projects,
+                          firstCallback: (i) {
+                            setState(() {
+                              var p = (_projectStore.projects).firstWhereOrNull(
+                                (element) => element.objectId == i,
+                              );
+                              setState(() {
+                                p?.isFavorite = !p.isFavorite;
+                              });
+                              // _projectStore.projects[i].isFavorite =
+                              //     !_projectStore.projects[i].isFavorite;
+                            });
+                          },
+                        )
+                      : Center(child: Text(Lang.get("nothing_here")));
+                } else if (snapshot.hasError) {
+                  children = Center(
+                    child: Text(Lang.get("error")),
+                  );
+                } else {
+                  print("loading");
+                  children = Lottie.asset(
+                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                    fit: BoxFit.cover,
+                    width: 80, // Adjust the width and height as needed
+                    height: 80,
+                    repeat:
+                        true, // Set to true if you want the animation to loop
+                  );
+                }
+                return children;
+              },
+            )),
         // AnimatedContainer(
         //     curve: Easing.legacyAccelerate,
         //     color: Colors.black.withOpacity(0.5),

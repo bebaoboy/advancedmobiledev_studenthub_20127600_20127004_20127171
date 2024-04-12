@@ -127,7 +127,7 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.projectDetailsStudent) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
-        return ProjectDetailsStudentScreen(project: arguments as Project);
+        return ProjectDetailsStudentScreen(project: arguments["project"] as StudentProject);
       }
     }
 

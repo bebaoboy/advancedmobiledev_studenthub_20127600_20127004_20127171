@@ -4,10 +4,8 @@ import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
-import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -93,13 +91,16 @@ class _DismissibleContainer extends StatelessWidget {
 
 class MyProjectItem extends StatefulWidget {
   final void Function(Project project)? onShowBottomSheet;
+  final bool Function(Project project, bool endToStart)? onDismissed;
   final Project project;
+  final bool dismissable;
+
   const MyProjectItem(
       {super.key,
       required this.project,
       required this.onShowBottomSheet,
+      this.onDismissed,
       this.dismissable = true});
-  final bool dismissable;
 
   @override
   State<MyProjectItem> createState() => _MyProjectItemState();
@@ -110,8 +111,6 @@ class _MyProjectItemState extends State<MyProjectItem> {
   void initState() {
     super.initState();
   }
-
-  var projectStore = getIt<ProjectStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -129,7 +128,10 @@ class _MyProjectItemState extends State<MyProjectItem> {
                   : DismissDirection.startToEnd,
               onDismissed: (direction) {},
               background: _DismissibleContainer(
-                icon: Text(widget.project.isWorking ? Lang.get("archive") : Lang.get("unarchive"),
+                icon: Text(
+                    widget.project.isWorking
+                        ? Lang.get("archive")
+                        : Lang.get("unarchive"),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onBackground,
                     )),
@@ -139,38 +141,22 @@ class _MyProjectItemState extends State<MyProjectItem> {
                 padding: const EdgeInsetsDirectional.only(start: 20),
               ),
               confirmDismiss: (direction) async {
-                switch (direction) {
-                  case DismissDirection.endToStart:
-                    {
-                      var p = projectStore.companyProjects.firstWhereOrNull(
-                        (element) =>
-                            element.objectId == widget.project.objectId,
-                      );
-                      if (widget.project.isWorking) {
-                        setState(() {
-                          p?.enabled = Status.inactive;
-                        });
-                        return true;
+                if (!widget.dismissable) return false;
+                if (widget.onDismissed != null) {
+                  switch (direction) {
+                    case DismissDirection.endToStart:
+                      {
+                        return widget.onDismissed!(widget.project, true);
                       }
-                      return false;
-                    }
-                  case DismissDirection.startToEnd:
-                    {
-                      var p = projectStore.companyProjects.firstWhereOrNull(
-                        (element) =>
-                            element.objectId == widget.project.objectId,
-                      );
-                      if (widget.project.isArchived) {
-                        setState(() {
-                          p?.enabled = Status.active;
-                        });
-                        return true;
+                    case DismissDirection.startToEnd:
+                      {
+                        return widget.onDismissed!(widget.project, false);
                       }
+                    default:
                       return false;
-                    }
-                  default:
-                    return false;
+                  }
                 }
+                return false;
               },
               secondaryBackground: widget.project.isArchived
                   ? null
@@ -249,6 +235,8 @@ class _MyProjectItemState extends State<MyProjectItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         widget.project.title,
                         style: Theme.of(context)
                             .textTheme

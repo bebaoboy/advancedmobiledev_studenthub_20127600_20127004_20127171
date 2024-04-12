@@ -144,7 +144,7 @@ class CallManager {
     P2PSession callSession =
         _callClient!.createCallSession(callType, opponents);
     _currentCall = callSession;
-    Navigator.push(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => ConversationCallScreen(callSession, false),
@@ -188,7 +188,7 @@ class CallManager {
           ConnectycubeFlutterCallKit.reportCallAccepted(sessionId: sessionId);
         }
         if (NavigationService.navigatorKey.currentContext != null) {
-          Navigator.push(
+          Navigator.pushReplacement(
             NavigationService.navigatorKey.currentContext!,
             MaterialPageRoute2(
               child: ConversationCallScreen(_currentCall!, true),
