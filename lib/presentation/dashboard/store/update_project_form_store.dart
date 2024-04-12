@@ -56,12 +56,15 @@ abstract class _UpdateProjectFormStore with Store {
   bool get canUpdate =>
       !formErrorStore.hasError() &&
       title.isNotEmpty &&
-      numberOfStudents > 0;
+      numberOfStudents > 0 &&
+      description.length <= 500;
 
   @action
   void validateTitle(String value) {
     if (value.isEmpty) {
-      formErrorStore.title = "Title must not be empty";
+      formErrorStore.title = "Must not be empty";
+    } else if (value.length > 200) {
+      formErrorStore.title = "Should be upmost 200 character";
     } else {
       formErrorStore.title = null;
     }
@@ -70,7 +73,7 @@ abstract class _UpdateProjectFormStore with Store {
   @action
   void validateDescription(String value) {
     if (value.length > 500) {
-      formErrorStore.description = "Description should be less than 500";
+      formErrorStore.description = "Should be less than 500";
     } else {
       formErrorStore.description = null;
     }
@@ -79,11 +82,9 @@ abstract class _UpdateProjectFormStore with Store {
   @action
   void validateNumberOfStudents(int value) {
     if (value <= 0) {
-      formErrorStore.numberOfStudent =
-          "The number of students should at least be 1";
+      formErrorStore.numberOfStudent = "Should at least be 1";
     } else if (value >= 1000) {
-      formErrorStore.numberOfStudent =
-          "The number of students should be less than 1000";
+      formErrorStore.numberOfStudent = "Should be less than 1000";
     } else {
       formErrorStore.numberOfStudent = null;
     }
@@ -91,7 +92,7 @@ abstract class _UpdateProjectFormStore with Store {
 
   setValue(Project project) {
     title = project.title;
-    jobDescription = project.description;
+    description = project.description;
     numberOfStudents = project.numberOfStudents;
     scope = project.scope;
   }
@@ -116,14 +117,19 @@ abstract class _UpdateProjectFormStore with Store {
       int id, String title, String description, int number, Scope scope) async {
     var params =
         UpdateProjectParams(id, title, description, number, scope.index);
-    var response = await _updateProjectUseCase.call(params: params);
-    if (response.statusCode == HttpStatus.accepted ||
-        response.statusCode == HttpStatus.ok ||
-        response.statusCode == HttpStatus.created) {
-      updateResult = true;
-      notification = "Update successfully";
-    } else {
-      errorStore.errorMessage = response.data['errorDetails'][0];
+    try {
+      var response = await _updateProjectUseCase.call(params: params);
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        updateResult = true;
+        notification = "Update successfully";
+      } else {
+        errorStore.errorMessage = response.data['errorDetails'][0];
+        updateResult = false;
+      }
+    } catch (e) {
+      errorStore.errorMessage = 'Update failed';
       updateResult = false;
     }
   }
@@ -151,7 +157,6 @@ abstract class _UpdateProjectFormErrorStore with Store {
 
   @observable
   String? numberOfStudent;
-  String? jobDescription;
 
   bool hasError() {
     return title != null || description != null || numberOfStudent != null;

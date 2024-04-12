@@ -59,7 +59,7 @@ class ProjectApi {
 
   Future<Response> updateCompanyProject(UpdateProjectParams params) async {
     return await _dioClient.dio.patch(
-        Interpolator(Endpoints.updateProject)({"studentId": params.projectId}),
+        Interpolator(Endpoints.updateProject)({"projectId": params.projectId}),
         data: {
           'projectScopeFlag': params.projectScope,
           'title': params.title,

@@ -16,7 +16,7 @@ class Toastify {
               .addPostFrameCallback((s) => toastification.show(
                     type: type,
                     style: ToastificationStyle.fillColored,
-                    primaryColor: Theme.of(context).colorScheme.primary,
+                    //primaryColor: Theme.of(context).colorScheme.primary,
                     closeButtonShowType: CloseButtonShowType.onHover,
                     context: context,
                     description: Text(message),

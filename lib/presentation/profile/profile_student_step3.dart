@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
@@ -49,7 +48,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
-  final FormStore _formStore = getIt<FormStore>();
   // final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();

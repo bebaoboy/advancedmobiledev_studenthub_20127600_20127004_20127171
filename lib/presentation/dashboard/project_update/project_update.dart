@@ -1,7 +1,6 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
-import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
+import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
@@ -60,10 +59,10 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
   }
 
   bool somethingChanged() {
-    return widget.project.title == _formStore.title &&
-        widget.project.numberOfStudents == _formStore.numberOfStudents &&
-        widget.project.scope == _formStore.scope &&
-        widget.project.description == _formStore.description;
+    return widget.project.title != _formStore.title ||
+        widget.project.numberOfStudents != _formStore.numberOfStudents ||
+        widget.project.scope != _formStore.scope ||
+        widget.project.description != _formStore.description;
   }
 
   Widget _buildBody(BuildContext context) {
@@ -74,19 +73,20 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               alignment: Alignment.topLeft,
               child: Text(Lang.get("project_title"))),
           Observer(
-            builder: (context) => TextFieldWidget(
+            builder: (context) => BorderTextField(
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
               ),
               inputType: TextInputType.name,
-              icon: Icons.title,
               iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
               textController: _titleController,
               inputAction: TextInputAction.done,
               onChanged: (value) {
                 _formStore.setTitle(_titleController.text);
               },
+              isIcon: false,
+              padding: const EdgeInsets.symmetric(horizontal: 1),
               errorText: _formStore.formErrorStore.title,
             ),
           ),
@@ -100,7 +100,7 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               alignment: Alignment.topLeft,
               child: Text(Lang.get("project_students"))),
           Observer(
-            builder: (context) => TextFieldWidget(
+            builder: (context) => BorderTextField(
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -110,10 +110,13 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
               textController: _numberController,
               inputAction: TextInputAction.done,
+              padding: const EdgeInsets.symmetric(horizontal: 1),
               onChanged: (value) {
                 String numberString = transformText(_numberController, value);
                 if (numberString.isNotEmpty) {
                   _formStore.setNumberOfStudents(int.parse(numberString));
+                } else {
+                  _formStore.setNumberOfStudents(0);
                 }
               },
               errorText: _formStore.formErrorStore.numberOfStudent,
@@ -124,7 +127,7 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               alignment: Alignment.topLeft,
               child: Text(Lang.get("project_description"))),
           Observer(
-            builder: (context) => TextFieldWidget(
+            builder: (context) => BorderTextField(
               minLines: 4,
               maxLines: 8,
               inputDecoration: const InputDecoration(
@@ -132,10 +135,10 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
                     borderSide: BorderSide(color: Colors.black)),
               ),
               inputType: TextInputType.text,
-              icon: Icons.description,
               iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
               textController: _descriptionController,
               inputAction: TextInputAction.done,
+              isIcon: false,
               onChanged: (value) {
                 _formStore.setDescription(_descriptionController.text);
               },
@@ -161,14 +164,23 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               child: Text(Lang.get("project_update")),
             ),
           ),
-          Observer(builder: (context) {
+          Observer(builder: (ctx) {
             if (_formStore.updateResult) {
-              Toastify.show(context, "Update", _formStore.notification,
-                  ToastificationType.success, () => _formStore.reset());
+              Future.delayed(const Duration(seconds: 0), () {
+                Toastify.show(context, "Update", _formStore.notification,
+                    ToastificationType.info, () => _formStore.reset());
+              });
+              _formStore.reset();
               return Container();
             } else {
-              Toastify.show(context, "Update", _formStore.notification,
-                  ToastificationType.success, () => _formStore.reset());
+              Future.delayed(const Duration(seconds: 0), () {
+                Toastify.show(
+                    context,
+                    "Update failed",
+                    _formStore.errorStore.errorMessage,
+                    ToastificationType.success,
+                    () => _formStore.reset());
+              });
               return Container();
             }
           })
