@@ -47,8 +47,8 @@ abstract class _ProjectStore with Store {
   }
 
   /// descending created date order
-  Future<ProjectList> getAllProject() {
-    return _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
+  Future<ProjectList> getAllProject() async {
+    return await _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
       _projects = value;
       _projects.projects?.sort(
         (a, b) => b.updatedAt!.compareTo(a.updatedAt!),

@@ -272,7 +272,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                   curve: Curves.fastOutSlowIn,
                 );
                 // element.jumpTo(element.position.minScrollExtent);
-              } catch (e) {}
+              } catch (e) {
+                ///
+              }
             }
           });
         },

@@ -486,7 +486,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
       NavbarNotifier2.index = widget.initialIndex;
     }
     widget.pageController.move(NavbarNotifier2.currentIndex);
-    refreshState = List.filled(widget.destinations.length, false);
+    refreshState = List.filled(widget.destinations.length, 0);
   }
 
   void initAnimation() {
@@ -618,7 +618,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
     }
   }
 
-  late List<bool> refreshState;
+  late List<int> refreshState;
 
   @override
   Widget build(BuildContext context) {
@@ -691,17 +691,14 @@ class _NavbarRouterState extends State<NavbarRouter2>
                                 print("pop nun");
                               }
                             }
-                            if (refreshState[NavbarNotifier2.currentIndex]) {
+                            if (refreshState[NavbarNotifier2.currentIndex] >
+                                1) {
                               initialize(i: NavbarNotifier2.currentIndex);
-                              refreshState[NavbarNotifier2.currentIndex] =
-                                  false;
+                              refreshState[NavbarNotifier2.currentIndex] = 0;
                             } else if (widget.onCurrentTabClicked != null) {
                               widget.onCurrentTabClicked!();
                               print("tap");
-                              refreshState[NavbarNotifier2.currentIndex] = true;
-                              NavbarNotifier2.showSnackBar(
-                                  context, "Press again to refresh",
-                                  duration: const Duration(seconds: 2));
+                              refreshState[NavbarNotifier2.currentIndex]++;
                             }
                             // can pop
                           } else {
@@ -711,11 +708,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             //   widget.onChanged!(x);
                             // }
                             // _handleFadeAnimation();
-                            for (int i = 0;
-                                i < widget.destinations.length;
-                                i++) {
-                              refreshState[i] = false;
-                            }
+
                             if ((x - NavbarNotifier2.currentIndex).abs() > 1) {
                               widget.pageController.move(x, animation: false);
                             } else {

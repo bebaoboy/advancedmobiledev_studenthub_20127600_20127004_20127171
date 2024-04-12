@@ -173,7 +173,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     //   ),
     // );
     if (NavigationService.navigatorKey.currentContext != null) {
-      Navigator.canPop(NavigationService.navigatorKey.currentContext!);
+      Navigator.pop(NavigationService.navigatorKey.currentContext!);
     }
   }
 

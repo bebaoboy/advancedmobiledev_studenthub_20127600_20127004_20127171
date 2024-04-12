@@ -6,6 +6,7 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
@@ -304,10 +305,10 @@ class DetailTabLayout extends StatelessWidget {
                     ),
                   ]),
                 )),
-            // if (userStore.user != null &&
-            //     userStore.user!.companyProfile != null &&
-            //     userStore.user!.type == UserType.company &&
-            //     project.companyId == userStore.user!.companyProfile!.objectId!)
+            if (userStore.user != null &&
+                userStore.user!.companyProfile != null &&
+                userStore.user!.type == UserType.company &&
+                project.companyId == userStore.user!.companyProfile!.objectId!)
               Row(
                 mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.end,

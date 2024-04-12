@@ -49,7 +49,7 @@ abstract class _UpdateProjectFormStore with Store {
   String description = "";
 
   @observable
-  bool? updateResult = false;
+  bool? updateResult;
 
   @observable
   String notification = "";
