@@ -143,9 +143,15 @@ class Project extends ProjectBase {
             : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
         numberOfStudents: json['numberOfStudents'] ?? 1,
+// <<<<<<< sprint6-update_project
+//         isWorking: json['projectScopeFlag'] == 0,
+//         isArchived: json['projectScopeFlag'] == 1,
+//         id: (json["id"] ?? json["projectId"] ?? "").toString(),
+// =======
         // isWorking: json['projectScopeFlag'] == 0,
         // isArchived: json['projectScopeFlag'] == 1,
         id: (json["projectId"] ?? json["id"] ?? "").toString(),
+// >>>>>>> sprint6-getprojectcompany
         proposal: (json['proposals'] != null)
             ? List<Proposal>.from((real as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))

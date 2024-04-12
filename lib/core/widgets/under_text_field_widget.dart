@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TextFieldWidget extends StatefulWidget {
+class BorderTextField extends StatefulWidget {
   final IconData? icon;
   final String? hint;
   final String? errorText;
@@ -37,11 +37,11 @@ class TextFieldWidget extends StatefulWidget {
   final Function()? onTap;
 
   @override
-  State<TextFieldWidget> createState() => _TextFieldWidgetState();
+  State<BorderTextField> createState() => _BorderTextFieldState();
 
-  const TextFieldWidget(
+  const BorderTextField(
       {super.key,
-      required this.icon,
+      this.icon,
       required this.errorText,
       required this.textController,
       this.inputType,
@@ -77,7 +77,7 @@ class TextFieldWidget extends StatefulWidget {
       this.onTap});
 }
 
-class _TextFieldWidgetState extends State<TextFieldWidget> {
+class _BorderTextFieldState extends State<BorderTextField> {
   late bool obscureText;
   bool tapInside = false;
   @override
@@ -149,34 +149,37 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
               .copyWith(color: widget.hintColor)
               .merge(widget.hintStyle),
           errorText: widget.errorText,
-          errorStyle: widget.inputDecoration?.errorStyle ??
-              const TextStyle(
-                fontSize: 12.0,
-              ),
-
+          errorStyle: widget.inputDecoration != null
+              ? widget.inputDecoration!.errorStyle ??
+                  const TextStyle(
+                    fontSize: 12.0,
+                  )
+              : const TextStyle(
+                  fontSize: 12.0,
+                ),
           counterText: '',
-          border: widget.inputDecoration?.border,
-          disabledBorder: widget.inputDecoration?.disabledBorder,
-          enabledBorder: widget.inputDecoration?.enabledBorder,
-          focusedBorder: (widget.inputDecoration?.focusedBorder)?.copyWith(
-              borderSide: BorderSide(color: Theme.of(context).focusColor)),
-          errorBorder: (widget.inputDecoration?.errorBorder),
-          focusedErrorBorder: (widget.inputDecoration?.focusedErrorBorder)
-              ?.copyWith(
-                  borderSide: BorderSide(color: Theme.of(context).focusColor)),
-          // border: const OutlineInputBorder(
-          //   borderSide: BorderSide(color: Colors.black)
-          // ),
-          icon: widget.inputDecoration?.icon ??
+          enabledBorder:
+              const OutlineInputBorder(borderSide: BorderSide(width: 1)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+            color: Theme.of(context).focusColor,
+          )),
+          errorBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).focusColor, width: 2)),
+          focusedErrorBorder: OutlineInputBorder(
+              borderSide:
+                  BorderSide(color: Theme.of(context).focusColor, width: 2)),
+          border: const OutlineInputBorder(borderSide: BorderSide(width: 3)),
+          prefixIcon: widget.inputDecoration?.icon ??
               (widget.isIcon
                   ? Container(
                       margin: widget.iconMargin,
                       child: Icon(widget.icon, color: widget.iconColor))
                   : null),
-
           suffixIcon: widget.isObscure && tapInside
               ? IconButton(
-                  icon: obscureText ? const Icon(Icons.remove_red_eye) : const Icon(Icons.remove_red_eye_outlined),
+                  icon: const Icon(Icons.remove_red_eye),
                   onPressed: () {
                     setState(() {
                       obscureText = !obscureText;

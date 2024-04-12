@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:dio/dio.dart';
 
 class ProjectRepositoryImpl extends ProjectRepository {
@@ -47,6 +48,12 @@ class ProjectRepositoryImpl extends ProjectRepository {
   @override
   Future<Response> getStudentProposalProjects(GetStudentProposalProjectsParams params) async {
     var response = await _projectApi.getStudentProposalProjects(params);
+    return response;
+  }
+
+  @override
+  Future<Response> updateCompanyProject(UpdateProjectParams params) async {
+    var response = await _projectApi.updateCompanyProject(params);
     return response;
   }
 }

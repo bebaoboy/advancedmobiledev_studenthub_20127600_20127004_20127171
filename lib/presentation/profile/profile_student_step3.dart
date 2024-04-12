@@ -50,7 +50,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
-  // final FormStore _formStore = getIt<FormStore>();
+
   final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();

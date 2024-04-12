@@ -2,7 +2,7 @@ import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -171,7 +171,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               Lang.get('profile_question_title_2'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            TextFieldWidget(
+            BorderTextField(
               readOnly: !enabled,
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
@@ -203,7 +203,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
               Lang.get('profile_question_title_3'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            TextFieldWidget(
+            BorderTextField(
               readOnly: !enabled,
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
@@ -236,7 +236,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           Lang.get('profile_question_title_4'),
           style: Theme.of(context).textTheme.bodySmall,
         ),
-        TextFieldWidget(
+        BorderTextField(
           errorText: _formStore.profileFormErrorStore.description,
 
           readOnly: !enabled,

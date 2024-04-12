@@ -177,6 +177,10 @@
   "project_item_remove_job_posting": "Remove posting",
   "project_start_working": "Start working this project",
   "project_edit": "Edit project",
+  "project_title": "Project name",
+  "project_description": "Project description",
+  "project_students": "Number of students",
+  "project_update": "Update project",
 
   "project_submit_proposal": "Describe why do fit to this project",
   "proposal_submit": "Submit proposal",
@@ -185,6 +189,11 @@
   "project_length": "Project Length",
   "0-1": "Less than one month",
   "6-": "More than 6 months",
+
+  "project_length_choice_1": "Less than 1 month",
+  "project_length_choice_2": "1 to 3 months",
+  "project_length_choice_3": "3 to 6 months",
+  "project_length_choice_4": "More than 6 months",
 
   "schedule_interview": "Schedule an interview",
   "no_camera": "No cameras found",

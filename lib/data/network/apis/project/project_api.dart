@@ -3,6 +3,7 @@ import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:dio/dio.dart';
 import 'package:interpolator/interpolator.dart';
 
@@ -24,7 +25,8 @@ class ProjectApi {
       q.putIfAbsent("proposalsLessThan", () => params.proposalsLessThan);
     }
     return await _dioClient.dio
-        .get(Endpoints.getProjects, data: {}, queryParameters: q).onError(
+        .get(Endpoints.getProjects, data: {}, queryParameters: q)
+        .onError(
             (DioException error, stackTrace) => Future.value(error.response));
   }
 
@@ -53,6 +55,18 @@ class ProjectApi {
         )
         .onError(
             (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> updateCompanyProject(UpdateProjectParams params) async {
+    return await _dioClient.dio.patch(
+        Interpolator(Endpoints.updateProject)({"projectId": params.projectId}),
+        data: {
+          'projectScopeFlag': params.projectScope,
+          'title': params.title,
+          'description': params.description,
+          'numberOfStudents': params.numberOfStudent
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
   }
 
   // Future<Response> filterProjects() async {

@@ -1,7 +1,7 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -128,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Lang.get('profile_question_title_2'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            TextFieldWidget(
+            BorderTextField(
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -161,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Lang.get('profile_question_title_3'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
-            TextFieldWidget(
+            BorderTextField(
               inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black)),
@@ -214,6 +214,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+// <<<<<<< sprint6-update_project
+//   Widget _buildEmailField(BuildContext context) {
+//     return Observer(
+//       builder: (context) {
+//         return Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             Text(
+//               Lang.get('signup_company_et_email'),
+//               style: Theme.of(context).textTheme.bodySmall,
+//             ),
+//             BorderTextField(
+//               inputDecoration: const InputDecoration(
+//                 border: OutlineInputBorder(
+//                     borderSide: BorderSide(color: Colors.black)),
+//               ),
+//               inputType: TextInputType.emailAddress,
+//               icon: Icons.web,
+//               autoFocus: false,
+//               iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
+//               textController: _emailController,
+//               inputAction: TextInputAction.next,
+//               onChanged: (value) {
+//                 _formStore.setEmail(_emailController.text);
+//               },
+//               errorText: _formStore.profileFormErrorStore.email == null
+//                   ? null
+//                   : Lang.get(_formStore.profileFormErrorStore.email),
+//               // onFieldSubmitted: (value) =>
+//               //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+//             ),
+//           ],
+//         );
+//       },
+//     );
+//   }
+// =======
   // Widget _buildEmailField(BuildContext context) {
   //   return Observer(
   //     builder: (context) {
@@ -249,6 +286,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //     },
   //   );
   // }
+// >>>>>>> sprint6-getprojectcompany
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
