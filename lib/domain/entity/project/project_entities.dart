@@ -85,11 +85,9 @@ class Project extends ProjectBase {
   int? _countMessages;
   int? _countHired;
 
-  int get countProposals =>
-      _countProposals ?? (proposal != null ? proposal!.length : 0);
-  int get countMessages =>
-      _countMessages ?? (messages != null ? messages!.length : 0);
-  int get countHired => _countHired ?? (hired != null ? hired!.length : 0);
+  int get countProposals => _countProposals ?? proposal?.length ?? 0;
+  int get countMessages => _countMessages ?? messages?.length ?? 0;
+  int get countHired => _countHired ?? hired?.length ?? 0;
 
   Project({
     required super.title,
@@ -143,15 +141,7 @@ class Project extends ProjectBase {
             : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
         numberOfStudents: json['numberOfStudents'] ?? 1,
-// <<<<<<< sprint6-update_project
-//         isWorking: json['projectScopeFlag'] == 0,
-//         isArchived: json['projectScopeFlag'] == 1,
-//         id: (json["id"] ?? json["projectId"] ?? "").toString(),
-// =======
-        // isWorking: json['projectScopeFlag'] == 0,
-        // isArchived: json['projectScopeFlag'] == 1,
         id: (json["projectId"] ?? json["id"] ?? "").toString(),
-// >>>>>>> sprint6-getprojectcompany
         proposal: (json['proposals'] != null)
             ? List<Proposal>.from((real as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
@@ -197,6 +187,7 @@ class StudentProject extends Project {
   // int numberOfStudents;
   String projectId;
 
+  @Deprecated("Use timeago instead")
   getModifiedSubmittedTime() {
     return timeCreated.difference(DateTime.now()).inDays.abs();
   }

@@ -98,6 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : () {
                             setState(() {
                               _companySize = CompanyScope.values[i - 1];
+                              _formStore
+                                  .setCompanyScope(_companySize);
                             });
                           },
                     title: Text(Lang.get('profile_question_1_choice_$i'),
@@ -127,6 +129,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               Lang.get('profile_question_title_2'),
               style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(
+              height: 8,
             ),
             BorderTextField(
               inputDecoration: const InputDecoration(
@@ -160,6 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Text(
               Lang.get('profile_question_title_3'),
               style: Theme.of(context).textTheme.bodySmall,
+            ),
+            const SizedBox(
+              height: 8,
             ),
             BorderTextField(
               inputDecoration: const InputDecoration(
@@ -196,18 +204,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Lang.get('profile_question_title_4'),
             style: Theme.of(context).textTheme.bodySmall,
           ),
-          TextField(
-            decoration: const InputDecoration(
+          const SizedBox(
+            height: 8,
+          ),
+          BorderTextField(
+            inputDecoration: const InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black))),
             onChanged: (value) {
               _formStore.setDescription(_descriptionController.text);
             },
-            controller: _descriptionController,
+            textController: _descriptionController,
             // onSubmitted: (value) =>
             //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
             minLines: 3,
             maxLines: 5,
+            errorText: null,
+            isIcon: false,
           ),
         ],
       ),

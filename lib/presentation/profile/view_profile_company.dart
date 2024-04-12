@@ -245,7 +245,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
           ),
           inputType: TextInputType.multiline,
-          icon: Icons.person,
+          isIcon: false,
           iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
           // inputAction: TextInputAction.next,
           onChanged: (value) {
