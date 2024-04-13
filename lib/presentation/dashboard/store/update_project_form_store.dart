@@ -142,10 +142,19 @@ abstract class _UpdateProjectFormStore with Store {
           projectStore.companyProjects
               .firstWhere((e) => e.objectId == id.toString())
               .scope = scope;
+          projectStore.companyProjects
+              .firstWhere((e) => e.objectId == id.toString())
+              .updatedAt = DateTime.now();
           if (statusFlag != null) {
             projectStore.companyProjects
                 .firstWhere((e) => e.objectId == id.toString())
                 .enabled = Status.values[statusFlag];
+          }
+          var i = projectStore.companyProjects
+              .indexWhere((e) => e.objectId == id.toString());
+          if (i != -1) {
+            projectStore.updateCompanyProject(
+                projectStore.companyProjects.elementAt(i));
           }
         } catch (e) {
           // at least we tried
@@ -161,7 +170,7 @@ abstract class _UpdateProjectFormStore with Store {
   }
 
   void reset() {
-    updateResult = false;
+    updateResult = null;
   }
 
   void dispose() {

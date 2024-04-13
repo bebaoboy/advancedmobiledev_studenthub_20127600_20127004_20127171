@@ -25,6 +25,8 @@ import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 import 'package:toastification/toastification.dart';
 
 // ignore: must_be_immutable
@@ -240,33 +242,39 @@ class _ProjectTabsState extends State<ProjectTabs> {
               controller: widget.tabController,
               physics: const BouncingScrollPhysics(),
               children: [
-                AllProjects(
-                  projects: [...projectStore.companyProjects, ...myProjects],
-                  // projectFuture: ,
-                  scrollController: scrollController[0],
-                  showBottomSheet: showBottomSheet,
-                  onDismissed: (project, endToStart) => false,
-                ),
-                WorkingProjects(
-                  projects: [
-                    ...projectStore.companyProjects.where(
-                      (element) => element.isWorking,
-                    )
-                  ],
-                  scrollController: scrollController[1],
-                  showBottomSheet: showBottomSheet,
-                  onDismissed: onDismissed,
-                ),
-                ArchivedProjects(
-                  projects: [
-                    ...projectStore.companyProjects.where(
-                      (element) => element.isArchived,
-                    )
-                  ],
-                  scrollController: scrollController[2],
-                  showBottomSheet: showBottomSheet,
-                  onDismissed: onDismissed,
-                )
+                Observer(builder: (context) {
+                  return AllProjects(
+                    projects: [...projectStore.companyProjects, ...myProjects],
+                    // projectFuture: ,
+                    scrollController: scrollController[0],
+                    showBottomSheet: showBottomSheet,
+                    onDismissed: (project, endToStart) => false,
+                  );
+                }),
+                Observer(builder: (context) {
+                  return WorkingProjects(
+                    projects: [
+                      ...projectStore.companyProjects.where(
+                        (element) => element.isWorking,
+                      )
+                    ],
+                    scrollController: scrollController[1],
+                    showBottomSheet: showBottomSheet,
+                    onDismissed: onDismissed,
+                  );
+                }),
+                Observer(builder: (context) {
+                  return ArchivedProjects(
+                    projects: [
+                      ...projectStore.companyProjects.where(
+                        (element) => element.isArchived,
+                      )
+                    ],
+                    scrollController: scrollController[2],
+                    showBottomSheet: showBottomSheet,
+                    onDismissed: onDismissed,
+                  );
+                })
               ]),
         )
       ]),
@@ -639,7 +647,8 @@ class _AllProjectsState extends State<AllProjects> {
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
             oldItem.objectId == newItem.objectId &&
-            oldItem.enabled == newItem.enabled;
+            oldItem.enabled == newItem.enabled &&
+            oldItem.updatedAt == newItem.updatedAt;
       },
       itemBuilder: (context, animation, item, i) {
         return SizeFadeTransition(

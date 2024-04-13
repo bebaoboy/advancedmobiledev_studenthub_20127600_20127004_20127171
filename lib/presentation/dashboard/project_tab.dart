@@ -33,7 +33,7 @@ class SearchFilter {
 
   @override
   String toString() {
-    return "${scope != null ? scope!.title : ""}${studentNeeded != null ? "\n$studentNeeded students needed" : ""}${proposalLessThan != null ? "\nProposal less than $proposalLessThan" : ""}";
+    return "${scope != null ? scope!.title : ""}${studentNeeded != null ? "\nLess than $studentNeeded students needed" : ""}${proposalLessThan != null ? "\nProposal less than $proposalLessThan" : ""}";
   }
 }
 
@@ -53,7 +53,7 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
   @override
   void initState() {
     super.initState();
-    groupValue = widget.filter.scope ?? Scope.tight;
+    groupValue = widget.filter.scope;
     studentNeededController.text =
         (widget.filter.studentNeeded ?? "").toString();
     proposalLessThanController.text =
@@ -110,6 +110,22 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                     //   //   icon:  Icon(Icons.edit_outlined),
                     //   // ),
                     // ),
+                    RadioListTile<Scope?>(
+                      title: const Text("Any scope"),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style:  TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: null,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
+                    ),
                     RadioListTile<Scope>(
                       title: Text(Lang.get("0-1")),
                       // secondary: Text(
@@ -242,7 +258,12 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
                   RoundedButtonWidget(
                     buttonColor: Theme.of(context).colorScheme.primary,
                     onPressed: () {
-                      widget.filter.clear();
+                      setState(() {
+                        widget.filter.clear();
+                        groupValue = null;
+                        studentNeededController.clear();
+                        proposalLessThanController.clear();
+                      });
                     },
                     buttonText: Lang.get("clear_filter"),
                   ),
@@ -271,7 +292,8 @@ class SearchBottomSheet extends StatefulWidget {
       required this.searchList,
       this.keyword,
       this.filter,
-      required this.favoriteCallback});
+      required this.favoriteCallback,
+      required this.stopLoadingCallback});
   final onSheetDismissed;
   final onFilterTap;
   final double height;
@@ -279,6 +301,7 @@ class SearchBottomSheet extends StatefulWidget {
   final String? keyword;
   final SearchFilter? filter;
   final Function favoriteCallback;
+  final Function(String? id) stopLoadingCallback;
 
   @override
   State<SearchBottomSheet> createState() => _SearchBottomSheetState();
@@ -387,44 +410,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                 fontWeight: FontWeight.w700,
                 color: Colors.black,
               )),
-
-      // AnimSearchBar2(
-      //   enabled: false,
-      //   expandedByDefault: false,
-      //   textFieldColor: Theme.of(context).colorScheme.surface,
-      //   color: Theme.of(context).colorScheme.surface,
-      //   onSubmitted: (p0) {},
-      //   width: MediaQuery.of(context).size.width,
-      //   textController: controller,
-      //   onSuffixTap: () {},
-      //   onSelected: (project) {
-      //     // //print(project.title);
-      //     // setState(() {
-      //     //   isSuggestionTapped = true;
-      //     // });
-      //   },
-      //   // initialText:
-      //   // readOnly:
-      //   searchTextEditingController: controller,
-      //   onSuggestionCallback: (pattern) {
-      //     // if (pattern.isEmpty) return [];
-      //     // return Future<List<Project>>.delayed(
-      //     //    Duration(milliseconds: 300),
-      //     //   () => _projectStore.projects.where((product) {
-      //     //     final nameLower = product.title.toLowerCase().split(' ').join('');
-      //     //     //print(nameLower);
-      //     //     final patternLower = pattern.toLowerCase().split(' ').join('');
-      //     //     return nameLower.contains(patternLower);
-      //     //   }).toList(),
-      //     // );
-      //     return [];
-      //   },
-      //   suggestionItemBuilder: (context, project) => ListTile(
-      //     title: Text(project.title),
-      //     subtitle: Text(project.description),
-      //   ),
-      // ),
-
       actions: const [
         // IconButton(
         //     onPressed: () {
@@ -472,13 +457,15 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
 
 bool applyFilter(SearchFilter f, Project p) {
   bool b = true;
-  b &= (f.scope != null && f.scope! == p.scope) || (f.scope == null);
-  b &= (f.studentNeeded != null && f.studentNeeded! == p.numberOfStudents) ||
-      (f.studentNeeded == null);
-  b &= (f.proposalLessThan != null &&
-          (p.proposal != null && f.proposalLessThan! <= p.proposal!.length)) ||
-      (f.studentNeeded == null) ||
-      (p.proposal == null);
+  if (f.scope != null) {
+    b &= f.scope == p.scope;
+  }
+  if (f.studentNeeded != null) {
+    b &= p.numberOfStudents <= f.studentNeeded!;
+  }
+  if (f.proposalLessThan != null) {
+    b &= p.countProposals <= f.proposalLessThan!;
+  }
   return b;
 }
 
@@ -538,12 +525,41 @@ class _ProjectTabState extends State<ProjectTab> {
     });
   }
 
+  List<Project> getSearchList() {
+    var list = keyword.isEmpty
+        ? _projectStore.projects
+        : _projectStore.projects
+            .where((e) =>
+                e.title.trim().toLowerCase().contains(keyword.toLowerCase()) &&
+                applyFilter(filter, e))
+            .toList();
+    if (filter.scope != null) {
+      list.sort((a, b) => b.scope.index.compareTo(a.scope.index));
+    }
+    if (filter.studentNeeded != null) {
+      list.sort((a, b) => b.numberOfStudents.compareTo(a.numberOfStudents));
+    }
+    if (filter.proposalLessThan != null) {
+      list.sort((a, b) => b.countProposals.compareTo(a.countProposals));
+    }
+    return list;
+  }
+
   Future<SearchBottomSheet?> showSearchBottomSheet(BuildContext context) async {
     return await NavbarNotifier2.push(
       NavbarNotifier2.currentIndex,
       context,
       ModalSheetRoute(
         builder: (context) => SearchBottomSheet(
+          stopLoadingCallback: (id) {
+            var p = _projectStore.projects.firstWhereOrNull(
+              (element) => element.objectId == id,
+            );
+            if (p != null) {
+              p.isLoading = false;
+              print("stop loading $id");
+            }
+          },
           favoriteCallback: (id) {
             setState(() {
               for (int i = 0; i < _projectStore.projects.length; i++) {
@@ -556,12 +572,7 @@ class _ProjectTabState extends State<ProjectTab> {
           },
           filter: filter,
           keyword: keyword,
-          searchList: _projectStore.projects
-              .where((e) =>
-                  keyword.isNotEmpty &&
-                  e.title.toLowerCase().contains(keyword.toLowerCase()) &&
-                  applyFilter(filter, e))
-              .toList(),
+          searchList: getSearchList(),
           onSheetDismissed: () {
             setState(() {
               NavbarNotifier2.hideBottomNavBar = false;
@@ -729,9 +740,12 @@ class _ProjectTabState extends State<ProjectTab> {
                                 projectList: _projectStore.projects
                                     .where((element) => element.isFavorite)
                                     .toList(),
-                                onFavoriteTap: (int i) {
-                                  _projectStore.projects[i].isFavorite =
-                                      !_projectStore.projects[i].isFavorite;
+                                onFavoriteTap: (String id) {
+                                  var p =
+                                      _projectStore.projects.firstWhereOrNull(
+                                    (element) => element.objectId == id,
+                                  );
+                                  if (p != null) p.isFavorite = !p.isFavorite;
                                 }));
                       },
                       color: Theme.of(context).colorScheme.primary,

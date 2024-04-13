@@ -691,7 +691,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                                 print("pop nun");
                               }
                             }
-                            if (refreshState[NavbarNotifier2.currentIndex] >
+                            if (refreshState[NavbarNotifier2.currentIndex] >=
                                 1) {
                               initialize(i: NavbarNotifier2.currentIndex);
                               refreshState[NavbarNotifier2.currentIndex] = 0;

@@ -62,7 +62,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
       // }
       submittedText = timeago
           .format(locale: _languageStore.locale, widget.project.timeCreated)
-          .toTitleCase();
+          .inCaps;
 
       return Padding(
         padding: const EdgeInsets.all(8.0),

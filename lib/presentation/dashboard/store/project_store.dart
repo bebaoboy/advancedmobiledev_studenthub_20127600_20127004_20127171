@@ -27,11 +27,13 @@ abstract class _ProjectStore with Store {
   @observable
   ProjectList _projects = ProjectList(projects: List.empty());
 
+  @observable
   List<Project> get projects => _projects.projects ?? [];
 
   @observable
   ProjectList _companyProjects = ProjectList(projects: List.empty());
 
+  @observable
   List<Project> get companyProjects => _companyProjects.projects ?? [];
 
   Future addProject(Project value, {index = 0}) async {
@@ -46,9 +48,26 @@ abstract class _ProjectStore with Store {
     );
   }
 
+  Future updateCompanyProject(Project value, {index = 0}) async {
+    if (_companyProjects.projects != null) {
+      value.updatedAt = DateTime.now();
+      var i = _companyProjects.projects!
+          .indexWhere((e) => e.objectId == value.objectId);
+      _companyProjects.projects!
+          .insert(index, _companyProjects.projects!.removeAt(i));
+    } else {
+      _companyProjects.projects = [value];
+    }
+    _companyProjects.projects?.sort(
+      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+    );
+  }
+
   /// descending created date order
   Future<ProjectList> getAllProject() async {
-    return await _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
+    return await _getProjectsUseCase
+        .call(params: GetProjectParams())
+        .then((value) {
       _projects = value;
       _projects.projects?.sort(
         (a, b) => b.updatedAt!.compareTo(a.updatedAt!),

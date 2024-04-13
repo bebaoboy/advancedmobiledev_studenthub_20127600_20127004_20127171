@@ -152,15 +152,33 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               onPressed: () {
                 try {
                   if (_formStore.canUpdate && somethingChanged()) {
-                    _formStore.updateProject(
-                        int.parse(widget.project.objectId!),
-                        _titleController.text,
-                        _descriptionController.text,
-                        int.parse(_numberController.text),
-                        _projectScope);
-                  } else {
-                    _formStore.updateResult = false;
-                    _formStore.errorStore.errorMessage = "Wrong";
+                    _formStore
+                        .updateProject(
+                            int.parse(widget.project.objectId!),
+                            _titleController.text,
+                            _descriptionController.text,
+                            int.parse(_numberController.text),
+                            _projectScope)
+                        .then(
+                      (value) {
+                        if (_formStore.updateResult == true) {
+                            Toastify.show(
+                                context,
+                                "Update",
+                                _formStore.notification,
+                                ToastificationType.info,
+                                () {});
+                          _formStore.reset();
+                        } else if (_formStore.updateResult == false) {
+                            Toastify.show(
+                                context,
+                                "Update failed",
+                                _formStore.errorStore.errorMessage,
+                                ToastificationType.error,
+                                () {});
+                        }
+                      },
+                    );
                   }
                 } catch (e) {
                   _formStore.updateResult = false;
@@ -172,27 +190,6 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               child: Text(Lang.get("project_update")),
             ),
           ),
-          Observer(builder: (ctx) {
-            if (_formStore.updateResult == null) return Container();
-            if (_formStore.updateResult == true) {
-              Future.delayed(const Duration(seconds: 100), () {
-                Toastify.show(context, "Update", _formStore.notification,
-                    ToastificationType.info, () => _formStore.reset());
-              });
-              _formStore.reset();
-              return Container();
-            } else {
-              Future.delayed(const Duration(seconds: 100), () {
-                Toastify.show(
-                    context,
-                    "Update failed",
-                    _formStore.errorStore.errorMessage,
-                    ToastificationType.error,
-                    () => _formStore.reset());
-              });
-              return Container();
-            }
-          })
         ],
       ),
     );
