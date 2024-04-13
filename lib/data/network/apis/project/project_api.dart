@@ -60,6 +60,20 @@ class ProjectApi {
             (DioException error, stackTrace) => Future.value(error.response));
   }
 
+  Future<Response> getStudentFavoriteProjects(
+      GetStudentProposalProjectsParams params) async {
+    return await _dioClient.dio
+        .get(
+          Interpolator(Endpoints.getUserFavoriteProjects)(
+              {"studentId": params.studentId}),
+          // queryParameters: params.statusFlag != null
+          //     ? {"statusFlag": params.statusFlag.toString()}
+          //     : null,
+        )
+        .onError(
+            (DioException error, stackTrace) => Future.value(error.response));
+  }
+
   Future<Response> updateCompanyProject(UpdateProjectParams params) async {
     var p = {
       'projectScopeFlag': params.projectScope,
@@ -85,7 +99,7 @@ class ProjectApi {
       "projectScopeFlag": params.projectScopeFlag,
       "title": params.title,
       "description": params.description,
-      "typeFlag": params.typeFlag,
+      "typeFlag": params.typeFlag ? 0 : 1,
       "numberOfStudents": params.numberOfStudents,
     }).onError((DioException error, stackTrace) {
       if (error.response != null) {

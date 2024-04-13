@@ -55,6 +55,13 @@ class ProjectRepositoryImpl extends ProjectRepository {
     return response;
   }
 
+    @override
+  Future<Response> getStudentFavoriteProjects(
+      GetStudentProposalProjectsParams params) async {
+    var response = await _projectApi.getStudentFavoriteProjects(params);
+    return response;
+  }
+
   @override
   Future<Response> updateCompanyProject(UpdateProjectParams params) async {
     var response = await _projectApi.updateCompanyProject(params);

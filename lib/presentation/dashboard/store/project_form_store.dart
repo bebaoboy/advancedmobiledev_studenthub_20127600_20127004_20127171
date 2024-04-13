@@ -10,6 +10,7 @@ import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'project_form_store.g.dart';
@@ -99,7 +100,20 @@ abstract class _ProjectFormStore with Store {
               timeCreated: DateTime.now(),
               numberOfStudents: numberOfStudents,
               companyId: companyId,
+              enabled: typeFlag ? Status.active : Status.inactive,
               id: id));
+          projectStore.updateCompanyProject(Project(
+              title: title,
+              description: description,
+              scope: Scope.values[projectScopeFlag],
+              timeCreated: DateTime.now(),
+              numberOfStudents: numberOfStudents,
+              companyId: companyId,
+              enabled: typeFlag ? Status.active : Status.inactive,
+              id: id));
+          var updateStore = getIt<UpdateProjectFormStore>();
+          // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
+          updateStore.updateResult.notifyListeners();
         } catch (e) {
           errorStore.errorMessage = "cannot parse company id";
         }

@@ -153,11 +153,8 @@ mixin StoreModule {
     );
 
     getIt.registerSingleton<UpdateProjectFormStore>(
-      UpdateProjectFormStore(
-        getIt<ErrorStore>(),
-        getIt<UpdateProjectFormErrorStore>(),
-        getIt<UpdateCompanyProject>()
-      ),
+      UpdateProjectFormStore(getIt<ErrorStore>(),
+          getIt<UpdateProjectFormErrorStore>(), getIt<UpdateCompanyProject>()),
     );
 
     getIt.registerSingleton<ThemeStore>(
@@ -173,7 +170,10 @@ mixin StoreModule {
         getIt<ErrorStore>(),
       ),
     );
-
+    getIt.registerSingleton<ProjectStore>(ProjectStore(
+        getIt<GetProjectsUseCase>(),
+        getIt<GetProjectByCompanyUseCase>(),
+        getIt<GetStudentProposalProjectsUseCase>()));
 
     getIt.registerSingleton<ProjectFormStore>(
       ProjectFormStore(
@@ -183,9 +183,5 @@ mixin StoreModule {
           getIt<ErrorStore>(),
           getIt<ProjectStore>()),
     );
-    getIt.registerSingleton<ProjectStore>(ProjectStore(
-        getIt<GetProjectsUseCase>(),
-        getIt<GetProjectByCompanyUseCase>(),
-        getIt<GetStudentProposalProjectsUseCase>()));
   }
 }

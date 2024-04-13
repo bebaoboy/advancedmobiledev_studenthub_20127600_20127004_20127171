@@ -22,5 +22,8 @@ abstract class ProjectRepository {
   Future<Response> getStudentProposalProjects(
       GetStudentProposalProjectsParams params);
 
+  Future<Response> getStudentFavoriteProjects(
+      GetStudentProposalProjectsParams params);
+
   Future<Response> updateCompanyProject(UpdateProjectParams params);
 }

@@ -78,14 +78,21 @@ class _DashBoardTabState extends State<DashBoardTab>
     tabController = TabController(vsync: this, initialIndex: 0, length: 3);
     updateProjectStore.updateResult.addListener(
       () {
-        print("change tabs");
-        setState(() {
-          scrollController[tabController.index].animateTo(
-            scrollController[tabController.index].position.minScrollExtent,
-            duration: const Duration(seconds: 1000),
-            curve: Curves.easeIn,
-          );
-        });
+        try {
+          print("change tabs");
+          Future.delayed(const Duration(milliseconds: 500), () {
+            if (mounted) {
+              setState(() {});
+            }
+            // scrollController[tabController.index].animateTo(
+            //   scrollController[tabController.index].position.minScrollExtent,
+            //   duration: const Duration(seconds: 1000),
+            //   curve: Curves.easeIn,
+            // );
+          });
+        } catch (e) {
+          // we can never scroll once we hard refresh
+        }
       },
     );
   }

@@ -123,6 +123,10 @@ class _MyProjectItemState extends State<MyProjectItem> {
     // } else {
     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     // }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     createdText = timeago
         .format(locale: _languageStore.locale, widget.project.timeCreated)
         .inCaps;
@@ -133,10 +137,6 @@ class _MyProjectItemState extends State<MyProjectItem> {
       updatedText =
           "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return _OpenContainerWrapper(
       project: widget.project,
       closedChild: widget.dismissable

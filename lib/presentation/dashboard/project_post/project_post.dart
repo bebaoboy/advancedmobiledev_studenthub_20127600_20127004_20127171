@@ -251,11 +251,13 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                     shape: const StadiumBorder(
                         side: BorderSide(color: Colors.transparent)),
                     onPressed: () {
-                      setState(() {
+                      if (controller2.text.isNotEmpty) {
+                        setState(() {
                         number = int.parse(controller2.text);
                         duration = groupValue ?? 'Not estimated yet';
                         _startIndex++;
                       });
+                      }
                     },
                     child: AutoSizeText(
                       Lang.get('Next_Description'),
@@ -438,7 +440,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                           controller3.text,
                           int.parse(controller2.text),
                           scope,
-                          false);
+                          true);
 
                       Navigator.of(context).pop<Project>(Project(
                         title: title,

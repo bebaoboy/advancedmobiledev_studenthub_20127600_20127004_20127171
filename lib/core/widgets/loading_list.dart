@@ -6,6 +6,7 @@
  *
  */
 
+// ignore: unused_import
 import 'dart:convert';
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -121,6 +122,7 @@ class RefazynistState extends State<Refazynist> {
   /// A string that's store cursor in SharedPreferences
   String cursor = '';
 
+  // ignore: unused_field, prefer_final_fields
   bool _end = false;
   Widget? _frontWidget;
   late Widget _animatedListWidget;
@@ -185,51 +187,51 @@ class RefazynistState extends State<Refazynist> {
   Future<void> _setSharedPreferences() async {
     return;
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-        widget.sharedPreferencesName,
-        jsonEncode(
-            {'cursor': cursor, '_end': !_loaderShowing, 'list': _items}));
+    // await prefs.setString(
+    //     widget.sharedPreferencesName,
+    //     jsonEncode(
+    //         {'cursor': cursor, '_end': !_loaderShowing, 'list': _items}));
   }
 
   Future<bool> _getSharedPreferences() async {
     return false;
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    String? spString = prefs.getString(widget.sharedPreferencesName);
+    // String? spString = prefs.getString(widget.sharedPreferencesName);
 
-    if (spString == '') return false;
+    // if (spString == '') return false;
 
-    if (spString != null) {
-      Map<dynamic, dynamic> sp = jsonDecode(spString);
+    // if (spString != null) {
+    //   Map<dynamic, dynamic> sp = jsonDecode(spString);
 
-      if (sp.containsKey('cursor')) {
-        cursor = sp['cursor'];
-      }
+    //   if (sp.containsKey('cursor')) {
+    //     cursor = sp['cursor'];
+    //   }
 
-      if (sp.containsKey('_end')) {
-        _end = sp['_end'];
-        if (_end) {
-          removeLoader();
-        } else {
-          addLoader();
-        }
-      }
+    //   if (sp.containsKey('_end')) {
+    //     _end = sp['_end'];
+    //     if (_end) {
+    //       removeLoader();
+    //     } else {
+    //       addLoader();
+    //     }
+    //   }
 
-      if (sp.containsKey('list')) {
-        List<dynamic> spList = sp['list'];
+    //   if (sp.containsKey('list')) {
+    //     List<dynamic> spList = sp['list'];
 
-        if (spList.isNotEmpty) {
-          _insertAllItem(0, spList);
-        }
+    //     if (spList.isNotEmpty) {
+    //       _insertAllItem(0, spList);
+    //     }
 
-        return true;
-      }
-    }
+    //     return true;
+    //   }
+    // }
 
-    return false;
+    // return false;
   }
 
   Future<void> _refresh() async {

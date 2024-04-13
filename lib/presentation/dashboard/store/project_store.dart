@@ -30,7 +30,8 @@ abstract class _ProjectStore with Store {
   List<Project> get projects => _projects.projects ?? [];
 
   @observable
-  ProjectList _companyProjects = ProjectList(projects: List.empty(growable: true));
+  ProjectList _companyProjects =
+      ProjectList(projects: List.empty(growable: true));
 
   List<Project> get companyProjects => _companyProjects.projects ?? [];
 
@@ -64,8 +65,12 @@ abstract class _ProjectStore with Store {
       value.updatedAt = DateTime.now();
       var i = _companyProjects.projects!
           .indexWhere((e) => e.objectId == value.objectId);
-      _companyProjects.projects!
-          .insert(index, _companyProjects.projects!.removeAt(i));
+      if (i != -1) {
+        _companyProjects.projects!
+            .insert(index, _companyProjects.projects!.removeAt(i));
+      } else {
+        _companyProjects.projects!.insert(index, value);
+      }
     } else {
       _companyProjects.projects = [value];
     }

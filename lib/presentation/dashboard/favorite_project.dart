@@ -68,6 +68,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         Container(
             margin: const EdgeInsets.only(top: 40),
             child: FutureBuilder<ProjectList>(
+              // TODO: get favorite project
               future: Future.value(ProjectList(projects: widget.projectList)),
               builder:
                   (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
