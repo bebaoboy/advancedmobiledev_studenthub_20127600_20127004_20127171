@@ -40,7 +40,6 @@ class _OpenContainerWrapper extends StatelessWidget {
       closedColor: theme.cardColor,
       closedBuilder: (context, openContainer) {
         return Container(
-            constraints: const BoxConstraints(maxHeight: 250),
             decoration: const BoxDecoration(
               border: Border(
                 top: BorderSide(color: Colors.black, width: 1.0),
@@ -321,8 +320,8 @@ class _ProjectItem2State extends State<ProjectItem2> {
       widget.stopLoading(widget.project.objectId!);
       if (mounted) {
         setState(() {
-        widget.project.isLoading = false;
-      });
+          widget.project.isLoading = false;
+        });
       }
     });
   }
@@ -337,83 +336,85 @@ class _ProjectItem2State extends State<ProjectItem2> {
       project: widget.project,
       closedChild: LayoutBuilder(builder: (context, c) {
         return Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
+          padding: const EdgeInsets.symmetric(horizontal:  8.0, vertical: 15),
+          child: Stack(
             children: [
-              Expanded(
-                flex: 9,
-                child: Skeletonizer(
-                  enabled: widget.project.isLoading,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(createdText + updatedText,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(fontSize: 12)),
-                      Text(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        widget.project.title == ''
-                            ? 'No title'
-                            : widget.project.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText2!
-                            .copyWith(color: Colors.green.shade400),
-                      ),
-                      // TODO: dịch
-                      Text(
-                        'Time: ${widget.project.scope.title}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      Text(
-                        '${widget.project.numberOfStudents} students needed',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        "Student are looking for: ",
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      SizedBox(
-                        height: c.maxHeight / 5,
-                        child: AutoSizeText(
-                          widget.project.description == ''
-                              ? 'No description'
-                              : widget.project.description,
-                          style: const TextStyle(),
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        proposalText,
+              Skeletonizer(
+                enabled: widget.project.isLoading,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(createdText + updatedText,
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
-                            .copyWith(fontSize: 14.0),
+                            .copyWith(fontSize: 12)),
+                    Text(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      widget.project.title == ''
+                          ? 'No title'
+                          : widget.project.title,
+                      style: TextStyle(color: Colors.green.shade400, fontWeight: FontWeight.bold),
+                    ),
+                    // TODO: dịch
+
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      "Student are looking for: ",
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+
+                    Flexible(
+                      // height: 100,
+                      child: AutoSizeText(
+                        widget.project.description == ''
+                            ? 'No description'
+                            : widget.project.description,
+                        style: Theme.of(context).textTheme.bodyLarge,
+                        maxLines: 4,
+                        maxFontSize: 15,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.justify,
                       ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Text(
+                      'Time: ${widget.project.scope.title}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Text(
+                      'Student: ${widget.project.numberOfStudents}',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    Text(
+                      proposalText,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(fontSize: 14.0),
+                    ),
+                  ],
                 ),
               ),
-              IconButton(
-                color: Theme.of(context).colorScheme.primary,
-                onPressed: () {
-                  setState(() {
-                    widget.onFavoriteTap(widget.project.objectId);
-                  });
-                },
-                icon: icon,
-              ),
+              Positioned(
+                right: 0,
+                top: 0,
+                child: IconButton(
+                  color: Theme.of(context).colorScheme.primary,
+                  onPressed: () {
+                    setState(() {
+                      widget.onFavoriteTap(widget.project.objectId);
+                    });
+                  },
+                  icon: icon,
+                ),
+              )
             ],
           ),
         );

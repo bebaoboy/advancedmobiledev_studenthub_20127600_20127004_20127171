@@ -402,6 +402,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
               ? MediaQuery.of(context).size.width * 0.93
               : MediaQuery.of(context).size.width * 0.84;
           return Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
               border: Border.all(width: 0.1),
               borderRadius: const BorderRadius.all(Radius.circular(13)),

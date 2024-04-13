@@ -1,3 +1,5 @@
+// ignore_for_file: invalid_use_of_protected_member
+
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
@@ -5,6 +7,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mobx/mobx.dart';
 
 part 'update_project_form_store.g.dart';
@@ -49,7 +52,7 @@ abstract class _UpdateProjectFormStore with Store {
   String description = "";
 
   @observable
-  bool? updateResult;
+  ValueNotifier<bool> updateResult = ValueNotifier(false);
 
   @observable
   String notification = "";
@@ -126,7 +129,7 @@ abstract class _UpdateProjectFormStore with Store {
       if (response.statusCode == HttpStatus.accepted ||
           response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.created) {
-        updateResult = true;
+        updateResult.value = true;
         notification = "Update successfully";
         final ProjectStore projectStore = getIt<ProjectStore>();
         try {
@@ -161,16 +164,20 @@ abstract class _UpdateProjectFormStore with Store {
         }
       } else {
         errorStore.errorMessage = response.data['errorDetails'][0];
-        updateResult = false;
+        updateResult.value = false;
       }
     } catch (e) {
       errorStore.errorMessage = 'Update failed';
-      updateResult = false;
+      updateResult.value = false;
     }
+    // ignore: invalid_use_of_visible_for_testing_member
+    updateResult.notifyListeners();
   }
 
   void reset() {
-    updateResult = null;
+    updateResult.value = false;
+    // ignore: invalid_use_of_visible_for_testing_member
+    updateResult.notifyListeners();
   }
 
   void dispose() {

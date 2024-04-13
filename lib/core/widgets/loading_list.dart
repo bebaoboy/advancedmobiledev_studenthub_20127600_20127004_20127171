@@ -269,6 +269,7 @@ class RefazynistState extends State<Refazynist> {
 
     _animatedListWidget = Scrollbar(
       child: AnimatedList(
+        physics: const BouncingScrollPhysics(),
         controller: widget.scrollController,
         initialItemCount: _items.length + (_loaderShowing ? 1 : 0),
         key: _animatedListKey,
@@ -486,18 +487,18 @@ class RefazynistState extends State<Refazynist> {
   @override
   Widget build(BuildContext context) {
     if (_frontWidget != null) {
-      return PlaneIndicator(
-          offsetToArmed: widget.scrollExtent,
-          onRefresh: _refresh,
-          child: Stack(
-            children: [
-              Opacity(
-                opacity: 0,
+      return Stack(
+        children: [
+          Opacity(
+              opacity: 0,
+              child: PlaneIndicator(
+                offsetToArmed: widget.scrollExtent,
+                onRefresh: _refresh,
                 child: _animatedListWidget,
-              ),
-              _frontWidget!,
-            ],
-          ));
+              )),
+          _frontWidget!,
+        ],
+      );
     } else {
       return PlaneIndicator(
         onRefresh: _refresh,

@@ -161,27 +161,29 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
                             _projectScope)
                         .then(
                       (value) {
-                        if (_formStore.updateResult == true) {
-                            Toastify.show(
-                                context,
-                                "Update",
-                                _formStore.notification,
-                                ToastificationType.info,
-                                () {});
+                        if (_formStore.updateResult.value == true) {
+                          Toastify.show(
+                              context,
+                              "Update",
+                              _formStore.notification,
+                              ToastificationType.info, () {
+                            _formStore.reset();
+                          });
                           _formStore.reset();
-                        } else if (_formStore.updateResult == false) {
-                            Toastify.show(
-                                context,
-                                "Update failed",
-                                _formStore.errorStore.errorMessage,
-                                ToastificationType.error,
-                                () {});
+                        } else if (_formStore.updateResult.value == false) {
+                          Toastify.show(
+                              context,
+                              "Update failed",
+                              _formStore.errorStore.errorMessage,
+                              ToastificationType.error, () {
+                            _formStore.reset();
+                          });
                         }
                       },
                     );
                   }
                 } catch (e) {
-                  _formStore.updateResult = false;
+                  _formStore.updateResult.value = false;
                   _formStore.errorStore.errorMessage = "Wrong";
                 }
               },

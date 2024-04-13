@@ -9,6 +9,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -30,6 +31,24 @@ class ProjectDetailsPage extends StatefulWidget {
 
 class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   @override
+  void initState() {
+    super.initState();
+    _updateStore.updateResult.addListener(
+      () {
+        print("change tabs");
+        try {
+          if (mounted) {
+            setState(() {});
+          }
+        } catch (e) {
+          ///
+        }
+      },
+    );
+  }
+
+  final _updateStore = getIt<UpdateProjectFormStore>();
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: MainAppBar(
@@ -47,7 +66,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-            child: Text(widget.project.title),
+            child: Text(
+              widget.project.title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
           ),
           DefaultTabController(
             initialIndex: widget.initialIndex ?? 0,
@@ -153,15 +175,25 @@ class ProposalTabLayout extends StatelessWidget {
 }
 
 // ignore: must_be_immutable
-class DetailTabLayout extends StatelessWidget {
+class DetailTabLayout extends StatefulWidget {
   final Project project;
+  const DetailTabLayout({super.key, required this.project});
+
+  @override
+  State<DetailTabLayout> createState() => _DetailTabLayoutState();
+}
+
+class _DetailTabLayoutState extends State<DetailTabLayout> {
   var userStore = getIt<UserStore>();
+
+  final _languageStore = getIt<LanguageStore>();
   var createdText = '';
   var createdText2 = '';
   var updatedText = "";
-  final _languageStore = getIt<LanguageStore>();
 
-  DetailTabLayout({super.key, required this.project}) {
+  @override
+  void initState() {
+    super.initState();
     // int differenceWithToday = widget.project.getModifiedTimeCreated();
     // if (differenceWithToday == 0) {
     //   createdText = Lang.get("created_now");
@@ -171,14 +203,14 @@ class DetailTabLayout extends StatelessWidget {
     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     // }
     createdText =
-        "Created: ${DateFormat("HH:mm").format(project.timeCreated.toLocal())}";
-    createdText2 =
-        timeago.format(locale: _languageStore.locale, project.timeCreated);
+        "Created: ${DateFormat("HH:mm").format(widget.project.timeCreated.toLocal())}";
+    createdText2 = timeago.format(
+        locale: _languageStore.locale, widget.project.timeCreated);
 
-    if (project.updatedAt != null &&
-        project.updatedAt! != project.timeCreated) {
+    if (widget.project.updatedAt != null &&
+        widget.project.updatedAt! != widget.project.timeCreated) {
       updatedText =
-          "Edit at ${DateFormat("HH:mm").format(project.updatedAt!.toLocal())}";
+          "Edit at ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())}";
     }
   }
 
@@ -196,12 +228,9 @@ class DetailTabLayout extends StatelessWidget {
             Flexible(
                 flex: 1,
                 fit: FlexFit.loose,
-                child: Container(
-                  constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.75),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.70,
+                  child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Container(
                       // margin: const EdgeInsetsDirectional.only(
                       //     top: Dimens.vertical_padding + 10),
@@ -216,7 +245,7 @@ class DetailTabLayout extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                         child: SingleChildScrollView(
                             controller: ScrollController(),
-                            child: Text(project.description)),
+                            child: Text(widget.project.description)),
                       ),
                     ),
                     Padding(
@@ -239,7 +268,7 @@ class DetailTabLayout extends StatelessWidget {
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(
-                                project.scope.title,
+                                widget.project.scope.title,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               )
                             ],
@@ -264,7 +293,7 @@ class DetailTabLayout extends StatelessWidget {
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             Text(
-                              '${project.numberOfStudents} students',
+                              '${widget.project.numberOfStudents} students',
                               style: Theme.of(context).textTheme.bodyLarge,
                             )
                           ],
@@ -295,7 +324,9 @@ class DetailTabLayout extends StatelessWidget {
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(
-                                updatedText.isEmpty ? "Updated: Same time" : updatedText,
+                                updatedText.isEmpty
+                                    ? "Updated: Same time"
+                                    : updatedText,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               )
                             ],
@@ -308,67 +339,77 @@ class DetailTabLayout extends StatelessWidget {
             if (userStore.user != null &&
                 userStore.user!.companyProfile != null &&
                 userStore.user!.type == UserType.company &&
-                project.companyId == userStore.user!.companyProfile!.objectId!)
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Flexible(
-                  //   fit: FlexFit.tight,
-                  //   child: TextButton(
-                  //     onPressed: () {
-                  //       widget.onSheetDismissed();
-                  //     },
-                  //     child: const Text(Lang.get('Cancel'),
-                  //   ),
-                  // ),
-                  // const SizedBox(width: 16),
-                  // ElevatedButton(
-                  //   style: ElevatedButton.styleFrom(
-                  //     backgroundColor:
-                  //         Theme.of(context).colorScheme.primaryContainer,
-                  //     surfaceTintColor: Colors.transparent,
+                widget.project.companyId ==
+                    userStore.user!.companyProfile!.objectId!)
+              Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    // Flexible(
+                    //   fit: FlexFit.tight,
+                    //   child: TextButton(
+                    //     onPressed: () {
+                    //       widget.onSheetDismissed();
+                    //     },
+                    //     child: const Text(Lang.get('Cancel'),
+                    //   ),
+                    // ),
+                    // const SizedBox(width: 16),
+                    // ElevatedButton(
+                    //   style: ElevatedButton.styleFrom(
+                    //     backgroundColor:
+                    //         Theme.of(context).colorScheme.primaryContainer,
+                    //     surfaceTintColor: Colors.transparent,
 
-                  //     minimumSize: Size(
-                  //         MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
-                  //     shape: RoundedRectangleBorder(
-                  //       borderRadius: BorderRadius.circular(3),
-                  //     ),
-                  //   ),
-                  //   onPressed: () {},
-                  //   child: Text(Lang.get('Saved',
-                  //     style: Theme.of(context).textTheme.bodyMedium!.merge(
-                  //         TextStyle(
-                  //             color: Theme.of(context).colorScheme.secondary)),
-                  //   ),
-                  // ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      surfaceTintColor: Colors.transparent,
-                      minimumSize: Size(
-                          MediaQuery.of(context).size.width / 2 - 48,
-                          40), // NEW
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3),
+                    //     minimumSize: Size(
+                    //         MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
+                    //     shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(3),
+                    //     ),
+                    //   ),
+                    //   onPressed: () {},
+                    //   child: Text(Lang.get('Saved',
+                    //     style: Theme.of(context).textTheme.bodyMedium!.merge(
+                    //         TextStyle(
+                    //             color: Theme.of(context).colorScheme.secondary)),
+                    //   ),
+                    // ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        surfaceTintColor: Colors.transparent,
+                        minimumSize: Size(
+                            MediaQuery.of(context).size.width / 2 - 48,
+                            40), // NEW
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                                context,
+                                MaterialPageRoute2(
+                                    routeName: Routes.updateProject,
+                                    arguments: widget.project))
+                            .then((value) {
+                          if (mounted) {
+                            setState(() {});
+                          }
+                        });
+                      },
+                      child: Text(
+                        Lang.get('project_edit'),
+                        style: Theme.of(context).textTheme.bodyMedium!.merge(
+                            TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.secondary)),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute2(
-                              routeName: Routes.updateProject,
-                              arguments: project));
-                    },
-                    child: Text(
-                      Lang.get('project_edit'),
-                      style: Theme.of(context).textTheme.bodyMedium!.merge(
-                          TextStyle(
-                              color: Theme.of(context).colorScheme.secondary)),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
           ],
         ),

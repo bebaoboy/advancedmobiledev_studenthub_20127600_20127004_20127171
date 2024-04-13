@@ -330,6 +330,11 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
                 return Stack(
                   clipBehavior: Clip.hardEdge,
                   children: <Widget>[
+                    Transform.translate(
+                      offset:
+                          Offset(0.0, widget.offsetToArmed * controller.value),
+                      child: child,
+                    ),
                     if (!controller.side.isNone)
                       Container(
                         height: widget.offsetToArmed * controller.value * 3,
@@ -400,10 +405,6 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
                           },
                         ),
                       ),
-                    Transform.translate(
-                      offset: Offset(0.0, widget.offsetToArmed * controller.value),
-                      child: child,
-                    ),
                   ],
                 );
               },

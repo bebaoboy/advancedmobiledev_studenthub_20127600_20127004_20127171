@@ -7,7 +7,9 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -40,6 +42,7 @@ class _OpenContainerWrapper extends StatelessWidget {
       closedColor: theme.cardColor,
       closedBuilder: (context, openContainer) {
         return InkWell(
+          splashColor: project.isArchived ? Colors.transparent : null,
           onTap: () {
             // Provider.of<EmailStore>(
             //   context,
@@ -122,8 +125,9 @@ class _MyProjectItemState extends State<MyProjectItem> {
     // } else {
     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     // }
-    createdText = timeago.format(
-        locale: _languageStore.locale, widget.project.timeCreated).inCaps;
+    createdText = timeago
+        .format(locale: _languageStore.locale, widget.project.timeCreated)
+        .inCaps;
 
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
@@ -139,10 +143,10 @@ class _MyProjectItemState extends State<MyProjectItem> {
       project: widget.project,
       closedChild: widget.dismissable
           ? Dismissible(
-              key: const ObjectKey(""),
+              key: UniqueKey(),
               dismissThresholds: const {
                 DismissDirection.startToEnd: 0.8,
-                DismissDirection.endToStart: 0.4,
+                DismissDirection.endToStart: 0.8,
               },
               direction: widget.project.isWorking
                   ? DismissDirection.endToStart
@@ -247,20 +251,23 @@ class _MyProjectItemState extends State<MyProjectItem> {
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
                         widget.project.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyMedium!
-                            .copyWith(color: Colors.green.shade400),
+                        style: TextStyle(
+                            color: Colors.green.shade400,
+                            fontWeight: widget.project.isWorking
+                                ? FontWeight.bold
+                                : null),
                       ),
                       Text(createdText + updatedText,
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall!
                               .copyWith(fontWeight: FontWeight.w200)),
-                      SizedBox(
+                      AnimatedContainer(
+                        duration: const Duration(milliseconds: 500),
+                        height: widget.project.isWorking ? null : 20,
                         width: width * 8,
                         child: AutoSizeText(widget.project.description,
-                            maxLines: 5,
+                            maxLines: widget.project.isWorking ? 5 : 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyLarge),
                       ),

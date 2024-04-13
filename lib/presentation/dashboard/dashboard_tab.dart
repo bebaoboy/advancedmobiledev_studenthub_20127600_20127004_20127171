@@ -39,7 +39,8 @@ class DashBoardTab extends StatefulWidget {
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
-class _DashBoardTabState extends State<DashBoardTab> {
+class _DashBoardTabState extends State<DashBoardTab>
+    with SingleTickerProviderStateMixin {
   // late TabController tabController;
   final ProjectStore _projectStore = getIt<ProjectStore>();
 
@@ -60,6 +61,32 @@ class _DashBoardTabState extends State<DashBoardTab> {
     // });
     future = projectStore
         .getProjectByCompany(_userStore.user!.companyProfile!.objectId!);
+
+    scrollController.add(ScrollController());
+    scrollController.add(ScrollController());
+    scrollController.add(ScrollController());
+    for (var element in scrollController) {
+      element.addListener(() {
+        if (element.position.userScrollDirection == ScrollDirection.reverse) {
+          NavbarNotifier2.hideBottomNavBar = true;
+        } else {
+          NavbarNotifier2.hideBottomNavBar = false;
+        }
+      });
+    }
+    tabController = TabController(vsync: this, initialIndex: 0, length: 3);
+    updateProjectStore.updateResult.addListener(
+      () {
+        print("change tabs");
+        setState(() {
+          scrollController[tabController.index].animateTo(
+            scrollController[tabController.index].position.minScrollExtent,
+            duration: const Duration(seconds: 1000),
+            curve: Curves.easeIn,
+          );
+        });
+      },
+    );
   }
 
   @override
@@ -71,8 +98,12 @@ class _DashBoardTabState extends State<DashBoardTab> {
   }
 
   var projectStore = getIt<ProjectStore>();
+
   final UserStore _userStore = getIt<UserStore>();
   late Future<ProjectList> future;
+  var updateProjectStore = getIt<UpdateProjectFormStore>();
+  late final TabController tabController;
+  List<ScrollController> scrollController = [];
 
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
@@ -145,6 +176,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
                       child: ProjectTabs(
                         // tabController: tabController,
                         pageController: widget.pageController,
+                        tabController: tabController,
+                        scrollController: scrollController,
                       ),
                     ),
             ],
@@ -171,9 +204,15 @@ class _DashBoardTabState extends State<DashBoardTab> {
 
 // ignore: must_be_immutable
 class ProjectTabs extends StatefulWidget {
-  ProjectTabs({super.key, this.tabController, required this.pageController});
-  TabController? tabController;
+  ProjectTabs({
+    super.key,
+    required this.tabController,
+    required this.pageController,
+    required this.scrollController,
+  });
+  TabController tabController;
   PageController pageController;
+  List<ScrollController> scrollController;
 
   @override
   State<ProjectTabs> createState() => _ProjectTabsState();
@@ -182,23 +221,10 @@ class ProjectTabs extends StatefulWidget {
 class _ProjectTabsState extends State<ProjectTabs> {
   var projectStore = getIt<ProjectStore>();
   var updateProjectStore = getIt<UpdateProjectFormStore>();
-  List<ScrollController> scrollController = [];
 
   @override
   void initState() {
     super.initState();
-    scrollController.add(ScrollController());
-    scrollController.add(ScrollController());
-    scrollController.add(ScrollController());
-    for (var element in scrollController) {
-      element.addListener(() {
-        if (element.position.userScrollDirection == ScrollDirection.reverse) {
-          NavbarNotifier2.hideBottomNavBar = true;
-        } else {
-          NavbarNotifier2.hideBottomNavBar = false;
-        }
-      });
-    }
   }
 
   @override
@@ -245,7 +271,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   return AllProjects(
                     projects: [...projectStore.companyProjects, ...myProjects],
                     // projectFuture: ,
-                    scrollController: scrollController[0],
+                    scrollController: widget.scrollController[0],
                     showBottomSheet: showBottomSheet,
                     onDismissed: (project, endToStart) => false,
                   );
@@ -257,7 +283,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         (element) => element.isWorking,
                       )
                     ],
-                    scrollController: scrollController[1],
+                    scrollController: widget.scrollController[1],
                     showBottomSheet: showBottomSheet,
                     onDismissed: onDismissed,
                   );
@@ -269,7 +295,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         (element) => element.isArchived,
                       )
                     ],
-                    scrollController: scrollController[2],
+                    scrollController: widget.scrollController[2],
                     showBottomSheet: showBottomSheet,
                     onDismissed: onDismissed,
                   );
@@ -639,7 +665,14 @@ class AllProjects extends StatefulWidget {
 
 class _AllProjectsState extends State<AllProjects> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    print("build tabs");
+
     return ImplicitlyAnimatedList<Project>(
       controller: widget.scrollController,
       items: widget.projects ?? [],
@@ -661,8 +694,10 @@ class _AllProjectsState extends State<AllProjects> {
             ));
       },
       removeItemBuilder: (context, animation, oldItem) {
-        return SizeTransition(
-            sizeFactor: animation,
+        return SizeFadeTransition(
+            sizeFraction: 0.7,
+            curve: Curves.easeInOut,
+            animation: animation,
             child: MyProjectItem(
               dismissable: false,
               project: oldItem,

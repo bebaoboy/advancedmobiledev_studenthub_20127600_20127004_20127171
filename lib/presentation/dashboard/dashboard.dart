@@ -269,7 +269,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                 element.animateTo(
                   element.position.minScrollExtent,
                   duration: const Duration(milliseconds: 500),
-                  curve: Curves.fastOutSlowIn,
+                  curve: Curves.easeIn,
                 );
                 // element.jumpTo(element.position.minScrollExtent);
               } catch (e) {
