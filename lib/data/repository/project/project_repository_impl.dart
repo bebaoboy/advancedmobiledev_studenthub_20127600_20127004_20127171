@@ -18,7 +18,8 @@ class ProjectRepositoryImpl extends ProjectRepository {
 
   @override
   Future<ProjectList> fetchPagingProjects(GetProjectParams params) async {
-    return await _projectApi.getProjects(params).then((value) {
+    try {
+      final value = await _projectApi.getProjects(params);
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
@@ -32,21 +33,21 @@ class ProjectRepositoryImpl extends ProjectRepository {
         return _datasource.getProjectsFromDb() as ProjectList;
       }
       // ignore: invalid_return_type_for_catch_error
-    }).onError((s, error) {
-      Log.e("ProjectRepo", error.toString());
-      // return Future.value(ProjectList(projects: List.empty(growable: true)));
-      return _datasource.getProjectsFromDb() as ProjectList;
-    });
+    } catch (e) {
+      Log.e("ProjectRepo", e.toString());
+      return await _datasource.getProjectsFromDb();
+    }
   }
 
-    @override
+  @override
   Future<Response> getProjectByCompany(GetProjectByCompanyParams params) async {
     var response = await _projectApi.getProjectByCompany(params);
     return response;
   }
 
   @override
-  Future<Response> getStudentProposalProjects(GetStudentProposalProjectsParams params) async {
+  Future<Response> getStudentProposalProjects(
+      GetStudentProposalProjectsParams params) async {
     var response = await _projectApi.getStudentProposalProjects(params);
     return response;
   }

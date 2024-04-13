@@ -27,7 +27,7 @@ class ProjectDataSource{
     //creating finder
     final finder = Finder(
         filter: filters != null ? Filter.and(filters) : null,
-        sortOrders: [SortOrder(DBConstants.FIELD_ID)]);
+        sortOrders: [SortOrder(DBConstants.PROJECT_FIELD_ID)]);
 
     final recordSnapshots = await _projectStore.find(
       _sembastClient.database,

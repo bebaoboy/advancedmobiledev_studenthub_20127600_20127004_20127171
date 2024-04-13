@@ -3,7 +3,7 @@ class DBConstants {
 
   // Store Name
   static const String STORE_NAME = 'demo';
-  static const String PROJECT_STORE_NAME = 'project_store';
+  static const String PROJECT_STORE_NAME = 'project';
 
   // DB Name
   static const DB_NAME = 'advance_mobile.db';
@@ -16,6 +16,6 @@ class DBConstants {
   static const FOREIGN_KEY = 'userId';
 
   // table project
-  static const PROJECT_FIELD_ID = 'id';
+  static const PROJECT_FIELD_ID = 'project_id';
   
 }
