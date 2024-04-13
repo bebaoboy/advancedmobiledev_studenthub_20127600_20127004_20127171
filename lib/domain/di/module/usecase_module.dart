@@ -186,7 +186,7 @@ mixin UseCaseModule {
       GetProjectsUseCase(getIt<ProjectRepository>()),
     );
 
-    getIt.registerSingleton<createProjectUseCase>(
+     getIt.registerSingleton<createProjectUseCase>(
       createProjectUseCase(getIt<ProjectRepository>()),
     );
 
@@ -196,6 +196,8 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<updateFavoriteProjectUseCase>(
       updateFavoriteProjectUseCase(getIt<ProjectRepository>()),
+    );
+
     getIt.registerSingleton<GetProjectByCompanyUseCase>(
       GetProjectByCompanyUseCase(getIt<ProjectRepository>()),
     );
