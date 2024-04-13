@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -17,7 +18,6 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:responsive_sizer/responsive_sizer.dart';
 import 'package:toastification/toastification.dart';
 
 import '../di/service_locator.dart';
@@ -56,9 +56,7 @@ class _MyAppState extends State<MyApp> {
       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
         return ErrorPage(errorDetails: errorDetails);
       };
-      return ResponsiveSizer(
-          builder: (context, orientation, screenType) =>
-              ToastificationConfigProvider(
+      return ToastificationConfigProvider(
                   config: ToastificationConfig(
                     marginBuilder: (e) =>
                         const EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -71,8 +69,10 @@ class _MyAppState extends State<MyApp> {
                           ? const BoxConstraints(minHeight: 600, minWidth: 500)
                           : null,
                       color: Theme.of(context).colorScheme.primary,
-                      child: SafeArea(child: child ?? const SizedBox()))));
+                      child: SafeArea(child: child ?? const SizedBox())));
     };
+
+    if (!kIsWeb) requestNotificationsPermission();
 
     // initPlatformState();
     super.initState();

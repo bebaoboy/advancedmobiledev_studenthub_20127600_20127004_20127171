@@ -1,17 +1,17 @@
 import 'package:boilerplate/constants/dimens.dart';
-import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class ProposalItem extends StatefulWidget {
-  final StudentProfile proposal;
-  final bool pending;
+  final Proposal proposal;
+  // final bool pending;
   final Function? onHired;
   const ProposalItem(
       {super.key,
       required this.proposal,
-      required this.pending,
+      // required this.pending,
       required this.onHired});
 
   @override
@@ -19,18 +19,18 @@ class ProposalItem extends StatefulWidget {
 }
 
 class _ProposalItemState extends State<ProposalItem> {
-  late bool isPending;
+  // late bool widget.proposal.isHired;
 
   @override
   void initState() {
     super.initState();
-    isPending = widget.pending;
+    // widget.proposal.isHired = widget.pending;
   }
 
   @override
   Widget build(BuildContext context) {
     var buttonHireText = 'Hire';
-    if (isPending) {
+    if (widget.proposal.isHired) {
       buttonHireText = 'Sent hired offer';
     }
 
@@ -59,9 +59,9 @@ class _ProposalItemState extends State<ProposalItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.proposal.fullName,
+                      Text(widget.proposal.student.fullName,
                           style: Theme.of(context).textTheme.bodyLarge),
-                      Text(widget.proposal.education,
+                      Text(widget.proposal.student.education,
                           style: Theme.of(context).textTheme.bodyLarge)
                     ],
                   )
@@ -71,7 +71,7 @@ class _ProposalItemState extends State<ProposalItem> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.proposal.title,
+                Text(widget.proposal.student.title,
                     style: Theme.of(context).textTheme.bodyLarge),
                 // ToDo: need a field for expertise
                 Text(Lang.get('excellent'),
@@ -82,7 +82,7 @@ class _ProposalItemState extends State<ProposalItem> {
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Text(widget.proposal.introduction,
+                child: Text(widget.proposal.student.introduction,
                     style: Theme.of(context).textTheme.bodyLarge),
               ),
             ),
@@ -100,41 +100,44 @@ class _ProposalItemState extends State<ProposalItem> {
                     child: Text(Lang.get('message')),
                   ),
                   MaterialButton(
-                    color: Theme.of(context).primaryColor,
+                    enableFeedback: !widget.proposal.isHired,
+                    color: !widget.proposal.isHired
+                        ? Theme.of(context).primaryColor
+                        : Colors.grey.shade600,
                     textColor: Colors.white,
                     onPressed: () {
-                      if (isPending) {
-                        return;
+                      if (!widget.proposal.isHired) {
+                        //print('send a hire notification');
+                        showAnimatedDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context) {
+                            return ClassicGeneralDialogWidget(
+                              titleText: 'Hired offer',
+                              contentText:
+                                  'Do you really want to send hired offer for student to do this project',
+                              negativeText: Lang.get('cancel'),
+                              positiveText: 'Send',
+                              onPositiveClick: () {
+                                setState(() {
+                                  if (!widget.proposal.isHired) {
+                                    widget.proposal.hiredStatus =
+                                        HireStatus.hired;
+                                    widget.onHired!();
+                                  }
+                                });
+                                Navigator.of(context).pop();
+                              },
+                              onNegativeClick: () {
+                                Navigator.of(context).pop();
+                              },
+                            );
+                          },
+                          animationType: DialogTransitionType.size,
+                          curve: Curves.fastOutSlowIn,
+                          duration: const Duration(seconds: 1),
+                        );
                       }
-                      //print('send a hire notification');
-                      showAnimatedDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return ClassicGeneralDialogWidget(
-                            titleText: 'Hired offer',
-                            contentText:
-                                'Do you really want to send hired offer for student to do this project',
-                            negativeText: Lang.get('cancel'),
-                            positiveText: 'Send',
-                            onPositiveClick: () {
-                              setState(() {
-                                if (!isPending) {
-                                  isPending = !isPending;
-                                  // widget.onHired!();
-                                }
-                              });
-                              Navigator.of(context).pop();
-                            },
-                            onNegativeClick: () {
-                              Navigator.of(context).pop();
-                            },
-                          );
-                        },
-                        animationType: DialogTransitionType.size,
-                        curve: Curves.fastOutSlowIn,
-                        duration: const Duration(seconds: 1),
-                      );
                     },
                     child: Text(buttonHireText),
                   ),

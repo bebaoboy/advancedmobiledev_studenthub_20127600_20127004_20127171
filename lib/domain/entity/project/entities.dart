@@ -7,10 +7,10 @@ import 'package:uuid/uuid.dart';
 
 class MyObject {
   String? objectId = const Uuid().v4();
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
-  DateTime deletedAt = DateTime.now();
-  MyObject({this.objectId}) {
+  DateTime? createdAt = DateTime.now();
+  DateTime? updatedAt = DateTime.now();
+  DateTime? deletedAt = DateTime.now();
+  MyObject({this.objectId, this.createdAt, this.updatedAt, this.deletedAt}) {
     objectId ??= const Uuid().v4();
     if (objectId!.isEmpty) objectId = const Uuid().v4();
   }

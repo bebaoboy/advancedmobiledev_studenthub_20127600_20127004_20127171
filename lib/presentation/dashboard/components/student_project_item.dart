@@ -3,7 +3,6 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -63,7 +62,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
       // }
       submittedText = timeago
           .format(locale: _languageStore.locale, widget.project.timeCreated)
-          .toTitleCase();
+          .inCaps;
 
       return Padding(
         padding: const EdgeInsets.all(8.0),
@@ -79,7 +78,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
               //print('navigate to student project detail');
               Navigator.of(NavigationService.navigatorKey.currentContext!)
                   .pushNamed(Routes.projectDetailsStudent,
-                      arguments: widget.project);
+                      arguments: {"project": widget.project});
             },
             child: Padding(
               padding: const EdgeInsets.all(8.0),

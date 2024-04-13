@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 import 'dart:math';
 
@@ -16,7 +18,6 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
@@ -195,6 +196,31 @@ class _SplashScreenState extends State<SplashScreen>
     }
   }
 
+  _loginCube(context, user) async {
+    await CubeChatConnection.instance.login(user).then((cubeUser) async {
+      SharedPrefs.saveNewUser(cubeUser);
+      log(cubeUser.toString(), "BEBAOBOY");
+      if (CubeChatConnection.instance.isAuthenticated() &&
+          CubeChatConnection.instance.currentUser != null) {
+        // log(
+        //     (CubeSessionManager.instance.activeSession!.user == null)
+        //         .toString(),
+        //     "BEBAOBOY");
+      }
+      initForegroundService();
+      CallManager.instance.init(context);
+
+      await PushNotificationsManager.instance.init();
+
+      WorkMangerHelper.registerProfileFetch();
+    }).catchError((exception) {
+      //_processLoginError(exception);
+
+      log(exception.toString(), "BEBAOBOY");
+      return;
+    });
+  }
+
   initCube(context) async {
     final UserStore userStore = getIt<UserStore>();
     CubeUser user;
@@ -206,22 +232,7 @@ class _SplashScreenState extends State<SplashScreen>
           null) {
         userStore.savedUsers.add(userStore.user!);
       }
-      // try {
-      //   // CallManager.instance.destroy();
-      //   // CubeChatConnection.instance.destroy();
-      //   // // await PushNotificationsManager.instance.unsubscribe();
-      //   // await SharedPrefs.deleteUserData();
-      //   // // await signOut();
-      // } catch (e) {}
-      //CubeSessionManager.instance.isActiveSessionValid();
-
-      // user = userStore.user!.email == "user1@gmail.com"
-      //     ? utils.users[0]
-      //     : userStore.user!.email == "user2@gmail.com"
-      //         ? utils.users[1]
-      //         : utils.users[2];
       Future.delayed(const Duration(seconds: 0), () async {
-        Future.delayed(const Duration(seconds: 1));
         user = CubeUser(
           login: userStore.user!.email,
           email: userStore.user!.email,
@@ -231,7 +242,14 @@ class _SplashScreenState extends State<SplashScreen>
         loadingText.text =
             "Loading Cube sesson (User ${userStore.user!.email})";
 
-        try {
+        if (CubeSessionManager.instance.isActiveSessionValid() &&
+            CubeSessionManager.instance.activeSession!.user != null) {
+          if (CubeChatConnection.instance.isAuthenticated()) {
+          } else {
+            _loginCube(context, user);
+          }
+        } else {
+          // create session
           var value;
           try {
             value = await createSession(user);
@@ -247,59 +265,8 @@ class _SplashScreenState extends State<SplashScreen>
           user.password ??= DEFAULT_PASS;
           print(user);
           utils.users.add(user);
-
-          CubeSessionManager.instance.activeSession = value;
-
-          await CubeChatConnection.instance.login(user).then((cubeUser) async {
-            SharedPrefs.saveNewUser(cubeUser);
-            log(cubeUser.toString(), "BEBAOBOY");
-            if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null) {
-              // log(
-              //     (CubeSessionManager.instance.activeSession!.user == null)
-              //         .toString(),
-              //     "BEBAOBOY");
-            }
-
-            checkSystemAlertWindowPermission(context);
-
-            if (!kIsWeb) requestNotificationsPermission();
-
-            CallManager.instance.init(context);
-
-            await PushNotificationsManager.instance.init();
-
-            initForegroundService().then((value) {
-              WorkMangerHelper.registerProfileFetch();
-            });
-          }).catchError((exception) {
-            //_processLoginError(exception);
-
-            log(exception.toString(), "BEBAOBOY");
-            return;
-          });
-          // _controller.stop();
-        } catch (exception) {
-          //_processLoginError(exception);
-
-          log(exception.toString(), "BEBAOBOY");
-
-          // deleteSessionsExceptCurrent()
-          //     .then((voidResult) {})
-          //     .catchError((error) {});
-          return;
+          _loginCube(context, user);
         }
-        // Future.delayed(const Duration(seconds: 2), () {
-        //   try {
-        //     _controller.stop();
-        //     // ignore: empty_catches
-        //   } catch (e) {}
-        //   Navigator.pushReplacement(
-        //       context,
-        //       MaterialPageRoute2(
-        //           routeName:
-        //               userStore.isLoggedIn ? Routes.home : Routes.login));
-        // });
       });
       Future.delayed(const Duration(seconds: 3), () {
         try {
@@ -408,7 +375,7 @@ class _SplashScreenState extends State<SplashScreen>
                               controller: loadingText,
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: 10,
                                 fontWeight: FontWeight.w600,
                                 color: Theme.of(context).colorScheme.primary,
                               ),

@@ -6,17 +6,28 @@ import 'package:animated_segmented_tab_control/animated_segmented_tab_control.da
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
+import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:toastification/toastification.dart';
 
 // ignore: must_be_immutable
 class DashBoardTab extends StatefulWidget {
@@ -29,7 +40,8 @@ class DashBoardTab extends StatefulWidget {
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
-class _DashBoardTabState extends State<DashBoardTab> {
+class _DashBoardTabState extends State<DashBoardTab>
+    with SingleTickerProviderStateMixin {
   // late TabController tabController;
   final ProjectStore _projectStore = getIt<ProjectStore>();
 
@@ -48,86 +60,144 @@ class _DashBoardTabState extends State<DashBoardTab> {
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   }
     // });
+    future = projectStore
+        .getProjectByCompany(_userStore.user!.companyProfile!.objectId!);
+
+    scrollController.add(ScrollController());
+    scrollController.add(ScrollController());
+    scrollController.add(ScrollController());
+    for (var element in scrollController) {
+      element.addListener(() {
+        if (element.position.userScrollDirection == ScrollDirection.reverse) {
+          NavbarNotifier2.hideBottomNavBar = true;
+        } else {
+          NavbarNotifier2.hideBottomNavBar = false;
+        }
+      });
+    }
+    tabController = TabController(vsync: this, initialIndex: 0, length: 3);
+    updateProjectStore.updateResult.addListener(
+      () {
+        print("change tabs");
+        setState(() {
+          scrollController[tabController.index].animateTo(
+            scrollController[tabController.index].position.minScrollExtent,
+            duration: const Duration(seconds: 1000),
+            curve: Curves.easeIn,
+          );
+        });
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 60),
+      padding: const EdgeInsets.only(bottom: 20.0),
       child: _buildDashBoardContent(),
     );
   }
 
   var projectStore = getIt<ProjectStore>();
 
+  final UserStore _userStore = getIt<UserStore>();
+  late Future<ProjectList> future;
+  var updateProjectStore = getIt<UpdateProjectFormStore>();
+  late final TabController tabController;
+  List<ScrollController> scrollController = [];
+
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          child: Row(
-            children: [
-              Align(
-                alignment: Alignment.topLeft,
-                child: Text(Lang.get('dashboard_your_job')),
-              ),
-              const Spacer(),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: SizedBox(
-                  width: 150,
-                  height: 30,
-                  child: RoundedButtonWidget(
-                    onPressed: () async {
-                      // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
-                      await Navigator.of(
-                              NavigationService.navigatorKey.currentContext!)
-                          .push(
-                              MaterialPageRoute2(routeName: Routes.projectPost))
-                          .then((value) {
-                        setState(() {
-                          if (value != null) {
-                            allProjects.insert(0, value as Project);
-                            // projectStore.projects.insert(0, value);
-                            // _projectStore.addProject(value);
-                          }
-                        });
-                      });
-                    },
-                    buttonText: Lang.get('Dashboard_post_job'),
-                    buttonColor: Theme.of(context).colorScheme.primary,
-                    textColor: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
 
-        // Conditional rendering based on whether projectStore.projects is empty or not
-        projectStore.projects.isEmpty
-            ? Column(
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(Lang.get('Dashboard_intro')),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(Lang.get('Dashboard_content')),
-                  ),
-                ],
-              )
-            // ignore: prefer_const_constructors
-            : Expanded(
-                // ignore: prefer_const_constructors
-                child: ProjectTabs(
-                  // tabController: tabController,
-                  pageController: widget.pageController,
+    return FutureBuilder<ProjectList>(
+      future: future,
+      builder: (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
+        Widget children;
+        if (snapshot.hasData) {
+          children = Column(
+            children: <Widget>[
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Row(
+                  children: [
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(Lang.get('dashboard_your_job')),
+                    ),
+                    const Spacer(),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: SizedBox(
+                        width: 150,
+                        height: 30,
+                        child: RoundedButtonWidget(
+                          onPressed: () async {
+                            // NavbarNotifier2.pushNamed(Routes.project_post, NavbarNotifier2.currentIndex, null);
+                            await Navigator.of(NavigationService
+                                    .navigatorKey.currentContext!)
+                                .push(MaterialPageRoute2(
+                                    routeName: Routes.projectPost))
+                                .then((value) {
+                              setState(() {
+                                if (value != null) {
+                                  allProjects.insert(0, value as Project);
+                                  //projectStore.companyProjects.insert(0, value);
+                                  //_projectStore.addProject(value);
+                                }
+                              });
+                            });
+                          },
+                          buttonText: Lang.get('Dashboard_post_job'),
+                          buttonColor: Theme.of(context).colorScheme.primary,
+                          textColor: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-      ],
+
+              // Conditional rendering based on whether (widget.projects ?? []) is empty or not
+              projectStore.companyProjects.isEmpty
+                  ? Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(Lang.get('Dashboard_intro')),
+                        ),
+                        Align(
+                          alignment: Alignment.center,
+                          child: Text(Lang.get('Dashboard_content')),
+                        ),
+                      ],
+                    )
+                  // ignore: prefer_const_constructors
+                  : Expanded(
+                      // ignore: prefer_const_constructors
+                      child: ProjectTabs(
+                        // tabController: tabController,
+                        pageController: widget.pageController,
+                        tabController: tabController,
+                        scrollController: scrollController,
+                      ),
+                    ),
+            ],
+          );
+        } else if (snapshot.hasError) {
+          children = Center(
+            child: Text(Lang.get("error")),
+          );
+        } else {
+          print("loading");
+          children = const Center(
+            child: LoadingScreenWidget(
+              size: 80,
+            ),
+          );
+        }
+        return children;
+      },
     );
   }
 
@@ -136,9 +206,15 @@ class _DashBoardTabState extends State<DashBoardTab> {
 
 // ignore: must_be_immutable
 class ProjectTabs extends StatefulWidget {
-  ProjectTabs({super.key, this.tabController, required this.pageController});
-  TabController? tabController;
+  ProjectTabs({
+    super.key,
+    required this.tabController,
+    required this.pageController,
+    required this.scrollController,
+  });
+  TabController tabController;
   PageController pageController;
+  List<ScrollController> scrollController;
 
   @override
   State<ProjectTabs> createState() => _ProjectTabsState();
@@ -146,6 +222,12 @@ class ProjectTabs extends StatefulWidget {
 
 class _ProjectTabsState extends State<ProjectTabs> {
   var projectStore = getIt<ProjectStore>();
+  var updateProjectStore = getIt<UpdateProjectFormStore>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -187,139 +269,397 @@ class _ProjectTabsState extends State<ProjectTabs> {
               controller: widget.tabController,
               physics: const BouncingScrollPhysics(),
               children: [
-                AllProjects(
-                  projects: projectStore.projects,
-                ),
-                WorkingProjects(
-                  projects: projectStore.projects,
-                ),
-                AllProjects(
-                  projects: projectStore.projects,
-                )
+                Observer(builder: (context) {
+                  return AllProjects(
+                    projects: [...projectStore.companyProjects, ...myProjects],
+                    // projectFuture: ,
+                    scrollController: widget.scrollController[0],
+                    showBottomSheet: showBottomSheet,
+                    onDismissed: (project, endToStart) => false,
+                  );
+                }),
+                Observer(builder: (context) {
+                  return WorkingProjects(
+                    projects: [
+                      ...projectStore.companyProjects.where(
+                        (element) => element.isWorking,
+                      )
+                    ],
+                    scrollController: widget.scrollController[1],
+                    showBottomSheet: showBottomSheet,
+                    onDismissed: onDismissed,
+                  );
+                }),
+                Observer(builder: (context) {
+                  return ArchivedProjects(
+                    projects: [
+                      ...projectStore.companyProjects.where(
+                        (element) => element.isArchived,
+                      )
+                    ],
+                    scrollController: widget.scrollController[2],
+                    showBottomSheet: showBottomSheet,
+                    onDismissed: onDismissed,
+                  );
+                })
               ]),
         )
       ]),
     );
   }
-}
 
-void showBottomSheet(Project project, Function workingCallback) {
-  final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
-
-  showAdaptiveActionSheet(
-    title: const Text(
-      "Menu",
-      style: TextStyle(
-        fontWeight: FontWeight.bold,
-      ),
-    ),
-    context: NavigationService.navigatorKey.currentContext!,
-    isDismissible: true,
-    barrierColor: Colors.black87,
-    actions: <BottomSheetAction>[
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(
-              Lang.get('project_item_view_proposal'),
-              style: const TextStyle(fontWeight: FontWeight.normal),
-            )),
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('project_item_view_message'),
-                style: const TextStyle(fontWeight: FontWeight.w100))),
-      ),
-      BottomSheetAction(
-        title: Container(
-          alignment: Alignment.topLeft,
-          child: Text(Lang.get('project_item_view_hired'),
-              style: const TextStyle(fontWeight: FontWeight.normal)),
+  void showBottomSheet(Project project) {
+    final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+    showAdaptiveActionSheet(
+      title: const Text(
+        "Menu",
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
         ),
       ),
-      BottomSheetAction(
-        title: null,
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('project_item_view_job_posting'),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get('project_item_edit_job_posting'),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
-      ),
-      BottomSheetAction(
-        title: Container(
-          alignment: Alignment.topLeft,
-          child: Text(Lang.get('project_item_remove_job_posting'),
-              style: const TextStyle(fontWeight: FontWeight.normal)),
+      context: NavigationService.navigatorKey.currentContext!,
+      isDismissible: true,
+      barrierColor: Colors.black87,
+      actions: <BottomSheetAction>[
+        BottomSheetAction(
+          title: null,
         ),
-        onPressed: (_) {
-          _projectFormStore.deleteProject(project.objectId ?? "");
-        },
-      ),
-      BottomSheetAction(
-        title: null,
-      ),
-      BottomSheetAction(
-        title: Container(
-            alignment: Alignment.topLeft,
-            child: Text(Lang.get("project_start_working"),
-                style: const TextStyle(fontWeight: FontWeight.normal))),
-        onPressed: (_) {
-          //print(project.title);
-          workingCallback();
-        },
-      ),
-    ],
-  );
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  Lang.get('project_item_view_proposal'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null),
+                )),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project}));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(Lang.get('project_item_view_message'),
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: project.enabled == Status.inactive
+                            ? Colors.grey.shade500
+                            : null))),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project, "index": 2}));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+              alignment: Alignment.topLeft,
+              child: Text(Lang.get('project_item_view_hired'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null)),
+            ),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project, "index": 3}));
+              });
+            }),
+        BottomSheetAction(
+          title: null,
+        ),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(Lang.get('project_item_view_job_posting'),
+                    style: TextStyle(
+                        fontWeight: FontWeight.normal,
+                        color: project.enabled == Status.inactive
+                            ? Colors.grey.shade500
+                            : null))),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.projectDetails,
+                        arguments: {"project": project, "index": 1}));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  Lang.get('project_item_edit_job_posting'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null),
+                )),
+            onPressed: (_) {
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.updateProject, arguments: project));
+              });
+            }),
+        BottomSheetAction(
+            title: Container(
+              alignment: Alignment.topLeft,
+              child: Text(Lang.get('project_item_remove_job_posting'),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null)),
+            ),
+            onPressed: (_) {
+              // TODO: delete
+              var p = (projectStore.companyProjects).firstWhereOrNull(
+                (element) => element.objectId == project.objectId,
+              );
+              _projectFormStore.deleteProject(project.objectId ?? "");
+              if (p != null) {
+                Toastify.show(
+                    context,
+                    "",
+                    "Delete succesfully!",
+                    aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                    ToastificationType.success,
+                    () {});
+                projectStore.deleteCompanyProject(p);
+              }
+              setState(() {
+                p?.enabled = Status.active;
+              });
+            }),
+        BottomSheetAction(
+          title: null,
+        ),
+        BottomSheetAction(
+          title: Container(
+              alignment: Alignment.topLeft,
+              child: Text(Lang.get("project_start_working"),
+                  style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      color: project.enabled == Status.inactive
+                          ? Colors.grey.shade500
+                          : null))),
+          onPressed: (_) {
+            //print(project.title);
+            var p = (projectStore.companyProjects).firstWhereOrNull(
+              (element) => element.objectId == project.objectId,
+            );
+            // TODO: update project status flag active
+            if (p != null) {
+              Toastify.show(
+                  context,
+                  "",
+                  p.isWorking
+                      ? Lang.get("archive_successfully")
+                      : Lang.get("unarchive_successfully"),
+                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                  ToastificationType.success,
+                  () {});
+              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
+                  p.title, p.description, p.numberOfStudents, p.scope,
+                  statusFlag: Status.inactive.index);
+            }
+            setState(() {
+              p?.enabled = Status.active;
+            });
+          },
+        ),
+        BottomSheetAction(
+            title: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    project.enabled == Status.active
+                        ? Lang.get("project_close")
+                        : Lang.get("project_open"),
+                    style: const TextStyle(fontWeight: FontWeight.normal))),
+            onPressed: (_) {
+              //print(project.title);
+              var p = (projectStore.companyProjects).firstWhereOrNull(
+                (element) => element.objectId == project.objectId,
+              );
+              // TODO: updateCompany status flag
+
+              if (p != null) {
+                Toastify.show(
+                    context,
+                    "",
+                    p.isWorking
+                        ? Lang.get("archive_successfully")
+                        : Lang.get("unarchive_successfully"),
+                    aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                    ToastificationType.success,
+                    () {});
+                updateProjectStore.updateProject(
+                    int.tryParse(p.objectId!) ?? -1,
+                    p.title,
+                    p.description,
+                    p.numberOfStudents,
+                    p.scope,
+                    statusFlag: p.enabled == Status.active
+                        ? Status.inactive.index
+                        : Status.active.index);
+              }
+              setState(() {
+                p?.enabled = p.enabled == Status.active
+                    ? Status.inactive
+                    : Status.active;
+              });
+            }),
+      ],
+    );
+  }
+
+  bool onDismissed(Project project, bool endToStart) {
+    switch (endToStart) {
+      case true:
+        {
+          var p = projectStore.companyProjects.firstWhereOrNull(
+            (element) => element.objectId == project.objectId,
+          );
+          if (project.isWorking) {
+            if (p != null) {
+              Toastify.show(
+                  context,
+                  "",
+                  p.isWorking
+                      ? Lang.get("archive_successfully")
+                      : Lang.get("unarchive_successfully"),
+                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                  ToastificationType.success,
+                  () {});
+              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
+                  p.title, p.description, p.numberOfStudents, p.scope,
+                  statusFlag: Status.inactive.index);
+            }
+            setState(() {
+              p?.enabled = Status.inactive;
+            });
+            // TODO: update project status flag INactive
+            return true;
+          }
+          return false;
+        }
+      case false:
+        {
+          var p = projectStore.companyProjects.firstWhereOrNull(
+            (element) => element.objectId == project.objectId,
+          );
+          if (project.isArchived) {
+            if (p != null) {
+              Toastify.show(
+                  context,
+                  "",
+                  p.isWorking
+                      ? Lang.get("archive_successfully")
+                      : Lang.get("unarchive_successfully"),
+                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                  ToastificationType.success,
+                  () {});
+              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
+                  p.title, p.description, p.numberOfStudents, p.scope,
+                  statusFlag: Status.active.index);
+            }
+            setState(() {
+              p?.enabled = Status.active;
+            });
+            // TODO: update project status flag active
+            return true;
+          }
+          return false;
+        }
+      default:
+        return false;
+    }
+  }
 }
 
 class WorkingProjects extends StatefulWidget {
   final List<Project>? projects;
-  const WorkingProjects({super.key, required this.projects});
-
+  const WorkingProjects(
+      {super.key,
+      required this.projects,
+      required this.scrollController,
+      required this.showBottomSheet,
+      required this.onDismissed});
+  final ScrollController scrollController;
+  final Function(Project) showBottomSheet;
+  final bool Function(Project project, bool endToStart) onDismissed;
   @override
   State<WorkingProjects> createState() => _WorkingProjectsState();
 }
 
 class _WorkingProjectsState extends State<WorkingProjects> {
-  late List<Project>? workingProjects;
+  @override
+  Widget build(BuildContext context) {
+    return widget.projects != null && widget.projects!.isNotEmpty
+        ? ListView.builder(
+            controller: widget.scrollController,
+            itemCount: widget.projects?.length ?? 0,
+            itemBuilder: (context, index) => MyProjectItem(
+              project: widget.projects![index],
+              onShowBottomSheet: widget.showBottomSheet,
+              onDismissed: widget.onDismissed,
+            ),
+          )
+        : Container(
+            alignment: Alignment.center,
+            child: const Text("You have no working projects"));
+  }
+}
+
+class ArchivedProjects extends StatefulWidget {
+  final List<Project>? projects;
+  const ArchivedProjects(
+      {super.key,
+      required this.projects,
+      required this.scrollController,
+      required this.showBottomSheet,
+      required this.onDismissed});
+  final ScrollController scrollController;
+  final Function(Project) showBottomSheet;
+  final bool Function(Project project, bool endToStart) onDismissed;
 
   @override
-  void initState() {
-    super.initState();
-    if (widget.projects != null) {
-      workingProjects =
-          widget.projects!.where((element) => element.isWorking).toList();
-    } else {
-      workingProjects = List.empty(growable: true);
-    }
-  }
+  State<ArchivedProjects> createState() => _ArchivedProjectsState();
+}
 
+class _ArchivedProjectsState extends State<ArchivedProjects> {
   var projectStore = getIt<ProjectStore>();
 
   @override
   Widget build(BuildContext context) {
-    return workingProjects != null && workingProjects!.isNotEmpty
+    return widget.projects != null && widget.projects!.isNotEmpty
         ? ListView.builder(
-            controller: ScrollController(),
-            itemCount: workingProjects?.length ?? 0,
+            controller: widget.scrollController,
+            itemCount: widget.projects?.length ?? 0,
             itemBuilder: (context, index) => MyProjectItem(
-              project: workingProjects![index],
-              onShowBottomSheet: (p) => showBottomSheet(p, () {
-                projectStore.projects
-                    .firstWhere(
-                      (element) => element.objectId == p.objectId,
-                      orElse: () => projectStore.projects[0],
-                    )
-                    .isWorking = true;
-              }),
+              project: widget.projects![index],
+              onShowBottomSheet: widget.showBottomSheet,
+              onDismissed: widget.onDismissed,
             ),
           )
         : Container(
@@ -330,22 +670,40 @@ class _WorkingProjectsState extends State<WorkingProjects> {
 
 class AllProjects extends StatefulWidget {
   final List<Project>? projects;
-  const AllProjects({super.key, required this.projects});
+  // final Future<ProjectList> projectFuture;
+  const AllProjects(
+      {super.key,
+      required this.projects,
+      // required this.projectFuture,
+      required this.scrollController,
+      required this.showBottomSheet,
+      required this.onDismissed});
+  final ScrollController scrollController;
+  final Function(Project) showBottomSheet;
+  final bool Function(Project project, bool endToStart) onDismissed;
 
   @override
   State<AllProjects> createState() => _AllProjectsState();
 }
 
 class _AllProjectsState extends State<AllProjects> {
-  var projectStore = getIt<ProjectStore>();
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    print("build tabs");
+
     return ImplicitlyAnimatedList<Project>(
-      items: projectStore.projects,
+      controller: widget.scrollController,
+      items: widget.projects ?? [],
       areItemsTheSame: (oldItem, newItem) {
         return oldItem.title == newItem.title &&
-            oldItem.objectId == newItem.objectId;
+            oldItem.objectId == newItem.objectId &&
+            oldItem.enabled == newItem.enabled &&
+            oldItem.updatedAt == newItem.updatedAt;
       },
       itemBuilder: (context, animation, item, i) {
         return SizeFadeTransition(
@@ -353,32 +711,21 @@ class _AllProjectsState extends State<AllProjects> {
             curve: Curves.easeInOut,
             animation: animation,
             child: MyProjectItem(
-              project: projectStore.projects[i],
-              onShowBottomSheet: (p) => showBottomSheet(p, () {
-                projectStore.projects
-                    .firstWhere(
-                      (element) => element.objectId == p.objectId,
-                      orElse: () => projectStore.projects[0],
-                    )
-                    .isWorking = true;
-              }),
+              dismissable: false,
+              project: item,
+              onShowBottomSheet: widget.showBottomSheet,
             ));
       },
       removeItemBuilder: (context, animation, oldItem) {
-        return SizeTransition(
-          sizeFactor: animation,
-          child: MyProjectItem(
-            project: oldItem,
-            onShowBottomSheet: (p) => showBottomSheet(p, () {
-              projectStore.projects
-                  .firstWhere(
-                    (element) => element.objectId == p.objectId,
-                    orElse: () => projectStore.projects[0],
-                  )
-                  .isWorking = true;
-            }),
-          ),
-        );
+        return SizeFadeTransition(
+            sizeFraction: 0.7,
+            curve: Curves.easeInOut,
+            animation: animation,
+            child: MyProjectItem(
+              dismissable: false,
+              project: oldItem,
+              onShowBottomSheet: widget.showBottomSheet,
+            ));
       },
     );
   }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 // ------------------- PROFILE ACCOUNT ------------------------------
@@ -26,6 +27,7 @@ class StudentProfile extends Profile {
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
+  List<Proposal>? proposalProjects;
 
   List<ProjectExperience>? projectExperience;
   String? transcript = "";
@@ -45,6 +47,7 @@ class StudentProfile extends Profile {
     this.projectExperience,
     this.transcript,
     this.resume,
+    this.proposalProjects,
     super.objectId = "",
   });
 
@@ -85,7 +88,7 @@ class StudentProfile extends Profile {
   Map<String, dynamic> toMap() {
     return {
       'title': title,
-      'fullName': fullName,
+      'fullname': fullName,
       'education': education,
       'introduction': introduction,
       'yearOfExperience': yearOfExperience,
@@ -97,6 +100,7 @@ class StudentProfile extends Profile {
       'transcript': transcript,
       'resume': resume,
       'experience': projectExperience,
+      "proposals": proposalProjects,
       "id": int.tryParse(objectId ?? "-1"),
     };
   }
@@ -104,7 +108,7 @@ class StudentProfile extends Profile {
   factory StudentProfile.fromMap(Map<String, dynamic> map) {
     return StudentProfile(
       title: map['title'] ?? '',
-      fullName: map['fullName'] ?? '',
+      fullName: map['fullname'] ?? '',
       education: map['education'] ?? '',
       introduction: map['introduction'] ?? '',
       yearOfExperience: map['yearOfExperience'] ?? 0,
@@ -113,7 +117,9 @@ class StudentProfile extends Profile {
               .map((e) => ProjectExperience.fromMap(e as Map<String, dynamic>)))
           : [],
       review: map['review'] ?? '',
-      techStack: map['techStack'] != null ? TechStack.fromJson(map['techStack']) : null,
+      techStack: map['techStack'] != null
+          ? TechStack.fromJson(map['techStack'])
+          : null,
       skillSet: (map['skillSet'] != null)
           ? List<Skill>.from((map['skillSet'] as List<dynamic>)
               .map((e) => Skill.fromMap(e as Map<String, dynamic>)))
@@ -128,6 +134,10 @@ class StudentProfile extends Profile {
           : [],
       transcript: map['transcript'] ?? '',
       resume: map['resume'] ?? '',
+      proposalProjects: (map['proposals'] != null)
+          ? List<Proposal>.from((map['proposals'] as List<dynamic>)
+              .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
+          : [],
       objectId: map["id"].toString(),
     );
   }

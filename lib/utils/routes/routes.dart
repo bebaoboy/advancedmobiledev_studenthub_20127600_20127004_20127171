@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
@@ -5,6 +6,7 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
+import 'package:boilerplate/presentation/dashboard/project_update/project_update.dart';
 import 'package:boilerplate/presentation/dashboard/submit_project_proposal/submit_project_proposal.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
@@ -56,6 +58,7 @@ class Routes {
   static const String forgetPasswordDone = '/forgetPasswordDone';
   static const String submitProposal = '/submitProposal';
   static const String message = "/message";
+  static const String updateProject = "/updateProject";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -75,7 +78,7 @@ class Routes {
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),
     projectPost: const ProjectPostScreen(),
-    favortieProject: const FavoriteScreen(),
+    favortieProject: const FavoriteScreen(projectList: [],),
     projectDetailsStudent: const Placeholder(),
     forgetPassword: const ForgetPasswordScreen(),
     forgetPasswordSent: const ForgetPasswordSentScreen(),
@@ -83,6 +86,7 @@ class Routes {
     forgetPasswordDone: const ForgetPasswordDoneScreen(),
     submitProposal: const Placeholder(),
     message: const Placeholder(),
+    updateProject: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
@@ -104,26 +108,57 @@ getRoute(name, context, {arguments}) {
   try {
     if (name == Routes.projectDetails) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
-      return ProjectDetailsPage(project: arguments as Project);
+      if (arguments != null) {
+        return ProjectDetailsPage(
+            project: arguments["project"] as Project,
+            initialIndex:
+                arguments["index"] != null ? arguments["index"]! as int : null);
+      }
     }
     if (name == Routes.submitProposal) {
-      return SubmitProjectProposal(project: arguments as Project);
+      if (arguments != null) {
+        return SubmitProjectProposal(project: arguments as Project);
+      }
     }
 
     if (name == Routes.message) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
-      return MessageScreen(title: arguments as String);
+      if (arguments != null) {
+        return MessageScreen(title: arguments as String);
+      }
     }
     if (name == Routes.projectDetailsStudent) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
-      return ProjectDetailsStudentScreen(project: arguments as Project);
-    } else if (name == Routes.message) {
-      // If route is projectDetails, return ProjectDetailsPage with arguments
-      return MessageScreen(title: arguments as String);
-    } else {
-      return Routes._route[name] ?? const HomeScreen();
+      if (arguments != null) {
+        return ProjectDetailsStudentScreen(project: arguments["project"] as StudentProject);
+      }
     }
+
+    if (name == Routes.welcome) {
+      if (arguments != null) {
+        var b = arguments as bool;
+        return WelcomeScreen(
+          newRole: b,
+        );
+      }
+    }
+
+    if (name == Routes.updateProject) {
+      if (arguments != null) {
+        var b = arguments as Project;
+        return ProjectUpdateScreen(project: b);
+      }
+    }
+
+
+    return Routes._route[name] ??
+        ErrorPage(
+          errorDetails: FlutterErrorDetails(
+              exception: {"summary": "Wrong route!", "stack": "name=$name"}),
+        );
   } catch (e) {
-    return const HomeScreen();
+    return ErrorPage(
+        errorDetails: FlutterErrorDetails(
+            exception: {"summary": "Wrong route!", "stack": e.toString()}));
   }
 }

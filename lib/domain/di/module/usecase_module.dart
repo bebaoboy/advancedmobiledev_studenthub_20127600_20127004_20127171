@@ -8,6 +8,8 @@ import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
@@ -21,6 +23,10 @@ import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -132,6 +138,14 @@ mixin UseCaseModule {
       UpdateResumeUseCase(getIt<UserRepository>()),
     );
 
+    getIt.registerSingleton<DeleteTranscriptUseCase>(
+      DeleteTranscriptUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<DeleteResumeUseCase>(
+      DeleteResumeUseCase(getIt<UserRepository>()),
+    );
+
     getIt.registerSingleton<GetTranscriptUseCase>(
       GetTranscriptUseCase(getIt<UserRepository>()),
     );
@@ -182,6 +196,16 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<updateFavoriteProjectUseCase>(
       updateFavoriteProjectUseCase(getIt<ProjectRepository>()),
+    getIt.registerSingleton<GetProjectByCompanyUseCase>(
+      GetProjectByCompanyUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateCompanyProject>(
+      UpdateCompanyProject(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<GetStudentProposalProjectsUseCase>(
+      GetStudentProposalProjectsUseCase(getIt<ProjectRepository>()),
     );
 
     // post:--------------------------------------------------------------------

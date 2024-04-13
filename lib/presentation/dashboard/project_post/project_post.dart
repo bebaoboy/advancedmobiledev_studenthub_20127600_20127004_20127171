@@ -162,6 +162,17 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               child: Text(Lang.get('how_long'),
                   style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
+            // RadioListTile<String>(
+            //   title: Text(Lang.get('1-3')),
+            //   value: Scope.tight.title,
+            //   groupValue: groupValue,
+            //   onChanged: (String? value) {
+            //     setState(() {
+            //       groupValue = value;
+            //       scope = Scope.tight;
+            //     });
+            //   },
+            // ),
             RadioListTile<String>(
               title: Text(Lang.get('0-1')),
               value: Scope.tight.title,
@@ -180,7 +191,9 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
-                  scope = Scope.tight.index;
+
+                  scope = Scope.short.index;
+                  // scope = Scope.short;
                 });
               },
             ),

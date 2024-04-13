@@ -17,7 +17,9 @@ var myProjects = [
                 title: 'Fullstack Engineer',
                 yearOfExperience: 3,
                 review: 'I find your project suitable',
-                objectId: 1.toString())),
+                objectId: 1.toString()),
+            project: StudentProject(
+                title: "", description: "", timeCreated: DateTime.now())),
         Proposal(
             student: StudentProfile(
                 fullName: 'Huynh Minh Bao',
@@ -26,73 +28,78 @@ var myProjects = [
                 title: 'Fullstack Engineer',
                 yearOfExperience: 3,
                 review: 'I find your project suitable',
-                objectId: 2.toString())),
+                objectId: 2.toString()),
+            project: StudentProject(
+                title: "", description: "", timeCreated: DateTime.now())),
         Proposal(
             student: StudentProfile(
-                fullName: 'Vu Huy Hoang',
-                introduction: 'I am eager',
-                education: '4th year students',
-                title: 'Fullstack Engineer',
-                yearOfExperience: 3,
-                review: 'I find your project suitable',
-                objectId: 3.toString()))
+              fullName: 'Vu Huy Hoang',
+              introduction: 'I am eager',
+              education: '4th year students',
+              title: 'Fullstack Engineer',
+              yearOfExperience: 3,
+              review: 'I find your project suitable',
+              objectId: 3.toString(),
+            ),
+            project: StudentProject(
+                title: "", description: "", timeCreated: DateTime.now()))
       ]),
-  Project(
-      title: "XYZ",
-      description: "description",
-      timeCreated: DateTime.parse('2023-03-12')),
-  Project(
-      title: "JKMM",
-      description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
-      scope: Scope.long),
-  Project(
-      title: "man bhsk p",
-      description: "description",
-      timeCreated: DateTime.parse('2023-03-11')),
-  Project(
-      title: "jOa josfj á ",
-      description: "description",
-      timeCreated: DateTime.parse('2023-03-13')),
+  // Project(
+  //     title: "XYZ",
+  //     description: "description",
+  //     timeCreated: DateTime.parse('2023-03-12')),
+  // Project(
+  //     title: "JKMM",
+  //     description: "description",
+  //     timeCreated: DateTime.parse('2023-03-13'),
+  //     scope: Scope.long),
+  // Project(
+  //     title: "man bhsk p",
+  //     description: "description",
+  //     timeCreated: DateTime.parse('2023-03-11')),
+  // Project(
+  //     title: "jOa josfj á ",
+  //     description: "description",
+  //     timeCreated: DateTime.parse('2023-03-13')),
 ];
 
 var studentProjects = [
   StudentProject(
       title: "XYZ",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-12'),
-      submittedTime: DateTime.parse('2024-03-12')),
+      // timeCreated: DateTime.parse('2023-03-12'),
+      timeCreated: DateTime.parse('2024-03-12')),
   StudentProject(
       title: "JKMM",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
+      // timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      submittedTime: DateTime.parse('2024-03-17')),
+      timeCreated: DateTime.parse('2024-03-17')),
   StudentProject(
       title: "man bhsk p",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-11'),
+      // timeCreated: DateTime.parse('2023-03-11'),
       isAccepted: true,
       isSubmitted: true,
-      submittedTime: DateTime.parse('2024-03-18')),
+      timeCreated: DateTime.parse('2024-03-18')),
   StudentProject(
       title: "JKMM",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
+      // timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      submittedTime: DateTime.parse('2024-03-17')),
+      timeCreated: DateTime.parse('2024-03-17')),
   StudentProject(
       title: "JKMM",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
+      // timeCreated: DateTime.parse('2023-03-13'),
       scope: Scope.long,
-      submittedTime: DateTime.parse('2024-03-17')),
+      timeCreated: DateTime.parse('2024-03-17')),
 ];
 
 var studentWorkingProjects = [
   StudentProject(
       title: "jOa josfj á ",
       description: "description",
-      timeCreated: DateTime.parse('2023-03-13'),
-      submittedTime: DateTime.parse('2024-03-11')),
+      // timeCreated: DateTime.parse('2023-03-13'),
+      timeCreated: DateTime.parse('2024-03-11')),
 ];

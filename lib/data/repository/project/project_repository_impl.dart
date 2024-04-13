@@ -8,6 +8,10 @@ import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:dio/dio.dart';
 
 class ProjectRepositoryImpl extends ProjectRepository {
@@ -16,8 +20,9 @@ class ProjectRepositoryImpl extends ProjectRepository {
   ProjectRepositoryImpl(this._projectApi, this._datasource);
 
   @override
-  Future<ProjectList> fetchPagingProjects() async {
-    return await _projectApi.getProjects().then((value) {
+  Future<ProjectList> fetchPagingProjects(GetProjectParams params) async {
+    try {
+      final value = await _projectApi.getProjects(params);
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
@@ -27,13 +32,33 @@ class ProjectRepositoryImpl extends ProjectRepository {
         });
         return result;
       } else {
-        return ProjectList(projects: List.empty(growable: true));
+        // return ProjectList(projects: List.empty(growable: true));
+        return _datasource.getProjectsFromDb() as ProjectList;
       }
       // ignore: invalid_return_type_for_catch_error
-    }).onError((s, error) {
-      Log.e("ProjectRepo", error.toString());
-      return Future.value(ProjectList(projects: List.empty(growable: true)));
-    });
+    } catch (e) {
+      Log.e("ProjectRepo", e.toString());
+      return await _datasource.getProjectsFromDb();
+    }
+  }
+
+  @override
+  Future<Response> getProjectByCompany(GetProjectByCompanyParams params) async {
+    var response = await _projectApi.getProjectByCompany(params);
+    return response;
+  }
+
+  @override
+  Future<Response> getStudentProposalProjects(
+      GetStudentProposalProjectsParams params) async {
+    var response = await _projectApi.getStudentProposalProjects(params);
+    return response;
+  }
+
+  @override
+  Future<Response> updateCompanyProject(UpdateProjectParams params) async {
+    var response = await _projectApi.updateCompanyProject(params);
+    return response;
   }
 
   @override

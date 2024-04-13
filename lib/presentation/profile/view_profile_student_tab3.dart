@@ -69,17 +69,21 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
     isLinkCv = ValueNotifier<bool>(true);
     isLinkTranscript = ValueNotifier<bool>(true);
     Future.delayed(Duration.zero, () async {
-      _cvImage = await FilePreview.getThumbnail(cvController.text,
+      if (cvController.text.isNotEmpty) {
+        _cvImage = await FilePreview.getThumbnail(cvController.text,
           isCV: true,
           changeValue: changeValue,
           retrieveFilePathAfterDownload: (s) =>
               _cv = PlatformFile(path: s, name: s, size: 1));
-      _transcriptImage = await FilePreview.getThumbnail(
+      }
+      if (transcriptController.text.isNotEmpty) {
+        _transcriptImage = await FilePreview.getThumbnail(
           transcriptController.text,
           isCV: false,
           changeValue: changeValue,
           retrieveFilePathAfterDownload: (s) =>
               _transcript = PlatformFile(path: s, name: s, size: 1));
+      }
       print(_cvImage.toString());
       setState(() {
         isLinkCv.value = false;
@@ -262,7 +266,9 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                               style: const TextStyle(fontSize: 13),
                             )),
                       ),
-                      if (_cv != null || _cvImage != null)
+                      if (_cv != null ||
+                          _cvImage != null ||
+                          cvController.text.isNotEmpty)
                         SizedBox(
                           width: 40,
                           child: IconButton(
@@ -275,6 +281,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                 cvEnable = true;
                                 cvController.clear();
                                 _cvImage = null;
+                                _profileStudentFormStore.resume = null;
                               });
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
@@ -486,7 +493,9 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                               style: const TextStyle(fontSize: 13),
                             )),
                       ),
-                      if (_transcript != null || _transcriptImage != null)
+                      if (_transcript != null ||
+                          _transcriptImage != null ||
+                          transcriptController.text.isNotEmpty)
                         SizedBox(
                           width: 40,
                           child: IconButton(
@@ -499,6 +508,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                                 transcriptEnable = true;
                                 transcriptController.clear();
                                 _transcriptImage = null;
+                                _profileStudentFormStore.transcript = null;
                               });
                               FocusManager.instance.primaryFocus?.unfocus();
                             },
@@ -698,7 +708,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
               contentText:
-                  '${_profileStudentFormStore.fullName} tạo profile thành công!',
+                  '${_profileStudentFormStore.fullName} update profile successfully!',
               negativeText: Lang.get('cancel'),
               positiveText: 'OK',
               onPositiveClick: () {

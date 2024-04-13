@@ -1,6 +1,7 @@
 // ignore_for_file: no_logic_in_create_state
 
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,17 @@ class SelectOpponentsScreen extends StatefulWidget {
 
 class _SelectOpponentsScreenState extends State<SelectOpponentsScreen> {
   final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    try {
+      checkSystemAlertWindowPermission(context);
+    } catch (e) {
+      print("error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

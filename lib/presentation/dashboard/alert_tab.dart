@@ -5,7 +5,8 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class AlertTab extends StatefulWidget {
-  const AlertTab({super.key});
+  const AlertTab({super.key, required this.scrollController});
+  final ScrollController scrollController;
 
   @override
   State<AlertTab> createState() => _AlertTabState();
@@ -70,9 +71,8 @@ class _AlertTabState extends State<AlertTab> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 60),
-      child: _buildAlertsContent(),
-    );
+        padding: const EdgeInsets.only(bottom: 20.0),
+        child: _buildAlertsContent());
   }
 
   Widget _buildAlertsContent() {
@@ -80,7 +80,7 @@ class _AlertTabState extends State<AlertTab> {
       children: <Widget>[
         Expanded(
           child: ListView.separated(
-            controller: ScrollController(),
+            controller: widget.scrollController,
             itemCount: alerts.length,
             separatorBuilder: (context, index) =>
                 const Divider(color: Colors.black),

@@ -81,80 +81,90 @@ void callbackDispatcher() {
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await setPreferredOrientations();
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    await setPreferredOrientations();
 
-  await ServiceLocator.configureDependencies().then((value) {
-    if (!kIsWeb) {
-      Workmanager().initialize(
-          callbackDispatcher, // The top level function, aka callbackDispatcher
-          isInDebugMode:
-              true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-          );
-    }
-  });
+    await ServiceLocator.configureDependencies().then((value) {
+      if (!kIsWeb) {
+        Workmanager().initialize(
+            callbackDispatcher, // The top level function, aka callbackDispatcher
+            isInDebugMode:
+                true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+            );
+      }
+    });
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  // FirebaseAnalytics analytics = FirebaseAnalytics.instance;
-
-  // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
-
-  // request permissions for showing notification in iOS
-  var messaging = FirebaseMessaging.instance;
-  messaging.requestPermission(alert: true, badge: true, sound: true);
-
-  if (kIsWeb) {
-    // use the returned token to send messages to users from your custom server
-    var token = await messaging.getToken(
-      vapidKey:
-          "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
     );
-  }
 
-  // add listener for foreground push notifications
-  FirebaseMessaging.onMessage.listen((remoteMessage) {
-    log('[onMessage] message: ${remoteMessage.data.toString()}', "bebaoboy");
-  });
-  if (!kIsWeb) {
-    if (kDebugMode) {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    } else {
-      await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
-    }
-  }
+    // FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  if (!kIsWeb) {
-    FlutterError.onError = (FlutterErrorDetails errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-    };
-    // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      return kReleaseMode;
-    };
-  }
+    // request permissions for showing notification in iOS
+    var messaging = FirebaseMessaging.instance;
+    messaging.requestPermission(alert: true, badge: true, sound: true);
 
-  if (!kIsWeb) {
-    Isolate.current.addErrorListener(RawReceivePort((pair) async {
-      final List<dynamic> errorAndStacktrace = pair;
-      await FirebaseCrashlytics.instance.recordError(
-        errorAndStacktrace.first,
-        errorAndStacktrace.last,
-        fatal: true,
+    if (kIsWeb) {
+      // use the returned token to send messages to users from your custom server
+      var token = await messaging.getToken(
+        vapidKey:
+            "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
       );
-    }).sendPort);
-  }
-  if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
+    }
 
-  await initConnectycube();
+    // add listener for foreground push notifications
+    FirebaseMessaging.onMessage.listen((remoteMessage) {
+      log('[onMessage] message: ${remoteMessage.data.toString()}', "bebaoboy");
+    });
+    if (!kIsWeb) {
+      if (kDebugMode) {
+        await FirebaseCrashlytics.instance
+            .setCrashlyticsCollectionEnabled(true);
+      } else {
+        await FirebaseCrashlytics.instance
+            .setCrashlyticsCollectionEnabled(true);
+      }
+    }
 
-  runApp(const MyApp());
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+    if (!kIsWeb) {
+      FlutterError.onError = (FlutterErrorDetails errorDetails) {
+        FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
+      };
+      // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+        return kReleaseMode;
+      };
+    }
+
+    if (!kIsWeb) {
+      Isolate.current.addErrorListener(RawReceivePort((pair) async {
+        print(
+            "crash isolateEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
+        final List<dynamic> errorAndStacktrace = pair;
+        await FirebaseCrashlytics.instance.recordError(
+          errorAndStacktrace.first,
+          errorAndStacktrace.last,
+          fatal: true,
+        );
+      }).sendPort);
+    }
+    if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
+
+    await initConnectycube();
+
+    runApp(const MyApp());
+  }, (error, stackTrace) {
+    print(error.toString());
+    print(stackTrace.toString());
+    print("CRASHHHHHHHHHHHHHHHHHHHHHH app");
+    FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
+  });
   // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }
 
@@ -183,6 +193,7 @@ initConnectycube() async {
       onSessionRestore: () {
         return SharedPrefs.getUser().then((savedUser) {
           log(savedUser?.toString(), "BEBAOBOY");
+          log("onSessionRestore", "BEBAOBOY");
           return createSession(savedUser);
         });
       },

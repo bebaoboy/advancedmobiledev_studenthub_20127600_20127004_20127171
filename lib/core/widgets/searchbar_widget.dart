@@ -5,7 +5,6 @@ library animation_search_bar;
 import 'dart:async';
 
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
@@ -15,13 +14,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> saveSearchHistory(Set<String> history) async {
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList(Preferences.project_search_history, history.toList());
+  await prefs.setStringList(Preferences.project_search_history, history.where((e) =>e.trim().isNotEmpty).toList());
 }
 
 Future<Set<String>> loadSearchHistory() async {
   final prefs = await SharedPreferences.getInstance();
   final history = prefs.getStringList(Preferences.project_search_history) ?? [];
-  return history.toSet();
+  return history.where((e) =>e.trim().isNotEmpty,).toSet();
 }
 
 class AnimSearchBar2 extends StatefulWidget {
@@ -378,9 +377,9 @@ AnimatedPositioned(
                             alignment: Alignment.centerRight,
                             icon: const Icon(
                               Icons.close_outlined,
-                              size: 20.0,
+                              size: 25.0,
                             ),
-                            color: widget.textFieldIconColor,
+                            // color: widget.textFieldIconColor,
                             onPressed: () {
                               try {
                                 ///trying to execute the onSuffixTap function

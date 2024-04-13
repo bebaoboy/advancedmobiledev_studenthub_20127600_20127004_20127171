@@ -35,7 +35,7 @@
   "Message_bar": "Tin nhắn",
   "Alert_bar": "Thông báo",
   "appbar_title": "StudentHub",
-  "dashboard_your_job": "Công việc của bạn",
+  "dashboard_your_job": "Công việc",
   "Dashboard_post_job": "Tạo việc",
   "Dashboard_intro": "Chào mừng, Hal!",
   "Dashboard_content": "Bạn hiện đang không có công việc",
@@ -177,6 +177,10 @@
   "project_item_remove_job_posting": "Xoá job",
   "project_start_working": "Bắt đầu làm project này",
   "project_edit": "Sửa project",
+  "project_title": "Tên project",
+  "project_description": "Mô tả project",
+  "project_students": "Số lượng sinh viên",
+  "project_update": "Cập nhập project",
 
   "project_submit_proposal": "Mô tả mong muốn khi nhận project",
   "proposal_submit": "Nộp proposal",
@@ -185,6 +189,10 @@
   "project_length": "Thời gian project",
   "0-1": "Ít hơn 1 tháng",
   "6-": "Lâu hơn 6 tháng",
+  "project_length_choice_1": "Ít hơn 1 tháng",
+  "project_length_choice_2": "Từ 1 tới 3 tháng",
+  "project_length_choice_3": "Từ 3 tới 6 tháng",
+  "project_length_choice_4": "Lâu hơn 6 tháng",
 
   "schedule_interview": "Lên lịch phỏng vấn",
   "no_camera": "Không tìm thấy camera",
@@ -216,7 +224,13 @@
   "clear_filter": "Xoá lọc",
   "apply": "OK",
   "discard_edit": "Huỷ chỉnh sửa?",
-  "exit_confirm": "Bấm lần nữa để thoát"
-
-
+  "exit_confirm": "Bấm lần nữa để thoát",
+  "about": "Về chúng tôi",
+  "project_close": "Đóng dự án",
+  "project_open": "Mở lại dự án",
+  "closed": "ĐÃ ĐÓNG",
+  "archive": "Lưu trữ",
+  "unarchive": "Huỷ lưu trữ",
+  "archive_successfully": "Lưu trữ thành công",
+  "unarchive_successfully": "Huỷ lưu trữ"
 }

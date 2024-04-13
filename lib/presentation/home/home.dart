@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -70,20 +71,23 @@ class _HomeScreenState extends State<HomeScreen> {
     return BackGuard(
       child: Scaffold(
         appBar: _buildAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: SingleChildScrollView(
-            controller: ScrollController(),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Flexible(
-                    fit: FlexFit.loose,
+        body: !enabled
+            ? const Center(
+            child: LoadingScreenWidget(size: 80,),
+          )
+            : Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: SingleChildScrollView(
+                    controller: ScrollController(),
                     child: Column(
-                      children: [
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
                         Text(
-                          Lang.get('home_title'),
+                          Lang.get('profile_welcome_title'),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 30),
@@ -228,19 +232,20 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         const SizedBox(height: 25),
+                        Text(Lang.get('home_description')),
                       ],
-                    )),
-                Text(Lang.get('home_description')),
-              ],
-            ),
-          ),
-        ),
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar();
+    return MainAppBar(
+      name: _userStore.user != null ? _userStore.user!.name : "",
+    );
   }
 }

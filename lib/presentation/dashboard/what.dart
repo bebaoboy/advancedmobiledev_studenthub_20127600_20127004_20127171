@@ -77,10 +77,14 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
         scrollController: ScrollController(),
       )),
       KeepAlivePage(DashBoardTab(
-              pageController: _pageController,
-            )),
-      const KeepAlivePage(MessageTab()),
-      const KeepAlivePage(AlertTab())
+        pageController: _pageController,
+      )),
+      KeepAlivePage(MessageTab(
+        scrollController: ScrollController(),
+      )),
+      KeepAlivePage(AlertTab(
+        scrollController: ScrollController(),
+      ))
     ];
     _routes = [
       {

@@ -289,6 +289,18 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
+    @override
+  Future<Response> deleteResume(UpdateResumeParams params) async {
+    var response = await _profileApi.deleteResume(params);
+    return response;
+  }
+
+  @override
+  Future<Response> deleteTranscript(UpdateTranscriptParams params) async {
+    var response = await _profileApi.deleteTranscript(params);
+    return response;
+  }
+
   @override
   Future<List<Profile?>> fetchProfileFromSharedPref() {
     return _sharedPrefsHelper.getCurrentProfile();

@@ -56,7 +56,9 @@ class PlaneIndicator extends StatefulWidget {
     required this.onRefresh,
     this.leadingScrollIndicatorVisible = false,
     this.trailingScrollIndicatorVisible = false,
+    this.offsetToArmed = 80.0,
   });
+  final double offsetToArmed;
 
   @override
   State<PlaneIndicator> createState() => _PlaneIndicatorState();
@@ -227,9 +229,8 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
     ),
   ];
 
-  static const _offsetToArmed = 80.0;
   bool complete = false;
-  static const _indicatorSize = 150.0;
+  // static const _indicatorSize = 150.0;
   static const _imageSize = 140.0;
 
   late AnimationController _spoonController;
@@ -257,46 +258,63 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
           },
         );
         return CustomRefreshIndicator(
-          durations: const RefreshIndicatorDurations(
-            completeDuration: Duration(seconds: 3),
-          ),
-          offsetToArmed: _offsetToArmed,
+          // durations: const RefreshIndicatorDurations(
+          //   completeDuration: Duration(seconds: 2),
+          // ),
+          offsetToArmed: widget.offsetToArmed,
           autoRebuild: false,
           onStateChanged: (change) {
             try {
+              // if (change.didChange(
+              //   from: IndicatorState.armed,
+              //   to: IndicatorState.settling,
+              // )) {
+              //   // _spoonController.stop();
+              //   _startCloudAnimation();
+              //   _startPlaneAnimation();
+              //   print("plane start");
+              // }
+              // if (change.didChange(
+              //   from: IndicatorState.loading,
+              // )) {
+              //   _stopPlaneAnimation();
+              //   print("plane stop");
+              // }
+              // if (change.didChange(
+              //   to: IndicatorState.idle,
+              // )) {
+              //   _stopCloudAnimation();
+              //   print("cloud stop");
+              //   setState(() {
+              //     complete = false;
+              //   });
+              //   print("ice cream stop");
+              // }
+              // if (change.didChange(to: IndicatorState.complete)) {
+              //   setState(() {
+              //     complete = true;
+              //   });
+              //   // _spoonController.repeat(reverse: true);
+              //   // print("ice cream start");
+
+              //   /// set [_renderCompleteState] to false when controller.state become idle
+              // }
               if (change.didChange(
                 from: IndicatorState.armed,
                 to: IndicatorState.settling,
               )) {
-                _spoonController.stop();
                 _startCloudAnimation();
                 _startPlaneAnimation();
-                print("plane start");
               }
               if (change.didChange(
                 from: IndicatorState.loading,
               )) {
                 _stopPlaneAnimation();
-                print("plane stop");
               }
               if (change.didChange(
                 to: IndicatorState.idle,
               )) {
                 _stopCloudAnimation();
-                print("cloud stop");
-                setState(() {
-                  complete = false;
-                });
-                print("ice cream stop");
-              }
-              if (change.didChange(to: IndicatorState.complete)) {
-                setState(() {
-                  complete = true;
-                });
-                _spoonController.repeat(reverse: true);
-                print("ice cream start");
-
-                /// set [_renderCompleteState] to false when controller.state become idle
               }
             } catch (e) {}
           },
@@ -312,9 +330,14 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
                 return Stack(
                   clipBehavior: Clip.hardEdge,
                   children: <Widget>[
+                    Transform.translate(
+                      offset:
+                          Offset(0.0, widget.offsetToArmed * controller.value),
+                      child: child,
+                    ),
                     if (!controller.side.isNone)
                       Container(
-                        height: _offsetToArmed * controller.value * 3,
+                        height: widget.offsetToArmed * controller.value * 3,
                         color: Colors.transparent,
                         width: double.infinity,
                         child: AnimatedBuilder(
@@ -346,46 +369,42 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
                                   ),
 
                                 /// plane
-                                if (complete) // icecream (complete widget)
-                                  for (int i = 0; i < _assets.length; i++)
+                                // if (complete) // icecream (complete widget)
+                                //   for (int i = 0; i < _assets.length; i++)
 
-                                    /// checking for spoon build animation and attaching the spoon controller
-                                    if (i == 1)
-                                      AnimatedBuilder(
-                                        animation: _spoonController,
-                                        child:
-                                            _buildImage(controller, _assets[i]),
-                                        builder: (context, child) {
-                                          return Transform.rotate(
-                                            angle: (-_spoonTween.transform(
-                                                    _spoonController.value)) *
-                                                1.25,
-                                            child: child,
-                                          );
-                                        },
-                                      )
-                                    else
-                                      _buildImage(controller, _assets[i])
-                                else
-                                  Center(
-                                    child: OverflowBox(
-                                      maxWidth: 172,
-                                      minWidth: 172,
-                                      maxHeight: 50,
-                                      minHeight: 50,
-                                      alignment: Alignment.center,
-                                      child: plane,
-                                    ),
+                                //     /// checking for spoon build animation and attaching the spoon controller
+                                //     if (i == 1)
+                                //       AnimatedBuilder(
+                                //         animation: _spoonController,
+                                //         child:
+                                //             _buildImage(controller, _assets[i]),
+                                //         builder: (context, child) {
+                                //           return Transform.rotate(
+                                //             angle: (-_spoonTween.transform(
+                                //                     _spoonController.value)) *
+                                //                 1.25,
+                                //             child: child,
+                                //           );
+                                //         },
+                                //       )
+                                //     else
+                                //       _buildImage(controller, _assets[i])
+                                // else
+                                Center(
+                                  child: OverflowBox(
+                                    maxWidth: 172,
+                                    minWidth: 172,
+                                    maxHeight: 50,
+                                    minHeight: 50,
+                                    alignment: Alignment.center,
+                                    child: plane,
                                   ),
+                                ),
                               ],
                             );
                           },
                         ),
                       ),
-                    Transform.translate(
-                      offset: Offset(0.0, _offsetToArmed * controller.value),
-                      child: child,
-                    ),
                   ],
                 );
               },
