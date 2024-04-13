@@ -411,9 +411,12 @@ class _ProjectTabsState extends State<ProjectTabs> {
                           : null),
                 )),
             onPressed: (_) {
-              // TODO: view details
-              // Navigator.of(context).push(MaterialPageRoute2(
-              //     routeName: Routes.projectDetails, arguments: {"project": project, "index": 0}));
+              Future.delayed(const Duration(milliseconds: 500), () {
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .push(MaterialPageRoute2(
+                        routeName: Routes.updateProject, arguments: project));
+              });
             }),
         BottomSheetAction(
             title: Container(
@@ -427,6 +430,23 @@ class _ProjectTabsState extends State<ProjectTabs> {
             ),
             onPressed: (_) {
               // TODO: delete
+              var p = (projectStore.companyProjects).firstWhereOrNull(
+                (element) => element.objectId == project.objectId,
+              );
+              // TODO: update project status flag active
+              if (p != null) {
+                Toastify.show(
+                    context,
+                    "",
+                    "Delete succesfully!",
+                    aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                    ToastificationType.success,
+                    () {});
+                projectStore.deleteCompanyProject(p);
+              }
+              setState(() {
+                p?.enabled = Status.active;
+              });
             }),
         BottomSheetAction(
           title: null,

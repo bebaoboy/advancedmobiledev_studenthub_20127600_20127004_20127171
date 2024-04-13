@@ -25,12 +25,12 @@ abstract class _ProjectStore with Store {
   final GetStudentProposalProjectsUseCase _getStudentProposalProjectsUseCase;
 
   @observable
-  ProjectList _projects = ProjectList(projects: List.empty());
+  ProjectList _projects = ProjectList(projects: List.empty(growable: true));
 
   List<Project> get projects => _projects.projects ?? [];
 
   @observable
-  ProjectList _companyProjects = ProjectList(projects: List.empty());
+  ProjectList _companyProjects = ProjectList(projects: List.empty(growable: true));
 
   List<Project> get companyProjects => _companyProjects.projects ?? [];
 
@@ -42,6 +42,19 @@ abstract class _ProjectStore with Store {
       _projects.projects = [value];
     }
     _projects.projects?.sort(
+      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+    );
+  }
+
+  Future deleteCompanyProject(Project value, {index = 0}) async {
+    if (_companyProjects.projects != null) {
+      var i = _companyProjects.projects!
+          .indexWhere((e) => e.objectId == value.objectId);
+      if (i != -1) _companyProjects.projects!.removeAt(i);
+    } else {
+      // _companyProjects.projects = [value];
+    }
+    _companyProjects.projects?.sort(
       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
     );
   }

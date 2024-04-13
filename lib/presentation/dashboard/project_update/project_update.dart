@@ -137,7 +137,7 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
               inputType: TextInputType.text,
               iconColor: _themeStore.darkMode ? Colors.white70 : Colors.black54,
               textController: _descriptionController,
-              inputAction: TextInputAction.done,
+              // inputAction: TextInputAction.done,
               isIcon: false,
               onChanged: (value) {
                 _formStore.setDescription(_descriptionController.text);

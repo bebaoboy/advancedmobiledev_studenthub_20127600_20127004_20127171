@@ -406,7 +406,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
 
                       lazyList.addAll(widget.searchList.sublist(
                           refazynistKey.currentState!.length(),
-                          refazynistKey.currentState!.length() + 5));
+                          (refazynistKey.currentState!.length() + 5)
+                              .clamp(0, widget.searchList.length)));
 
                       await Future.delayed(
                           const Duration(seconds: 1)); // Fake internet delay
@@ -655,6 +656,10 @@ class _ProjectTabState extends State<ProjectTab> {
   List<Project> getSearchList() {
     var list = keyword.isEmpty
         ? _projectStore.projects
+            .where(
+              (element) => applyFilter(filter, element),
+            )
+            .toList()
         : _projectStore.projects
             .where((e) =>
                 e.title.trim().toLowerCase().contains(keyword.toLowerCase()) &&

@@ -154,8 +154,19 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               child: Text(Lang.get('how_long'),
                   style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
+            // RadioListTile<String>(
+            //   title: Text(Lang.get('1-3')),
+            //   value: Scope.tight.title,
+            //   groupValue: groupValue,
+            //   onChanged: (String? value) {
+            //     setState(() {
+            //       groupValue = value;
+            //       scope = Scope.tight;
+            //     });
+            //   },
+            // ),
             RadioListTile<String>(
-              title: Text(Lang.get('1-3')),
+              title: Text(Lang.get('0-1')),
               value: Scope.tight.title,
               groupValue: groupValue,
               onChanged: (String? value) {
@@ -172,19 +183,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
-                  scope = Scope.tight;
-                });
-              },
-            ),
-            RadioListTile<String>(
-              title: Text(Lang.get('1-3')),
-              value: Scope.short.title,
-              groupValue: groupValue,
-              onChanged: (String? value) {
-                setState(() {
-                  groupValue = value;
                   scope = Scope.short;
-                  scope = Scope.short;
+                  // scope = Scope.short;
                 });
               },
             ),
@@ -201,7 +201,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               },
             ),
             RadioListTile<String>(
-              title: Text(Lang.get('1-3')),
+              title: Text(Lang.get('6-')),
               value: Scope.extended.title,
               groupValue: groupValue,
               onChanged: (String? value) {
