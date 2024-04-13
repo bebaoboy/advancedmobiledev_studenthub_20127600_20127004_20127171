@@ -13,6 +13,7 @@ import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -42,7 +43,7 @@ class DashBoardTab extends StatefulWidget {
 class _DashBoardTabState extends State<DashBoardTab>
     with SingleTickerProviderStateMixin {
   // late TabController tabController;
-  final ProjectStore _projectStore = getIt<ProjectStore>();
+  // final ProjectStore _projectStore = getIt<ProjectStore>();
 
   @override
   void initState() {
@@ -107,6 +108,7 @@ class _DashBoardTabState extends State<DashBoardTab>
 
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
+
     return FutureBuilder<ProjectList>(
       future: future,
       builder: (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
@@ -140,8 +142,8 @@ class _DashBoardTabState extends State<DashBoardTab>
                               setState(() {
                                 if (value != null) {
                                   allProjects.insert(0, value as Project);
-                                  projectStore.companyProjects.insert(0, value);
-                                  _projectStore.addProject(value);
+                                  //projectStore.companyProjects.insert(0, value);
+                                  //_projectStore.addProject(value);
                                 }
                               });
                             });
@@ -307,6 +309,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   }
 
   void showBottomSheet(Project project) {
+    final ProjectFormStore projectFormStore = getIt<ProjectFormStore>();
     showAdaptiveActionSheet(
       title: const Text(
         "Menu",
@@ -433,7 +436,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
               var p = (projectStore.companyProjects).firstWhereOrNull(
                 (element) => element.objectId == project.objectId,
               );
-              // TODO: update project status flag active
+              projectFormStore.deleteProject(project.objectId ?? "");
               if (p != null) {
                 Toastify.show(
                     context,

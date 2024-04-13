@@ -5,6 +5,9 @@ import 'package:boilerplate/data/local/datasources/project/project_datasource.da
 import 'package:boilerplate/data/network/apis/project/project_api.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
+import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
+import 'package:boilerplate/domain/usecase/project/create_project.dart';
+import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
@@ -56,5 +59,24 @@ class ProjectRepositoryImpl extends ProjectRepository {
   Future<Response> updateCompanyProject(UpdateProjectParams params) async {
     var response = await _projectApi.updateCompanyProject(params);
     return response;
+  }
+
+  @override
+  Future<Response> createProject(createProjectParams params) async {
+    var reponse = await _projectApi.createProjects(params);
+    return reponse;
+  }
+
+  @override
+  Future<Response> deleteProject(deleteProjectParams params) async {
+    var reponse = await _projectApi.deleteProjects(params);
+    return reponse;
+  }
+
+  @override
+  Future<Response> updateFavoriteProject(
+      updateFavoriteProjectParams params) async {
+    var reponse = await _projectApi.updateFavoriteProjects(params);
+    return reponse;
   }
 }

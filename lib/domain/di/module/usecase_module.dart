@@ -19,8 +19,11 @@ import 'package:boilerplate/domain/usecase/profile/get_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/get_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
-import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:boilerplate/domain/usecase/project/create_project.dart';
+import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
@@ -180,6 +183,18 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<GetProjectsUseCase>(
       GetProjectsUseCase(getIt<ProjectRepository>()),
+    );
+
+     getIt.registerSingleton<createProjectUseCase>(
+      createProjectUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<deleteProjectUseCase>(
+      deleteProjectUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<updateFavoriteProjectUseCase>(
+      updateFavoriteProjectUseCase(getIt<ProjectRepository>()),
     );
 
     getIt.registerSingleton<GetProjectByCompanyUseCase>(

@@ -10,7 +10,9 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -610,7 +612,8 @@ class ProjectTab extends StatefulWidget {
 class _ProjectTabState extends State<ProjectTab> {
   SearchFilter filter = SearchFilter();
   final ProjectStore _projectStore = getIt<ProjectStore>();
-
+  final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+  final UserStore _userStore = getIt<UserStore>();
   double yOffset = 0;
   String keyword = "";
   TextEditingController controller = TextEditingController();
@@ -1024,6 +1027,14 @@ class _ProjectTabState extends State<ProjectTab> {
                                       (_projectStore.projects).firstWhereOrNull(
                                     (element) => element.objectId == id,
                                   );
+                                  if (p != null) {
+                                    _projectFormStore.updateFavoriteProject(
+                                        _userStore.user!.studentProfile!
+                                                .objectId ??
+                                            "",
+                                        id,
+                                        !p.isFavorite);
+                                  }
                                   setState(() {
                                     setState(() {
                                       p?.isFavorite = !p.isFavorite;
@@ -1062,6 +1073,14 @@ class _ProjectTabState extends State<ProjectTab> {
                                         .firstWhereOrNull(
                                       (element) => element.objectId == id,
                                     );
+                                    if (p != null) {
+                                      _projectFormStore.updateFavoriteProject(
+                                          _userStore.user!.studentProfile!
+                                                  .objectId ??
+                                              "",
+                                          id,
+                                          !p.isFavorite);
+                                    }
                                     setState(() {
                                       p?.isFavorite = !p.isFavorite;
                                     });

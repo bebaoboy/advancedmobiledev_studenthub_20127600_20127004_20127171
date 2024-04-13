@@ -9,8 +9,10 @@
   "example_description": "- Build responsive WordPress site with booking/payment functionality\n- Facebook ad specialist needed for product launch",
   "scope": "Next: Scope",
   "scope_title": "Consider the size of your project and the timeline",
+  "0-1": "Less than 1 month",
   "1-3": "1 to 3 months",
   "3-6": "3 to 6 months",
+  "6-9": "More than 6 months",
   "how_long": "How long will your project take?",
   "how_many": "How many students do you want for this project?",
   "number": "number of students",
@@ -187,7 +189,6 @@
 
   "filter_title": "Filter by",
   "project_length": "Project Length",
-  "0-1": "Less than one month",
   "6-": "More than 6 months",
 
   "project_length_choice_1": "Less than 1 month",
