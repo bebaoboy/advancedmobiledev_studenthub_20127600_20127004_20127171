@@ -62,10 +62,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
             itemHeight: MediaQuery.of(context).size.height * 0.3,
             list: widget.projectList ?? [],
             firstCallback: (i) {
-              setState(() {
-                if (widget.onFavoriteTap != null) widget.onFavoriteTap!(i);
-                if (widget.onFavoriteTap != null) widget.onFavoriteTap!(i);
-              });
+              if (widget.projectList != null) {
+                if (widget.onFavoriteTap != null) {
+                  widget.onFavoriteTap!(widget.projectList![i].objectId);
+                }
+                setState(() {
+                  widget.projectList![i].isFavorite =
+                      !widget.projectList![i].isFavorite;
+                });
+              }
             },
           ),
         ),

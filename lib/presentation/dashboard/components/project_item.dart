@@ -88,19 +88,13 @@ class _ProjectItemState extends State<ProjectItem> {
     // } else {
     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     // }
-    createdText = timeago
-        .format(locale: _languageStore.locale, widget.project.timeCreated)
-        .toTitleCase();
+    createdText = timeago.format(
+        locale: _languageStore.locale, widget.project.timeCreated).inCaps;
 
-    if (widget.project.proposal != null) {
-      if (widget.project.proposal!.length > 6) {
-        proposalText +=
-            'Less than ${widget.project.proposal!.length.toString()}';
-      } else {
-        proposalText += widget.project.proposal!.length.toString();
-      }
+    if (widget.project.countProposals < 1) {
+      proposalText += 'None';
     } else {
-      proposalText += '0';
+      proposalText += widget.project.proposal!.length.toString();
     }
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
@@ -171,7 +165,11 @@ class _ProjectItemState extends State<ProjectItem> {
                       ),
                       // TODO: dịch
                       Text(
-                        'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+                        'Time: ${widget.project.scope.title}',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      Text(
+                        '${widget.project.numberOfStudents} students needed',
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                       const SizedBox(

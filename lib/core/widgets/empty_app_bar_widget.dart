@@ -1,7 +1,6 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/shared_preference_view.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
-import 'package:boilerplate/presentation/dashboard/what.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -22,11 +21,11 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 margin: const EdgeInsets.only(left: 20),
                 child: GestureDetector(
                     onDoubleTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const What(),
-                        ),
-                      );
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const What(),
+                      //   ),
+                      // );
                     },
                     onLongPress: () {
                       Navigator.of(context).push(MaterialPageRoute2(
@@ -54,11 +53,11 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
                 margin: const EdgeInsets.only(left: 20),
                 child: GestureDetector(
                     onDoubleTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const What(),
-                        ),
-                      );
+                      // Navigator.of(context).push(
+                      //   MaterialPageRoute(
+                      //     builder: (context) => const What(),
+                      //   ),
+                      // );
                     },
                     onLongPress: () {
                       Navigator.of(context).push(MaterialPageRoute2(
