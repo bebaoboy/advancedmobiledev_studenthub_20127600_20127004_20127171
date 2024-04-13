@@ -1,12 +1,17 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:boilerplate/core/widgets/lazy_loading_card.dart';
+import 'package:boilerplate/core/widgets/loading_list.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
+import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -322,6 +327,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
     super.dispose();
   }
 
+  GlobalKey<RefazynistState> refazynistKey = GlobalKey();
+
+  int lazyCount = 5;
+
   @override
   Widget build(BuildContext context) {
     controller.text = widget.keyword ?? "";
@@ -347,15 +356,123 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
           child: Align(
             alignment: Alignment.topCenter,
             child: widget.searchList.isNotEmpty
-                ? LazyLoadingAnimationProjectList(
-                    scrollController: ScrollController(),
-                    itemHeight: MediaQuery.of(context).size.height * 0.3,
-                    list: widget.searchList,
-                    skipItemLoading: true,
-                    firstCallback: (id) {
-                      widget.favoriteCallback(id);
+                ? Refazynist(
+                  scrollExtent: 230,
+                    loaderBuilder: (bContext, bAnimation) {
+                      return const LoadingScreenWidget();
                     },
-                  )
+                    scrollController: ScrollController(),
+                    key: refazynistKey,
+                    sharedPreferencesName: "",
+                    onInit: () async {
+                      return widget.searchList.sublist(
+                          0, lazyCount.clamp(0, widget.searchList.length));
+                    },
+                    emptyBuilder: (ewContext) {
+                      return Stack(
+                        children: <Widget>[
+                          Center(child: Text(Lang.get("nothing_here"))),
+                        ],
+                      );
+                    },
+
+                    //
+                    // Refazynist: It's for refresh
+
+                    onRefresh: () async {
+                      lazyCount = 5;
+                      // await _projectStore.getAllProject();
+
+                      return widget.searchList.sublist(
+                          0, lazyCount.clamp(0, widget.searchList.length));
+                    },
+
+                    //
+                    // Refazynist: It's for lazy load
+
+                    onLazy: () async {
+                      lazyCount += 5;
+                      List<Project> lazyList = [];
+
+                      lazyList.addAll(widget.searchList.sublist(
+                          refazynistKey.currentState!.length(),
+                          refazynistKey.currentState!.length() + 5));
+
+                      await Future.delayed(
+                          const Duration(seconds: 1)); // Fake internet delay
+                      return lazyList;
+                    },
+
+                    //
+                    // Refazynist: itemBuilder
+
+                    itemBuilder: (item, ibContext, index, animation, type) {
+                      return SlideTransition(
+                          position: Tween<Offset>(
+                            begin: const Offset(-1, 0),
+                            end: Offset.zero,
+                          ).animate(CurvedAnimation(
+                              parent: animation,
+                              curve: Interval(
+                                  0,
+                                  max(
+                                      0,
+                                      (Random().nextDouble() + 0.1)
+                                          .clamp(0, 1)),
+                                  curve: Curves.fastOutSlowIn))),
+                          // opacity: animation,
+                          child: ProjectItem2(
+                              loadingDelay: index,
+                              stopLoading: (id) {
+                                widget.stopLoadingCallback(id);
+                              },
+                              project: item,
+                              onFavoriteTap: (id) {
+                                widget.favoriteCallback(id);
+                                var p = (widget.searchList).firstWhereOrNull(
+                                  (element) => element.objectId == id,
+                                );
+                                setState(() {
+                                  p?.isFavorite = !p.isFavorite;
+                                });
+                                // _projectStore.projects[i].isFavorite =
+                                //     !_projectStore.projects[i].isFavorite;
+                              }));
+                    },
+
+                    //
+                    // Refazynist: removed ItemBuilder (need for Flutter's Animated List)
+
+                    removedItemBuilder:
+                        (item, ibContext, index, animation, type) {
+                      return FadeTransition(
+                          opacity: animation,
+                          child: ProjectItem2(
+                              project: item,
+                              stopLoading: (id) {
+                                widget.stopLoadingCallback(id);
+                              },
+                              onFavoriteTap: (id) {
+                                widget.favoriteCallback(id);
+                                var p = (widget.searchList).firstWhereOrNull(
+                                  (element) => element.objectId == id,
+                                );
+                                setState(() {
+                                  p?.isFavorite = !p.isFavorite;
+                                });
+                                // _projectStore.projects[i].isFavorite =
+                                //     !_projectStore.projects[i].isFavorite;
+                              }));
+                    })
+                // LazyLoadingAnimationProjectList(
+                //     scrollController: ScrollController(),
+                //     itemHeight: MediaQuery.of(context).size.height * 0.3,
+                //     list: widget.searchList,
+                //     skipItemLoading: true,
+                //     firstCallback: (id) {
+                //       widget.favoriteCallback(id);
+                //     },
+                //   )
                 : Center(child: Text(Lang.get("nothing_here"))),
           ),
         ),
@@ -608,6 +725,9 @@ class _ProjectTabState extends State<ProjectTab> {
     });
   }
 
+  GlobalKey<RefazynistState> refazynistKey = GlobalKey();
+
+  int lazyCount = 5; // It's for lazy loading limit
   Widget _buildProjectContent() {
     if (yOffset == 0) {
       yOffset = MediaQuery.of(context).size.height;
@@ -773,25 +893,185 @@ class _ProjectTabState extends State<ProjectTab> {
                   (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
                 Widget children;
                 if (snapshot.hasData) {
-                  children = _projectStore.projects.isNotEmpty
-                      ? LazyLoadingAnimationProjectList(
-                          scrollController: widget.scrollController,
-                          itemHeight: 230,
-                          list: _projectStore.projects,
-                          firstCallback: (i) {
-                            setState(() {
-                              var p = (_projectStore.projects).firstWhereOrNull(
-                                (element) => element.objectId == i,
-                              );
-                              setState(() {
-                                p?.isFavorite = !p.isFavorite;
-                              });
-                              // _projectStore.projects[i].isFavorite =
-                              //     !_projectStore.projects[i].isFavorite;
-                            });
-                          },
-                        )
-                      : Center(child: Text(Lang.get("nothing_here")));
+                  children = Refazynist(
+                      loaderBuilder: (bContext, bAnimation) {
+                        return const LoadingScreenWidget();
+                      },
+                      scrollController: widget.scrollController,
+                      key: refazynistKey,
+                      sharedPreferencesName: Preferences.all_project,
+                      onInit: () async {
+                        return snapshot.data!.projects != null
+                            ? snapshot.data!.projects!.sublist(
+                                0,
+                                lazyCount.clamp(
+                                    0, _projectStore.projects.length))
+                            : [];
+                      },
+                      emptyBuilder: (ewContext) {
+                        return Stack(
+                          children: <Widget>[
+                            Center(child: Text(Lang.get("nothing_here"))),
+                            // ListView(),
+                            // Center(
+                            //   child: Wrap(
+                            //     children: [
+                            //       Column(
+                            //         children: [
+                            //           const Icon(
+                            //             Icons.warning_amber_rounded,
+                            //             size: 60,
+                            //             color: Colors.black26,
+                            //           ),
+                            //           const Text('Empty'),
+                            //           const Padding(
+                            //               padding: EdgeInsets.only(top: 20)),
+                            //           ElevatedButton(
+                            //             child: const Text('Create New'),
+                            //             onPressed: () {
+                            //               refazynistKey.currentState!
+                            //                   .insertItem(0, 'Created item');
+                            //             },
+                            //           )
+                            //         ],
+                            //       )
+                            //     ],
+                            //   ),
+                            // ),
+                          ],
+                        );
+                      },
+
+                      //
+                      // Refazynist: It's for refresh
+
+                      onRefresh: () async {
+                        lazyCount = 5;
+                        await _projectStore.getAllProject();
+
+                        return _projectStore.projects.sublist(0,
+                            lazyCount.clamp(0, _projectStore.projects.length));
+                      },
+
+                      //
+                      // Refazynist: It's for lazy load
+
+                      onLazy: () async {
+                        lazyCount += 5;
+                        List<Project> lazyList = [];
+
+                        lazyList.addAll(_projectStore.projects.sublist(
+                            refazynistKey.currentState!.length(),
+                            (refazynistKey.currentState!.length() + 5)
+                                .clamp(0, _projectStore.projects.length)));
+
+                        await Future.delayed(
+                            const Duration(seconds: 1)); // Fake internet delay
+                        return lazyList;
+                      },
+
+                      //
+                      // Refazynist: itemBuilder
+
+                      itemBuilder: (item, ibContext, index, animation, type) {
+                        return SlideTransition(
+                            position: Tween<Offset>(
+                              begin: const Offset(-1, 0),
+                              end: Offset.zero,
+                            ).animate(CurvedAnimation(
+                                parent: animation,
+                                curve: Interval(
+                                    0,
+                                    max(
+                                        0,
+                                        (Random().nextDouble() + 0.1)
+                                            .clamp(0, 1)),
+                                    curve: Curves.fastOutSlowIn))),
+                            // opacity: animation,
+                            child: ProjectItem2(
+                                loadingDelay: index,
+                                stopLoading: (id) {
+                                  var p =
+                                      (_projectStore.projects).firstWhereOrNull(
+                                    (element) => element.objectId == id,
+                                  );
+                                  setState(() {
+                                    setState(() {
+                                      p?.isLoading = false;
+                                    });
+                                    // _projectStore.projects[i].isFavorite =
+                                    //     !_projectStore.projects[i].isFavorite;
+                                  });
+                                },
+                                project: item,
+                                onFavoriteTap: (id) {
+                                  var p =
+                                      (_projectStore.projects).firstWhereOrNull(
+                                    (element) => element.objectId == id,
+                                  );
+                                  setState(() {
+                                    setState(() {
+                                      p?.isFavorite = !p.isFavorite;
+                                    });
+                                    // _projectStore.projects[i].isFavorite =
+                                    //     !_projectStore.projects[i].isFavorite;
+                                  });
+                                }));
+                      },
+
+                      //
+                      // Refazynist: removed ItemBuilder (need for Flutter's Animated List)
+
+                      removedItemBuilder:
+                          (item, ibContext, index, animation, type) {
+                        return FadeTransition(
+                            opacity: animation,
+                            child: ProjectItem2(
+                                project: item,
+                                stopLoading: (id) {
+                                  var p =
+                                      (_projectStore.projects).firstWhereOrNull(
+                                    (element) => element.objectId == id,
+                                  );
+                                  setState(() {
+                                    setState(() {
+                                      p?.isLoading = false;
+                                    });
+                                    // _projectStore.projects[i].isFavorite =
+                                    //     !_projectStore.projects[i].isFavorite;
+                                  });
+                                },
+                                onFavoriteTap: (id) {
+                                  setState(() {
+                                    var p = (_projectStore.projects)
+                                        .firstWhereOrNull(
+                                      (element) => element.objectId == id,
+                                    );
+                                    setState(() {
+                                      p?.isFavorite = !p.isFavorite;
+                                    });
+                                    // _projectStore.projects[i].isFavorite =
+                                    //     !_projectStore.projects[i].isFavorite;
+                                  });
+                                }));
+                      });
+                  // LazyLoadingAnimationProjectList(
+                  //     scrollController: widget.scrollController,
+                  //     itemHeight: 230,
+                  //     list: _projectStore.projects,
+                  //     firstCallback: (i) {
+                  //       setState(() {
+                  //         var p = (_projectStore.projects).firstWhereOrNull(
+                  //           (element) => element.objectId == i,
+                  //         );
+                  //         setState(() {
+                  //           p?.isFavorite = !p.isFavorite;
+                  //         });
+                  //         // _projectStore.projects[i].isFavorite =
+                  //         //     !_projectStore.projects[i].isFavorite;
+                  //       });
+                  //     },
+                  //   )
                 } else if (snapshot.hasError) {
                   children = Center(
                     child: Text(Lang.get("error")),

@@ -78,7 +78,7 @@ class Routes {
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),
     projectPost: const ProjectPostScreen(),
-    favortieProject: const FavoriteScreen(),
+    favortieProject: const FavoriteScreen(projectList: [],),
     projectDetailsStudent: const Placeholder(),
     forgetPassword: const ForgetPasswordScreen(),
     forgetPasswordSent: const ForgetPasswordSentScreen(),

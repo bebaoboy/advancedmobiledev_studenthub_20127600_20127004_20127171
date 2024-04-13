@@ -126,6 +126,7 @@ dependencies:
   scroll_to_index: ^3.0.1
   super_sliver_list:
   synchronized: 
+  skeletonizer:
   # smooth_page_indicator:
   swipeable_page_route:
   size_helper:

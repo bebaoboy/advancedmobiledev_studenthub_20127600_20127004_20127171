@@ -9,6 +9,7 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class _OpenContainerWrapper extends StatelessWidget {
@@ -88,8 +89,9 @@ class _ProjectItemState extends State<ProjectItem> {
     // } else {
     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
     // }
-    createdText = timeago.format(
-        locale: _languageStore.locale, widget.project.timeCreated).inCaps;
+    createdText = timeago
+        .format(locale: _languageStore.locale, widget.project.timeCreated)
+        .inCaps;
 
     if (widget.project.countProposals < 1) {
       proposalText += 'None';
@@ -263,5 +265,159 @@ class _ProjectItemState extends State<ProjectItem> {
         // ),
       );
     }
+  }
+}
+
+class ProjectItem2 extends StatefulWidget {
+  final Project project;
+
+  final Function onFavoriteTap;
+  final Function(String id) stopLoading;
+  final int loadingDelay;
+  const ProjectItem2(
+      {super.key,
+      required this.project,
+      required this.onFavoriteTap,
+      required this.stopLoading,
+      this.loadingDelay = 1});
+
+  @override
+  _ProjectItem2State createState() => _ProjectItem2State();
+}
+
+class _ProjectItem2State extends State<ProjectItem2> {
+  final _languageStore = getIt<LanguageStore>();
+  var createdText = '';
+  var proposalText = 'Proposals: ';
+  var updatedText = "";
+  @override
+  void initState() {
+    super.initState();
+    // int differenceWithToday = widget.project.getModifiedTimeCreated();
+    // if (differenceWithToday == 0) {
+    //   createdText = Lang.get("created_now");
+    // } else if (differenceWithToday == 1) {
+    //   createdText = 'Created 1 day ago';
+    // } else {
+    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+    // }
+    createdText = timeago
+        .format(locale: _languageStore.locale, widget.project.timeCreated)
+        .inCaps;
+
+    if (widget.project.countProposals < 1) {
+      proposalText += 'None';
+    } else {
+      proposalText += widget.project.proposal!.length.toString();
+    }
+    if (widget.project.updatedAt != null &&
+        widget.project.updatedAt! != widget.project.timeCreated &&
+        widget.project.updatedAt!.day == DateTime.now().day) {
+      updatedText =
+          "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
+    }
+
+    Future.delayed(Duration(milliseconds: 500 + widget.loadingDelay * 100), () {
+      widget.stopLoading(widget.project.objectId!);
+      if (mounted) {
+        setState(() {
+        widget.project.isLoading = false;
+      });
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var icon = widget.project.isFavorite
+        ? const Icon(Icons.favorite)
+        : const Icon(Icons.favorite_border);
+
+    return _OpenContainerWrapper(
+      project: widget.project,
+      closedChild: LayoutBuilder(builder: (context, c) {
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 9,
+                child: Skeletonizer(
+                  enabled: widget.project.isLoading,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(createdText + updatedText,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 12)),
+                      Text(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        widget.project.title == ''
+                            ? 'No title'
+                            : widget.project.title,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2!
+                            .copyWith(color: Colors.green.shade400),
+                      ),
+                      // TODO: dịch
+                      Text(
+                        'Time: ${widget.project.scope.title}',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      Text(
+                        '${widget.project.numberOfStudents} students needed',
+                        style: Theme.of(context).textTheme.subtitle2,
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        "Student are looking for: ",
+                        style: Theme.of(context).textTheme.bodyText1,
+                      ),
+                      SizedBox(
+                        height: c.maxHeight / 5,
+                        child: AutoSizeText(
+                          widget.project.description == ''
+                              ? 'No description'
+                              : widget.project.description,
+                          style: const TextStyle(),
+                          maxLines: 5,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.justify,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        proposalText,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontSize: 14.0),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              IconButton(
+                color: Theme.of(context).colorScheme.primary,
+                onPressed: () {
+                  setState(() {
+                    widget.onFavoriteTap(widget.project.objectId);
+                  });
+                },
+                icon: icon,
+              ),
+            ],
+          ),
+        );
+      }),
+    );
   }
 }

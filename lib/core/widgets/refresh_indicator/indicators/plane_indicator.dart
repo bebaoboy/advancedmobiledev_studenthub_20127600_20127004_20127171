@@ -56,7 +56,9 @@ class PlaneIndicator extends StatefulWidget {
     required this.onRefresh,
     this.leadingScrollIndicatorVisible = false,
     this.trailingScrollIndicatorVisible = false,
+    this.offsetToArmed = 80.0,
   });
+  final double offsetToArmed;
 
   @override
   State<PlaneIndicator> createState() => _PlaneIndicatorState();
@@ -227,9 +229,8 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
     ),
   ];
 
-  static const _offsetToArmed = 80.0;
   bool complete = false;
-  static const _indicatorSize = 150.0;
+  // static const _indicatorSize = 150.0;
   static const _imageSize = 140.0;
 
   late AnimationController _spoonController;
@@ -260,7 +261,7 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
           // durations: const RefreshIndicatorDurations(
           //   completeDuration: Duration(seconds: 2),
           // ),
-          offsetToArmed: _offsetToArmed,
+          offsetToArmed: widget.offsetToArmed,
           autoRebuild: false,
           onStateChanged: (change) {
             try {
@@ -331,7 +332,7 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
                   children: <Widget>[
                     if (!controller.side.isNone)
                       Container(
-                        height: _offsetToArmed * controller.value * 3,
+                        height: widget.offsetToArmed * controller.value * 3,
                         color: Colors.transparent,
                         width: double.infinity,
                         child: AnimatedBuilder(
@@ -400,7 +401,7 @@ class _PlaneIndicatorState extends State<PlaneIndicator>
                         ),
                       ),
                     Transform.translate(
-                      offset: Offset(0.0, _offsetToArmed * controller.value),
+                      offset: Offset(0.0, widget.offsetToArmed * controller.value),
                       child: child,
                     ),
                   ],
