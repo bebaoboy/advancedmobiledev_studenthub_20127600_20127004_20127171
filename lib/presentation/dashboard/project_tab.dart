@@ -1028,11 +1028,13 @@ class _ProjectTabState extends State<ProjectTab> {
                                     (element) => element.objectId == id,
                                   );
                                   if (p != null) {
-              _projectFormStore.updateFavoriteProject(
-                  _userStore.user!.studentProfile!.objectId ?? "",
-                  id,
-                  !p!.isFavorite);
-             }
+                                    _projectFormStore.updateFavoriteProject(
+                                        _userStore.user!.studentProfile!
+                                                .objectId ??
+                                            "",
+                                        id,
+                                        !p.isFavorite);
+                                  }
                                   setState(() {
                                     setState(() {
                                       p?.isFavorite = !p.isFavorite;
@@ -1072,11 +1074,13 @@ class _ProjectTabState extends State<ProjectTab> {
                                       (element) => element.objectId == id,
                                     );
                                     if (p != null) {
-              _projectFormStore.updateFavoriteProject(
-                  _userStore.user!.studentProfile!.objectId ?? "",
-                  id,
-                  !p!.isFavorite);
-             }
+                                      _projectFormStore.updateFavoriteProject(
+                                          _userStore.user!.studentProfile!
+                                                  .objectId ??
+                                              "",
+                                          id,
+                                          !p.isFavorite);
+                                    }
                                     setState(() {
                                       p?.isFavorite = !p.isFavorite;
                                     });

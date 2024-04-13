@@ -1,6 +1,7 @@
+// ignore_for_file: camel_case_types
+
 import 'package:dio/dio.dart';
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
 class deleteProjectParams {

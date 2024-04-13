@@ -9,8 +9,6 @@ import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:dio/dio.dart';
 
 abstract class ProjectRepository {
-  Future<ProjectList> fetchPagingProjects();
-
   Future<Response> createProject(createProjectParams params);
 
   Future<Response> deleteProject(deleteProjectParams params);

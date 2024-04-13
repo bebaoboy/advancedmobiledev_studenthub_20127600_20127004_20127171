@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
@@ -19,7 +21,7 @@ abstract class _ProjectFormStore with Store {
   final ProjectStore projectStore;
 
   _ProjectFormStore(this._createProjectUseCase, this._deleteProjectUseCase,
-      this._updateFavoriteProjectUseCase, this.errorStore, this.projectStore) {}
+      this._updateFavoriteProjectUseCase, this.errorStore, this.projectStore);
 
   // For add to favorite
   @observable
@@ -62,9 +64,9 @@ abstract class _ProjectFormStore with Store {
   @observable
   ObservableFuture<void> updateProjectFuture = emptyResponse;
 
-  createProjectUseCase _createProjectUseCase;
-  deleteProjectUseCase _deleteProjectUseCase;
-  updateFavoriteProjectUseCase _updateFavoriteProjectUseCase;
+  final createProjectUseCase _createProjectUseCase;
+  final deleteProjectUseCase _deleteProjectUseCase;
+  final updateFavoriteProjectUseCase _updateFavoriteProjectUseCase;
 
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 

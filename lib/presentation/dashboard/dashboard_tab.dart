@@ -43,7 +43,7 @@ class DashBoardTab extends StatefulWidget {
 class _DashBoardTabState extends State<DashBoardTab>
     with SingleTickerProviderStateMixin {
   // late TabController tabController;
-  final ProjectStore _projectStore = getIt<ProjectStore>();
+  // final ProjectStore _projectStore = getIt<ProjectStore>();
 
   @override
   void initState() {
@@ -309,7 +309,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   }
 
   void showBottomSheet(Project project) {
-    final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+    final ProjectFormStore projectFormStore = getIt<ProjectFormStore>();
     showAdaptiveActionSheet(
       title: const Text(
         "Menu",
@@ -436,7 +436,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
               var p = (projectStore.companyProjects).firstWhereOrNull(
                 (element) => element.objectId == project.objectId,
               );
-              _projectFormStore.deleteProject(project.objectId ?? "");
+              projectFormStore.deleteProject(project.objectId ?? "");
               if (p != null) {
                 Toastify.show(
                     context,
