@@ -28,13 +28,19 @@ class ProjectApi {
       "description": params.description,
       "typeFlag": params.typeFlag,
       "numberOfStudents": params.numberOfStudents,
-    }).onError(
-        (DioException error, stackTrace) => Future.value(error.response));
+    }).onError((DioException error, stackTrace) {
+      if (error.response != null) {
+        return Future.value(error.response);
+      } else {
+        // Handle the case when error.response is null
+        return Future.error('An error occurred: ${error.message}');
+      }
+    });
   }
 
   Future<Response> deleteProjects(deleteProjectParams params) async {
     return await _dioClient.dio.delete(
-        Interpolator(Endpoints.deleteProject)({"id": params.Id}),
+        Interpolator(Endpoints.deleteProject)({"projectId": params.Id}),
         data: {}).onError((DioException error,
             stackTrace) =>
         Future.value(error.response));

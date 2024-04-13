@@ -5,10 +5,13 @@ import 'package:boilerplate/core/widgets/searchbar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'dart:async';
@@ -492,7 +495,8 @@ class ProjectTab extends StatefulWidget {
 class _ProjectTabState extends State<ProjectTab> {
   SearchFilter filter = SearchFilter();
   final ProjectStore _projectStore = getIt<ProjectStore>();
-
+  final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+  final UserStore _userStore = getIt<UserStore>();
   double yOffset = 0;
   String keyword = "";
   TextEditingController controller = TextEditingController();
@@ -716,7 +720,9 @@ class _ProjectTabState extends State<ProjectTab> {
                           // }).toList(),
                           searchHistory.where(
                         (element) {
-                          return element.trim().contains(controller.text.trim());
+                          return element
+                              .trim()
+                              .contains(controller.text.trim());
                         },
                       ).toList(),
                     );
@@ -798,9 +804,15 @@ class _ProjectTabState extends State<ProjectTab> {
             itemHeight: 230,
             list: _projectStore.projects,
             firstCallback: (i) {
+              var p = (_projectStore.projects).firstWhereOrNull(
+                (element) => element.objectId == i,
+              );
+              _projectFormStore.updateFavoriteProject(
+                  _userStore.user!.studentProfile!.objectId ?? "",
+                  i,
+                  p!.isFavorite = !p.isFavorite);
               setState(() {
-                _projectStore.projects[i].isFavorite =
-                    !_projectStore.projects[i].isFavorite;
+                p!.isFavorite = !p.isFavorite;
               });
             },
           ),

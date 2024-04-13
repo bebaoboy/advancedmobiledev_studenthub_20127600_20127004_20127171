@@ -4,7 +4,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
 class deleteProjectParams {
-  int Id;
+  String Id;
 
   deleteProjectParams({required this.Id});
 }

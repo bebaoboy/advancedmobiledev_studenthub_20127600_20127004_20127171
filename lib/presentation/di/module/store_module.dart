@@ -164,7 +164,8 @@ mixin StoreModule {
           getIt<createProjectUseCase>(),
           getIt<deleteProjectUseCase>(),
           getIt<updateFavoriteProjectUseCase>(),
-          getIt<ErrorStore>()),
+          getIt<ErrorStore>(),
+          getIt<ProjectStore>()),
     );
   }
 }

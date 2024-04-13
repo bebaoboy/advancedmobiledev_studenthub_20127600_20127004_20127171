@@ -3,6 +3,7 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -18,14 +19,12 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   // final ThemeStore _themeStore = getIt<ThemeStore>();
   // final LanguageStore _languageStore = getIt<LanguageStore>();
   final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+  final UserStore _userStore = getIt<UserStore>();
 
   //textEdittingController
   final TextEditingController controller1 = TextEditingController();
   final TextEditingController controller2 = TextEditingController();
   final TextEditingController controller3 = TextEditingController();
-  final TextEditingController controller4 = TextEditingController();
-  final TextEditingController controller5 = TextEditingController();
-  final TextEditingController controller6 = TextEditingController();
 
   int _startIndex = 0;
   String title = "";
@@ -33,7 +32,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   int number = 0;
   String description = "";
   String? groupValue;
-  Scope scope = Scope.short;
+  int scope = Scope.short.index;
 
   @override
   void initState() {
@@ -170,7 +169,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
-                  scope = Scope.tight;
+                  scope = Scope.tight.index;
                 });
               },
             ),
@@ -181,7 +180,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
-                  scope = Scope.tight;
+                  scope = Scope.tight.index;
                 });
               },
             ),
@@ -192,7 +191,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
-                  scope = Scope.long;
+                  scope = Scope.long.index;
                 });
               },
             ),
@@ -204,7 +203,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               onChanged: (String? value) {
                 setState(() {
                   groupValue = value;
-                  scope = Scope.extended;
+                  scope = Scope.extended.index;
                 });
               },
             ),
@@ -420,10 +419,18 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                     shape: const StadiumBorder(
                         side: BorderSide(color: Colors.transparent)),
                     onPressed: () {
+                      _projectFormStore.createProject(
+                          _userStore.user!.companyProfile!.objectId ?? "",
+                          controller1.text,
+                          controller3.text,
+                          int.parse(controller2.text),
+                          scope,
+                          false);
+
                       Navigator.of(context).pop<Project>(Project(
                         title: title,
                         description: description,
-                        scope: scope,
+                        scope: Scope.values[scope],
                         numberOfStudents: number,
                         timeCreated: DateTime.now(),
                       ));

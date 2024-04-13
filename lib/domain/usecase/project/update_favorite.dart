@@ -4,9 +4,9 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
 class updateFavoriteProjectParams {
-  int projectId;
+  String projectId;
   bool disableFlag;
-  int studentId;
+  String studentId;
 
   updateFavoriteProjectParams(
       {required this.projectId,

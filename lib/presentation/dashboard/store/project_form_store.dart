@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'project_form_store.g.dart';
@@ -15,9 +16,10 @@ class ProjectFormStore = _ProjectFormStore with _$ProjectFormStore;
 
 abstract class _ProjectFormStore with Store {
   final ErrorStore errorStore;
+  final ProjectStore projectStore;
 
   _ProjectFormStore(this._createProjectUseCase, this._deleteProjectUseCase,
-      this._updateFavoriteProjectUseCase, this.errorStore) {}
+      this._updateFavoriteProjectUseCase, this.errorStore, this.projectStore) {}
 
   // For add to favorite
   @observable
@@ -40,7 +42,7 @@ abstract class _ProjectFormStore with Store {
   int numberOfStudents = 0;
 
   @observable
-  Scope projectScopeFlag = Scope.tight;
+  int projectScopeFlag = Scope.tight.index;
 
   @observable
   bool typeFlag = true;
@@ -67,8 +69,8 @@ abstract class _ProjectFormStore with Store {
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 
   @action
-  Future createProject(int companyId, String title, String description,
-      int numberOfStudents, Scope projectScopeFlag, bool typeFlag) async {
+  Future createProject(String companyId, String title, String description,
+      int numberOfStudents, int projectScopeFlag, bool typeFlag) async {
     final createProjectParams projectParams = createProjectParams(
         companyId: companyId,
         title: title,
@@ -88,6 +90,14 @@ abstract class _ProjectFormStore with Store {
         String? id;
         try {
           id = value.data["result"]["id"].toString();
+          projectStore.addProject(Project(
+              title: title,
+              description: description,
+              scope: Scope.values[projectScopeFlag],
+              timeCreated: DateTime.now(),
+              numberOfStudents: numberOfStudents,
+              companyId: companyId,
+              id: id));
         } catch (e) {
           errorStore.errorMessage = "cannot parse company id";
         }
@@ -104,7 +114,7 @@ abstract class _ProjectFormStore with Store {
   }
 
   @action
-  Future deleteProject(int projectId) async {
+  Future deleteProject(String projectId) async {
     final deleteProjectParams projectParams =
         deleteProjectParams(Id: projectId);
     final future = _deleteProjectUseCase.call(params: projectParams);
@@ -136,7 +146,7 @@ abstract class _ProjectFormStore with Store {
 
   @action
   Future updateFavoriteProject(
-      int studentId, int projectId, bool disableFlag) async {
+      String studentId, String projectId, bool disableFlag) async {
     final updateFavoriteProjectParams projectParams =
         updateFavoriteProjectParams(
             projectId: projectId,

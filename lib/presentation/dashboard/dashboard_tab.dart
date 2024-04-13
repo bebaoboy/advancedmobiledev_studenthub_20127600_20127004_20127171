@@ -10,6 +10,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/my_project_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -88,8 +89,8 @@ class _DashBoardTabState extends State<DashBoardTab> {
                         setState(() {
                           if (value != null) {
                             allProjects.insert(0, value as Project);
-                            projectStore.projects.insert(0, value);
-                            _projectStore.addProject(value);
+                            // projectStore.projects.insert(0, value);
+                            // _projectStore.addProject(value);
                           }
                         });
                       });
@@ -203,6 +204,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
 }
 
 void showBottomSheet(Project project, Function workingCallback) {
+  final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+
   showAdaptiveActionSheet(
     title: const Text(
       "Menu",
@@ -256,6 +259,9 @@ void showBottomSheet(Project project, Function workingCallback) {
           child: Text(Lang.get('project_item_remove_job_posting'),
               style: const TextStyle(fontWeight: FontWeight.normal)),
         ),
+        onPressed: (_) {
+          _projectFormStore.deleteProject(project.objectId ?? "");
+        },
       ),
       BottomSheetAction(
         title: null,

@@ -4,11 +4,11 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
 class createProjectParams {
-  int companyId;
+  String companyId;
   String title;
   String description;
   int numberOfStudents;
-  Scope projectScopeFlag;
+  int projectScopeFlag;
   bool typeFlag;
 
   createProjectParams(
