@@ -130,7 +130,7 @@ dependencies:
   # T
   to_string_pretty:
   tuple: 
-  toastification:
+  toastification: ^1.2.1
   timeago:
   # tree_view_flutter: ^1.0.2
   # U
