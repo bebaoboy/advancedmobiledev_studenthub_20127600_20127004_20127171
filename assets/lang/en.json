@@ -191,6 +191,7 @@
   "project_item_description_header": "Looking for students that: ",
   "project_item_blank": "No description",
   "project_item_no_title": "Empty title",
+  "project_item_scope": "Scope: ",
   "project_delete_success": "Delete project successful",
   "project_update_same": "Updated: same time",
 

@@ -128,7 +128,7 @@ class Project extends ProjectBase {
     return timeCreated.difference(DateTime.now()).inDays.abs();
   }
 
-  factory Project.fromMap(Map<String, dynamic> json) {
+  factory Project.fromMap(Map<String, dynamic> json, {fav = false}) {
     // var proprosal = json['proposals'];
     // var real;
     // if (proprosal is String) {
@@ -159,7 +159,7 @@ class Project extends ProjectBase {
         countMessages: json["countMessages"],
         countHired: json["countHired"],
         enabled: Status.values[json["typeFlag"] ?? 0],
-        isFavorite: json['isFavorite'] ?? false);
+        isFavorite: fav);
   }
 
   Map<String, dynamic> toJson() {

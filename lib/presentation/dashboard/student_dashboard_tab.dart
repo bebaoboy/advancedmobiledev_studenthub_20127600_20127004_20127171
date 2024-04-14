@@ -297,74 +297,74 @@ class _AllProjectsState extends State<AllProjects> {
         ),
       ],
     );
-    Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: Colors.black)),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 12, left: 12),
-                  child: Container(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                          '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
-                ),
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: ListView.builder(
-                    controller: ScrollController(),
-                    itemCount: activeProjects?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      activeProjects![index].isLoading = false;
-                      return StudentProjectItem(
-                          project: activeProjects![index]);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 12,
-        ),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-                border: Border.all(width: 1, color: Colors.black)),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-                  child: Container(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                          '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
-                ),
-                Flexible(
-                  fit: FlexFit.loose,
-                  child: ListView.builder(
-                    controller: ScrollController(),
-                    itemCount: submittedProjects?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      submittedProjects![index].isLoading = false;
-                      return StudentProjectItem(
-                          project: submittedProjects![index]);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(
-          height: 16,
-        )
-      ],
-    );
+    // Column(
+    //   mainAxisSize: MainAxisSize.min,
+    //   children: [
+    //     Expanded(
+    //       child: Container(
+    //         decoration: BoxDecoration(
+    //             border: Border.all(width: 1, color: Colors.black)),
+    //         child: Column(
+    //           children: [
+    //             Padding(
+    //               padding: const EdgeInsets.only(top: 12, left: 12),
+    //               child: Container(
+    //                   alignment: Alignment.topLeft,
+    //                   child: Text(
+    //                       '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
+    //             ),
+    //             Flexible(
+    //               fit: FlexFit.loose,
+    //               child: ListView.builder(
+    //                 controller: ScrollController(),
+    //                 itemCount: activeProjects?.length ?? 0,
+    //                 itemBuilder: (context, index) {
+    //                   activeProjects![index].isLoading = false;
+    //                   return StudentProjectItem(
+    //                       project: activeProjects![index]);
+    //                 },
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //     const SizedBox(
+    //       height: 12,
+    //     ),
+    //     Expanded(
+    //       child: Container(
+    //         decoration: BoxDecoration(
+    //             border: Border.all(width: 1, color: Colors.black)),
+    //         child: Column(
+    //           children: [
+    //             Padding(
+    //               padding: const EdgeInsets.only(top: 12.0, left: 12.0),
+    //               child: Container(
+    //                   alignment: Alignment.topLeft,
+    //                   child: Text(
+    //                       '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
+    //             ),
+    //             Flexible(
+    //               fit: FlexFit.loose,
+    //               child: ListView.builder(
+    //                 controller: ScrollController(),
+    //                 itemCount: submittedProjects?.length ?? 0,
+    //                 itemBuilder: (context, index) {
+    //                   submittedProjects![index].isLoading = false;
+    //                   return StudentProjectItem(
+    //                       project: submittedProjects![index]);
+    //                 },
+    //               ),
+    //             ),
+    //           ],
+    //         ),
+    //       ),
+    //     ),
+    //     const SizedBox(
+    //       height: 16,
+    //     )
+    //   ],
+    // );
   }
 }

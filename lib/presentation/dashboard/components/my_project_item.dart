@@ -8,7 +8,6 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -134,8 +133,12 @@ class _MyProjectItemState extends State<MyProjectItem> {
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
         widget.project.updatedAt!.day == DateTime.now().day) {
+      // updatedText =
+      //     "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
       updatedText =
-          "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
+          "Updated ${timeago.format(locale: _languageStore.locale, widget.project.updatedAt!.toLocal())}";
+    } else {
+      updatedText = createdText;
     }
     return _OpenContainerWrapper(
       project: widget.project,
@@ -255,7 +258,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                                 ? FontWeight.bold
                                 : null),
                       ),
-                      Text(createdText + updatedText,
+                      Text(updatedText,
                           style: Theme.of(context)
                               .textTheme
                               .labelSmall!

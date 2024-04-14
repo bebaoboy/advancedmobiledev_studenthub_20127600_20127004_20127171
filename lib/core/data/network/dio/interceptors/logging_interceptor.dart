@@ -160,7 +160,9 @@ class LoggingInterceptor extends Interceptor {
 
     logPrint!('[DIO]--> END ${options.method}');
     s += '[DIO]--> END ${options.method}';
-    spPrint(s);
+    Future.delayed(Duration.zero, () {
+      spPrint(s);
+    });
     return handler.next(options);
   }
 
@@ -216,7 +218,9 @@ class LoggingInterceptor extends Interceptor {
 
     logPrint!('[DIO]<-- END HTTP');
     s += '[DIO]<-- END HTTP';
-    spPrint(s);
+    Future.delayed(Duration.zero, () {
+      spPrint(s);
+    });
 
     return handler.next(response);
   }
@@ -233,7 +237,9 @@ class LoggingInterceptor extends Interceptor {
 
     logPrint!('[DIO]<-- HTTP FAILED: $err');
     s += '[DIO]<-- HTTP FAILED: ';
-    spPrint("$s\n${toStringPretty(err)}");
+    Future.delayed(Duration.zero, () {
+      spPrint("$s\n${toStringPretty(err)}");
+    });
 
     return handler.next(err);
   }

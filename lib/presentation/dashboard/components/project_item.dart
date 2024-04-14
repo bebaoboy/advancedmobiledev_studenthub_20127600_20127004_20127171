@@ -9,7 +9,6 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -62,212 +61,213 @@ class _OpenContainerWrapper extends StatelessWidget {
   }
 }
 
-class ProjectItem extends StatefulWidget {
-  final Project project;
+// class ProjectItem extends StatefulWidget {
+//   final Project project;
 
-  final Function onFavoriteTap;
-  const ProjectItem(
-      {super.key, required this.project, required this.onFavoriteTap});
+//   final Function onFavoriteTap;
+//   const ProjectItem(
+//       {super.key, required this.project, required this.onFavoriteTap});
 
-  @override
-  _ProjectItemState createState() => _ProjectItemState();
-}
+//   @override
+//   _ProjectItemState createState() => _ProjectItemState();
+// }
 
-class _ProjectItemState extends State<ProjectItem> {
-  final _languageStore = getIt<LanguageStore>();
-  var createdText = '';
-  var proposalText = 'Proposals: ';
-  var updatedText = "";
-  @override
-  void initState() {
-    super.initState();
-    // int differenceWithToday = widget.project.getModifiedTimeCreated();
-    // if (differenceWithToday == 0) {
-    //   createdText = Lang.get("created_now");
-    // } else if (differenceWithToday == 1) {
-    //   createdText = 'Created 1 day ago';
-    // } else {
-    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-    // }
-    createdText = timeago
-        .format(locale: _languageStore.locale, widget.project.timeCreated)
-        .inCaps;
+// class _ProjectItemState extends State<ProjectItem> {
+//   final _languageStore = getIt<LanguageStore>();
+//   var createdText = '';
+//   var proposalText = 'Proposals: ';
+//   var updatedText = "";
+//   @override
+//   void initState() {
+//     super.initState();
+//     // int differenceWithToday = widget.project.getModifiedTimeCreated();
+//     // if (differenceWithToday == 0) {
+//     //   createdText = Lang.get("created_now");
+//     // } else if (differenceWithToday == 1) {
+//     //   createdText = 'Created 1 day ago';
+//     // } else {
+//     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
+//     // }
+//     createdText = timeago
+//         .format(locale: _languageStore.locale, widget.project.timeCreated)
+//         .inCaps;
 
-    if (widget.project.countProposals < 1) {
-      proposalText += 'None';
-    } else {
-      proposalText += widget.project.proposal!.length.toString();
-    }
-    if (widget.project.updatedAt != null &&
-        widget.project.updatedAt! != widget.project.timeCreated &&
-        widget.project.updatedAt!.day == DateTime.now().day) {
-      updatedText =
-          "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
-    }
-  }
+//     if (widget.project.countProposals < 1) {
+//       proposalText += 'None';
+//     } else {
+//       proposalText += widget.project.proposal!.length.toString();
+//     }
+//     if (widget.project.updatedAt != null &&
+//         widget.project.updatedAt! != widget.project.timeCreated &&
+//         widget.project.updatedAt!.day == DateTime.now().day) {
+//       updatedText =
+//           "Updated ${timeago.format(locale: _languageStore.locale, widget.project.updatedAt!.toLocal())}";
+//     } else {
+//       updatedText = createdText;
+//     }
+//   }
 
-  Widget _buildImage() {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Container(
-        width: double.infinity,
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-    );
-  }
+//   Widget _buildImage() {
+//     return AspectRatio(
+//       aspectRatio: 16 / 9,
+//       child: Container(
+//         width: double.infinity,
+//         height: 100,
+//         decoration: BoxDecoration(
+//           color: Colors.black,
+//           borderRadius: BorderRadius.circular(16),
+//         ),
+//       ),
+//     );
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    if (widget.project.isLoading) {
-      return Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildImage(),
-          ],
-        ),
-      );
-    } else {
-      var icon = widget.project.isFavorite
-          ? const Icon(Icons.favorite)
-          : const Icon(Icons.favorite_border);
+//   @override
+//   Widget build(BuildContext context) {
+//     if (widget.project.isLoading) {
+//       return Padding(
+//         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.start,
+//           children: [
+//             _buildImage(),
+//           ],
+//         ),
+//       );
+//     } else {
+//       var icon = widget.project.isFavorite
+//           ? const Icon(Icons.favorite)
+//           : const Icon(Icons.favorite_border);
 
-      return _OpenContainerWrapper(
-        project: widget.project,
-        closedChild: LayoutBuilder(builder: (context, c) {
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 9,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(createdText + updatedText,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(fontSize: 12)),
-                      Text(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        widget.project.title == ''
-                            ? 'No title'
-                            : widget.project.title,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText2!
-                            .copyWith(color: Colors.green.shade400),
-                      ),
-                      
-                      Text(
-                        '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
-                        //'Time: ${widget.project.scope.title}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      Text(
-                        '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
-                        style: Theme.of(context).textTheme.subtitle2,
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        Lang.get('project_item_description_header'),
-                        style: Theme.of(context).textTheme.bodyText1,
-                      ),
-                      SizedBox(
-                        height: c.maxHeight / 5,
-                        child: AutoSizeText(
-                          widget.project.description == ''
-                              ? Lang.get("project_item_blank")
-                              : widget.project.description,
-                          style: const TextStyle(),
-                          maxLines: 5,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.justify,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        proposalText,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(fontSize: 14.0),
-                      ),
-                    ],
-                  ),
-                ),
-                IconButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  onPressed: () {
-                    setState(() {
-                      widget.onFavoriteTap();
-                    });
-                  },
-                  icon: icon,
-                ),
-              ],
-            ),
-          );
-        }),
+//       return _OpenContainerWrapper(
+//         project: widget.project,
+//         closedChild: LayoutBuilder(builder: (context, c) {
+//           return Padding(
+//             padding: const EdgeInsets.all(8.0),
+//             child: Row(
+//               children: [
+//                 Expanded(
+//                   flex: 9,
+//                   child: Column(
+//                     crossAxisAlignment: CrossAxisAlignment.start,
+//                     children: [
+//                       Text(updatedText,
+//                           style: Theme.of(context)
+//                               .textTheme
+//                               .bodyText1!
+//                               .copyWith(fontSize: 12)),
+//                       Text(
+//                         maxLines: 1,
+//                         overflow: TextOverflow.ellipsis,
+//                         widget.project.title == ''
+//                             ? 'No title'
+//                             : widget.project.title,
+//                         style: Theme.of(context)
+//                             .textTheme
+//                             .bodyText2!
+//                             .copyWith(color: Colors.green.shade400),
+//                       ),
+//                       Text(
+//                         '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
+//                         //'Time: ${widget.project.scope.title}',
+//                         style: Theme.of(context).textTheme.subtitle2,
+//                       ),
+//                       Text(
+//                         '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
+//                         style: Theme.of(context).textTheme.subtitle2,
+//                       ),
+//                       const SizedBox(
+//                         height: 10,
+//                       ),
+//                       Text(
+//                         Lang.get('project_item_description_header'),
+//                         style: Theme.of(context).textTheme.bodyText1,
+//                       ),
+//                       SizedBox(
+//                         height: c.maxHeight / 5,
+//                         child: AutoSizeText(
+//                           widget.project.description == ''
+//                               ? Lang.get("project_item_blank")
+//                               : widget.project.description,
+//                           style: const TextStyle(),
+//                           maxLines: 5,
+//                           overflow: TextOverflow.ellipsis,
+//                           textAlign: TextAlign.justify,
+//                         ),
+//                       ),
+//                       const SizedBox(
+//                         height: 10,
+//                       ),
+//                       Text(
+//                         proposalText,
+//                         style: Theme.of(context)
+//                             .textTheme
+//                             .bodyText1!
+//                             .copyWith(fontSize: 14.0),
+//                       ),
+//                     ],
+//                   ),
+//                 ),
+//                 IconButton(
+//                   color: Theme.of(context).colorScheme.primary,
+//                   onPressed: () {
+//                     setState(() {
+//                       widget.onFavoriteTap();
+//                     });
+//                   },
+//                   icon: icon,
+//                 ),
+//               ],
+//             ),
+//           );
+//         }),
 
-        //  Card(
-        //   child: InkWell(
-        //     onTap: () {
-        //       //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
-        //       Navigator.of(NavigationService.navigatorKey.currentContext!)
-        //           .pushNamed(Routes.projectDetailsStudent,
-        //               arguments: widget.project);
-        //     },
-        //     child: Padding(
-        //       padding: const EdgeInsets.all(8.0),
-        //       child: Row(
-        //         children: [
-        //           Expanded(
-        //             flex: 9,
-        //             child: SingleChildScrollView(
-        //               child: Column(
-        //                 crossAxisAlignment: CrossAxisAlignment.start,
-        //                 children: [
-        //                   Text(createdText),
-        //                   Text(widget.project.title),
-        //                   Text(
-        //                     'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-        //                   ),
-        //                   Text(widget.project.description),
-        //                   Text(proposalText),
-        //                 ],
-        //               ),
-        //             ),
-        //           ),
-        //           IconButton(
-        //             color: Theme.of(context).colorScheme.primary,
-        //             onPressed: () {
-        //               setState(() {
-        //                 widget.onFavoriteTap();
-        //               });
-        //             },
-        //             icon: icon,
-        //           ),
-        //         ],
-        //       ),
-        //     ),
-        //   ),
-        // ),
-      );
-    }
-  }
-}
+//         //  Card(
+//         //   child: InkWell(
+//         //     onTap: () {
+//         //       //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
+//         //       Navigator.of(NavigationService.navigatorKey.currentContext!)
+//         //           .pushNamed(Routes.projectDetailsStudent,
+//         //               arguments: widget.project);
+//         //     },
+//         //     child: Padding(
+//         //       padding: const EdgeInsets.all(8.0),
+//         //       child: Row(
+//         //         children: [
+//         //           Expanded(
+//         //             flex: 9,
+//         //             child: SingleChildScrollView(
+//         //               child: Column(
+//         //                 crossAxisAlignment: CrossAxisAlignment.start,
+//         //                 children: [
+//         //                   Text(createdText),
+//         //                   Text(widget.project.title),
+//         //                   Text(
+//         //                     'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
+//         //                   ),
+//         //                   Text(widget.project.description),
+//         //                   Text(proposalText),
+//         //                 ],
+//         //               ),
+//         //             ),
+//         //           ),
+//         //           IconButton(
+//         //             color: Theme.of(context).colorScheme.primary,
+//         //             onPressed: () {
+//         //               setState(() {
+//         //                 widget.onFavoriteTap();
+//         //               });
+//         //             },
+//         //             icon: icon,
+//         //           ),
+//         //         ],
+//         //       ),
+//         //     ),
+//         //   ),
+//         // ),
+//       );
+//     }
+//   }
+// }
 
 class ProjectItem2 extends StatefulWidget {
   final Project project;
@@ -309,13 +309,15 @@ class _ProjectItem2State extends State<ProjectItem2> {
     if (widget.project.countProposals < 1) {
       proposalText += 'None';
     } else {
-      proposalText += (widget.project.proposal?.length ?? 0 ).toString();
+      proposalText += (widget.project.proposal?.length ?? 0).toString();
     }
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
         widget.project.updatedAt!.day == DateTime.now().day) {
       updatedText =
-          "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
+          "Updated ${timeago.format(locale: _languageStore.locale, widget.project.updatedAt!.toLocal())}";
+    } else {
+      updatedText = createdText;
     }
 
     Future.delayed(Duration(milliseconds: 500 + widget.loadingDelay * 100), () {
@@ -338,7 +340,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
       project: widget.project,
       closedChild: LayoutBuilder(builder: (context, c) {
         return Padding(
-          padding: const EdgeInsets.symmetric(horizontal:  8.0, vertical: 15),
+          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
           child: Stack(
             children: [
               Skeletonizer(
@@ -347,7 +349,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(createdText + updatedText,
+                    Text(updatedText,
                         style: Theme.of(context)
                             .textTheme
                             .bodyText1!
@@ -358,10 +360,10 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       widget.project.title == ''
                           ? Lang.get('project_item_no_title')
                           : widget.project.title,
-                      style: TextStyle(color: Colors.green.shade400, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.green.shade400,
+                          fontWeight: FontWeight.bold),
                     ),
-                  
-
                     const SizedBox(
                       height: 10,
                     ),
@@ -369,7 +371,6 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       Lang.get('project_item_description_header'),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
-
                     Flexible(
                       // height: 100,
                       child: AutoSizeText(

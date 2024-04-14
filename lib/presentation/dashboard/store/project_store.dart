@@ -113,10 +113,23 @@ abstract class _ProjectStore with Store {
 
   /// descending created date order
   Future<ProjectList> getAllProject() async {
+    try {
+    await getStudentFavoriteProject(false);
+    } catch(e) {
+      // nothing changed
+    }
     return await _getProjectsUseCase
         .call(params: GetProjectParams())
         .then((value) {
       _projects = value;
+      for (var element in _favoriteProjects.projects!) {
+          var p = _projects.projects!.firstWhereOrNull(
+            (e) => e.objectId == element.objectId,
+          );
+          if (p != null) {
+            p.isFavorite = true;
+          }
+        }
       _projects.projects?.sort(
         (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
       );
@@ -173,7 +186,7 @@ abstract class _ProjectStore with Store {
         _companyProjects.projects?.sort(
           (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
         );
-        
+
         return _companyProjects;
       } else {
         print(value.data);

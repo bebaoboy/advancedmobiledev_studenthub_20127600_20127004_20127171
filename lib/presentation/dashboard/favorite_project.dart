@@ -136,10 +136,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
                         lazyList.addAll(_projectStore.favoriteProjects.sublist(
                             max(refazynistKey.currentState!.length() - 1, 0),
-                            (max(refazynistKey.currentState!.length() - 1, 0) +
-                                    5)
-                                .clamp(
-                                    0, _projectStore.favoriteProjects.length)));
+                            (refazynistKey.currentState!.length() + 5).clamp(
+                                0, _projectStore.favoriteProjects.length)));
 
                         await Future.delayed(
                             const Duration(seconds: 1)); // Fake internet delay

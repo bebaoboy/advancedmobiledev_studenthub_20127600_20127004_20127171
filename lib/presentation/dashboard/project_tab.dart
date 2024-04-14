@@ -407,7 +407,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
 
                       lazyList.addAll(widget.searchList.sublist(
                           max(refazynistKey.currentState!.length() - 1, 0),
-                          (max(refazynistKey.currentState!.length() - 1, 0) + 5)
+                          (refazynistKey.currentState!.length() + 5)
                               .clamp(0, widget.searchList.length)));
 
                       await Future.delayed(
@@ -904,7 +904,7 @@ class _ProjectTabState extends State<ProjectTab> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 55, left: 5),
-          child: Text("Result: ${_projectStore.projects.length}"),
+          child: Text("Result: ${_projectStore.projects.length} (Latest update)"),
         ),
         Container(
             margin: const EdgeInsets.only(top: 90),
@@ -983,8 +983,7 @@ class _ProjectTabState extends State<ProjectTab> {
 
                         lazyList.addAll(_projectStore.projects.sublist(
                             max(refazynistKey.currentState!.length() - 1, 0),
-                            (max(refazynistKey.currentState!.length() - 1, 0) +
-                                    5)
+                            (refazynistKey.currentState!.length() + 5)
                                 .clamp(0, _projectStore.projects.length)));
 
                         await Future.delayed(

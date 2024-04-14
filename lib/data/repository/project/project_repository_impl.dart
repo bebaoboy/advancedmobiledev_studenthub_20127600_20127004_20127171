@@ -31,8 +31,10 @@ class ProjectRepositoryImpl extends ProjectRepository {
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
         var result = ProjectList.fromJson(value.data["result"]);
-        result.projects?.forEach((project) {
-          _datasource.insert(project);
+        Future.delayed(Duration.zero, () {
+          result.projects?.forEach((project) {
+            _datasource.insert(project);
+          });
         });
         return result;
       } else {
@@ -42,7 +44,7 @@ class ProjectRepositoryImpl extends ProjectRepository {
       // ignore: invalid_return_type_for_catch_error
     } catch (e) {
       Log.e("ProjectRepo", e.toString());
-      return await _datasource.getProjectsFromDb();
+      return _datasource.getProjectsFromDb();
     }
   }
 

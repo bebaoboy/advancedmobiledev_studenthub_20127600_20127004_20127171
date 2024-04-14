@@ -1,6 +1,8 @@
 import 'package:boilerplate/core/widgets/onboarding/flutter_onboarding_slider.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class OnBoarding extends StatelessWidget {
@@ -13,8 +15,14 @@ class OnBoarding extends StatelessWidget {
         imageVerticalOffset: -100,
         centerBackground: true,
         finishButtonText: 'Register',
-        onFinish: () {
+        onFinish: () async {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setBool(Preferences.first_time, true);
           Navigator.of(context).pop();
+        },
+        skipFunctionOverride: () async {
+          final prefs = await SharedPreferences.getInstance();
+          prefs.setBool(Preferences.first_time, true);
         },
         finishButtonStyle: FinishButtonStyle(
           shape: const RoundedRectangleBorder(
