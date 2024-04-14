@@ -903,7 +903,11 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
-            margin: const EdgeInsets.only(top: 50),
+          margin: const EdgeInsets.only(top: 55, left: 5),
+          child: Text("Result: ${_projectStore.projects.length}"),
+        ),
+        Container(
+            margin: const EdgeInsets.only(top: 90),
             child: FutureBuilder<ProjectList>(
               future: future,
               builder:

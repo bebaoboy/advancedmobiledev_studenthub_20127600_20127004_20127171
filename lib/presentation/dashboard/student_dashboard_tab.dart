@@ -12,6 +12,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:accordion/accordion.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
@@ -29,8 +30,8 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
   void initState() {
     super.initState();
     // tabController = TabController(length: 3, vsync: this);
-    future = _projectStore.getStudentProposalProjects(
-          _userStore.user!.studentProfile!.objectId!);
+    future = _projectStore
+        .getStudentProposalProjects(_userStore.user!.studentProfile!.objectId!);
   }
 
   final _userStore = getIt<UserStore>();
@@ -49,7 +50,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
         Widget children;
         if (snapshot.hasData) {
           children = Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Column(
                 children: <Widget>[
                   Align(
@@ -93,7 +94,9 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
         } else {
           print("loading");
           children = const Center(
-            child: LoadingScreenWidget(size: 80,),
+            child: LoadingScreenWidget(
+              size: 80,
+            ),
           );
         }
         return children;
@@ -235,7 +238,66 @@ class _AllProjectsState extends State<AllProjects> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Accordion(
+      paddingListTop: 0,
+      paddingListBottom: 0,
+      maxOpenSections: 1,
+      headerBackgroundColorOpened: Colors.black54,
+      headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
+      children: [
+        AccordionSection(
+          isOpen: true,
+          leftIcon: const Icon(Icons.insights_rounded, color: Colors.white),
+          headerBackgroundColor: Colors.black38,
+          headerBackgroundColorOpened: Colors.black54,
+          header: Padding(
+            padding: const EdgeInsets.only(top: 12, left: 12),
+            child: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
+          ),
+          content: LimitedBox(
+            maxHeight: MediaQuery.of(context).size.height / 2,
+            child: ListView.builder(
+              controller: ScrollController(),
+              itemCount: activeProjects?.length ?? 0,
+              itemBuilder: (context, index) {
+                activeProjects![index].isLoading = false;
+                return StudentProjectItem(project: activeProjects![index]);
+              },
+            ),
+          ),
+          contentHorizontalPadding: 20,
+          contentBorderColor: Colors.black54,
+        ),
+        AccordionSection(
+          isOpen: true,
+          leftIcon: const Icon(Icons.compare_rounded, color: Colors.white),
+          header: Padding(
+            padding: const EdgeInsets.only(top: 12.0, left: 12.0),
+            child: Container(
+                alignment: Alignment.topLeft,
+                child: Text(
+                    '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
+          ),
+          headerBackgroundColor: Colors.black38,
+          headerBackgroundColorOpened: Colors.black54,
+          contentBorderColor: Colors.black54,
+          content: LimitedBox(
+              maxHeight: MediaQuery.of(context).size.height / 2,
+              child: ListView.builder(
+                controller: ScrollController(),
+                itemCount: submittedProjects?.length ?? 0,
+                itemBuilder: (context, index) {
+                  submittedProjects![index].isLoading = false;
+                  return StudentProjectItem(project: submittedProjects![index]);
+                },
+              )),
+        ),
+      ],
+    );
+    Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Expanded(

@@ -439,7 +439,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
                           : null)),
             ),
             onPressed: (_) {
-              // TODO: delete
               var p = (projectStore.companyProjects).firstWhereOrNull(
                 (element) => element.objectId == project.objectId,
               );
@@ -475,7 +474,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
             var p = (projectStore.companyProjects).firstWhereOrNull(
               (element) => element.objectId == project.objectId,
             );
-            // TODO: update project status flag active
             if (p != null) {
               Toastify.show(
                   context,
@@ -508,7 +506,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
               var p = (projectStore.companyProjects).firstWhereOrNull(
                 (element) => element.objectId == project.objectId,
               );
-              // TODO: updateCompany status flag
 
               if (p != null) {
                 Toastify.show(
@@ -565,7 +562,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
             setState(() {
               p?.enabled = Status.inactive;
             });
-            // TODO: update project status flag INactive
             return true;
           }
           return false;
@@ -593,7 +589,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
             setState(() {
               p?.enabled = Status.active;
             });
-            // TODO: update project status flag active
             return true;
           }
           return false;

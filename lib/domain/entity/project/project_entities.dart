@@ -75,9 +75,9 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
 class Project extends ProjectBase {
   // var id = const Uuid().v4();
   int numberOfStudents;
-  List<Proposal>? hired = List.empty(growable: true);
-  List<Proposal>? proposal = List.empty(growable: true);
-  List<Proposal>? messages = List.empty(growable: true);
+  List<Proposal>? hired;
+  List<Proposal>? proposal;
+  List<Proposal>? messages;
   DateTime timeCreated = DateTime.now();
   bool get isWorking => enabled == Status.active;
   bool get isArchived => enabled == Status.inactive;
@@ -153,7 +153,7 @@ class Project extends ProjectBase {
         proposal: (json['proposals'] != null)
             ? List<Proposal>.from((real as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
-            : [],
+            : null,
         companyId: json["companyId"] ?? "",
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
@@ -179,6 +179,11 @@ class Project extends ProjectBase {
       "timeCreated": timeCreated.toString(),
       "proposals": json.encode(proposal),
     };
+  }
+
+  @override
+  String toString() {
+    return "\ncompanyId: $companyId\nid: $objectId\ntitle: $title \ndescription: $description";
   }
 }
 
@@ -225,6 +230,11 @@ class StudentProject extends Project {
         id: (json["id"] ?? "").toString(),
         projectId: (json["projectId"] ?? "").toString(),
         enabled: Status.values[json["typeFlag"] ?? 0]);
+  }
+
+  @override
+  String toString() {
+    return "\ncompanyId: $projectId\nid: $objectId";
   }
 }
 
