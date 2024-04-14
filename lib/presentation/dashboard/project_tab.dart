@@ -982,7 +982,7 @@ class _ProjectTabState extends State<ProjectTab> {
                         List<Project> lazyList = [];
 
                         lazyList.addAll(_projectStore.projects.sublist(
-                            max(refazynistKey.currentState!.length() - 1, 0),
+                            min(refazynistKey.currentState!.length(), _projectStore.projects.length),
                             (refazynistKey.currentState!.length() + 5)
                                 .clamp(0, _projectStore.projects.length)));
 

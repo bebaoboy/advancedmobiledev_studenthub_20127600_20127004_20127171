@@ -8,17 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class OnBoarding extends StatelessWidget {
-  OnBoarding({super.key}) {
-    try {
-      var datasource = getIt<ProjectDataSource>();
-
-      // TODO: disable delete all
-      datasource.deleteAll();
-      //
-    } catch (e) {
-      //
-    }
-  }
+  const OnBoarding({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +49,15 @@ class OnBoarding extends StatelessWidget {
         ),
         trailingFunction: () {
           //Navigator.of(context).pop();
+          try {
+            var datasource = getIt<ProjectDataSource>();
+
+            // TODO: disable delete all
+            datasource.deleteAll();
+            //
+          } catch (e) {
+            //
+          }
         },
         controllerColor: Theme.of(context).colorScheme.primary,
         totalPage: 3,
@@ -239,7 +238,7 @@ class _OnboardingSheetState extends State<OnboardingSheet> {
         // 500px + (app bar height) + (bottom bar height).
         body: SizedBox(
           height: widget.height,
-          child: OnBoarding(),
+          child: const OnBoarding(),
         ),
         // appBar: buildAppBar(context),
         // bottomBar: buildBottomBar(),
