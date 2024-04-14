@@ -4,19 +4,19 @@ import 'package:dio/dio.dart';
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
-class deleteProjectParams {
+class DeleteProjectParams {
   String Id;
 
-  deleteProjectParams({required this.Id});
+  DeleteProjectParams({required this.Id});
 }
 
-class deleteProjectUseCase implements UseCase<Response, deleteProjectParams> {
+class DeleteProjectUseCase implements UseCase<Response, DeleteProjectParams> {
   final ProjectRepository _projectRepository;
 
-  deleteProjectUseCase(this._projectRepository);
+  DeleteProjectUseCase(this._projectRepository);
 
   @override
-  Future<Response> call({required deleteProjectParams params}) async {
+  Future<Response> call({required DeleteProjectParams params}) async {
     return _projectRepository.deleteProject(params);
   }
 }

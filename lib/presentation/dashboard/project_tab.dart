@@ -406,8 +406,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       List<Project> lazyList = [];
 
                       lazyList.addAll(widget.searchList.sublist(
-                          refazynistKey.currentState!.length(),
-                          (refazynistKey.currentState!.length() + 5)
+                          max(refazynistKey.currentState!.length() - 1, 0),
+                          (max(refazynistKey.currentState!.length() - 1, 0) + 5)
                               .clamp(0, widget.searchList.length)));
 
                       await Future.delayed(
@@ -978,8 +978,9 @@ class _ProjectTabState extends State<ProjectTab> {
                         List<Project> lazyList = [];
 
                         lazyList.addAll(_projectStore.projects.sublist(
-                            refazynistKey.currentState!.length(),
-                            (refazynistKey.currentState!.length() + 5)
+                            max(refazynistKey.currentState!.length() - 1, 0),
+                            (max(refazynistKey.currentState!.length() - 1, 0) +
+                                    5)
                                 .clamp(0, _projectStore.projects.length)));
 
                         await Future.delayed(
@@ -1027,12 +1028,18 @@ class _ProjectTabState extends State<ProjectTab> {
                                     (element) => element.objectId == id,
                                   );
                                   if (p != null) {
-                                    _projectFormStore.updateFavoriteProject(
-                                        _userStore.user!.studentProfile!
-                                                .objectId ??
-                                            "",
-                                        id,
-                                        !p.isFavorite);
+                                    _projectFormStore
+                                        .updateFavoriteProject(
+                                            _userStore.user!.studentProfile!
+                                                    .objectId ??
+                                                "",
+                                            id,
+                                            !p.isFavorite)
+                                        .then((value) {
+                                      if (value) {
+                                        _projectStore.updateInFav(p);
+                                      }
+                                    });
                                   }
                                   setState(() {
                                     setState(() {
@@ -1073,12 +1080,18 @@ class _ProjectTabState extends State<ProjectTab> {
                                       (element) => element.objectId == id,
                                     );
                                     if (p != null) {
-                                      _projectFormStore.updateFavoriteProject(
-                                          _userStore.user!.studentProfile!
-                                                  .objectId ??
-                                              "",
-                                          id,
-                                          !p.isFavorite);
+                                      _projectFormStore
+                                          .updateFavoriteProject(
+                                              _userStore.user!.studentProfile!
+                                                      .objectId ??
+                                                  "",
+                                              id,
+                                              !p.isFavorite)
+                                          .then((value) {
+                                        if (value) {
+                                          _projectStore.updateInFav(p);
+                                        }
+                                      });
                                     }
                                     setState(() {
                                       p?.isFavorite = !p.isFavorite;

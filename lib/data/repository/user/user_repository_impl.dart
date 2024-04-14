@@ -147,6 +147,7 @@ class UserRepositoryImpl extends UserRepository {
     await _sharedPrefsHelper.deleteProfile();
     await _sharedPrefsHelper.removeAuthToken();
     await _sharedPrefsHelper.removeUser();
+    await _sharedPrefsHelper.removeSavedProjects();
   }
 
   @override
@@ -289,7 +290,7 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
-    @override
+  @override
   Future<Response> deleteResume(UpdateResumeParams params) async {
     var response = await _profileApi.deleteResume(params);
     return response;

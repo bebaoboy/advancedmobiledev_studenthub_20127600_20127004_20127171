@@ -4,25 +4,25 @@ import 'package:dio/dio.dart';
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
-class updateFavoriteProjectParams {
+class UpdateFavoriteProjectParams {
   String projectId;
   bool disableFlag;
   String studentId;
 
-  updateFavoriteProjectParams(
+  UpdateFavoriteProjectParams(
       {required this.projectId,
       required this.disableFlag,
       required this.studentId});
 }
 
-class updateFavoriteProjectUseCase
-    implements UseCase<Response, updateFavoriteProjectParams> {
+class UpdateFavoriteProjectUseCase
+    implements UseCase<Response, UpdateFavoriteProjectParams> {
   final ProjectRepository _projectRepository;
 
-  updateFavoriteProjectUseCase(this._projectRepository);
+  UpdateFavoriteProjectUseCase(this._projectRepository);
 
   @override
-  Future<Response> call({required updateFavoriteProjectParams params}) async {
+  Future<Response> call({required UpdateFavoriteProjectParams params}) async {
     return _projectRepository.updateFavoriteProject(params);
   }
 }

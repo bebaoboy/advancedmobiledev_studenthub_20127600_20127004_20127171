@@ -144,7 +144,14 @@
   "profile_enter_link": "Nhập liên kết",
   "double_click_to_edit": "Bấm 2 lần để sửa",
 
-
+  
+  "project_item_students": "Số lượng sinh viên: ",
+  "project_item_description_header": "Tìm kiếm sinh viên có: ",
+  "project_item_blank": "Không có mô tả",
+  "project_item_no_title": "Không có tiêu đề",
+  "project_item_scope": "Thời gian: ",
+  "project_delete_success": "Xóa project thành công",
+  "project_update_same": "Cập nhập: cùng lúc",
 
   "setting_text": "Cài đặt",
   "logout": "Đăng xuất",
@@ -232,5 +239,9 @@
   "archive": "Lưu trữ",
   "unarchive": "Huỷ lưu trữ",
   "archive_successfully": "Lưu trữ thành công",
-  "unarchive_successfully": "Huỷ lưu trữ"
+  "unarchive_successfully": "Huỷ lưu trữ",
+
+  "error_text": "Có lỗi đã xảy ra",
+  "sorry_text": "Ứng dụng đã gặp lỗi, chúng tôi đã thông báo cho đội IT để xử lý. Xin lỗi về sự bất tiện này :'(.",
+  "reject_file_text": "Định dạng không được hổ trợ: "
 }

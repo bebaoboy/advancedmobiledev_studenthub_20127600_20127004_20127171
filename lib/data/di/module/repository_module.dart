@@ -36,7 +36,9 @@ mixin RepositoryModule {
       getIt<PostDataSource>(),
     ));
 
-    getIt.registerSingleton<ProjectRepository>(
-        ProjectRepositoryImpl(getIt<ProjectApi>(), getIt<ProjectDataSource>()));
+    getIt.registerSingleton<ProjectRepository>(ProjectRepositoryImpl(
+        getIt<ProjectApi>(),
+        getIt<ProjectDataSource>(),
+        getIt<SharedPreferenceHelper>()));
   }
 }

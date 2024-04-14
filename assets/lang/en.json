@@ -187,6 +187,13 @@
   "project_submit_proposal": "Describe why do fit to this project",
   "proposal_submit": "Submit proposal",
 
+  "project_item_students": "Students needed: ",
+  "project_item_description_header": "Looking for students that: ",
+  "project_item_blank": "No description",
+  "project_item_no_title": "Empty title",
+  "project_delete_success": "Delete project successful",
+  "project_update_same": "Updated: same time",
+
   "filter_title": "Filter by",
   "project_length": "Project Length",
   "6-": "More than 6 months",
@@ -234,5 +241,10 @@
   "archive": "Archive",
   "unarchive": "Unarchive",
   "archive_successfully": "Archive Successfully",
-  "unarchive_successfully": "Unarchive Successfully"
+  "unarchive_successfully": "Unarchive Successfully",
+
+  "error_text": "Oops! Something went wrong!",
+  "sorry_text": "We encountered an error and have notified our engineering team about it. Sorry for this inconvenience :'(.",
+  "reject_file_text": "File type not supported: "
+
 }

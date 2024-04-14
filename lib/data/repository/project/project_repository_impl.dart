@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/network/apis/project/project_api.dart';
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
@@ -17,7 +19,9 @@ import 'package:dio/dio.dart';
 class ProjectRepositoryImpl extends ProjectRepository {
   final ProjectApi _projectApi;
   final ProjectDataSource _datasource;
-  ProjectRepositoryImpl(this._projectApi, this._datasource);
+  final SharedPreferenceHelper _sharedPrefHelper;
+  ProjectRepositoryImpl(
+      this._projectApi, this._datasource, this._sharedPrefHelper);
 
   @override
   Future<ProjectList> fetchPagingProjects(GetProjectParams params) async {
@@ -55,11 +59,31 @@ class ProjectRepositoryImpl extends ProjectRepository {
     return response;
   }
 
-    @override
-  Future<Response> getStudentFavoriteProjects(
-      GetStudentProposalProjectsParams params) async {
-    var response = await _projectApi.getStudentFavoriteProjects(params);
-    return response;
+  @override
+  Future<ProjectList> getStudentFavoriteProjects() async {
+    var profiles = await _sharedPrefHelper.getCurrentProfile();
+    var studentId = (profiles[0] as StudentProfile?)?.objectId;
+
+    if (studentId != null && studentId.isNotEmpty) {
+      try {
+        var response = await _projectApi.getStudentFavoriteProjects(studentId);
+
+        if (response.statusCode == HttpStatus.accepted ||
+            response.statusCode == HttpStatus.ok ||
+            response.statusCode == HttpStatus.created) {
+          var projectList =
+              ProjectList.fromJsonWithPrefix(response.data["result"]);
+          _sharedPrefHelper.saveFavoriteProjects(projectList);
+          return projectList;
+        } else {
+          return _sharedPrefHelper.getFavoriteProjects();
+        }
+      } catch (e) {
+        return _sharedPrefHelper.getFavoriteProjects();
+      }
+    } else {
+      return ProjectList(projects: List.empty(growable: true));
+    }
   }
 
   @override
@@ -69,21 +93,26 @@ class ProjectRepositoryImpl extends ProjectRepository {
   }
 
   @override
-  Future<Response> createProject(createProjectParams params) async {
-    var reponse = await _projectApi.createProjects(params);
-    return reponse;
+  Future<Response> createProject(CreateProjectParams params) async {
+    var response = await _projectApi.createProjects(params);
+    return response;
   }
 
   @override
-  Future<Response> deleteProject(deleteProjectParams params) async {
-    var reponse = await _projectApi.deleteProjects(params);
-    return reponse;
+  Future<Response> deleteProject(DeleteProjectParams params) async {
+    var response = await _projectApi.deleteProjects(params);
+    return response;
   }
 
   @override
   Future<Response> updateFavoriteProject(
-      updateFavoriteProjectParams params) async {
-    var reponse = await _projectApi.updateFavoriteProjects(params);
-    return reponse;
+      UpdateFavoriteProjectParams params) async {
+    var response = await _projectApi.updateFavoriteProjects(params);
+    return response;
+  }
+
+  @override
+  Future saveStudentFavProject(ProjectList projectList) async {
+    await _sharedPrefHelper.saveFavoriteProjects(projectList);
   }
 }

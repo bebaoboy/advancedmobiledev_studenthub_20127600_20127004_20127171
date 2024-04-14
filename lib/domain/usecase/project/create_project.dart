@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 
-class createProjectParams {
+class CreateProjectParams {
   String companyId;
   String title;
   String description;
@@ -12,7 +12,7 @@ class createProjectParams {
   int projectScopeFlag;
   bool typeFlag;
 
-  createProjectParams(
+  CreateProjectParams(
       {required this.companyId,
       required this.title,
       required this.description,
@@ -21,13 +21,13 @@ class createProjectParams {
       required this.typeFlag});
 }
 
-class createProjectUseCase implements UseCase<Response, createProjectParams> {
+class CreateProjectUseCase implements UseCase<Response, CreateProjectParams> {
   final ProjectRepository _projectRepository;
 
-  createProjectUseCase(this._projectRepository);
+  CreateProjectUseCase(this._projectRepository);
 
   @override
-  Future<Response> call({required createProjectParams params}) async {
+  Future<Response> call({required CreateProjectParams params}) async {
     return _projectRepository.createProject(params);
   }
 }
