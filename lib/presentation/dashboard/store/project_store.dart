@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
@@ -25,9 +26,9 @@ abstract class _ProjectStore with Store {
     this._getStudentFavoriteProjectUseCase,
     this._saveStudentFavoriteProjectUseCase,
   ) {
-    _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
-      _favoriteProjects = value;
-    });
+    // _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
+    //   _favoriteProjects = value;
+    // });
   }
 
   final GetProjectsUseCase _getProjectsUseCase;
@@ -114,8 +115,8 @@ abstract class _ProjectStore with Store {
   /// descending created date order
   Future<ProjectList> getAllProject() async {
     try {
-    await getStudentFavoriteProject(false);
-    } catch(e) {
+      await getStudentFavoriteProject(false);
+    } catch (e) {
       // nothing changed
     }
     return await _getProjectsUseCase
@@ -123,13 +124,13 @@ abstract class _ProjectStore with Store {
         .then((value) {
       _projects = value;
       for (var element in _favoriteProjects.projects!) {
-          var p = _projects.projects!.firstWhereOrNull(
-            (e) => e.objectId == element.objectId,
-          );
-          if (p != null) {
-            p.isFavorite = true;
-          }
+        var p = _projects.projects!.firstWhereOrNull(
+          (e) => e.objectId == element.objectId,
+        );
+        if (p != null) {
+          p.isFavorite = true;
         }
+      }
       _projects.projects?.sort(
         (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
       );
@@ -170,6 +171,7 @@ abstract class _ProjectStore with Store {
   Future<ProjectList> getProjectByCompany(String id, {Status? typeFlag}) async {
     print(
         "\n\n\n\n======================================\n GET PROJECT COMPANY ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n\n\n\n\n\n\n");
+    var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
     final GetProjectByCompanyParams loginParams =
         GetProjectByCompanyParams(companyId: id, typeFlag: typeFlag?.index);
     try {
@@ -183,6 +185,9 @@ abstract class _ProjectStore with Store {
         _companyProjects = result;
 
         // TODO: lưu vào sharedpref
+
+        sharedPrefsHelper.saveCompanyProjects(_companyProjects);
+
         _companyProjects.projects?.sort(
           (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
         );
@@ -194,6 +199,17 @@ abstract class _ProjectStore with Store {
       }
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
+
+      var companys = await sharedPrefsHelper.getCompanyProjects();
+      if (companys.projects != null && companys.projects!.isNotEmpty) {
+        {
+          _companyProjects = companys;
+          _companyProjects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          return companys;
+        }
+      }
       print("cannot get profile company");
       return Future.value(ProjectList(projects: []));
     }
@@ -208,35 +224,61 @@ abstract class _ProjectStore with Store {
     final GetStudentProposalProjectsParams loginParams =
         GetStudentProposalProjectsParams(
             studentId: studentId, statusFlag: statusFlag?.index);
-    final future = _getStudentProposalProjectsUseCase.call(params: loginParams);
-    return await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        print(value);
-        try {
-          var result = ProposalList.fromJson(value.data["result"]);
-          var userStore = getIt<UserStore>();
-          if (userStore.user != null &&
-              userStore.user!.studentProfile != null) {
-            userStore.user!.studentProfile!.proposalProjects = result.proposals;
-          }
-          userStore.user!.studentProfile!.proposalProjects?.sort(
-            (a, b) => b.createdAt!.compareTo(a.createdAt!),
-          );
-          return result;
+    var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+    var userStore = getIt<UserStore>();
 
-          // TODO: lưu vào sharedpref
-        } catch (e) {
-          // errorStore.errorMessage = "cannot save student profile";
-          print("cannot get profile company");
+    try {
+      final future =
+          _getStudentProposalProjectsUseCase.call(params: loginParams);
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          print(value);
+          try {
+            var result = ProposalList.fromJson(value.data["result"]);
+            if (userStore.user != null &&
+                userStore.user!.studentProfile != null) {
+              userStore.user!.studentProfile!.proposalProjects =
+                  result.proposals;
+
+              sharedPrefsHelper.saveStudentProjects(result);
+
+              userStore.user!.studentProfile!.proposalProjects?.sort(
+                (a, b) => b.createdAt!.compareTo(a.createdAt!),
+              );
+            }
+            return result;
+
+            // TODO: lưu vào sharedpref
+          } catch (e) {
+            // errorStore.errorMessage = "cannot save student profile";
+            print("cannot get profile company");
+            return ProposalList(proposals: []);
+          }
+        } else {
+          print(value.data);
           return ProposalList(proposals: []);
         }
-      } else {
-        print(value.data);
-        return ProposalList(proposals: []);
+        // //print(value);
+      });
+    } catch (e) {
+      var companys = await sharedPrefsHelper.getStudentProjects();
+
+      if (companys.proposals != null && companys.proposals!.isNotEmpty) {
+        {
+          if (userStore.user != null &&
+              userStore.user!.studentProfile != null) {
+            userStore.user!.studentProfile!.proposalProjects =
+                companys.proposals;
+            userStore.user!.studentProfile!.proposalProjects?.sort(
+              (a, b) => b.createdAt!.compareTo(a.createdAt!),
+            );
+          }
+          return companys;
+        }
       }
-      // //print(value);
-    });
+    }
+    return ProposalList(proposals: []);
   }
 }

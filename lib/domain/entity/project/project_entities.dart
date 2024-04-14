@@ -1,7 +1,5 @@
 // ignore_for_file: overridden_fields
 
-import 'dart:convert';
-
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -177,8 +175,9 @@ class Project extends ProjectBase {
       "isWorking": isWorking,
       "numberOfStudents": numberOfStudents,
       "scope": scope.index,
-      "timeCreated": timeCreated.toString(),
-      "proposals": json.encode(proposal),
+      "createdAt": timeCreated.toString(),
+      "proposals": proposal,
+      "updatedAt": updatedAt.toString(),
     };
   }
 
@@ -218,6 +217,7 @@ class StudentProject extends Project {
     this.isAccepted = false,
     super.id,
     super.enabled,
+    super.updatedAt,
     this.projectId = "",
   });
 
@@ -225,12 +225,27 @@ class StudentProject extends Project {
     return StudentProject(
         title: json['title'] ?? '',
         description: json['description'] ?? '',
-        timeCreated: DateTime.tryParse(json['createdAt']) ?? DateTime.now(),
+         timeCreated: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+            : DateTime.now(),
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'])
+            : json['createdAt'] != null
+                ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+                : DateTime.now(),
         scope: Scope.values[json['projectScopeFlag'] ?? 0],
         numberOfStudents: json['numberOfStudents'] ?? 0,
         id: (json["id"] ?? "").toString(),
         projectId: (json["projectId"] ?? "").toString(),
-        enabled: Status.values[json["typeFlag"] ?? 0]);
+        enabled: Status.values[json["typeFlag"] ?? 0],);
+  }
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      ...super.toJson(),
+      "projectId": projectId,
+    };
   }
 
   @override
@@ -302,6 +317,7 @@ class Proposal extends MyObject {
       "projectId": projectId,
       "statusFlag": status.index,
       "project": project,
+      "createdAt": createdAt.toString(),
     };
   }
 

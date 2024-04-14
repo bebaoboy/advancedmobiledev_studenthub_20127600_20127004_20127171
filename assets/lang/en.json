@@ -245,6 +245,8 @@
 
   "error_text": "Oops! Something went wrong!",
   "sorry_text": "We encountered an error and have notified our engineering team about it. Sorry for this inconvenience :'(.",
-  "reject_file_text": "File type not supported: "
+  "reject_file_text": "File type not supported: ",
+  "result": "Result",
+  "latest": "Latest Update"
 
 }

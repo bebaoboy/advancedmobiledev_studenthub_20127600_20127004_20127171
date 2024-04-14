@@ -119,6 +119,11 @@ class Language extends MyObject {
       if (objectId != "") "id": int.tryParse(objectId!),
     };
   }
+
+  @override
+  String toString() {
+    return languageName;
+  }
 }
 
 @JsonSerializable()
@@ -163,6 +168,11 @@ class Education extends MyObject {
         startYear: DateTime(map['startYear'] ?? DateTime.now().year - 1),
         endYear: DateTime(map['endYear'] ?? DateTime.now().year),
         id: map['id'].toString());
+  }
+
+  @override
+  String toString() {
+    return schoolName;
   }
 }
 
@@ -213,6 +223,11 @@ class ProjectExperience extends MyObject {
               : skills!.map((e) => e.objectId).toList(),
       if (objectId != "") "id": int.tryParse(objectId!),
     };
+  }
+
+  @override
+  String toString() {
+    return name;
   }
 
   factory ProjectExperience.fromMap(Map<String, dynamic> map) {
