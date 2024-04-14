@@ -30,6 +30,10 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   final TextEditingController controller2 = TextEditingController();
   final TextEditingController controller3 = TextEditingController();
 
+  final FocusNode titleFocusNode = FocusNode();
+  final FocusNode numberFocusNode = FocusNode();
+  final FocusNode descriptionFocusNode = FocusNode();
+
   int _startIndex = 0;
   String? groupValue;
   int length = Scope.values.length;
@@ -40,7 +44,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     super.initState();
     controller1.text = _projectFormStore.title;
     controller3.text = _projectFormStore.description;
-    controller3.text = _projectFormStore.numberOfStudents.toString();
+    controller2.text = _projectFormStore.numberOfStudents.toString();
     _projectScope = Scope.values[_projectFormStore.projectScopeFlag];
   }
 
@@ -118,6 +122,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
               inputType: TextInputType.name,
               textController: controller1,
               inputAction: TextInputAction.done,
+              focusNode: titleFocusNode,
               onChanged: (value) {
                 _projectFormStore.setTitle(controller1.text);
               },
@@ -157,6 +162,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                       setState(() {
                         _startIndex++;
                       });
+                    } else {
+                      titleFocusNode.requestFocus();
                     }
                   },
                   child: AutoSizeText(
@@ -267,6 +274,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                 hint: Lang.get('number'),
                 inputAction: TextInputAction.done,
                 padding: const EdgeInsets.symmetric(horizontal: 1),
+                focusNode: numberFocusNode,
                 onChanged: (value) {
                   String numberString = transformText(controller2, value);
                   if (numberString.isNotEmpty) {
@@ -297,6 +305,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                         setState(() {
                           _startIndex++;
                         });
+                      } else {
+                        numberFocusNode.requestFocus();
                       }
                     },
                     child: Text(
@@ -364,6 +374,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                 ),
                 inputType: TextInputType.text,
                 textController: controller3,
+                focusNode: descriptionFocusNode,
                 isIcon: false,
                 onChanged: (value) {
                   _projectFormStore.setDescription(controller3.text);
@@ -389,6 +400,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                           setState(() {
                             _startIndex++;
                           });
+                        } else {
+                          descriptionFocusNode.requestFocus();
                         }
                       },
                       child: AutoSizeText(
@@ -428,7 +441,6 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                 IconButton(
                   tooltip: 'Edit project Info',
                   onPressed: () {
-                    
                     setState(() {
                       _startIndex = 0;
                     });
@@ -543,9 +555,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                                 context,
                                 "Update failed",
                                 _projectFormStore.errorStore.errorMessage,
-                                ToastificationType.error, () {
-                              _projectFormStore.reset();
-                            });
+                                ToastificationType.error,
+                                () {});
                           }
                         });
                       }
@@ -563,5 +574,17 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return const MainAppBar();
+  }
+
+  @override
+  void dispose() {
+    controller1.dispose();
+    controller2.dispose();
+    controller3.dispose();
+    titleFocusNode.dispose();
+    descriptionFocusNode.dispose();
+    numberFocusNode.dispose();
+    _projectFormStore.reset();
+    super.dispose();
   }
 }

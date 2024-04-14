@@ -265,8 +265,15 @@ abstract class _ProjectFormStore with Store {
     });
   }
 
+  @action
   void reset() {
     success = false;
+    title = '';
+    description = '';
+    numberOfStudents = 1;
+    formErrorStore.title = null;
+    formErrorStore.description = null;
+    formErrorStore.numberOfStudent = null;
   }
 
   @action
