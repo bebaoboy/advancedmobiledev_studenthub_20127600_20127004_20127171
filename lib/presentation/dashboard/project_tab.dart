@@ -904,7 +904,7 @@ class _ProjectTabState extends State<ProjectTab> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 55, left: 5),
-          child: Text("Result: ${_projectStore.projects.length} (Latest update)"),
+          child: Text("${Lang.get("result")} ${_projectStore.projects.length} (Latest update)"),
         ),
         Container(
             margin: const EdgeInsets.only(top: 90),
@@ -982,7 +982,7 @@ class _ProjectTabState extends State<ProjectTab> {
                         List<Project> lazyList = [];
 
                         lazyList.addAll(_projectStore.projects.sublist(
-                            max(refazynistKey.currentState!.length() - 1, 0),
+                            min(refazynistKey.currentState!.length(), _projectStore.projects.length),
                             (refazynistKey.currentState!.length() + 5)
                                 .clamp(0, _projectStore.projects.length)));
 
@@ -1122,9 +1122,7 @@ class _ProjectTabState extends State<ProjectTab> {
                   //     },
                   //   )
                 } else if (snapshot.hasError) {
-                  children = Center(
-                    child: Text(Lang.get("error")),
-                  );
+                  children = Center(child: Text(Lang.get("nothing_here")));
                 } else {
                   print("loading");
                   children = const LoadingScreenWidget();

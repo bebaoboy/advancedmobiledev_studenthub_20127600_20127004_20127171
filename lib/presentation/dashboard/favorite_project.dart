@@ -122,9 +122,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
                         return _projectStore.favoriteProjects.sublist(
                             0,
-                            (_projectStore.favoriteProjects.length + lazyCount)
-                                .clamp(
-                                    0, _projectStore.favoriteProjects.length));
+                            lazyCount.clamp(
+                                0, _projectStore.favoriteProjects.length));
                       },
 
                       //
@@ -135,7 +134,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         List<Project> lazyList = [];
 
                         lazyList.addAll(_projectStore.favoriteProjects.sublist(
-                            max(refazynistKey.currentState!.length() - 1, 0),
+                            min(refazynistKey.currentState!.length(),
+                                _projectStore.favoriteProjects.length),
                             (refazynistKey.currentState!.length() + 5).clamp(
                                 0, _projectStore.favoriteProjects.length)));
 
