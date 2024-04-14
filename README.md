@@ -3,11 +3,10 @@
 StudentHub 0.6 is OUT!!
 <br>
 
-![StudentHub icon](https://drive.google.com/file/d/1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO/view?usp=drivesdk)
-
+<img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
 <br>
 
-## Link Youtube Demo:
+## Link Youtube Demo (All Sprints + Extra):
 
 [Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
 <br>
@@ -19,7 +18,9 @@ StudentHub 0.6 is OUT!!
 [StudentHub Firebase](https://advmobiledev-studenthub-clc20.web.app)
 
 <br>
+
 ## Thông tin nhóm:
+
 <br>
 Lưu Tuấn Quân - 20127600
 <br>
@@ -29,7 +30,8 @@ Vũ Huy Hoàng - 20127171
 <br><br>
 
 
-######################################
+
+<br>
 
 ### Sprint 3: Update account for demo video call (in chat section)
 
