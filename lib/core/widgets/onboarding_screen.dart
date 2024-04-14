@@ -1,12 +1,24 @@
 import 'package:boilerplate/core/widgets/onboarding/flutter_onboarding_slider.dart';
+import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 class OnBoarding extends StatelessWidget {
-  const OnBoarding({super.key});
+  OnBoarding({super.key}) {
+    try {
+      var datasource = getIt<ProjectDataSource>();
+
+      // TODO: disable delete all
+      datasource.deleteAll();
+      //
+    } catch (e) {
+      //
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -227,7 +239,7 @@ class _OnboardingSheetState extends State<OnboardingSheet> {
         // 500px + (app bar height) + (bottom bar height).
         body: SizedBox(
           height: widget.height,
-          child: const OnBoarding(),
+          child: OnBoarding(),
         ),
         // appBar: buildAppBar(context),
         // bottomBar: buildBottomBar(),

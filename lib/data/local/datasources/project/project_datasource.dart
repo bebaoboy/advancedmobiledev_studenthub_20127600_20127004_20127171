@@ -4,19 +4,26 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:sembast/sembast.dart';
 
-class ProjectDataSource{
+class ProjectDataSource {
+  final _projectStore =
+      intMapStoreFactory.store(DBConstants.PROJECT_STORE_NAME);
 
-  final _projectStore = intMapStoreFactory.store(DBConstants.PROJECT_STORE_NAME);
-
-    // database instance
+  // database instance
   final SembastClient _sembastClient;
 
   // Constructor
   ProjectDataSource(this._sembastClient);
 
   // DB functions:--------------------------------------------------------------
-  Future<int> insert(Project project) async {
-    return await _projectStore.add(_sembastClient.database, project.toJson());
+  Future insert(Project project) async {
+    if (project.objectId != null &&
+        int.tryParse(project.objectId ?? "") != null) {
+      return await _projectStore
+          .record(int.parse(project.objectId!))
+          .put(_sembastClient.database, project.toJson());
+    } else {
+      return await _projectStore.add(_sembastClient.database, project.toJson());
+    }
   }
 
   Future<int> count() async {
@@ -60,7 +67,7 @@ class ProjectDataSource{
           projects: recordSnapshots.map((snapshot) {
         final project = Project.fromMap(snapshot.value);
         // An ID is a key of a record from the database.
-        project.objectId = snapshot.key.toString();
+        // project.objectId = snapshot.key.toString();
         return project;
       }).toList());
     }

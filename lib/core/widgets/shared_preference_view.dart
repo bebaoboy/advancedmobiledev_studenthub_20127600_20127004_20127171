@@ -63,6 +63,10 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
   }
 
   Widget getAllProject() {
+    var r = _projectStore.projects;
+    r.sort(
+      (a, b) => int.parse(a.objectId!).compareTo(int.parse(b.objectId!)),
+    );
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Align(
@@ -86,7 +90,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                       child: Scrollbar(
                         child: SingleChildScrollView(
                           child: Text(_projectStore.projects.isNotEmpty
-                              ? _projectStore.projects
+                              ? r
                                   .map(
                                     (e) => e.toString(),
                                   )
@@ -108,7 +112,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Result: ${_projectStore.projects.length}"),
+                child: Text("Result: ${_projectStore.companyProjects.length}"),
               ),
               ListTile(
                 title: const Text(
@@ -124,10 +128,10 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                       child: SingleChildScrollView(
                           child: Text(_projectStore.companyProjects.isNotEmpty
                               ? _projectStore.companyProjects
-                                      .map(
-                                        (e) => e.toString(),
-                                      )
-                                      .join("\n")
+                                  .map(
+                                    (e) => e.toString(),
+                                  )
+                                  .join("\n")
                               : "No company projects")),
                     )),
               ),

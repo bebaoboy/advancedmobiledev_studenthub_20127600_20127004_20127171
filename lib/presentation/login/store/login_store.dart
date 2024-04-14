@@ -206,7 +206,7 @@ abstract class _UserStore with Store {
             shouldChangePass = value.res;
           });
 
-          _getStudentFavoriteProjectUseCase.call(params: null);
+          // _getStudentFavoriteProjectUseCase.call(params: null);
         } else {
           notification = value.data['result'];
         }
