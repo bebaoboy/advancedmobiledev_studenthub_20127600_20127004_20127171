@@ -180,6 +180,7 @@ abstract class _UpdateProjectFormStore with Store {
     updateResult.notifyListeners();
   }
 
+  @action
   void dispose() {
     for (final d in _disposers) {
       d();

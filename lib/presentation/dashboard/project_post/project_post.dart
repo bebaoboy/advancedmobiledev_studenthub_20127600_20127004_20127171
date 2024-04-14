@@ -1,11 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
+import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:toastification/toastification.dart';
 
 class ProjectPostScreen extends StatefulWidget {
   const ProjectPostScreen({super.key});
@@ -27,16 +31,24 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
   final TextEditingController controller3 = TextEditingController();
 
   int _startIndex = 0;
-  String title = "";
-  String duration = "";
-  int number = 0;
-  String description = "";
   String? groupValue;
-  int scope = Scope.short.index;
+  int length = Scope.values.length;
+  Scope _projectScope = Scope.short;
 
   @override
   void initState() {
     super.initState();
+    controller1.text = _projectFormStore.title;
+    controller3.text = _projectFormStore.description;
+    controller3.text = _projectFormStore.numberOfStudents.toString();
+    _projectScope = Scope.values[_projectFormStore.projectScopeFlag];
+  }
+
+  String transformText(TextEditingController textController, String value) {
+    var val = value.replaceAll(RegExp(r'\D'), '');
+    if (val.isEmpty) val = value;
+    textController.text = val;
+    return val;
   }
 
   @override
@@ -71,38 +83,65 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
       physics: const ClampingScrollPhysics(),
       child: Column(
         children: <Widget>[
-          AutoSizeText(Lang.get('1/4'),
-              maxLines: 2,
-              minFontSize: 12,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(
-            height: 20,
-          ),
-          Align(
+          Container(
             alignment: Alignment.topLeft,
-            child: Text(Lang.get('description_title')),
-          ),
-          const SizedBox(
-            height: 20,
-          ),
-          TextField(
-            controller: controller1,
-            decoration: InputDecoration(
-              border: const OutlineInputBorder(),
-              labelText: Lang.get('title_guide'),
+            child: Text(
+              Lang.get('1/4'),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor),
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 5,
           ),
           Align(
             alignment: Alignment.topLeft,
-            child: Text(Lang.get('examples_title')),
+            child: Text(
+              Lang.get('description_title'),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w200),
+            ),
           ),
-          Text(Lang.get('example_description')),
           const SizedBox(
-            height: 10,
+            height: 30,
+          ),
+          Observer(
+            builder: (context) => BorderTextField(
+              inputDecoration: const InputDecoration(
+                border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.black)),
+              ),
+              icon: Icons.title,
+              inputType: TextInputType.name,
+              textController: controller1,
+              inputAction: TextInputAction.done,
+              onChanged: (value) {
+                _projectFormStore.setTitle(controller1.text);
+              },
+              hint: Lang.get('title_guide'),
+              padding: const EdgeInsets.symmetric(horizontal: 1),
+              errorText: _projectFormStore.formErrorStore.title,
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          Align(
+            alignment: Alignment.topLeft,
+            child: Text(
+              Lang.get('examples_title'),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
+          Text(
+            Lang.get('example_description'),
+            style: const TextStyle(fontSize: 15),
+          ),
+          const SizedBox(
+            height: 40,
           ),
           Align(
             alignment: Alignment.topRight,
@@ -113,14 +152,16 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                   shape: const StadiumBorder(
                       side: BorderSide(color: Colors.transparent)),
                   onPressed: () {
-                    setState(() {
-                      title = controller1.text;
-                      _startIndex++;
-                    });
+                    if (_projectFormStore.formErrorStore.title == null &&
+                        _projectFormStore.title.isNotEmpty) {
+                      setState(() {
+                        _startIndex++;
+                      });
+                    }
                   },
                   child: AutoSizeText(
-                    Lang.get('scope'),
-                    minFontSize: 14,
+                    Lang.get('next'),
+                    minFontSize: 16,
                     style: const TextStyle(
                       color: Colors.white,
                     ),
@@ -141,106 +182,105 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
           children: <Widget>[
             Align(
               alignment: Alignment.topLeft,
-              child: AutoSizeText(Lang.get('2/4'),
-                  maxLines: 2,
-                  minFontSize: 12,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                Lang.get('2/4'),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Theme.of(context).primaryColor),
+              ),
             ),
             const SizedBox(
-              height: 20,
+              height: 5,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(Lang.get('scope_title')),
+              child: Text(
+                Lang.get('scope_title'),
+                style:
+                    const TextStyle(fontWeight: FontWeight.w200, fontSize: 12),
+              ),
             ),
             const SizedBox(
-              height: 20,
+              height: 30,
             ),
             Align(
               alignment: Alignment.topLeft,
               child: Text(Lang.get('how_long'),
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14)),
             ),
-            // RadioListTile<String>(
-            //   title: Text(Lang.get('1-3')),
-            //   value: Scope.tight.title,
-            //   groupValue: groupValue,
-            //   onChanged: (String? value) {
-            //     setState(() {
-            //       groupValue = value;
-            //       scope = Scope.tight;
-            //     });
-            //   },
-            // ),
-            RadioListTile<String>(
-              title: Text(Lang.get('0-1')),
-              value: Scope.tight.title,
-              groupValue: groupValue,
-              onChanged: (String? value) {
-                setState(() {
-                  groupValue = value;
-                  scope = Scope.tight.index;
-                });
-              },
-            ),
-            RadioListTile<String>(
-              title: Text(Lang.get('1-3')),
-              value: Scope.short.title,
-              groupValue: groupValue,
-              onChanged: (String? value) {
-                setState(() {
-                  groupValue = value;
-
-                  scope = Scope.short.index;
-                  // scope = Scope.short;
-                });
-              },
-            ),
-            RadioListTile<String>(
-              title: Text(Lang.get('3-6')),
-              value: Scope.long.title,
-              groupValue: groupValue,
-              onChanged: (String? value) {
-                setState(() {
-                  groupValue = value;
-                  scope = Scope.long.index;
-                });
-              },
-            ),
-            RadioListTile<String>(
-              title: Text(Lang.get('6-9')),
-              value: Scope.extended.title,
-              groupValue: groupValue,
-              activeColor: Colors.red,
-              onChanged: (String? value) {
-                setState(() {
-                  groupValue = value;
-                  scope = Scope.extended.index;
-                });
-              },
-            ),
+            Observer(
+                builder: (context) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        for (int i = 1; i <= length; i++)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            onTap: i > Scope.values.length + 1
+                                ? null
+                                : () {
+                                    setState(() {
+                                      _projectScope = Scope.values[i - 1];
+                                    });
+                                  },
+                            title: Text(Lang.get('project_length_choice_$i'),
+                                style: Theme.of(context).textTheme.bodyLarge),
+                            leading: Radio<Scope>(
+                              value: Scope.values[i - 1],
+                              groupValue: _projectScope,
+                              onChanged: i > Scope.values.length + 1
+                                  ? null
+                                  : (Scope? value) {
+                                      setState(() => _projectScope = value!);
+                                      _projectFormStore
+                                          .setScope(value ?? Scope.short);
+                                    },
+                            ),
+                          ),
+                      ],
+                    )),
             const SizedBox(
-              height: 10,
+              height: 30,
             ),
             Align(
               alignment: Alignment.topLeft,
               child: Text(Lang.get('how_many'),
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 14)),
             ),
             const SizedBox(
               height: 10,
             ),
-            TextField(
-              controller: controller2,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                labelText: Lang.get('number'),
+            Observer(
+              builder: (context) => BorderTextField(
+                inputDecoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                ),
+                inputType: const TextInputType.numberWithOptions(decimal: true),
+                icon: Icons.people,
+                textController: controller2,
+                hint: Lang.get('number'),
+                inputAction: TextInputAction.done,
+                padding: const EdgeInsets.symmetric(horizontal: 1),
+                onChanged: (value) {
+                  String numberString = transformText(controller2, value);
+                  if (numberString.isNotEmpty) {
+                    _projectFormStore
+                        .setNumberOfStudents(int.parse(numberString));
+                  } else {
+                    _projectFormStore.setNumberOfStudents(0);
+                  }
+                },
+                errorText: _projectFormStore.formErrorStore.numberOfStudent,
               ),
-              keyboardType: TextInputType.number,
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             Align(
               alignment: Alignment.topRight,
@@ -251,21 +291,18 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                     shape: const StadiumBorder(
                         side: BorderSide(color: Colors.transparent)),
                     onPressed: () {
-                      if (controller2.text.isNotEmpty) {
+                      if (_projectFormStore.formErrorStore.numberOfStudent ==
+                              null &&
+                          _projectFormStore.numberOfStudents > 0) {
                         setState(() {
-                        number = int.parse(controller2.text);
-                        duration = groupValue ?? 'Not estimated yet';
-                        _startIndex++;
-                      });
+                          _startIndex++;
+                        });
                       }
                     },
-                    child: AutoSizeText(
-                      Lang.get('Next_Description'),
-                      minFontSize: 12,
+                    child: Text(
+                      Lang.get('next'),
                       maxLines: 3,
-                      style: const TextStyle(
-                        color: Colors.white,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 16),
                       textAlign: TextAlign.center,
                     ),
                   )),
@@ -282,25 +319,32 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
           children: <Widget>[
             Align(
               alignment: Alignment.topLeft,
-              child: AutoSizeText(Lang.get('3/4'),
+              child: Text(Lang.get('3/4'),
                   maxLines: 2,
-                  minFontSize: 12,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                      color: Theme.of(context).primaryColor)),
             ),
             const SizedBox(
               height: 20,
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(Lang.get('looking')),
+              child: Text(
+                Lang.get('looking'),
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
             ),
             Align(
               alignment: Alignment.topLeft,
-              child: Text(Lang.get('looking_description')),
+              child: Text(Lang.get('looking_description'),
+                  style: const TextStyle(fontSize: 14)),
             ),
             const SizedBox(
-              height: 10,
+              height: 20,
             ),
             Align(
               alignment: Alignment.topLeft,
@@ -308,14 +352,23 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                   style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
             const SizedBox(
-              height: 20,
+              height: 10,
             ),
-            TextField(
-              maxLines: 5,
-              controller: controller3,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: '',
+            Observer(
+              builder: (context) => BorderTextField(
+                minLines: 4,
+                maxLines: 8,
+                inputDecoration: const InputDecoration(
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.black)),
+                ),
+                inputType: TextInputType.text,
+                textController: controller3,
+                isIcon: false,
+                onChanged: (value) {
+                  _projectFormStore.setDescription(controller3.text);
+                },
+                errorText: _projectFormStore.formErrorStore.description,
               ),
             ),
             const SizedBox(
@@ -330,10 +383,13 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                       shape: const StadiumBorder(
                           side: BorderSide(color: Colors.transparent)),
                       onPressed: () {
-                        setState(() {
-                          description = controller3.text;
-                          _startIndex++;
-                        });
+                        if (_projectFormStore.formErrorStore.description ==
+                                null &&
+                            _projectFormStore.description.isNotEmpty) {
+                          setState(() {
+                            _startIndex++;
+                          });
+                        }
                       },
                       child: AutoSizeText(
                         Lang.get('review'),
@@ -354,21 +410,43 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
         physics: const ClampingScrollPhysics(),
         child: Column(
           children: <Widget>[
-            Align(
-              alignment: Alignment.topLeft,
-              child: AutoSizeText(Lang.get('4/4'),
-                  maxLines: 2,
-                  minFontSize: 12,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    Lang.get('4/4'),
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Theme.of(context).primaryColor),
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'Edit project Info',
+                  onPressed: () {
+                    
+                    setState(() {
+                      _startIndex = 0;
+                    });
+                  },
+                  icon: const Icon(
+                    Icons.edit,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
-              height: 20,
+              height: 35,
             ),
             Align(
               alignment: Alignment.topLeft,
               child: Text(
-                title.isEmpty ? "Demo Project" : title,
+                'Project Name: ${_projectFormStore.title}',
                 style: const TextStyle(fontWeight: FontWeight.w700),
               ),
             ),
@@ -382,12 +460,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                 constraints: const BoxConstraints(maxHeight: 400),
                 child: SingleChildScrollView(
                   controller: ScrollController(),
-                  child: Text(description.isEmpty
-                      ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                          'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                          'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                          'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                      : description),
+                  child: AutoSizeText(_projectFormStore.description),
                 ),
               ),
             ),
@@ -404,7 +477,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                 const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
-                Text('${Lang.get('project_scope')}\n  - $duration'),
+                Text(
+                    '${Lang.get('project_scope')}\n  - ${Scope.values[_projectFormStore.projectScopeFlag].title}'),
               ],
             ),
             const SizedBox(
@@ -419,7 +493,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                 const SizedBox(
                     width:
                         10), // You can adjust the space between the icon and the text
-                Text('${Lang.get('student_require')}\n  - $number students'),
+                Text(
+                    '${Lang.get('student_require')}\n  - ${_projectFormStore.numberOfStudents} students'),
               ],
             ),
             const SizedBox(
@@ -434,21 +509,46 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                     shape: const StadiumBorder(
                         side: BorderSide(color: Colors.transparent)),
                     onPressed: () {
-                      _projectFormStore.createProject(
-                          _userStore.user!.companyProfile!.objectId ?? "",
-                          controller1.text,
-                          controller3.text,
-                          int.parse(controller2.text),
-                          scope,
-                          true);
-
-                      Navigator.of(context).pop<Project>(Project(
-                        title: title,
-                        description: description,
-                        scope: Scope.values[scope],
-                        numberOfStudents: number,
-                        timeCreated: DateTime.now(),
-                      ));
+                      if (_projectFormStore.canPost) {
+                        _projectFormStore
+                            .createProject(
+                                _userStore.user!.companyProfile!.objectId ?? "",
+                                controller1.text,
+                                controller3.text,
+                                int.parse(controller2.text),
+                                _projectScope.index,
+                                true)
+                            .then((value) {
+                          if (_projectFormStore.success) {
+                            Toastify.show(
+                                context,
+                                "Update",
+                                _projectFormStore.notification,
+                                ToastificationType.info, () {
+                              _projectFormStore.reset();
+                            });
+                            _projectFormStore.reset();
+                            Future.delayed(const Duration(seconds: 1), () {
+                              Navigator.of(context).pop<Project>(Project(
+                                title: _projectFormStore.title,
+                                description: _projectFormStore.description,
+                                scope: _projectScope,
+                                numberOfStudents:
+                                    _projectFormStore.numberOfStudents,
+                                timeCreated: DateTime.now(),
+                              ));
+                            });
+                          } else {
+                            Toastify.show(
+                                context,
+                                "Update failed",
+                                _projectFormStore.errorStore.errorMessage,
+                                ToastificationType.error, () {
+                              _projectFormStore.reset();
+                            });
+                          }
+                        });
+                      }
                     },
                     child: Text(
                       Lang.get('post_job'),

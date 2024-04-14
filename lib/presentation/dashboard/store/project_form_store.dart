@@ -20,9 +20,27 @@ class ProjectFormStore = _ProjectFormStore with _$ProjectFormStore;
 abstract class _ProjectFormStore with Store {
   final ErrorStore errorStore;
   final ProjectStore projectStore;
+  final PostProjectErrorStore formErrorStore;
 
-  _ProjectFormStore(this._createProjectUseCase, this._deleteProjectUseCase,
-      this._updateFavoriteProjectUseCase, this.errorStore, this.projectStore);
+  _ProjectFormStore(
+      this.formErrorStore,
+      this._createProjectUseCase,
+      this._deleteProjectUseCase,
+      this._updateFavoriteProjectUseCase,
+      this.errorStore,
+      this.projectStore) {
+    _setUpDisposers();
+  }
+
+  late List<ReactionDisposer> _disposer;
+
+  _setUpDisposers() {
+    _disposer = [
+      reaction((_) => title, validateTitle),
+      reaction((_) => description, validateDescription),
+      reaction((_) => numberOfStudents, validateNumberOfStudents),
+    ];
+  }
 
   // For add to favorite
   @observable
@@ -72,6 +90,64 @@ abstract class _ProjectFormStore with Store {
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 
   @action
+  void validateTitle(String title) {
+    if (title.isEmpty) {
+      formErrorStore.title = "Title can't be empty";
+    } else if (title.length > 500) {
+      formErrorStore.title = "Title should be less than 500";
+    } else {
+      formErrorStore.title = null;
+    }
+  }
+
+  @action
+  void validateDescription(String value) {
+    if (value.isEmpty) {
+      formErrorStore.description = "Description can't be empty";
+    } else if (value.length > 1000) {
+      formErrorStore.description = "Description should be less than 1000";
+    } else {
+      formErrorStore.description = null;
+    }
+  }
+
+  @action
+  void validateNumberOfStudents(int value) {
+    if (value <= 0) {
+      formErrorStore.numberOfStudent = "Should at least be 1";
+    } else if (value >= 1000) {
+      formErrorStore.numberOfStudent = "Should be less than 1000";
+    } else {
+      formErrorStore.numberOfStudent = null;
+    }
+  }
+
+  @computed
+  bool get canPost =>
+      title.isNotEmpty &&
+      description.isNotEmpty &&
+      numberOfStudents > 0 &&
+      !formErrorStore.hasError();
+
+  @observable
+  String notification = '';
+
+  void setNumberOfStudents(int number) {
+    numberOfStudents = number;
+  }
+
+  void setDescription(String value) {
+    description = value;
+  }
+
+  void setTitle(String value) {
+    title = value;
+  }
+
+  void setScope(Scope value) {
+    projectScopeFlag = value.index;
+  }
+
   Future createProject(String companyId, String title, String description,
       int numberOfStudents, int projectScopeFlag, bool typeFlag) async {
     final CreateProjectParams projectParams = CreateProjectParams(
@@ -160,8 +236,6 @@ abstract class _ProjectFormStore with Store {
     });
   }
 
-  updateInFav() async {}
-
   @action
   Future<bool> updateFavoriteProject(
       String studentId, String projectId, bool disableFlag) async {
@@ -178,6 +252,7 @@ abstract class _ProjectFormStore with Store {
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
         success = true;
+        notification = "Post successfully";
         return true;
       } else {
         success = false;
@@ -188,5 +263,34 @@ abstract class _ProjectFormStore with Store {
         return false;
       }
     });
+  }
+
+  void reset() {
+    success = false;
+  }
+
+  @action
+  void dispose() {
+    for (final disposer in _disposer) {
+      disposer();
+    }
+  }
+}
+
+class PostProjectErrorStore = _PostProjectErrorStore
+    with _$PostProjectErrorStore;
+
+abstract class _PostProjectErrorStore with Store {
+  @observable
+  String? title;
+
+  @observable
+  String? description;
+
+  @observable
+  String? numberOfStudent;
+
+  bool hasError() {
+    return title != null || description != null || numberOfStudent != null;
   }
 }

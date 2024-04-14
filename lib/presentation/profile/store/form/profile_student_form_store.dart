@@ -796,6 +796,7 @@ abstract class _ProfileStudentFormStore with Store {
     // }
   }
 
+  @action
   void dispose() {
     for (final d in _disposers) {
       d();

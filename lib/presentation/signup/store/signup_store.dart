@@ -173,6 +173,7 @@ abstract class _SignupStore with Store {
   }
 
   // general methods:-----------------------------------------------------------
+  @action
   void dispose() {
     for (final d in _disposers) {
       d();

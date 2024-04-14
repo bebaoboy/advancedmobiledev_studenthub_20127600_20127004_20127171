@@ -180,6 +180,7 @@ abstract class _ForgetPasswordStore with Store {
     }
   }
 
+  @action
   void dispose() {
     for (final d in _disposers) {
       d();

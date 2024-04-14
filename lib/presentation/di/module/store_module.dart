@@ -81,6 +81,7 @@ mixin StoreModule {
     );
     getIt.registerFactory(() => SignUpFormErrorStore());
     getIt.registerFactory(() => UpdateProjectFormErrorStore());
+    getIt.registerFactory(() => PostProjectErrorStore());
 
     // stores:------------------------------------------------------------------
     getIt.registerSingleton<UserStore>(
@@ -183,6 +184,7 @@ mixin StoreModule {
 
     getIt.registerSingleton<ProjectFormStore>(
       ProjectFormStore(
+          getIt<PostProjectErrorStore>(),
           getIt<CreateProjectUseCase>(),
           getIt<DeleteProjectUseCase>(),
           getIt<UpdateFavoriteProjectUseCase>(),
