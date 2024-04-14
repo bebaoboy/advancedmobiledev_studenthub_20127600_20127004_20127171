@@ -65,16 +65,16 @@ abstract class _ProjectFormStore with Store {
   @observable
   ObservableFuture<void> updateProjectFuture = emptyResponse;
 
-  final createProjectUseCase _createProjectUseCase;
-  final deleteProjectUseCase _deleteProjectUseCase;
-  final updateFavoriteProjectUseCase _updateFavoriteProjectUseCase;
+  final CreateProjectUseCase _createProjectUseCase;
+  final DeleteProjectUseCase _deleteProjectUseCase;
+  final UpdateFavoriteProjectUseCase _updateFavoriteProjectUseCase;
 
   static ObservableFuture<void> emptyResponse = ObservableFuture.value(null);
 
   @action
   Future createProject(String companyId, String title, String description,
       int numberOfStudents, int projectScopeFlag, bool typeFlag) async {
-    final createProjectParams projectParams = createProjectParams(
+    final CreateProjectParams projectParams = CreateProjectParams(
         companyId: companyId,
         title: title,
         description: description,
@@ -131,8 +131,8 @@ abstract class _ProjectFormStore with Store {
 
   @action
   Future deleteProject(String projectId) async {
-    final deleteProjectParams projectParams =
-        deleteProjectParams(Id: projectId);
+    final DeleteProjectParams projectParams =
+        DeleteProjectParams(Id: projectId);
     final future = _deleteProjectUseCase.call(params: projectParams);
     deleteProjectFuture = ObservableFuture(future);
 
@@ -160,37 +160,32 @@ abstract class _ProjectFormStore with Store {
     });
   }
 
+  updateInFav() async {}
+
   @action
-  Future updateFavoriteProject(
+  Future<bool> updateFavoriteProject(
       String studentId, String projectId, bool disableFlag) async {
-    final updateFavoriteProjectParams projectParams =
-        updateFavoriteProjectParams(
+    final UpdateFavoriteProjectParams projectParams =
+        UpdateFavoriteProjectParams(
             projectId: projectId,
             disableFlag: disableFlag,
             studentId: studentId);
     final future = _updateFavoriteProjectUseCase.call(params: projectParams);
-    updateProjectFuture = ObservableFuture(future);
+    // updateProjectFuture = ObservableFuture(future);
 
-    await future.then((value) {
+    return await future.then((value) {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
         success = true;
-        print(value.data);
-        String? id;
-        try {
-          id = value.data["result"]["id"].toString();
-        } catch (e) {
-          errorStore.errorMessage = "cannot parse company id";
-        }
-
-        var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+        return true;
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
         print(value.data);
+        return false;
       }
     });
   }

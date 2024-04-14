@@ -447,7 +447,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 Toastify.show(
                     context,
                     "",
-                    "Delete succesfully!",
+                    Lang.get('project_delete_success'),
                     aboveNavbar: !NavbarNotifier2.isNavbarHidden,
                     ToastificationType.success,
                     () {});

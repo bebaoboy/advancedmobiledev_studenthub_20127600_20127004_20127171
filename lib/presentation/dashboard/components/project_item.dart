@@ -7,6 +7,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -164,27 +165,28 @@ class _ProjectItemState extends State<ProjectItem> {
                             .bodyText2!
                             .copyWith(color: Colors.green.shade400),
                       ),
-                      // TODO: dịch
+                      
                       Text(
-                        'Time: ${widget.project.scope.title}',
+                        '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
+                        //'Time: ${widget.project.scope.title}',
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                       Text(
-                        '${widget.project.numberOfStudents} students needed',
+                        '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
                         style: Theme.of(context).textTheme.subtitle2,
                       ),
                       const SizedBox(
                         height: 10,
                       ),
                       Text(
-                        "Student are looking for: ",
+                        Lang.get('project_item_description_header'),
                         style: Theme.of(context).textTheme.bodyText1,
                       ),
                       SizedBox(
                         height: c.maxHeight / 5,
                         child: AutoSizeText(
                           widget.project.description == ''
-                              ? 'No description'
+                              ? Lang.get("project_item_blank")
                               : widget.project.description,
                           style: const TextStyle(),
                           maxLines: 5,
@@ -307,7 +309,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
     if (widget.project.countProposals < 1) {
       proposalText += 'None';
     } else {
-      proposalText += widget.project.proposal!.length.toString();
+      proposalText += (widget.project.proposal?.length ?? 0 ).toString();
     }
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
@@ -354,17 +356,17 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       widget.project.title == ''
-                          ? 'No title'
+                          ? Lang.get('project_item_no_title')
                           : widget.project.title,
                       style: TextStyle(color: Colors.green.shade400, fontWeight: FontWeight.bold),
                     ),
-                    // TODO: dịch
+                  
 
                     const SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "Student are looking for: ",
+                      Lang.get('project_item_description_header'),
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
 
@@ -372,7 +374,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       // height: 100,
                       child: AutoSizeText(
                         widget.project.description == ''
-                            ? 'No description'
+                            ? Lang.get('project_item_blank')
                             : widget.project.description,
                         style: Theme.of(context).textTheme.bodyLarge,
                         maxLines: 4,
@@ -385,11 +387,11 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       height: 10,
                     ),
                     Text(
-                      'Time: ${widget.project.scope.title}',
+                      '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(
-                      'Student: ${widget.project.numberOfStudents}',
+                      '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
                       style: Theme.of(context).textTheme.bodyLarge,
                     ),
                     Text(

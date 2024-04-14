@@ -1,10 +1,14 @@
 import 'dart:math';
 
 import 'package:boilerplate/core/widgets/loading_list.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -21,16 +25,28 @@ class FavoriteScreen extends StatefulWidget {
 }
 
 class _FavoriteScreenState extends State<FavoriteScreen> {
-  @override
-  Widget build(BuildContext context) {
-    return _buildProjectContent();
-  }
-
   double yOffset = 0;
   String keyword = "";
   GlobalKey<RefazynistState> refazynistKey = GlobalKey();
 
   int lazyCount = 5;
+
+  final ProjectStore _projectStore = getIt<ProjectStore>();
+  final ProjectFormStore _projectFormStore = getIt<ProjectFormStore>();
+  final UserStore _userStore = getIt<UserStore>();
+
+  late Future<ProjectList> future;
+
+  @override
+  void initState() {
+    future = _projectStore.getStudentFavoriteProject(false);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _buildProjectContent();
+  }
 
   Widget _buildProjectContent() {
     if (yOffset == 0) {
@@ -66,10 +82,9 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
           height: 100,
         ),
         Container(
-            margin: const EdgeInsets.only(top: 40),
+            margin: const EdgeInsets.symmetric(vertical: 55),
             child: FutureBuilder<ProjectList>(
-              // TODO: get favorite project
-              future: Future.value(ProjectList(projects: widget.projectList)),
+              future: future,
               builder:
                   (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
                 Widget children;
@@ -93,6 +108,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         return Stack(
                           children: <Widget>[
                             Center(child: Text(Lang.get("nothing_here"))),
+                            // Center(child: Text("test")),
                           ],
                         );
                       },
@@ -102,9 +118,13 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
                       onRefresh: () async {
                         lazyCount = 5;
-                        // await _projectStore.getAllProject();
+                        await _projectStore.getStudentFavoriteProject(true);
 
-                        return widget.projectList.sublist(0, lazyCount);
+                        return _projectStore.favoriteProjects.sublist(
+                            0,
+                            (_projectStore.favoriteProjects.length + lazyCount)
+                                .clamp(
+                                    0, _projectStore.favoriteProjects.length));
                       },
 
                       //
@@ -114,10 +134,12 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                         lazyCount += 5;
                         List<Project> lazyList = [];
 
-                        lazyList.addAll(widget.projectList.sublist(
-                            refazynistKey.currentState!.length(),
-                            (refazynistKey.currentState!.length() + 5)
-                                .clamp(0, widget.projectList.length)));
+                        lazyList.addAll(_projectStore.favoriteProjects.sublist(
+                            max(refazynistKey.currentState!.length() - 1, 0),
+                            (max(refazynistKey.currentState!.length() - 1, 0) +
+                                    5)
+                                .clamp(
+                                    0, _projectStore.favoriteProjects.length)));
 
                         await Future.delayed(
                             const Duration(seconds: 1)); // Fake internet delay
@@ -145,7 +167,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             child: ProjectItem2(
                                 loadingDelay: index,
                                 stopLoading: (id) {
-                                  var p = (widget.projectList).firstWhereOrNull(
+                                  var p = (_projectStore.favoriteProjects)
+                                      .firstWhereOrNull(
                                     (element) => element.objectId == id,
                                   );
                                   setState(() {
@@ -158,9 +181,24 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                 },
                                 project: item,
                                 onFavoriteTap: (id) {
-                                  var p = (widget.projectList).firstWhereOrNull(
+                                  var p = (_projectStore.favoriteProjects)
+                                      .firstWhereOrNull(
                                     (element) => element.objectId == id,
                                   );
+                                  if (p != null) {
+                                    _projectFormStore
+                                        .updateFavoriteProject(
+                                            _userStore.user!.studentProfile!
+                                                    .objectId ??
+                                                "",
+                                            id,
+                                            !p.isFavorite)
+                                        .then((value) {
+                                      if (value) {
+                                        _projectStore.updateInFav(p);
+                                      }
+                                    });
+                                  }
                                   setState(() {
                                     setState(() {
                                       p?.isFavorite = !p.isFavorite;
@@ -181,7 +219,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                             child: ProjectItem2(
                                 project: item,
                                 stopLoading: (id) {
-                                  var p = (widget.projectList).firstWhereOrNull(
+                                  var p = (_projectStore.favoriteProjects)
+                                      .firstWhereOrNull(
                                     (element) => element.objectId == id,
                                   );
                                   setState(() {
@@ -196,9 +235,25 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                                   if (widget.onFavoriteTap != null) {
                                     widget.onFavoriteTap!(id);
                                   }
-                                  var p = (widget.projectList).firstWhereOrNull(
+                                  var p = (_projectStore.favoriteProjects)
+                                      .firstWhereOrNull(
                                     (element) => element.objectId == id,
                                   );
+                                  if (p != null) {
+                                    _projectFormStore
+                                        .updateFavoriteProject(
+                                            _userStore.user!.studentProfile!
+                                                    .objectId ??
+                                                "",
+                                            id,
+                                            !p.isFavorite)
+                                        .then((value) {
+                                      if (value) {
+                                        _projectStore.updateInFav(p);
+                                      }
+                                    });
+                                  }
+
                                   setState(() {
                                     p?.isFavorite = !p.isFavorite;
                                   });
@@ -211,15 +266,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                   //   scrollController: ScrollController(),
                   //   skipItemLoading: true,
                   //   itemHeight: MediaQuery.of(context).size.height * 0.3,
-                  //   list: widget.projectList ?? [],
+                  //   list: _projectStore.favoriteProjects ?? [],
                   //   firstCallback: (i) {
-                  //     if (widget.projectList != null) {
+                  //     if (_projectStore.favoriteProjects != null) {
                   //       if (widget.onFavoriteTap != null) {
-                  //         widget.onFavoriteTap!(widget.projectList![i].objectId);
+                  //         widget.onFavoriteTap!(_projectStore.favoriteProjects![i].objectId);
                   //       }
                   //       setState(() {
-                  //         widget.projectList![i].isFavorite =
-                  //             !widget.projectList![i].isFavorite;
+                  //         _projectStore.favoriteProjects![i].isFavorite =
+                  //             !_projectStore.favoriteProjects![i].isFavorite;
                   //       });
                   //     }
                   //   },

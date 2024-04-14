@@ -9,11 +9,11 @@ import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:dio/dio.dart';
 
 abstract class ProjectRepository {
-  Future<Response> createProject(createProjectParams params);
+  Future<Response> createProject(CreateProjectParams params);
 
-  Future<Response> deleteProject(deleteProjectParams params);
+  Future<Response> deleteProject(DeleteProjectParams params);
 
-  Future<Response> updateFavoriteProject(updateFavoriteProjectParams params);
+  Future<Response> updateFavoriteProject(UpdateFavoriteProjectParams params);
 
   Future<ProjectList> fetchPagingProjects(GetProjectParams params);
 
@@ -22,8 +22,9 @@ abstract class ProjectRepository {
   Future<Response> getStudentProposalProjects(
       GetStudentProposalProjectsParams params);
 
-  Future<Response> getStudentFavoriteProjects(
-      GetStudentProposalProjectsParams params);
+  Future<ProjectList> getStudentFavoriteProjects();
 
   Future<Response> updateCompanyProject(UpdateProjectParams params);
+
+  Future saveStudentFavProject(ProjectList params);
 }

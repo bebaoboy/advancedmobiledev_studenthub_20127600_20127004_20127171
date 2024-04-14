@@ -10,6 +10,7 @@ class Preferences {
   static const String current_user_email = "current_user_email";
   static const String current_user_name = "current_user_name";
   static const String current_user_id = "current_user_id";
+  static const String current_user_favoriteProjects = "current_user_fav";
   static const String encrypted_pass = "encrypted";
   static const String private_key = "group417600";
 

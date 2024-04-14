@@ -7,7 +7,18 @@ class ProjectList {
 
   factory ProjectList.fromJson(List<dynamic> json) {
     List<Project>? projects = <Project>[];
-    projects = json.map((post) => Project.fromMap(post)).toList();
+    projects =
+        json.map((p) => Project.fromMap(p)).toList();
+
+    return ProjectList(
+      projects: projects,
+    );
+  }
+
+  factory ProjectList.fromJsonWithPrefix(List<dynamic> json) {
+    List<Project>? projects = <Project>[];
+    projects =
+        json.map((p) => Project.fromMap(p['project'])).toList();
 
     return ProjectList(
       projects: projects,

@@ -60,12 +60,11 @@ class ProjectApi {
             (DioException error, stackTrace) => Future.value(error.response));
   }
 
-  Future<Response> getStudentFavoriteProjects(
-      GetStudentProposalProjectsParams params) async {
+  Future<Response> getStudentFavoriteProjects(String studentId) async {
     return await _dioClient.dio
         .get(
           Interpolator(Endpoints.getUserFavoriteProjects)(
-              {"studentId": params.studentId}),
+              {"studentId": studentId}),
           // queryParameters: params.statusFlag != null
           //     ? {"statusFlag": params.statusFlag.toString()}
           //     : null,
@@ -93,7 +92,7 @@ class ProjectApi {
             (DioException error, stackTrace) => Future.value(error.response));
   }
 
-  Future<Response> createProjects(createProjectParams params) async {
+  Future<Response> createProjects(CreateProjectParams params) async {
     return await _dioClient.dio.post(Endpoints.addNewProject, data: {
       "companyId": params.companyId,
       "projectScopeFlag": params.projectScopeFlag,
@@ -111,7 +110,7 @@ class ProjectApi {
     });
   }
 
-  Future<Response> deleteProjects(deleteProjectParams params) async {
+  Future<Response> deleteProjects(DeleteProjectParams params) async {
     return await _dioClient.dio.delete(
         Interpolator(Endpoints.deleteProject)({"projectId": params.Id}),
         data: {}).onError((DioException error,
@@ -120,13 +119,13 @@ class ProjectApi {
   }
 
   Future<Response> updateFavoriteProjects(
-      updateFavoriteProjectParams params) async {
+      UpdateFavoriteProjectParams params) async {
     return await _dioClient.dio.patch(
         Interpolator(Endpoints.updateUserFavoriteProject)(
             {"studentId": params.studentId}),
         data: {
-          "projectId": params.projectId,
-          "disableFlag": params.disableFlag
+          "projectId": int.parse(params.projectId),
+          "disableFlag": params.disableFlag ? 0 : 1
         }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }

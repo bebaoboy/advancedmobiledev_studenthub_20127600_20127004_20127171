@@ -264,7 +264,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Project scope',
+                                Lang.get('project_scope'),
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(
@@ -289,13 +289,9 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Student required',
+                              '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
-                            Text(
-                              '${widget.project.numberOfStudents} students',
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            )
                           ],
                         )
                       ],
@@ -325,7 +321,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                               ),
                               Text(
                                 updatedText.isEmpty
-                                    ? "Updated: Same time"
+                                    ? Lang.get('project_update_same')
                                     : updatedText,
                                 style: Theme.of(context).textTheme.bodyLarge,
                               )

@@ -22,6 +22,8 @@ import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecas
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
+import 'package:boilerplate/domain/usecase/project/save_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
@@ -71,7 +73,32 @@ mixin UseCaseModule {
     getIt.registerSingleton<SaveTokenUseCase>(
       SaveTokenUseCase(getIt<UserRepository>()),
     );
+    getIt.registerSingleton<GetUserDataUseCase>(
+      GetUserDataUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SaveUserDataUsecase>(
+      SaveUserDataUsecase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SetUserProfileUseCase>(
+      SetUserProfileUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<LogoutUseCase>(
+      LogoutUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<ChangePasswordUseCase>(
+      ChangePasswordUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SendResetPasswordMailUseCase>(
+      SendResetPasswordMailUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<GetMustChangePassUseCase>(
+      GetMustChangePassUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<HasToChangePassUseCase>(
+      HasToChangePassUseCase(getIt<UserRepository>()),
+    );
 
+    // profile:--------------------------------------------------------------------
     getIt.registerSingleton<AddProfileCompanyUseCase>(
       AddProfileCompanyUseCase(getIt<UserRepository>()),
     );
@@ -153,48 +180,25 @@ mixin UseCaseModule {
       GetResumeUseCase(getIt<UserRepository>()),
     );
 
-    getIt.registerSingleton<GetUserDataUseCase>(
-      GetUserDataUseCase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<SaveUserDataUsecase>(
-      SaveUserDataUsecase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<SetUserProfileUseCase>(
-      SetUserProfileUseCase(getIt<UserRepository>()),
-    );
     getIt.registerSingleton<GetProfileUseCase>(
       GetProfileUseCase(getIt<UserRepository>()),
     );
-    getIt.registerSingleton<LogoutUseCase>(
-      LogoutUseCase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<ChangePasswordUseCase>(
-      ChangePasswordUseCase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<SendResetPasswordMailUseCase>(
-      SendResetPasswordMailUseCase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<GetMustChangePassUseCase>(
-      GetMustChangePassUseCase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<HasToChangePassUseCase>(
-      HasToChangePassUseCase(getIt<UserRepository>()),
-    );
 
+    // project:--------------------------------------------------------------------
     getIt.registerSingleton<GetProjectsUseCase>(
       GetProjectsUseCase(getIt<ProjectRepository>()),
     );
 
-     getIt.registerSingleton<createProjectUseCase>(
-      createProjectUseCase(getIt<ProjectRepository>()),
+    getIt.registerSingleton<CreateProjectUseCase>(
+      CreateProjectUseCase(getIt<ProjectRepository>()),
     );
 
-    getIt.registerSingleton<deleteProjectUseCase>(
-      deleteProjectUseCase(getIt<ProjectRepository>()),
+    getIt.registerSingleton<DeleteProjectUseCase>(
+      DeleteProjectUseCase(getIt<ProjectRepository>()),
     );
 
-    getIt.registerSingleton<updateFavoriteProjectUseCase>(
-      updateFavoriteProjectUseCase(getIt<ProjectRepository>()),
+    getIt.registerSingleton<UpdateFavoriteProjectUseCase>(
+      UpdateFavoriteProjectUseCase(getIt<ProjectRepository>()),
     );
 
     getIt.registerSingleton<GetProjectByCompanyUseCase>(
@@ -207,6 +211,14 @@ mixin UseCaseModule {
 
     getIt.registerSingleton<GetStudentProposalProjectsUseCase>(
       GetStudentProposalProjectsUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<GetStudentFavoriteProjectUseCase>(
+      GetStudentFavoriteProjectUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<SaveStudentFavoriteProjectUseCase>(
+      SaveStudentFavoriteProjectUseCase(getIt<ProjectRepository>()),
     );
 
     // post:--------------------------------------------------------------------

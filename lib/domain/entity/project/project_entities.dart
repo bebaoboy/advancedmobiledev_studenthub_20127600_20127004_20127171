@@ -129,13 +129,13 @@ class Project extends ProjectBase {
   }
 
   factory Project.fromMap(Map<String, dynamic> json) {
-    var proprosal = json['proposals'];
-    var real;
-    if (proprosal is String) {
-      real = jsonDecode(proprosal);
-    } else {
-      real = json['proposals'];
-    }
+    // var proprosal = json['proposals'];
+    // var real;
+    // if (proprosal is String) {
+    //   real = jsonDecode(proprosal);
+    // } else {
+    //   real = json['proposals'];
+    // }
     return Project(
         title: json['title'] ?? '',
         description: json['description'] ?? '',
@@ -151,14 +151,15 @@ class Project extends ProjectBase {
         numberOfStudents: json['numberOfStudents'] ?? 1,
         id: (json["projectId"] ?? json["id"] ?? "").toString(),
         proposal: (json['proposals'] != null)
-            ? List<Proposal>.from((real as List<dynamic>)
+            ? List<Proposal>.from((json['proposals'] as List<dynamic>)
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
             : null,
         companyId: json["companyId"] ?? "",
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
         countHired: json["countHired"],
-        enabled: Status.values[json["typeFlag"] ?? 0]);
+        enabled: Status.values[json["typeFlag"] ?? 0],
+        isFavorite: json['isFavorite'] ?? false);
   }
 
   Map<String, dynamic> toJson() {

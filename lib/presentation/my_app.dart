@@ -5,6 +5,7 @@ import 'package:boilerplate/constants/strings.dart';
 import 'package:boilerplate/core/widgets/animated_theme_app.dart';
 import 'package:boilerplate/core/widgets/animation_type.dart';
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -39,6 +40,8 @@ class _MyAppState extends State<MyApp> {
   // final UserStore _userStore = getIt<UserStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
 
+  final ProjectStore _projectStore = getIt<ProjectStore>();
+
   late final onGenerateRoute;
   late final builder;
 
@@ -57,25 +60,29 @@ class _MyAppState extends State<MyApp> {
         return ErrorPage(errorDetails: errorDetails);
       };
       return ToastificationConfigProvider(
-                  config: ToastificationConfig(
-                    marginBuilder: (e) =>
-                        const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    alignment:
-                        kIsWeb ? Alignment.topCenter : Alignment.bottomLeft,
-                    animationDuration: const Duration(milliseconds: 500),
-                  ),
-                  child: Container(
-                      constraints: kIsWeb
-                          ? const BoxConstraints(minHeight: 600, minWidth: 500)
-                          : null,
-                      color: Theme.of(context).colorScheme.primary,
-                      child: SafeArea(child: child ?? const SizedBox())));
+          config: ToastificationConfig(
+            marginBuilder: (e) => const EdgeInsets.fromLTRB(0, 0, 0, 10),
+            alignment: kIsWeb ? Alignment.topCenter : Alignment.bottomLeft,
+            animationDuration: const Duration(milliseconds: 500),
+          ),
+          child: Container(
+              constraints: kIsWeb
+                  ? const BoxConstraints(minHeight: 600, minWidth: 500)
+                  : null,
+              color: Theme.of(context).colorScheme.primary,
+              child: SafeArea(child: child ?? const SizedBox())));
     };
 
     if (!kIsWeb) requestNotificationsPermission();
 
     // initPlatformState();
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    _projectStore.saveFavToSharePref();
+    super.dispose();
   }
 
   // Future<void> initPlatformState() async {

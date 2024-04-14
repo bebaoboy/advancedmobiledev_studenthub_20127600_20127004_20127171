@@ -18,6 +18,8 @@ import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecas
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
+import 'package:boilerplate/domain/usecase/project/save_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
@@ -95,6 +97,7 @@ mixin StoreModule {
         getIt<GetProfileUseCase>(),
         getIt<LogoutUseCase>(),
         getIt<SetUserProfileUseCase>(),
+        getIt<GetStudentFavoriteProjectUseCase>(),
       ),
     );
 
@@ -171,15 +174,18 @@ mixin StoreModule {
       ),
     );
     getIt.registerSingleton<ProjectStore>(ProjectStore(
-        getIt<GetProjectsUseCase>(),
-        getIt<GetProjectByCompanyUseCase>(),
-        getIt<GetStudentProposalProjectsUseCase>()));
+      getIt<GetProjectsUseCase>(),
+      getIt<GetProjectByCompanyUseCase>(),
+      getIt<GetStudentProposalProjectsUseCase>(),
+      getIt<GetStudentFavoriteProjectUseCase>(),
+      getIt<SaveStudentFavoriteProjectUseCase>(),
+    ));
 
     getIt.registerSingleton<ProjectFormStore>(
       ProjectFormStore(
-          getIt<createProjectUseCase>(),
-          getIt<deleteProjectUseCase>(),
-          getIt<updateFavoriteProjectUseCase>(),
+          getIt<CreateProjectUseCase>(),
+          getIt<DeleteProjectUseCase>(),
+          getIt<UpdateFavoriteProjectUseCase>(),
           getIt<ErrorStore>(),
           getIt<ProjectStore>()),
     );

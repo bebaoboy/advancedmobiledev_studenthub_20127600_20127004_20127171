@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -68,7 +69,7 @@ class FilePreview {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(13.0),
-                  child: Text("File type not supported: $filePath"),
+                  child: Text("${Lang.get('reject_file_text')} $filePath"),
                 ),
               );
             },
@@ -95,7 +96,7 @@ class FilePreview {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(13.0),
-                    child: Text("File type not supported: $filePath"),
+                    child: Text("${Lang.get('reject_file_text')} $filePath"),
                   ),
                 );
               }
@@ -114,7 +115,7 @@ class FilePreview {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(13.0),
-                  child: Text("File type not supported: $filePath"),
+                  child: Text("${Lang.get('reject_file_text')} $filePath"),
                 ),
               );
             },
@@ -175,7 +176,7 @@ class FilePreview {
                     return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(13.0),
-                        child: Text("File type not supported: $filePath"),
+                        child: Text("${Lang.get('reject_file_text')} $filePath"),
                       ),
                     );
                   }
@@ -195,7 +196,7 @@ class FilePreview {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(13.0),
-                      child: Text("File type not supported: $filePath"),
+                      child: Text("${Lang.get('reject_file_text')} $filePath"),
                     ),
                   );
                 },

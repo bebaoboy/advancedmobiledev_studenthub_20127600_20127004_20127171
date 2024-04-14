@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
@@ -39,6 +40,7 @@ abstract class _UserStore with Store {
     this._getProfileUseCase,
     this._logoutUseCase,
     this._setUserProfileUseCase,
+    this._getStudentFavoriteProjectUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -90,6 +92,7 @@ abstract class _UserStore with Store {
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
   final GetMustChangePassUseCase _getMustChangePassUseCase;
+  final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -202,6 +205,8 @@ abstract class _UserStore with Store {
           _getMustChangePassUseCase.call(params: null).then((value) {
             shouldChangePass = value.res;
           });
+
+          _getStudentFavoriteProjectUseCase.call(params: null);
         } else {
           notification = value.data['result'];
         }
