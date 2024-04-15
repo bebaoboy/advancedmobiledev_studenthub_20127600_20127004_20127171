@@ -1,4 +1,7 @@
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
+import 'package:boilerplate/core/widgets/material_dialog/dialog_buttons.dart';
+import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
+import 'package:boilerplate/core/widgets/material_dialog/navigator.dart';
 import 'package:boilerplate/core/widgets/shared_preference_view.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -11,6 +14,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:lottie/lottie.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 // class DarkTransition extends StatefulWidget {
@@ -354,6 +358,8 @@ class _MainAppBarState extends State<MainAppBar> {
     //     childBuilder: (context, x) =>
     return kIsWeb
         ? AppBar(
+            // automaticallyImplyLeading: widget.showBackButton,
+            scrolledUnderElevation: 0,
             leadingWidth: 30,
             titleSpacing: 0,
             toolbarHeight: 250,
@@ -408,8 +414,103 @@ class _MainAppBarState extends State<MainAppBar> {
                     // Navigator.of(context).pushAndRemoveUntil(
                     //     MaterialPageRoute2(routeName: Routes.home),
                     //     (Route<dynamic> route) => false);
-                    Navigator.of(context)
-                        .push(MaterialPageRoute2(child: const Welcome2()));
+                    // Navigator.of(context)
+                    //     .push(MaterialPageRoute2(child: const Welcome2()));
+
+                    AnimatedDialog.showAnimatedDialog(
+                      context,
+                      onClose: (p0) => print("hiii"),
+                      contentTextAlign: TextAlign.center,
+                      contentText: 'You can\'t undo this',
+                      title: "Are you sure?",
+                      color: Colors.white,
+                      dialogWidth: kIsWeb ? 0.3 : null,
+                      lottieBuilder: Lottie.asset(
+                        'assets/animations/loading_animation.json',
+                        fit: BoxFit.contain,
+                      ),
+                      positiveText: "Delete",
+                      positiveIcon: Icons.delete_forever,
+                      onPositiveClick: (context) {
+                        DialogNavigator.of(context).push(
+                          AnimatedDialog.getMaterialDialog(
+                              // msgAlign: TextAlign.center,
+                              title: "Delete done!",
+                              // dialogWidth: kIsWeb ? 0.3 : null,
+                              actions: [
+                                IconsButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(['Test', 'List']);
+                                  },
+                                  color: Colors.blue,
+                                  text: 'OK',
+                                  iconData: Icons.cloud_done_sharp,
+                                  textStyle:
+                                      const TextStyle(color: Colors.white),
+                                  iconColor: Colors.white,
+                                ),
+                              ]),
+                        );
+                      },
+                      negativeText: "Cancel",
+                      negativeIcon: Icons.close_sharp,
+                      onNegativeClick: (context) {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                  onDoubleTap: () {
+                    AnimatedDialog.showBottomAnimatedDialog(
+                      context,
+                      onClose: (p0) => print("hiii"),
+                      contentTextAlign: TextAlign.center,
+                      contentText: 'You can\'t undo this',
+                      title: "Are you sure?",
+                      color: Colors.white,
+                      dialogWidth: kIsWeb ? 0.3 : null,
+                      lottieBuilder: Lottie.asset(
+                        'assets/animations/loading_animation.json',
+                        fit: BoxFit.contain,
+                      ),
+                      positiveText: "Delete",
+                      positiveIcon: Icons.delete_forever,
+                      onPositiveClick: (context) {
+                        AnimatedDialog.showBottomMaterialDialog(
+                          onClose: (value) => Navigator.of(context).pop(),
+                          context: context,
+                          // msgAlign: TextAlign.center,
+                          title: "Delete done!",
+                          // dialogWidth: kIsWeb ? 0.3 : null,
+                          actions: [
+                            IconsButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(['Test', 'List']);
+                              },
+                              color: Colors.blue,
+                              text: 'OK',
+                              iconData: Icons.cloud_done_sharp,
+                              textStyle: const TextStyle(color: Colors.white),
+                              iconColor: Colors.white,
+                            ),
+                            IconsButton(
+                              onPressed: () {
+                                Navigator.of(context).pop(['Test', 'List']);
+                              },
+                              color: Colors.blue,
+                              text: 'OK',
+                              iconData: Icons.cloud_done_sharp,
+                              textStyle: const TextStyle(color: Colors.white),
+                              iconColor: Colors.white,
+                            ),
+                          ],
+                        );
+                      },
+                      negativeText: "Cancel",
+                      negativeIcon: Icons.close_sharp,
+                      onNegativeClick: (context) {
+                        Navigator.of(context).pop(['Test', 'List']);
+                      },
+                    );
                   },
                   onLongPress: () {
                     Navigator.of(context).push(MaterialPageRoute2(

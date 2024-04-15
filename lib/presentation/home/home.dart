@@ -42,8 +42,10 @@ class _HomeScreenState extends State<HomeScreen> {
           infoStore.getInfo().then(
                 (value) {},
               );
+
+          // TODO: check welcome
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute2(routeName: Routes.welcome),
+            MaterialPageRoute2(routeName: Routes.dashboard),
           );
         } else {
           if (mounted) {
@@ -122,9 +124,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
+                                  // TODO: check welcome
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute2(
-                                        routeName: Routes.welcome),
+                                        routeName: Routes.dashboard),
                                   );
                                 } else {
                                   showAnimatedDialog(
@@ -187,9 +190,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
+                                  // TODO: check welcome
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute2(
-                                        routeName: Routes.welcome),
+                                        routeName: Routes.dashboard),
                                   );
                                 } else {
                                   showAnimatedDialog(

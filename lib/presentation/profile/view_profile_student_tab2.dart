@@ -987,17 +987,17 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
-    }
+    // if (message.isNotEmpty) {
+    //   Future.delayed(const Duration(milliseconds: 0), () {
+    //     if (message.isNotEmpty) {
+    //       FlushbarHelper.createError(
+    //         message: message,
+    //         title: Lang.get('error'),
+    //         duration: const Duration(seconds: 3),
+    //       ).show(context);
+    //     }
+    //   });
+    // }
 
     return const SizedBox.shrink();
   }

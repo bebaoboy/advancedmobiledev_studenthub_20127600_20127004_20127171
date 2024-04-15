@@ -1,9 +1,9 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
@@ -15,6 +15,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
 
@@ -335,7 +336,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     // SharedPreferences.getInstance().then((prefs) {
     //   prefs.setBool(Preferences.is_logged_in, true);
     // });
-      loading = false;
+    loading = false;
 
     Future.delayed(const Duration(seconds: 2)).then(
       (value) {
@@ -371,11 +372,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     if (message.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
+          Toastify.show(context, Lang.get('error'), message,
+              ToastificationType.error, () {});
         }
       });
     }

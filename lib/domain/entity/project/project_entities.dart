@@ -178,6 +178,7 @@ class Project extends ProjectBase {
       "createdAt": timeCreated.toString(),
       "proposals": proposal,
       "updatedAt": updatedAt.toString(),
+      "isFavorite": isFavorite,
     };
   }
 

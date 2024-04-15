@@ -195,6 +195,7 @@ abstract class _ProjectStore with Store {
         return _companyProjects;
       } else {
         print(value.data);
+        _companyProjects = ProjectList(projects: []);
         return Future.value(ProjectList(projects: []));
       }
     } catch (e) {

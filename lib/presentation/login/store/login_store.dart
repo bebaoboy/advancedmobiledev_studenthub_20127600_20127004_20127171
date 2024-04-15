@@ -92,6 +92,7 @@ abstract class _UserStore with Store {
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
   final GetMustChangePassUseCase _getMustChangePassUseCase;
+  // ignore: unused_field
   final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
 
   // stores:--------------------------------------------------------------------

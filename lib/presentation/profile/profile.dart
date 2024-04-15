@@ -1,5 +1,5 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
@@ -14,6 +14,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
@@ -98,8 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         : () {
                             setState(() {
                               _companySize = CompanyScope.values[i - 1];
-                              _formStore
-                                  .setCompanyScope(_companySize);
+                              _formStore.setCompanyScope(_companySize);
                             });
                           },
                     title: Text(Lang.get('profile_question_1_choice_$i'),
@@ -407,6 +407,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPositiveClick: () {
                 Navigator.of(context).pop();
                 _userStore.user?.type = UserType.company;
+                // TODO: check welcome
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
                     .pushAndRemoveUntil(
@@ -436,11 +437,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     if (message.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('profile_change_error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
+          Toastify.show(context, Lang.get('profile_change_error'), message,
+              ToastificationType.error, () {});
         }
       });
     }

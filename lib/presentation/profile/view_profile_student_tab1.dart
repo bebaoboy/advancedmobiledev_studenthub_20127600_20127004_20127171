@@ -1115,17 +1115,17 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
-    }
+    // if (message.isNotEmpty) {
+    //   Future.delayed(const Duration(milliseconds: 0), () {
+    //     if (message.isNotEmpty) {
+    //       FlushbarHelper.createError(
+    //         message: message,
+    //         title: Lang.get('error'),
+    //         duration: const Duration(seconds: 3),
+    //       ).show(context);
+    //     }
+    //   });
+    // }
 
     return const SizedBox.shrink();
   }
