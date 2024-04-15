@@ -8,7 +8,7 @@ on:
       - phasing2
       - phasing3
       - phasing4
-      - sprint6
+      - sprint7
   push:
     branches:
       - test

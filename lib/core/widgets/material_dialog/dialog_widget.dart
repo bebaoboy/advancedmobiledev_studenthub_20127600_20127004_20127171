@@ -202,59 +202,59 @@ class AnimatedDialog {
   /// [actions] Widgets to display a row of buttons after the [msg] widget.
   /// [onClose] used to listen to dialog close events.
 
-  static Future<void> _materialDialog({
-    required BuildContext context,
-    Function(dynamic value)? onClose,
-    String? title,
-    String? msg,
-    List<Widget>? actions,
-    Widget customView = holder,
-    CustomViewPosition customViewPosition = CustomViewPosition.BEFORE_TITLE,
-    LottieBuilder? lottieBuilder,
-    bool barrierDismissible = true,
-    Color? barrierColor = Colors.black54,
-    String? barrierLabel,
-    bool useSafeArea = true,
-    bool useRootNavigator = true,
-    RouteSettings? routeSettings,
-    ShapeBorder dialogShape = dialogShape,
-    TextStyle titleStyle = titleStyle,
-    TextStyle? msgStyle,
-    TextAlign? titleAlign,
-    TextAlign? msgAlign,
-    Color color = bcgColor,
-    double? dialogWidth,
-  }) async {
-    await showDialog(
-      context: context,
-      barrierDismissible: barrierDismissible,
-      barrierColor: barrierColor,
-      barrierLabel: barrierLabel,
-      useSafeArea: useSafeArea,
-      useRootNavigator: useRootNavigator,
-      routeSettings: routeSettings,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: color,
-          shape: dialogShape,
-          child: DialogWidget(
-            title: title,
-            dialogWidth: dialogWidth,
-            msg: msg,
-            actions: actions,
-            animationBuilder: lottieBuilder,
-            customView: customView,
-            customViewPosition: customViewPosition,
-            titleStyle: titleStyle,
-            msgStyle: msgStyle,
-            titleAlign: titleAlign,
-            msgAlign: msgAlign,
-            color: color,
-          ),
-        );
-      },
-    ).then((value) => onClose?.call(value));
-  }
+  // static Future<void> _materialDialog({
+  //   required BuildContext context,
+  //   Function(dynamic value)? onClose,
+  //   String? title,
+  //   String? msg,
+  //   List<Widget>? actions,
+  //   Widget customView = holder,
+  //   CustomViewPosition customViewPosition = CustomViewPosition.BEFORE_TITLE,
+  //   LottieBuilder? lottieBuilder,
+  //   bool barrierDismissible = true,
+  //   Color? barrierColor = Colors.black54,
+  //   String? barrierLabel,
+  //   bool useSafeArea = true,
+  //   bool useRootNavigator = true,
+  //   RouteSettings? routeSettings,
+  //   ShapeBorder dialogShape = dialogShape,
+  //   TextStyle titleStyle = titleStyle,
+  //   TextStyle? msgStyle,
+  //   TextAlign? titleAlign,
+  //   TextAlign? msgAlign,
+  //   Color color = bcgColor,
+  //   double? dialogWidth,
+  // }) async {
+  //   await showDialog(
+  //     context: context,
+  //     barrierDismissible: barrierDismissible,
+  //     barrierColor: barrierColor,
+  //     barrierLabel: barrierLabel,
+  //     useSafeArea: useSafeArea,
+  //     useRootNavigator: useRootNavigator,
+  //     routeSettings: routeSettings,
+  //     builder: (context) {
+  //       return Dialog(
+  //         backgroundColor: color,
+  //         shape: dialogShape,
+  //         child: DialogWidget(
+  //           title: title,
+  //           dialogWidth: dialogWidth,
+  //           msg: msg,
+  //           actions: actions,
+  //           animationBuilder: lottieBuilder,
+  //           customView: customView,
+  //           customViewPosition: customViewPosition,
+  //           titleStyle: titleStyle,
+  //           msgStyle: msgStyle,
+  //           titleAlign: titleAlign,
+  //           msgAlign: msgAlign,
+  //           color: color,
+  //         ),
+  //       );
+  //     },
+  //   ).then((value) => onClose?.call(value));
+  // }
 
   static FluidDialogPage getMaterialDialog({
     String? title,
