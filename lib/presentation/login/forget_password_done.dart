@@ -7,7 +7,6 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-
 class ForgetPasswordDoneScreen extends StatefulWidget {
   const ForgetPasswordDoneScreen({super.key});
 
@@ -17,25 +16,12 @@ class ForgetPasswordDoneScreen extends StatefulWidget {
 }
 
 class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
-  //text controllers:-----------------------------------------------------------
-  final TextEditingController _userEmailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-
-  //stores:---------------------------------------------------------------------
-  // final ThemeStore _themeStore = getIt<ThemeStore>();
-  // final FormStore _formStore = getIt<FormStore>();
-  // final UserStore _userStore = getIt<UserStore>();
-
-  //focus node:-----------------------------------------------------------------
-  late FocusNode _passwordFocusNode;
-
   bool loading = false;
 
   @override
   void initState() {
     super.initState();
-    _passwordFocusNode = FocusNode();
-    Future.delayed(const Duration(seconds: 5)).then((value) {
+    Future.delayed(const Duration(seconds: 2)).then((value) {
       loading = false;
       Navigator.of(context)
           .pushReplacement(MaterialPageRoute2(routeName: Routes.home));
@@ -68,28 +54,6 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
                   ],
                 )
               : Container(child: _buildRightSide()),
-          // Observer(
-          //   builder: (context) {
-          //     return _userStore.success
-          //         ? navigate(context)
-          //         : _showErrorMessage(_formStore.errorStore.errorMessage);
-          //   },
-          // ),
-          // Observer(
-          //   builder: (context) {
-          //     return Visibility(
-          //       visible: _userStore.isLoading || loading,
-          //       // child: CustomProgressIndicatorWidget(),
-          //       child: GestureDetector(
-          //           onTap: () {
-          //             setState(() {
-          //               loading = false;
-          //             });
-          //           },
-          //           child: const LoadingScreen()),
-          //     );
-          //   },
-          // )
         ],
       ),
     );
@@ -106,6 +70,7 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -144,63 +109,15 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
               ),
             ),
           ),
-          // Align(
-          //   heightFactor: 2,
-          //   alignment: Alignment.bottomCenter,
-          //   child: Column(
-          //     children: [
-          //       _buildFooterText(),
-          //       const SizedBox(
-          //         height: 14,
-          //       ),
-          //       _buildSignUpButton(),
-          //     ],
-          //   ),
-          // )
         ],
       ),
     );
   }
 
-  Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
-
-    Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: Routes.home),
-          (Route<dynamic> route) => false);
-    });
-
-    return Container();
-  }
-
-  // General Methods:-----------------------------------------------------------
-  // _showErrorMessage(String message) {
-  //   if (message.isNotEmpty) {
-  //     Future.delayed(const Duration(milliseconds: 0), () {
-  //       if (message.isNotEmpty) {
-  //         FlushbarHelper.createError(
-  //           message: message,
-  //           title: Lang.get('error'),
-  //           duration: const Duration(seconds: 3),
-  //         ).show(context);
-  //       }
-  //     });
-  //   }
-
-  //   return const SizedBox.shrink();
-  // }
-
   // dispose:-------------------------------------------------------------------
   @override
   void dispose() {
     // Clean up the controller when the Widget is removed from the Widget tree
-    _userEmailController.dispose();
-    _passwordController.dispose();
-    _passwordFocusNode.dispose();
     super.dispose();
   }
 }

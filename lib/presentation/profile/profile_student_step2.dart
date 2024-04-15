@@ -11,6 +11,7 @@ import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -154,7 +155,10 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
         startDate: DateTime(2020, 9),
         endDate: DateTime(2020, 12),
-        skills: [Skill("React", "", "", id: "10"), Skill("Android", "", "", id: "2")]));
+        skills: [
+          Skill("React", "", "", id: "10"),
+          Skill("Android", "", "", id: "2")
+        ]));
     _projects.add(ProjectExperience("Community partners project",
         description:
             "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
@@ -175,6 +179,8 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
             "Klls to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
         startDate: DateTime(2023, 1),
         endDate: DateTime(2024, 2)));
+    var infoStore = getIt<ProfileStudentStore>();
+    if (infoStore.skillSet.isNotEmpty) mockSkillsets = infoStore.skillSet;
   }
 
   @override
@@ -252,18 +258,20 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
   // }
 
   Future<List<Skill>> _findSuggestions(String query) async {
+    _profileStudentFormStore.skillSet ??= [];
     if (query.isNotEmpty) {
-      return mockSkillsets.where((profile) {
-        return profile.name.contains(query) ||
-            profile.description.contains(query);
+      return _profileStudentFormStore.skillSet!.where((profile) {
+        return profile.name.toLowerCase().contains(query.toLowerCase()) ||
+            profile.description.toLowerCase().contains(query.toLowerCase());
       }).toList(growable: true);
     } else {
-      return mockSkillsets;
+      return _profileStudentFormStore.skillSet!;
     }
   }
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -385,6 +393,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
     return SizedBox(
       height: 500,
       child: ListView.builder(
+        controller: ScrollController(),
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
         itemCount: _projects.length,
@@ -393,6 +402,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
               ? MediaQuery.of(context).size.width * 0.93
               : MediaQuery.of(context).size.width * 0.84;
           return Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
               border: Border.all(width: 0.1),
               borderRadius: const BorderRadius.all(Radius.circular(13)),
@@ -706,11 +716,11 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                 width: w,
                                 height: _projects[index].readOnly ? 20 : null,
                                 child: GestureDetector(
-                                    onTap: () {
-                                      if (_projects[index].readOnly) {
-                                        openHintBar();
-                                      }
-                                    },
+                                    // onTap: () {
+                                    //   if (_projects[index].readOnly) {
+                                    //     openHintBar();
+                                    //   }
+                                    // },
                                     onDoubleTap: () {
                                       if (_projects[index].readOnly &&
                                           _projects[index].enabled) {
@@ -725,8 +735,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                         text: _projects[index].link,
                                         style: const TextStyle(
                                           color: Colors.blue,
-                                          decoration:
-                                              TextDecoration.underline,
+                                          decoration: TextDecoration.underline,
                                         ),
                                       )
                                     ]))),
@@ -806,6 +815,7 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                                   ? LimitedBox(
                                       maxHeight: 90,
                                       child: SingleChildScrollView(
+                                        controller: ScrollController(),
                                         child: Text(
                                           _projects[index].description,
                                           style: const TextStyle(fontSize: 12),

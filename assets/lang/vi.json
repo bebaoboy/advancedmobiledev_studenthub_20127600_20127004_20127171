@@ -1,7 +1,7 @@
 {
   "1/4": "1/4 Hãy bắt đầu với một tiêu đề nổi bật",
-  "2/4": "2/4 Tiếp theo, ước lượng phạm vi công việc của bạn",
-  "3/4": "3/4 Tiếp theo, cung cấp mô tả dự án",
+  "2/4": "2/4 Uớc lượng phạm vi công việc của bạn",
+  "3/4": "3/4 Cung cấp mô tả dự án",
   "4/4": "4/4 Chi tiết dự án",
   "description_title": "Điều này giúp bài đăng của bạn nổi bật với những sinh viên phù hợp. Đây là điều đầu tiên họ sẽ thấy, vì vậy hãy làm cho nó ấn tượng!",
   "title_guide": "Viết một tiêu đề cho bài đăng của bạn",
@@ -27,7 +27,7 @@
   "home_description": "StudentHub là môi trường đại học để kết nối sinh viên có tay nghề cao và công ty trên một dự án thực tế",
   "student": "Sinh viên",
   "company": "Công ty",
-  "Welcome": "Chào mừng, Hal!",
+  "Welcome": "Chào mừng, ",
   "Start": "Hãy bắt đầu với bài đăng dự án đầu tiên của bạn",
   "Start_button": "Bắt đầu",
   "Project_bar": "Dự án",
@@ -35,7 +35,7 @@
   "Message_bar": "Tin nhắn",
   "Alert_bar": "Thông báo",
   "appbar_title": "StudentHub",
-  "dashboard_your_job": "Công việc của bạn",
+  "dashboard_your_job": "Công việc",
   "Dashboard_post_job": "Tạo việc",
   "Dashboard_intro": "Chào mừng, Hal!",
   "Dashboard_content": "Bạn hiện đang không có công việc",
@@ -144,7 +144,14 @@
   "profile_enter_link": "Nhập liên kết",
   "double_click_to_edit": "Bấm 2 lần để sửa",
 
-
+  
+  "project_item_students": "Số lượng sinh viên: ",
+  "project_item_description_header": "Tìm kiếm sinh viên có: ",
+  "project_item_blank": "Không có mô tả",
+  "project_item_no_title": "Không có tiêu đề",
+  "project_item_scope": "Thời gian: ",
+  "project_delete_success": "Xóa project thành công",
+  "project_update_same": "Cập nhập: cùng lúc",
 
   "setting_text": "Cài đặt",
   "logout": "Đăng xuất",
@@ -177,6 +184,10 @@
   "project_item_remove_job_posting": "Xoá job",
   "project_start_working": "Bắt đầu làm project này",
   "project_edit": "Sửa project",
+  "project_title": "Tên project",
+  "project_description": "Mô tả project",
+  "project_students": "Số lượng sinh viên",
+  "project_update": "Cập nhập project",
 
   "project_submit_proposal": "Mô tả mong muốn khi nhận project",
   "proposal_submit": "Nộp proposal",
@@ -185,6 +196,10 @@
   "project_length": "Thời gian project",
   "0-1": "Ít hơn 1 tháng",
   "6-": "Lâu hơn 6 tháng",
+  "project_length_choice_1": "Ít hơn 1 tháng",
+  "project_length_choice_2": "Từ 1 tới 3 tháng",
+  "project_length_choice_3": "Từ 3 tới 6 tháng",
+  "project_length_choice_4": "Lâu hơn 6 tháng",
 
   "schedule_interview": "Lên lịch phỏng vấn",
   "no_camera": "Không tìm thấy camera",
@@ -216,7 +231,19 @@
   "clear_filter": "Xoá lọc",
   "apply": "OK",
   "discard_edit": "Huỷ chỉnh sửa?",
-  "exit_confirm": "Bấm lần nữa để thoát"
+  "exit_confirm": "Bấm lần nữa để thoát",
+  "about": "Về chúng tôi",
+  "project_close": "Đóng dự án",
+  "project_open": "Mở lại dự án",
+  "closed": "ĐÃ ĐÓNG",
+  "archive": "Lưu trữ",
+  "unarchive": "Huỷ lưu trữ",
+  "archive_successfully": "Lưu trữ thành công",
+  "unarchive_successfully": "Huỷ lưu trữ",
 
-
+  "error_text": "Có lỗi đã xảy ra",
+  "sorry_text": "Ứng dụng đã gặp lỗi, chúng tôi đã thông báo cho đội IT để xử lý. Xin lỗi về sự bất tiện này :'(.",
+  "reject_file_text": "Định dạng không được hổ trợ: ",
+  "result": "Kết quả",
+  "latest": "mới nhất"
 }

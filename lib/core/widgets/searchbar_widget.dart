@@ -4,12 +4,24 @@ library animation_search_bar;
 
 import 'dart:async';
 
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'dart:math';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+Future<void> saveSearchHistory(Set<String> history) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setStringList(Preferences.project_search_history, history.where((e) =>e.trim().isNotEmpty).toList());
+}
+
+Future<Set<String>> loadSearchHistory() async {
+  final prefs = await SharedPreferences.getInstance();
+  final history = prefs.getStringList(Preferences.project_search_history) ?? [];
+  return history.where((e) =>e.trim().isNotEmpty,).toSet();
+}
 
 class AnimSearchBar2 extends StatefulWidget {
   ///  width - double ,isRequired : Yes
@@ -49,9 +61,9 @@ class AnimSearchBar2 extends StatefulWidget {
   final bool boxShadow;
   final Function(String) onSubmitted;
   final TextEditingController searchTextEditingController;
-  final Widget Function(BuildContext, Project) suggestionItemBuilder;
-  final Function(Project)? onSelected;
-  final FutureOr<List<Project>?> Function(String) onSuggestionCallback;
+  final Widget Function(BuildContext, String) suggestionItemBuilder;
+  final Function(String)? onSelected;
+  final FutureOr<List<String>?> Function(String) onSuggestionCallback;
   final bool? expandedByDefault;
   final bool? enabled;
 
@@ -143,6 +155,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
   }
 
   unfocusKeyboard() {
+    focusNode.unfocus();
     final FocusScopeNode currentScope = FocusScope.of(context);
     if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
       FocusManager.instance.primaryFocus?.unfocus();
@@ -192,119 +205,10 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
         child: Stack(
           children: [
             ///Using Animated Positioned widget to expand and shrink the widget
-            AnimatedPositioned(
+             AnimatedPositioned(
               duration: Duration(milliseconds: widget.animationDurationInMilli),
-              top: 1.0,
-              right: 7.0,
-              bottom: 1.0,
-              curve: Curves.easeOut,
-              child: AnimatedOpacity(
-                opacity: (toggle == 0) ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 200),
-                child: Container(
-                  decoration: BoxDecoration(
-                    /// can add custom color or the color will be white
-                    color: widget.color,
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: AnimatedBuilder(
-                    builder: (context, widget) {
-                      ///Using Transform.rotate to rotate the suffix icon when it gets expanded
-                      return Transform.rotate(
-                        angle: _con.value * 2.0 * pi,
-                        child: widget,
-                      );
-                    },
-                    animation: _con,
-                    child: GestureDetector(
-                      onTap: () {
-                        try {
-                          ///trying to execute the onSuffixTap function
-                          widget.onSuffixTap();
-
-                          // * if field empty then the user trying to close bar
-                          if (textFieldValue == '') {
-                            unfocusKeyboard();
-                            setState(() {
-                              toggle = 0;
-                            });
-
-                            ///reverse == close
-                            _con.reverse();
-                          }
-
-                          // * why not clear textfield here?
-                          widget.textController.clear();
-                          textFieldValue = '';
-
-                          ///closeSearchOnSuffixTap will execute if it's true
-                          if (widget.closeSearchOnSuffixTap) {
-                            unfocusKeyboard();
-                            focusNode.unfocus();
-
-                            setState(() {
-                              toggle = 0;
-                            });
-                          }
-                        } catch (e) {
-                          ///print the error if the try block fails
-                          //print(e);
-                        }
-                      },
-
-                      ///suffixIcon is of type Icon
-                      child: widget.suffixIcon ??
-                          IconButton(
-                            padding: const EdgeInsets.only(left: 20),
-                            alignment: Alignment.centerRight,
-                            icon: const Icon(
-                              Icons.close_outlined,
-                              size: 20.0,
-                            ),
-                            color: widget.textFieldIconColor,
-                            onPressed: () {
-                              try {
-                                ///trying to execute the onSuffixTap function
-                                widget.onSuffixTap();
-
-                                // * if field empty then the user trying to close bar
-                                if (textFieldValue == '') {
-                                  unfocusKeyboard();
-                                  setState(() {
-                                    toggle = 0;
-                                  });
-
-                                  ///reverse == close
-                                  _con.reverse();
-                                }
-
-                                // * why not clear textfield here?
-                                widget.textController.clear();
-                                textFieldValue = '';
-
-                                ///closeSearchOnSuffixTap will execute if it's true
-                                if (widget.closeSearchOnSuffixTap) {
-                                  unfocusKeyboard();
-                                  focusNode.unfocus();
-                                  setState(() {
-                                    toggle = 0;
-                                  });
-                                }
-                              } catch (e) {
-                                ///print the error if the try block fails
-                                //print(e);
-                              }
-                            },
-                          ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            AnimatedPositioned(
-              duration: Duration(milliseconds: widget.animationDurationInMilli),
-              left: (toggle == 0) ? 20.0 : 10,
-              right: (toggle == 0) ? 0 : 40,
+              left: (toggle == 0) ? 20.0 : 2,
+              right: 2,
               curve: Curves.easeOut,
               top: 6.0,
 
@@ -315,13 +219,13 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                 child: Container(
                   alignment: Alignment.topCenter,
                   width: widget.width,
-                  child: TypeAheadField<Project>(
+                  child: TypeAheadField<String>(
                       hideOnSelect: true,
                       focusNode: focusNode,
                       hideOnEmpty: true,
                       hideWithKeyboard: false,
                       hideKeyboardOnDrag: true,
-                      hideOnUnfocus: false,
+                      hideOnUnfocus: true,
                       controller: widget.searchTextEditingController,
                       suggestionsCallback: widget.onSuggestionCallback,
                       itemBuilder: widget.suggestionItemBuilder,
@@ -360,17 +264,17 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                           onSubmitted: (value) => {
                             widget.onSubmitted(value),
                             unfocusKeyboard(),
-                            setState(() {
-                              toggle = 0;
-                            }),
+                            // setState(() {
+                            //   toggle = 0;
+                            // }),
                             //widget.textController.clear(),
                           },
                           onEditingComplete: () {
                             /// on editing complete the keyboard will be closed and the search bar will be closed
                             unfocusKeyboard();
-                            setState(() {
-                              toggle = 0;
-                            });
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
                           },
 
                           ///style is of type TextStyle, the default is just a color black
@@ -378,7 +282,8 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                               const TextStyle(color: Colors.black),
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                            contentPadding: const EdgeInsets.only(bottom: 5),
+                            contentPadding:
+                                const EdgeInsets.only(bottom: 5, right: 100, left: 5),
                             isDense: true,
                             floatingLabelBehavior: FloatingLabelBehavior.never,
                             labelText: widget.helpText,
@@ -405,7 +310,116 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                 ),
               ),
             ),
+AnimatedPositioned(
+              duration: Duration(milliseconds: widget.animationDurationInMilli),
+              top: 1.0,
+              right: 7.0,
+              bottom: 1.0,
+              curve: Curves.easeOut,
+              child: AnimatedOpacity(
+                opacity: (toggle == 0) ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 200),
+                child: Container(
+                  decoration: BoxDecoration(
+                    /// can add custom color or the color will be white
+                    color: widget.color,
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  child: AnimatedBuilder(
+                    builder: (context, widget) {
+                      ///Using Transform.rotate to rotate the suffix icon when it gets expanded
+                      return Transform.rotate(
+                        angle: _con.value * 2.0 * pi,
+                        child: widget,
+                      );
+                    },
+                    animation: _con,
+                    child: GestureDetector(
+                      onTap: () {
+                        try {
+                          ///trying to execute the onSuffixTap function
+                          widget.onSuffixTap();
 
+                          // * if field empty then the user trying to close bar
+                          if (textFieldValue == '') {
+                            unfocusKeyboard();
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
+
+                            ///reverse == close
+                            _con.reverse();
+                          }
+
+                          // * why not clear textfield here?
+                          widget.textController.clear();
+                          textFieldValue = '';
+
+                          ///closeSearchOnSuffixTap will execute if it's true
+                          if (widget.closeSearchOnSuffixTap) {
+                            unfocusKeyboard();
+                            focusNode.unfocus();
+
+                            // setState(() {
+                            //   toggle = 0;
+                            // });
+                          }
+                        } catch (e) {
+                          ///print the error if the try block fails
+                          //print(e);
+                        }
+                      },
+
+                      ///suffixIcon is of type Icon
+                      child: widget.suffixIcon ??
+                          IconButton(
+                            padding: const EdgeInsets.only(left: 20),
+                            alignment: Alignment.centerRight,
+                            icon: const Icon(
+                              Icons.close_outlined,
+                              size: 25.0,
+                            ),
+                            // color: widget.textFieldIconColor,
+                            onPressed: () {
+                              try {
+                                ///trying to execute the onSuffixTap function
+                                widget.onSuffixTap();
+
+                                // * if field empty then the user trying to close bar
+                                if (textFieldValue == '') {
+                                  unfocusKeyboard();
+                                  // setState(() {
+                                  //   toggle = 0;
+                                  // });
+
+                                  ///reverse == close
+                                  _con.reverse();
+                                }
+
+                                // * why not clear textfield here?
+                                widget.textController.clear();
+                                textFieldValue = '';
+
+                                ///closeSearchOnSuffixTap will execute if it's true
+                                if (widget.closeSearchOnSuffixTap) {
+                                  unfocusKeyboard();
+                                  focusNode.unfocus();
+                                  // setState(() {
+                                  //   toggle = 0;
+                                  // });
+                                }
+                              } catch (e) {
+                                ///print the error if the try block fails
+                                //print(e);
+                              }
+                            },
+                          ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+           
             ///Using material widget here to get the ripple effect on the prefix icon
             Material(
               /// can add custom color or the color will be white
@@ -529,9 +543,9 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
 //   late Duration? duration;
 //   final TextEditingController searchTextEditingController;
 //   final Function(String) onChanged;
-//   final Widget Function(BuildContext, Project) suggestionItemBuilder;
-//   Function(Project)? onSelected;
-//   FutureOr<List<Project>?> Function(String) onSuggestionCallback;
+//   final Widget Function(BuildContext, String) suggestionItemBuilder;
+//   Function(String)? onSelected;
+//   FutureOr<List<String>?> Function(String) onSuggestionCallback;
 
 //   @override
 //   State<AnimationSearchBar> createState() => _AnimationSearchBarState();
@@ -638,7 +652,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
 //                                       .withOpacity(.2),
 //                                   width: .5),
 //                               borderRadius: BorderRadius.circular(15)),
-//                       child: TypeAheadField<Project>(
+//                       child: TypeAheadField<String>(
 //                           focusNode: focusNode,
 //                           hideWithKeyboard: false,
 //                           hideOnUnfocus: false,

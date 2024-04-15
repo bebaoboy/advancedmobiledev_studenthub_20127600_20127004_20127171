@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,6 +42,11 @@ class FilePreview {
           //You can download a single file
           return await FileDownloader.downloadFile(
               url: filePath,
+              headers: {
+                "Access-Control-Allow-Methods": "GET, OPTIONS",
+                "Access-Control-Allow-Headers": "Content-Type",
+                'Access-Control-Allow-Credentials': "true",
+              },
               name: "file_${isCV ? "resume" : "transcript"}", //(optional)
               onProgress: (String? fileName, double progress) {
                 print('FILE fileName HAS PROGRESS $progress');
@@ -63,7 +69,7 @@ class FilePreview {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(13.0),
-                  child: Text("File type not supported: $filePath"),
+                  child: Text("${Lang.get('reject_file_text')} $filePath"),
                 ),
               );
             },
@@ -90,7 +96,7 @@ class FilePreview {
                 return Center(
                   child: Padding(
                     padding: const EdgeInsets.all(13.0),
-                    child: Text("File type not supported: $filePath"),
+                    child: Text("${Lang.get('reject_file_text')} $filePath"),
                   ),
                 );
               }
@@ -109,7 +115,7 @@ class FilePreview {
               return Center(
                 child: Padding(
                   padding: const EdgeInsets.all(13.0),
-                  child: Text("File type not supported: $filePath"),
+                  child: Text("${Lang.get('reject_file_text')} $filePath"),
                 ),
               );
             },
@@ -170,7 +176,7 @@ class FilePreview {
                     return Center(
                       child: Padding(
                         padding: const EdgeInsets.all(13.0),
-                        child: Text("File type not supported: $filePath"),
+                        child: Text("${Lang.get('reject_file_text')} $filePath"),
                       ),
                     );
                   }
@@ -190,7 +196,7 @@ class FilePreview {
                   return Center(
                     child: Padding(
                       padding: const EdgeInsets.all(13.0),
-                      child: Text("File type not supported: $filePath"),
+                      child: Text("${Lang.get('reject_file_text')} $filePath"),
                     ),
                   );
                 },

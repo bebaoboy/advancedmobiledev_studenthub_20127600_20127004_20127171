@@ -2,7 +2,8 @@ class Endpoints {
   Endpoints._();
 
   // base url
-  static const String baseUrl = "http://34.16.137.128";
+  // static const String baseUrl = "http://34.16.137.128";
+  static const String baseUrl = "https://api.studenthub.dev";
 
   // receiveTimeout
   static const int receiveTimeout = 15000;
@@ -16,9 +17,45 @@ class Endpoints {
   // project
 
   // all project in dashboard
-  static const String getProjects = "$baseUrl/api/project";
+  static const String getProjects = "$baseUrl/api/project"; // done
+  /*
+    "result": [
+    {
+      "id": 151,
+      "createdAt": "2024-04-10T04:26:40.237Z",
+      "updatedAt": "2024-04-10T04:26:40.237Z",
+      "deletedAt": null,
+      "companyId": "11",
+      "projectScopeFlag": 1,
+      "title": "Test Project 2",
+      "description": "description of the project",
+      "numberOfStudents": 1,
+      "typeFlag": 0,
+      "proposals": [],
+      "countProposals": 0,
+      "countMessages": 0,
+      "countHired": 0
+    },
+    ] */
   static const String getCurrentCompanyProjects =
-      "$baseUrl/project/company/{companyId}";
+      "$baseUrl/api/project/company/{companyId}"; // done
+  /*
+      {
+  "result": {
+    "companyId": "11",
+    "projectScopeFlag": 3,
+    "title": "Test Project 3",
+    "numberOfStudents": 1,
+    "description": "description of the project",
+    "typeFlag": 0,
+    "updatedAt": "2024-04-10T04:27:03.283Z",
+    "deletedAt": null,
+    "id": 152,
+    "createdAt": "2024-04-10T04:27:03.283Z"
+  }
+} */
+  static const String getStudentProposalProjects =
+      "$baseUrl/api/proposal/project/{studentId}"; // done
   static const String addNewProject = "$baseUrl/api/project";
   static const String deleteProject = "$baseUrl/api/project/{projectId}";
   static const String updateProject = "$baseUrl/api/project/{projectId}";
@@ -158,6 +195,12 @@ class Endpoints {
 
   static const String getTranscript =
       "$baseUrl/api/profile/student/{studentId}/transcript"; // done
+
+  static const String deleteResume =
+      "$baseUrl/api/profile/student/{studentId}/resume";
+
+  static const String deleteTranscript =
+      "$baseUrl/api/profile/student/{studentId}/transcript";
 
   static const String getTechStack = "$baseUrl/api/techstack/getAllTechStack";
   static const String getSkillset = "$baseUrl/api/skillset/getAllSkillSet";

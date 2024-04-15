@@ -1,13 +1,13 @@
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/signup/store/signup_store.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -35,8 +35,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
 
   //stores:---------------------------------------------------------------------
   final ThemeStore _themeStore = getIt<ThemeStore>();
-  final FormStore _formStore = getIt<FormStore>();
-  final UserStore _userStore = getIt<UserStore>();
+  final SignupStore _formStore = getIt<SignupStore>();
+  // final UserStore _userStore = getIt<UserStore>();
 
   //focus node:-----------------------------------------------------------------
   late FocusNode _passwordFocusNode;
@@ -80,7 +80,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
               : Container(child: _buildRightSide()),
           Observer(
             builder: (context) {
-              return _userStore.success
+              return _formStore.success
                   ? navigate(context)
                   : _showErrorMessage(_formStore.errorStore.errorMessage);
             },
@@ -88,7 +88,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _userStore.isLoading || loading,
+                visible: _formStore.isLoading || loading,
                 // child: CustomProgressIndicatorWidget(),
                 child: const LoadingScreen(),
               );
@@ -110,6 +110,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -147,32 +148,32 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                     _buildPasswordConfirmField(),
                     // _buildForgotPasswordButton(),
                     const SizedBox(height: 24.0),
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Transform.translate(
-                        offset: const Offset(-8, 0),
-                        child: CheckboxListTile(
-                          title: Transform.translate(
-                            offset: const Offset(-10, 0),
-                            child: AutoSizeText(
-                              Lang.get('signup_company_policy_agree'),
-                              style: const TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w800),
-                              minFontSize: 10,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                    Observer(
+                      builder: (context) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 0),
+                        child: Transform.translate(
+                          offset: const Offset(-8, 0),
+                          child: CheckboxListTile(
+                            title: Transform.translate(
+                              offset: const Offset(-10, 0),
+                              child: AutoSizeText(
+                                Lang.get('signup_company_policy_agree'),
+                                style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w800),
+                                minFontSize: 10,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
                             ),
+                            value: _formStore.hasAcceptPolicy,
+                            contentPadding: EdgeInsets.zero,
+                            onChanged: (newValue) {
+                              _formStore.changeAcceptState();
+                            },
+                            dense: true,
+                            controlAffinity: ListTileControlAffinity
+                                .leading, //  <-- leading Checkbox
                           ),
-                          value: checked,
-                          contentPadding: EdgeInsets.zero,
-                          onChanged: (newValue) {
-                            setState(() {
-                              checked = newValue ?? !checked;
-                            });
-                          },
-                          dense: true,
-                          controlAffinity: ListTileControlAffinity
-                              .leading, //  <-- leading Checkbox
                         ),
                       ),
                     ),
@@ -224,13 +225,13 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           textController: _userFullnameController,
           inputAction: TextInputAction.next,
           autoFocus: false,
-          // onChanged: (value) {
-          //   _formStore.setUserId(_userEmailController.text);
-          // },
-          // onFieldSubmitted: (value) {
-          //   FocusScope.of(context).requestFocus(_passwordFocusNode);
-          // },
-          errorText: null,
+          onChanged: (value) {
+            _formStore.setFullname(_userFullnameController.text);
+          },
+          onFieldSubmitted: (value) {
+            FocusScope.of(context).requestFocus(_passwordFocusNode);
+          },
+          errorText: _formStore.signUpFormErrorStore.fullname,
         );
       },
     );
@@ -247,14 +248,14 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           inputAction: TextInputAction.next,
           autoFocus: false,
           onChanged: (value) {
-            _formStore.setUserId(_userEmailController.text);
+            _formStore.setEmail(_userEmailController.text);
           },
           onFieldSubmitted: (value) {
             FocusScope.of(context).requestFocus(_passwordFocusNode);
           },
-          errorText: _formStore.formErrorStore.userEmail == null
+          errorText: _formStore.signUpFormErrorStore.email == null
               ? null
-              : Lang.get(_formStore.formErrorStore.userEmail),
+              : Lang.get(_formStore.signUpFormErrorStore.email),
         );
       },
     );
@@ -269,9 +270,9 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           icon: Icons.lock,
           textController: _passwordController,
           focusNode: _passwordFocusNode,
-          errorText: _formStore.formErrorStore.password == null
+          errorText: _formStore.signUpFormErrorStore.password == null
               ? null
-              : Lang.get(_formStore.formErrorStore.password),
+              : Lang.get(_formStore.signUpFormErrorStore.password),
           onChanged: (value) {
             _formStore.setPassword(_passwordController.text);
           },
@@ -288,9 +289,9 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           isObscure: true,
           icon: Icons.lock,
           textController: _passwordConfirmController,
-          errorText: _formStore.formErrorStore.confirmPassword == null
+          errorText: _formStore.signUpFormErrorStore.repeatPassword == null
               ? null
-              : Lang.get(_formStore.formErrorStore.confirmPassword),
+              : Lang.get(_formStore.signUpFormErrorStore.repeatPassword),
           onChanged: (value) {
             _formStore.setConfirmPassword(_passwordConfirmController.text);
           },
@@ -305,6 +306,16 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
       buttonColor: Theme.of(context).colorScheme.primary,
       textColor: Colors.white,
       onPressed: () async {
+        if (_formStore.canRegister) {
+          DeviceUtils.hideKeyboard(context);
+          _formStore.signUp(_userFullnameController.text,
+              _userEmailController.text, _passwordController.text);
+          setState(() {
+            loading = true;
+          });
+        } else {
+          _showErrorMessage(Lang.get('login_error_missing_fields'));
+        }
         // if (_formStore.canSignUpCompany) {
         //   DeviceUtils.hideKeyboard(context);
         //   _userStore.login(
@@ -313,38 +324,7 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
         //   _showErrorMessage(AppLocalizations.of(context)
         //       .translate('login_error_missing_fields'));
         // }
-        setState(() {
-          loading = true;
-        });
-        await Future.delayed(const Duration(seconds: 2)).then(
-          (value) {
-            setState(() {
-              loading = false;
-            });
-            showAnimatedDialog(
-              context: context,
-              barrierDismissible: true,
-              builder: (BuildContext c) {
-                return ClassicGeneralDialogWidget(
-                  contentText: Lang.get('signup_email_sent'),
-                  negativeText: ':Debug:',
-                  positiveText: 'OK',
-                  onPositiveClick: () {
-                    Navigator.of(c).pop();
-                  },
-                  onNegativeClick: () {
-                    Navigator.of(c).pop();
-                    Navigator.of(context)
-                        .push(MaterialPageRoute2(routeName: Routes.profile));
-                  },
-                );
-              },
-              animationType: DialogTransitionType.size,
-              curve: Curves.fastOutSlowIn,
-              duration: const Duration(seconds: 1),
-            );
-          },
-        );
+
         // Navigator.of(context)
         //     .push(MaterialPageRoute2(routeName: Routes.profile));
       },
@@ -355,14 +335,34 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
     // SharedPreferences.getInstance().then((prefs) {
     //   prefs.setBool(Preferences.is_logged_in, true);
     // });
+      loading = false;
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      //print("LOADING = $loading");
-      // Navigator.of(context)
-      //   .pushAndRemoveUntil(MaterialPageRoute2(child: HomeScreen()),
-      //       (Route<dynamic> route) => false);
-    });
-
+    Future.delayed(const Duration(seconds: 2)).then(
+      (value) {
+        showAnimatedDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext c) {
+            return ClassicGeneralDialogWidget(
+              contentText: Lang.get('signup_email_sent'),
+              // negativeText: ':Debug:',
+              positiveText: 'OK',
+              onPositiveClick: () {
+                Navigator.of(c).pop();
+              },
+              // onNegativeClick: () {
+              //   Navigator.of(c).pop();
+              //   Navigator.of(context)
+              //       .push(MaterialPageRoute2(routeName: Routes.profile));
+              // },
+            );
+          },
+          animationType: DialogTransitionType.size,
+          curve: Curves.fastOutSlowIn,
+          duration: const Duration(seconds: 1),
+        ).then((v) => Navigator.of(context).pop());
+      },
+    );
     return Container();
   }
 

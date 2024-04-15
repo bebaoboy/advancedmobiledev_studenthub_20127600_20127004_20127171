@@ -181,6 +181,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5.0),
         child: Column(
@@ -328,7 +329,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
               contentText:
-                  '${_formStore.fullName} update tạo profile thành công!',
+                  '${_formStore.fullName} update profile successfully!',
               negativeText: Lang.get('cancel'),
               positiveText: 'OK',
               onPositiveClick: () {

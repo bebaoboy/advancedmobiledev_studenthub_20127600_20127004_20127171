@@ -13,11 +13,12 @@ class PlaneIndicatorScreen extends StatefulWidget {
 class _PlaneIndicatorScreenState extends State<PlaneIndicatorScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: appBackgroundColor,
-      appBar: ExampleAppBar(),
+      appBar: const ExampleAppBar(),
       body: PlaneIndicator(
-        child: ExampleList(),
+        onRefresh: ()=>Future.value(),
+        child: const ExampleList(),
       ),
     );
   }

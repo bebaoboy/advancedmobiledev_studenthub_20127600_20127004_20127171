@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
+import 'package:boilerplate/core/widgets/onboarding_screen.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -19,7 +20,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../constants/strings.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
 
@@ -42,11 +43,12 @@ class _SettingScreenState extends State<SettingScreen> {
     print("init setting");
     accountList = [
       // guest acc
-      if (_userStore.user != null &&
-          _userStore.savedUsers.firstWhereOrNull(
-                (element) => element.email == _userStore.user!.email,
-              ) ==
-              null)
+      if (_userStore.user == null ||
+          (_userStore.user != null &&
+              _userStore.savedUsers.firstWhereOrNull(
+                    (element) => element.email == _userStore.user!.email,
+                  ) ==
+                  null))
         Account(
             _userStore.user!.email.isNotEmpty
                 ? _userStore.user!
@@ -129,8 +131,9 @@ class _SettingScreenState extends State<SettingScreen> {
             expansionIndicatorBuilder: (context, node) =>
                 ChevronIndicator.rightDown(
                   tree: node,
-                  color: Colors.blue[700],
-                  padding: const EdgeInsets.all(8),
+                  alignment: Alignment.topRight,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  padding: const EdgeInsets.symmetric(vertical: 10),
                 ),
             indentation: const Indentation(style: IndentStyle.none),
             onItemTap: (item) {
@@ -152,7 +155,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             'Do you want to switch account to ${item.data!.user.email} (company)?',
                         negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
-                        onPositiveClick: () {
+                        onPositiveClick: () async {
                           Navigator.of(context).pop();
                           if (item.data!.user.companyProfile == null) {
                             showAnimatedDialog(
@@ -164,7 +167,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       '${item.data!.user.email} dont have company profile? Create now?',
                                   negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
-                                  onPositiveClick: () {
+                                  onPositiveClick: () async {
                                     Navigator.of(context).pop();
 
                                     Navigator.of(context).push(
@@ -205,26 +208,38 @@ class _SettingScreenState extends State<SettingScreen> {
                   showAnimatedDialog(
                     context: context,
                     barrierDismissible: true,
-                    builder: (BuildContext context) {
+                    builder: (BuildContext ctx) {
                       return ClassicGeneralDialogWidget(
                         contentText:
                             'Do you want to switch account to ${item.data!.user.email} (student)?',
                         negativeText: Lang.get('cancel'),
                         positiveText: 'Yes',
-                        onPositiveClick: () {
-                          Navigator.of(context).pop();
+                        onPositiveClick: () async {
+                          Navigator.of(ctx).pop();
                           if (item.data!.user.studentProfile == null) {
                             showAnimatedDialog(
                               context: context,
                               barrierDismissible: true,
-                              builder: (BuildContext context) {
+                              builder: (BuildContext ctx2) {
                                 return ClassicGeneralDialogWidget(
                                   contentText:
                                       '${item.data!.user.email} dont have student profile? Create now?',
                                   negativeText: Lang.get('cancel'),
                                   positiveText: 'Yes',
-                                  onPositiveClick: () {
-                                    Navigator.of(context).pop();
+                                  onPositiveClick: () async {
+                                    Navigator.of(ctx2).pop();
+                                    setState(() {
+                                      loading = true;
+                                    });
+
+                                    final ProfileStudentStore infoStore =
+                                        getIt<ProfileStudentStore>();
+
+                                    await infoStore.getTechStack();
+                                    await infoStore.getSkillset();
+                                    setState(() {
+                                      loading = false;
+                                    });
 
                                     Navigator.of(context)
                                         .push(MaterialPageRoute2(
@@ -349,7 +364,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text(Strings.appName),
+      title: Text(Lang.get("profile_text")),
       actions: _buildActions(context),
     );
   }
@@ -377,6 +392,7 @@ class _SettingScreenState extends State<SettingScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: SingleChildScrollView(
+        controller: ScrollController(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -434,14 +450,19 @@ class _SettingScreenState extends State<SettingScreen> {
                         showAnimatedDialog(
                           context: context,
                           barrierDismissible: true,
-                          builder: (BuildContext context) {
+                          builder: (BuildContext ctx) {
                             return ClassicGeneralDialogWidget(
                               contentText:
                                   'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
                               negativeText: Lang.get('cancel'),
                               positiveText: 'Yes',
-                              onPositiveClick: () {
-                                Navigator.of(context).pop();
+                              onPositiveClick: () async {
+                                Navigator.of(ctx).pop();
+                                final ProfileStudentStore infoStore =
+                                    getIt<ProfileStudentStore>();
+
+                                await infoStore.getTechStack();
+                                await infoStore.getSkillset();
 
                                 Navigator.of(context).push(MaterialPageRoute2(
                                     routeName: Routes.profileStudent));
@@ -460,17 +481,18 @@ class _SettingScreenState extends State<SettingScreen> {
                         setState(() {
                           loading = true;
                         });
-                        final ProfileStudentStore infoStore =
-                            getIt<ProfileStudentStore>();
 
-                        infoStore.setStudentId(
-                            _userStore.user!.studentProfile!.objectId!);
-                          await infoStore.getInfo().then(
-                                (value) {},
-                              );
                         if (_userStore.user != null &&
                             _userStore.user!.studentProfile != null &&
                             _userStore.user!.studentProfile!.objectId != null) {
+                          final ProfileStudentStore infoStore =
+                              getIt<ProfileStudentStore>();
+
+                          infoStore.setStudentId(
+                              _userStore.user!.studentProfile!.objectId!);
+                          await infoStore.getInfo().then(
+                                (value) {},
+                              );
                           final ProfileStudentFormStore formStore =
                               getIt<ProfileStudentFormStore>();
                           await formStore.getProfileStudent(
@@ -504,6 +526,25 @@ class _SettingScreenState extends State<SettingScreen> {
             const Divider(
               height: 3,
             ),
+            ListTile(
+                onTap: () async {
+                  await Navigator.push(
+                    context,
+                    ModalSheetRoute(
+                      builder: (context) => OnboardingSheet(
+                        height: MediaQuery.of(context).size.height,
+                        onSheetDismissed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          prefs.setBool(Preferences.first_time, true);
+                        },
+                      ),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.help_outline),
+                title: Text(
+                  Lang.get('about'),
+                )),
             ListTile(
                 onTap: () {
                   _userStore.logout();

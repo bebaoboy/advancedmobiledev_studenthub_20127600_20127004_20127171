@@ -1,3 +1,38 @@
+## ANNOUNCEMENT🎉 
+<br>
+StudentHub 0.6 is OUT!!
+<br>
+
+<img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
+<br>
+
+## Link Youtube Demo (All Sprints + Extra):
+
+[Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
+<br>
+## Link File làm việc và đánh giá:
+
+[GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
+<br>
+## Deploy web: 
+[StudentHub Firebase](https://advmobiledev-studenthub-clc20.web.app)
+
+<br>
+
+## Thông tin nhóm:
+
+<br>
+Lưu Tuấn Quân - 20127600
+<br>
+Huỳnh Minh Bảo- 20127004
+<br>
+Vũ Huy Hoàng - 20127171
+<br><br>
+
+
+
+<br>
+
 ### Sprint 3: Update account for demo video call (in chat section)
 
 **Username:**
@@ -8,20 +43,6 @@
 **Account for company access:**
 - c@mpany.com
 - others: student
-
-## Thông tin nhóm:
-Lưu Tuấn Quân - 20127600
-<br>
-Huỳnh Minh Bảo- 20127004
-<br>
-Vũ Huy Hoàng - 20127171
-<br>
-
-## Link Youtube Demo:
-[Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
-
-## Link File đánh giá:
-[GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
 
 
 ## How to Use 
@@ -228,7 +249,6 @@ class Routes {
   //static variables
   static const String splash = '/splash';
   static const String login = '/login';
-  static const String home = '/post';
 
   static final routes = <String, WidgetBuilder>{
     splash: (BuildContext context) => SplashScreen(),

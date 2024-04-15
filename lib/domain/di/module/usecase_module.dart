@@ -1,12 +1,15 @@
 import 'dart:async';
 
 import 'package:boilerplate/domain/repository/post/post_repository.dart';
+import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/post/delete_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
+import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
@@ -16,6 +19,15 @@ import 'package:boilerplate/domain/usecase/profile/get_skillset.dart';
 import 'package:boilerplate/domain/usecase/profile/get_techstack.dart';
 import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
+import 'package:boilerplate/domain/usecase/project/create_project.dart';
+import 'package:boilerplate/domain/usecase/project/delete_project.dart';
+import 'package:boilerplate/domain/usecase/project/get_projects.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
+import 'package:boilerplate/domain/usecase/project/save_student_favorite_project.dart';
+import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
+import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -61,7 +73,32 @@ mixin UseCaseModule {
     getIt.registerSingleton<SaveTokenUseCase>(
       SaveTokenUseCase(getIt<UserRepository>()),
     );
+    getIt.registerSingleton<GetUserDataUseCase>(
+      GetUserDataUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SaveUserDataUsecase>(
+      SaveUserDataUsecase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SetUserProfileUseCase>(
+      SetUserProfileUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<LogoutUseCase>(
+      LogoutUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<ChangePasswordUseCase>(
+      ChangePasswordUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<SendResetPasswordMailUseCase>(
+      SendResetPasswordMailUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<GetMustChangePassUseCase>(
+      GetMustChangePassUseCase(getIt<UserRepository>()),
+    );
+    getIt.registerSingleton<HasToChangePassUseCase>(
+      HasToChangePassUseCase(getIt<UserRepository>()),
+    );
 
+    // profile:--------------------------------------------------------------------
     getIt.registerSingleton<AddProfileCompanyUseCase>(
       AddProfileCompanyUseCase(getIt<UserRepository>()),
     );
@@ -127,6 +164,14 @@ mixin UseCaseModule {
       UpdateResumeUseCase(getIt<UserRepository>()),
     );
 
+    getIt.registerSingleton<DeleteTranscriptUseCase>(
+      DeleteTranscriptUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<DeleteResumeUseCase>(
+      DeleteResumeUseCase(getIt<UserRepository>()),
+    );
+
     getIt.registerSingleton<GetTranscriptUseCase>(
       GetTranscriptUseCase(getIt<UserRepository>()),
     );
@@ -135,32 +180,45 @@ mixin UseCaseModule {
       GetResumeUseCase(getIt<UserRepository>()),
     );
 
-    getIt.registerSingleton<GetUserDataUseCase>(
-      GetUserDataUseCase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<SaveUserDataUsecase>(
-      SaveUserDataUsecase(getIt<UserRepository>()),
-    );
-    getIt.registerSingleton<SetUserProfileUseCase>(
-      SetUserProfileUseCase(getIt<UserRepository>()),
-    );
     getIt.registerSingleton<GetProfileUseCase>(
       GetProfileUseCase(getIt<UserRepository>()),
     );
-    getIt.registerSingleton<LogoutUseCase>(
-      LogoutUseCase(getIt<UserRepository>()),
+
+    // project:--------------------------------------------------------------------
+    getIt.registerSingleton<GetProjectsUseCase>(
+      GetProjectsUseCase(getIt<ProjectRepository>()),
     );
-    getIt.registerSingleton<ChangePasswordUseCase>(
-      ChangePasswordUseCase(getIt<UserRepository>()),
+
+    getIt.registerSingleton<CreateProjectUseCase>(
+      CreateProjectUseCase(getIt<ProjectRepository>()),
     );
-    getIt.registerSingleton<SendResetPasswordMailUseCase>(
-      SendResetPasswordMailUseCase(getIt<UserRepository>()),
+
+    getIt.registerSingleton<DeleteProjectUseCase>(
+      DeleteProjectUseCase(getIt<ProjectRepository>()),
     );
-    getIt.registerSingleton<GetMustChangePassUseCase>(
-      GetMustChangePassUseCase(getIt<UserRepository>()),
+
+    getIt.registerSingleton<UpdateFavoriteProjectUseCase>(
+      UpdateFavoriteProjectUseCase(getIt<ProjectRepository>()),
     );
-    getIt.registerSingleton<HasToChangePassUseCase>(
-      HasToChangePassUseCase(getIt<UserRepository>()),
+
+    getIt.registerSingleton<GetProjectByCompanyUseCase>(
+      GetProjectByCompanyUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateCompanyProject>(
+      UpdateCompanyProject(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<GetStudentProposalProjectsUseCase>(
+      GetStudentProposalProjectsUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<GetStudentFavoriteProjectUseCase>(
+      GetStudentFavoriteProjectUseCase(getIt<ProjectRepository>()),
+    );
+
+    getIt.registerSingleton<SaveStudentFavoriteProjectUseCase>(
+      SaveStudentFavoriteProjectUseCase(getIt<ProjectRepository>()),
     );
 
     // post:--------------------------------------------------------------------

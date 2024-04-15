@@ -457,7 +457,8 @@ class _LinkPreviewState extends State<LinkPreview>
         );
       }
     } else {
-      return  _containerWidget(animate: false, child: Center(child: widget.loadingWidget));
+      return _containerWidget(
+          animate: false, child: Center(child: widget.loadingWidget));
     }
   }
 }

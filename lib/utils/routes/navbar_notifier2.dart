@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:navbar_router/src/navbar_router.dart';
+import 'package:toastification/toastification.dart';
 
 class NavbarNotifier2 extends ChangeNotifier {
   static final NavbarNotifier2 _singleton = NavbarNotifier2._internal();
@@ -60,6 +61,9 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static set hideBottomNavBar(bool x) {
     _hideBottomNavBar = x;
+    if (!x) {
+      toastification.dismissAll();
+    }
     _singleton.notify();
   }
 

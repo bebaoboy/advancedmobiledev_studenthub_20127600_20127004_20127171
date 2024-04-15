@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/forgetPass/get_must_change_pass_usecase.dart';
@@ -39,6 +40,7 @@ abstract class _UserStore with Store {
     this._getProfileUseCase,
     this._logoutUseCase,
     this._setUserProfileUseCase,
+    this._getStudentFavoriteProjectUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -51,17 +53,6 @@ abstract class _UserStore with Store {
     _getUserDataUseCase.call(params: null).then((value) async {
       _user = value;
       if (_user != null) _user?.isVerified = true;
-    });
-
-    _setUserProfileUseCase.call(params: null).then((value) async {
-      if (value != null) {
-        if (_user != null) {
-          _user?.companyProfile =
-              value[1] != null ? value[1] as CompanyProfile : null;
-          _user?.studentProfile =
-              value[0] != null ? value[0] as StudentProfile : null;
-        }
-      }
     });
 
     _getMustChangePassUseCase.call(params: null).then((value) {
@@ -101,6 +92,7 @@ abstract class _UserStore with Store {
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
   final GetMustChangePassUseCase _getMustChangePassUseCase;
+  final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -213,6 +205,8 @@ abstract class _UserStore with Store {
           _getMustChangePassUseCase.call(params: null).then((value) {
             shouldChangePass = value.res;
           });
+
+          // _getStudentFavoriteProjectUseCase.call(params: null);
         } else {
           notification = value.data['result'];
         }
@@ -223,11 +217,28 @@ abstract class _UserStore with Store {
             : value.data['errorDetails'].toString();
       }
     }).catchError((e) {
-      //print(e);
+      print(e);
       isLoggedIn = false;
       success = false;
-      // throw e;
+      //throw e;
     });
+  }
+
+  Future<bool> fetchUserProfileIfLoggedIn() async {
+    print('in background fetch');
+    _setUserProfileUseCase.call(params: null).then((value) async {
+      if (value != null) {
+        if (_user != null) {
+          _user?.companyProfile =
+              value[1] != null ? value[1] as CompanyProfile : null;
+          _user?.studentProfile =
+              value[0] != null ? value[0] as StudentProfile : null;
+          return Future.value(true);
+        }
+      }
+      return Future.value(false);
+    }).onError((error, stackTrace) => Future.value(false));
+    return Future.value(true);
   }
 
   Future logout() async {
@@ -241,6 +252,7 @@ abstract class _UserStore with Store {
   }
 
   // general methods:-----------------------------------------------------------
+  @action
   void dispose() {
     for (final d in _disposers) {
       d();

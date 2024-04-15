@@ -3,6 +3,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ProjectDetailsStudentScreen extends StatefulWidget {
   const ProjectDetailsStudentScreen({super.key, required this.project});
@@ -15,9 +16,12 @@ class ProjectDetailsStudentScreen extends StatefulWidget {
 
 class _ProjectDetailsStudentScreenState
     extends State<ProjectDetailsStudentScreen> {
+  var updatedText = "";
   @override
   void initState() {
     super.initState();
+    updatedText =
+        "Created at ${DateFormat("HH:mm").format(widget.project.timeCreated.toLocal())}";
   }
 
   @override
@@ -33,6 +37,7 @@ class _ProjectDetailsStudentScreenState
 
   Widget _buildFourContent() {
     return SingleChildScrollView(
+        controller: ScrollController(),
         physics: const ClampingScrollPhysics(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -68,6 +73,7 @@ class _ProjectDetailsStudentScreenState
                         child: Container(
                           constraints: const BoxConstraints(maxHeight: 400),
                           child: SingleChildScrollView(
+                            controller: ScrollController(),
                             child: Text(widget.project.description.isEmpty
                                 ? 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
                                     'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
@@ -112,6 +118,31 @@ class _ProjectDetailsStudentScreenState
                       ),
                       const SizedBox(
                         height: 10,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Icon(
+                              Icons.calendar_month_outlined,
+                              size: 45,
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  updatedText.isEmpty
+                                      ? "Just now"
+                                      : updatedText,
+                                )
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ],
                   ),

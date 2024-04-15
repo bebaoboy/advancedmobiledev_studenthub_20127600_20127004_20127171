@@ -3,14 +3,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
 
@@ -177,6 +180,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: ConstrainedBox(
         constraints: BoxConstraints(
@@ -341,11 +345,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (message.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
+          Toastify.show(
+              context,
+              "",
+              message,
+              aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+              ToastificationType.error,
+              () {});
         }
       });
     }

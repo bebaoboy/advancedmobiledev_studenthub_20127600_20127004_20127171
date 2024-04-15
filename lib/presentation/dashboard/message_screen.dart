@@ -43,18 +43,16 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   @override
   void initState() {
     super.initState();
-    itv = widget.filter ?? InterviewSchedule(
-                  startDate: DateTime.now(),
-                  endDate: DateTime.now(),
-                  title: "Null meeting"
-        );
+    itv = widget.filter ??
+        InterviewSchedule(
+            startDate: DateTime.now(),
+            endDate: DateTime.now(),
+            title: "Null meeting");
     title.text = (itv.title).toString();
     startDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.startDate))
-            .toString();
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.startDate)).toString();
     endDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.endDate))
-            .toString();
+        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.endDate)).toString();
   }
 
   Future<DateTime?> showDateTimePicker({
@@ -115,6 +113,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             body: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32),
               child: SingleChildScrollView(
+                controller: ScrollController(),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -188,10 +187,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                     ////print(pickedDate);
                                     setState(() {
                                       itv.startDate = pickedDate;
-                                      startDate.text = (DateFormat(
-                                                  "EEEE dd/MM/yyyy HH:MM")
-                                              .format(itv.startDate))
-                                          .toString();
+                                      startDate.text =
+                                          (DateFormat("EEEE dd/MM/yyyy HH:MM")
+                                                  .format(itv.startDate))
+                                              .toString();
                                     });
                                   }
                                 },
@@ -295,10 +294,10 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                     ////print(pickedDate);
                                     setState(() {
                                       itv.endDate = pickedDate;
-                                      endDate.text = (DateFormat(
-                                                  "EEEE dd/MM/yyyy HH:MM")
-                                              .format(itv.endDate))
-                                          .toString();
+                                      endDate.text =
+                                          (DateFormat("EEEE dd/MM/yyyy HH:MM")
+                                                  .format(itv.endDate))
+                                              .toString();
                                     });
                                   }
                                 },
@@ -666,10 +665,9 @@ class _MessageScreenState extends State<MessageScreen> {
     return await Navigator.push<InterviewSchedule>(
       context,
       ModalSheetRoute(
-        builder: (context) => ScheduleBottomSheet(
-          filter: flt,
-              
-      )),
+          builder: (context) => ScheduleBottomSheet(
+                filter: flt,
+              )),
     ).then((value) {
       if (flt == null) {
         if (value != null) {

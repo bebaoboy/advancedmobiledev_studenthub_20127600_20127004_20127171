@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:http/http.dart' as http;
 
-import 'exceptions/network_exceptions.dart';
+import 'constants/exceptions/network_exceptions.dart';
 
 class RestClient {
   // instantiate json decoder for json serialization

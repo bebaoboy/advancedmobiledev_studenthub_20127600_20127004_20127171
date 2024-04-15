@@ -141,17 +141,13 @@ class UserRepositoryImpl extends UserRepository {
   }
 
   @override
-  Future<List<Profile?>> fetchProfileFromSharedPref() {
-    return _sharedPrefsHelper.getCurrentProfile();
-  }
-
-  @override
   Future<void> logout() async {
     await _userApi.logout();
     await _sharedPrefsHelper.saveIsLoggedIn(false);
     await _sharedPrefsHelper.deleteProfile();
     await _sharedPrefsHelper.removeAuthToken();
     await _sharedPrefsHelper.removeUser();
+    await _sharedPrefsHelper.removeSavedProjects();
   }
 
   @override
@@ -292,5 +288,22 @@ class UserRepositoryImpl extends UserRepository {
   Future<Response> updateTranscript(UpdateTranscriptParams params) async {
     var response = await _profileApi.updateTranscript(params);
     return response;
+  }
+
+  @override
+  Future<Response> deleteResume(UpdateResumeParams params) async {
+    var response = await _profileApi.deleteResume(params);
+    return response;
+  }
+
+  @override
+  Future<Response> deleteTranscript(UpdateTranscriptParams params) async {
+    var response = await _profileApi.deleteTranscript(params);
+    return response;
+  }
+
+  @override
+  Future<List<Profile?>> fetchProfileFromSharedPref() {
+    return _sharedPrefsHelper.getCurrentProfile();
   }
 }

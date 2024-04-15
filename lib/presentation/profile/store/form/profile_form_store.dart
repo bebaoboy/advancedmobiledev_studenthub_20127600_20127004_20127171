@@ -109,6 +109,10 @@ abstract class _ProfileFormStore with Store {
             description: description,
             scope: scope,
             objectId: id);
+        var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+
+        sharedPrefsHelper
+            .saveCompanyProfile(CompanyProfile.fromMap(value.data["result"]));
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
@@ -141,7 +145,8 @@ abstract class _ProfileFormStore with Store {
         userStore.user!.companyProfile =
             CompanyProfile.fromMap(value.data["result"]);
         var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
-        sharedPrefsHelper.saveCompanyProfile(CompanyProfile.fromMap(value.data["result"]));
+        sharedPrefsHelper
+            .saveCompanyProfile(CompanyProfile.fromMap(value.data["result"]));
         // ToDO: save profile to sharedpref
       } else {
         success = false;
@@ -214,6 +219,7 @@ abstract class _ProfileFormStore with Store {
     }
   }
 
+  @action
   void dispose() {
     for (final d in _disposers) {
       d();

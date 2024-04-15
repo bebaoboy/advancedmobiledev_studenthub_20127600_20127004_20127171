@@ -80,7 +80,7 @@ class _SearchDropdownState extends State<SearchDropdown> {
       initialItem: userStore.user != null &&
               userStore.user!.studentProfile != null &&
               userStore.user!.studentProfile!.techStack != null
-          ? userStore.user!.studentProfile!.techStack![0]
+          ? userStore.user!.studentProfile!.techStack!
           : _list[0],
       futureRequest: (p0) {
         return Future.microtask(
@@ -273,8 +273,8 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.isNotEmpty) {
       return mockSkillsets.where((profile) {
-        return profile.name.contains(query) ||
-            profile.description.contains(query);
+        return profile.name.toLowerCase().contains(query.toLowerCase()) ||
+            profile.description.toLowerCase().contains(query.toLowerCase());
       }).toList(growable: true);
     } else {
       return mockSkillsets;
@@ -283,6 +283,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -330,7 +331,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                   const SizedBox(height: 14.0),
                   SearchDropdown(
                     onListChangedCallback: (p0) {
-                      _profileStudentFormStore.setTechStack([p0]);
+                      _profileStudentFormStore.setTechStack(p0);
                     },
                   ),
                   // _buildUserIdField(),
@@ -561,6 +562,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: ListView.builder(
+            controller: ScrollController(),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: _languages.length,
@@ -781,6 +783,7 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
         child: Padding(
           padding: const EdgeInsets.only(left: 10),
           child: ListView.builder(
+            controller: ScrollController(),
             physics: const BouncingScrollPhysics(),
             shrinkWrap: true,
             itemCount: _educations.length,

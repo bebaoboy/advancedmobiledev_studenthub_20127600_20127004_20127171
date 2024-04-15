@@ -23,6 +23,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
 
   Widget _buildBody(BuildContext context) {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Column(
@@ -69,11 +70,17 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                 ),
                 MaterialButton(
                   onPressed: () {
+                    // TODO: check id proposal + add callback
                     var newStudentProject = StudentProject(
-                        title: widget.project.title,
-                        description: widget.project.description,
-                        submittedTime: DateTime.now(),
-                        timeCreated: widget.project.timeCreated);
+                      title: widget.project.title,
+                      description: widget.project.description,
+                      numberOfStudents: widget.project.numberOfStudents,
+                      scope: widget.project.scope,
+                      id: widget.project.objectId ?? "",
+                      timeCreated: DateTime.now(),
+                      projectId: widget.project.companyId,
+                      // timeCreated: widget.project.timeCreated
+                    );
                     studentProjects.add(newStudentProject);
                   },
                   color: Colors.amber.shade300,

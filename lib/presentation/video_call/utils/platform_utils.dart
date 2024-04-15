@@ -1,5 +1,5 @@
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/presentation/video_call/connectycube_flutter_call_kit/lib/connectycube_flutter_call_kit.dart';
+import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_core.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
@@ -14,7 +14,7 @@ Future<bool> initForegroundService() async {
     const androidConfig = FlutterBackgroundAndroidConfig(
       notificationTitle: 'P2P Calls sample',
       notificationText: 'Screen sharing is in progress',
-      notificationImportance: AndroidNotificationImportance.Default,
+      notificationImportance: AndroidNotificationImportance.Max,
       notificationIcon:
           AndroidResource(name: 'ic_launcher_foreground', defType: 'drawable'),
     );

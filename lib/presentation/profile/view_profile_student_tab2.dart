@@ -190,8 +190,8 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.isNotEmpty) {
       return mockSkillsets.where((profile) {
-        return profile.name.contains(query) ||
-            profile.description.contains(query);
+        return profile.name.toLowerCase().contains(query.toLowerCase()) ||
+            profile.description.toLowerCase().contains(query.toLowerCase());
       }).toList(growable: true);
     } else {
       return mockSkillsets;
@@ -200,6 +200,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -320,6 +321,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.8,
       child: ListView.builder(
+        controller: ScrollController(),
         physics: const BouncingScrollPhysics(),
         shrinkWrap: true,
         itemCount: _projects.length,
@@ -328,6 +330,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
               ? MediaQuery.of(context).size.width * 0.93
               : MediaQuery.of(context).size.width * 0.84;
           return Container(
+            padding: const EdgeInsets.symmetric(vertical: 20),
             decoration: BoxDecoration(
               border: Border.all(width: 0.1),
               borderRadius: const BorderRadius.all(Radius.circular(13)),
@@ -642,11 +645,11 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                 width: w,
                                 height: _projects[index].readOnly ? 20 : null,
                                 child: GestureDetector(
-                                    onTap: () {
-                                      if (_projects[index].readOnly) {
-                                        openHintBar();
-                                      }
-                                    },
+                                    // onTap: () {
+                                    //   if (_projects[index].readOnly) {
+                                    //     openHintBar();
+                                    //   }
+                                    // },
                                     onDoubleTap: () {
                                       if (_projects[index].readOnly &&
                                           _projects[index].enabled) {
@@ -741,6 +744,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                   ? LimitedBox(
                                       maxHeight: 90,
                                       child: SingleChildScrollView(
+                                        controller: ScrollController(),
                                         child: Text(
                                           _projects[index].description,
                                           style: const TextStyle(fontSize: 12),

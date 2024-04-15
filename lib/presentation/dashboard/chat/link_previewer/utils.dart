@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Element;
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
     show PreviewData, PreviewDataImage;
@@ -194,8 +195,13 @@ Future<PreviewData> getPreviewData(
     }
     previewDataUrl = _calculateUrl(url, proxy);
     final uri = Uri.parse(previewDataUrl);
-    final response = await http.get(uri, headers: {
-      'User-Agent': userAgent ?? 'WhatsApp/2',
+    final response = await http.get(uri, headers: !kIsWeb ? {
+      'User-Agent': userAgent ?? 'WhatsApp/2',} :  {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,PATCH,POST,DELETE",
+      "Access-Control-Allow-Headers":
+          "Origin, X-Requested-With, Content-Type, Accept",
+      'Access-Control-Allow-Credentials': "true",
     }).timeout(requestTimeout ?? const Duration(seconds: 5));
     final document = parser.parse(utf8.decode(response.bodyBytes));
 
@@ -253,10 +259,10 @@ Future<PreviewData> getPreviewData(
     );
   } catch (e) {
     return PreviewData(
-      description: previewDataDescription,
+      description: previewDataUrl,
       image: previewDataImage,
       link: previewDataUrl,
-      title: previewDataTitle,
+      title: previewDataUrl,
     );
   }
 }

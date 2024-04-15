@@ -3,13 +3,17 @@ import 'dart:async';
 import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
-import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
@@ -46,8 +50,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   //text controllers:-----------------------------------------------------------
 
   //stores:---------------------------------------------------------------------
-  final FormStore _formStore = getIt<FormStore>();
-  // final UserStore _userStore = getIt<UserStore>();
+
+  final UserStore _userStore = getIt<UserStore>();
   final ProfileStudentFormStore _profileStudentFormStore =
       getIt<ProfileStudentFormStore>();
 
@@ -99,7 +103,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _profileStudentFormStore.isLoading || loading,
+                visible: _profileStudentFormStore.isLoading,
                 // child: CustomProgressIndicatorWidget(),
                 child: GestureDetector(
                     onTap: () {
@@ -123,6 +127,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   Widget _buildRightSide() {
     //print(isLinkCv.value);
     return SingleChildScrollView(
+      controller: ScrollController(),
       physics: const ClampingScrollPhysics(),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -188,8 +193,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
-                                          isCV: true, cvController.text)
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
+                                          isCV: true,
+                                          cvController.text)
                                       .then(
                                     (value) {
                                       if (value != null) {
@@ -216,8 +223,10 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   cvController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
-                                          isCV: true, cvController.text)
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
+                                          isCV: true,
+                                          cvController.text)
                                       .then((value) {
                                     if (value != null) {
                                       setState(() {
@@ -299,7 +308,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           cvEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
+                        final image = await FilePreview.getThumbnail(
+                          changeValue: changeValue,
                           isCV: true,
                           result.files.single.path!,
                         );
@@ -407,7 +417,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then(
@@ -436,7 +447,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                     filePath = "https://$filePath";
                                   }
                                   transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(changeValue: changeValue,
+                                  await FilePreview.getThumbnail(
+                                          changeValue: changeValue,
                                           isCV: false,
                                           transcriptController.text)
                                       .then((value) {
@@ -520,7 +532,8 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         setState(() {
                           transcriptEnable = false;
                         });
-                        final image = await FilePreview.getThumbnail(changeValue: changeValue,
+                        final image = await FilePreview.getThumbnail(
+                          changeValue: changeValue,
                           isCV: false,
                           result.files.single.path!,
                         );
@@ -660,24 +673,28 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
     //   prefs.setBool(Preferences.is_logged_in, true);
     // });
 
-    Future.delayed(const Duration(milliseconds: 0), () {
-      if (_formStore.success) {
-        _formStore.success = false;
+    Future.delayed(const Duration(milliseconds: 100), () {
+      if (_profileStudentFormStore.success) {
+        _profileStudentFormStore.success = false;
         showAnimatedDialog(
           context: context,
           barrierDismissible: true,
           builder: (BuildContext context) {
             return ClassicGeneralDialogWidget(
               contentText:
-                  '${_profileStudentFormStore.fullName} tạo profile thành công!',
-              negativeText: Lang.get('cancel'),
+                  '${_profileStudentFormStore.fullName} create profile successfully!',
               positiveText: 'OK',
               onPositiveClick: () {
                 Navigator.of(context).pop();
+                _userStore.user?.type = UserType.student;
+
+                Navigator.of(NavigationService.navigatorKey.currentContext ??
+                        context)
+                    .pushAndRemoveUntil(
+                        MaterialPageRoute2(
+                            routeName: Routes.welcome, arguments: true),
+                        (Route<dynamic> route) => false);
                 return;
-              },
-              onNegativeClick: () {
-                Navigator.of(context).pop();
               },
             );
           },
@@ -687,7 +704,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         );
       }
     });
-
     return Container();
   }
 

@@ -174,8 +174,10 @@ Future<T?> _showCupertinoBottomSheet<T>(
             color: Colors.transparent,
             child: CupertinoActionSheetAction(
               onPressed: () {
-                if (action.onPressed != null) action.onPressed!(coxt);
-                Navigator.of(coxt).pop();
+                if (action.onPressed != null) {
+                  action.onPressed!(coxt);
+                  Navigator.of(coxt).pop();
+                }
               },
               child: action.title == null
                   ? const Divider(
@@ -266,6 +268,7 @@ Future<T?> _showMaterialBottomSheet<T>(
               maxHeight: screenHeight - (screenHeight / 10),
             ),
             child: SingleChildScrollView(
+              controller: ScrollController(),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,
@@ -279,8 +282,10 @@ Future<T?> _showMaterialBottomSheet<T>(
                   ...actions.map<Widget>((action) {
                     return InkWell(
                       onTap: () {
-                        if (action.onPressed != null) action.onPressed!(coxt);
-                        Navigator.of(coxt).pop();
+                        if (action.onPressed != null) {
+                          action.onPressed!(coxt);
+                          Navigator.of(coxt).pop();
+                        }
                       },
                       child: action.title == null
                           ? const Divider(

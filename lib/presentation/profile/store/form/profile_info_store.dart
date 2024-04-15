@@ -79,25 +79,29 @@ abstract class _ProfileStudentStore with Store {
 
   Future getInfo() async {
     if (_studentId != null) {
-      await _getEducationUseCase
-          .call(params: _studentId.toString())
-          .then((value) => _educations = value);
-      await _getExperienceUseCase
-          .call(params: _studentId.toString())
-          .then((value) => _experiences = value);
-      await _getLanguageUseCase
-          .call(params: _studentId.toString())
-          .then((value) => _languages = value);
-      var userStore = getIt<UserStore>();
-      if (userStore.user != null && userStore.user!.studentProfile != null) {
-        userStore.user!.studentProfile!.educations = currentEducation;
-        userStore.user!.studentProfile!.languages = currentLanguage;
-        userStore.user!.studentProfile!.projectExperience =
-            currentProjectExperience;
+      try {
+        await _getEducationUseCase
+            .call(params: _studentId.toString())
+            .then((value) => _educations = value);
+        await _getExperienceUseCase
+            .call(params: _studentId.toString())
+            .then((value) => _experiences = value);
+        await _getLanguageUseCase
+            .call(params: _studentId.toString())
+            .then((value) => _languages = value);
+        var userStore = getIt<UserStore>();
+        if (userStore.user != null && userStore.user!.studentProfile != null) {
+          userStore.user!.studentProfile!.educations = currentEducation;
+          userStore.user!.studentProfile!.languages = currentLanguage;
+          userStore.user!.studentProfile!.projectExperience =
+              currentProjectExperience;
+        }
+        await getTechStack();
+        await getSkillset();
+      } catch (e) {
+        print(e.toString());
       }
     }
-    await getTechStack();
-    await getSkillset();
   }
 
   @action

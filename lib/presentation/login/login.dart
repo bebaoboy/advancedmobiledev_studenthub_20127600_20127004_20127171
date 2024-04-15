@@ -1,17 +1,22 @@
-import 'package:another_flushbar/flushbar_helper.dart';
+// ignore_for_file: unused_local_variable
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/onboarding_screen.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/setting/settings_drawer.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
@@ -22,13 +27,17 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:size_helper/size_helper.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
-// import 'package:boilerplate/presentation/video_call/utils/configs.dart'
-//     as utils;
+import 'package:boilerplate/presentation/video_call/utils/configs.dart'
+    as utils;
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key, this.email = ""});
@@ -58,6 +67,18 @@ class _LoginScreenState extends State<LoginScreen> {
     super.initState();
     _passwordFocusNode = FocusNode();
     _userEmailController.text = widget.email ?? "";
+    checkIntro(context);
+  }
+
+  checkIntro(context) {
+    Future.delayed(Duration.zero, () async {
+      bool firstTime = false;
+      final prefs = await SharedPreferences.getInstance();
+      firstTime = prefs.getBool(Preferences.first_time) ?? false;
+      if (!firstTime) {
+        await showIntroBottomSheet(context);
+      }
+    });
   }
 
   @override
@@ -66,6 +87,24 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         appBar: const EmptyAppBar(),
         body: _buildBody(),
+        endDrawer: const SettingScreenDrawer(),
+        // drawer: const SettingScreenDrawer(),
+        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
+      ),
+    );
+  }
+
+  Future showIntroBottomSheet(BuildContext context) async {
+    return await Navigator.push(
+      context,
+      ModalSheetRoute(
+        builder: (context) => OnboardingSheet(
+          height: MediaQuery.of(context).size.height,
+          onSheetDismissed: () async {
+            final prefs = await SharedPreferences.getInstance();
+            prefs.setBool(Preferences.first_time, true);
+          },
+        ),
       ),
     );
   }
@@ -110,11 +149,32 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const LoadingScreen()),
               );
             },
-          )
+          ),
+
+//           Positioned(
+//             height: 1000,
+//             width: 2000,
+//             top: o.dy,
+//             left: o.dx,
+//             child: GestureDetector(
+//                 onPanUpdate: (details) => setState(() {
+//                       o += Offset(details.delta.dx, details.delta.dy);
+//                     }),
+//                 child: PageView(
+//                   children: [
+//                     Container(color: Colors.amber.withOpacity(0.1),),
+//                     AbsorbPointer(child: Container(color: Colors.blue.withOpacity(0.1),)),
+//                     Container(color: Colors.red.withOpacity(0.1),)
+// ,
+//                   ],
+//                 )),
+//           )
         ],
       ),
     );
   }
+
+  Offset o = Offset.zero;
 
   Widget _buildLeftSide() {
     return SizedBox.expand(
@@ -127,10 +187,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
+      controller: ScrollController(),
       child: LimitedBox(
-        maxHeight: MediaQuery.of(context).orientation == Orientation.landscape
-            ? MediaQuery.of(context).size.width * 0.9
-            : MediaQuery.of(context).size.height * 0.9,
+        maxHeight: SizeHelper.of(context, printScreenInfo: true).help(
+          mobileExtraLarge: MediaQuery.of(context).size.height * 0.9,
+          desktopExtraLarge: MediaQuery.of(context).size.height * 0.9,
+          mobileExtraLargeLandscape: MediaQuery.of(context).size.width * 0.9,
+        ),
+        // MediaQuery.of(context).orientation == Orientation.landscape
+        //     ? MediaQuery.of(context).size.width * 0.9
+        //     : MediaQuery.of(context).size.height * 0.9,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
@@ -150,9 +216,14 @@ class _LoginScreenState extends State<LoginScreen> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     Expanded(
-                      child: Image.asset(
-                        'assets/images/img_login.png',
-                        scale: 1.2,
+                      child: Container(
+                        constraints: BoxConstraints(
+                            minHeight:
+                                MediaQuery.of(context).size.height * 0.3),
+                        child: Image.asset(
+                          'assets/images/img_login.png',
+                          scale: 1.2,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 24.0),
@@ -333,19 +404,47 @@ class _LoginScreenState extends State<LoginScreen> {
     }
 
     if (!_userStore.isLoading && !initializing) {
+      initializing = true;
+      print("LOADING = ${_userStore.isLoading}");
+      log("login", "BEBAOBOY");
       Future.delayed(const Duration(milliseconds: 1000), () async {
-        print("LOADING = ${_userStore.isLoading}");
-        setState(() {
-          initializing = true;
-        });
-        log("login", "BEBAOBOY");
-        initCube(context);
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(routeName: Routes.home),
             (Route<dynamic> route) => false);
       });
+      Future.delayed(const Duration(milliseconds: 1200), () async {
+        if (NavigationService.navigatorKey.currentContext != null) {
+          initCube(NavigationService.navigatorKey.currentContext!);
+        }
+      });
     }
     return Container();
+  }
+
+  _loginCube(context, user) async {
+    await CubeChatConnection.instance.login(user).then((cubeUser) async {
+      SharedPrefs.saveNewUser(cubeUser);
+      log(cubeUser.toString(), "BEBAOBOY");
+      if (CubeChatConnection.instance.isAuthenticated() &&
+          CubeChatConnection.instance.currentUser != null) {
+        // log(
+        //     (CubeSessionManager.instance.activeSession!.user == null)
+        //         .toString(),
+        //     "BEBAOBOY");
+      }
+      initForegroundService();
+
+      CallManager.instance.init(context);
+
+      await PushNotificationsManager.instance.init();
+
+      WorkMangerHelper.registerProfileFetch();
+    }).catchError((exception) {
+      //_processLoginError(exception);
+
+      log(exception.toString(), "BEBAOBOY");
+      return;
+    });
   }
 
   initCube(context) async {
@@ -357,11 +456,11 @@ class _LoginScreenState extends State<LoginScreen> {
         if (CubeChatConnection.instance.currentUser != null &&
             !userStore.user!.email.contains(
                 CubeChatConnection.instance.currentUser!.login ?? "????")) {
-          //print("change user --- LOGING OUT");
+          print("change user --- LOGING OUT cb");
           await SharedPreferences.getInstance().then((preference) async {
+            PushNotificationsManager.instance.unsubscribe();
             CallManager.instance.destroy();
             CubeChatConnection.instance.destroy();
-            PushNotificationsManager.instance.unsubscribe();
 
             SharedPrefs.deleteUserData();
             await signOut();
@@ -372,69 +471,47 @@ class _LoginScreenState extends State<LoginScreen> {
         //     : userStore.user!.email == "user2@gmail.com"
         //         ? utils.users[1]
         //         : utils.users[2];
+        while (userStore.user!.email.isEmpty) {}
         var user = CubeUser(
           login: userStore.user!.email,
           email: userStore.user!.email,
           fullName: userStore.user!.email.split("@").first.toUpperCase(),
           password: DEFAULT_PASS,
         );
-        try {
-          var value;
-          try {
-            value = await createSession(user);
-          } catch (e) {
-            log(e.toString(), "BEBAOBOY");
-            user = await signUp(user);
-            user.password ??= DEFAULT_PASS;
+        Future.delayed(const Duration(seconds: 0), () async {
+          user = CubeUser(
+            login: userStore.user!.email,
+            email: userStore.user!.email,
+            fullName: userStore.user!.email.split("@").first.toUpperCase(),
+            password: DEFAULT_PASS,
+          );
 
-            value = await createSession(user);
-          }
-          var cb = await getUserByLogin(user.login!);
-          if (cb != null) user = cb;
-          user.password ??= DEFAULT_PASS;
-          print(user);
-          CubeSessionManager.instance.activeSession = value;
-
-          await CubeChatConnection.instance.login(user).then((cubeUser) async {
-            SharedPrefs.saveNewUser(cubeUser);
-            log(cubeUser.toString(), "BEBAOBOY");
-            if (CubeChatConnection.instance.isAuthenticated() &&
-                CubeChatConnection.instance.currentUser != null) {
-              log(
-                  (CubeSessionManager.instance.activeSession!.user == null)
-                      .toString(),
-                  "BEBAOBOY");
+          if (CubeSessionManager.instance.isActiveSessionValid() &&
+              CubeSessionManager.instance.activeSession!.user != null) {
+            if (CubeChatConnection.instance.isAuthenticated()) {
+            } else {
+              _loginCube(context, user);
             }
+          } else {
+            // create session
+            var value;
+            try {
+              value = await createSession(user);
+            } catch (e) {
+              log(e.toString(), "BEBAOBOY");
+              user = await signUp(user);
+              user.password ??= DEFAULT_PASS;
 
-            initForegroundService();
-            checkSystemAlertWindowPermission(context);
-
-            requestNotificationsPermission();
-
-            CallManager.instance.init(context);
-
-            PushNotificationsManager.instance.init();
-
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute2(
-                    routeName:
-                        userStore.isLoggedIn ? Routes.home : Routes.login));
-          }).catchError((exception) {
-            //_processLoginError(exception);
-
-            log(exception.toString(), "BEBAOBOY");
-          });
-          // _controller.stop();
-        } catch (exception) {
-          //_processLoginError(exception);
-
-          log(exception.toString(), "BEBAOBOY");
-
-          deleteSessionsExceptCurrent()
-              .then((voidResult) {})
-              .catchError((error) {});
-        }
+              value = await createSession(user);
+            }
+            var cb = await getUserByLogin(user.login!);
+            if (cb != null) user = cb;
+            user.password ??= DEFAULT_PASS;
+            print(user);
+            utils.users.add(user);
+            _loginCube(context, user);
+          }
+        });
       } catch (e) {
         print(e.toString());
         print("error init cubit login screen");
@@ -444,33 +521,24 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  bool error = false;
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(NavigationService.navigatorKey.currentContext!);
-        }
-      });
+    if (message.isNotEmpty && !error) {
+      error = true;
+      Toastify.show(context, Lang.get('error'), message,
+          ToastificationType.error, () => error = false);
     }
 
     return const SizedBox.shrink();
   }
 
   _showNotificationMessage(String message) {
-    Future.delayed(const Duration(milliseconds: 0), () {
-      if (message.isNotEmpty) {
-        FlushbarHelper.createInformation(
-          message: message,
-          title: Lang.get('notification'),
-          duration: const Duration(seconds: 3),
-        ).show(NavigationService.navigatorKey.currentContext!);
-      }
-    });
+    if (message.isNotEmpty && !error) {
+      error = true;
+      Toastify.show(context, Lang.get('notification'), message,
+          ToastificationType.info, () => error = false);
+    }
     return const SizedBox.shrink();
   }
 

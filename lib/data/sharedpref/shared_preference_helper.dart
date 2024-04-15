@@ -1,6 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_list.dart';
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:quiver/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -111,11 +115,14 @@ class SharedPreferenceHelper {
     int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
 
     return User(
-        email: userEmail,
-        type: userType,
-        roles: userRoles,
-        name: name,
-        objectId: id.toString());
+      email: userEmail,
+      type: userType,
+      roles: userRoles,
+      name: name,
+      objectId: id.toString(),
+      companyProfile: await companyProfile,
+      studentProfile: await studentProfile,
+    );
   }
 
   Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
@@ -214,5 +221,72 @@ class SharedPreferenceHelper {
     int id = _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
     await _sharedPreference.setBool(
         "${Preferences.required_pass_change}_$id", value);
+  }
+
+  Future saveFavoriteProjects(ProjectList projectList) async {
+    var list = projectList.projects!
+        .map((e) => json.encode(e.toJson()).toString())
+        .toList();
+    await _sharedPreference.setStringList(
+        Preferences.current_user_favoriteProjects, list);
+  }
+
+  Future saveCompanyProjects(ProjectList projectList) async {
+    var list = projectList.projects!
+        .map((e) => json.encode(e.toJson()).toString())
+        .toList();
+    await _sharedPreference.setStringList(
+        Preferences.current_user_companyProjects, list);
+  }
+
+  Future saveStudentProjects(ProposalList projectList) async {
+    var list = projectList.proposals!
+        .map((e) => json.encode(e.toJson()).toString())
+        .toList();
+    await _sharedPreference.setStringList(
+        Preferences.current_user_studentProjects, list);
+  }
+
+  Future removeSavedProjects() async {
+    await _sharedPreference
+        .setStringList(Preferences.current_user_favoriteProjects, []);
+    await _sharedPreference.remove(Preferences.current_user_favoriteProjects);
+  }
+
+  Future<ProjectList> getFavoriteProjects() async {
+    var result = _sharedPreference
+        .getStringList(Preferences.current_user_favoriteProjects);
+    if (result != null) {
+      var list = ProjectList(
+          projects: result.map((e) => Project.fromMap(jsonDecode(e))).toList());
+      return list;
+    } else {
+      return ProjectList(projects: List.empty(growable: true));
+    }
+  }
+
+  Future<ProjectList> getCompanyProjects() async {
+    var result = _sharedPreference
+        .getStringList(Preferences.current_user_companyProjects);
+    if (result != null) {
+      var list = ProjectList(
+          projects: result.map((e) => Project.fromMap(jsonDecode(e))).toList());
+      return list;
+    } else {
+      return ProjectList(projects: List.empty(growable: true));
+    }
+  }
+
+  Future<ProposalList> getStudentProjects() async {
+    var result = _sharedPreference
+        .getStringList(Preferences.current_user_studentProjects);
+    if (result != null) {
+      var list = ProposalList(
+          proposals:
+              result.map((e) => Proposal.fromJson(jsonDecode(e))).toList());
+      return list;
+    } else {
+      return ProposalList(proposals: List.empty(growable: true));
+    }
   }
 }

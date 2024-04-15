@@ -27,14 +27,13 @@ class AppThemeData {
   static const _lightFillColor = Colors.black;
   static const _darkFillColor = Colors.white;
 
-  static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
-  static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
+  // static final Color _lightFocusColor = Colors.black.withOpacity(0.12);
+  // static final Color _darkFocusColor = Colors.white.withOpacity(0.12);
 
-  static ThemeData lightThemeData =
-      themeData(lightColorScheme, _lightFocusColor);
-  static ThemeData darkThemeData = themeData(darkColorScheme, _darkFocusColor);
+  static ThemeData lightThemeData = themeData(lightColorScheme);
+  static ThemeData darkThemeData = themeData(darkColorScheme);
 
-  static ThemeData themeData(ColorScheme colorScheme, Color focusColor) {
+  static ThemeData themeData(ColorScheme colorScheme) {
     return ThemeData(
       colorScheme: colorScheme,
       textTheme: _textTheme,
@@ -49,7 +48,17 @@ class AppThemeData {
       canvasColor: colorScheme.background,
       scaffoldBackgroundColor: colorScheme.background,
       highlightColor: Colors.transparent,
-      focusColor: focusColor,
+      focusColor: colorScheme.errorContainer,
+      // inputDecorationTheme: InputDecorationTheme(
+      //   border: OutlineInputBorder(
+      //       borderSide: BorderSide(color: colorScheme.onSurface, )),
+      //   enabledBorder: OutlineInputBorder(
+      //       borderSide: BorderSide(color: colorScheme.onSurface)),
+      //   errorBorder: OutlineInputBorder(
+      //       borderSide: BorderSide(color: colorScheme.error)),
+      //   focusedErrorBorder: OutlineInputBorder(
+      //       borderSide: BorderSide(color: colorScheme.error)),
+      // ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         backgroundColor: Color.alphaBlend(
@@ -65,7 +74,7 @@ class AppThemeData {
     primary: Color(0xFFd21e1d),
     primaryContainer: Color(0xFF9e1718),
     secondary: Color(0xFFEFF3F3),
-    secondaryContainer: Color.fromARGB(255, 35, 42, 42),
+    secondaryContainer: Color.fromARGB(255, 255, 255, 255),
     background: Color.fromARGB(255, 245, 245, 245),
     surface: Color.fromARGB(255, 245, 245, 245),
     onBackground: Colors.white,
@@ -75,6 +84,7 @@ class AppThemeData {
     onSecondary: Color(0xFF322942),
     onSurface: Color(0xFF241E30),
     brightness: Brightness.light,
+    errorContainer: Color.fromARGB(255, 247, 109, 109),
   );
 
   static const ColorScheme darkColorScheme = ColorScheme(
@@ -92,6 +102,7 @@ class AppThemeData {
     onSecondary: _darkFillColor,
     onSurface: _darkFillColor,
     brightness: Brightness.dark,
+    errorContainer: Color.fromARGB(255, 247, 109, 109),
   );
 
   static const _regular = FontWeight.w400;

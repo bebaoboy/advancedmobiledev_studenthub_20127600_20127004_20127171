@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -21,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool enabled = false;
   @override
   void initState() {
     super.initState();
@@ -43,10 +45,21 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute2(routeName: Routes.welcome),
           );
+        } else {
+          if (mounted) {
+            setState(() {
+              enabled = true;
+            });
+          }
         }
       } catch (E) {
         print(E.toString);
         print("cannot redirect from home");
+        if (mounted) {
+          setState(() {
+            enabled = true;
+          });
+        }
       }
     });
   }
@@ -58,156 +71,181 @@ class _HomeScreenState extends State<HomeScreen> {
     return BackGuard(
       child: Scaffold(
         appBar: _buildAppBar(),
-        body: Padding(
-          padding: const EdgeInsets.all(30.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: <Widget>[
-                Flexible(
-                    fit: FlexFit.loose,
+        body: !enabled
+            ? const Center(
+            child: LoadingScreenWidget(size: 80,),
+          )
+            : Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: SingleChildScrollView(
+                    controller: ScrollController(),
                     child: Column(
-                      children: [
-                        Text(Lang.get('home_title')),
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          Lang.get('profile_welcome_title'),
+                          textAlign: TextAlign.center,
+                        ),
                         const SizedBox(height: 30),
-                        Text(Lang.get('home_intro')),
+                        Text(
+                          Lang.get('home_intro'),
+                          textAlign: TextAlign.center,
+                        ),
                         const SizedBox(height: 25),
-                        SizedBox(
-                          width: 200,
-                          height: 50,
-                          child: RoundedButtonWidget(
-                            onPressed: () {
-                              // Handle your action
-                              if (_userStore.user == null) return;
-                              // if (_userStore.user!.roles!.firstWhereOrNull(
-                              //       (element) =>
-                              //           element.name == UserType.company.name,
-                              //     ) !=
-                              //     null)
-                              if (_userStore.user!.companyProfile != null) {
-                                _userStore.user!.type = UserType.company;
-                                if (_userStore.user != null) {
-                                  SharedPreferences.getInstance().then(
-                                    (value) {
-                                      value.setString(
-                                          Preferences.current_user_role,
-                                          _userStore.user!.type.name
-                                              .toLowerCase()
-                                              .toString());
-                                    },
-                                  );
-                                }
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute2(routeName: Routes.welcome),
-                                );
-                              } else {
-                                showAnimatedDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return ClassicGeneralDialogWidget(
-                                      contentText:
-                                          'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                                      negativeText: Lang.get('cancel'),
-                                      positiveText: 'Yes',
-                                      onPositiveClick: () {
-                                        Navigator.of(context).pop();
-      
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute2(
-                                                routeName: Routes.profile));
-                                        return;
-                                      },
-                                      onNegativeClick: () {
-                                        Navigator.of(context).pop();
+                        if (enabled)
+                          SizedBox(
+                            width: 200,
+                            height: 50,
+                            child: RoundedButtonWidget(
+                              onPressed: () {
+                                // Handle your action
+                                if (_userStore.user == null) return;
+                                // if (_userStore.user!.roles!.firstWhereOrNull(
+                                //       (element) =>
+                                //           element.name == UserType.company.name,
+                                //     ) !=
+                                //     null)
+                                if (_userStore.user!.companyProfile != null) {
+                                  _userStore.user!.type = UserType.company;
+                                  if (_userStore.user != null) {
+                                    SharedPreferences.getInstance().then(
+                                      (value) {
+                                        value.setString(
+                                            Preferences.current_user_role,
+                                            _userStore.user!.type.name
+                                                .toLowerCase()
+                                                .toString());
                                       },
                                     );
-                                  },
-                                  animationType: DialogTransitionType.size,
-                                  curve: Curves.fastOutSlowIn,
-                                  duration: const Duration(seconds: 1),
-                                );
-                              }
-                            },
-                            buttonText: Lang.get('company'),
-                            buttonColor: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
+                                  }
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute2(
+                                        routeName: Routes.welcome),
+                                  );
+                                } else {
+                                  showAnimatedDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext ctx) {
+                                      return ClassicGeneralDialogWidget(
+                                        contentText:
+                                            'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
+                                        negativeText: Lang.get('cancel'),
+                                        positiveText: 'Yes',
+                                        onPositiveClick: () async {
+                                          Navigator.of(ctx).pop();
+                                          final ProfileStudentStore infoStore =
+                                              getIt<ProfileStudentStore>();
+
+                                          await infoStore.getTechStack();
+                                          await infoStore.getSkillset();
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute2(
+                                                  routeName: Routes.profile));
+                                          return;
+                                        },
+                                        onNegativeClick: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      );
+                                    },
+                                    animationType: DialogTransitionType.size,
+                                    curve: Curves.fastOutSlowIn,
+                                    duration: const Duration(seconds: 1),
+                                  );
+                                }
+                              },
+                              buttonText: Lang.get('company'),
+                              buttonColor:
+                                  Theme.of(context).colorScheme.primary,
+                              textColor: Colors.white,
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 10),
-                        SizedBox(
-                          width: 200,
-                          height: 50,
-                          child: RoundedButtonWidget(
-                            onPressed: () {
-                              // Handle your action
-                              if (_userStore.user == null) return;
-                              if (_userStore.user!.studentProfile != null) {
-                                _userStore.user!.type = UserType.student;
-                                if (_userStore.user != null) {
-                                  SharedPreferences.getInstance().then(
-                                    (value) {
-                                      value.setString(
-                                          Preferences.current_user_role,
-                                          _userStore.user!.type.name
-                                              .toLowerCase()
-                                              .toString());
-                                    },
-                                  );
-                                }
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute2(routeName: Routes.welcome),
-                                );
-                              } else {
-                                showAnimatedDialog(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    return ClassicGeneralDialogWidget(
-                                      contentText:
-                                          'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                                      negativeText: Lang.get('cancel'),
-                                      positiveText: 'Yes',
-                                      onPositiveClick: () {
-                                        Navigator.of(context).pop();
-      
-                                        Navigator.of(context).push(
-                                            MaterialPageRoute2(
-                                                routeName:
-                                                    Routes.profileStudent));
-                                        return;
-                                      },
-                                      onNegativeClick: () {
-                                        Navigator.of(context).pop();
+                        if (enabled)
+                          SizedBox(
+                            width: 200,
+                            height: 50,
+                            child: RoundedButtonWidget(
+                              onPressed: () {
+                                // Handle your action
+                                if (_userStore.user == null) return;
+                                if (_userStore.user!.studentProfile != null) {
+                                  _userStore.user!.type = UserType.student;
+                                  if (_userStore.user != null) {
+                                    SharedPreferences.getInstance().then(
+                                      (value) {
+                                        value.setString(
+                                            Preferences.current_user_role,
+                                            _userStore.user!.type.name
+                                                .toLowerCase()
+                                                .toString());
                                       },
                                     );
-                                  },
-                                  animationType: DialogTransitionType.size,
-                                  curve: Curves.fastOutSlowIn,
-                                  duration: const Duration(seconds: 1),
-                                );
-                              }
-                            },
-                            buttonText: Lang.get('student'),
-                            buttonColor: Theme.of(context).colorScheme.primary,
-                            textColor: Colors.white,
+                                  }
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute2(
+                                        routeName: Routes.welcome),
+                                  );
+                                } else {
+                                  showAnimatedDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext ctx) {
+                                      return ClassicGeneralDialogWidget(
+                                        contentText:
+                                            'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
+                                        negativeText: Lang.get('cancel'),
+                                        positiveText: 'Yes',
+                                        onPositiveClick: () async {
+                                          Navigator.of(ctx).pop();
+                                          final ProfileStudentStore infoStore =
+                                              getIt<ProfileStudentStore>();
+
+                                          await infoStore.getTechStack();
+                                          await infoStore.getSkillset();
+                                          Navigator.of(context).push(
+                                              MaterialPageRoute2(
+                                                  routeName:
+                                                      Routes.profileStudent));
+                                          return;
+                                        },
+                                        onNegativeClick: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      );
+                                    },
+                                    animationType: DialogTransitionType.size,
+                                    curve: Curves.fastOutSlowIn,
+                                    duration: const Duration(seconds: 1),
+                                  );
+                                }
+                              },
+                              buttonText: Lang.get('student'),
+                              buttonColor:
+                                  Theme.of(context).colorScheme.primary,
+                              textColor: Colors.white,
+                            ),
                           ),
-                        ),
                         const SizedBox(height: 25),
+                        Text(Lang.get('home_description')),
                       ],
-                    )),
-                Text(Lang.get('home_description')),
-              ],
-            ),
-          ),
-        ),
+                    ),
+                  ),
+                ),
+              ),
       ),
     );
   }
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar() {
-    return const MainAppBar();
+    return MainAppBar(
+      name: _userStore.user != null ? _userStore.user!.name : "",
+    );
   }
 }

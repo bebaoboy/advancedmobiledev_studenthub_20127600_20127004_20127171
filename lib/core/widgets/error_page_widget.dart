@@ -25,7 +25,7 @@ class ErrorPage extends StatelessWidget {
             Text(
               kDebugMode
                   ? errorDetails.summary.toString()
-                  : 'Oups! Something went wrong!',
+                  : Lang.get('error_text'),
               textAlign: TextAlign.center,
               style: const TextStyle(
                   color: kDebugMode ? Colors.red : Colors.black,
@@ -36,11 +36,12 @@ class ErrorPage extends StatelessWidget {
             Expanded(
               child: Scrollbar(
                 child: SingleChildScrollView(
+                  controller: ScrollController(),
                   child: Text(
                     kDebugMode
                         // ? 'https://docs.flutter.dev/testing/errors'
                         ? errorDetails.stack.toString()
-                        : "We encountered an error and have notified our engineering team about it. Sorry for this inconvenience :'(.",
+                        : Lang.get("sorry_text"),
                     textAlign: TextAlign.left,
                     style: const TextStyle(color: Colors.black, fontSize: 10),
                   ),

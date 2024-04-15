@@ -1,9 +1,7 @@
 // ignore_for_file: overridden_fields, must_be_immutable
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
-import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -350,6 +348,7 @@ class NavbarRouter2 extends NavbarRouter {
   /// defaults to true.
   @override
   final bool shouldPopToBaseRoute;
+  final bool shouldRefresh;
 
   /// AnimationDuration in milliseconds for the destination animation
   /// defaults to 300 milliseconds
@@ -420,6 +419,7 @@ class NavbarRouter2 extends NavbarRouter {
       required this.destinations,
       required this.errorBuilder,
       this.shouldPopToBaseRoute = true,
+      this.shouldRefresh = true,
       this.onChanged,
       this.decoration,
       this.isDesktop = false,
@@ -486,6 +486,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
       NavbarNotifier2.index = widget.initialIndex;
     }
     widget.pageController.move(NavbarNotifier2.currentIndex);
+    refreshState = List.filled(widget.destinations.length, 0);
   }
 
   void initAnimation() {
@@ -589,10 +590,11 @@ class _NavbarRouterState extends State<NavbarRouter2>
               for (int j = 0; j < nestedLength; j++) {
                 if (widget.destinations[index].destinations[j].route ==
                     settings.name) {
-                  if (settings.name == Routes.projectDetails) {
-                    builder = ProjectDetailsPage(
-                        project: settings.arguments as Project);
-                  } else if (settings.name == Routes.favortieProject) {
+                  // if (settings.name == Routes.projectDetails) {
+                  //   builder = ProjectDetailsPage(
+                  //       project: settings.arguments as Project);
+                  // } else
+                  if (settings.name == Routes.favortieProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
                     builder = widget.destinations[index].destinations[j].widget;
@@ -615,6 +617,8 @@ class _NavbarRouterState extends State<NavbarRouter2>
       }
     }
   }
+
+  late List<int> refreshState;
 
   @override
   Widget build(BuildContext context) {
@@ -682,17 +686,21 @@ class _NavbarRouterState extends State<NavbarRouter2>
                         onItemTapped: (x) {
                           // User pressed  on the same tab twice
                           if (NavbarNotifier2.currentIndex == x) {
-                            bool ok = true;
                             if (widget.shouldPopToBaseRoute) {
-                              ok = NavbarNotifier2.popAllRoutes(x);
+                              if (NavbarNotifier2.popAllRoutes(x)) {
+                                print("pop nun");
+                              }
                             }
-                            if (widget.onCurrentTabClicked != null && !ok) {
-                              setState(() {
-                                widget.onCurrentTabClicked!();
-                                print("tap");
-                                initialize(i: NavbarNotifier2.currentIndex);
-                              });
+                            if (refreshState[NavbarNotifier2.currentIndex] >
+                                1) {
+                              initialize(i: NavbarNotifier2.currentIndex);
+                              refreshState[NavbarNotifier2.currentIndex] = 0;
+                            } else if (widget.onCurrentTabClicked != null) {
+                              widget.onCurrentTabClicked!();
+                              print("tap");
+                              refreshState[NavbarNotifier2.currentIndex]++;
                             }
+                            // can pop
                           } else {
                             print('not tap');
                             // NavbarNotifier2.index = x;
@@ -700,6 +708,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                             //   widget.onChanged!(x);
                             // }
                             // _handleFadeAnimation();
+
                             if ((x - NavbarNotifier2.currentIndex).abs() > 1) {
                               widget.pageController.move(x, animation: false);
                             } else {
@@ -708,6 +717,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                               // curve: Curves.ease);
                             }
                           }
+                          print(refreshState);
                         },
                         menuItems: items),
                   ),

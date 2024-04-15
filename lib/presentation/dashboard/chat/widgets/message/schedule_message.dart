@@ -385,10 +385,11 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             borderColor: Theme.of(context).colorScheme.primary,
                             onPressed: () {
                               //print("hey");
+                              // TODO: change route url
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => SelectOpponentsScreen(
                                     CubeSessionManager
-                                        .instance.activeSession!.user!),
+                                        .instance.activeSession!.user!, users: List.empty(growable: true)),
                               ));
                             },
                           )

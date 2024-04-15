@@ -1,16 +1,18 @@
 // ignore_for_file: overridden_fields
 
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
   String? objectId = const Uuid().v4();
-  DateTime createdAt = DateTime.now();
-  DateTime updatedAt = DateTime.now();
-  DateTime deletedAt = DateTime.now();
-  MyObject({this.objectId}) {
+  DateTime? createdAt = DateTime.now();
+  DateTime? updatedAt = DateTime.now();
+  DateTime? deletedAt = DateTime.now();
+  MyObject({this.objectId, this.createdAt, this.updatedAt, this.deletedAt}) {
     objectId ??= const Uuid().v4();
+    if (objectId!.isEmpty) objectId = const Uuid().v4();
   }
 }
 
@@ -68,8 +70,9 @@ class Skill extends MyObject {
 
   Skill.fromJson(Map<String, dynamic> json)
       : name = json["name"] ?? "",
-        description = json["id"],
-        imageUrl = "";
+        description = json["id"].toString(),
+        imageUrl = "",
+        super(objectId: json["id"].toString());
 
   factory Skill.fromMap(Map<String, dynamic> map) {
     return Skill(map['name'] ?? '', map['id'].toString(), map['imageUrl'] ?? '',
@@ -116,6 +119,11 @@ class Language extends MyObject {
       if (objectId != "") "id": int.tryParse(objectId!),
     };
   }
+
+  @override
+  String toString() {
+    return languageName;
+  }
 }
 
 @JsonSerializable()
@@ -123,6 +131,7 @@ class Education extends MyObject {
   String schoolName;
   String year() {
     return "${startYear.year} - ${endYear.year}";
+    // return "$startYear - $endYear";
   }
 
   DateTime startYear = DateTime.now().subtract(const Duration(days: 365));
@@ -141,24 +150,29 @@ class Education extends MyObject {
 
   Education.fromJson(Map<String, dynamic> json)
       : schoolName = json["schoolName"] ?? "",
-        startYear = json["startYear"] ?? "",
-        endYear = json["endYear"] ?? "",
+        startYear = DateTime(json['startYear'] ?? DateTime.now().year - 1),
+        endYear = DateTime(json['endYear'] ?? DateTime.now().year),
         super(objectId: json["id"]);
 
   Map<String, dynamic> toJson() {
     return {
       "schoolName": schoolName,
-      "startYear": startYear.toString(),
-      "endYear": endYear.toString(),
+      "startYear": startYear.year,
+      "endYear": endYear.year,
       if (objectId != "") "id": int.tryParse(objectId!),
     };
   }
 
   factory Education.fromMap(Map<String, dynamic> map) {
     return Education(map['schoolName'] ?? '',
-        startYear: DateTime.parse(map['startYear']),
-        endYear: DateTime.parse(map['endYear']),
+        startYear: DateTime(map['startYear'] ?? DateTime.now().year - 1),
+        endYear: DateTime(map['endYear'] ?? DateTime.now().year),
         id: map['id'].toString());
+  }
+
+  @override
+  String toString() {
+    return schoolName;
   }
 }
 
@@ -188,9 +202,11 @@ class ProjectExperience extends MyObject {
   ProjectExperience.fromJson(Map<String, dynamic> json)
       : description = json["description"] ?? "",
         link = json["link"] ?? "",
-        startDate = json["startMonth"] ?? "",
-        endDate = json["endMonth"] ?? "",
-        skills = json["skills"] as List<Skill>,
+        startDate = DateFormat("MM-yyyy").parse(json['startMonth'] ??
+            "${DateTime.now().month}-${DateTime.now().year}"),
+        endDate = DateFormat("MM-yyyy").parse(json['endMonth'] ??
+            "${DateTime.now().month}-${DateTime.now().year}"),
+        skills = json["skillSets"] as List<Skill>,
         name = json["title"] ?? '',
         super(objectId: json['id']);
 
@@ -198,8 +214,8 @@ class ProjectExperience extends MyObject {
     return {
       "description": description,
       "title": name,
-      "startMonth": startDate.toString(),
-      "endMonth": endDate.toString(),
+      "startMonth": DateFormat("MM-yyyy").format(startDate),
+      "endMonth": DateFormat("MM-yyyy").format(endDate),
       "skillSets": skills == null
           ? ["1"]
           : skills!.isEmpty
@@ -209,33 +225,46 @@ class ProjectExperience extends MyObject {
     };
   }
 
+  @override
+  String toString() {
+    return name;
+  }
+
   factory ProjectExperience.fromMap(Map<String, dynamic> map) {
     return ProjectExperience(map['title'] ?? '',
         description: map['description'] ?? '',
         id: map['id'].toString(),
-        startDate: DateTime.parse(map['startMonth']),
-        endDate: DateTime.parse(map['endMonth']));
+        skills: (map['skillSets'] != null)
+            ? List<Skill>.from((map['skillSets'] as List<dynamic>).map((e) =>
+                e is String
+                    ? Skill(e, "", "", id: "")
+                    : Skill.fromJson(e as Map<String, dynamic>)))
+            : [],
+        startDate: DateFormat("MM-yyyy").parse(map['startMonth'] ??
+            "${DateTime.now().month}-${DateTime.now().year}"),
+        endDate: DateFormat("MM-yyyy").parse(map['endMonth'] ??
+            "${DateTime.now().month}-${DateTime.now().year}"));
   }
 }
 
 // ------------------- NOTIFICATION ------------------------------
 
 @JsonSerializable()
-class Notification extends MyObject {
+class NotificationObject extends MyObject {
   String id;
   Profile receiver;
   Profile sender;
   String content;
   NotificationType type;
 
-  Notification({
+  NotificationObject({
     required this.id,
     required this.receiver,
     required this.sender,
     required this.type,
     this.content = "",
   }) : super(objectId: id);
-  Notification.fromJson(Map<String, dynamic> json)
+  NotificationObject.fromJson(Map<String, dynamic> json)
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
@@ -251,7 +280,7 @@ enum NotificationType {
 }
 
 @JsonSerializable()
-class OfferNotification extends Notification {
+class OfferNotification extends NotificationObject {
   String projectId;
 
   OfferNotification({
@@ -270,7 +299,7 @@ enum MessageType {
 }
 
 @JsonSerializable()
-class Message extends Notification {
+class Message extends NotificationObject {
   MessageType messageType;
   InterviewSchedule? interviewSchedule;
 

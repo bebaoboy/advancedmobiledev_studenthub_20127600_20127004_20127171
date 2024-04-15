@@ -56,7 +56,7 @@ abstract class UserRepository {
   Future<Response> updateProfileCompany(AddProfileCompanyParams params);
 
   Future<Response> addProfileStudent(AddProfileStudentParams params);
-  
+
   Future<Response> getProfileStudent(UpdateProfileStudentParams params);
 
   Future<Response> updateProfileStudent(UpdateProfileStudentParams params);
@@ -85,4 +85,7 @@ abstract class UserRepository {
 
   Future<Response> addSkillset(AddSkillsetParams params);
   Future<Response> getSkillset(AddSkillsetParams params);
+
+  Future<Response> deleteResume(UpdateResumeParams params);
+  Future<Response> deleteTranscript(UpdateTranscriptParams params);
 }

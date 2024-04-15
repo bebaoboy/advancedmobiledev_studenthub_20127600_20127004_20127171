@@ -57,6 +57,7 @@ class _PostListScreenState extends State<PostListScreen> {
   Widget _buildListView() {
     return _postStore.postList != null
         ? ListView.separated(
+            controller: ScrollController(),
             itemCount: _postStore.postList!.posts!.length,
             separatorBuilder: (context, position) {
               return const Divider();

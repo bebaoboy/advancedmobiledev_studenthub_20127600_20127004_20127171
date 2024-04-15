@@ -134,8 +134,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
                     fontSize: widget.fontSize, overflow: TextOverflow.ellipsis)
                 .merge(widget.style),
         magnifierConfiguration: TextMagnifierConfiguration.disabled,
-        decoration:
-            (widget.inputDecoration ?? const InputDecoration()).copyWith(
+        decoration: InputDecoration(
           floatingLabelBehavior: widget.floatingLabelBehavior ??
               (widget.initialValue == null ||
                       (widget.initialValue != null &&
@@ -150,32 +149,34 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
               .copyWith(color: widget.hintColor)
               .merge(widget.hintStyle),
           errorText: widget.errorText,
-          errorStyle: widget.inputDecoration != null
-              ? widget.inputDecoration!.errorStyle ??
-                  const TextStyle(
-                    fontSize: 12.0,
-                  )
-              : const TextStyle(
-                  fontSize: 12.0,
-                ),
+          errorStyle: widget.inputDecoration?.errorStyle ??
+              const TextStyle(
+                fontSize: 12.0,
+              ),
+
           counterText: '',
-          border: widget.inputDecoration != null
-              ? widget.inputDecoration!.border
-              : widget.border,
+          border: widget.inputDecoration?.border,
+          disabledBorder: widget.inputDecoration?.disabledBorder,
+          enabledBorder: widget.inputDecoration?.enabledBorder,
+          focusedBorder: (widget.inputDecoration?.focusedBorder)?.copyWith(
+              borderSide: BorderSide(color: Theme.of(context).focusColor)),
+          errorBorder: (widget.inputDecoration?.errorBorder),
+          focusedErrorBorder: (widget.inputDecoration?.focusedErrorBorder)
+              ?.copyWith(
+                  borderSide: BorderSide(color: Theme.of(context).focusColor)),
           // border: const OutlineInputBorder(
           //   borderSide: BorderSide(color: Colors.black)
           // ),
-          icon: widget.inputDecoration != null
-              ? widget.inputDecoration!.icon
-              : widget.isIcon
+          icon: widget.inputDecoration?.icon ??
+              (widget.isIcon
                   ? Container(
                       margin: widget.iconMargin,
                       child: Icon(widget.icon, color: widget.iconColor))
-                  : null,
+                  : null),
 
           suffixIcon: widget.isObscure && tapInside
               ? IconButton(
-                  icon: const Icon(Icons.remove_red_eye),
+                  icon: obscureText ? const Icon(Icons.remove_red_eye) : const Icon(Icons.remove_red_eye_outlined),
                   onPressed: () {
                     setState(() {
                       obscureText = !obscureText;

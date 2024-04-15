@@ -83,6 +83,7 @@ abstract class BaseSession<C, P extends PeerConnection>
 
       _initLocalStreamCompleter?.complete(localStream);
     }).catchError((onError) {
+      log("error");
       _initLocalStreamCompleter?.completeError(onError);
     });
 
@@ -197,6 +198,7 @@ abstract class BaseSession<C, P extends PeerConnection>
         }
       }
     } catch (error) {
+      log("error");
       return Future.error(error);
     }
   }
@@ -226,6 +228,7 @@ abstract class BaseSession<C, P extends PeerConnection>
         });
       }
     } catch (error) {
+      log("error");
       return Future.error(error);
     }
   }
@@ -298,6 +301,7 @@ abstract class BaseSession<C, P extends PeerConnection>
         return replaceMediaStream(mediaStream);
       });
     } catch (e) {
+      log("error");
       return Future.value();
     }
   }
@@ -398,6 +402,7 @@ abstract class BaseSession<C, P extends PeerConnection>
         return Helper.selectAudioInput(selectedAudioInputDevice!);
       }
     } catch (error) {
+      log("error");
       return Future.error(error);
     }
   }

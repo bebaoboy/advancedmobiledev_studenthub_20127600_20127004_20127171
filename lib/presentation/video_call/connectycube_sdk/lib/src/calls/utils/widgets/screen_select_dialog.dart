@@ -4,6 +4,8 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 
+import '../../../core/utils/cube_logger.dart';
+
 class ThumbnailWidget extends StatefulWidget {
   const ThumbnailWidget(
       {super.key,
@@ -141,6 +143,7 @@ class ScreenSelectDialog extends Dialog {
       _stateSetter?.call(() {});
       return;
     } catch (e) {
+      log("error");
       //print(e.toString());
     }
   }
