@@ -39,7 +39,7 @@
 // export 'package:firebase_crashlytics/firebase_crashlytics.dart';
 // export 'package:firebase_core/firebase_core.dart';
 // export 'package:firebase_messaging/firebase_messaging.dart';
-// export 'package:auto_size_text/auto_size_text.dart';
+// export 'package:boilerplate/core/widgets/auto_size_text.dart';
 // export 'package:flutter_mobx/flutter_mobx.dart';
 // export 'package:shared_preferences/shared_preferences.dart';
 // export 'package:toastification/toastification.dart';

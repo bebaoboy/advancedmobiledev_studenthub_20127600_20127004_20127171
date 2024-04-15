@@ -3,7 +3,7 @@
 // import 'dart:async';
 // import 'dart:math';
 
-// import 'package:auto_size_text/auto_size_text.dart';
+// import 'package:boilerplate/core/widgets/auto_size_text.dart';
 // import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 // import 'package:boilerplate/domain/entity/project/project_entities.dart';
 // import 'package:boilerplate/presentation/dashboard/components/project_item.dart';

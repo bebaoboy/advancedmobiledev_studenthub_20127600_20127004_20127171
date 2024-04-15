@@ -1,7 +1,7 @@
 // ignore_for_file: deprecated_member_use
 
 import 'package:animations/animations.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
@@ -275,12 +275,15 @@ class ProjectItem2 extends StatefulWidget {
   final Function onFavoriteTap;
   final Function(String id) stopLoading;
   final int loadingDelay;
+  final String? keyword;
+
   const ProjectItem2(
       {super.key,
       required this.project,
       required this.onFavoriteTap,
       required this.stopLoading,
-      this.loadingDelay = 1});
+      this.loadingDelay = 1,
+      this.keyword});
 
   @override
   _ProjectItem2State createState() => _ProjectItem2State();
@@ -354,7 +357,20 @@ class _ProjectItem2State extends State<ProjectItem2> {
                             .textTheme
                             .bodyText1!
                             .copyWith(fontSize: 12)),
-                    Text(
+                    AutoSizeText(
+                      maxFontSize: 13,
+                      words: widget.keyword != null  ? {
+                          widget.keyword!: HighlightedWord(
+                            onTap: () {
+                              print("match");
+                            },
+                          ),
+                        } : null,
+                        
+                        matchDecoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       widget.project.title == ''
@@ -374,6 +390,17 @@ class _ProjectItem2State extends State<ProjectItem2> {
                     Flexible(
                       // height: 100,
                       child: AutoSizeText(
+                        words: widget.keyword != null  ? {
+                          widget.keyword!: HighlightedWord(
+                            onTap: () {
+                              print("match");
+                            },
+                          ),
+                        } : null,
+                        matchDecoration: BoxDecoration(
+                          color: Colors.amber,
+                          borderRadius: BorderRadius.circular(50),
+                        ),
                         widget.project.description == ''
                             ? Lang.get('project_item_blank')
                             : widget.project.description,

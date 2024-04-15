@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/loading_list.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
@@ -404,6 +405,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     onLazy: () async {
                       lazyCount += 5;
                       List<Project> lazyList = [];
+                      if (refazynistKey.currentState!.length() ==
+                          widget.searchList.length) {
+                        return [];
+                      }
 
                       lazyList.addAll(widget.searchList.sublist(
                           max(refazynistKey.currentState!.length() - 1, 0),
@@ -434,6 +439,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                   curve: Curves.fastOutSlowIn))),
                           // opacity: animation,
                           child: ProjectItem2(
+                              keyword: widget.keyword,
                               loadingDelay: index,
                               stopLoading: (id) {
                                 widget.stopLoadingCallback(id);
@@ -441,12 +447,12 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                               project: item,
                               onFavoriteTap: (id) {
                                 widget.favoriteCallback(id);
-                                var p = (widget.searchList).firstWhereOrNull(
-                                  (element) => element.objectId == id,
-                                );
-                                setState(() {
-                                  p?.isFavorite = !p.isFavorite;
-                                });
+                                // var p = (widget.searchList).firstWhereOrNull(
+                                //   (element) => element.objectId == id,
+                                // );
+                                // setState(() {
+                                //   p?.isFavorite = p.isFavorite;
+                                // });
                                 // _projectStore.projects[i].isFavorite =
                                 //     !_projectStore.projects[i].isFavorite;
                               }));
@@ -460,6 +466,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       return FadeTransition(
                           opacity: animation,
                           child: ProjectItem2(
+                              keyword: widget.keyword,
                               project: item,
                               stopLoading: (id) {
                                 widget.stopLoadingCallback(id);
@@ -629,6 +636,9 @@ class _ProjectTabState extends State<ProjectTab> {
     future = _projectStore.getAllProject();
   }
 
+  List<String> _list = [""];
+  String keywordId = "";
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -664,7 +674,11 @@ class _ProjectTabState extends State<ProjectTab> {
             .toList()
         : _projectStore.projects
             .where((e) =>
-                e.title.trim().toLowerCase().contains(keyword.toLowerCase()) &&
+                (e.title.trim().toLowerCase().contains(keyword.toLowerCase()) ||
+                    e.description
+                        .trim()
+                        .toLowerCase()
+                        .contains(keyword.toLowerCase())) &&
                 applyFilter(filter, e))
             .toList();
     if (filter.scope != null) {
@@ -695,14 +709,22 @@ class _ProjectTabState extends State<ProjectTab> {
             }
           },
           favoriteCallback: (id) {
-            setState(() {
-              for (int i = 0; i < _projectStore.projects.length; i++) {
-                if (_projectStore.projects[i].objectId == id) {
-                  _projectStore.projects[i].isFavorite =
-                      !_projectStore.projects[i].isFavorite;
-                }
+            for (int i = 0; i < _projectStore.projects.length; i++) {
+              if (_projectStore.projects[i].objectId == id) {
+                _projectStore.projects[i].isFavorite =
+                    !_projectStore.projects[i].isFavorite;
+                _projectFormStore
+                    .updateFavoriteProject(
+                        _userStore.user!.studentProfile!.objectId ?? "",
+                        id,
+                        _projectStore.projects[i].isFavorite)
+                    .then((value) {
+                  if (value) {
+                    _projectStore.updateInFav(_projectStore.projects[i]);
+                  }
+                });
               }
-            });
+            }
           },
           filter: filter,
           keyword: keyword,
@@ -786,7 +808,9 @@ class _ProjectTabState extends State<ProjectTab> {
                       if (p0.trim().isNotEmpty) searchHistory.add(p0.trim());
                       saveSearchHistory(searchHistory);
                     });
-                    await showSearchBottomSheet(context);
+                    await showSearchBottomSheet(context).then(
+                      (value) => setState(() {}),
+                    );
                   },
                   width: MediaQuery.of(context).size.width,
                   textController: controller,
@@ -802,7 +826,9 @@ class _ProjectTabState extends State<ProjectTab> {
                       searchHistory.add(project.trim());
                     }
                     saveSearchHistory(searchHistory);
-                    await showSearchBottomSheet(context);
+                    await showSearchBottomSheet(context).then(
+                      (value) => setState(() {}),
+                    );
                   },
                   // initialText:
                   // readOnly:
@@ -903,17 +929,89 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
-          margin: const EdgeInsets.only(top: 55, left: 5),
-          child: Text("${Lang.get("result")} ${_projectStore.projects.length} (Latest update)"),
+          margin: const EdgeInsets.only(top: 65, left: 5),
+          child: Text("${Lang.get("result")} ${_projectStore.projects.length}"),
         ),
+        Positioned(
+          right: 0,
+          top: 55,
+          width: 150,
+          child: CustomDropdown<String>.search(
+            closedHeaderPadding: const EdgeInsets.only(left: 40),
+            decoration: const CustomDropdownDecoration(
+                closedFillColor: Colors.transparent),
+            initialItem: _list[0],
+            onChanged: (p0) {
+              setState(() {
+                keywordId = p0;
+              });
+              if (refazynistKey.currentState != null) {
+                refazynistKey.currentState!.refresh();
+              }
+              setState(() {});
+            },
+            noResultFoundText: Lang.get("nothing_here"),
+            maxlines: 3,
+            hintText: "Company id",
+            items: _list,
+            headerBuilder: (context, selectedItem) => Text(
+                (_userStore.user != null &&
+                            _userStore.user!.companyProfile != null &&
+                            _userStore.user!.companyProfile!.objectId ==
+                                selectedItem
+                        ? "(You) "
+                        : "") +
+                    selectedItem),
+            listItemBuilder: (context, item, isSelected, onItemSelect) {
+              return SizedBox(
+                height: 30,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Icon(item.icon),
+                    // const SizedBox(
+                    //   width: 20,
+                    // ),
+                    Text(
+                      (_userStore.user != null &&
+                                  _userStore.user!.companyProfile != null &&
+                                  _userStore.user!.companyProfile!.objectId ==
+                                      item
+                              ? "(You) "
+                              : "") +
+                          item,
+                      textAlign: TextAlign.start,
+                    ),
+                    // const Spacer(),
+                    // Checkbox(
+                    //   value: isSelected,
+                    //   onChanged: (value) => value = isSelected,
+                    // )
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+
         Container(
-            margin: const EdgeInsets.only(top: 90),
+            margin: const EdgeInsets.only(top: 100),
             child: FutureBuilder<ProjectList>(
               future: future,
               builder:
                   (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
                 Widget children;
                 if (snapshot.hasData) {
+                  _list = snapshot.data!.projects!
+                      .map(
+                        (e) => e.companyId,
+                      )
+                      .toSet()
+                      .toList();
+                  _list.insert(0, "");
+                  _list.sort(
+                    (a, b) => a.compareTo(b),
+                  );
                   children = Refazynist(
                       loaderBuilder: (bContext, bAnimation) {
                         return const LoadingScreenWidget();
@@ -922,43 +1020,16 @@ class _ProjectTabState extends State<ProjectTab> {
                       key: refazynistKey,
                       sharedPreferencesName: Preferences.all_project,
                       onInit: () async {
-                        return snapshot.data!.projects != null
-                            ? snapshot.data!.projects!.sublist(
-                                0,
-                                lazyCount.clamp(
-                                    0, _projectStore.projects.length))
-                            : [];
+                        if (snapshot.data!.projects == null) return [];
+                        var p = getProjectWithKeyword(snapshot.data!.projects!);
+
+                        return p.sublist(0,
+                            lazyCount.clamp(0, _projectStore.projects.length));
                       },
                       emptyBuilder: (ewContext) {
                         return Stack(
                           children: <Widget>[
                             Center(child: Text(Lang.get("nothing_here"))),
-                            // ListView(),
-                            // Center(
-                            //   child: Wrap(
-                            //     children: [
-                            //       Column(
-                            //         children: [
-                            //           const Icon(
-                            //             Icons.warning_amber_rounded,
-                            //             size: 60,
-                            //             color: Colors.black26,
-                            //           ),
-                            //           const Text('Empty'),
-                            //           const Padding(
-                            //               padding: EdgeInsets.only(top: 20)),
-                            //           ElevatedButton(
-                            //             child: const Text('Create New'),
-                            //             onPressed: () {
-                            //               refazynistKey.currentState!
-                            //                   .insertItem(0, 'Created item');
-                            //             },
-                            //           )
-                            //         ],
-                            //       )
-                            //     ],
-                            //   ),
-                            // ),
                           ],
                         );
                       },
@@ -968,10 +1039,12 @@ class _ProjectTabState extends State<ProjectTab> {
 
                       onRefresh: () async {
                         lazyCount = 5;
-                        await _projectStore.getAllProject();
+                        if (keywordId.isEmpty) {
+                          await _projectStore.getAllProject();
+                        }
+                        var p = getProjectWithKeyword(_projectStore.projects);
 
-                        return _projectStore.projects.sublist(0,
-                            lazyCount.clamp(0, _projectStore.projects.length));
+                        return p.sublist(0, lazyCount.clamp(0, p.length));
                       },
 
                       //
@@ -980,11 +1053,16 @@ class _ProjectTabState extends State<ProjectTab> {
                       onLazy: () async {
                         lazyCount += 5;
                         List<Project> lazyList = [];
+                        if (refazynistKey.currentState!.length() ==
+                            _projectStore.projects.length) {
+                          return [];
+                        }
 
-                        lazyList.addAll(_projectStore.projects.sublist(
-                            min(refazynistKey.currentState!.length(), _projectStore.projects.length),
+                        var p = getProjectWithKeyword(_projectStore.projects);
+                        lazyList.addAll(p.sublist(
+                            min(refazynistKey.currentState!.length(), p.length),
                             (refazynistKey.currentState!.length() + 5)
-                                .clamp(0, _projectStore.projects.length)));
+                                .clamp(0, p.length)));
 
                         await Future.delayed(
                             const Duration(seconds: 1)); // Fake internet delay
@@ -1163,5 +1241,14 @@ class _ProjectTabState extends State<ProjectTab> {
         //     )),
       ],
     );
+  }
+
+  List<Project> getProjectWithKeyword(List<Project> projects) {
+    if (keywordId.isEmpty) return projects;
+    return projects
+        .where(
+          (element) => element.companyId == keywordId,
+        )
+        .toList();
   }
 }

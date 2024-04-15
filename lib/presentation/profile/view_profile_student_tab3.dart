@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
@@ -70,18 +70,18 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
     Future.delayed(Duration.zero, () async {
       if (cvController.text.isNotEmpty) {
         _cvImage = await FilePreview.getThumbnail(cvController.text,
-          isCV: true,
-          changeValue: changeValue,
-          retrieveFilePathAfterDownload: (s) =>
-              _cv = PlatformFile(path: s, name: s, size: 1));
+            isCV: true,
+            changeValue: changeValue,
+            retrieveFilePathAfterDownload: (s) =>
+                _cv = PlatformFile(path: s, name: s, size: 1));
       }
       if (transcriptController.text.isNotEmpty) {
         _transcriptImage = await FilePreview.getThumbnail(
-          transcriptController.text,
-          isCV: false,
-          changeValue: changeValue,
-          retrieveFilePathAfterDownload: (s) =>
-              _transcript = PlatformFile(path: s, name: s, size: 1));
+            transcriptController.text,
+            isCV: false,
+            changeValue: changeValue,
+            retrieveFilePathAfterDownload: (s) =>
+                _transcript = PlatformFile(path: s, name: s, size: 1));
       }
       print(_cvImage.toString());
       setState(() {

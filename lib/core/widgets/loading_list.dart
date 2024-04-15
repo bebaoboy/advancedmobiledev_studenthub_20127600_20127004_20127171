@@ -234,7 +234,7 @@ class RefazynistState extends State<Refazynist> {
     // return false;
   }
 
-  Future<void> _refresh() async {
+  Future<void> refresh() async {
     if (!_play) return Future.value();
 
     cursor = "";
@@ -495,7 +495,7 @@ class RefazynistState extends State<Refazynist> {
               opacity: 0,
               child: PlaneIndicator(
                 offsetToArmed: widget.scrollExtent,
-                onRefresh: _refresh,
+                onRefresh: refresh,
                 child: _animatedListWidget,
               )),
           _frontWidget!,
@@ -503,7 +503,7 @@ class RefazynistState extends State<Refazynist> {
       );
     } else {
       return PlaneIndicator(
-        onRefresh: _refresh,
+        onRefresh: refresh,
         offsetToArmed: widget.scrollExtent,
         child: _animatedListWidget,
       );

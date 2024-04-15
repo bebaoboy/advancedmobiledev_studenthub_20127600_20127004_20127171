@@ -330,6 +330,26 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                         ],
                       ),
                     ),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.business_outlined,
+                          size: 45,
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '${Lang.get('profile_question_title_2')}: ${widget.project.companyId}',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
                   ]),
                 )),
             if (userStore.user != null &&

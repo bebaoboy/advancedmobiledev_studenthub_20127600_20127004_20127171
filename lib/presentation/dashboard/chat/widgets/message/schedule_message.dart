@@ -1,6 +1,6 @@
 // ignore_for_file: unused_element
 
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
@@ -389,7 +389,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => SelectOpponentsScreen(
                                     CubeSessionManager
-                                        .instance.activeSession!.user!, users: List.empty(growable: true)),
+                                        .instance.activeSession!.user!,
+                                    users: List.empty(growable: true)),
                               ));
                             },
                           )
