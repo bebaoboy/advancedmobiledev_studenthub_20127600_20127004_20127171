@@ -52,6 +52,7 @@ abstract class UserRepository {
   Future<HasToChangePassParams> getRequired();
 
   Future<Response> addProfileCompany(AddProfileCompanyParams params);
+  Future<Response> getCompanyProfile(AddProfileCompanyParams params);
 
   Future<Response> updateProfileCompany(AddProfileCompanyParams params);
 

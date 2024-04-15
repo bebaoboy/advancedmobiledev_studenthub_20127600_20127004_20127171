@@ -10,6 +10,7 @@ import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
+import 'package:boilerplate/domain/usecase/profile/get_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
@@ -101,6 +102,10 @@ mixin UseCaseModule {
     // profile:--------------------------------------------------------------------
     getIt.registerSingleton<AddProfileCompanyUseCase>(
       AddProfileCompanyUseCase(getIt<UserRepository>()),
+    );
+
+    getIt.registerSingleton<GetCompanyUseCase>(
+      GetCompanyUseCase(getIt<UserRepository>()),
     );
 
     getIt.registerSingleton<UpdateProfileCompanyUseCase>(

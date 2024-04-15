@@ -230,9 +230,9 @@ class TypingWidget extends StatelessWidget {
     } else if (author.length == 1) {
       return '${author.first.firstName} is typing';
     } else if (author.length == 2) {
-      return '${author.first.firstName} and ${author[1].firstName}';
+      return '${author.first.firstName} and ${author[1].firstName} are typing';
     } else {
-      return '${author.first.firstName} and ${author.length - 1} others';
+      return '${author.first.firstName} and ${author.length - 1} others are typing';
     }
   }
 

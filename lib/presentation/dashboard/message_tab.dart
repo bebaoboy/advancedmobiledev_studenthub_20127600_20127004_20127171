@@ -52,11 +52,68 @@ class _MessageTabState extends State<MessageTab> {
         child: _buildMessageContent());
   }
 
+  Widget _buildTopRowList() {
+    return SizedBox(
+      height: 72,
+      child: Scrollbar(
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: 18,
+          itemBuilder: (context, index) {
+            return Container(
+              width: 64,
+              height: 54,
+              margin: const EdgeInsets.symmetric(horizontal: 15),
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+              ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white,
+                      radius: 60.0,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        backgroundImage: Image.network(
+                          'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                          fit: BoxFit.cover,
+                        ).image,
+                        radius: 50.0,
+                      ),
+                    ),
+                    // ClipOval(
+                    //   child: Image.network(
+                    //     'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                    //     fit: BoxFit.cover,
+                    //   ),
+                    // ),
+                  ),
+                  Positioned(
+                    bottom: 5,
+                    right: 1,
+                    child: Container(
+                      width: 15,
+                      height: 15,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: Colors.red),
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
   Widget _buildMessageContent() {
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          top: 0,
+          top: 90,
           child: PlaneIndicator(
             onRefresh: () => Future.delayed(const Duration(seconds: 3)),
             child: Stack(children: [
@@ -115,6 +172,7 @@ class _MessageTabState extends State<MessageTab> {
             ),
           ),
         ),
+        Container(margin: const EdgeInsets.only(top: 85), child: _buildTopRowList()),
       ],
     );
   }

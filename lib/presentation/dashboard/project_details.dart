@@ -2,6 +2,7 @@
 
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
@@ -212,7 +213,19 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
       updatedText =
           "Edit at ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())}";
     }
+    // var userStore = getIt<UserStore>();
+    // userStore.getCompanyProfile(widget.project.companyId).then(
+    //   (value) {
+    //     if (value != null) {
+    //       name = value.companyName;
+    //       print(name);
+    //       setState(() {});
+    //     }
+    //   },
+    // );
   }
+
+  String name = "";
 
   @override
   Widget build(BuildContext context) {
@@ -342,9 +355,13 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '${Lang.get('profile_question_title_2')}: ${widget.project.companyId}',
-                              style: Theme.of(context).textTheme.bodyLarge,
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.7,
+                              child: AutoSizeText(
+                                maxLines: 5,
+                                '${Lang.get('profile_question_title_2')}: ${name.isNotEmpty ? ("$name (${widget.project.companyId})") : widget.project.companyId}',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
                             ),
                           ],
                         )

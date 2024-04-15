@@ -6,6 +6,7 @@ import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
+import 'package:boilerplate/domain/usecase/profile/get_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_education_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_experience_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_language_usecase.dart';
@@ -99,6 +100,7 @@ mixin StoreModule {
         getIt<LogoutUseCase>(),
         getIt<SetUserProfileUseCase>(),
         getIt<GetStudentFavoriteProjectUseCase>(),
+        getIt<GetCompanyUseCase>(),
       ),
     );
 
