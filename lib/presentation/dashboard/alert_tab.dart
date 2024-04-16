@@ -118,14 +118,17 @@ class _AlertTabState extends State<AlertTab> {
   Widget _buildAlertsContent() {
     return Column(
       children: <Widget>[
-        SizedBox(height: 120, child: _buildTopRowList()),
         Expanded(
           child: ListView.separated(
             controller: widget.scrollController,
-            itemCount: alerts.length,
+            itemCount: alerts.length + 1,
             separatorBuilder: (context, index) =>
                 const Divider(color: Colors.black),
-            itemBuilder: (context, index) {
+            itemBuilder: (context, i) {
+              int index = i - 1;
+              if (i == 0) {
+                return SizedBox(height: 120, child: _buildTopRowList());
+              }
               return GestureDetector(
                 onTap: () {
                   //print('Tile clicked');
@@ -296,7 +299,7 @@ class AlbumDetailsContainer extends StatelessWidget {
                           children: <Widget>[
                             Center(
                               child: Text(
-                                "Student Name",
+                                "Project Name",
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyLarge

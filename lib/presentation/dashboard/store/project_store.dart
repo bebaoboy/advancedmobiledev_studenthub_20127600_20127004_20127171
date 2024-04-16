@@ -145,12 +145,8 @@ abstract class _ProjectStore with Store {
   //     return _projects;
   //   });
   // }
-  @observable
-  bool done = false;
-
   Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
       {int count = 5}) async {
-    done = false;
     return await _getProjectsUseCase
         .call(params: GetProjectParams())
         .then((value) {
@@ -193,8 +189,7 @@ abstract class _ProjectStore with Store {
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
 
-          refazynistKey.currentState?.refresh();
-          done = true;
+          refazynistKey.currentState?.refresh(readyMade: _projects.projects);
         } else {
           _projects = value;
           _projects.projects?.forEach(
@@ -213,7 +208,7 @@ abstract class _ProjectStore with Store {
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
-          refazynistKey.currentState?.refresh();
+          refazynistKey.currentState?.refresh(readyMade: _projects.projects);
         }
       });
 

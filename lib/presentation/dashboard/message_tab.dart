@@ -113,18 +113,24 @@ class _MessageTabState extends State<MessageTab> {
     return Stack(
       children: <Widget>[
         Positioned.fill(
-          top: 90,
+          top: 60,
           child: PlaneIndicator(
             onRefresh: () => Future.delayed(const Duration(seconds: 3)),
             child: Stack(children: [
               Positioned.fill(
-                top: 80,
+                top: 30,
                 child: ListView.separated(
                   controller: widget.scrollController,
-                  itemCount: messages.length,
+                  itemCount: messages.length + 1,
                   separatorBuilder: (context, index) =>
                       const Divider(color: Colors.black),
-                  itemBuilder: (context, index) {
+                  itemBuilder: (context, i) {
+                    if (i == 0) {
+                      return Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: _buildTopRowList());
+                    }
+                    int index = i - 1;
                     return InkWell(
                       onTap: () {
                         //print('Tile clicked');
@@ -172,7 +178,6 @@ class _MessageTabState extends State<MessageTab> {
             ),
           ),
         ),
-        Container(margin: const EdgeInsets.only(top: 85), child: _buildTopRowList()),
       ],
     );
   }

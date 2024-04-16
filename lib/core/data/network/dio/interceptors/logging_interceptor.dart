@@ -3,6 +3,7 @@
 library dio_logging_interceptor;
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -248,7 +249,7 @@ class LoggingInterceptor extends Interceptor {
     final prettyString = encoder.convert(input);
     logPrint!('<-- Response payload');
     prettyString.split('\n').forEach((element) {
-      logPrint!(element);
+      logPrint!(element.substring(0, min(element.length, 500)));
     });
   }
 }

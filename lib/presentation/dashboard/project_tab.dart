@@ -1011,7 +1011,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       onRefresh: () async {
                         lazyCount = 5;
 
-                        if (_projectStore.done && keywordId.isEmpty) {
+                        if (keywordId.isEmpty) {
                           print("on refesshh");
                           setState(() {
                             future = _projectStore.getAllProject(refazynistKey);

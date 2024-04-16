@@ -234,12 +234,12 @@ class RefazynistState extends State<Refazynist> {
     // return false;
   }
 
-  Future<void> refresh() async {
+  Future<void> refresh({List? readyMade}) async {
     if (!_play) return Future.value();
 
     cursor = "";
 
-    List<dynamic> refreshList = await widget.onRefresh();
+    List<dynamic> refreshList = readyMade ?? await widget.onRefresh();
 
     await clear(sequentialRemove: widget.sequentialRemove);
 
