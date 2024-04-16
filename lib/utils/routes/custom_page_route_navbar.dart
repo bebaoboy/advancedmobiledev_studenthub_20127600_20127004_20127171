@@ -2,13 +2,16 @@
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
 
 import 'package:flutter/foundation.dart';
-import 'package:navbar_router/navbar_router.dart';
 
 const double kM3NavbarHeight = kBottomNavigationBarHeight;
 const double kStandardNavbarHeight = kBottomNavigationBarHeight;
@@ -18,9 +21,12 @@ const double kFloatingNavbarHeight = 60.0;
 /// The height of the navbar based on the [NavbarType]
 double kNavbarHeight = 0.0;
 
-class _AnimatedNavBar extends StatefulWidget {
-  const _AnimatedNavBar(
-      {this.decoration,
+enum NavbarType { standard, notched, material3, floating }
+
+class AnimatedNavBar extends StatefulWidget {
+  const AnimatedNavBar(
+      {super.key,
+      this.decoration,
       required this.model,
       this.isDesktop = false,
       this.navbarType = NavbarType.standard,
@@ -37,10 +43,10 @@ class _AnimatedNavBar extends StatefulWidget {
   _AnimatedNavBarState createState() => _AnimatedNavBarState();
 }
 
-class _AnimatedNavBarState extends State<_AnimatedNavBar>
+class _AnimatedNavBarState extends State<AnimatedNavBar>
     with SingleTickerProviderStateMixin {
   @override
-  void didUpdateWidget(covariant _AnimatedNavBar oldWidget) {
+  void didUpdateWidget(covariant AnimatedNavBar oldWidget) {
     if (NavbarNotifier2.isNavbarHidden != isHidden) {
       if (!isHidden) {
         _showBottomNavBar();
@@ -206,9 +212,10 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
           extended: navigationRailDefaultDecoration.isExtended,
           backgroundColor: navigationRailDefaultDecoration.backgroundColor ??
               theme.colorScheme.surface,
-          destinations: widget.menuItems.map((NavbarItem menuItem) {
+          destinations:
+              widget.menuItems.mapIndexed((int i, NavbarItem menuItem) {
             return NavigationRailDestination(
-              icon: Icon(menuItem.iconData),
+              icon: buildBadge(i, menuItem.iconData),
               label: Text(menuItem.text),
             );
           }).toList(),
@@ -225,6 +232,27 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
               child: widget.isDesktop ? buildNavigationRail() : buildNavBar());
         });
   }
+}
+
+Widget buildBadge(int index, IconData child) {
+  return badges.Badge(
+    position: badges.BadgePosition.topEnd(),
+    badgeAnimation: const badges.BadgeAnimation.slide(
+        // disappearanceFadeAnimationDuration: Duration(milliseconds: 200),
+        // curve: Curves.easeInCubic,
+        ),
+    showBadge: NavbarNotifier2.badges[index].showBadge,
+    badgeStyle: badges.BadgeStyle(
+      badgeColor: NavbarNotifier2.badges[index].color ?? Colors.white,
+    ),
+    badgeContent: Text(
+      NavbarNotifier2.badges[index].badgeText,
+      style: TextStyle(
+          color: NavbarNotifier2.badges[index].textColor ?? Colors.black,
+          fontSize: 9),
+    ),
+    child: Icon(child),
+  );
 }
 
 abstract class NavbarBase extends StatefulWidget {
@@ -312,10 +340,12 @@ class StandardNavbarState extends State<StandardNavbar> {
               backgroundColor: items[index].backgroundColor,
               icon: _selectedIndex == index
                   ? items[index].selectedIcon ??
-                      Icon(
+                      buildBadge(
+                        index,
                         items[index].iconData,
                       )
-                  : Icon(
+                  : buildBadge(
+                      index,
                       items[index].iconData,
                     ),
               label: items[index].text,
@@ -678,7 +708,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     top: widget.isDesktop ? 0 : null,
                     bottom: bottomPadding(),
                     right: widget.isDesktop ? null : 0,
-                    child: _AnimatedNavBar(
+                    child: AnimatedNavBar(
                         model: _navbarNotifier,
                         isDesktop: widget.isDesktop,
                         decoration: widget.decoration,

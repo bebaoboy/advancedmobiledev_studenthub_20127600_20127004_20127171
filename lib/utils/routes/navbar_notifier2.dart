@@ -2,9 +2,28 @@
 
 import 'dart:async';
 
+import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:flutter/material.dart';
-import 'package:navbar_router/src/navbar_router.dart';
 import 'package:toastification/toastification.dart';
+
+class ShowBadge {
+  String badgeText;
+  bool showBadge;
+  Duration animationDuration;
+  Color? color;
+  Color? textColor;
+  ShowBadge(
+      {this.badgeText = "0",
+      this.showBadge = false,
+      this.animationDuration = const Duration(milliseconds: 500),
+      this.color,
+      this.textColor});
+
+  void clearBadge() {
+    badgeText = "";
+    showBadge = false;
+  }
+}
 
 class NavbarNotifier2 extends ChangeNotifier {
   static final NavbarNotifier2 _singleton = NavbarNotifier2._internal();
@@ -33,8 +52,19 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static List<GlobalKey<NavigatorState>> _keys = [];
 
+  static List<ShowBadge> badges = [];
+  // static List<String> badgeTexts = [];
+
   static void setKeys(List<GlobalKey<NavigatorState>> value) {
     _keys = value;
+    badges = List.filled(keys.length, ShowBadge());
+  }
+
+  static void setBadges(int index, ShowBadge badge) {
+    if (index < 0 || index >= length) return;
+    badges[index] = badge;
+    _notifyIndexChangeListeners(index);
+    _singleton.notify();
   }
 
   static void setKey(GlobalKey<NavigatorState> value, int index) {
@@ -47,6 +77,7 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static set index(int x) {
     _index = x;
+    badges[x].clearBadge();
     if (_navbarStackHistory.contains(x)) {
       _navbarStackHistory.remove(x);
     }

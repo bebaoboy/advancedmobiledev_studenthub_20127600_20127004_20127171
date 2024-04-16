@@ -33,6 +33,7 @@ dependencies:
   another_transformer_page_view:
   # B
   # background_fetch:
+  badges:
   # C
   # connectycube_sdk:
   connectycube_flutter_call_kit: 
@@ -59,9 +60,9 @@ dependencies:
   file_picker:
   flutter_mobx: ^2.0.6+5
   # file_previewer:
-  firebase_core: ^2.24.2
+  firebase_core: 
   firebase_crashlytics: 
-  firebase_analytics: ^10.8.0
+  firebase_analytics: 
   firebase_messaging:
   flutter_animated_dialog: 
   # flutter_link_previewer: ^3.2.2
@@ -104,7 +105,7 @@ dependencies:
   mime: ^1.0.5
   meta:  
   # N
-  navbar_router:
+  # navbar_router:
   # O
   open_filex: ^4.4.0
   objectid:

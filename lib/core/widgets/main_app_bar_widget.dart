@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_buttons.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
@@ -10,177 +12,13 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/welcome/welcome%20copy.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
-
-// class DarkTransition extends StatefulWidget {
-//   const DarkTransition(
-//       {required this.childBuilder,
-//       Key? key,
-//       this.offset = Offset.zero,
-//       this.themeController,
-//       this.radius,
-//       this.duration = const Duration(milliseconds: 400),
-//       this.isDark = false})
-//       : super(key: key);
-
-//   /// Deinfe the widget that will be transitioned
-//   /// int index is either 1 or 2 to identify widgets, 2 is the top widget
-//   final Widget Function(BuildContext, int) childBuilder;
-
-//   /// the current state of the theme
-//   final bool isDark;
-
-//   /// optional animation controller to controll the animation
-//   final AnimationController? themeController;
-
-//   /// centeral point of the circular transition
-//   final Offset offset;
-
-//   /// optional radius of the circle defaults to [max(height,width)*1.5])
-//   final double? radius;
-
-//   /// duration of animation defaults to 400ms
-//   final Duration? duration;
-
-//   @override
-//   _DarkTransitionState createState() => _DarkTransitionState();
-// }
-
-// class _DarkTransitionState extends State<DarkTransition>
-//     with SingleTickerProviderStateMixin {
-//   @override
-//   void dispose() {
-//     _darkNotifier.dispose();
-//     super.dispose();
-//   }
-
-//   final _darkNotifier = ValueNotifier<bool>(false);
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     if (widget.themeController == null) {
-//       _animationController =
-//           AnimationController(vsync: this, duration: widget.duration);
-//     } else {
-//       _animationController = widget.themeController!;
-//     }
-//   }
-
-//   double _radius(Size size) {
-//     final maxVal = max(size.width, size.height);
-//     return maxVal * 1.5;
-//   }
-
-//   late AnimationController _animationController;
-//   double x = 0;
-//   double y = 0;
-//   bool isDark = false;
-//   // bool isBottomThemeDark = true;
-//   bool isDarkVisible = false;
-//   late double radius;
-//   Offset position = Offset.zero;
-
-//   ThemeData getTheme(bool dark) {
-//     if (dark)
-//       return AppThemeData.darkThemeData;
-//     else
-//       return AppThemeData.lightThemeData;
-//   }
-
-//   @override
-//   void didUpdateWidget(DarkTransition oldWidget) {
-//     super.didUpdateWidget(oldWidget);
-//     _darkNotifier.value = widget.isDark;
-//     if (widget.isDark != oldWidget.isDark) {
-//       if (isDark) {
-//         _animationController.reverse();
-//         _darkNotifier.value = false;
-//       } else {
-//         _animationController.reset();
-//         _animationController.forward();
-//         _darkNotifier.value = true;
-//       }
-//       position = widget.offset;
-//     }
-//     if (widget.radius != oldWidget.radius) {
-//       _updateRadius();
-//     }
-//     if (widget.duration != oldWidget.duration) {
-//       _animationController.duration = widget.duration;
-//     }
-//   }
-
-//   @override
-//   void didChangeDependencies() {
-//     super.didChangeDependencies();
-//     _updateRadius();
-//   }
-
-//   void _updateRadius() {
-//     final size = MediaQuery.of(context).size;
-//     if (widget.radius == null)
-//       radius = _radius(size);
-//     else
-//       radius = widget.radius!;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     isDark = _darkNotifier.value;
-//     Widget _body(int index) {
-//       return ValueListenableBuilder<bool>(
-//           valueListenable: _darkNotifier,
-//           builder: (BuildContext context, bool isDark, Widget? child) {
-//             return Theme(
-//                 data: index == 2
-//                     ? getTheme(!isDarkVisible)
-//                     : getTheme(isDarkVisible),
-//                 child: widget.childBuilder(context, index));
-//           });
-//     }
-
-//     return AnimatedBuilder(
-//         animation: _animationController,
-//         builder: (BuildContext context, Widget? child) {
-//           return Stack(
-//             children: [
-//               _body(1),
-//               ClipPath(
-//                   clipper: CircularClipper(
-//                       _animationController.value *
-//                           radius *
-//                           (isDark ? 0.8 : 0.9),
-//                       position),
-//                   child: _body(2)),
-//             ],
-//           );
-//         });
-//   }
-// }
-
-// class CircularClipper extends CustomClipper<Path> {
-//   const CircularClipper(this.radius, this.center);
-//   final double radius;
-//   final Offset center;
-
-//   @override
-//   Path getClip(Size size) {
-//     final Path path = Path();
-//     path.addOval(Rect.fromCircle(center: center, radius: radius));
-//     return path;
-//   }
-
-//   @override
-//   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-//     return true;
-//   }
-// }
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MainAppBar(
@@ -210,40 +48,6 @@ class _MainAppBarState extends State<MainAppBar> {
       icon: const Icon(Icons.account_circle, size: 25),
     );
   }
-
-  // darkCB() {
-  //   //print("dark");
-  //   setState(() {
-  //     isDark = !isDark;
-  //   });
-  // }
-
-  // Widget _buildThemeButton() {
-  //   return Observer(
-  //     builder: (context) {
-  //       return IconButton(
-  //         onPressed: () async {
-  //           // if (!isDark) {
-  //           //   darkCB();
-  //           //   await Future.delayed(Duration(milliseconds: 200)).then((value) {
-  //           //     _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-  //           //   });
-  //           // } else {
-  //           //   await _themeStore
-  //           //       .changeBrightnessToDark(!_themeStore.darkMode)
-  //           //       .then((value) {
-  //           //     darkCB();
-  //           //   });
-  //           // }
-  //           _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-  //         },
-  //         icon: Icon(
-  //           _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
 
   Widget _buildLogoutButton() {
     // final UserStore userStore = getIt<UserStore>();
@@ -460,57 +264,91 @@ class _MainAppBarState extends State<MainAppBar> {
                     );
                   },
                   onDoubleTap: () {
-                    AnimatedDialog.showBottomAnimatedDialog(
-                      context,
-                      onClose: (p0) => print("hiii"),
-                      contentTextAlign: TextAlign.center,
-                      contentText: 'You can\'t undo this',
-                      title: "Are you sure?",
-                      color: Colors.white,
-                      dialogWidth: kIsWeb ? 0.3 : null,
-                      lottieBuilder: Lottie.asset(
-                        'assets/animations/loading_animation.json',
-                        fit: BoxFit.contain,
-                      ),
-                      positiveText: "Delete",
-                      positiveIcon: Icons.delete_forever,
-                      onPositiveClick: (context) {
-                        AnimatedDialog.showBottomMaterialDialog(
-                          onClose: (value) => Navigator.of(context).pop(),
-                          context: context,
-                          // msgAlign: TextAlign.center,
-                          title: "Delete done!",
-                          // dialogWidth: kIsWeb ? 0.3 : null,
-                          actions: [
-                            IconsButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(['Test', 'List']);
-                              },
-                              color: Colors.blue,
-                              text: 'OK',
-                              iconData: Icons.cloud_done_sharp,
-                              textStyle: const TextStyle(color: Colors.white),
-                              iconColor: Colors.white,
-                            ),
-                            IconsButton(
-                              onPressed: () {
-                                Navigator.of(context).pop(['Test', 'List']);
-                              },
-                              color: Colors.blue,
-                              text: 'OK',
-                              iconData: Icons.cloud_done_sharp,
-                              textStyle: const TextStyle(color: Colors.white),
-                              iconColor: Colors.white,
-                            ),
-                          ],
-                        );
-                      },
-                      negativeText: "Cancel",
-                      negativeIcon: Icons.close_sharp,
-                      onNegativeClick: (context) {
-                        Navigator.of(context).pop(['Test', 'List']);
-                      },
-                    );
+                    // TODO: remove this badge test
+                    int r = Random().nextInt(100);
+                    NavbarNotifier2.setBadges(
+                        0,
+                        ShowBadge(
+                            badgeText: "$r",
+                            showBadge: Random().nextBool(),
+                            animationDuration: Duration(
+                                milliseconds:
+                                    (Random().nextInt(5) + 5) * 100)));
+                    NavbarNotifier2.setBadges(
+                        1,
+                        ShowBadge(
+                            badgeText: "$r",
+                            showBadge: Random().nextBool(),
+                            animationDuration: Duration(
+                                milliseconds:
+                                    (Random().nextInt(5) + 5) * 100)));
+                    NavbarNotifier2.setBadges(
+                        2,
+                        ShowBadge(
+                            badgeText: "$r",
+                            showBadge: Random().nextBool(),
+                            animationDuration: Duration(
+                                milliseconds:
+                                    (Random().nextInt(5) + 5) * 100)));
+                    NavbarNotifier2.setBadges(
+                        3,
+                        ShowBadge(
+                            badgeText: "$r",
+                            showBadge: Random().nextBool(),
+                            animationDuration: Duration(
+                                milliseconds:
+                                    (Random().nextInt(5) + 5) * 100)));
+                    // AnimatedDialog.showBottomAnimatedDialog(
+                    //   context,
+                    //   onClose: (p0) => print("hiii"),
+                    //   contentTextAlign: TextAlign.center,
+                    //   contentText: 'You can\'t undo this',
+                    //   title: "Are you sure?",
+                    //   color: Colors.white,
+                    //   dialogWidth: kIsWeb ? 0.3 : null,
+                    //   lottieBuilder: Lottie.asset(
+                    //     'assets/animations/loading_animation.json',
+                    //     fit: BoxFit.contain,
+                    //   ),
+                    //   positiveText: "Delete",
+                    //   positiveIcon: Icons.delete_forever,
+                    //   onPositiveClick: (context) {
+                    //     AnimatedDialog.showBottomMaterialDialog(
+                    //       onClose: (value) => Navigator.of(context).pop(),
+                    //       context: context,
+                    //       // msgAlign: TextAlign.center,
+                    //       title: "Delete done!",
+                    //       // dialogWidth: kIsWeb ? 0.3 : null,
+                    //       actions: [
+                    //         IconsButton(
+                    //           onPressed: () {
+                    //             Navigator.of(context).pop(['Test', 'List']);
+                    //           },
+                    //           color: Colors.blue,
+                    //           text: 'OK',
+                    //           iconData: Icons.cloud_done_sharp,
+                    //           textStyle: const TextStyle(color: Colors.white),
+                    //           iconColor: Colors.white,
+                    //         ),
+                    //         IconsButton(
+                    //           onPressed: () {
+                    //             Navigator.of(context).pop(['Test', 'List']);
+                    //           },
+                    //           color: Colors.blue,
+                    //           text: 'OK',
+                    //           iconData: Icons.cloud_done_sharp,
+                    //           textStyle: const TextStyle(color: Colors.white),
+                    //           iconColor: Colors.white,
+                    //         ),
+                    //       ],
+                    //     );
+                    //   },
+                    //   negativeText: "Cancel",
+                    //   negativeIcon: Icons.close_sharp,
+                    //   onNegativeClick: (context) {
+                    //     Navigator.of(context).pop(['Test', 'List']);
+                    //   },
+                    // );
                   },
                   onLongPress: () {
                     Navigator.of(context).push(MaterialPageRoute2(
