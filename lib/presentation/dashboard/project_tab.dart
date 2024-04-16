@@ -468,18 +468,19 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                           child: ProjectItem2(
                               keyword: widget.keyword,
                               project: item,
+                              loadingDelay: index,
                               stopLoading: (id) {
                                 widget.stopLoadingCallback(id);
                               },
                               onFavoriteTap: (id) {
                                 widget.favoriteCallback(id);
-                                var p = (widget.searchList).firstWhereOrNull(
-                                  (element) => element.objectId == id,
-                                );
-                                setState(() {
-                                  p?.isFavorite = !p.isFavorite;
-                                });
-                                // _projectStore.projects[i].isFavorite =
+                                // var p = (widget.searchList).firstWhereOrNull(
+                                //   (element) => element.objectId == id,
+                                // );
+                                // setState(() {
+                                //   p?.isFavorite = !p.isFavorite;
+                                // });
+                                // // _projectStore.projects[i].isFavorite =
                                 //     !_projectStore.projects[i].isFavorite;
                               }));
                     })
@@ -633,7 +634,7 @@ class _ProjectTabState extends State<ProjectTab> {
     loadSearchHistory().then(
       (value) => searchHistory = value,
     );
-    future = _projectStore.getAllProject();
+    future = _projectStore.getAllProject(refazynistKey);
   }
 
   List<String> _list = [""];
@@ -700,13 +701,7 @@ class _ProjectTabState extends State<ProjectTab> {
       ModalSheetRoute(
         builder: (context) => SearchBottomSheet(
           stopLoadingCallback: (id) {
-            var p = _projectStore.projects.firstWhereOrNull(
-              (element) => element.objectId == id,
-            );
-            if (p != null) {
-              p.isLoading = false;
-              print("stop loading $id");
-            }
+            stopLoading(id!);
           },
           favoriteCallback: (id) {
             for (int i = 0; i < _projectStore.projects.length; i++) {
@@ -774,22 +769,6 @@ class _ProjectTabState extends State<ProjectTab> {
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // IconButton(
-        //   icon:
-        //       Icon(Icons.search, size: 35, color: Colors.black.withOpacity(.7)),
-        //   onPressed: () {
-        //     setState(() {
-        //       if (yOffset == MediaQuery.of(context).size.height) {
-        //         NavbarNotifier2.hideBottomNavBar = true;
-        //         // yOffset = -(MediaQuery.of(context).size.height) * 0.05 + 45;
-        //       } else {
-        //         NavbarNotifier2.hideBottomNavBar = false;
-        //         yOffset = MediaQuery.of(context).size.height;
-        //       }
-        //     });
-        //   },
-        // ),
-        // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
             child: Stack(
@@ -1002,16 +981,6 @@ class _ProjectTabState extends State<ProjectTab> {
                   (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {
                 Widget children;
                 if (snapshot.hasData) {
-                  _list = snapshot.data!.projects!
-                      .map(
-                        (e) => e.companyId,
-                      )
-                      .toSet()
-                      .toList();
-                  _list.insert(0, "");
-                  _list.sort(
-                    (a, b) => a.compareTo(b),
-                  );
                   children = Refazynist(
                       loaderBuilder: (bContext, bAnimation) {
                         return const LoadingScreenWidget();
@@ -1023,8 +992,10 @@ class _ProjectTabState extends State<ProjectTab> {
                         if (snapshot.data!.projects == null) return [];
                         var p = getProjectWithKeyword(snapshot.data!.projects!);
 
-                        return p.sublist(0,
-                            lazyCount.clamp(0, _projectStore.projects.length));
+                        return p.sublist(
+                            0,
+                            lazyCount.clamp(
+                                0, snapshot.data!.projects!.length));
                       },
                       emptyBuilder: (ewContext) {
                         return Stack(
@@ -1039,8 +1010,22 @@ class _ProjectTabState extends State<ProjectTab> {
 
                       onRefresh: () async {
                         lazyCount = 5;
-                        if (keywordId.isEmpty) {
-                          await _projectStore.getAllProject();
+
+                        if (_projectStore.done && keywordId.isEmpty) {
+                          print("on refesshh");
+                          setState(() {
+                            future = _projectStore.getAllProject(refazynistKey);
+                          });
+                          _list = _projectStore.projects
+                              .map(
+                                (e) => e.companyId,
+                              )
+                              .toSet()
+                              .toList();
+                          _list.insert(0, "");
+                          _list.sort(
+                            (a, b) => a.compareTo(b),
+                          );
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);
 
@@ -1089,46 +1074,12 @@ class _ProjectTabState extends State<ProjectTab> {
                             // opacity: animation,
                             child: ProjectItem2(
                                 loadingDelay: index,
-                                stopLoading: (id) {
-                                  var p =
-                                      (_projectStore.projects).firstWhereOrNull(
-                                    (element) => element.objectId == id,
-                                  );
-                                  setState(() {
-                                    setState(() {
-                                      p?.isLoading = false;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
-                                },
                                 project: item,
+                                stopLoading: (id) {
+                                  stopLoading(id);
+                                },
                                 onFavoriteTap: (id) {
-                                  var p =
-                                      (_projectStore.projects).firstWhereOrNull(
-                                    (element) => element.objectId == id,
-                                  );
-                                  if (p != null) {
-                                    _projectFormStore
-                                        .updateFavoriteProject(
-                                            _userStore.user!.studentProfile!
-                                                    .objectId ??
-                                                "",
-                                            id,
-                                            !p.isFavorite)
-                                        .then((value) {
-                                      if (value) {
-                                        _projectStore.updateInFav(p);
-                                      }
-                                    });
-                                  }
-                                  setState(() {
-                                    setState(() {
-                                      p?.isFavorite = !p.isFavorite;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
+                                  favoriteTap(id);
                                 }));
                       },
 
@@ -1140,65 +1091,15 @@ class _ProjectTabState extends State<ProjectTab> {
                         return FadeTransition(
                             opacity: animation,
                             child: ProjectItem2(
+                                loadingDelay: index,
                                 project: item,
                                 stopLoading: (id) {
-                                  var p =
-                                      (_projectStore.projects).firstWhereOrNull(
-                                    (element) => element.objectId == id,
-                                  );
-                                  setState(() {
-                                    setState(() {
-                                      p?.isLoading = false;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
+                                  stopLoading(id);
                                 },
                                 onFavoriteTap: (id) {
-                                  setState(() {
-                                    var p = (_projectStore.projects)
-                                        .firstWhereOrNull(
-                                      (element) => element.objectId == id,
-                                    );
-                                    if (p != null) {
-                                      _projectFormStore
-                                          .updateFavoriteProject(
-                                              _userStore.user!.studentProfile!
-                                                      .objectId ??
-                                                  "",
-                                              id,
-                                              !p.isFavorite)
-                                          .then((value) {
-                                        if (value) {
-                                          _projectStore.updateInFav(p);
-                                        }
-                                      });
-                                    }
-                                    setState(() {
-                                      p?.isFavorite = !p.isFavorite;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
+                                  favoriteTap(id);
                                 }));
                       });
-                  // LazyLoadingAnimationProjectList(
-                  //     scrollController: widget.scrollController,
-                  //     itemHeight: 230,
-                  //     list: _projectStore.projects,
-                  //     firstCallback: (i) {
-                  //       setState(() {
-                  //         var p = (_projectStore.projects).firstWhereOrNull(
-                  //           (element) => element.objectId == i,
-                  //         );
-                  //         setState(() {
-                  //           p?.isFavorite = !p.isFavorite;
-                  //         });
-                  //         // _projectStore.projects[i].isFavorite =
-                  //         //     !_projectStore.projects[i].isFavorite;
-                  //       });
-                  //     },
-                  //   )
                 } else if (snapshot.hasError) {
                   children = Center(child: Text(Lang.get("nothing_here")));
                 } else {
@@ -1208,39 +1109,44 @@ class _ProjectTabState extends State<ProjectTab> {
                 return children;
               },
             )),
-        // AnimatedContainer(
-        //     curve: Easing.legacyAccelerate,
-        //     color: Colors.black.withOpacity(0.5),
-
-        //     // color: Colors.amber,
-        //     alignment: Alignment.bottomCenter,
-        //     duration: Duration(milliseconds: 300),
-        //     transform: Matrix4.translationValues(0, yOffset, -1.0),
-        //     child: SearchBottomSheet(
-        //       filter: filter,
-        //       keyword: keyword,
-        //       searchList: _projectStore.projects
-        //           .where((e) =>
-        //               keyword.isNotEmpty &&
-        //               e.title.toLowerCase().contains(keyword.toLowerCase()))
-        //           .toList(),
-        //       onSheetDismissed: () {
-        //         setState(() {
-        //           Navigator.hideBottomNavBar = false;
-        //           yOffset = MediaQuery.of(context).size.height;
-        //         });
-        //         final FocusScopeNode currentScope = FocusScope.of(context);
-        //         if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-        //           FocusManager.instance.primaryFocus?.unfocus();
-        //         }
-        //         return true;
-        //       },
-        //       onFilterTap: () async {
-        //         await showFilterBottomSheet(NavigationService.navigatorKey.currentContext ?? context);
-        //       },
-        //     )),
       ],
     );
+  }
+
+  favoriteTap(String id) {
+    setState(() {
+      var p = (_projectStore.projects).firstWhereOrNull(
+        (element) => element.objectId == id,
+      );
+      if (p != null) {
+        _projectFormStore
+            .updateFavoriteProject(
+                _userStore.user!.studentProfile!.objectId ?? "",
+                id,
+                !p.isFavorite)
+            .then((value) {
+          if (value) {
+            _projectStore.updateInFav(p);
+          }
+        });
+      }
+      setState(() {
+        p?.isFavorite = !p.isFavorite;
+      });
+      // _projectStore.projects[i].isFavorite =
+      //     !_projectStore.projects[i].isFavorite;
+    });
+  }
+
+  stopLoading(String id) {
+    var p = (_projectStore.projects).firstWhereOrNull(
+      (element) => element.objectId == id,
+    );
+    setState(() {
+      setState(() {
+        p?.isLoading = false;
+      });
+    });
   }
 
   List<Project> getProjectWithKeyword(List<Project> projects) {

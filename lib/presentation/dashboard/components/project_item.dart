@@ -323,14 +323,14 @@ class _ProjectItem2State extends State<ProjectItem2> {
       updatedText = createdText;
     }
 
-    Future.delayed(Duration(milliseconds: 500 + widget.loadingDelay * 100), () {
-      widget.stopLoading(widget.project.objectId!);
-      if (mounted) {
-        setState(() {
-          widget.project.isLoading = false;
-        });
-      }
-    });
+    // Future.delayed(Duration(milliseconds: 500 + widget.loadingDelay * 100), () {
+    //   widget.stopLoading(widget.project.objectId!);
+    //   if (mounted) {
+    //     setState(() {
+    //       widget.project.isLoading = false;
+    //     });
+    //   }
+    // });
   }
 
   @override
