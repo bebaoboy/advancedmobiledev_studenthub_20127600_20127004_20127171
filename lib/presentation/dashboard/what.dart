@@ -18,11 +18,12 @@ import 'package:boilerplate/presentation/welcome/pip_test.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
+import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:navbar_router/navbar_router.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -160,7 +161,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
   initItems() {
     items = [
       NavbarItem(
-        Icons.business,
+         Icons.business,
         'Projects',
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),

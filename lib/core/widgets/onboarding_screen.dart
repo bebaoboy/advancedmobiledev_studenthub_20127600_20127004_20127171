@@ -3,6 +3,7 @@ import 'package:boilerplate/data/local/datasources/project/project_datasource.da
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
@@ -20,12 +21,24 @@ class OnBoarding extends StatelessWidget {
         onFinish: () async {
           final prefs = await SharedPreferences.getInstance();
           prefs.setBool(Preferences.first_time, true);
+
           Navigator.of(context).pop();
         },
-        skipFunctionOverride: () async {
-          final prefs = await SharedPreferences.getInstance();
-          prefs.setBool(Preferences.first_time, true);
-        },
+        skipFunctionOverride: !kReleaseMode
+            ? () async {
+                try {
+                  var datasource = getIt<ProjectDataSource>();
+
+                  // TODO: disable delete all
+                  datasource.deleteAll();
+                  //
+                } catch (e) {
+                  //
+                }
+                final prefs = await SharedPreferences.getInstance();
+                prefs.setBool(Preferences.first_time, true);
+              }
+            : null,
         finishButtonStyle: FinishButtonStyle(
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12.0))),
@@ -49,15 +62,6 @@ class OnBoarding extends StatelessWidget {
         ),
         trailingFunction: () {
           //Navigator.of(context).pop();
-          try {
-            var datasource = getIt<ProjectDataSource>();
-
-            // TODO: disable delete all
-            datasource.deleteAll();
-            //
-          } catch (e) {
-            //
-          }
         },
         controllerColor: Theme.of(context).colorScheme.primary,
         totalPage: 3,

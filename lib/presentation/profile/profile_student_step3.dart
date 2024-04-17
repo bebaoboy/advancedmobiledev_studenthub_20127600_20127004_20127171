@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:another_flushbar/flushbar_helper.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
@@ -688,6 +688,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                 Navigator.of(context).pop();
                 _userStore.user?.type = UserType.student;
 
+                // TODO: check welcome
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
                     .pushAndRemoveUntil(

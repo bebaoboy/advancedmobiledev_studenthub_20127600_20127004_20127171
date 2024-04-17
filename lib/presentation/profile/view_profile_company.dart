@@ -1,7 +1,7 @@
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -10,6 +10,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:toastification/toastification.dart';
 
 import '../../di/service_locator.dart';
 import 'store/form/profile_form_store.dart';
@@ -409,11 +410,8 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
     if (message.isNotEmpty) {
       Future.delayed(const Duration(milliseconds: 0), () {
         if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('profile_change_error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
+          Toastify.show(context, Lang.get('profile_change_error'), message,
+              ToastificationType.error, () {});
         }
       });
     }

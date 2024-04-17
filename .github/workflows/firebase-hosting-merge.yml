@@ -5,10 +5,8 @@ name: Deploy to Firebase Hosting on merge
 'on':
   push:
     branches:
-      - sprint6-getprojectcompany
-      - sprint6-videocall-fix
-      - sprint6-delete-post-project-favorite
-      - sprint6
+      - sprint7
+      - sprint7-viewoffer
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest

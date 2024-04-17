@@ -339,9 +339,10 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
         _userStore.success = true;
+        // TODO: check welcome
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(
-              routeName: Routes.welcome,
+              routeName: Routes.home,
             ),
             (Route<dynamic> route) => false);
       });

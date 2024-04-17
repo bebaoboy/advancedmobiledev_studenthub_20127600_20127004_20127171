@@ -12,14 +12,14 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
+import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:navbar_router/navbar_router.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-
-String lastLocale = "";
 
 // ---------------------------------------------------------------------------
 class DashBoardScreen extends StatefulWidget {
@@ -59,6 +59,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     for (var element in sc) {
       element.addListener(
         () {
+          if (kIsWeb || MediaQuery.of(context).size.width > 600) return;
           if (element.position.userScrollDirection == ScrollDirection.reverse) {
             NavbarNotifier2.hideBottomNavBar = true;
           } else {
@@ -163,60 +164,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   //view page height
   final double _height = 230.0;
 
-  // @override
-  // void didUpdateWidget(covariant DashBoardScreen oldWidget) {
-  //   if (lastLocale != _languageStore.locale) {
-  //     //initItems();
-  //     print("change locale");
-  //     lastLocale = _languageStore.locale;
-  //     // _routes = [
-  //     //   ..._routes.sublist(0, NavbarNotifier2.currentIndex),
-  //     //   ...List.from(_routes.mapIndexed((i, e) {
-  //     //     if (i == NavbarNotifier2.currentIndex) return e;
-  //     //   })),
-  //     //   ..._routes.sublist(
-  //     //       (NavbarNotifier2.currentIndex + 1)
-  //     //           .clamp(0, NavbarNotifier2.length - 1),
-  //     //       NavbarNotifier2.length)
-  //     // ];
-  //   }
-  //   super.didUpdateWidget(oldWidget);
-  // }
-
   initItems() {
-    // _routes = [
-    //   {
-    //     '/': KeepAlivePage(ProjectTab(
-    //       key: const PageStorageKey(0),
-    //       scrollController: ScrollController(),
-    //     )),
-    //     Routes.favortieProject: getRoute(Routes.favortieProject, context),
-    //   },
-    //   {
-    //     '/': _userStore.user!.type == UserType.company
-    //         ? KeepAlivePage(DashBoardTab(
-    //             key: const PageStorageKey(1),
-    //             pageController: _pageController,
-    //           ))
-    //         : KeepAlivePage(StudentDashBoardTab(
-    //             key: const PageStorageKey(1), pageController: _pageController)),
-    //     // Routes.projectDetails: ProjectDetailsPage(
-    //     //   project: Project(title: 'som', description: 'smm'),
-    //     // ),
-    //     // Routes.project_post: getRoute(Routes.project_post),
-    //   },
-    //   {
-    //     '/': const KeepAlivePage(MessageTab(
-    //       key: PageStorageKey(2),
-    //     )),
-    //     // ProfileEdit.route: ProfileEdit(),
-    //   },
-    //   {
-    //     '/': const KeepAlivePage(AlertTab(
-    //       key: PageStorageKey(3),
-    //     )),
-    //   },
-    // ];
     items = [
       NavbarItem(
         Icons.business,
@@ -247,7 +195,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     // if (items.isEmpty || lastLocale != _languageStore.locale) {
     initItems();
     // print("change locale" + lastLocale);
-    lastLocale = _languageStore.locale;
+    // lastLocale = _languageStore.locale;
     // }
 // final Color unselectedColor = colors[currentPage].computeLuminance() < 0.5
     //     ? Colors.black
@@ -260,8 +208,15 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
-          return const Center(child: Text('Dev: Navbar build failed'));
+          return Center(
+              child: GestureDetector(
+                  onTap: () => setState(() {}),
+                  child: const Text('Failed to render. Tap to retry.')));
         },
+        isDesktop: MediaQuery.of(context).size.width > 600 ? true : false,
+        decoration: NavbarDecoration(
+            isExtended: MediaQuery.of(context).size.width > 800 ? true : false,
+            navbarType: BottomNavigationBarType.shifting),
         onCurrentTabClicked: () {
           setState(() {
             for (var element in sc) {
@@ -307,8 +262,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         },
         destinationAnimationCurve: Curves.fastOutSlowIn,
         destinationAnimationDuration: 200,
-        decoration:
-            NavbarDecoration(navbarType: BottomNavigationBarType.shifting),
         destinations: [
           for (int i = 0; i < items.length; i++)
             DestinationRouter(

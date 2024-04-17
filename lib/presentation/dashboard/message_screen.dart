@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:math';
+
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
@@ -412,16 +415,39 @@ class MessageScreen extends StatefulWidget {
 
 class _MessageScreenState extends State<MessageScreen> {
   List<types.Message> _messages = [];
+  List<types.User> typings = [];
   final _user = const types.User(
     id: '1',
   );
-
+  Timer? timer;
   @override
   void initState() {
     super.initState();
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
     _loadMessages();
+    typings = [const types.User(id: "123", firstName: "Lam", lastName: "Quan")];
+    timer = Timer.periodic(const Duration(seconds: 3), (t) {
+      Random r = Random();
+      var num = r.nextInt(25);
+      // print(num);
+      if (num <= 7) {
+        typings = [
+          const types.User(id: "1", firstName: "Nam Hà", lastName: "Hồng Dăm")
+        ];
+      } else if (num > 7 && num < 15) {
+        typings = [
+          const types.User(id: "3", firstName: "Bảo", lastName: "Minh")
+        ];
+      } else if (num > 15 && num <= 20) {
+        typings.add(const types.User(
+            id: "2", firstName: "Jonnathan", lastName: "Nguyên"));
+      } else {
+        typings.add(
+            const types.User(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+      }
+      setState(() {});
+    });
   }
 
   void _addMessage(types.Message message) {
@@ -429,6 +455,12 @@ class _MessageScreenState extends State<MessageScreen> {
       _messages.insert(0, message);
       _sortMessages();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    timer?.cancel();
   }
 
   void _sortMessages() {
@@ -717,15 +749,13 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("build chat");
+    // print("build chat");
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Chat(
         scrollPhysics: const ClampingScrollPhysics(),
-        typingIndicatorOptions: const TypingIndicatorOptions(typingUsers: [
-          types.User(id: "123", firstName: "Lam", lastName: "Quan")
-        ]),
+        typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
         messages: _messages,
         onAttachmentPressed: _handleAttachmentPressed,
         onFirstIconPressed: () => showScheduleBottomSheet(context),
@@ -745,9 +775,9 @@ class _MessageScreenState extends State<MessageScreen> {
         },
         scheduleMessageBuilder: (p0, {required messageWidth}) {
           var t = InterviewSchedule.fromJson(p0.metadata!);
-          print(t);
-          print(messageWidth);
-          print(t.objectId);
+          // print(t);
+          // print(messageWidth);
+          // print(t.objectId);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
                 showAdaptiveActionSheet(

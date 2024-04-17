@@ -79,7 +79,7 @@ class TextFieldWidget extends StatefulWidget {
 
 class _TextFieldWidgetState extends State<TextFieldWidget> {
   late bool obscureText;
-  bool tapInside = false;
+  bool tapInside = true;
   @override
   void initState() {
     super.initState();
@@ -119,7 +119,7 @@ class _TextFieldWidgetState extends State<TextFieldWidget> {
         onTapOutside: (event) {
           FocusManager.instance.primaryFocus?.unfocus();
           setState(() {
-            tapInside = false;
+            // tapInside = false;
           });
         },
         keyboardType: widget.inputType,

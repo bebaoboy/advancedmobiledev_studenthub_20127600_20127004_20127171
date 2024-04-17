@@ -1,6 +1,6 @@
 // ignore_for_file: must_be_immutable, empty_catches
 
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'

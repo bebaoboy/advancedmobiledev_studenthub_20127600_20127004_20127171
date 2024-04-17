@@ -179,6 +179,12 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
+    @override
+  Future<Response> getCompanyProfile(AddProfileCompanyParams params) async {
+    var response = await _profileApi.getCompanyProfile(params);
+    return response;
+  }
+
   @override
   Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
     var response = await _profileApi.updateProfileCompany(params);

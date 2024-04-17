@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:another_flushbar/flushbar_helper.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
@@ -987,17 +987,17 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
-    }
+    // if (message.isNotEmpty) {
+    //   Future.delayed(const Duration(milliseconds: 0), () {
+    //     if (message.isNotEmpty) {
+    //       FlushbarHelper.createError(
+    //         message: message,
+    //         title: Lang.get('error'),
+    //         duration: const Duration(seconds: 3),
+    //       ).show(context);
+    //     }
+    //   });
+    // }
 
     return const SizedBox.shrink();
   }

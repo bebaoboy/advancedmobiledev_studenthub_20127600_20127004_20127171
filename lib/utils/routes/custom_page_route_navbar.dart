@@ -2,13 +2,16 @@
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
+import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:badges/badges.dart' as badges;
 
 import 'package:flutter/foundation.dart';
-import 'package:navbar_router/navbar_router.dart';
 
 const double kM3NavbarHeight = kBottomNavigationBarHeight;
 const double kStandardNavbarHeight = kBottomNavigationBarHeight;
@@ -18,9 +21,12 @@ const double kFloatingNavbarHeight = 60.0;
 /// The height of the navbar based on the [NavbarType]
 double kNavbarHeight = 0.0;
 
-class _AnimatedNavBar extends StatefulWidget {
-  const _AnimatedNavBar(
-      {this.decoration,
+enum NavbarType { standard, notched, material3, floating }
+
+class AnimatedNavBar extends StatefulWidget {
+  const AnimatedNavBar(
+      {super.key,
+      this.decoration,
       required this.model,
       this.isDesktop = false,
       this.navbarType = NavbarType.standard,
@@ -37,10 +43,10 @@ class _AnimatedNavBar extends StatefulWidget {
   _AnimatedNavBarState createState() => _AnimatedNavBarState();
 }
 
-class _AnimatedNavBarState extends State<_AnimatedNavBar>
+class _AnimatedNavBarState extends State<AnimatedNavBar>
     with SingleTickerProviderStateMixin {
   @override
-  void didUpdateWidget(covariant _AnimatedNavBar oldWidget) {
+  void didUpdateWidget(covariant AnimatedNavBar oldWidget) {
     if (NavbarNotifier2.isNavbarHidden != isHidden) {
       if (!isHidden) {
         _showBottomNavBar();
@@ -206,9 +212,10 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
           extended: navigationRailDefaultDecoration.isExtended,
           backgroundColor: navigationRailDefaultDecoration.backgroundColor ??
               theme.colorScheme.surface,
-          destinations: widget.menuItems.map((NavbarItem menuItem) {
+          destinations:
+              widget.menuItems.mapIndexed((int i, NavbarItem menuItem) {
             return NavigationRailDestination(
-              icon: Icon(menuItem.iconData),
+              icon: buildBadge(i, Icon(menuItem.iconData)),
               label: Text(menuItem.text),
             );
           }).toList(),
@@ -225,6 +232,45 @@ class _AnimatedNavBarState extends State<_AnimatedNavBar>
               child: widget.isDesktop ? buildNavigationRail() : buildNavBar());
         });
   }
+}
+
+/// Function to build badges, using index and child from the [NavbarNotifier.badges] list (given by user)
+Widget buildBadge(
+  /// Current index of the navbar
+  int index,
+
+  /// The navbar icon
+  Widget child,
+) {
+  return badges.Badge(
+    key: NavbarNotifier2.badges[index].key,
+    position: NavbarNotifier2.badges[index].position ??
+        (NavbarNotifier2.badges[index].badgeText.isNotEmpty
+            ? badges.BadgePosition.topEnd(top: -15, end: -15)
+            : badges.BadgePosition.topEnd()),
+    badgeAnimation: NavbarNotifier2.badges[index].badgeAnimation ??
+        const badges.BadgeAnimation.slide(
+            // disappearanceFadeAnimationDuration: Duration(milliseconds: 200),
+            // curve: Curves.easeInCubic,
+            ),
+    ignorePointer: NavbarNotifier2.badges[index].ignorePointer,
+    stackFit: NavbarNotifier2.badges[index].stackFit,
+    onTap: NavbarNotifier2.badges[index].onTap,
+    showBadge: NavbarNotifier2.badges[index].showBadge,
+    badgeStyle: badges.BadgeStyle(
+      badgeColor: NavbarNotifier2.badges[index].color ?? Colors.white,
+    ),
+    badgeContent: NavbarNotifier2.badges[index].badgeContent ??
+        Text(
+          NavbarNotifier2.badges[index].badgeText,
+          style: NavbarNotifier2.badges[index].badgeTextStyle ??
+              TextStyle(
+                  color:
+                      NavbarNotifier2.badges[index].textColor ?? Colors.black,
+                  fontSize: 9),
+        ),
+    child: child,
+  );
 }
 
 abstract class NavbarBase extends StatefulWidget {
@@ -311,12 +357,13 @@ class StandardNavbarState extends State<StandardNavbar> {
             BottomNavigationBarItem(
               backgroundColor: items[index].backgroundColor,
               icon: _selectedIndex == index
-                  ? items[index].selectedIcon ??
-                      Icon(
-                        items[index].iconData,
-                      )
-                  : Icon(
-                      items[index].iconData,
+                  ? buildBadge(
+                      index,
+                      items[index].selectedIcon ?? Icon(items[index].iconData),
+                    )
+                  : buildBadge(
+                      index,
+                      Icon(items[index].iconData),
                     ),
               label: items[index].text,
             )
@@ -348,7 +395,6 @@ class NavbarRouter2 extends NavbarRouter {
   /// defaults to true.
   @override
   final bool shouldPopToBaseRoute;
-  final bool shouldRefresh;
 
   /// AnimationDuration in milliseconds for the destination animation
   /// defaults to 300 milliseconds
@@ -419,7 +465,6 @@ class NavbarRouter2 extends NavbarRouter {
       required this.destinations,
       required this.errorBuilder,
       this.shouldPopToBaseRoute = true,
-      this.shouldRefresh = true,
       this.onChanged,
       this.decoration,
       this.isDesktop = false,
@@ -678,7 +723,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     top: widget.isDesktop ? 0 : null,
                     bottom: bottomPadding(),
                     right: widget.isDesktop ? null : 0,
-                    child: _AnimatedNavBar(
+                    child: AnimatedNavBar(
                         model: _navbarNotifier,
                         isDesktop: widget.isDesktop,
                         decoration: widget.decoration,

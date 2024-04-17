@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:boilerplate/core/widgets/loading_list.dart';
+import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
@@ -13,6 +15,7 @@ import 'package:boilerplate/domain/usecase/project/save_student_favorite_project
 import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 import 'package:mobx/mobx.dart';
 
 part 'project_store.g.dart';
@@ -69,16 +72,22 @@ abstract class _ProjectStore with Store {
   @observable
   bool postSuccess = false;
 
-  Future addProject(Project value, {index = 0}) async {
+
+  Future addProject(Project value, {index = 0, sort = true}) async {
     if (_projects.projects != null) {
-      value.updatedAt = DateTime.now();
+      if (sort) {
+        value.updatedAt = DateTime.now();
+      }
+      value.isLoading = false;
       _projects.projects!.insert(index, value);
     } else {
       _projects.projects = [value];
     }
-    _projects.projects?.sort(
-      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-    );
+    if (sort) {
+      _projects.projects?.sort(
+        (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+      );
+    }
   }
 
   Future updateInFav(Project project) async {
@@ -146,28 +155,110 @@ abstract class _ProjectStore with Store {
   }
 
   /// descending created date order
-  Future<ProjectList> getAllProject() async {
-    try {
-      await getStudentFavoriteProject(false);
-    } catch (e) {
-      // nothing changed
-    }
+  // Future<ProjectList> getAllProject() async {
+  //   try {
+  //     await getStudentFavoriteProject(false);
+  //   } catch (e) {
+  //     // nothing changed
+  //   }
+  //   return await _getProjectsUseCase
+  //       .call(params: GetProjectParams())
+  //       .then((value) {
+  //     _projects = value;
+  //     for (var element in _favoriteProjects.projects!) {
+  //       var p = _projects.projects!.firstWhereOrNull(
+  //         (e) => e.objectId == element.objectId,
+  //       );
+  //       if (p != null) {
+  //         p.isFavorite = true;
+  //       }
+  //     }
+  //     _projects.projects?.sort(
+  //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+  //     );
+  //     return _projects;
+  //   });
+  // }
+  Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
+      {int count = 5}) async {
     return await _getProjectsUseCase
         .call(params: GetProjectParams())
         .then((value) {
-      _projects = value;
-      for (var element in _favoriteProjects.projects!) {
-        var p = _projects.projects!.firstWhereOrNull(
-          (e) => e.objectId == element.objectId,
-        );
-        if (p != null) {
-          p.isFavorite = true;
+      // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
+      print("call api refesshh");
+
+      Future.delayed(const Duration(seconds: 1), () async {
+        try {
+          await getStudentFavoriteProject(false);
+        } catch (e) {
+          // nothing changed
         }
-      }
-      _projects.projects?.sort(
-        (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+        final ProjectDataSource datasource = getIt<ProjectDataSource>();
+
+        bool doneInit = false;
+        if (value.data != null) {
+          _projects.projects?.clear();
+          for (int i = 0; i < value.data!.length; i++) {
+            if (i == 5 && !doneInit) {
+              // refazynistKey.currentState?.refresh();
+              doneInit = true;
+              print("refesshh");
+            }
+            var project = Project.fromMap(value.data![i]);
+            project.isLoading = false;
+            var p = _favoriteProjects.projects!.firstWhereOrNull(
+              (e) => e.objectId == project.objectId,
+            );
+            if (p != null) {
+              project.isFavorite = true;
+            }
+            addProject(project, sort: false);
+
+            datasource.insert(project);
+          }
+          _projects.projects?.forEach(
+            (element) => element.isLoading = false,
+          );
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+
+          refazynistKey.currentState?.refresh(readyMade: _projects.projects);
+        } else {
+          _projects = value;
+          _projects.projects?.forEach(
+            (element) => element.isLoading = false,
+          );
+          _favoriteProjects.projects?.forEach(
+            (element) {
+              var p = _projects.projects!.firstWhereOrNull(
+                (e) => e.objectId == element.objectId,
+              );
+              if (p != null) {
+                p.isFavorite = true;
+              }
+            },
+          );
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          refazynistKey.currentState?.refresh(readyMade: _projects.projects);
+        }
+      });
+
+      // _projects = value;
+
+      return ProjectList(
+        projects: List.filled(
+          5.clamp(0, (value.data ?? []).length),
+          Project(
+            title: "",
+            description: "",
+            timeCreated: DateTime.now(),
+          ),
+          growable: true,
+        ),
       );
-      return _projects;
     });
   }
 
@@ -228,6 +319,7 @@ abstract class _ProjectStore with Store {
         return _companyProjects;
       } else {
         print(value.data);
+        _companyProjects = ProjectList(projects: []);
         return Future.value(ProjectList(projects: []));
       }
     } catch (e) {
@@ -286,7 +378,7 @@ abstract class _ProjectStore with Store {
             // TODO: lưu vào sharedpref
           } catch (e) {
             // errorStore.errorMessage = "cannot save student profile";
-            print("cannot get profile company");
+            print("cannot get profile student ${e.toString()}");
             return ProposalList(proposals: []);
           }
         } else {

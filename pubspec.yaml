@@ -22,7 +22,7 @@ dependencies:
   # A
   accordion:
   animations: ^2.0.11
-  auto_size_text: ^3.0.0
+  # auto_size_text: ^3.0.0
   another_flushbar: ^1.12.29
   animated_custom_dropdown:
   animated_list_plus:
@@ -33,6 +33,7 @@ dependencies:
   another_transformer_page_view:
   # B
   # background_fetch:
+  badges:
   # C
   # connectycube_sdk:
   connectycube_flutter_call_kit: 
@@ -42,6 +43,7 @@ dependencies:
   cryptoutils: 
   custom_refresh_indicator:
   connectivity_plus:
+  choice:
   # cupertino_icons: ^1.0.5
   # D
   dio: ^5.1.1 
@@ -53,13 +55,14 @@ dependencies:
   event_bus: ^2.0.0
   enhanced_paginated_view:
   equatable: ^2.0.5
+  exprollable_page_view:
   # F
   file_picker:
   flutter_mobx: ^2.0.6+5
   # file_previewer:
-  firebase_core: ^2.24.2
+  firebase_core: 
   firebase_crashlytics: 
-  firebase_analytics: ^10.8.0
+  firebase_analytics: 
   firebase_messaging:
   flutter_animated_dialog: 
   # flutter_link_previewer: ^3.2.2
@@ -82,6 +85,7 @@ dependencies:
   http:
   http_parser:
   html:
+  highlight_text:
   # I
   intl: ^0.18.1
   image_picker: ^1.0.7
@@ -101,7 +105,7 @@ dependencies:
   mime: ^1.0.5
   meta:  
   # N
-  navbar_router:
+  # navbar_router:
   # O
   open_filex: ^4.4.0
   objectid:
@@ -110,7 +114,7 @@ dependencies:
   path_provider: ^2.0.14
   path:
   permission_handler: ^11.3.1
-  package_info_plus: ^6.0.0
+  package_info_plus: ^7.0.0
   pdf_image_renderer:
   # Q
   quiver: 

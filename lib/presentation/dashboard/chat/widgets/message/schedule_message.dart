@@ -1,6 +1,6 @@
 // ignore_for_file: unused_element
 
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
@@ -305,8 +305,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           minFontSize: 7,
-                          style: const TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                       ),
                       Flexible(
@@ -345,7 +344,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
 
               AutoSizeText(
                 "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
-                style: const TextStyle(color: Colors.black),
+                // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
                 // textWidthBasis: TextWidthBasis.longestLine,
@@ -355,7 +354,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               ),
               AutoSizeText(
                 "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
-                style: const TextStyle(color: Colors.black),
+                // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
                 // textWidthBasis: TextWidthBasis.longestLine,
@@ -389,7 +388,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => SelectOpponentsScreen(
                                     CubeSessionManager
-                                        .instance.activeSession!.user!, users: List.empty(growable: true)),
+                                        .instance.activeSession!.user!,
+                                    users: List.empty(growable: true)),
                               ));
                             },
                           )

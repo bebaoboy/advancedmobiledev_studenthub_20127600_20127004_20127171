@@ -31,13 +31,9 @@ class ProjectRepositoryImpl extends ProjectRepository {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
-        var result = ProjectList.fromJson(value.data["result"]);
-        Future.delayed(Duration.zero, () {
-          result.projects?.forEach((project) {
-            _datasource.insert(project);
-          });
-        });
-        return result;
+        List json = value.data["result"];
+        
+        return ProjectList(projects: null, data: json);
       } else {
         // return ProjectList(projects: List.empty(growable: true));
         return _datasource.getProjectsFromDb() as ProjectList;

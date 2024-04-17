@@ -1,6 +1,5 @@
 // ignore_for_file: unused_element
 
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
@@ -354,15 +353,15 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
     if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('profile_change_error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
+      // Future.delayed(const Duration(milliseconds: 0), () {
+      //   if (message.isNotEmpty) {
+      //     FlushbarHelper.createError(
+      //       message: message,
+      //       title: Lang.get('profile_change_error'),
+      //       duration: const Duration(seconds: 3),
+      //     ).show(context);
+      //   }
+      // });
     }
 
     return const SizedBox.shrink();

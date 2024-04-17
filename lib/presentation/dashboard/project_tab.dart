@@ -1,6 +1,7 @@
 import 'dart:math';
 
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:animated_custom_dropdown/custom_dropdown.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/loading_list.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
@@ -408,6 +409,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     onLazy: () async {
                       lazyCount += 5;
                       List<Project> lazyList = [];
+                      if (refazynistKey.currentState!.length() ==
+                          widget.searchList.length) {
+                        return [];
+                      }
 
                       lazyList.addAll(widget.searchList.sublist(
                           max(refazynistKey.currentState!.length() - 1, 0),
@@ -438,6 +443,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                   curve: Curves.fastOutSlowIn))),
                           // opacity: animation,
                           child: ProjectItem2(
+                              keyword: widget.keyword,
                               loadingDelay: index,
                               stopLoading: (id) {
                                 widget.stopLoadingCallback(id);
@@ -445,12 +451,12 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                               project: item,
                               onFavoriteTap: (id) {
                                 widget.favoriteCallback(id);
-                                var p = (widget.searchList).firstWhereOrNull(
-                                  (element) => element.objectId == id,
-                                );
-                                setState(() {
-                                  p?.isFavorite = !p.isFavorite;
-                                });
+                                // var p = (widget.searchList).firstWhereOrNull(
+                                //   (element) => element.objectId == id,
+                                // );
+                                // setState(() {
+                                //   p?.isFavorite = p.isFavorite;
+                                // });
                                 // _projectStore.projects[i].isFavorite =
                                 //     !_projectStore.projects[i].isFavorite;
                               }));
@@ -464,19 +470,21 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       return FadeTransition(
                           opacity: animation,
                           child: ProjectItem2(
+                              keyword: widget.keyword,
                               project: item,
+                              loadingDelay: index,
                               stopLoading: (id) {
                                 widget.stopLoadingCallback(id);
                               },
                               onFavoriteTap: (id) {
                                 widget.favoriteCallback(id);
-                                var p = (widget.searchList).firstWhereOrNull(
-                                  (element) => element.objectId == id,
-                                );
-                                setState(() {
-                                  p?.isFavorite = !p.isFavorite;
-                                });
-                                // _projectStore.projects[i].isFavorite =
+                                // var p = (widget.searchList).firstWhereOrNull(
+                                //   (element) => element.objectId == id,
+                                // );
+                                // setState(() {
+                                //   p?.isFavorite = !p.isFavorite;
+                                // });
+                                // // _projectStore.projects[i].isFavorite =
                                 //     !_projectStore.projects[i].isFavorite;
                               }));
                     })
@@ -629,8 +637,11 @@ class _ProjectTabState extends State<ProjectTab> {
     loadSearchHistory().then(
       (value) => searchHistory = value,
     );
-    future = _projectStore.getAllProject();
+    future = _projectStore.getAllProject(refazynistKey);
   }
+
+  List<String> _list = [""];
+  String keywordId = "";
 
   @override
   Widget build(BuildContext context) {
@@ -667,7 +678,11 @@ class _ProjectTabState extends State<ProjectTab> {
             .toList()
         : _projectStore.projects
             .where((e) =>
-                e.title.trim().toLowerCase().contains(keyword.toLowerCase()) &&
+                (e.title.trim().toLowerCase().contains(keyword.toLowerCase()) ||
+                    e.description
+                        .trim()
+                        .toLowerCase()
+                        .contains(keyword.toLowerCase())) &&
                 applyFilter(filter, e))
             .toList();
     if (filter.scope != null) {
@@ -689,23 +704,25 @@ class _ProjectTabState extends State<ProjectTab> {
       ModalSheetRoute(
         builder: (context) => SearchBottomSheet(
           stopLoadingCallback: (id) {
-            var p = _projectStore.projects.firstWhereOrNull(
-              (element) => element.objectId == id,
-            );
-            if (p != null) {
-              p.isLoading = false;
-              print("stop loading $id");
-            }
+            stopLoading(id!);
           },
           favoriteCallback: (id) {
-            setState(() {
-              for (int i = 0; i < _projectStore.projects.length; i++) {
-                if (_projectStore.projects[i].objectId == id) {
-                  _projectStore.projects[i].isFavorite =
-                      !_projectStore.projects[i].isFavorite;
-                }
+            for (int i = 0; i < _projectStore.projects.length; i++) {
+              if (_projectStore.projects[i].objectId == id) {
+                _projectStore.projects[i].isFavorite =
+                    !_projectStore.projects[i].isFavorite;
+                _projectFormStore
+                    .updateFavoriteProject(
+                        _userStore.user!.studentProfile!.objectId ?? "",
+                        id,
+                        _projectStore.projects[i].isFavorite)
+                    .then((value) {
+                  if (value) {
+                    _projectStore.updateInFav(_projectStore.projects[i]);
+                  }
+                });
               }
-            });
+            }
           },
           filter: filter,
           keyword: keyword,
@@ -755,22 +772,6 @@ class _ProjectTabState extends State<ProjectTab> {
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // IconButton(
-        //   icon:
-        //       Icon(Icons.search, size: 35, color: Colors.black.withOpacity(.7)),
-        //   onPressed: () {
-        //     setState(() {
-        //       if (yOffset == MediaQuery.of(context).size.height) {
-        //         NavbarNotifier2.hideBottomNavBar = true;
-        //         // yOffset = -(MediaQuery.of(context).size.height) * 0.05 + 45;
-        //       } else {
-        //         NavbarNotifier2.hideBottomNavBar = false;
-        //         yOffset = MediaQuery.of(context).size.height;
-        //       }
-        //     });
-        //   },
-        // ),
-        // Text(Lang.get('This is project page"),
         Align(
             alignment: Alignment.topRight,
             child: Stack(
@@ -789,7 +790,9 @@ class _ProjectTabState extends State<ProjectTab> {
                       if (p0.trim().isNotEmpty) searchHistory.add(p0.trim());
                       saveSearchHistory(searchHistory);
                     });
-                    await showSearchBottomSheet(context);
+                    await showSearchBottomSheet(context).then(
+                      (value) => setState(() {}),
+                    );
                   },
                   width: MediaQuery.of(context).size.width,
                   textController: controller,
@@ -805,7 +808,9 @@ class _ProjectTabState extends State<ProjectTab> {
                       searchHistory.add(project.trim());
                     }
                     saveSearchHistory(searchHistory);
-                    await showSearchBottomSheet(context);
+                    await showSearchBottomSheet(context).then(
+                      (value) => setState(() {}),
+                    );
                   },
                   // initialText:
                   // readOnly:
@@ -906,12 +911,74 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
-          margin: const EdgeInsets.only(top: 55, left: 5),
-          child: Text(
-              "${Lang.get("result")} ${_projectStore.projects.length} (Latest update)"),
+
+          margin: const EdgeInsets.only(top: 65, left: 5),
+          child: Text("${Lang.get("result")} ${_projectStore.projects.length}"),
         ),
+        Positioned(
+          right: 0,
+          top: 55,
+          width: 150,
+          child: CustomDropdown<String>.search(
+            closedHeaderPadding: const EdgeInsets.only(left: 40),
+            decoration: const CustomDropdownDecoration(
+                closedFillColor: Colors.transparent),
+            initialItem: _list[0],
+            onChanged: (p0) {
+              setState(() {
+                keywordId = p0;
+              });
+              if (refazynistKey.currentState != null) {
+                refazynistKey.currentState!.refresh();
+              }
+              setState(() {});
+            },
+            noResultFoundText: Lang.get("nothing_here"),
+            maxlines: 3,
+            hintText: "Company id",
+            items: _list,
+            headerBuilder: (context, selectedItem) => Text(
+                (_userStore.user != null &&
+                            _userStore.user!.companyProfile != null &&
+                            _userStore.user!.companyProfile!.objectId ==
+                                selectedItem
+                        ? "(You) "
+                        : "") +
+                    selectedItem),
+            listItemBuilder: (context, item, isSelected, onItemSelect) {
+              return SizedBox(
+                height: 30,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Icon(item.icon),
+                    // const SizedBox(
+                    //   width: 20,
+                    // ),
+                    Text(
+                      (_userStore.user != null &&
+                                  _userStore.user!.companyProfile != null &&
+                                  _userStore.user!.companyProfile!.objectId ==
+                                      item
+                              ? "(You) "
+                              : "") +
+                          item,
+                      textAlign: TextAlign.start,
+                    ),
+                    // const Spacer(),
+                    // Checkbox(
+                    //   value: isSelected,
+                    //   onChanged: (value) => value = isSelected,
+                    // )
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+
         Container(
-            margin: const EdgeInsets.only(top: 90),
+            margin: const EdgeInsets.only(top: 100),
             child: FutureBuilder<ProjectList>(
               future: future,
               builder:
@@ -926,43 +993,18 @@ class _ProjectTabState extends State<ProjectTab> {
                       key: refazynistKey,
                       sharedPreferencesName: Preferences.all_project,
                       onInit: () async {
-                        return snapshot.data!.projects != null
-                            ? snapshot.data!.projects!.sublist(
-                                0,
-                                lazyCount.clamp(
-                                    0, _projectStore.projects.length))
-                            : [];
+                        if (snapshot.data!.projects == null) return [];
+                        var p = getProjectWithKeyword(snapshot.data!.projects!);
+
+                        return p.sublist(
+                            0,
+                            lazyCount.clamp(
+                                0, snapshot.data!.projects!.length));
                       },
                       emptyBuilder: (ewContext) {
                         return Stack(
                           children: <Widget>[
                             Center(child: Text(Lang.get("nothing_here"))),
-                            // ListView(),
-                            // Center(
-                            //   child: Wrap(
-                            //     children: [
-                            //       Column(
-                            //         children: [
-                            //           const Icon(
-                            //             Icons.warning_amber_rounded,
-                            //             size: 60,
-                            //             color: Colors.black26,
-                            //           ),
-                            //           const Text('Empty'),
-                            //           const Padding(
-                            //               padding: EdgeInsets.only(top: 20)),
-                            //           ElevatedButton(
-                            //             child: const Text('Create New'),
-                            //             onPressed: () {
-                            //               refazynistKey.currentState!
-                            //                   .insertItem(0, 'Created item');
-                            //             },
-                            //           )
-                            //         ],
-                            //       )
-                            //     ],
-                            //   ),
-                            // ),
                           ],
                         );
                       },
@@ -972,10 +1014,26 @@ class _ProjectTabState extends State<ProjectTab> {
 
                       onRefresh: () async {
                         lazyCount = 5;
-                        await _projectStore.getAllProject();
 
-                        return _projectStore.projects.sublist(0,
-                            lazyCount.clamp(0, _projectStore.projects.length));
+                        if (keywordId.isEmpty) {
+                          print("on refesshh");
+                          setState(() {
+                            future = _projectStore.getAllProject(refazynistKey);
+                          });
+                          _list = _projectStore.projects
+                              .map(
+                                (e) => e.companyId,
+                              )
+                              .toSet()
+                              .toList();
+                          _list.insert(0, "");
+                          _list.sort(
+                            (a, b) => a.compareTo(b),
+                          );
+                        }
+                        var p = getProjectWithKeyword(_projectStore.projects);
+
+                        return p.sublist(0, lazyCount.clamp(0, p.length));
                       },
 
                       //
@@ -984,12 +1042,17 @@ class _ProjectTabState extends State<ProjectTab> {
                       onLazy: () async {
                         lazyCount += 5;
                         List<Project> lazyList = [];
+                        if (refazynistKey.currentState!.length() ==
+                            _projectStore.projects.length) {
+                          return [];
+                        }
 
-                        lazyList.addAll(_projectStore.projects.sublist(
-                            min(refazynistKey.currentState!.length(),
-                                _projectStore.projects.length),
+
+                        var p = getProjectWithKeyword(_projectStore.projects);
+                        lazyList.addAll(p.sublist(
+                            min(refazynistKey.currentState!.length(), p.length),
                             (refazynistKey.currentState!.length() + 5)
-                                .clamp(0, _projectStore.projects.length)));
+                                .clamp(0, p.length)));
 
                         await Future.delayed(
                             const Duration(seconds: 1)); // Fake internet delay
@@ -1016,46 +1079,12 @@ class _ProjectTabState extends State<ProjectTab> {
                             // opacity: animation,
                             child: ProjectItem2(
                                 loadingDelay: index,
-                                stopLoading: (id) {
-                                  var p =
-                                      (_projectStore.projects).firstWhereOrNull(
-                                    (element) => element.objectId == id,
-                                  );
-                                  setState(() {
-                                    setState(() {
-                                      p?.isLoading = false;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
-                                },
                                 project: item,
+                                stopLoading: (id) {
+                                  stopLoading(id);
+                                },
                                 onFavoriteTap: (id) {
-                                  var p =
-                                      (_projectStore.projects).firstWhereOrNull(
-                                    (element) => element.objectId == id,
-                                  );
-                                  if (p != null) {
-                                    _projectFormStore
-                                        .updateFavoriteProject(
-                                            _userStore.user!.studentProfile!
-                                                    .objectId ??
-                                                "",
-                                            id,
-                                            !p.isFavorite)
-                                        .then((value) {
-                                      if (value) {
-                                        _projectStore.updateInFav(p);
-                                      }
-                                    });
-                                  }
-                                  setState(() {
-                                    setState(() {
-                                      p?.isFavorite = !p.isFavorite;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
+                                  favoriteTap(id);
                                 }));
                       },
 
@@ -1067,65 +1096,15 @@ class _ProjectTabState extends State<ProjectTab> {
                         return FadeTransition(
                             opacity: animation,
                             child: ProjectItem2(
+                                loadingDelay: index,
                                 project: item,
                                 stopLoading: (id) {
-                                  var p =
-                                      (_projectStore.projects).firstWhereOrNull(
-                                    (element) => element.objectId == id,
-                                  );
-                                  setState(() {
-                                    setState(() {
-                                      p?.isLoading = false;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
+                                  stopLoading(id);
                                 },
                                 onFavoriteTap: (id) {
-                                  setState(() {
-                                    var p = (_projectStore.projects)
-                                        .firstWhereOrNull(
-                                      (element) => element.objectId == id,
-                                    );
-                                    if (p != null) {
-                                      _projectFormStore
-                                          .updateFavoriteProject(
-                                              _userStore.user!.studentProfile!
-                                                      .objectId ??
-                                                  "",
-                                              id,
-                                              !p.isFavorite)
-                                          .then((value) {
-                                        if (value) {
-                                          _projectStore.updateInFav(p);
-                                        }
-                                      });
-                                    }
-                                    setState(() {
-                                      p?.isFavorite = !p.isFavorite;
-                                    });
-                                    // _projectStore.projects[i].isFavorite =
-                                    //     !_projectStore.projects[i].isFavorite;
-                                  });
+                                  favoriteTap(id);
                                 }));
                       });
-                  // LazyLoadingAnimationProjectList(
-                  //     scrollController: widget.scrollController,
-                  //     itemHeight: 230,
-                  //     list: _projectStore.projects,
-                  //     firstCallback: (i) {
-                  //       setState(() {
-                  //         var p = (_projectStore.projects).firstWhereOrNull(
-                  //           (element) => element.objectId == i,
-                  //         );
-                  //         setState(() {
-                  //           p?.isFavorite = !p.isFavorite;
-                  //         });
-                  //         // _projectStore.projects[i].isFavorite =
-                  //         //     !_projectStore.projects[i].isFavorite;
-                  //       });
-                  //     },
-                  //   )
                 } else if (snapshot.hasError) {
                   children = Center(child: Text(Lang.get("nothing_here")));
                 } else {
@@ -1135,38 +1114,52 @@ class _ProjectTabState extends State<ProjectTab> {
                 return children;
               },
             )),
-        // AnimatedContainer(
-        //     curve: Easing.legacyAccelerate,
-        //     color: Colors.black.withOpacity(0.5),
-
-        //     // color: Colors.amber,
-        //     alignment: Alignment.bottomCenter,
-        //     duration: Duration(milliseconds: 300),
-        //     transform: Matrix4.translationValues(0, yOffset, -1.0),
-        //     child: SearchBottomSheet(
-        //       filter: filter,
-        //       keyword: keyword,
-        //       searchList: _projectStore.projects
-        //           .where((e) =>
-        //               keyword.isNotEmpty &&
-        //               e.title.toLowerCase().contains(keyword.toLowerCase()))
-        //           .toList(),
-        //       onSheetDismissed: () {
-        //         setState(() {
-        //           Navigator.hideBottomNavBar = false;
-        //           yOffset = MediaQuery.of(context).size.height;
-        //         });
-        //         final FocusScopeNode currentScope = FocusScope.of(context);
-        //         if (!currentScope.hasPrimaryFocus && currentScope.hasFocus) {
-        //           FocusManager.instance.primaryFocus?.unfocus();
-        //         }
-        //         return true;
-        //       },
-        //       onFilterTap: () async {
-        //         await showFilterBottomSheet(NavigationService.navigatorKey.currentContext ?? context);
-        //       },
-        //     )),
       ],
     );
+  }
+
+  favoriteTap(String id) {
+    setState(() {
+      var p = (_projectStore.projects).firstWhereOrNull(
+        (element) => element.objectId == id,
+      );
+      if (p != null) {
+        _projectFormStore
+            .updateFavoriteProject(
+                _userStore.user!.studentProfile!.objectId ?? "",
+                id,
+                !p.isFavorite)
+            .then((value) {
+          if (value) {
+            _projectStore.updateInFav(p);
+          }
+        });
+      }
+      setState(() {
+        p?.isFavorite = !p.isFavorite;
+      });
+      // _projectStore.projects[i].isFavorite =
+      //     !_projectStore.projects[i].isFavorite;
+    });
+  }
+
+  stopLoading(String id) {
+    var p = (_projectStore.projects).firstWhereOrNull(
+      (element) => element.objectId == id,
+    );
+    setState(() {
+      setState(() {
+        p?.isLoading = false;
+      });
+    });
+  }
+
+  List<Project> getProjectWithKeyword(List<Project> projects) {
+    if (keywordId.isEmpty) return projects;
+    return projects
+        .where(
+          (element) => element.companyId == keywordId,
+        )
+        .toList();
   }
 }

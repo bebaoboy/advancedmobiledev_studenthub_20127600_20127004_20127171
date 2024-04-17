@@ -1,5 +1,5 @@
 import 'package:animations/animations.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/di/service_locator.dart';

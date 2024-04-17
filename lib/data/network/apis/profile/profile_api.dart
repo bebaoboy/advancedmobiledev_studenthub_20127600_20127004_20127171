@@ -49,6 +49,14 @@ class ProfileApi {
         (DioException error, stackTrace) => Future.value(error.response));
   }
 
+  Future<Response> getCompanyProfile(AddProfileCompanyParams params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getProfileCompany)({"companyId": params.id}),
+        data: {}).onError((DioException error,
+            stackTrace) =>
+        Future.value(error.response));
+  }
+
   Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
     return await _dioClient.dio.put(
         Interpolator(Endpoints.updateProfileCompany)({"id": params.id}),

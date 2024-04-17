@@ -5,6 +5,8 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
+import 'package:boilerplate/domain/usecase/profile/get_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
@@ -41,6 +43,7 @@ abstract class _UserStore with Store {
     this._logoutUseCase,
     this._setUserProfileUseCase,
     this._getStudentFavoriteProjectUseCase,
+    this._getCompanyUseCase,
   ) {
     // setting up disposers
     _setupDisposers();
@@ -92,7 +95,9 @@ abstract class _UserStore with Store {
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
   final GetMustChangePassUseCase _getMustChangePassUseCase;
+  // ignore: unused_field
   final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
+  final GetCompanyUseCase _getCompanyUseCase;
 
   // stores:--------------------------------------------------------------------
   // for handling form errors
@@ -239,6 +244,30 @@ abstract class _UserStore with Store {
       return Future.value(false);
     }).onError((error, stackTrace) => Future.value(false));
     return Future.value(true);
+  }
+
+  Future<CompanyProfile?> getCompanyProfile(String id) async {
+    try {
+      return await _getCompanyUseCase
+          .call(
+              params: AddProfileCompanyParams(
+                  companyName: "",
+                  website: "",
+                  description: "",
+                  size: 0,
+                  id: int.tryParse(id) ??
+                      (int.tryParse(user?.companyProfile?.objectId ?? "1") ??
+                          1)))
+          .then(
+        (value) {
+          print(value);
+          return CompanyProfile.fromMap(value.data["result"]);
+        },
+      );
+    } catch (e) {
+      print("error company id $id");
+      return null;
+    }
   }
 
   Future logout() async {
