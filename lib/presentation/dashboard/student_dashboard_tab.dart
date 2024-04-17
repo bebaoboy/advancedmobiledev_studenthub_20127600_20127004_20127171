@@ -149,7 +149,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
         ),
         Padding(
           padding:
-              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 55),
+              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 5),
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             child: TabBarView(

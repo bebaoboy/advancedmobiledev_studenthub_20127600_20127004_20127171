@@ -1,5 +1,7 @@
 import 'dart:math';
 
+import 'package:badges/badges.dart';
+
 import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_buttons.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
@@ -9,7 +11,6 @@ import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/welcome/welcome%20copy.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -163,6 +164,7 @@ class _MainAppBarState extends State<MainAppBar> {
     return kIsWeb
         ? AppBar(
             // automaticallyImplyLeading: widget.showBackButton,
+            automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
             leadingWidth: 30,
             titleSpacing: 0,
@@ -175,11 +177,7 @@ class _MainAppBarState extends State<MainAppBar> {
                 margin: const EdgeInsets.only(left: 20),
                 child: GestureDetector(
                   onTap: () {
-                    // Navigator.of(context).pushAndRemoveUntil(
-                    //     MaterialPageRoute2(routeName: Routes.home),
-                    //     (Route<dynamic> route) => false);
-                    Navigator.of(context)
-                        .push(MaterialPageRoute2(child: const Welcome2()));
+                    showRandomBadge();
                   },
                   onLongPress: () {
                     Navigator.of(context).push(MaterialPageRoute2(
@@ -265,39 +263,7 @@ class _MainAppBarState extends State<MainAppBar> {
                   },
                   onDoubleTap: () {
                     // TODO: remove this badge test
-                    int r = Random().nextInt(100);
-                    NavbarNotifier2.setBadges(
-                        0,
-                        ShowBadge(
-                            badgeText: "$r",
-                            showBadge: Random().nextBool(),
-                            animationDuration: Duration(
-                                milliseconds:
-                                    (Random().nextInt(5) + 5) * 100)));
-                    NavbarNotifier2.setBadges(
-                        1,
-                        ShowBadge(
-                            badgeText: "$r",
-                            showBadge: Random().nextBool(),
-                            animationDuration: Duration(
-                                milliseconds:
-                                    (Random().nextInt(5) + 5) * 100)));
-                    NavbarNotifier2.setBadges(
-                        2,
-                        ShowBadge(
-                            badgeText: "$r",
-                            showBadge: Random().nextBool(),
-                            animationDuration: Duration(
-                                milliseconds:
-                                    (Random().nextInt(5) + 5) * 100)));
-                    NavbarNotifier2.setBadges(
-                        3,
-                        ShowBadge(
-                            badgeText: "$r",
-                            showBadge: Random().nextBool(),
-                            animationDuration: Duration(
-                                milliseconds:
-                                    (Random().nextInt(5) + 5) * 100)));
+                    showRandomBadge();
                     // AnimatedDialog.showBottomAnimatedDialog(
                     //   context,
                     //   onClose: (p0) => print("hiii"),
@@ -372,5 +338,84 @@ class _MainAppBarState extends State<MainAppBar> {
             ],
             // )
           );
+  }
+
+  showRandomBadge() {
+    final List<Color> themeColorSeed = [
+      Colors.blue,
+      Colors.red,
+      Colors.green,
+      Colors.purple,
+      Colors.orange,
+      Colors.teal,
+      Colors.pink,
+      Colors.indigo,
+      Colors.brown,
+      Colors.cyan,
+      Colors.deepOrange,
+      Colors.deepPurple,
+      Colors.lime,
+      Colors.amber,
+      Colors.lightBlue,
+      Colors.lightGreen,
+      Colors.yellow,
+      Colors.grey,
+    ];
+    var anims = [
+      BadgeAnimation.fade,
+      BadgeAnimation.rotation,
+      BadgeAnimation.scale,
+      BadgeAnimation.size,
+      BadgeAnimation.slide
+    ];
+    int r = Random().nextInt(100);
+    var b = Random().nextBool();
+    NavbarNotifier2.setBadges(
+        0,
+        ShowBadge(
+            badgeText: "${b ? r : ""}",
+            color: b
+                ? null
+                : themeColorSeed[Random().nextInt(themeColorSeed.length)],
+            showBadge: Random().nextInt(5) > 1,
+            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            animationDuration:
+                Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
+    b = Random().nextBool();
+    NavbarNotifier2.setBadges(
+        1,
+        ShowBadge(
+            badgeText: "${b ? r : ""}",
+            color: b
+                ? null
+                : themeColorSeed[Random().nextInt(themeColorSeed.length)],
+            showBadge: Random().nextInt(5) > 1,
+            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            animationDuration:
+                Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
+    b = Random().nextBool();
+    NavbarNotifier2.setBadges(
+        2,
+        ShowBadge(
+            badgeText: "${b ? r : ""}",
+            color: b
+                ? null
+                : themeColorSeed[Random().nextInt(themeColorSeed.length)],
+            showBadge: Random().nextInt(5) > 1,
+            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            animationDuration:
+                Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
+    b = Random().nextBool();
+    NavbarNotifier2.setBadges(
+        3,
+        ShowBadge(
+            badgeText: "${b ? r : ""}",
+            color: b
+                ? null
+                : themeColorSeed[Random().nextInt(themeColorSeed.length)],
+            showBadge: Random().nextInt(5) > 1,
+            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            animationDuration:
+                Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
   }
 }

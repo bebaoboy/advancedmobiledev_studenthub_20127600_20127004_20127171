@@ -344,7 +344,7 @@ abstract class _ProjectStore with Store {
             // TODO: lưu vào sharedpref
           } catch (e) {
             // errorStore.errorMessage = "cannot save student profile";
-            print("cannot get profile company");
+            print("cannot get profile student ${e.toString()}");
             return ProposalList(proposals: []);
           }
         } else {

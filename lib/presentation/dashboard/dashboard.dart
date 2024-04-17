@@ -16,11 +16,10 @@ import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-
-String lastLocale = "";
 
 // ---------------------------------------------------------------------------
 class DashBoardScreen extends StatefulWidget {
@@ -60,6 +59,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     for (var element in sc) {
       element.addListener(
         () {
+          if (kIsWeb || MediaQuery.of(context).size.width > 600) return;
           if (element.position.userScrollDirection == ScrollDirection.reverse) {
             NavbarNotifier2.hideBottomNavBar = true;
           } else {
@@ -195,7 +195,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     // if (items.isEmpty || lastLocale != _languageStore.locale) {
     initItems();
     // print("change locale" + lastLocale);
-    lastLocale = _languageStore.locale;
+    // lastLocale = _languageStore.locale;
     // }
 // final Color unselectedColor = colors[currentPage].computeLuminance() < 0.5
     //     ? Colors.black
@@ -208,8 +208,15 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
-          return const Center(child: Text('Dev: Navbar build failed'));
+          return Center(
+              child: GestureDetector(
+                  onTap: () => setState(() {}),
+                  child: const Text('Failed to render. Tap to retry.')));
         },
+        isDesktop: MediaQuery.of(context).size.width > 600 ? true : false,
+        decoration: NavbarDecoration(
+            isExtended: MediaQuery.of(context).size.width > 800 ? true : false,
+            navbarType: BottomNavigationBarType.shifting),
         onCurrentTabClicked: () {
           setState(() {
             for (var element in sc) {
@@ -255,8 +262,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         },
         destinationAnimationCurve: Curves.fastOutSlowIn,
         destinationAnimationDuration: 200,
-        decoration:
-            NavbarDecoration(navbarType: BottomNavigationBarType.shifting),
         destinations: [
           for (int i = 0; i < items.length; i++)
             DestinationRouter(

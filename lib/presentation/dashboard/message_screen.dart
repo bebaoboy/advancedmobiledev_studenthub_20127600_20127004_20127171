@@ -430,7 +430,7 @@ class _MessageScreenState extends State<MessageScreen> {
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
       var num = r.nextInt(25);
-      print(num);
+      // print(num);
       if (num <= 7) {
         typings = [
           const types.User(id: "1", firstName: "Nam Hà", lastName: "Hồng Dăm")
@@ -749,7 +749,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("build chat");
+    // print("build chat");
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
@@ -775,9 +775,9 @@ class _MessageScreenState extends State<MessageScreen> {
         },
         scheduleMessageBuilder: (p0, {required messageWidth}) {
           var t = InterviewSchedule.fromJson(p0.metadata!);
-          print(t);
-          print(messageWidth);
-          print(t.objectId);
+          // print(t);
+          // print(messageWidth);
+          // print(t.objectId);
           return ScheduleMessage(
               onMenuCallback: (scheduleFilter) async {
                 showAdaptiveActionSheet(

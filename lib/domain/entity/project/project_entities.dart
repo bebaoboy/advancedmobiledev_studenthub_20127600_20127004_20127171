@@ -224,21 +224,22 @@ class StudentProject extends Project {
 
   factory StudentProject.fromMap(Map<String, dynamic> json) {
     return StudentProject(
-        title: json['title'] ?? '',
-        description: json['description'] ?? '',
-         timeCreated: json['createdAt'] != null
-            ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-            : DateTime.now(),
-        updatedAt: json['updatedAt'] != null
-            ? DateTime.tryParse(json['updatedAt'])
-            : json['createdAt'] != null
-                ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-                : DateTime.now(),
-        scope: Scope.values[json['projectScopeFlag'] ?? 0],
-        numberOfStudents: json['numberOfStudents'] ?? 0,
-        id: (json["id"] ?? "").toString(),
-        projectId: (json["projectId"] ?? "").toString(),
-        enabled: Status.values[json["typeFlag"] ?? 0],);
+      title: json['title'] ?? '',
+      description: json['description'] ?? '',
+      timeCreated: json['createdAt'] != null
+          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+          : DateTime.now(),
+      updatedAt: json['updatedAt'] != null
+          ? DateTime.tryParse(json['updatedAt'])
+          : json['createdAt'] != null
+              ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+              : DateTime.now(),
+      scope: Scope.values[json['projectScopeFlag'] ?? 0],
+      numberOfStudents: json['numberOfStudents'] ?? 0,
+      id: (json["id"] ?? "").toString(),
+      projectId: (json["projectId"] ?? "").toString(),
+      enabled: Status.values[json["typeFlag"] ?? 0],
+    );
   }
 
   @override
@@ -295,8 +296,10 @@ class Proposal extends MyObject {
             objectId: json["studentId"].toString(),
             fullName: "Sample Student ${json["studentId"]}"),
         coverLetter = json["coverLetter"] ?? "",
-        status = Status.values[json["statusFlag"] ?? 0],
-        hiredStatus = HireStatus.values[json["hiredStatus"] ?? 0],
+        status = Status.values[
+            ((json["disableFlag"] ?? 0) as int).clamp(0, Status.values.length - 1)],
+        hiredStatus = HireStatus.values[((json["statusFlag"] ?? 0) as int)
+            .clamp(0, HireStatus.values.length - 1)],
         projectId = json["projectId"].toString(),
         enabled = json["disableFlag"] != 0,
         project = json["project"] != null
