@@ -58,7 +58,8 @@ abstract class _ProjectStore with Store {
   List<Project> get companyProjects => _companyProjects.projects ?? [];
 
   @observable
-  final ProjectList _studentProjects =
+  // ignore: prefer_final_fields
+  ProjectList _studentProjects =
       ProjectList(projects: List.empty(growable: true));
 
   List<Project> get studentProjects => _studentProjects.projects ?? [];

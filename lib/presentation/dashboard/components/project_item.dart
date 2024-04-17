@@ -322,13 +322,17 @@ class _ProjectItem2State extends State<ProjectItem2> {
     if (widget.project.countProposals < 1) {
       proposalText += 'None';
     } else {
-      proposalText += (widget.project.proposal?.length ?? 0).toString();
+      proposalText += (widget.project.countProposals).toString();
     }
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
         widget.project.updatedAt!.day == DateTime.now().day) {
       updatedText =
           "Updated ${timeago.format(locale: _languageStore.locale, widget.project.updatedAt!.toLocal())}";
+    } else if (widget.project.updatedAt != null) {
+      updatedText = timeago
+          .format(locale: _languageStore.locale, widget.project.updatedAt!)
+          .inCaps;
     } else {
       updatedText = createdText;
     }
@@ -369,18 +373,19 @@ class _ProjectItem2State extends State<ProjectItem2> {
                             .copyWith(fontSize: 12)),
                     AutoSizeText(
                       maxFontSize: 13,
-                      words: widget.keyword != null  ? {
-                          widget.keyword!: HighlightedWord(
-                            onTap: () {
-                              print("match");
-                            },
-                          ),
-                        } : null,
-                        
-                        matchDecoration: BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
+                      words: widget.keyword != null
+                          ? {
+                              widget.keyword!: HighlightedWord(
+                                onTap: () {
+                                  print("match");
+                                },
+                              ),
+                            }
+                          : null,
+                      matchDecoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       widget.project.title == ''
@@ -400,13 +405,15 @@ class _ProjectItem2State extends State<ProjectItem2> {
                     Flexible(
                       // height: 100,
                       child: AutoSizeText(
-                        words: widget.keyword != null  ? {
-                          widget.keyword!: HighlightedWord(
-                            onTap: () {
-                              print("match");
-                            },
-                          ),
-                        } : null,
+                        words: widget.keyword != null
+                            ? {
+                                widget.keyword!: HighlightedWord(
+                                  onTap: () {
+                                    print("match");
+                                  },
+                                ),
+                              }
+                            : null,
                         matchDecoration: BoxDecoration(
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(50),

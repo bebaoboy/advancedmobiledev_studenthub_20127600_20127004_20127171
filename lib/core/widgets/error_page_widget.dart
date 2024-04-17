@@ -14,13 +14,24 @@ class ErrorPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+      ),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(child: Image.asset('assets/images/error.jpg', width: 120, height: 120,)),
+            Center(
+                child: Image.asset(
+              'assets/images/error.jpg',
+              width: 120,
+              height: 120,
+            )),
             const SizedBox(height: 12),
             Text(
               kDebugMode

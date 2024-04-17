@@ -258,7 +258,12 @@ class StudentProject extends Project {
 
 // ------------------- PROPOSAL ------------------------------
 
-enum HireStatus { pending, offer, hired, notHired }
+enum HireStatus {
+  notHired,
+  pending,
+  offer,
+  hired,
+}
 
 extension HireStatusTitle on HireStatus {
   String get title {
@@ -296,8 +301,8 @@ class Proposal extends MyObject {
             objectId: json["studentId"].toString(),
             fullName: "Sample Student ${json["studentId"]}"),
         coverLetter = json["coverLetter"] ?? "",
-        status = Status.values[
-            ((json["disableFlag"] ?? 0) as int).clamp(0, Status.values.length - 1)],
+        status = Status.values[((json["disableFlag"] ?? 0) as int)
+            .clamp(0, Status.values.length - 1)],
         hiredStatus = HireStatus.values[((json["statusFlag"] ?? 0) as int)
             .clamp(0, HireStatus.values.length - 1)],
         projectId = json["projectId"].toString(),

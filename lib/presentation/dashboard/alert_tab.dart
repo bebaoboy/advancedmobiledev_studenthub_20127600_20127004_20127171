@@ -1,5 +1,10 @@
+import 'dart:math';
+
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -8,7 +13,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
 
-var colors = [
+var colorss = [
   Colors.red,
   Colors.green,
   Colors.blue,
@@ -22,6 +27,8 @@ var colors = [
   Colors.lime,
   ...Colors.accents,
 ];
+
+List<Color> colors = [];
 
 class AlertTab extends StatefulWidget {
   const AlertTab({super.key, required this.scrollController});
@@ -86,6 +93,34 @@ class _AlertTabState extends State<AlertTab> {
     },
     // Add more alerts here
   ];
+  var userStore = getIt<UserStore>();
+  bool hasOfferProposal = false;
+
+  List<Proposal> getOffer() {
+    if (hasOfferProposal) {
+      var p = userStore.user!.studentProfile!.proposalProjects!
+          .where(
+            (element) => element.hiredStatus == HireStatus.offer,
+          )
+          .toList();
+      return p;
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    hasOfferProposal = userStore.user != null &&
+        userStore.user!.studentProfile != null &&
+        userStore.user!.studentProfile!.proposalProjects != null &&
+        userStore.user!.studentProfile!.proposalProjects!.isNotEmpty;
+    colors = List.filled(getOffer().length, Colors.white);
+    for (int i = 0; i < (getOffer().length); i++) {
+      colors[i] = colorss[Random().nextInt(colorss.length)];
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,24 +130,28 @@ class _AlertTabState extends State<AlertTab> {
   }
 
   Widget _buildTopRowList() {
-    return Scrollbar(
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: colors.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15),
-            child: HeroFlutterLogo(
-              color: colors[index],
-              tag: index,
-              size: 100,
-              onTap: () => showAlbumDetailsDialog(context, index),
-            ),
-          );
-        },
-      ),
-    );
+    if (hasOfferProposal) {
+      return Scrollbar(
+        child: ListView.builder(
+          scrollDirection: Axis.horizontal,
+          shrinkWrap: true,
+          itemCount: getOffer().length,
+          itemBuilder: (context, index) {
+            return Container(
+              margin: const EdgeInsets.symmetric(horizontal: 15),
+              child: HeroFlutterLogo(
+                color: colors[index],
+                tag: index,
+                size: 100,
+                onTap: () => showAlbumDetailsDialog(context, index, getOffer()),
+              ),
+            );
+          },
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _buildAlertsContent() {
@@ -151,8 +190,8 @@ class _AlertTabState extends State<AlertTab> {
                                         arguments: "Javis - AI Copilot"));
                               } else if (alerts[index]['action'] ==
                                   "View offer") {
-                                showAlbumDetailsDialog(context, 2);
-                                NavbarNotifier2.hideBottomNavBar = true;
+                                // showAlbumDetailsDialog(context, 2);
+                                // NavbarNotifier2.hideBottomNavBar = true;
                               }
                             }
                             // You can replace the print statement with your function
@@ -170,7 +209,8 @@ class _AlertTabState extends State<AlertTab> {
   }
 }
 
-void showAlbumDetailsDialog(BuildContext context, int index) {
+void showAlbumDetailsDialog(
+    BuildContext context, int index, List<Proposal> proposals) {
   print(index);
   NavbarNotifier2.hideBottomNavBar = true;
 
@@ -179,6 +219,7 @@ void showAlbumDetailsDialog(BuildContext context, int index) {
     ModalExprollableRouteBuilder(
         pageBuilder: (_, __, ___) => AlbumDetailsDialog(
               index: index,
+              proposal: proposals,
             ),
         // Increase the transition durations and take a closer look at what's going on!
         transitionDuration: const Duration(milliseconds: 500),
@@ -197,9 +238,11 @@ class AlbumDetailsDialog extends StatefulWidget {
   const AlbumDetailsDialog({
     super.key,
     required this.index,
+    required this.proposal,
   });
 
   final int index;
+  final List<Proposal> proposal;
 
   @override
   State<StatefulWidget> createState() => _AlbumDetailsDialogState();
@@ -232,15 +275,274 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
   Widget build(BuildContext context) {
     return ExprollablePageView(
         controller: controller,
-        itemCount: colors.length,
+        itemCount: widget.proposal.length,
         itemBuilder: (context, page) {
           return PageGutter(
-            gutterWidth: 8,
-            child: AlbumDetailsContainer(
-              album: page,
-              controller: PageContentScrollController.of(context),
-            ),
-          );
+              gutterWidth: 8,
+              child: Stack(
+                children: [
+                  Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: Stack(children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 20),
+                          child: ListView.builder(
+                            controller: PageContentScrollController.of(context),
+                            itemCount: 3,
+                            itemBuilder: (_, index) {
+                              if (index == 0) {
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(30, 30, 30, 0),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: HeroFlutterLogo(
+                                      color: colors[page],
+                                      tag: page,
+                                      size: 400,
+                                      onTap: () => Navigator.of(context).pop(),
+                                    ),
+                                  ),
+                                );
+                              } else if (index == 2) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8.0, horizontal: 10),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Center(
+                                        child: Text(
+                                          "Project Name: \n${widget.proposal[page].project?.title}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Center(
+                                        child: Text(
+                                          "${widget.proposal[page].coverLetter} \n${Lang.get('profile_common_body')}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        Lang.get('profile_question_title_1'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      const SizedBox(
+                                        height: 50,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              Lang.get(
+                                                  'profile_question_title_4'),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          BorderTextField(
+                                            inputDecoration:
+                                                const InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.black))),
+                                            onChanged: (value) {},
+                                            textController:
+                                                TextEditingController(),
+                                            // onSubmitted: (value) =>
+                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+                                            minLines: 3,
+                                            maxLines: 5,
+                                            errorText: null,
+                                            isIcon: false,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            Lang.get(
+                                                'profile_question_title_4'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          BorderTextField(
+                                            textController:
+                                                TextEditingController(),
+                                            inputDecoration:
+                                                const InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.black))),
+                                            onChanged: (value) {},
+                                            // onSubmitted: (value) =>
+                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+                                            minLines: 3,
+                                            maxLines: 5,
+                                            errorText: null,
+                                            isIcon: false,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                      // _buildEmailField(context),
+                                      // const SizedBox(
+                                      //   height: 25,
+                                      // ),
+                                      Container(
+                                        alignment: Alignment.centerRight,
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            RoundedButtonWidget(
+                                              buttonText: Lang.get('continue'),
+                                              buttonColor: Theme.of(context)
+                                                  .colorScheme
+                                                  .primary,
+                                              textColor: Colors.white,
+                                              onPressed: () {},
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            Lang.get(
+                                                'profile_question_title_4'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          BorderTextField(
+                                            textController:
+                                                TextEditingController(),
+                                            inputDecoration:
+                                                const InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.black))),
+                                            onChanged: (value) {},
+                                            // onSubmitted: (value) =>
+                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+                                            minLines: 3,
+                                            maxLines: 5,
+                                            errorText: null,
+                                            isIcon: false,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            Lang.get(
+                                                'profile_question_title_4'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          BorderTextField(
+                                            textController:
+                                                TextEditingController(),
+                                            inputDecoration:
+                                                const InputDecoration(
+                                                    border: OutlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                            color:
+                                                                Colors.black))),
+                                            onChanged: (value) {},
+                                            // onSubmitted: (value) =>
+                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
+                                            minLines: 3,
+                                            maxLines: 5,
+                                            errorText: null,
+                                            isIcon: false,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              return const ListTile(
+                                  // onTap: () =>
+                                  //     debugPrint("onTap(index=$index, page=$index)"),
+                                  // title: Text("Item#$index"),
+                                  // subtitle: Text("Page#$index"),
+                                  );
+                            },
+                          ),
+                        ),
+                        const CloseButton(),
+                      ])),
+                ],
+              ));
         });
   }
 }
