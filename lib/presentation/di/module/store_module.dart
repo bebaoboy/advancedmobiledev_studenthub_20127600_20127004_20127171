@@ -25,6 +25,7 @@ import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
+import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
 import 'package:boilerplate/domain/usecase/user/auth/logout_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/auth/save_token_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -180,6 +181,7 @@ mixin StoreModule {
       getIt<GetStudentProposalProjectsUseCase>(),
       getIt<GetStudentFavoriteProjectUseCase>(),
       getIt<SaveStudentFavoriteProjectUseCase>(),
+      getIt<PostProposalUseCase>(),
     ));
 
     getIt.registerSingleton<ProjectFormStore>(

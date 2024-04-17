@@ -124,8 +124,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
       length: 3,
       child: Stack(children: [
         Padding(
-          padding:
-              const EdgeInsets.symmetric(horizontal: Dimens.horizontal_padding),
+          padding: const EdgeInsets.symmetric(horizontal: 3),
           child: SegmentedTabControl(
             controller: widget.tabController,
             height: Dimens.tab_height,
@@ -239,8 +238,9 @@ class _AllProjectsState extends State<AllProjects> {
   @override
   Widget build(BuildContext context) {
     return Accordion(
-      paddingListTop: 0,
+      paddingListTop: 10,
       paddingListBottom: 0,
+      paddingListHorizontal: 10,
       maxOpenSections: 1,
       headerBackgroundColorOpened: Colors.black54,
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
@@ -251,11 +251,13 @@ class _AllProjectsState extends State<AllProjects> {
           headerBackgroundColor: Colors.black38,
           headerBackgroundColorOpened: Colors.black54,
           header: Padding(
-            padding: const EdgeInsets.only(top: 12, left: 12),
+            padding: const EdgeInsets.only(top: 12, left: 10),
             child: Container(
                 alignment: Alignment.topLeft,
                 child: Text(
-                    '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
+                  '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})',
+                  style: const TextStyle(color: Colors.white),
+                )),
           ),
           content: LimitedBox(
             maxHeight: MediaQuery.of(context).size.height / 2,
@@ -279,7 +281,9 @@ class _AllProjectsState extends State<AllProjects> {
             child: Container(
                 alignment: Alignment.topLeft,
                 child: Text(
-                    '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
+                  '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})',
+                  style: const TextStyle(color: Colors.white),
+                )),
           ),
           headerBackgroundColor: Colors.black38,
           headerBackgroundColorOpened: Colors.black54,

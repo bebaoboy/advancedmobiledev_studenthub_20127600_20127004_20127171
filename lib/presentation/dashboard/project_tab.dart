@@ -83,7 +83,11 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             clipBehavior: Clip.antiAlias,
             child: SheetContentScaffold(
                 appBar: AppBar(
-                  title: Text(Lang.get("filter_title")),
+                  title: Text(
+                    Lang.get("filter_title"),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary),
+                  ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -537,7 +541,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       titleTextStyle:
           Theme.of(context).textTheme.titleSmall!.merge(const TextStyle(
                 fontWeight: FontWeight.w700,
-                color: Colors.black,
               )),
       actions: const [
         // IconButton(
@@ -886,7 +889,7 @@ class _ProjectTabState extends State<ProjectTab> {
                                 }));
                       },
                       color: Theme.of(context).colorScheme.primary,
-                      icon: const Icon(Icons.favorite_rounded)),
+                      icon: const Icon(Icons.bookmark)),
                 ),
               ],
             )),
@@ -904,7 +907,8 @@ class _ProjectTabState extends State<ProjectTab> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 55, left: 5),
-          child: Text("${Lang.get("result")} ${_projectStore.projects.length} (Latest update)"),
+          child: Text(
+              "${Lang.get("result")} ${_projectStore.projects.length} (Latest update)"),
         ),
         Container(
             margin: const EdgeInsets.only(top: 90),
@@ -982,7 +986,8 @@ class _ProjectTabState extends State<ProjectTab> {
                         List<Project> lazyList = [];
 
                         lazyList.addAll(_projectStore.projects.sublist(
-                            min(refazynistKey.currentState!.length(), _projectStore.projects.length),
+                            min(refazynistKey.currentState!.length(),
+                                _projectStore.projects.length),
                             (refazynistKey.currentState!.length() + 5)
                                 .clamp(0, _projectStore.projects.length)));
 
