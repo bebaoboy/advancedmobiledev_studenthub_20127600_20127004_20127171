@@ -1,14 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" package="com.iotecksolutions.todoapp">
-
     <!-- The INTERNET permission is required for development. Specifically,
          flutter needs it to communicate with the running application
          to allow setting breakpoints, to provide hot reload, etc.
     -->
-
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -24,7 +21,6 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:minSdkVersion="34" android:name="android.permission.USE_EXACT_ALARM" />
-
     <!-- io.flutter.app.FlutterApplication is an android.app.Application that
          calls FlutterMain.startInitialization(this); in its onCreate method.
          In most cases you can leave this as-is, but you if you want to provide
@@ -41,10 +37,19 @@
             <action android:name="android.intent.action.SEND" />
             <data android:mimeType="*/*" />
         </intent>
-
     </queries>
-    <application tools:replace="android:label" android:icon="@mipmap/ic_launcher" android:label="StudentHub" android:name="${applicationName}" android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:exported="true" android:hardwareAccelerated="true" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
+    <application tools:replace="android:label" 
+    android:icon="@mipmap/ic_launcher" 
+    android:label="StudentHub" 
+    android:name="${applicationName}" 
+    android:usesCleartextTraffic="true">
+        <activity android:name=".MainActivity" 
+        android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" 
+        android:exported="true" 
+        android:hardwareAccelerated="true"              
+        android:supportsPictureInPicture="true"
+        android:launchMode="singleTop" 
+        android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen
@@ -52,7 +57,6 @@
             <!-- Specify that the launch screen should continue being displayed -->
             <!-- until Flutter renders its first frame. -->
             <meta-data android:name="io.flutter.embedding.android.SplashScreenDrawable" android:resource="@drawable/launch_background" />
-
             <!-- Theme to apply as soon as Flutter begins rendering frames -->
             <meta-data android:name="io.flutter.embedding.android.NormalTheme" android:resource="@style/NormalTheme" />
             <intent-filter>
@@ -61,7 +65,6 @@
             </intent-filter>
         </activity>
         <service android:name="de.julianassmann.flutter_background.IsolateHolderService" android:enabled="true" android:exported="false" android:foregroundServiceType="mediaProjection" />
-
     </application>
     <meta-data android:name="flutterEmbedding" android:value="2" />
 </manifest>

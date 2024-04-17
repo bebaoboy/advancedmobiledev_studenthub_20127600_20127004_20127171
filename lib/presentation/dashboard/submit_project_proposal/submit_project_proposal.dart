@@ -1,7 +1,6 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';

@@ -3,9 +3,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ProjectDetailsStudentScreen extends StatefulWidget {
@@ -82,11 +80,7 @@ class _ProjectDetailsStudentScreenState
                                     'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
                                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
                                     'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                                : widget.project.description +
-                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                                        'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
-                                        'eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
+                                : widget.project.description),
                           ),
                         ),
                       ),

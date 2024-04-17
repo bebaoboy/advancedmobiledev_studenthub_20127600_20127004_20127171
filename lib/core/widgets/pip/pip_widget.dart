@@ -1,4 +1,3 @@
-import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:flutter/material.dart';
 
 class PiPWidget extends StatefulWidget {
@@ -6,10 +5,6 @@ class PiPWidget extends StatefulWidget {
   final Function onPiPClose;
   final double elevation;
   final double pipBorderRadius;
-
-  static void closePiP() {
-    PictureInPicture.stopPiP();
-  }
 
   const PiPWidget({
     super.key,

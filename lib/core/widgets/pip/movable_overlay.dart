@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings
+// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings, unused_field, unused_element
 
 import 'dart:math';
 
@@ -48,6 +48,7 @@ class MovableOverlayState extends State<MovableOverlay>
   double _scaleFactor = 1.0;
 
   double _baseScaleFactor = 1.0;
+  bool fullyExpand = true;
 
   @override
   void initState() {
@@ -62,6 +63,7 @@ class MovableOverlayState extends State<MovableOverlay>
       vsync: this,
     );
     bottomChild = widget.bottomWidget;
+    _dragOffset = Offset.zero;
   }
 
   @override
@@ -83,6 +85,10 @@ class MovableOverlayState extends State<MovableOverlay>
         _isFloating = true;
         print("floating");
         _toggleFloatingAnimationController.forward();
+        _dragOffset = Offset.zero;
+        fullyExpand = true;
+        _scaleFactor = 1;
+        _baseScaleFactor = 1;
       }
     }
   }
@@ -117,18 +123,18 @@ class MovableOverlayState extends State<MovableOverlay>
   void _onPanEnd(ScaleEndDetails details) {
     if (!_isDragging) return;
 
-    final nearestCorner = _calculateNearestCorner(
-      offset: _dragOffset,
-      offsets: _offsets,
-    );
-    setState(() {
-      _corner = nearestCorner;
-      _isDragging = false;
-    });
-    _dragAnimationController.forward().whenCompleteOrCancel(() {
-      _dragAnimationController.value = 0;
-      _dragOffset = Offset.zero;
-    });
+    // final nearestCorner = _calculateNearestCorner(
+    //   offset: _dragOffset,
+    //   offsets: _offsets,
+    // );
+    // setState(() {
+    //   _corner = nearestCorner;
+    //   _isDragging = false;
+    // });
+    // _dragAnimationController.forward().whenCompleteOrCancel(() {
+    //   _dragAnimationController.value = 0;
+    //   _dragOffset = Offset.zero;
+    // });
   }
 
   void _onPanStart(ScaleStartDetails details) {
@@ -136,7 +142,7 @@ class MovableOverlayState extends State<MovableOverlay>
     setState(() {
       print("pan");
 
-      _dragOffset = _offsets[_corner]!;
+      // _dragOffset = _offsets[_corner]!;
       _isDragging = true;
     });
   }
@@ -232,9 +238,9 @@ class MovableOverlayState extends State<MovableOverlay>
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
     var windowPadding = mediaQuery.padding;
-    if (widget.avoidKeyboard) {
-      windowPadding += mediaQuery.viewInsets;
-    }
+    // if (widget.avoidKeyboard) {
+    //   windowPadding += mediaQuery.viewInsets;
+    // }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -273,7 +279,7 @@ class MovableOverlayState extends State<MovableOverlay>
           windowPadding: windowPadding,
         );
 
-        final calculatedOffset = _offsets[_corner];
+        // final calculatedOffset = _offsets[_corner];
 
         // BoxFit.cover
         final widthRatio = floatingWidth / width;
@@ -295,25 +301,30 @@ class MovableOverlayState extends State<MovableOverlay>
                   final animationCurve = CurveTween(
                     curve: Curves.easeInOutQuad,
                   );
-                  final dragAnimationValue = animationCurve.transform(
-                    _dragAnimationController.value,
-                  );
+                  // final dragAnimationValue = animationCurve.transform(
+                  //   _dragAnimationController.value,
+                  // );
                   final toggleFloatingAnimationValue = animationCurve.transform(
                     _toggleFloatingAnimationController.value,
                   );
 
-                  final floatingOffset = _isDragging
-                      ? _dragOffset
-                      : Tween<Offset>(
-                          begin: _dragOffset,
-                          end: calculatedOffset,
-                        ).transform(_dragAnimationController.isAnimating
-                          ? dragAnimationValue
-                          : toggleFloatingAnimationValue);
+                  // final floatingOffset = _isDragging
+                  //     ? _dragOffset
+                  //     : Tween<Offset>(
+                  //         begin: _dragOffset,
+                  //         end: calculatedOffset,
+                  //       ).transform(_dragAnimationController.isAnimating
+                  //         ? dragAnimationValue
+                  //         : toggleFloatingAnimationValue);
+                  var floatingOffset = _dragOffset;
+                  if (widget.avoidKeyboard) {
+                    // floatingOffset -= Offset(0, mediaQuery.viewInsets.bottom);
+                  }
+                  print("floating  $_dragOffset");
 
                   final borderRadius = Tween<double>(
                     begin: 0,
-                    end: 10,
+                    end: 12,
                   ).transform(toggleFloatingAnimationValue);
                   final width = Tween<double>(
                     begin: fullWidgetSize.width,
@@ -333,51 +344,130 @@ class MovableOverlayState extends State<MovableOverlay>
                     top: floatingOffset.dy,
                     child: Card(
                       elevation: 10,
-                      child: GestureDetector(
-                        onScaleStart: _isFloating ? _onScaleStart : null,
-                        onScaleEnd: _isFloating ? _onScaleEnd : null,
-                        onScaleUpdate: _isFloating ? _onScaleUpdate : null,
-                        onTap: widget.onTapTopWidget,
-                        child: SizedBox(
-                          width: width,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              PiPAppBar(radius: borderRadius),
-                              Flexible(
-                                fit: FlexFit.loose,
-                                child: Container(
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    color: Colors.transparent,
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft:
-                                            Radius.circular(borderRadius),
-                                        bottomRight:
-                                            Radius.circular(borderRadius)),
-                                  ),
-                                  width: width,
-                                  height: height,
-                                  child: Transform.scale(
-                                    scale: scale,
-                                    child: OverflowBox(
-                                      maxHeight: fullWidgetSize.height,
-                                      maxWidth: fullWidgetSize.width,
-                                      child: Container(
-                                        margin: const EdgeInsets.only(top: 20),
-                                        child: child ??
-                                            const SizedBox(
-                                              child: Text("???"),
+                      child: widget.pipParams.resizable
+                          ? GestureDetector(
+                              onScaleStart: _isFloating ? _onScaleStart : null,
+                              onScaleEnd: _isFloating ? _onScaleEnd : null,
+                              onScaleUpdate:
+                                  _isFloating ? _onScaleUpdate : null,
+                              onTap: widget.onTapTopWidget,
+                              child: SizedBox(
+                                width: width,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    PiPAppBar(
+                                      onExpand: () {
+                                        setState(() {
+                                          if (!fullyExpand) {
+                                            _scaleFactor = 1;
+                                            fullyExpand = true;
+                                            _dragOffset = Offset.zero;
+                                          } else {
+                                            _scaleFactor = 0.5;
+                                            fullyExpand = false;
+                                            _dragOffset = Offset.zero;
+                                          }
+                                        });
+                                      },
+                                      radius: borderRadius,
+                                      openWidgetOnClose:
+                                          widget.pipParams.openWidgetOnClose,
+                                    ),
+                                    Flexible(
+                                      fit: FlexFit.loose,
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          color: Colors.transparent,
+                                          borderRadius: BorderRadius.only(
+                                              bottomLeft:
+                                                  Radius.circular(borderRadius),
+                                              bottomRight: Radius.circular(
+                                                  borderRadius)),
+                                        ),
+                                        width: width,
+                                        height: height,
+                                        child: Transform.scale(
+                                          scale: scale,
+                                          child: OverflowBox(
+                                            maxHeight: fullWidgetSize.height,
+                                            maxWidth: fullWidgetSize.width,
+                                            child: Container(
+                                              // margin: const EdgeInsets.only(
+                                              //     top: 20),
+                                              child: child ??
+                                                  const SizedBox(
+                                                    child: Text("???"),
+                                                  ),
                                             ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            )
+                          : SizedBox(
+                              width: width,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  PiPAppBar(
+                                    radius: borderRadius,
+                                    onExpand: () {
+                                      setState(() {
+                                        if (!fullyExpand) {
+                                          _scaleFactor = 1;
+                                          fullyExpand = true;
+                                          _dragOffset = Offset.zero;
+                                        } else {
+                                          _scaleFactor = 0.5;
+                                          fullyExpand = false;
+                                          _dragOffset = Offset.zero;
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  Flexible(
+                                    fit: FlexFit.loose,
+                                    child: AnimatedContainer(
+                                      duration:
+                                          const Duration(milliseconds: 500),
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: BoxDecoration(
+                                        color: Colors.transparent,
+                                        borderRadius: BorderRadius.only(
+                                            bottomLeft:
+                                                Radius.circular(borderRadius),
+                                            bottomRight:
+                                                Radius.circular(borderRadius)),
+                                      ),
+                                      width: width,
+                                      height: height,
+                                      child: Transform.scale(
+                                        scale: scale,
+                                        child: OverflowBox(
+                                          maxHeight: fullWidgetSize.height,
+                                          maxWidth: fullWidgetSize.width,
+                                          child: Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 20),
+                                            child: child ??
+                                                const SizedBox(
+                                                  child: Text("???"),
+                                                ),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                                  )
+                                ],
+                              ),
+                            ),
                     ),
                   );
                 },

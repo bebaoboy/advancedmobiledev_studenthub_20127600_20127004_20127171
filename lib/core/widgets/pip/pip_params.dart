@@ -14,6 +14,7 @@ class PiPParams {
   final bool movable;
   final Size minSize;
   final Size maxSize;
+  final bool openWidgetOnClose;
   const PiPParams({
     this.bottomSpace = 16,
     this.leftSpace = 16,
@@ -26,5 +27,6 @@ class PiPParams {
     this.movable = true,
     this.minSize = const Size(200, 100),
     this.maxSize = const Size(300, 150),
+    this.openWidgetOnClose = true,
   });
 }

@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
 class PiPAppBar extends StatelessWidget implements PreferredSizeWidget {
-  PiPAppBar({super.key, this.radius = 30});
+  PiPAppBar({super.key, this.radius = 30, this.openWidgetOnClose = true, required this.onExpand});
   double? radius = 30;
+  bool openWidgetOnClose;
+  Function onExpand;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,18 @@ class PiPAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.zero,
               iconSize: 16,
               onPressed: () {
-                PictureInPicture.stopPiP();
+                onExpand();
+              },
+              icon: const Icon(
+                Icons.fullscreen,
+              ),
+            ),
+            IconButton(
+              alignment: Alignment.centerRight,
+              padding: EdgeInsets.zero,
+              iconSize: 16,
+              onPressed: () {
+                PictureInPicture.stopPiP(openWidgetOnClose);
               },
               icon: const Icon(
                 Icons.close,
