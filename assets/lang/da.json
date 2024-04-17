@@ -49,7 +49,7 @@
   "login_btn_sign_in": "Sign In",
   "login_error_missing_fields": "Please fill in all fields",
   "login_btn_sign_up": "Sign Up",
-  "login_btn_sign_up_prompt": "Dont have a StudentHub account?",
+  "login_btn_sign_up_prompt": "Don't have a StudentHub account?",
   "Email can't be empty": "Email can't be empty",
   "Please enter a valid email address": "Please enter a valid email address",
   "Password can't be empty": "Password can't be empty",

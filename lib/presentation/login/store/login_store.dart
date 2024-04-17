@@ -280,6 +280,11 @@ abstract class _UserStore with Store {
     await _logoutUseCase.call(params: true);
   }
 
+  @action
+  UserType getCurrentType() {
+    return user?.type ?? UserType.naught;
+  }
+
   // general methods:-----------------------------------------------------------
   @action
   void dispose() {

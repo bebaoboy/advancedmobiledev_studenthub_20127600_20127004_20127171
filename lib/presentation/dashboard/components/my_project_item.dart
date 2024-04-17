@@ -205,7 +205,8 @@ class _MyProjectItemState extends State<MyProjectItem> {
   final _languageStore = getIt<LanguageStore>();
 
   buildItem(width) {
-    return Padding(
+    return Container(
+        color: Theme.of(context).colorScheme.background,
         padding: const EdgeInsets.symmetric(
             horizontal: Dimens.horizontal_padding, vertical: 5),
         child: ClipRect(
@@ -214,13 +215,13 @@ class _MyProjectItemState extends State<MyProjectItem> {
               ? RotatedCornerDecoration.withColor(
                   color: Theme.of(context).colorScheme.primaryContainer,
                   spanBaselineShift: 4,
-                  badgeSize: const Size(64, 64),
+                  badgeSize: const Size(84, 84),
                   badgeCornerRadius: const Radius.circular(8),
                   badgePosition: BadgePosition.topEnd,
                   textSpan: TextSpan(
                       text: Lang.get("closed"),
                       style: const TextStyle(
-                        fontSize: 8,
+                        fontSize: 14,
                         letterSpacing: 1,
                         fontWeight: FontWeight.bold,
                         shadows: [
@@ -232,8 +233,13 @@ class _MyProjectItemState extends State<MyProjectItem> {
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 color: widget.project.enabled == Status.inactive
-                    ? Colors.grey.shade300
-                    : null,
+                    ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1)
+                    : Theme.of(context).brightness == Brightness.dark
+                        ? Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.2)
+                        : null,
                 border: Border.all(
                     color: Colors.black54,
                     width: 0.3,

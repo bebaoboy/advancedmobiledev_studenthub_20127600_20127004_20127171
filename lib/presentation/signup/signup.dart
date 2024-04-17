@@ -1,3 +1,4 @@
+
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';

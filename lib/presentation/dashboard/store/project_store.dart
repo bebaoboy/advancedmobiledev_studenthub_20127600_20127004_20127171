@@ -12,6 +12,7 @@ import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/save_student_favorite_project.dart';
+import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -28,17 +29,22 @@ abstract class _ProjectStore with Store {
     this._getStudentProposalProjectsUseCase,
     this._getStudentFavoriteProjectUseCase,
     this._saveStudentFavoriteProjectUseCase,
+    this._postProposalUseCase,
   ) {
     // _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
     //   _favoriteProjects = value;
     // });
   }
 
+  // company
   final GetProjectsUseCase _getProjectsUseCase;
   final GetProjectByCompanyUseCase _getProjectByCompanyUseCase;
+
+  // student
   final GetStudentProposalProjectsUseCase _getStudentProposalProjectsUseCase;
   final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
   final SaveStudentFavoriteProjectUseCase _saveStudentFavoriteProjectUseCase;
+  final PostProposalUseCase _postProposalUseCase;
 
   @observable
   ProjectList _projects = ProjectList(projects: List.empty(growable: true));
@@ -52,10 +58,20 @@ abstract class _ProjectStore with Store {
   List<Project> get companyProjects => _companyProjects.projects ?? [];
 
   @observable
+  ProjectList _studentProjects =
+      ProjectList(projects: List.empty(growable: true));
+
+  List<Project> get studentProjects => _studentProjects.projects ?? [];
+
+  @observable
   ProjectList _favoriteProjects =
       ProjectList(projects: List.empty(growable: true));
 
   List<Project> get favoriteProjects => _favoriteProjects.projects ?? [];
+
+  @observable
+  bool postSuccess = false;
+
 
   Future addProject(Project value, {index = 0, sort = true}) async {
     if (_projects.projects != null) {
@@ -99,6 +115,24 @@ abstract class _ProjectStore with Store {
     _companyProjects.projects?.sort(
       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
     );
+  }
+
+  Future<bool> postProposal(StudentProject project, String studentId) async {
+    int status = 0;
+    int disableFlag = 0;
+
+    var params = PostProposalParams(status, disableFlag, project.description,
+        int.parse(project.objectId!), int.parse(studentId));
+    return await _postProposalUseCase.call(params: params).then((value) {
+      if (value.statusCode == HttpStatus.accepted ||
+          value.statusCode == HttpStatus.ok ||
+          value.statusCode == HttpStatus.created) {
+        _studentProjects.projects!.add(project);
+        return true;
+      } else {
+        return false;
+      }
+    });
   }
 
   Future updateCompanyProject(Project value, {index = 0}) async {

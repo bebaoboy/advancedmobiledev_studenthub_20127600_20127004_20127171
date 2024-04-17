@@ -14,6 +14,7 @@ import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
+import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
 import 'package:dio/dio.dart';
 
 class ProjectRepositoryImpl extends ProjectRepository {
@@ -112,5 +113,11 @@ class ProjectRepositoryImpl extends ProjectRepository {
   @override
   Future saveStudentFavProject(ProjectList projectList) async {
     await _sharedPrefHelper.saveFavoriteProjects(projectList);
+  }
+
+  @override
+  Future<Response> postProposal(PostProposalParams params) async {
+    var response = await _projectApi.postProposal(params);
+    return response;
   }
 }

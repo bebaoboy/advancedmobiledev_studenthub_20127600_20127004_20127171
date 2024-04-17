@@ -5,21 +5,25 @@ import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class _OpenContainerWrapper extends StatelessWidget {
-  const _OpenContainerWrapper({
+  _OpenContainerWrapper({
     required this.closedChild,
     required this.project,
   });
 
   final Widget closedChild;
   final Project project;
+  final UserStore _userStore = getIt<UserStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -28,9 +32,15 @@ class _OpenContainerWrapper extends StatelessWidget {
       useRootNavigator: true,
       transitionDuration: const Duration(milliseconds: 500),
       openBuilder: (context, closedContainer) {
-        return ProjectDetailsPage(
-          project: project,
-        );
+        if (_userStore.getCurrentType() == UserType.company) {
+          return ProjectDetailsPage(
+            project: project,
+          );
+        } else {
+          return ProjectDetailsStudentScreen(
+            project: project,
+          );
+        }
       },
       openColor: theme.cardColor,
       closedShape: const RoundedRectangleBorder(
@@ -336,8 +346,8 @@ class _ProjectItem2State extends State<ProjectItem2> {
   @override
   Widget build(BuildContext context) {
     var icon = widget.project.isFavorite
-        ? const Icon(Icons.favorite)
-        : const Icon(Icons.favorite_border);
+        ? const Icon(Icons.bookmark)
+        : const Icon(Icons.bookmark_add_outlined);
 
     return _OpenContainerWrapper(
       project: widget.project,

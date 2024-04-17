@@ -84,7 +84,11 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
             clipBehavior: Clip.antiAlias,
             child: SheetContentScaffold(
                 appBar: AppBar(
-                  title: Text(Lang.get("filter_title")),
+                  title: Text(
+                    Lang.get("filter_title"),
+                    style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSecondary),
+                  ),
                 ),
                 body: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -545,7 +549,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       titleTextStyle:
           Theme.of(context).textTheme.titleSmall!.merge(const TextStyle(
                 fontWeight: FontWeight.w700,
-                color: Colors.black,
               )),
       actions: const [
         // IconButton(
@@ -891,7 +894,7 @@ class _ProjectTabState extends State<ProjectTab> {
                                 }));
                       },
                       color: Theme.of(context).colorScheme.primary,
-                      icon: const Icon(Icons.favorite_rounded)),
+                      icon: const Icon(Icons.bookmark)),
                 ),
               ],
             )),
@@ -908,6 +911,7 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
+
           margin: const EdgeInsets.only(top: 65, left: 5),
           child: Text("${Lang.get("result")} ${_projectStore.projects.length}"),
         ),
@@ -1042,6 +1046,7 @@ class _ProjectTabState extends State<ProjectTab> {
                             _projectStore.projects.length) {
                           return [];
                         }
+
 
                         var p = getProjectWithKeyword(_projectStore.projects);
                         lazyList.addAll(p.sublist(

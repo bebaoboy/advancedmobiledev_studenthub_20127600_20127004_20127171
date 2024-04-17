@@ -1,8 +1,11 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ProjectDetailsStudentScreen extends StatefulWidget {
@@ -29,27 +32,25 @@ class _ProjectDetailsStudentScreenState
     return Scaffold(
       appBar: _buildAppBar(),
       body: Padding(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.only(
+            top: 16.0, bottom: 10.0, left: 16.0, right: 16.0),
         child: _buildFourContent(),
       ),
     );
   }
 
   Widget _buildFourContent() {
-    return SingleChildScrollView(
-        controller: ScrollController(),
-        physics: const ClampingScrollPhysics(),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Flexible(
-                flex: 1,
-                fit: FlexFit.loose,
-                child: Container(
-                  constraints: BoxConstraints(
-                      maxHeight: MediaQuery.of(context).size.height * 0.75),
+    return Stack(
+      // mainAxisSize: MainAxisSize.min,
+      // crossAxisAlignment: CrossAxisAlignment.start,
+      // mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Positioned.fill(
+          child: Column(
+            children: [
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: SingleChildScrollView(
                   child: Column(
                     children: [
                       const SizedBox(
@@ -61,7 +62,9 @@ class _ProjectDetailsStudentScreenState
                           widget.project.title.isEmpty
                               ? "Demo Project"
                               : widget.project.title,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: Colors.green.shade300),
                         ),
                       ),
                       const SizedBox(
@@ -71,7 +74,7 @@ class _ProjectDetailsStudentScreenState
                       Align(
                         alignment: Alignment.topLeft,
                         child: Container(
-                          constraints: const BoxConstraints(maxHeight: 400),
+                          constraints: const BoxConstraints(maxHeight: 350),
                           child: SingleChildScrollView(
                             controller: ScrollController(),
                             child: Text(widget.project.description.isEmpty
@@ -79,7 +82,11 @@ class _ProjectDetailsStudentScreenState
                                     'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
                                     'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
                                     'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-                                : widget.project.description),
+                                : widget.project.description +
+                                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
+                                        'eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+                                        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do '
+                                        'eiusmod tempor incididunt ut labore et dolore magna aliqua.'),
                           ),
                         ),
                       ),
@@ -143,70 +150,46 @@ class _ProjectDetailsStudentScreenState
                             )
                           ],
                         ),
-                      ),
+                      )
                     ],
                   ),
-                )),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                // Flexible(
-                //   fit: FlexFit.tight,
-                //   child: TextButton(
-                //     onPressed: () {
-                //       widget.onSheetDismissed();
-                //     },
-                //     child: const Text(Lang.get('Cancel'),
-                //   ),
-                // ),
-                // const SizedBox(width: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    surfaceTintColor: Colors.transparent,
-
-                    minimumSize: Size(
-                        MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: Text(
-                    Lang.get('save'),
-                    style: Theme.of(context).textTheme.bodyMedium!.merge(
-                        TextStyle(
-                            color: Theme.of(context).colorScheme.secondary)),
-                  ),
                 ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).colorScheme.primaryContainer,
-                    surfaceTintColor: Colors.transparent,
-                    minimumSize: Size(
-                        MediaQuery.of(context).size.width / 2 - 48, 40), // NEW
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pushNamed(Routes.submitProposal,
-                        arguments: widget.project);
-                  },
-                  child: Text(
-                    Lang.get('apply_now'),
-                    style: Theme.of(context).textTheme.bodyMedium!.merge(
-                        TextStyle(
-                            color: Theme.of(context).colorScheme.secondary)),
-                  ),
+              ),
+            ],
+          ),
+        ),
+        Positioned.fill(
+          bottom: 0,
+          right: 0,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              RoundedButtonWidget(
+                onPressed: () {},
+                buttonText: Lang.get('save'),
+                buttonTextSize: 16,
+                buttonColor: Theme.of(context).primaryColor,
+              ),
+              MaterialButton(
+                color: Theme.of(context).primaryColor,
+                onPressed: () {
+                  Navigator.of(context).pushNamed(Routes.submitProposal,
+                      arguments: widget.project);
+                },
+                child: Text(
+                  Lang.get('apply_now'),
+                  style: Theme.of(context).textTheme.bodyMedium!.merge(
+                      TextStyle(
+                          color: Theme.of(context).colorScheme.secondary)),
                 ),
-              ],
-            ),
-          ],
-        ));
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
   // app bar methods:-----------------------------------------------------------

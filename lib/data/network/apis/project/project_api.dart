@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
+import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
 import 'package:dio/dio.dart';
 import 'package:interpolator/interpolator.dart';
 
@@ -58,6 +59,19 @@ class ProjectApi {
         )
         .onError(
             (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> postProposal(PostProposalParams params) async {
+    return await _dioClient.dio.post(
+        Interpolator(Endpoints.postProposal)({"studentId": params.studentId}),
+        data: {
+          "projectId": params.projectId,
+          "studentId": params.studentId,
+          "coverLetter": params.coverLetter,
+          "statusFlag": params.status,
+          "disableFlag": params.disableFlag
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
   }
 
   Future<Response> getStudentFavoriteProjects(String studentId) async {
