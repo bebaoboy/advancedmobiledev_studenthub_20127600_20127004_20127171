@@ -6,17 +6,17 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class ProjectDetailsStudentScreen extends StatefulWidget {
-  const ProjectDetailsStudentScreen({super.key, required this.project});
-  final StudentProject project;
+class ProjectDetailsStudentApplyScreen extends StatefulWidget {
+  const ProjectDetailsStudentApplyScreen({super.key, required this.project});
+  final Project project;
 
   @override
-  State<ProjectDetailsStudentScreen> createState() =>
-      _ProjectDetailsStudentScreenState();
+  State<ProjectDetailsStudentApplyScreen> createState() =>
+      _ProjectDetailsStudentApplyScreenState();
 }
 
-class _ProjectDetailsStudentScreenState
-    extends State<ProjectDetailsStudentScreen> {
+class _ProjectDetailsStudentApplyScreenState
+    extends State<ProjectDetailsStudentApplyScreen> {
   var updatedText = "";
   @override
   void initState() {
@@ -39,7 +39,6 @@ class _ProjectDetailsStudentScreenState
 
   Widget _buildFourContent() {
     return SingleChildScrollView(
-      controller: ScrollController(),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -188,7 +187,7 @@ class _ProjectDetailsStudentScreenState
               alignment: Alignment.bottomRight,
               child: Row(
                 mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   ElevatedButton(
@@ -214,31 +213,30 @@ class _ProjectDetailsStudentScreenState
                               color: Theme.of(context).colorScheme.secondary)),
                     ),
                   ),
-                  if (!widget.project.isSubmitted)
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        surfaceTintColor: Colors.transparent,
-                        minimumSize: Size(
-                            MediaQuery.of(context).size.width / 2 - 48,
-                            40), // NEW
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pushNamed(Routes.submitProposal,
-                            arguments: widget.project);
-                      },
-                      child: Text(
-                        Lang.get('apply_now'),
-                        style: Theme.of(context).textTheme.bodyMedium!.merge(
-                            TextStyle(
-                                color:
-                                    Theme.of(context).colorScheme.secondary)),
+
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Theme.of(context).colorScheme.primaryContainer,
+                      surfaceTintColor: Colors.transparent,
+                      minimumSize: Size(
+                          MediaQuery.of(context).size.width / 2 - 48,
+                          40), // NEW
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(3),
                       ),
                     ),
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Routes.submitProposal,
+                          arguments: widget.project);
+                    },
+                    child: Text(
+                      Lang.get('apply_now'),
+                      style: Theme.of(context).textTheme.bodyMedium!.merge(
+                          TextStyle(
+                              color: Theme.of(context).colorScheme.secondary)),
+                    ),
+                  ),
                 ],
               ),
             ),

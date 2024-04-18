@@ -78,7 +78,6 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                 ),
                 MaterialButton(
                   onPressed: () {
-                    // TODO: check id proposal + add callback
                     if (descriptionController.text.isEmpty) {
                       Toastify.show(context, '', "Description can't be empty",
                           ToastificationType.error, () {});

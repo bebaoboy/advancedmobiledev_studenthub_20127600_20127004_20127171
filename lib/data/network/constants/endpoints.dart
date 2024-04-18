@@ -60,7 +60,7 @@ class Endpoints {
   static const String getCandidatesOfProject =
       "$baseUrl/api/proposal/getByProjectId/{projectId}";
   static const String postProposal = "$baseUrl/api/proposal";
-  static const String updateProposal = "$baseUrl/api/proposal/{proposalId}";
+  static const String updateProposal = "$baseUrl/api/proposal/{id}";
 
   static const String addNewProject = "$baseUrl/api/project";
   static const String deleteProject = "$baseUrl/api/project/{projectId}";

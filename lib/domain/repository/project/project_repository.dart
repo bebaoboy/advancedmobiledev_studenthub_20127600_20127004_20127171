@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
+import 'package:boilerplate/domain/usecase/proposal/update_proposal.dart';
 import 'package:dio/dio.dart';
 
 abstract class ProjectRepository {
@@ -30,4 +31,6 @@ abstract class ProjectRepository {
   Future saveStudentFavProject(ProjectList params);
 
   Future<Response> postProposal(PostProposalParams params);
+
+  Future<Response> updateProposal(UpdateProposalParams params);
 }

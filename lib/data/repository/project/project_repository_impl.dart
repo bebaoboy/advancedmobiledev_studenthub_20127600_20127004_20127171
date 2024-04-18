@@ -15,6 +15,7 @@ import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
+import 'package:boilerplate/domain/usecase/proposal/update_proposal.dart';
 import 'package:dio/dio.dart';
 
 class ProjectRepositoryImpl extends ProjectRepository {
@@ -32,7 +33,7 @@ class ProjectRepositoryImpl extends ProjectRepository {
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
         List json = value.data["result"];
-        
+
         return ProjectList(projects: null, data: json);
       } else {
         // return ProjectList(projects: List.empty(growable: true));
@@ -118,6 +119,12 @@ class ProjectRepositoryImpl extends ProjectRepository {
   @override
   Future<Response> postProposal(PostProposalParams params) async {
     var response = await _projectApi.postProposal(params);
+    return response;
+  }
+
+  @override
+  Future<Response> updateProposal(UpdateProposalParams params) async {
+    var response = await _projectApi.updateProposal(params);
     return response;
   }
 }

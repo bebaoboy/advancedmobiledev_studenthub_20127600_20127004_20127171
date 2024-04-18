@@ -83,7 +83,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                 pageController: _pageController,
               ))
             : KeepAlivePage(StudentDashBoardTab(
-                key: const PageStorageKey(1), pageController: _pageController)),
+                key: const PageStorageKey(1), pageController: sc[1])),
         // Routes.projectDetails: ProjectDetailsPage(
         //   project: Project(title: 'som', description: 'smm'),
         // ),
@@ -137,26 +137,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   ];
   int selectedIndex = 0;
   final bool _colorful = false;
-  void onButtonPressed(int index) {
-    if (index == selectedIndex) {
-      if (index == 1) {
-        _pageController.jumpToPage(selectedIndex);
-        return;
-      }
-    }
-    if ((index - selectedIndex).abs() > 1) {
-      setState(() {
-        selectedIndex = index;
-      });
-      _pageController.jumpToPage(selectedIndex);
-      return;
-    }
-    setState(() {
-      selectedIndex = index;
-    });
-    _pageController.animateToPage(selectedIndex,
-        duration: const Duration(milliseconds: 500), curve: Curves.decelerate);
-  }
 
   double pageValue = 0;
   //scale factor

@@ -184,7 +184,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                       // ignore: prefer_const_constructors
                       child: ProjectTabs(
                         // tabController: tabController,
-                        pageController: widget.pageController,
+                        // pageController: widget.pageController,
                         tabController: tabController,
                         scrollController: scrollController,
                       ),
@@ -216,11 +216,11 @@ class ProjectTabs extends StatefulWidget {
   ProjectTabs({
     super.key,
     required this.tabController,
-    required this.pageController,
+    // required this.pageController,
     required this.scrollController,
   });
   TabController tabController;
-  PageController pageController;
+  // PageController pageController;
   List<ScrollController> scrollController;
 
   @override

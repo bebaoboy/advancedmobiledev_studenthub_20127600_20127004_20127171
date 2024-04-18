@@ -10,8 +10,10 @@ import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
 import 'package:accordion/accordion.dart';
+import 'package:flutter/rendering.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
@@ -169,7 +171,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                               e.hiredStatus == HireStatus.hired)
                           .toList()),
                   ArchiveProjects(
-                    scrollController: widget.pageController,
+                    scrollController: ScrollController(),
                     projects: userStore.user?.studentProfile?.proposalProjects
                         ?.where((e) => e.project != null && e.enabled)
                         .toList(),
@@ -218,10 +220,28 @@ class ArchiveProjects extends StatefulWidget {
 
 class _ArchiveProjectsState extends State<ArchiveProjects> {
   @override
+  void initState() {
+    super.initState();
+    if (widget.scrollController != null) {
+      widget.scrollController!.addListener(
+        () {
+          if (widget.scrollController!.position.userScrollDirection ==
+              ScrollDirection.reverse) {
+            NavbarNotifier2.hideBottomNavBar = true;
+          } else {
+            NavbarNotifier2.hideBottomNavBar = false;
+          }
+        },
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListView.builder(
       controller: widget.scrollController,
       itemCount: widget.projects?.length ?? 0,
+      physics: const AlwaysScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         // widget.projects![index].isLoading = false;
         return StudentProjectItem(project: widget.projects![index]);
@@ -262,11 +282,15 @@ class _AllProjectsState extends State<AllProjects> {
       paddingListTop: 10,
       paddingListBottom: 0,
       paddingListHorizontal: 10,
+      scaleWhenAnimating: true,
       maxOpenSections: 1,
       headerBackgroundColorOpened: Colors.black54,
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
       children: [
         AccordionSection(
+          onOpenSection: () {
+            NavbarNotifier2.hideBottomNavBar = false;
+          },
           isOpen: true,
           leftIcon: const Icon(Icons.insights_rounded, color: Colors.white),
           headerBackgroundColor: Colors.black38,
@@ -296,6 +320,9 @@ class _AllProjectsState extends State<AllProjects> {
         ),
         AccordionSection(
           isOpen: true,
+          onOpenSection: () {
+            NavbarNotifier2.hideBottomNavBar = false;
+          },
           leftIcon: const Icon(Icons.compare_rounded, color: Colors.white),
           header: Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 12.0),

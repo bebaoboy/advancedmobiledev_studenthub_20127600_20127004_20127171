@@ -1,11 +1,14 @@
 import 'package:boilerplate/core/extensions/cap_extension.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:toastification/toastification.dart';
 
 class StudentProjectItem extends StatefulWidget {
   final Proposal project;
@@ -24,19 +27,19 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
     super.initState();
   }
 
-  Widget _buildImage() {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: Container(
-        width: double.infinity,
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.black,
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
-    );
-  }
+  // Widget _buildImage() {
+  //   return AspectRatio(
+  //     aspectRatio: 16 / 9,
+  //     child: Container(
+  //       width: double.infinity,
+  //       height: 100,
+  //       decoration: BoxDecoration(
+  //         color: Colors.black,
+  //         borderRadius: BorderRadius.circular(16),
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -80,9 +83,15 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
         child: InkWell(
           onTap: () {
             //print('navigate to student project detail');
-            Navigator.of(NavigationService.navigatorKey.currentContext!)
-                .pushNamed(Routes.projectDetailsStudent,
-                    arguments: {"project": widget.project});
+            if (widget.project.project != null) {
+              Navigator.of(NavigationService.navigatorKey.currentContext!)
+                  .pushNamed(Routes.projectDetailsStudent,
+                      arguments: {"project": widget.project.project!});
+            } else {
+              Toastify.show(context, Lang.get("error"), "Project is null",
+                  ToastificationType.error, () {},
+                  aboveNavbar: true);
+            }
           },
           child: Padding(
             padding: const EdgeInsets.all(8.0),

@@ -245,5 +245,8 @@
   "sorry_text": "Ứng dụng đã gặp lỗi, chúng tôi đã thông báo cho đội IT để xử lý. Xin lỗi về sự bất tiện này :'(.",
   "reject_file_text": "Định dạng không được hổ trợ: ",
   "result": "Kết quả",
-  "latest": "mới nhất"
+  "latest": "mới nhất",
+  "accept_offer": "Đồng ý",
+  "new_offer": "Bạn có offer mới"
+
 }

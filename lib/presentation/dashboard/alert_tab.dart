@@ -1,9 +1,8 @@
 import 'dart:math';
 
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -129,6 +128,8 @@ class _AlertTabState extends State<AlertTab> {
         child: _buildAlertsContent());
   }
 
+  var projectStore = getIt<ProjectStore>();
+
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
       return Scrollbar(
@@ -143,7 +144,46 @@ class _AlertTabState extends State<AlertTab> {
                 color: colors[index],
                 tag: index,
                 size: 100,
-                onTap: () => showAlbumDetailsDialog(context, index, getOffer()),
+                onTap: () {
+                  print(index);
+                  NavbarNotifier2.hideBottomNavBar = true;
+
+                  Navigator.of(NavigationService.navigatorKey.currentContext ??
+                          context)
+                      .push(
+                    ModalExprollableRouteBuilder(
+                        pageBuilder: (_, __, ___) => OfferDetailsDialog(
+                              index: index,
+                              proposal: getOffer(),
+                              onAcceptCallback: (proposal) {
+                                var userStore = getIt<UserStore>();
+                                var id =
+                                    userStore.user?.studentProfile?.objectId;
+                                if (id != null && proposal != null) {
+                                  projectStore
+                                      .updateProposal(proposal, id)
+                                      .then(
+                                    (value) {
+                                      setState(() {});
+                                    },
+                                  );
+                                }
+                              },
+                            ),
+                        // Increase the transition durations and take a closer look at what's going on!
+                        transitionDuration: const Duration(milliseconds: 500),
+                        reverseTransitionDuration:
+                            const Duration(milliseconds: 300),
+                        // The next two lines are not required, but are recommended for better performance.
+                        dismissThresholdInset:
+                            const DismissThresholdInset(dragMargin: 10000)),
+                  )
+                      .then(
+                    (value) {
+                      NavbarNotifier2.hideBottomNavBar = false;
+                    },
+                  );
+                },
               ),
             );
           },
@@ -190,7 +230,7 @@ class _AlertTabState extends State<AlertTab> {
                                         arguments: "Javis - AI Copilot"));
                               } else if (alerts[index]['action'] ==
                                   "View offer") {
-                                // showAlbumDetailsDialog(context, 2);
+                                // showOfferDetailsDialog(context, 2);
                                 // NavbarNotifier2.hideBottomNavBar = true;
                               }
                             }
@@ -209,46 +249,23 @@ class _AlertTabState extends State<AlertTab> {
   }
 }
 
-void showAlbumDetailsDialog(
-    BuildContext context, int index, List<Proposal> proposals) {
-  print(index);
-  NavbarNotifier2.hideBottomNavBar = true;
-
-  Navigator.of(NavigationService.navigatorKey.currentContext ?? context)
-      .push(
-    ModalExprollableRouteBuilder(
-        pageBuilder: (_, __, ___) => AlbumDetailsDialog(
-              index: index,
-              proposal: proposals,
-            ),
-        // Increase the transition durations and take a closer look at what's going on!
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        // The next two lines are not required, but are recommended for better performance.
-        dismissThresholdInset: const DismissThresholdInset(dragMargin: 10000)),
-  )
-      .then(
-    (value) {
-      NavbarNotifier2.hideBottomNavBar = false;
-    },
-  );
-}
-
-class AlbumDetailsDialog extends StatefulWidget {
-  const AlbumDetailsDialog({
+class OfferDetailsDialog extends StatefulWidget {
+  const OfferDetailsDialog({
     super.key,
     required this.index,
     required this.proposal,
+    required this.onAcceptCallback,
   });
 
   final int index;
   final List<Proposal> proposal;
+  final Function(Proposal?) onAcceptCallback;
 
   @override
-  State<StatefulWidget> createState() => _AlbumDetailsDialogState();
+  State<StatefulWidget> createState() => _OfferDetailsDialogState();
 }
 
-class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
+class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
   late final ExprollablePageController controller;
 
   @override
@@ -292,21 +309,39 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                       ),
                       child: Stack(children: [
                         Container(
-                          margin: const EdgeInsets.only(top: 20),
+                          margin: const EdgeInsets.only(top: 00),
                           child: ListView.builder(
                             controller: PageContentScrollController.of(context),
-                            itemCount: 3,
+                            itemCount: 4,
                             itemBuilder: (_, index) {
                               if (index == 0) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(left: 35),
+                                      child: Text(
+                                          "${widget.proposal[page].isHired ? "Accepted" : Lang.get("new_offer")} #$page"),
+                                    ),
+                                    const Align(
+                                        alignment: Alignment.topRight,
+                                        child: CloseButton()),
+                                  ],
+                                );
+                              }
+                              if (index == 1) {
                                 return Container(
                                   margin:
-                                      const EdgeInsets.fromLTRB(30, 30, 30, 0),
+                                      const EdgeInsets.fromLTRB(30, 10, 30, 30),
                                   child: ClipRRect(
                                     borderRadius: BorderRadius.circular(25),
                                     child: HeroFlutterLogo(
                                       color: colors[page],
                                       tag: page,
-                                      size: 400,
+                                      size: MediaQuery.of(context).size.height *
+                                          0.4,
                                       onTap: () => Navigator.of(context).pop(),
                                     ),
                                   ),
@@ -314,7 +349,7 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                               } else if (index == 2) {
                                 return Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      vertical: 8.0, horizontal: 10),
+                                      vertical: 0.0, horizontal: 10),
                                   child: Column(
                                     mainAxisSize: MainAxisSize.max,
                                     crossAxisAlignment:
@@ -337,11 +372,112 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                                         height: 10,
                                       ),
                                       Center(
-                                        child: Text(
-                                          "${widget.proposal[page].coverLetter} \n${Lang.get('profile_common_body')}",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0, vertical: 20),
+                                          child: Text(
+                                            "${widget.proposal[page].coverLetter} \n${Lang.get('profile_common_body')}\n",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primaryContainer,
+                                                surfaceTintColor:
+                                                    Colors.transparent,
+                                                minimumSize: Size(
+                                                    MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            2 -
+                                                        48,
+                                                    40), // NEW
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                // Navigator.of(context).pushNamed(
+                                                //     Routes.submitProposal,
+                                                //     arguments: widget.project);
+                                              },
+                                              child: Text(
+                                                Lang.get('save'),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium!
+                                                    .merge(TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .secondary)),
+                                              ),
+                                            ),
+                                            if (widget.proposal[page]
+                                                    .hiredStatus ==
+                                                HireStatus.offer)
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primaryContainer,
+                                                  surfaceTintColor:
+                                                      Colors.transparent,
+                                                  minimumSize: Size(
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2 -
+                                                          48,
+                                                      40), // NEW
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  // Navigator.of(context).pushNamed(
+                                                  //     Routes.submitProposal,
+                                                  //     arguments: widget.project);
+                                                  widget.proposal[page]
+                                                          .hiredStatus =
+                                                      HireStatus.hired;
+                                                  widget.onAcceptCallback(
+                                                      widget.proposal[page]);
+                                                },
+                                                child: Text(
+                                                  Lang.get('accept_offer'),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .merge(TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .secondary)),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(
@@ -372,22 +508,11 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                                           const SizedBox(
                                             height: 8,
                                           ),
-                                          BorderTextField(
-                                            inputDecoration:
-                                                const InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color:
-                                                                Colors.black))),
-                                            onChanged: (value) {},
-                                            textController:
-                                                TextEditingController(),
-                                            // onSubmitted: (value) =>
-                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                            minLines: 3,
-                                            maxLines: 5,
-                                            errorText: null,
-                                            isIcon: false,
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
                                           ),
                                         ],
                                       ),
@@ -408,23 +533,12 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                                           const SizedBox(
                                             height: 8,
                                           ),
-                                          BorderTextField(
-                                            textController:
-                                                TextEditingController(),
-                                            inputDecoration:
-                                                const InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color:
-                                                                Colors.black))),
-                                            onChanged: (value) {},
-                                            // onSubmitted: (value) =>
-                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                            minLines: 3,
-                                            maxLines: 5,
-                                            errorText: null,
-                                            isIcon: false,
-                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          )
                                         ],
                                       ),
                                       const SizedBox(
@@ -434,22 +548,11 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                                       // const SizedBox(
                                       //   height: 25,
                                       // ),
-                                      Container(
-                                        alignment: Alignment.centerRight,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            RoundedButtonWidget(
-                                              buttonText: Lang.get('continue'),
-                                              buttonColor: Theme.of(context)
-                                                  .colorScheme
-                                                  .primary,
-                                              textColor: Colors.white,
-                                              onPressed: () {},
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        Lang.get('profile_common_body'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
                                       ),
                                       const SizedBox(
                                         height: 15,
@@ -468,23 +571,12 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                                           const SizedBox(
                                             height: 8,
                                           ),
-                                          BorderTextField(
-                                            textController:
-                                                TextEditingController(),
-                                            inputDecoration:
-                                                const InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color:
-                                                                Colors.black))),
-                                            onChanged: (value) {},
-                                            // onSubmitted: (value) =>
-                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                            minLines: 3,
-                                            maxLines: 5,
-                                            errorText: null,
-                                            isIcon: false,
-                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          )
                                         ],
                                       ),
                                       const SizedBox(
@@ -504,23 +596,12 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                                           const SizedBox(
                                             height: 8,
                                           ),
-                                          BorderTextField(
-                                            textController:
-                                                TextEditingController(),
-                                            inputDecoration:
-                                                const InputDecoration(
-                                                    border: OutlineInputBorder(
-                                                        borderSide: BorderSide(
-                                                            color:
-                                                                Colors.black))),
-                                            onChanged: (value) {},
-                                            // onSubmitted: (value) =>
-                                            //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                            minLines: 3,
-                                            maxLines: 5,
-                                            errorText: null,
-                                            isIcon: false,
-                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          )
                                         ],
                                       ),
                                       const SizedBox(
@@ -539,254 +620,10 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
                             },
                           ),
                         ),
-                        const CloseButton(),
                       ])),
                 ],
               ));
         });
-  }
-}
-
-class AlbumDetailsContainer extends StatelessWidget {
-  const AlbumDetailsContainer({
-    super.key,
-    required this.album,
-    required this.controller,
-  });
-
-  final int album;
-  final ScrollController? controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Card(
-            margin: EdgeInsets.zero,
-            clipBehavior: Clip.antiAlias,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Stack(children: [
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: ListView.builder(
-                  controller: controller,
-                  itemCount: 3,
-                  itemBuilder: (_, index) {
-                    if (index == 0) {
-                      return Container(
-                        margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: HeroFlutterLogo(
-                            color: colors[album],
-                            tag: album,
-                            size: 400,
-                            onTap: () => Navigator.of(context).pop(),
-                          ),
-                        ),
-                      );
-                    } else if (index == 2) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 10),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Center(
-                              child: Text(
-                                "Project Name",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Center(
-                              child: Text(
-                                Lang.get('profile_common_body'),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              Lang.get('profile_question_title_1'),
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    Lang.get('profile_question_title_4'),
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  textController: TextEditingController(),
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Lang.get('profile_question_title_4'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  textController: TextEditingController(),
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 25,
-                            ),
-                            // _buildEmailField(context),
-                            // const SizedBox(
-                            //   height: 25,
-                            // ),
-                            Container(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  RoundedButtonWidget(
-                                    buttonText: Lang.get('continue'),
-                                    buttonColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    textColor: Colors.white,
-                                    onPressed: () {},
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Lang.get('profile_question_title_4'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  textController: TextEditingController(),
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Lang.get('profile_question_title_4'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  textController: TextEditingController(),
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 25,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return const ListTile(
-                        // onTap: () =>
-                        //     debugPrint("onTap(index=$index, page=$index)"),
-                        // title: Text("Item#$index"),
-                        // subtitle: Text("Page#$index"),
-                        );
-                  },
-                ),
-              ),
-              const CloseButton(),
-            ])),
-      ],
-    );
   }
 }
 

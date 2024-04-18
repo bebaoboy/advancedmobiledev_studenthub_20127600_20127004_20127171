@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/update_company_project.dart';
 import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
+import 'package:boilerplate/domain/usecase/proposal/update_proposal.dart';
 import 'package:dio/dio.dart';
 import 'package:interpolator/interpolator.dart';
 
@@ -67,6 +68,17 @@ class ProjectApi {
         data: {
           "projectId": params.projectId,
           "studentId": params.studentId,
+          "coverLetter": params.coverLetter,
+          "statusFlag": params.status,
+          "disableFlag": params.disableFlag
+        }).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+    Future<Response> updateProposal(UpdateProposalParams params) async {
+    return await _dioClient.dio.patch(
+        Interpolator(Endpoints.updateProposal)({"id": params.proposalId}),
+        data: {
           "coverLetter": params.coverLetter,
           "statusFlag": params.status,
           "disableFlag": params.disableFlag

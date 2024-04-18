@@ -241,7 +241,7 @@ class _SplashScreenState extends State<SplashScreen>
             password: DEFAULT_PASS,
           );
           loadingText.text =
-              "Loading Cube sesson (User ${userStore.user!.email})";
+              "Loading Cube sesson \n(User ${userStore.user!.email})";
 
           if (CubeSessionManager.instance.isActiveSessionValid() &&
               CubeSessionManager.instance.activeSession!.user != null) {

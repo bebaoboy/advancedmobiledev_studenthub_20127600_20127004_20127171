@@ -7,7 +7,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
-import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student_apply.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -37,7 +37,7 @@ class _OpenContainerWrapper extends StatelessWidget {
             project: project,
           );
         } else {
-          return ProjectDetailsStudentScreen(
+          return ProjectDetailsStudentApplyScreen(
             project: project,
           );
         }
@@ -62,6 +62,7 @@ class _OpenContainerWrapper extends StatelessWidget {
                 //   context,
                 //   listen: false,
                 // ).currentlySelectedEmailId = id;
+                if (project.isLoading) return;
                 openContainer();
               },
               child: closedChild,

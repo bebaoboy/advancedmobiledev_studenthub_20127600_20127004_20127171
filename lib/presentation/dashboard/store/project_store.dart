@@ -13,6 +13,7 @@ import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
 import 'package:boilerplate/domain/usecase/project/save_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/proposal/post_proposal.dart';
+import 'package:boilerplate/domain/usecase/proposal/update_proposal.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -24,13 +25,13 @@ class ProjectStore = _ProjectStore with _$ProjectStore;
 
 abstract class _ProjectStore with Store {
   _ProjectStore(
-    this._getProjectsUseCase,
-    this._getProjectByCompanyUseCase,
-    this._getStudentProposalProjectsUseCase,
-    this._getStudentFavoriteProjectUseCase,
-    this._saveStudentFavoriteProjectUseCase,
-    this._postProposalUseCase,
-  ) {
+      this._getProjectsUseCase,
+      this._getProjectByCompanyUseCase,
+      this._getStudentProposalProjectsUseCase,
+      this._getStudentFavoriteProjectUseCase,
+      this._saveStudentFavoriteProjectUseCase,
+      this._postProposalUseCase,
+      this._updateProposalUseCase) {
     // _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
     //   _favoriteProjects = value;
     // });
@@ -45,6 +46,7 @@ abstract class _ProjectStore with Store {
   final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
   final SaveStudentFavoriteProjectUseCase _saveStudentFavoriteProjectUseCase;
   final PostProposalUseCase _postProposalUseCase;
+  final UpdateProposalUseCase _updateProposalUseCase;
 
   @observable
   ProjectList _projects = ProjectList(projects: List.empty(growable: true));
@@ -72,7 +74,6 @@ abstract class _ProjectStore with Store {
 
   @observable
   bool postSuccess = false;
-
 
   Future addProject(Project value, {index = 0, sort = true}) async {
     if (_projects.projects != null) {
@@ -128,12 +129,60 @@ abstract class _ProjectStore with Store {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
+        // TODO: change to studentProfile.prooject
         _studentProjects.projects!.add(project);
         return true;
       } else {
         return false;
       }
     });
+  }
+
+  Future<bool> updateProposal(Proposal project, String studentId) async {
+    var params = UpdateProposalParams(
+      project.hiredStatus.index,
+      project.enabled == true ? 0 : 1,
+      project.coverLetter,
+      int.parse(project.objectId!),
+    );
+    var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+    var userStore = getIt<UserStore>();
+    try {
+      return await _updateProposalUseCase.call(params: params).then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          if (project.project != null) {
+            if (userStore.user != null &&
+                userStore.user!.studentProfile != null) {
+              var p = userStore.user!.studentProfile!.proposalProjects!
+                  .firstWhereOrNull(
+                (element) => element.objectId == project.objectId,
+              );
+              if (p != null) {
+                p.hiredStatus = project.hiredStatus;
+                p.enabled = project.enabled;
+                p.coverLetter = project.coverLetter;
+              }
+              sharedPrefsHelper.saveStudentProjects(ProposalList(
+                  proposals: userStore.user!.studentProfile!.proposalProjects));
+
+              userStore.user!.studentProfile!.proposalProjects?.sort(
+                (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+              );
+            }
+          }
+          return true;
+        } else {
+          print(value.data["result"].toString());
+
+          return false;
+        }
+      });
+    } catch (e) {
+      print(e.toString());
+      return Future.value(false);
+    }
   }
 
   Future updateCompanyProject(Project value, {index = 0}) async {
@@ -223,8 +272,12 @@ abstract class _ProjectStore with Store {
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
-
-          refazynistKey.currentState?.refresh(readyMade: _projects.projects);
+          if (_projects.projects != null) {
+            refazynistKey.currentState?.refresh(
+                readyMade: _projects.projects!
+                    .sublist(0, count.clamp(0, _projects.projects!.length))
+                    .toList());
+          }
         } else {
           _projects = value;
           _projects.projects?.forEach(
@@ -243,7 +296,12 @@ abstract class _ProjectStore with Store {
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
-          refazynistKey.currentState?.refresh(readyMade: _projects.projects);
+          if (_projects.projects != null) {
+            refazynistKey.currentState?.refresh(
+                readyMade: _projects.projects!
+                    .sublist(0, count.clamp(0, _projects.projects!.length))
+                    .toList());
+          }
         }
       });
 
@@ -371,7 +429,7 @@ abstract class _ProjectStore with Store {
               sharedPrefsHelper.saveStudentProjects(result);
 
               userStore.user!.studentProfile!.proposalProjects?.sort(
-                (a, b) => b.createdAt!.compareTo(a.createdAt!),
+                (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
               );
             }
             return result;
@@ -398,7 +456,7 @@ abstract class _ProjectStore with Store {
             userStore.user!.studentProfile!.proposalProjects =
                 companys.proposals;
             userStore.user!.studentProfile!.proposalProjects?.sort(
-              (a, b) => b.createdAt!.compareTo(a.createdAt!),
+              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
             );
           }
           return companys;

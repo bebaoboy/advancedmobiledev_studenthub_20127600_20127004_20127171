@@ -71,24 +71,22 @@ class _MessageTabState extends State<MessageTab> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 60.0,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () => print("flutter"),
                       child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        backgroundImage: Image.network(
-                          'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                          fit: BoxFit.cover,
-                        ).image,
-                        radius: 50.0,
+                        backgroundColor: Colors.white,
+                        radius: 60.0,
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          backgroundImage: Image.network(
+                            'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                            fit: BoxFit.cover,
+                          ).image,
+                          radius: 50.0,
+                        ),
                       ),
                     ),
-                    // ClipOval(
-                    //   child: Image.network(
-                    //     'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                    //     fit: BoxFit.cover,
-                    //   ),
-                    // ),
                   ),
                   Positioned(
                     bottom: 5,
