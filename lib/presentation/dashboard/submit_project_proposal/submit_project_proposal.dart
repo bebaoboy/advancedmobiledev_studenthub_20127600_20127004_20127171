@@ -18,7 +18,7 @@ class SubmitProjectProposal extends StatefulWidget {
 }
 
 class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
-  TextEditingController descriptionController = TextEditingController();
+  TextEditingController coverLetterController = TextEditingController();
   final UserStore _userStore = getIt<UserStore>();
   final ProjectStore _projectStore = getIt<ProjectStore>();
 
@@ -54,7 +54,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                 decoration: BoxDecoration(
                     border: Border.all(width: 1, color: Colors.black)),
                 child: TextField(
-                  controller: descriptionController,
+                  controller: coverLetterController,
                   decoration: const InputDecoration(
                       contentPadding: EdgeInsets.all(8.0)),
                   minLines: 12,
@@ -80,10 +80,10 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                 MaterialButton(
                   onPressed: () {
                     // TODO: check id proposal + add callback
-                    if (descriptionController.text.isEmpty) {
+                    if (coverLetterController.text.isEmpty) {
                       Toastify.show(context, '', "Description can't be empty",
                           ToastificationType.error, () {});
-                    } else if (descriptionController.text.length > 500) {
+                    } else if (coverLetterController.text.length > 500) {
                       Toastify.show(
                           context,
                           '',
@@ -92,8 +92,8 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                           () {});
                     } else {
                       var newStudentProject = StudentProject(
+                        description: '',
                         title: widget.project.title,
-                        description: widget.project.description,
                         numberOfStudents: widget.project.numberOfStudents,
                         scope: widget.project.scope,
                         id: widget.project.objectId ?? "",
@@ -101,11 +101,16 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                         projectId: widget.project.companyId,
                         // timeCreated: widget.project.timeCreated
                       );
+                      var proposal = Proposal(
+                          project: newStudentProject,
+                          student: _userStore.user!.studentProfile!,
+                          coverLetter: coverLetterController.text.trim());
+
                       _projectStore
-                          .postProposal(newStudentProject,
-                              _userStore.user!.studentProfile!.objectId!)
+                          .postProposal(proposal, widget.project)
                           .then((value) {
                         if (value) {
+                          _userStore.addNewProposal(proposal);
                           Toastify.show(context, '', "Sent successfully",
                               ToastificationType.success, () {});
                           Future.delayed(const Duration(seconds: 2), () {

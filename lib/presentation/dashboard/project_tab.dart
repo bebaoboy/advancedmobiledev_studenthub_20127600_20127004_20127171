@@ -879,7 +879,7 @@ class _ProjectTabState extends State<ProjectTab> {
                   child: IconButton(
                       onPressed: () {
                         NavbarNotifier2.pushNamed(
-                            Routes.favortieProject,
+                            Routes.favoriteProject,
                             NavbarNotifier2.currentIndex,
                             FavoriteScreen(
                                 projectList: _projectStore.projects
@@ -911,7 +911,6 @@ class _ProjectTabState extends State<ProjectTab> {
           height: 100,
         ),
         Container(
-
           margin: const EdgeInsets.only(top: 65, left: 5),
           child: Text("${Lang.get("result")} ${_projectStore.projects.length}"),
         ),
@@ -1046,7 +1045,6 @@ class _ProjectTabState extends State<ProjectTab> {
                             _projectStore.projects.length) {
                           return [];
                         }
-
 
                         var p = getProjectWithKeyword(_projectStore.projects);
                         lazyList.addAll(p.sublist(

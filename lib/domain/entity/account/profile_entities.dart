@@ -105,7 +105,8 @@ class StudentProfile extends Profile {
     };
   }
 
-  factory StudentProfile.fromMap(Map<String, dynamic> map) {
+  factory StudentProfile.fromMap(Map<String, dynamic>? map) {
+    if (map == null) return StudentProfile();
     return StudentProfile(
       title: map['title'] ?? '',
       fullName: map['fullname'] ?? '',

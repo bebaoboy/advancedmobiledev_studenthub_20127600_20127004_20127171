@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/get_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
@@ -246,6 +247,7 @@ abstract class _UserStore with Store {
     return Future.value(true);
   }
 
+  @action
   Future<CompanyProfile?> getCompanyProfile(String id) async {
     try {
       return await _getCompanyUseCase
@@ -270,6 +272,7 @@ abstract class _UserStore with Store {
     }
   }
 
+  @action
   Future logout() async {
     isLoggedIn = false;
     if (_user != null) {
@@ -283,6 +286,15 @@ abstract class _UserStore with Store {
   @action
   UserType getCurrentType() {
     return user?.type ?? UserType.naught;
+  }
+
+  @action
+  addNewProposal(Proposal proposal) async {
+    if (_user == null || _user!.studentProfile == null) return;
+    if (_user!.studentProfile!.proposalProjects == null) {
+      _user!.studentProfile!.proposalProjects = List.empty(growable: true);
+    }
+    _user?.studentProfile?.proposalProjects!.add(proposal);
   }
 
   // general methods:-----------------------------------------------------------

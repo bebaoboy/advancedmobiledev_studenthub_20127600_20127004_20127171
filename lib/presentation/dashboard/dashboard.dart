@@ -74,7 +74,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           key: const PageStorageKey(0),
           scrollController: sc[0],
         )),
-        Routes.favortieProject: getRoute(Routes.favortieProject, context),
+        Routes.favoriteProject: getRoute(Routes.favoriteProject, context),
       },
       {
         '/': _userStore.user!.type == UserType.company

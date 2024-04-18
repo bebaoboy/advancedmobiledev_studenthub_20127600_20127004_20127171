@@ -101,7 +101,10 @@ class _DashBoardTabState extends State<DashBoardTab>
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
-      child: _buildDashBoardContent(),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: _buildDashBoardContent(),
+      ),
     );
   }
 
@@ -115,7 +118,6 @@ class _DashBoardTabState extends State<DashBoardTab>
 
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
-
     return FutureBuilder<ProjectList>(
       future: future,
       builder: (BuildContext context, AsyncSnapshot<ProjectList> snapshot) {

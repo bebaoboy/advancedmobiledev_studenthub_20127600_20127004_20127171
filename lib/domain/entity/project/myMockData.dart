@@ -1,4 +1,5 @@
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 
 var myProjects = [
@@ -12,12 +13,20 @@ var myProjects = [
         Proposal(
             student: StudentProfile(
                 fullName: 'Luu Tuan Quan',
-                introduction: 'I am happy',
+                introduction:
+                    'I am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happyI am happy',
                 education: '4th year students',
                 title: 'Fullstack Engineer',
                 yearOfExperience: 3,
                 review: 'I find your project suitable',
-                objectId: 1.toString()),
+                objectId: 1.toString(),
+                projectExperience: <ProjectExperience>[
+                  ProjectExperience("book store",
+                      link: "sample.com",
+                      startDate: DateTime.now(),
+                      endDate: DateTime.now(),
+                      description: "book store project")
+                ]),
             project: StudentProject(
                 title: "", description: "", timeCreated: DateTime.now())),
         Proposal(

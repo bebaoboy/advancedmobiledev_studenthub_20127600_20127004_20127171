@@ -62,6 +62,9 @@ class _OpenContainerWrapper extends StatelessWidget {
                 //   context,
                 //   listen: false,
                 // ).currentlySelectedEmailId = id;
+
+                // ToDo: uncomment first line and comment second
+                // this is for testing               
                 openContainer();
               },
               child: closedChild,
@@ -369,18 +372,19 @@ class _ProjectItem2State extends State<ProjectItem2> {
                             .copyWith(fontSize: 12)),
                     AutoSizeText(
                       maxFontSize: 13,
-                      words: widget.keyword != null  ? {
-                          widget.keyword!: HighlightedWord(
-                            onTap: () {
-                              print("match");
-                            },
-                          ),
-                        } : null,
-                        
-                        matchDecoration: BoxDecoration(
-                          color: Colors.amber,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
+                      words: widget.keyword != null
+                          ? {
+                              widget.keyword!: HighlightedWord(
+                                onTap: () {
+                                  print("match");
+                                },
+                              ),
+                            }
+                          : null,
+                      matchDecoration: BoxDecoration(
+                        color: Colors.amber,
+                        borderRadius: BorderRadius.circular(50),
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       widget.project.title == ''
@@ -400,13 +404,15 @@ class _ProjectItem2State extends State<ProjectItem2> {
                     Flexible(
                       // height: 100,
                       child: AutoSizeText(
-                        words: widget.keyword != null  ? {
-                          widget.keyword!: HighlightedWord(
-                            onTap: () {
-                              print("match");
-                            },
-                          ),
-                        } : null,
+                        words: widget.keyword != null
+                            ? {
+                                widget.keyword!: HighlightedWord(
+                                  onTap: () {
+                                    print("match");
+                                  },
+                                ),
+                              }
+                            : null,
                         matchDecoration: BoxDecoration(
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(50),

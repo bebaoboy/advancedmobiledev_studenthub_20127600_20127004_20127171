@@ -24,6 +24,7 @@ dependencies:
   animations: ^2.0.11
   # auto_size_text: ^3.0.0
   another_flushbar: ^1.12.29
+  appinio_swiper: 
   animated_custom_dropdown:
   animated_list_plus:
   # anim_search_bar:

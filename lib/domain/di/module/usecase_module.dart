@@ -22,6 +22,7 @@ import 'package:boilerplate/domain/usecase/profile/get_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/update_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_proposals.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/project/save_student_favorite_project.dart';
@@ -229,6 +230,9 @@ mixin UseCaseModule {
     getIt.registerSingleton<PostProposalUseCase>(
       PostProposalUseCase(getIt<ProjectRepository>()),
     );
+    getIt.registerSingleton<GetProjectProposals>(GetProjectProposals(
+      getIt<ProjectRepository>(),
+    ));
 
     // post:--------------------------------------------------------------------
     getIt.registerSingleton<GetPostUseCase>(

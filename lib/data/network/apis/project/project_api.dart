@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
@@ -142,6 +143,15 @@ class ProjectApi {
           "disableFlag": params.disableFlag ? 0 : 1
         }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
+  }
+
+  Future<Response> getProjectProposals(Project params) async {
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getCandidatesOfProject)(
+            {"projectId": params.objectId}),
+        queryParameters: {}).onError((DioException error,
+            stackTrace) =>
+        Future.value(error.response));
   }
 
   // Future<Response> filterProjects() async {

@@ -258,7 +258,12 @@ class StudentProject extends Project {
 
 // ------------------- PROPOSAL ------------------------------
 
-enum HireStatus { pending, offer, hired, notHired }
+enum HireStatus {
+  notHired,
+  pending,
+  offer,
+  hired,
+}
 
 extension HireStatusTitle on HireStatus {
   String get title {
@@ -291,10 +296,10 @@ class Proposal extends MyObject {
 
   Proposal.fromJson(Map<String, dynamic> json)
       :
-        // student = StudentProfile.fromJson(json["student"] ?? ""),
-        student = StudentProfile(
-            objectId: json["studentId"].toString(),
-            fullName: "Sample Student ${json["studentId"]}"),
+        student = StudentProfile.fromMap(json["student"]),
+        // student = StudentProfile(
+        //     objectId: json["studentId"].toString(),
+        //     fullName: "Sample Student ${json["studentId"]}"),
         coverLetter = json["coverLetter"] ?? "",
         status = Status.values[
             ((json["disableFlag"] ?? 0) as int).clamp(0, Status.values.length - 1)],

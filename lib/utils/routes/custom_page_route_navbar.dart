@@ -639,7 +639,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   //   builder = ProjectDetailsPage(
                   //       project: settings.arguments as Project);
                   // } else
-                  if (settings.name == Routes.favortieProject) {
+                  if (settings.name == Routes.favoriteProject) {
                     builder = settings.arguments as FavoriteScreen;
                   } else {
                     builder = widget.destinations[index].destinations[j].widget;

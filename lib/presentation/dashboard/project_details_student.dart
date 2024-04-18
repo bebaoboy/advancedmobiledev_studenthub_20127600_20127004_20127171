@@ -1,11 +1,12 @@
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 
 class ProjectDetailsStudentScreen extends StatefulWidget {
@@ -20,6 +21,10 @@ class ProjectDetailsStudentScreen extends StatefulWidget {
 class _ProjectDetailsStudentScreenState
     extends State<ProjectDetailsStudentScreen> {
   var updatedText = "";
+
+  final ProjectStore _projectStore = getIt<ProjectStore>();
+  final UserStore _userStore = getIt<UserStore>();
+
   @override
   void initState() {
     super.initState();
@@ -34,12 +39,12 @@ class _ProjectDetailsStudentScreenState
       body: Padding(
         padding: const EdgeInsets.only(
             top: 16.0, bottom: 10.0, left: 16.0, right: 16.0),
-        child: _buildFourContent(),
+        child: _buildBody(),
       ),
     );
   }
 
-  Widget _buildFourContent() {
+  Widget _buildBody() {
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       // crossAxisAlignment: CrossAxisAlignment.start,

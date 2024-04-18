@@ -59,6 +59,9 @@ class Endpoints {
       "$baseUrl/api/proposal/project/{studentId}"; // done
   static const String getCandidatesOfProject =
       "$baseUrl/api/proposal/getByProjectId/{projectId}";
+  // offset (number), limit(number), q(string), 
+  // order(e.g. order=createdAt:DESC), statusFlag(string) 
+
   static const String postProposal = "$baseUrl/api/proposal";
   static const String updateProposal = "$baseUrl/api/proposal/{proposalId}";
 
