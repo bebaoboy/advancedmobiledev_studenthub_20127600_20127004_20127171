@@ -1,5 +1,8 @@
 import 'dart:math';
 
+import 'package:another_transformer_page_view/another_transformer_page_view.dart';
+import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
+import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
@@ -7,6 +10,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -119,6 +123,17 @@ class _AlertTabState extends State<AlertTab> {
     for (int i = 0; i < (getOffer().length); i++) {
       colors[i] = colorss[Random().nextInt(colorss.length)];
     }
+    var today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    selectedDate = today;
+    activeDates
+        .addAll([for (int i = -7; i < 7; i++) today.add(Duration(days: i))]);
+    print(activeDates);
+    Future.delayed(const Duration(seconds: 1), () {
+      // dateController.animateToFocusDate(duration: const Duration(seconds: 1));
+    });
+    dateStyle = datePickerStyle;
+    monthStyle = monthPickerStyle;
   }
 
   @override
@@ -129,123 +144,338 @@ class _AlertTabState extends State<AlertTab> {
   }
 
   var projectStore = getIt<ProjectStore>();
+  var topRowController = ScrollController();
 
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
-      return Scrollbar(
-        child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          shrinkWrap: true,
-          itemCount: getOffer().length,
-          itemBuilder: (context, index) {
-            return Container(
-              margin: const EdgeInsets.symmetric(horizontal: 15),
-              child: HeroFlutterLogo(
-                color: colors[index],
-                tag: index,
-                size: 100,
-                onTap: () {
-                  print(index);
-                  NavbarNotifier2.hideBottomNavBar = true;
+      return Stack(
+        children: [
+          for (int index = getOffer().length - 1; index >= 0; index--)
+            Center(
+              child: Container(
+                margin: EdgeInsets.only(
+                    left: index == 1 ? 10 : 15, right: index == 2 ? 7 : 15),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: HeroFlutterLogo(
+                    color: index == 2 ? Colors.white : colors[index],
+                    tag: index,
+                    size: 145,
+                    onTap: () {
+                      print(index);
+                      NavbarNotifier2.hideBottomNavBar = true;
 
-                  Navigator.of(NavigationService.navigatorKey.currentContext ??
-                          context)
-                      .push(
-                    ModalExprollableRouteBuilder(
-                        pageBuilder: (_, __, ___) => OfferDetailsDialog(
-                              index: index,
-                              proposal: getOffer(),
-                              onAcceptCallback: (proposal) {
-                                var userStore = getIt<UserStore>();
-                                var id =
-                                    userStore.user?.studentProfile?.objectId;
-                                if (id != null && proposal != null) {
-                                  projectStore
-                                      .updateProposal(proposal, id)
-                                      .then(
-                                    (value) {
-                                      setState(() {});
-                                    },
-                                  );
-                                }
-                              },
-                            ),
-                        // Increase the transition durations and take a closer look at what's going on!
-                        transitionDuration: const Duration(milliseconds: 500),
-                        reverseTransitionDuration:
-                            const Duration(milliseconds: 300),
-                        // The next two lines are not required, but are recommended for better performance.
-                        dismissThresholdInset:
-                            const DismissThresholdInset(dragMargin: 10000)),
-                  )
-                      .then(
-                    (value) {
-                      NavbarNotifier2.hideBottomNavBar = false;
+                      Navigator.of(
+                              NavigationService.navigatorKey.currentContext ??
+                                  context)
+                          .push(
+                        ModalExprollableRouteBuilder(
+                            pageBuilder: (_, __, ___) => OfferDetailsDialog(
+                                  index: index,
+                                  proposal: getOffer(),
+                                  onAcceptCallback: (proposal) {
+                                    var userStore = getIt<UserStore>();
+                                    var id = userStore
+                                        .user?.studentProfile?.objectId;
+                                    if (id != null && proposal != null) {
+                                      projectStore
+                                          .updateProposal(proposal, id)
+                                          .then(
+                                        (value) {
+                                          setState(() {});
+                                        },
+                                      );
+                                    }
+                                  },
+                                ),
+                            // Increase the transition durations and take a closer look at what's going on!
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            reverseTransitionDuration:
+                                const Duration(milliseconds: 300),
+                            // The next two lines are not required, but are recommended for better performance.
+                            dismissThresholdInset:
+                                const DismissThresholdInset(dragMargin: 10000)),
+                      )
+                          .then(
+                        (value) {
+                          NavbarNotifier2.hideBottomNavBar = false;
+                        },
+                      );
                     },
-                  );
-                },
+                  ),
+                ),
               ),
-            );
-          },
+            )
+        ],
+      );
+
+      // Scrollbar(
+      //   controller: topRowController,
+      //   child: ListView.builder(
+      //     controller: topRowController,
+      //     shrinkWrap: true,
+      //     reverse: true,
+      //     itemCount: getOffer().length,
+      //     itemBuilder: (context, index) {
+      //       return Container(
+      //         margin: const EdgeInsets.only(right: 15, left: 5, top: 15),
+      //         child: ClipRRect(
+      //           borderRadius: BorderRadius.circular(12),
+      //           child: HeroFlutterLogo(
+      //             color: colors[index],
+      //             tag: index,
+      //             size: 125,
+      //             onTap: () {
+      //               print(index);
+      //               NavbarNotifier2.hideBottomNavBar = true;
+
+      //               Navigator.of(
+      //                       NavigationService.navigatorKey.currentContext ??
+      //                           context)
+      //                   .push(
+      //                 ModalExprollableRouteBuilder(
+      //                     pageBuilder: (_, __, ___) => OfferDetailsDialog(
+      //                           index: index,
+      //                           proposal: getOffer(),
+      //                           onAcceptCallback: (proposal) {
+      //                             var userStore = getIt<UserStore>();
+      //                             var id =
+      //                                 userStore.user?.studentProfile?.objectId;
+      //                             if (id != null && proposal != null) {
+      //                               projectStore
+      //                                   .updateProposal(proposal, id)
+      //                                   .then(
+      //                                 (value) {
+      //                                   setState(() {});
+      //                                 },
+      //                               );
+      //                             }
+      //                           },
+      //                         ),
+      //                     // Increase the transition durations and take a closer look at what's going on!
+      //                     transitionDuration: const Duration(milliseconds: 500),
+      //                     reverseTransitionDuration:
+      //                         const Duration(milliseconds: 300),
+      //                     // The next two lines are not required, but are recommended for better performance.
+      //                     dismissThresholdInset:
+      //                         const DismissThresholdInset(dragMargin: 10000)),
+      //               )
+      //                   .then(
+      //                 (value) {
+      //                   NavbarNotifier2.hideBottomNavBar = false;
+      //                 },
+      //               );
+      //             },
+      //           ),
+      //         ),
+      //       );
+      //     },
+      //   ),
+      // );
+    } else {
+      return Container(
+        margin: const EdgeInsets.only(left: 15, right: 15),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: HeroFlutterLogo(
+            color: Colors.white,
+            tag: -1,
+            size: 125,
+            onTap: () {},
+          ),
         ),
       );
-    } else {
-      return Container();
     }
   }
 
-  Widget _buildAlertsContent() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: ListView.separated(
-            controller: widget.scrollController,
-            itemCount: alerts.length + 1,
-            separatorBuilder: (context, index) =>
-                const Divider(color: Colors.black),
-            itemBuilder: (context, i) {
-              int index = i - 1;
-              if (i == 0) {
-                return SizedBox(height: 120, child: _buildTopRowList());
-              }
-              return GestureDetector(
-                onTap: () {
-                  //print('Tile clicked');
-                  // You can replace the print statement with your function
-                },
-                child: ListTile(
-                  leading: Icon(alerts[index]['icon']),
-                  title: Text(alerts[index]['title']),
-                  subtitle: Text(alerts[index]['subtitle']),
-                  trailing: alerts[index]['action'] != null
-                      ? ElevatedButton(
-                          onPressed: () {
-                            //print('${alerts[index]['action']} button clicked');
-                            if (alerts[index]['action'] != null) {
-                              if (alerts[index]['action'] == "Join") {
-                                Navigator.of(NavigationService
-                                        .navigatorKey.currentContext!)
-                                    .push(MaterialPageRoute2(
-                                        routeName: Routes.message,
-                                        arguments: "Javis - AI Copilot"));
-                              } else if (alerts[index]['action'] ==
-                                  "View offer") {
-                                // showOfferDetailsDialog(context, 2);
-                                // NavbarNotifier2.hideBottomNavBar = true;
-                              }
-                            }
-                            // You can replace the print statement with your function
-                          },
-                          child: Text(Lang.get(alerts[index]['action'])),
-                        )
-                      : null,
-                ),
-              );
-            },
-          ),
-        ),
-      ],
+  TextStyle get datePickerStyle {
+    return const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
     );
+  }
+
+  TextStyle get monthPickerStyle {
+    return const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.grey,
+    );
+  }
+
+  TextStyle get datePickerStyleToday {
+    return const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.red,
+    );
+  }
+
+  TextStyle get monthPickerStyleToday {
+    return const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.red,
+    );
+  }
+
+  TextStyle dateStyle = const TextStyle(), monthStyle = const TextStyle();
+
+  DateTime selectedDate = DateTime.now();
+  IndexController alertPageController = IndexController();
+  final List<DateTime> activeDates = [];
+  final EasyInfiniteDateTimelineController dateController =
+      EasyInfiniteDateTimelineController();
+  int oldIndex = 7;
+
+  _datePickerSection() {
+    return Container(
+        margin: const EdgeInsets.only(),
+        child: EasyInfiniteDateTimeLine(
+          selectionMode: const SelectionMode.autoCenter(),
+          controller: dateController,
+          firstDate: activeDates.first,
+          focusDate: selectedDate,
+          lastDate: activeDates.last,
+          onDateChange: (date) {
+            setState(() {
+              selectedDate = date;
+              print(date);
+            });
+            var i = activeDates.indexWhere(
+              (element) =>
+                  element.millisecondsSinceEpoch == date.millisecondsSinceEpoch,
+            );
+            if (i != -1) {
+              alertPageController.move(i, animation: (oldIndex - i).abs() == 1);
+              oldIndex = i;
+              print(i);
+            }
+          },
+          // timeLineProps: EasyTimeLineProps(
+          //     decoration:
+          //         BoxDecoration(borderRadius: BorderRadius.circular(12))),
+          dayProps: EasyDayProps(
+            activeDayStyle: DayStyle(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    const Color.fromARGB(255, 255, 170, 170),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+    //   DatePicker(
+    //     controller: dateController,
+    //     activeDates[0],
+    //     height: 130,
+    //     width: 80,
+    //     daysCount: activeDates.length, // fortnight
+    //     locale: getIt<LanguageStore>().locale,
+    //     initialSelectedDate: selectedDate,
+    //     selectionColor: const Color.fromARGB(255, 255, 48, 48),
+    //     selectedTextColor: Colors.white,
+    //     dateTextStyle: datePickerStyle,
+    //     monthTextStyle: monthPickerStyle,
+    //     onDateChange: (date) {
+    //       setState(() {
+    //         selectedDate = date;
+    //         print(date);
+    //       });
+    //       var i = activeDates.indexWhere(
+    //         (element) =>
+    //             element.millisecondsSinceEpoch == date.millisecondsSinceEpoch,
+    //       );
+    //       if (i != -1) {
+    //         alertPageController.move(i, animation: (oldIndex - i).abs() == 1);
+    //         oldIndex = i;
+    //         print(i);
+    //       }
+    //     },
+    //   ),
+    // );
+  }
+
+  Widget _buildAlertsContent() {
+    return Stack(children: [
+      Container(
+          height: 155,
+          width: 120,
+          margin: const EdgeInsets.only(
+            top: 2,
+          ),
+          child: _buildTopRowList()),
+      Container(
+          margin: const EdgeInsets.only(top: 0, left: 120),
+          height: 170,
+          child: _datePickerSection()),
+      Container(
+        margin: const EdgeInsets.only(top: 170),
+        height: MediaQuery.of(context).size.height * 0.9 - 230,
+        child: TransformerPageView(
+          itemCount: activeDates.length,
+          index: 7, // middle page
+          controller: alertPageController,
+          transformer: DepthPageTransformer(),
+          onPageChanged: (value) {
+            dateController.animateToDate(activeDates[value ?? 0]);
+            setState(() {
+              selectedDate = activeDates[value ?? 0];
+            });
+            print(selectedDate);
+          },
+          itemBuilder: (context, index) {
+            return ListView.separated(
+                itemCount: alerts.length,
+                separatorBuilder: (context, index) =>
+                    const Divider(color: Colors.black),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      //print('Tile clicked');
+                      // You can replace the print statement with your function
+                    },
+                    child: ListTile(
+                      leading: Icon(alerts[index]['icon']),
+                      title: Text(alerts[index]['title']),
+                      subtitle: Text(alerts[index]['subtitle']),
+                      trailing: alerts[index]['action'] != null
+                          ? ElevatedButton(
+                              onPressed: () {
+                                //print('${alerts[index]['action']} button clicked');
+                                if (alerts[index]['action'] != null) {
+                                  if (alerts[index]['action'] == "Join") {
+                                    Navigator.of(NavigationService
+                                            .navigatorKey.currentContext!)
+                                        .push(MaterialPageRoute2(
+                                            routeName: Routes.message,
+                                            arguments: "Javis - AI Copilot"));
+                                  } else if (alerts[index]['action'] ==
+                                      "View offer") {
+                                    // showOfferDetailsDialog(context, 2);
+                                    // NavbarNotifier2.hideBottomNavBar = true;
+                                  }
+                                }
+                                // You can replace the print statement with your function
+                              },
+                              child: Text(Lang.get(alerts[index]['action'])),
+                            )
+                          : null,
+                    ),
+                  );
+                });
+          },
+        ),
+      ),
+    ]);
   }
 }
 
@@ -661,6 +891,7 @@ class HeroFlutterLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
+      transitionOnUserGestures: true,
       tag: tag,
       child: Material(
         color: color,

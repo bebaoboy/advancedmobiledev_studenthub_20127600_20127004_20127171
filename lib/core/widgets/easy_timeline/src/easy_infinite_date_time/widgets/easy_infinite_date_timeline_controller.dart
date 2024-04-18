@@ -1,0 +1,464 @@
+import 'package:flutter/material.dart';
+
+import '../../properties/properties.dart';
+import '../../utils/utils.dart';
+import '../../widgets/easy_day_widget/easy_day_widget.dart';
+import 'web_scroll_behavior.dart';
+
+class InfiniteTimeLineWidget extends StatefulWidget {
+  InfiniteTimeLineWidget({
+    super.key,
+    this.inactiveDates,
+    this.dayProps = const EasyDayProps(),
+    this.locale = "en_US",
+    this.timeLineProps = const EasyTimeLineProps(),
+    this.onDateChange,
+    this.itemBuilder,
+    required this.firstDate,
+    required this.focusedDate,
+    required this.activeDayTextColor,
+    required this.activeDayColor,
+    required this.lastDate,
+    this.controller,
+    required this.selectionMode,
+  })  : assert(timeLineProps.hPadding > -1,
+            "Can't set timeline hPadding less than zero."),
+        assert(timeLineProps.separatorPadding > -1,
+            "Can't set timeline separatorPadding less than zero."),
+        assert(timeLineProps.vPadding > -1,
+            "Can't set timeline vPadding less than zero."),
+        assert(
+          !lastDate.isBefore(firstDate),
+          'lastDate $lastDate must be on or after firstDate $firstDate.',
+        );
+
+  /// Represents the initial date for the timeline widget.
+  /// This is the date that will be displayed as the first day in the timeline.
+  final DateTime firstDate;
+
+  /// Represents the last date for the timeline widget.
+  /// This is the date that will be displayed as the last day in the timeline.
+  final DateTime lastDate;
+
+  /// The currently focused date in the timeline.
+  final DateTime? focusedDate;
+
+  /// The color of the text for the selected day.
+  final Color activeDayTextColor;
+
+  /// The background color of the selected day.
+  final Color activeDayColor;
+
+  /// Represents a list of inactive dates for the timeline widget.
+  /// Note that all the dates defined in the inactiveDates list will be deactivated.
+  final List<DateTime>? inactiveDates;
+
+  /// Contains properties for configuring the appearance and behavior of the timeline widget.
+  /// This object includes properties such as the height of the timeline, the color of the selected day,
+  /// and the animation duration for scrolling.
+  final EasyTimeLineProps timeLineProps;
+
+  /// Contains properties for configuring the appearance and behavior of the day widgets in the timeline.
+  /// This object includes properties such as the width and height of each day widget,
+  /// the color of the text and background, and the font size.
+  final EasyDayProps dayProps;
+
+  /// Called when the selected date in the timeline changes.
+  /// This function takes a `DateTime` object as its parameter, which represents the new selected date.
+  final OnDateChangeCallBack? onDateChange;
+
+  /// Called for each day in the timeline, allowing the developer to customize the appearance and behavior of each day widget.
+  /// This function takes a `BuildContext` and a `DateTime` object as its parameters, and should return a `Widget` that represents the day.
+  final ItemBuilderCallBack? itemBuilder;
+
+  /// A `String` that represents the locale code to use for formatting the dates in the timeline.
+  final String locale;
+
+  /// Determines the selection mode of the infinite date timeline.
+  ///
+  /// The [selectionMode] specifies how the timeline should behave when the selected date changes.
+  /// It can be set to one of the following values:
+  /// - [SelectionMode.none]: The timeline does not animate the selection.
+  /// - [SelectionMode.autoCenter]: The timeline automatically centers the selected date.
+  /// - [SelectionMode.alwaysFirst]: The timeline always positions the selected date at the first visible day of the timeline.
+  ///
+  /// By default, the selection mode is set to [SelectionMode.autoCenter].
+  ///
+  /// This property is used to customize the behavior of the timeline when the selected date changes.
+  /// For example, if you set it to `SelectionMode.alwaysFirst()`, the timeline will always position the selected date at the first visible day of the timeline.
+  final SelectionMode selectionMode;
+
+  /// The controller to manage the EasyInfiniteDateTimeline. Allows programmatic control over the timeline,
+  /// such as scrolling to a specific date or scrolling to the focus date.
+  final EasyInfiniteDateTimelineController? controller;
+
+  @override
+  State<InfiniteTimeLineWidget> createState() => _InfiniteTimeLineWidgetState();
+}
+
+class _InfiniteTimeLineWidgetState extends State<InfiniteTimeLineWidget> {
+  /// Returns the [EasyDayProps] associated with the widget.
+  EasyDayProps get _dayProps => widget.dayProps;
+
+  /// Returns the [EasyTimeLineProps] associated with this [InfiniteTimeLineWidget].
+  EasyTimeLineProps get _timeLineProps => widget.timeLineProps;
+
+  /// Returns a boolean value indicating whether the widget is in landscape mode.
+  bool get _isLandscapeMode => _dayProps.landScapeMode;
+
+  /// Returns the width of a single day in the timeline.
+  double get _dayWidth => _dayProps.width;
+
+  /// Returns the height of a single day in the timeline.
+  double get _dayHeight => _dayProps.height;
+
+  /// The number of days in the timeline.
+  late int _daysCount;
+
+  /// Scroll controller for the infinite timeline widget.
+  late ScrollController _controller;
+
+  /// Returns the focus date of the timeline widget.
+  /// If the `focusedDate` property is not set, it returns the `firstDate` property.
+  DateTime get _focusDate => widget.focusedDate ?? widget.firstDate;
+
+  /// The extent of each item in the infinite timeline widget.
+  double _itemExtend = 0.0;
+
+  @override
+  void initState() {
+    super.initState();
+    _initItemExtend();
+    _attachEasyController();
+    _daysCount =
+        EasyDateUtils.calculateDaysCount(widget.firstDate, widget.lastDate);
+    _controller = ScrollController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _jumpToInitialOffset());
+  }
+
+  void _jumpToInitialOffset() {
+    final initialScrollOffset = _getScrollOffset();
+    if (_controller.hasClients) {
+      _controller.animateTo(
+        initialScrollOffset,
+        duration: widget.selectionMode.duration ??
+            EasyConstants.selectionModeAnimationDuration,
+        curve: widget.selectionMode.curve ?? Curves.linear,
+      );
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant InfiniteTimeLineWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.controller != oldWidget.controller) {
+      _attachEasyController();
+    } else if (widget.timeLineProps != oldWidget.timeLineProps ||
+        widget.dayProps != oldWidget.dayProps) {
+      _initItemExtend();
+    } else if (widget.selectionMode != oldWidget.selectionMode) {
+      _jumpToInitialOffset();
+    }
+  }
+
+  /// Attaches the [EasyInfiniteDateTimelineController] to the [InfiniteTimeLineWidget].
+  ///
+  /// This method is responsible for attaching the [EasyInfiniteDateTimelineController] provided by the widget to the [InfiniteTimeLineWidget].
+  /// It calls the `_attachEasyDateState` method on the [EasyInfiniteDateTimelineController] to establish the connection.
+  ///
+  /// If the [EasyInfiniteDateTimelineController] is not provided, this method does nothing.
+  void _attachEasyController() => widget.controller?._attachEasyDateState(this);
+
+  /// Detaches the [EasyInfiniteDateTimelineController] from the [InfiniteTimeLineWidget].
+  ///
+  /// This method is responsible for detaching the [EasyInfiniteDateTimelineController] provided by the widget from the [InfiniteTimeLineWidget].
+  /// It calls the `_detachEasyDateState` method on the [EasyInfiniteDateTimelineController] to remove the connection.
+  ///
+  /// If the [EasyInfiniteDateTimelineController] is not provided, this method does nothing.
+  void _detachEasyController() => widget.controller?._detachEasyDateState();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _detachEasyController();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: _isLandscapeMode ? _dayWidth : _dayHeight,
+      margin: _timeLineProps.margin,
+      color: _timeLineProps.decoration == null
+          ? _timeLineProps.backgroundColor
+          : null,
+      decoration: _timeLineProps.decoration,
+      child: ClipRRect(
+        borderRadius:
+            _timeLineProps.decoration?.borderRadius ?? BorderRadius.zero,
+        child: CustomScrollView(
+          scrollDirection: Axis.horizontal,
+          scrollBehavior: EasyCustomScrollBehavior(),
+          controller: _controller,
+          slivers: [
+            SliverPadding(
+              padding: EdgeInsets.symmetric(
+                horizontal: _timeLineProps.hPadding,
+                vertical: _timeLineProps.vPadding,
+              ),
+              sliver: SliverFixedExtentList.builder(
+                itemExtent: _itemExtend,
+                itemBuilder: (context, index) {
+                  /// Adds a duration of [index] days to the [firstDate] and assigns the result to [currentDate].
+                  ///
+                  /// The [firstDate] is the starting date from which the duration is added.
+                  /// The [index] represents the number of days to be added to the [firstDate].
+                  final currentDate =
+                      widget.firstDate.add(Duration(days: index));
+
+                  /// Checks if the [_focusDate] is the same day as [currentDate].
+                  bool isSelected =
+                      EasyDateUtils.isSameDay(_focusDate, currentDate);
+
+                  /// Flag indicating whether the day is disabled or not.
+                  bool isDisabledDay = false;
+
+                  /// Checks if the current date [currentDate] is present in the list of inactive dates [widget.inactiveDates].
+                  /// If it is found, sets the [isDisabledDay] flag to true, indicating that the day should be disabled.
+                  /// Returns void.
+                  if (widget.inactiveDates != null) {
+                    for (DateTime inactiveDate in widget.inactiveDates!) {
+                      if (EasyDateUtils.isSameDay(currentDate, inactiveDate)) {
+                        isDisabledDay = true;
+                        break;
+                      }
+                    }
+                  }
+                  return Padding(
+                    key: ValueKey<DateTime>(currentDate),
+                    padding: EdgeInsetsDirectional.only(
+                      end: _timeLineProps.separatorPadding,
+                    ),
+                    child: widget.itemBuilder != null
+                        ? _dayItemBuilder(
+                            context,
+                            isSelected,
+                            currentDate,
+                          )
+                        : EasyDayWidget(
+                            easyDayProps: _dayProps,
+                            date: currentDate,
+                            locale: widget.locale,
+                            isSelected: isSelected,
+                            isDisabled: isDisabledDay,
+                            onDayPressed: () =>
+                                _onDayChanged(isSelected, currentDate),
+                            activeTextColor: widget.activeDayTextColor,
+                            activeDayColor: widget.activeDayColor,
+                          ),
+                  );
+                },
+                itemCount: _daysCount,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Builds an [InkWell] widget for a day item in the infinite timeline.
+  ///
+  /// The [context] is the build context.
+  /// The [isSelected] indicates whether the day item is selected.
+  /// The [date] is the date associated with the day item.
+  ///
+  /// Returns an [InkWell] widget with the specified properties.
+  InkWell _dayItemBuilder(
+    BuildContext context,
+    bool isSelected,
+    DateTime date,
+  ) {
+    return InkWell(
+      onTap: () => _onDayChanged(isSelected, date),
+      borderRadius: BorderRadius.circular(_dayProps.activeBorderRadius),
+      child: widget.itemBuilder!(
+        context,
+        date.day.toString(),
+        EasyDateFormatter.shortDayName(date, widget.locale).toUpperCase(),
+        EasyDateFormatter.shortMonthName(date, widget.locale).toUpperCase(),
+        date,
+        isSelected,
+      ),
+    );
+  }
+
+  /// Callback function that is called when a day is changed.
+  ///
+  /// The [isSelected] parameter indicates whether the day is selected or not.
+  /// The [currentDate] parameter represents the current selected date.
+  void _onDayChanged(bool isSelected, DateTime currentDate) {
+    // A date is selected
+    widget.onDateChange?.call(currentDate);
+    final selectionMode = widget.selectionMode;
+    if (selectionMode.isAutoCenter || selectionMode.isAlwaysFirst) {
+      final offset = _getScrollOffset(currentDate);
+      _controller.animateTo(
+        offset,
+        duration: selectionMode.duration ??
+            EasyConstants.selectionModeAnimationDuration,
+        curve: selectionMode.curve ?? Curves.linear,
+      );
+    }
+  }
+
+  /// Calculates the scroll offset for the specified [lastDate].
+  ///
+  /// If [lastDate] is not provided, it falls back to [widget.focusedDate].
+  ///
+  /// Returns the calculated scroll offset.
+  double _getScrollOffset([DateTime? lastDate]) {
+    // Get the last date to use, defaulting to widget.focusedDate if not provided
+    final effectiveLastDate = lastDate ?? widget.focusedDate;
+    // Check if a date is provided
+    if (effectiveLastDate != null) {
+      // Use a switch expression to determine the scroll offset based on the selection mode
+      return switch (widget.selectionMode) {
+        // If the selection mode is none or always first
+        SelectionModeNone() ||
+        SelectionModeAlwaysFirst() =>
+          // Calculate the scroll offset between the first date and the last date
+          calculateDateOffsetBetweenDates(
+            firstDate: widget.firstDate, // Use the widget's first date
+            lastDate: effectiveLastDate, // Use the effective last date
+            dayWidth: _itemExtend, // Use the item extend calculated earlier
+            hPadding: _timeLineProps
+                .hPadding, // Use the timeline's horizontal padding
+          ),
+        // If the selection mode is auto center
+        SelectionModeAutoCenter() =>
+          // Calculate the scroll offset for center mode
+          calculateDateOffsetForCenter(
+            firstDate: widget.firstDate, // Use the widget's first date
+            lastDate: effectiveLastDate, // Use the effective last date
+            dayWidth: _itemExtend, // Use the item extend calculated earlier
+            hPadding: _timeLineProps
+                .hPadding, // Use the timeline's horizontal padding
+            controller: _controller, // Use the scroll controller
+          ),
+      };
+    } else {
+      // If no date is provided, return 0.0 as the scroll offset
+      return 0.0;
+    }
+  }
+
+  /// Initializes the item extend value based on the current orientation and timeline properties.
+  /// The item extend value is calculated by adding the day height or day width (depending on the landscape mode)
+  /// with the separator padding from the timeline properties.
+  void _initItemExtend() {
+    _itemExtend = (_isLandscapeMode ? _dayHeight : _dayWidth) +
+        _timeLineProps.separatorPadding;
+  }
+}
+
+/// Controller for the EasyInfiniteDateTimeline.
+/// This controller is responsible for managing the state and behavior of the timeline.
+final class EasyInfiniteDateTimelineController {
+  _InfiniteTimeLineWidgetState? _infiniteTimeLineState;
+
+  /// Attaches the controller to the given EasyInfiniteDateTimeline state.
+  void _attachEasyDateState(_InfiniteTimeLineWidgetState state) {
+    _infiniteTimeLineState = state;
+  }
+
+  /// Detaches the controller from the EasyInfiniteDateTimeline state.
+  void _detachEasyDateState() {
+    _infiniteTimeLineState = null;
+  }
+
+  /// Jumps to the focus date on the timeline.
+  /// Throws an assertion error if the controller is not attached to any EasyInfiniteDateTimeline view.
+  void jumpToFocusDate() {
+    assert(
+      _infiniteTimeLineState != null,
+      'EasyInfiniteDateTimelineController is not attached to any EasyInfiniteDateTimeline View.',
+    );
+
+    final offset = _infiniteTimeLineState!
+        ._getScrollOffset(_infiniteTimeLineState!._focusDate);
+    _infiniteTimeLineState!._controller.jumpTo(offset);
+  }
+
+  /// Animates to the focus date on the timeline.
+  /// Throws an assertion error if the controller is not attached to any EasyInfiniteDateTimeline view.
+  void animateToFocusDate({
+    duration = const Duration(milliseconds: 300),
+    curve = Curves.linear,
+  }) {
+    assert(
+      _infiniteTimeLineState != null,
+      'EasyInfiniteDateTimelineController is not attached to any EasyInfiniteDateTimeline View.',
+    );
+
+    final offset = _infiniteTimeLineState!
+        ._getScrollOffset(_infiniteTimeLineState!._focusDate);
+    _infiniteTimeLineState!._controller.animateTo(
+      offset,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
+  /// Animates to the specified date on the timeline.
+  /// Throws an assertion error if the controller is not attached to any EasyInfiniteDateTimeline view.
+  void animateToDate(
+    DateTime date, {
+    duration = const Duration(milliseconds: 300),
+    curve = Curves.linear,
+  }) {
+    assert(
+      _infiniteTimeLineState != null,
+      'EasyInfiniteDateTimelineController is not attached to any EasyInfiniteDateTimeline View.',
+    );
+    final offset = _infiniteTimeLineState!._getScrollOffset(date);
+    _infiniteTimeLineState!._controller.animateTo(
+      offset,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
+  /// Animates to the current date on the timeline.
+  /// Throws an assertion error if the controller is not attached to any EasyInfiniteDateTimeline view.
+  void animateToCurrentData({
+    duration = const Duration(milliseconds: 300),
+    curve = Curves.linear,
+  }) {
+    assert(
+      _infiniteTimeLineState != null,
+      'EasyInfiniteDateTimelineController is not attached to any EasyInfiniteDateTimeline View.',
+    );
+    final offset = _infiniteTimeLineState!._getScrollOffset(DateTime.now());
+    _infiniteTimeLineState!._controller.animateTo(
+      offset,
+      duration: duration,
+      curve: curve,
+    );
+  }
+
+  /// Jumps to the specified date on the timeline.
+  /// Throws an assertion error if the controller is not attached to any EasyInfiniteDateTimeline view.
+  void jumpToDate(
+    DateTime date,
+  ) {
+    assert(
+      _infiniteTimeLineState != null,
+      'EasyInfiniteDateTimelineController is not attached to any EasyInfiniteDateTimeline View.',
+    );
+    final offset = _infiniteTimeLineState!._getScrollOffset(date);
+    _infiniteTimeLineState!._controller.jumpTo(
+      offset,
+    );
+  }
+}

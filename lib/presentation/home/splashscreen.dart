@@ -377,6 +377,7 @@ class _SplashScreenState extends State<SplashScreen>
                             child: TextField(
                               // "20127600 - 20127004 - 20127171",
                               controller: loadingText,
+                              maxLines: 2,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 10,

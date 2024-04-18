@@ -772,6 +772,17 @@ class _ProjectTabState extends State<ProjectTab> {
     if (yOffset == 0) {
       yOffset = MediaQuery.of(context).size.height;
     }
+    var l = _projectStore.projects
+        .map(
+          (e) => e.companyId,
+        )
+        .toSet()
+        .toList();
+    l.insert(0, "");
+    l.sort(
+      (a, b) => a.compareTo(b),
+    );
+    _list = l;
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -921,20 +932,7 @@ class _ProjectTabState extends State<ProjectTab> {
           right: 0,
           top: 55,
           width: 150,
-          child: CustomDropdown<String>.searchRequest(
-            futureRequest: (p0) {
-              var l = _projectStore.projects
-                  .map(
-                    (e) => e.companyId,
-                  )
-                  .toSet()
-                  .toList();
-              l.insert(0, "");
-              l.sort(
-                (a, b) => a.compareTo(b),
-              );
-              return Future.value(l);
-            },
+          child: CustomDropdown<String>.search(
             hideSelectedFieldWhenExpanded: false,
             closedHeaderPadding: const EdgeInsets.only(left: 40),
             decoration: const CustomDropdownDecoration(
