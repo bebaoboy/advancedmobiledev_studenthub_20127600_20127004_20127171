@@ -1,11 +1,15 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:math';
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
+import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -15,6 +19,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
+import 'package:flutter/rendering.dart';
 
 var colorss = [
   Colors.red,
@@ -41,61 +46,68 @@ class AlertTab extends StatefulWidget {
   State<AlertTab> createState() => _AlertTabState();
 }
 
-class _AlertTabState extends State<AlertTab> {
-  final List<Map<String, dynamic>> alerts = [
-    {
-      'icon': Icons.star,
-      'title': 'You have submitted to join project "Javis - AI Copilot"',
-      'subtitle': '6/6/2024',
-      'action': null,
-    },
-    {
-      'icon': Icons.star,
-      'title':
-          'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-      'subtitle': '6/6/2024',
-      'action': 'Join',
-    },
-    {
-      'icon': Icons.star,
-      'title': 'You have offer to join project "Javis - AI Copilot"',
-      'subtitle': '6/6/2024',
-      'action': 'View offer',
-    },
-    {
-      'icon': Icons.star,
-      'title': 'Alex Jor',
-      'subtitle':
-          'I have read your requirement but I dont seem to...?\n6/6/2024',
-      'action': null,
-    },
-    {
-      'icon': Icons.star,
-      'title': 'Alex Jor',
-      'subtitle': 'Finish your project?\n6/6/2024',
-      'action': null,
-    },
-    {
-      'icon': Icons.star,
-      'title': 'Alex Jor',
-      'subtitle': 'How are you doing?\n6/6/2024',
-      'action': null,
-    },
+final List<Map<String, dynamic>> alerts = [
+  // OfferNotification(
+  //     projectId: "",
+  //     id: "",
+  //     receiver: Profile(objectId: ""),
+  //     sender: Profile(objectId: ""),
+  //     content: 'You have submitted to join project "Javis - AI Copilot'),
 
-    {
-      'icon': Icons.star,
-      'title': 'You have an offer to join project "Quantum Physics"',
-      'subtitle': '6/6/2024',
-      'action': 'View offer',
-    },
-    {
-      'icon': Icons.star,
-      'title': 'You have an offer to join project "HCMUS - Administration"',
-      'subtitle': '6/6/2024',
-      'action': 'View offer',
-    },
-    // Add more alerts here
-  ];
+  {
+    'icon': Icons.star,
+    'title': 'You have submitted to join project "Javis - AI Copilot"',
+    'subtitle': '6/6/2024',
+    'action': null,
+  },
+  {
+    'icon': Icons.star,
+    'title':
+        'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+    'subtitle': '6/6/2024',
+    'action': 'Join',
+  },
+  {
+    'icon': Icons.star,
+    'title': 'You have offer to join project "Javis - AI Copilot"',
+    'subtitle': '6/6/2024',
+    'action': 'View offer',
+  },
+  {
+    'icon': Icons.star,
+    'title': 'Alex Jor',
+    'subtitle': 'I have read your requirement but I dont seem to...?\n6/6/2024',
+    'action': null,
+  },
+  {
+    'icon': Icons.star,
+    'title': 'Alex Jor',
+    'subtitle': 'Finish your project?\n6/6/2024',
+    'action': null,
+  },
+  {
+    'icon': Icons.star,
+    'title': 'Alex Jor',
+    'subtitle': 'How are you doing?\n6/6/2024',
+    'action': null,
+  },
+
+  {
+    'icon': Icons.star,
+    'title': 'You have an offer to join project "Quantum Physics"',
+    'subtitle': '6/6/2024',
+    'action': 'View offer',
+  },
+  {
+    'icon': Icons.star,
+    'title': 'You have an offer to join project "HCMUS - Administration"',
+    'subtitle': '6/6/2024',
+    'action': 'View offer',
+  },
+  // Add more alerts here
+];
+
+class _AlertTabState extends State<AlertTab> {
   var userStore = getIt<UserStore>();
   bool hasOfferProposal = false;
 
@@ -134,6 +146,22 @@ class _AlertTabState extends State<AlertTab> {
     });
     dateStyle = datePickerStyle;
     monthStyle = monthPickerStyle;
+    listController = List.filled(activeDates.length, ScrollController());
+    for (var element in listController) {
+      element.addListener(
+        () {
+          if (element.position.userScrollDirection == ScrollDirection.reverse) {
+            hideBar(true);
+          } else {
+            hideBar(false);
+          }
+        },
+      );
+    }
+  }
+
+  hideBar(b) {
+    NavbarNotifier2.hideBottomNavBar = b;
   }
 
   @override
@@ -322,6 +350,7 @@ class _AlertTabState extends State<AlertTab> {
   }
 
   TextStyle dateStyle = const TextStyle(), monthStyle = const TextStyle();
+  List<ScrollController> listController = [];
 
   DateTime selectedDate = DateTime.now();
   IndexController alertPageController = IndexController();
@@ -332,13 +361,19 @@ class _AlertTabState extends State<AlertTab> {
 
   _datePickerSection() {
     return Container(
+        // decoration: BoxDecoration(
+        //     border: Border.all(
+        //       color: Theme.of(context).colorScheme.primary,
+        //     ),
+        //     borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.only(),
         child: EasyInfiniteDateTimeLine(
-          selectionMode: const SelectionMode.autoCenter(),
+          selectionMode: const SelectionMode.alwaysFirst(),
           controller: dateController,
           firstDate: activeDates.first,
           focusDate: selectedDate,
           lastDate: activeDates.last,
+          locale: getIt<LanguageStore>().locale,
           onDateChange: (date) {
             setState(() {
               selectedDate = date;
@@ -354,10 +389,8 @@ class _AlertTabState extends State<AlertTab> {
               print(i);
             }
           },
-          // timeLineProps: EasyTimeLineProps(
-          //     decoration:
-          //         BoxDecoration(borderRadius: BorderRadius.circular(12))),
           dayProps: EasyDayProps(
+            height: 60,
             activeDayStyle: DayStyle(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(12)),
@@ -407,7 +440,7 @@ class _AlertTabState extends State<AlertTab> {
   Widget _buildAlertsContent() {
     return Stack(children: [
       Container(
-          height: 155,
+          height: 108,
           width: 120,
           margin: const EdgeInsets.only(
             top: 2,
@@ -415,11 +448,11 @@ class _AlertTabState extends State<AlertTab> {
           child: _buildTopRowList()),
       Container(
           margin: const EdgeInsets.only(top: 0, left: 120),
-          height: 170,
+          height: 110,
           child: _datePickerSection()),
       Container(
-        margin: const EdgeInsets.only(top: 170),
-        height: MediaQuery.of(context).size.height * 0.9 - 230,
+        margin: const EdgeInsets.only(top: 120),
+        height: MediaQuery.of(context).size.height * 0.9,
         child: TransformerPageView(
           itemCount: activeDates.length,
           index: 7, // middle page
@@ -433,7 +466,73 @@ class _AlertTabState extends State<AlertTab> {
             print(selectedDate);
           },
           itemBuilder: (context, index) {
-            return ListView.separated(
+            return SingleChildScrollView(
+              controller: listController[index],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "New",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        alerts.where((e) => e["action"] == "Join").length,
+                    itemBuilder: (context, index) {
+                      return const CustomFollowNotifcation();
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Today",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        alerts.where((e) => e["action"] == "View offer").length,
+                    itemBuilder: (context, index) {
+                      return const CustomFollowNotifcation();
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Oldest",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: alerts.where((e) => e["action"] == null).length,
+                    itemBuilder: (context, index) {
+                      return const CustomLikedNotifcation();
+                    },
+                  ),
+                ],
+              ),
+            );
+
+            ListView.separated(
+                controller: listController[index],
                 itemCount: alerts.length,
                 separatorBuilder: (context, index) =>
                     const Divider(color: Colors.black),
@@ -472,6 +571,7 @@ class _AlertTabState extends State<AlertTab> {
                     ),
                   );
                 });
+          
           },
         ),
       ),
@@ -901,6 +1001,164 @@ class HeroFlutterLogo extends StatelessWidget {
             size: size,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CustomFollowNotifcation extends StatefulWidget {
+  const CustomFollowNotifcation({super.key});
+
+  @override
+  State<CustomFollowNotifcation> createState() =>
+      _CustomFollowNotifcationState();
+}
+
+class _CustomFollowNotifcationState extends State<CustomFollowNotifcation> {
+  bool follow = false;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20, backgroundColor: Colors.blue,
+            backgroundImage: Image.network(
+              width: 50,
+              height: 50,
+              'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+              fit: BoxFit.cover,
+            ).image,
+            // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Dean Winchester",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline3!
+                      .copyWith(fontSize: 13)),
+              const SizedBox(
+                height: 5,
+              ),
+              Text("New following you  ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(fontSize: 9)),
+            ],
+          ),
+          const Spacer(),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 0),
+              child: RoundedButtonWidget(
+                height: 40,
+                buttonColor: Theme.of(context).colorScheme.primary,
+                buttonTextSize: 10,
+                // textColor: follow == false ? Colors.white : mainText,
+                onPressed: () {
+                  setState(() {
+                    follow = !follow;
+                  });
+                },
+                buttonText: "Follow",
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomLikedNotifcation extends StatelessWidget {
+  const CustomLikedNotifcation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2,8,8,8),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 80,
+            width: 50,
+            child: Stack(children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: CircleAvatar(
+                  radius: 25,
+
+                  // backgroundImage: AssetImage("assets/imges/Avatar3.png"),
+                ),
+              ),
+              Positioned(
+                bottom: 10,
+                child: CircleAvatar(
+                  radius: 20, backgroundColor: Colors.blue,
+                  backgroundImage: Image.network(
+                    width: 50,
+                    height: 50,
+                    'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                    fit: BoxFit.cover,
+                  ).image,
+                  // backgroundImage: AssetImage("assets/imges/Avatar2.png"),
+                ),
+              ),
+            ]),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RichText(
+                  maxLines: 2,
+                  text: TextSpan(
+                      text: "John Steve",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(fontSize: 15),
+                      children: [
+                        TextSpan(
+                          text: " and ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 9),
+                        ),
+                        const TextSpan(text: "Sam Wincherter")
+                      ]),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text("Liked your recipe  ",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(fontSize: 9))
+              ],
+            ),
+          ),
+          Image.network(
+            "https://docs.flutter.dev/assets/images/404/dash_nest.png",
+            height: 64,
+            width: 64,
+          ),
+        ],
       ),
     );
   }

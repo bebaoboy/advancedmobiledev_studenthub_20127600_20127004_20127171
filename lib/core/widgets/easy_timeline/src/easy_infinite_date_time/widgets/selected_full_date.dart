@@ -1,3 +1,5 @@
+// ignore_for_file: unused_import
+
 import 'package:boilerplate/core/widgets/easy_timeline/src/utils/easy_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

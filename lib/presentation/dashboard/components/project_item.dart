@@ -43,6 +43,9 @@ class _OpenContainerWrapper extends StatelessWidget {
         }
       },
       openColor: theme.cardColor,
+      openShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(25)),
+      ),
       closedShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
@@ -55,6 +58,7 @@ class _OpenContainerWrapper extends StatelessWidget {
                 top: BorderSide(color: Colors.black, width: 1.0),
                 bottom: BorderSide(color: Colors.black, width: 1.0),
               ),
+              // borderRadius: BorderRadius.all(Radius.circular(25))
             ),
             child: InkWell(
               onTap: () {

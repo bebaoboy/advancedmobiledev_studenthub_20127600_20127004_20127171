@@ -59,12 +59,16 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
   }
 
   void _hideBottomNavBar() {
-    _controller.reverse();
+    if (!widget.isDesktop) {
+      _controller.reverse();
+    }
     return;
   }
 
   void _showBottomNavBar() {
-    _controller.forward();
+    if (!widget.isDesktop) {
+      _controller.forward();
+    }
     return;
   }
 
