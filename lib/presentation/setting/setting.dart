@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
+import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/onboarding_screen.dart';
+import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -521,6 +523,24 @@ class _SettingScreenState extends State<SettingScreen> {
             ),
             ListTile(
                 leading: const Icon(Icons.settings),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) {
+                    return Scaffold(
+                      appBar: AppBar(
+                        title: Text('Settings'),
+                      ),
+                      body: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          ThemeButton(),
+                          LanguageButton(),
+                        ],
+                      ),
+                    );
+                  }));
+                },
                 title: Text(
                   Lang.get('setting_text'),
                 )),

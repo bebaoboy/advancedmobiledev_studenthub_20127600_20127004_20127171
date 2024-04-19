@@ -215,8 +215,8 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
         centerTitle: false,
         alwaysShowTitle: true,
         actions: [
-          LanguageButton(),
-          ThemeButton(),
+          // LanguageButton(),
+          // ThemeButton(),
           _buildLogoutButton(),
         ],
         title: Lang.get('appbar_title'),

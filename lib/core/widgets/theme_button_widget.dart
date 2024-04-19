@@ -12,13 +12,14 @@ class ThemeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Observer(
       builder: (context) {
-        return IconButton(
-          onPressed: () {
-            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
-          },
-          icon: Icon(
+        return ListTile(
+          leading: Icon(
             _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
           ),
+          title: Text('Change Theme'),
+          onTap: () {
+            _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+          },
         );
       },
     );
