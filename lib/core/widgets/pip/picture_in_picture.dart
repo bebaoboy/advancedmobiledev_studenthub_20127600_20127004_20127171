@@ -7,9 +7,13 @@ import 'package:flutter/material.dart';
 class PictureInPicture {
   static bool isActive = false;
   static GlobalKey<PiPMaterialAppState> pipKey = GlobalKey();
-  static void stopPiP() {
-    Navigator.of(NavigationService.navigatorKey.currentContext!)
-        .push(MaterialPageRoute2(child: pipKey.currentState?.changeOverlay()));
+  static void stopPiP(bool openWidgetOnClose) {
+    if (openWidgetOnClose) {
+      Navigator.of(NavigationService.navigatorKey.currentContext!).push(
+          MaterialPageRoute2(child: pipKey.currentState?.changeOverlay()));
+    } else {
+      pipKey.currentState?.changeOverlay();
+    }
     isActive = false;
   }
 

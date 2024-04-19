@@ -7,7 +7,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
-import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student_apply.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -37,12 +37,15 @@ class _OpenContainerWrapper extends StatelessWidget {
             project: project,
           );
         } else {
-          return ProjectDetailsStudentScreen(
+          return ProjectDetailsStudentApplyScreen(
             project: project,
           );
         }
       },
       openColor: theme.cardColor,
+      openShape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(25)),
+      ),
       closedShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
@@ -55,6 +58,7 @@ class _OpenContainerWrapper extends StatelessWidget {
                 top: BorderSide(color: Colors.black, width: 1.0),
                 bottom: BorderSide(color: Colors.black, width: 1.0),
               ),
+              // borderRadius: BorderRadius.all(Radius.circular(25))
             ),
             child: InkWell(
               onTap: () {
@@ -65,7 +69,8 @@ class _OpenContainerWrapper extends StatelessWidget {
 
                 // ToDo: uncomment first line and comment second
                 // this is for testing               
-                openContainer();
+                if (project.isLoading) return;
+                  openContainer();
               },
               child: closedChild,
             ));
@@ -325,13 +330,17 @@ class _ProjectItem2State extends State<ProjectItem2> {
     if (widget.project.countProposals < 1) {
       proposalText += 'None';
     } else {
-      proposalText += (widget.project.proposal?.length ?? 0).toString();
+      proposalText += (widget.project.countProposals).toString();
     }
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated &&
         widget.project.updatedAt!.day == DateTime.now().day) {
       updatedText =
           "Updated ${timeago.format(locale: _languageStore.locale, widget.project.updatedAt!.toLocal())}";
+    } else if (widget.project.updatedAt != null) {
+      updatedText = timeago
+          .format(locale: _languageStore.locale, widget.project.updatedAt!)
+          .inCaps;
     } else {
       updatedText = createdText;
     }

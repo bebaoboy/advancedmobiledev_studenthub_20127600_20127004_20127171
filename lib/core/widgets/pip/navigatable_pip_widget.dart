@@ -9,13 +9,13 @@ class NavigatablePiPWidget extends StatefulWidget {
   final double pipBorderRadius;
 
   static void closePiP() {
-    PictureInPicture.stopPiP();
+    PictureInPicture.stopPiP(true);
   }
 
   const NavigatablePiPWidget({
     super.key,
     required this.onPiPClose,
-    this.pipBorderRadius = 5,
+    this.pipBorderRadius = 12,
     this.elevation = 10,
     required this.builder,
   });

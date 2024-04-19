@@ -1,9 +1,13 @@
 // ignore_for_file: empty_catches
 
+import 'package:boilerplate/core/widgets/pip/navigatable_pip_widget.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
+import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
+import 'package:boilerplate/core/widgets/pip/pip_params.dart';
+import 'package:boilerplate/core/widgets/pip/pip_view_corner.dart';
 
 import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
@@ -144,12 +148,40 @@ class CallManager {
     P2PSession callSession =
         _callClient!.createCallSession(callType, opponents);
     _currentCall = callSession;
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => ConversationCallScreen(callSession, false),
+    PictureInPicture.updatePiPParams(
+      pipParams: PiPParams(
+        pipWindowHeight: MediaQuery.of(context).size.height * 0.95,
+        pipWindowWidth: MediaQuery.of(context).size.width * 0.95,
+        bottomSpace: 64,
+        leftSpace: 64,
+        rightSpace: 64,
+        topSpace: 64,
+        minSize: Size((MediaQuery.of(context).size.width * 0.95) / 2,
+            (MediaQuery.of(context).size.height * 0.95) / 2),
+        maxSize: MediaQuery.of(context).size,
+        movable: true,
+        resizable: true,
+        initialCorner: PIPViewCorner.topLeft,
+        openWidgetOnClose: false,
       ),
     );
+    PictureInPicture.startPiP(
+        pipWidget: NavigatablePiPWidget(
+            onPiPClose: () {
+              //Handle closing events e.g. dispose controllers.
+              // _enableScreenSharing = false;
+              // _toggleScreenSharing();
+              hungUp();
+            },
+            elevation: 10, //Optional
+            pipBorderRadius: 10,
+            builder: (context) => ConversationCallScreen(callSession, false)));
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(
+    //     builder: (context) => ConversationCallScreen(callSession, false),
+    //   ),
+    // );
 
     _sendStartCallSignalForOffliners(_currentCall!);
   }
@@ -188,12 +220,42 @@ class CallManager {
           ConnectycubeFlutterCallKit.reportCallAccepted(sessionId: sessionId);
         }
         if (NavigationService.navigatorKey.currentContext != null) {
-          Navigator.pushReplacement(
-            NavigationService.navigatorKey.currentContext!,
-            MaterialPageRoute2(
-              child: ConversationCallScreen(_currentCall!, true),
+          // Navigator.pushReplacement(
+          //   NavigationService.navigatorKey.currentContext!,
+          //   MaterialPageRoute2(
+          //     child: ConversationCallScreen(_currentCall!, true),
+          //   ),
+          // );
+          var context = NavigationService.navigatorKey.currentContext!;
+          PictureInPicture.updatePiPParams(
+            pipParams: PiPParams(
+              pipWindowHeight: MediaQuery.of(context).size.height * 0.95,
+              pipWindowWidth: MediaQuery.of(context).size.width * 0.95,
+              bottomSpace: 64,
+              leftSpace: 64,
+              rightSpace: 64,
+              topSpace: 64,
+              minSize: Size((MediaQuery.of(context).size.width * 0.95) / 2,
+                  (MediaQuery.of(context).size.height * 0.95) / 2),
+              maxSize: MediaQuery.of(context).size,
+              movable: true,
+              resizable: true,
+              initialCorner: PIPViewCorner.topLeft,
+              openWidgetOnClose: false,
             ),
           );
+          PictureInPicture.startPiP(
+              pipWidget: NavigatablePiPWidget(
+                  onPiPClose: () {
+                    //Handle closing events e.g. dispose controllers.
+                    // _enableScreenSharing = false;
+                    // _toggleScreenSharing();
+                    hungUp();
+                  },
+                  elevation: 10, //Optional
+                  pipBorderRadius: 10,
+                  builder: (context) =>
+                      ConversationCallScreen(_currentCall!, true)));
         }
       }
 
@@ -214,7 +276,7 @@ class CallManager {
       _currentCall!.reject();
       _sendEndCallSignalForOffliners(_currentCall);
     } else {
-      Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
+      // Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }
 
@@ -224,7 +286,7 @@ class CallManager {
       _currentCall!.hungUp();
       _sendEndCallSignalForOffliners(_currentCall);
     } else {
-      Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
+      // Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }
 

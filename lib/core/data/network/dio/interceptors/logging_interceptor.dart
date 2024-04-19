@@ -3,7 +3,6 @@
 library dio_logging_interceptor;
 
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -246,10 +245,15 @@ class LoggingInterceptor extends Interceptor {
   }
 
   void _prettyPrintJson(Object input) {
-    final prettyString = encoder.convert(input);
+    String prettyString = encoder.convert(input);
     logPrint!('<-- Response payload');
+    if (prettyString.length > 1000) {
+      logPrint!(input.toString());
+      return;
+    }
+    // prettyString = prettyString.substring(0, min(prettyString.length, 500));
     prettyString.split('\n').forEach((element) {
-      logPrint!(element.substring(0, min(element.length, 500)));
+      logPrint!(element);
     });
   }
 }

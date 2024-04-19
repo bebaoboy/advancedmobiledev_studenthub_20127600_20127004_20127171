@@ -60,8 +60,9 @@ class _DashBoardTabState extends State<DashBoardTab>
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   }
     // });
-    future = projectStore
-        .getProjectByCompany(_userStore.user!.companyProfile!.objectId!);
+    future = projectStore.getProjectByCompany(
+        _userStore.user!.companyProfile!.objectId!,
+        setStateCallback: () => setState(() {}));
 
     scrollController.add(ScrollController());
     scrollController.add(ScrollController());
@@ -186,7 +187,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                       // ignore: prefer_const_constructors
                       child: ProjectTabs(
                         // tabController: tabController,
-                        pageController: widget.pageController,
+                        // pageController: widget.pageController,
                         tabController: tabController,
                         scrollController: scrollController,
                       ),
@@ -218,11 +219,11 @@ class ProjectTabs extends StatefulWidget {
   ProjectTabs({
     super.key,
     required this.tabController,
-    required this.pageController,
+    // required this.pageController,
     required this.scrollController,
   });
   TabController tabController;
-  PageController pageController;
+  // PageController pageController;
   List<ScrollController> scrollController;
 
   @override

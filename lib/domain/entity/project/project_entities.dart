@@ -220,10 +220,12 @@ class StudentProject extends Project {
     super.enabled,
     super.updatedAt,
     this.projectId = "",
+    super.companyId = "",
   });
 
   factory StudentProject.fromMap(Map<String, dynamic> json) {
     return StudentProject(
+      companyId: (json["companyId"] ?? "").toString(),
       title: json['title'] ?? '',
       description: json['description'] ?? '',
       timeCreated: json['createdAt'] != null
@@ -301,8 +303,8 @@ class Proposal extends MyObject {
         //     objectId: json["studentId"].toString(),
         //     fullName: "Sample Student ${json["studentId"]}"),
         coverLetter = json["coverLetter"] ?? "",
-        status = Status.values[
-            ((json["disableFlag"] ?? 0) as int).clamp(0, Status.values.length - 1)],
+        status = Status.values[((json["disableFlag"] ?? 0) as int)
+            .clamp(0, Status.values.length - 1)],
         hiredStatus = HireStatus.values[((json["statusFlag"] ?? 0) as int)
             .clamp(0, HireStatus.values.length - 1)],
         projectId = json["projectId"].toString(),
@@ -314,19 +316,25 @@ class Proposal extends MyObject {
             objectId: json["id"].toString(),
             createdAt: json['createdAt'] != null
                 ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-                : DateTime.now());
+                : DateTime.now(),
+            updatedAt: json['updatedAt'] != null
+                ? DateTime.tryParse(json['updatedAt']) ?? DateTime.now()
+                : json['createdAt'] != null
+                    ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+                    : DateTime.now());
 
   Map<String, dynamic> toJson() {
     return {
       "id": objectId,
       "coverLetter": coverLetter,
-      "hiredStatus": hiredStatus.index,
+      "statusFlag": hiredStatus.index,
       "student": student,
       "disableFlag": enabled ? 0 : 1,
       "projectId": projectId,
-      "statusFlag": status.index,
+      // "statusFlag": status.index,
       "project": project,
       "createdAt": createdAt.toString(),
+      "updatedAt": updatedAt.toString(),
     };
   }
 

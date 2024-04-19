@@ -55,6 +55,7 @@ class Refazynist extends StatefulWidget {
       required this.removedItemBuilder,
       required this.onLazy,
       required this.onRefresh,
+      required this.setStateCallback,
       required this.sharedPreferencesName,
       this.emptyBuilder = refazynistDefaultErrorBuilder,
       this.loaderBuilder = refazynistDefaultLoaderBuilder,
@@ -76,6 +77,8 @@ class Refazynist extends StatefulWidget {
 
   /// itemBuilder for rendering on Animated List
   final RefazynistItemBuilder itemBuilder;
+
+  final Function? setStateCallback;
 
   /// itemBuilder for rendering on Animated List when item removed
   final RefazynistRemovedItemBuilder removedItemBuilder;
@@ -234,8 +237,12 @@ class RefazynistState extends State<Refazynist> {
     // return false;
   }
 
-  Future<void> refresh({List? readyMade}) async {
+  bool refreshing = true;
+
+  Future<void> refresh({List? readyMade, bool isFinal = true}) async {
     if (!_play) return Future.value();
+    refreshing = true;
+    print("refessh list");
 
     cursor = "";
 
@@ -247,8 +254,9 @@ class RefazynistState extends State<Refazynist> {
       _insertAllItem(_items.length, refreshList,
           sequentialInsert: widget.sequentialInsert,
           callType: RefazynistCallType.all);
-
-      addLoader();
+      if (isFinal) {
+        addLoader();
+      }
     }
 
     if (_items.isNotEmpty) {
@@ -259,6 +267,11 @@ class RefazynistState extends State<Refazynist> {
 
     setState(() {});
 
+    if ((widget.setStateCallback != null)) {
+      widget.setStateCallback!();
+    } else {}
+
+    refreshing = false;
     return Future.value(null);
   }
 
@@ -408,10 +421,12 @@ class RefazynistState extends State<Refazynist> {
 
   Widget _itemBuilder(
       BuildContext ibContext, int index, Animation<double> ibAnimation) {
+    print("init refessh $refreshing");
+
     if (_loaderShowing && index >= _items.length) {
       // lazynin çağrılması için o an çalışmıyor olması gerek
       // ek olarak temizleme yapılmıyor olmalı. temizlerken eklemek saçma olur
-
+      if (refreshing) return Container();
       if (_play && _onLazyRunning == false && _clearRunning == false) {
         _onLazyRunning = true;
 

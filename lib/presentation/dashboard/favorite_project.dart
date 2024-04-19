@@ -90,6 +90,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
                 Widget children;
                 if (snapshot.hasData) {
                   children = Refazynist(
+                      setStateCallback: () => setState(() {}),
                       loaderBuilder: (bContext, bAnimation) {
                         return const LoadingScreenWidget();
                       },

@@ -373,6 +373,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             alignment: Alignment.topCenter,
             child: widget.searchList.isNotEmpty
                 ? Refazynist(
+                    setStateCallback: () => {},
                     scrollExtent: 30,
                     loaderBuilder: (bContext, bAnimation) {
                       return const LoadingScreenWidget();
@@ -629,6 +630,7 @@ class _ProjectTabState extends State<ProjectTab> {
   TextEditingController controller = TextEditingController();
   Set<String> searchHistory = {};
   late Future<ProjectList> future;
+  int resultLenght = 0;
 
   @override
   void initState() {
@@ -640,6 +642,7 @@ class _ProjectTabState extends State<ProjectTab> {
     future = _projectStore.getAllProject(refazynistKey);
   }
 
+  // ignore: prefer_final_fields
   List<String> _list = [""];
   String keywordId = "";
 
@@ -766,9 +769,21 @@ class _ProjectTabState extends State<ProjectTab> {
 
   int lazyCount = 5; // It's for lazy loading limit
   Widget _buildProjectContent() {
+    resultLenght = _projectStore.projects.length;
     if (yOffset == 0) {
       yOffset = MediaQuery.of(context).size.height;
     }
+    var l = _projectStore.projects
+        .map(
+          (e) => e.companyId,
+        )
+        .toSet()
+        .toList();
+    l.insert(0, "");
+    l.sort(
+      (a, b) => a.compareTo(b),
+    );
+    _list = l;
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -912,13 +927,14 @@ class _ProjectTabState extends State<ProjectTab> {
         ),
         Container(
           margin: const EdgeInsets.only(top: 65, left: 5),
-          child: Text("${Lang.get("result")} ${_projectStore.projects.length}"),
+          child: Text("${Lang.get("result")} $resultLenght"),
         ),
         Positioned(
           right: 0,
           top: 55,
           width: 150,
           child: CustomDropdown<String>.search(
+            hideSelectedFieldWhenExpanded: false,
             closedHeaderPadding: const EdgeInsets.only(left: 40),
             decoration: const CustomDropdownDecoration(
                 closedFillColor: Colors.transparent),
@@ -962,6 +978,9 @@ class _ProjectTabState extends State<ProjectTab> {
                               ? "(You) "
                               : "") +
                           item,
+                      style: isSelected
+                          ? const TextStyle(fontWeight: FontWeight.bold)
+                          : null,
                       textAlign: TextAlign.start,
                     ),
                     // const Spacer(),
@@ -985,6 +1004,7 @@ class _ProjectTabState extends State<ProjectTab> {
                 Widget children;
                 if (snapshot.hasData) {
                   children = Refazynist(
+                      setStateCallback: () => setState(() {}),
                       loaderBuilder: (bContext, bAnimation) {
                         return const LoadingScreenWidget();
                       },
@@ -1016,19 +1036,7 @@ class _ProjectTabState extends State<ProjectTab> {
 
                         if (keywordId.isEmpty) {
                           print("on refesshh");
-                          setState(() {
-                            future = _projectStore.getAllProject(refazynistKey);
-                          });
-                          _list = _projectStore.projects
-                              .map(
-                                (e) => e.companyId,
-                              )
-                              .toSet()
-                              .toList();
-                          _list.insert(0, "");
-                          _list.sort(
-                            (a, b) => a.compareTo(b),
-                          );
+                          _projectStore.getAllProject(refazynistKey);
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);
 
@@ -1052,8 +1060,8 @@ class _ProjectTabState extends State<ProjectTab> {
                             (refazynistKey.currentState!.length() + 5)
                                 .clamp(0, p.length)));
 
-                        await Future.delayed(
-                            const Duration(seconds: 1)); // Fake internet delay
+                        await Future.delayed(const Duration(
+                            milliseconds: 500)); // Fake internet delay
                         return lazyList;
                       },
 

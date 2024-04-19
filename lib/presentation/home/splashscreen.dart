@@ -241,7 +241,7 @@ class _SplashScreenState extends State<SplashScreen>
             password: DEFAULT_PASS,
           );
           loadingText.text =
-              "Loading Cube sesson (User ${userStore.user!.email})";
+              "Loading Cube sesson \n(User ${userStore.user!.email})";
 
           if (CubeSessionManager.instance.isActiveSessionValid() &&
               CubeSessionManager.instance.activeSession!.user != null) {
@@ -272,7 +272,7 @@ class _SplashScreenState extends State<SplashScreen>
           print("cannot init cube");
         }
       });
-      Future.delayed(const Duration(seconds: 3), () {
+      Future.delayed(const Duration(seconds: 2), () {
         try {
           _controller.stop();
           // ignore: empty_catches
@@ -285,7 +285,7 @@ class _SplashScreenState extends State<SplashScreen>
     }
     // user = utils.users[2];
     else {
-      Future.delayed(const Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 1), () {
         try {
           _controller.stop();
           // ignore: empty_catches
@@ -377,6 +377,7 @@ class _SplashScreenState extends State<SplashScreen>
                             child: TextField(
                               // "20127600 - 20127004 - 20127171",
                               controller: loadingText,
+                              maxLines: 2,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontSize: 10,

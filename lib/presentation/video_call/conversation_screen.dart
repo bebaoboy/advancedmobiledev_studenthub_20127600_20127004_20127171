@@ -1,6 +1,10 @@
 // ignore_for_file: deprecated_member_use, no_logic_in_create_state, empty_catches
 
+import 'dart:math';
+
+import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:floating/floating.dart';
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -27,6 +31,7 @@ class ConversationCallScreen extends StatefulWidget {
 }
 
 class _ConversationCallScreenState extends State<ConversationCallScreen>
+    with WidgetsBindingObserver
     implements RTCSessionStateCallback<P2PSession> {
   static String TAG = "BEBAOBOY";
   final P2PSession _callSession;
@@ -49,9 +54,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   _ConversationCallScreenState(this._callSession, this._isIncoming)
       : _enableScreenSharing = !_callSession.startScreenSharing;
 
+  final floating = Floating();
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     _initAlreadyReceivedStreams();
 
@@ -75,14 +83,22 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
         _callSession.setMicrophoneMute(_isMicMute);
       });
     };
+
+    // PictureInPicture.isActive.addListener(
+    //   () {
+    //     if (!PictureInPicture.isActive.value) {
+    //       inAppPip = false;
+    //     }
+    //   },
+    // );
   }
 
   @override
   void dispose() {
     super.dispose();
-
-    stopBackgroundExecution();
+    WidgetsBinding.instance.removeObserver(this);
     try {
+      stopBackgroundExecution();
       primaryRenderer?.value.srcObject = null;
       primaryRenderer?.value.dispose();
 
@@ -140,15 +156,18 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
       minorRenderers[userId] = RTCVideoRenderer();
       await minorRenderers[userId]?.initialize();
     }
+    try {
+      setState(() {
+        minorRenderers[userId]?.srcObject = stream;
 
-    setState(() {
-      minorRenderers[userId]?.srcObject = stream;
-
-      if (primaryRenderer?.key == _currentUserId ||
-          primaryRenderer?.key == userId) {
-        _replacePrimaryRenderer(userId);
-      }
-    });
+        if (primaryRenderer?.key == _currentUserId ||
+            primaryRenderer?.key == userId) {
+          _replacePrimaryRenderer(userId);
+        }
+      });
+    } catch (e) {
+      ///
+    }
   }
 
   void _replacePrimaryRenderer(int newPrimaryUser) {
@@ -173,7 +192,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     //   ),
     // );
     if (NavigationService.navigatorKey.currentContext != null) {
-      Navigator.pop(NavigationService.navigatorKey.currentContext!);
+      // Navigator.pop(NavigationService.navigatorKey.currentContext!);
     }
   }
 
@@ -307,53 +326,178 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState lifecycleState) async {
+    if (lifecycleState == AppLifecycleState.inactive &&
+        !PictureInPicture.isActive) {
+      final canUsePiP = await floating.isPipAvailable;
+      if (!canUsePiP || enablePipStatus == PiPStatus.enabled) return;
+      final rational = !_enableScreenSharing
+          ? const Rational.landscape()
+          : const Rational.vertical();
+      final screenSize =
+          MediaQuery.of(context).size * MediaQuery.of(context).devicePixelRatio;
+      final height = !_enableScreenSharing
+          ? screenSize.width ~/ rational.aspectRatio
+          : screenSize.height ~/ rational.aspectRatio;
+
+      enablePipStatus = await floating.enable(
+          aspectRatio: rational,
+          sourceRectHint: Rectangle<int>(
+            0,
+            (screenSize.height ~/ 2) - (height ~/ 2),
+            screenSize.width.toInt(),
+            height,
+          ));
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () => _onBackPressed(context),
-      child: Scaffold(
-        backgroundColor: Colors.grey,
-        body: Stack(fit: StackFit.loose, clipBehavior: Clip.none, children: [
-          _isVideoCall()
-              ? OrientationBuilder(
-                  builder: (context, orientation) {
-                    return _callSession.opponentsIds.length > 1
-                        ? _buildGroupCallLayout(orientation)
-                        : _buildPrivateCallLayout(orientation);
-                  },
-                )
-              : Center(
+    return PiPSwitcher(
+      childWhenEnabled:
+          Stack(fit: StackFit.loose, clipBehavior: Clip.none, children: [
+        _isVideoCall()
+            ? OrientationBuilder(
+                builder: (context, orientation) {
+                  return _buildThemCallLayout(orientation);
+                },
+              )
+            : Scaffold(
+                resizeToAvoidBottomInset: false,
+                body: Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.only(bottom: 24),
                         child: Text(
-                          "Audio call from ${_callSession.callerId}",
-                          style: const TextStyle(fontSize: 28),
+                          "Audio ${_callSession.callerId}",
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
                         ),
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 12),
-                        child: Text(
-                          "Members:",
-                          style: TextStyle(
-                              fontSize: 20, fontStyle: FontStyle.italic),
-                        ),
-                      ),
-                      Text(
-                        _callSession.opponentsIds.join(", "),
-                        style: const TextStyle(fontSize: 20),
                       ),
                     ],
                   ),
                 ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: _getActionsPanel(),
-          ),
-        ]),
+              ),
+        Align(
+          alignment: Alignment.bottomCenter,
+          child:
+              enablePipStatus != PiPStatus.enabled ? _getActionsPanel() : null,
+        ),
+      ]),
+      childWhenDisabled: WillPopScope(
+        onWillPop: () => _onBackPressed(context),
+        child: Scaffold(
+          resizeToAvoidBottomInset: false,
+          backgroundColor: Colors.grey,
+          body: Stack(fit: StackFit.loose, clipBehavior: Clip.none, children: [
+            _isVideoCall()
+                ? OrientationBuilder(
+                    builder: (context, orientation) {
+                      return _callSession.opponentsIds.length > 1
+                          ? _buildGroupCallLayout(orientation)
+                          : _buildPrivateCallLayout(orientation);
+                    },
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 24),
+                          child: Text(
+                            "Audio call from ${_callSession.callerId}",
+                            style: const TextStyle(fontSize: 28),
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(bottom: 12),
+                          child: Text(
+                            "Members:",
+                            style: TextStyle(
+                                fontSize: 20, fontStyle: FontStyle.italic),
+                          ),
+                        ),
+                        Text(
+                          _callSession.opponentsIds.join(", "),
+                          style: const TextStyle(fontSize: 20),
+                        ),
+                      ],
+                    ),
+                  ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: _getActionsPanel(),
+            ),
+          ]),
+        ),
       ),
     );
+  }
+
+  Widget _buildThemCallLayout(Orientation orientation) {
+    if (minorRenderers.isNotEmpty) {
+      return Align(
+        alignment: Alignment.topRight,
+        child: buildItems(
+                minorRenderers,
+                orientation == Orientation.portrait
+                    ? MediaQuery.of(context).size.width / 3
+                    : MediaQuery.of(context).size.width / 4,
+                orientation == Orientation.portrait
+                    ? MediaQuery.of(context).size.height / 4
+                    : MediaQuery.of(context).size.height / 2.5)
+            .first,
+      );
+    } else {
+      return Stack(
+        children: [
+          RTCVideoView(
+            primaryRenderer!.value,
+            objectFit: primaryVideoFit,
+            mirror: primaryRenderer!.key == _currentUserId &&
+                _isFrontCameraUsed &&
+                _enableScreenSharing,
+          ),
+          if (primaryRenderer!.key != _currentUserId)
+            Align(
+              alignment: Alignment.topCenter,
+              child: Container(
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).padding.top + 10),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  child: Container(
+                    padding: const EdgeInsets.all(6),
+                    color: Colors.black26,
+                    child: StreamBuilder<CubeVideoBitrateEvent>(
+                      stream: _statsReportsManager.videoBitrateStream.where(
+                          (event) => event.userId == primaryRenderer!.key),
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return const Text(
+                            '0 kbits/sec',
+                            style: TextStyle(color: Colors.white),
+                          );
+                        } else {
+                          var videoBitrateForUser = snapshot.data!;
+                          return Text(
+                            '${videoBitrateForUser.bitRate} kbits/sec',
+                            style: const TextStyle(color: Colors.white),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      );
+    }
   }
 
   Widget _buildGroupCallLayout(Orientation orientation) {
@@ -798,11 +942,21 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   _endCall() {
+    PictureInPicture.stopPiP(false);
     CallManager.instance.hungUp();
   }
 
-  Future<bool> _onBackPressed(BuildContext context) {
-    return Future.value(false);
+  PiPStatus enablePipStatus = PiPStatus.disabled;
+  bool inAppPip = false;
+  Future<bool> _onBackPressed(BuildContext context) async {
+    // if (!inAppPip) {
+
+    //   inAppPip = true;
+    //   // _enableScreenSharing = false;
+    //   // _toggleScreenSharing();
+    //   return true;
+    // }
+    return false;
   }
 
   _muteMic() {
@@ -897,17 +1051,28 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
         : null;
 
     foregroundServiceFuture.then((_) {
-      _callSession
-          .enableScreenSharing(_enableScreenSharing,
-              desktopCapturerSource: desktopCapturerSource,
-              useIOSBroadcasting: true,
-              requestAudioForScreenSharing: true)
-          .then((voidResult) {
-        setState(() {
-          _enableScreenSharing = !_enableScreenSharing;
-          _isFrontCameraUsed = _enableScreenSharing;
+      try {
+        _callSession
+            .enableScreenSharing(_enableScreenSharing,
+                desktopCapturerSource: desktopCapturerSource,
+                useIOSBroadcasting: true,
+                requestAudioForScreenSharing: true)
+            .onError(
+              (error, stackTrace) {},
+            )
+            .then((voidResult) {
+          try {
+            setState(() {
+              _enableScreenSharing = !_enableScreenSharing;
+              _isFrontCameraUsed = _enableScreenSharing;
+            });
+          } catch (e) {
+            ///
+          }
         });
-      });
+      } catch (e) {
+        print("cannot screen sharing: ${e.toString()}");
+      }
     });
   }
 
@@ -1073,8 +1238,8 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
           return MapEntry(mediaStreamEntry.key, videoRenderer);
         })
       ]);
-      // CallManager.instance.remoteStreams
-      //     .clear(); //ToDO VT check concurrency issue
+      CallManager.instance.remoteStreams
+          .clear(); //ToDO VT check concurrency issue
     }
 
     createLocalRenderer() {

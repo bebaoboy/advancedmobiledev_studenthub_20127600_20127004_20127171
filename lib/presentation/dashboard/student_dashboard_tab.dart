@@ -10,9 +10,10 @@ import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:accordion/accordion.dart';
+import 'package:flutter/rendering.dart';
 
 class StudentDashBoardTab extends StatefulWidget {
   final bool? isAlive;
@@ -30,8 +31,9 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
   void initState() {
     super.initState();
     // tabController = TabController(length: 3, vsync: this);
-    future = _projectStore
-        .getStudentProposalProjects(_userStore.user!.studentProfile!.objectId!);
+    future = _projectStore.getStudentProposalProjects(
+        _userStore.user!.studentProfile!.objectId!,
+        setStateCallback: () => setState(() {}));
   }
 
   final _userStore = getIt<UserStore>();
@@ -120,7 +122,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
+      initialIndex: 1,
       length: 3,
       child: Stack(children: [
         Padding(
@@ -147,35 +149,33 @@ class _ProjectTabsState extends State<ProjectTabs> {
           ),
         ),
         Padding(
-          padding:
-              const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 5),
+          padding: const EdgeInsets.only(top: Dimens.tab_height + 8, bottom: 5),
           child: SizedBox(
             height: MediaQuery.of(context).size.height,
             child: TabBarView(
                 controller: widget.tabController,
                 physics: const BouncingScrollPhysics(),
                 children: [
-                  Observer(
-                    builder: (context) => AllProjects(
-                      projects: userStore.user?.studentProfile?.proposalProjects
-                          ?.where((e) => e.project != null)
-                          .map(
-                            (e) => e.project!,
-                          )
-                          .toList(),
-                    ),
+                  AllProjects(
+                    projects: userStore.user?.studentProfile?.proposalProjects
+                        ?.where((e) =>
+                            e.project != null &&
+                            (e.hiredStatus == HireStatus.notHired ||
+                                e.hiredStatus == HireStatus.pending))
+                        .toList(),
                   ),
                   WorkingProjects(
-                      scrollController: widget.pageController, projects: null),
-                  Observer(
-                    builder: (context) => AllProjects(
+                      scrollController: widget.pageController,
                       projects: userStore.user?.studentProfile?.proposalProjects
-                          ?.where((e) => e.project != null)
-                          .map(
-                            (e) => e.project!,
-                          )
-                          .toList(),
-                    ),
+                          ?.where((e) =>
+                              e.project != null &&
+                              e.hiredStatus == HireStatus.hired)
+                          .toList()),
+                  ArchiveProjects(
+                    scrollController: ScrollController(),
+                    projects: userStore.user?.studentProfile?.proposalProjects
+                        ?.where((e) => e.project != null && e.enabled)
+                        .toList(),
                   ),
                 ]),
           ),
@@ -186,7 +186,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
 }
 
 class WorkingProjects extends StatefulWidget {
-  final List<StudentProject>? projects;
+  final List<Proposal>? projects;
   final ScrollController? scrollController;
   const WorkingProjects(
       {super.key, required this.projects, required this.scrollController});
@@ -202,7 +202,49 @@ class _WorkingProjectsState extends State<WorkingProjects> {
       controller: widget.scrollController,
       itemCount: widget.projects?.length ?? 0,
       itemBuilder: (context, index) {
-        widget.projects![index].isLoading = false;
+        // widget.projects![index].isLoading = false;
+        return StudentProjectItem(project: widget.projects![index]);
+      },
+    );
+  }
+}
+
+class ArchiveProjects extends StatefulWidget {
+  final List<Proposal>? projects;
+  final ScrollController? scrollController;
+  const ArchiveProjects(
+      {super.key, required this.projects, required this.scrollController});
+
+  @override
+  State<ArchiveProjects> createState() => _ArchiveProjectsState();
+}
+
+class _ArchiveProjectsState extends State<ArchiveProjects> {
+  @override
+  void initState() {
+    super.initState();
+    if (widget.scrollController != null) {
+      widget.scrollController!.addListener(
+        () {
+          if (widget.scrollController!.position.userScrollDirection ==
+              ScrollDirection.reverse) {
+            NavbarNotifier2.hideBottomNavBar = true;
+          } else {
+            NavbarNotifier2.hideBottomNavBar = false;
+          }
+        },
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      controller: widget.scrollController,
+      itemCount: widget.projects?.length ?? 0,
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemBuilder: (context, index) {
+        // widget.projects![index].isLoading = false;
         return StudentProjectItem(project: widget.projects![index]);
       },
     );
@@ -210,7 +252,7 @@ class _WorkingProjectsState extends State<WorkingProjects> {
 }
 
 class AllProjects extends StatefulWidget {
-  final List<StudentProject>? projects;
+  final List<Proposal>? projects;
   const AllProjects({super.key, required this.projects});
 
   @override
@@ -218,8 +260,8 @@ class AllProjects extends StatefulWidget {
 }
 
 class _AllProjectsState extends State<AllProjects> {
-  List<StudentProject>? activeProjects = [];
-  List<StudentProject>? submittedProjects = [];
+  List<Proposal>? activeProjects = [];
+  List<Proposal>? submittedProjects = [];
 
   @override
   void initState() {
@@ -227,10 +269,10 @@ class _AllProjectsState extends State<AllProjects> {
 
     if (widget.projects != null) {
       activeProjects = widget.projects!
-          .where((element) => element.isAccepted && element.isSubmitted)
+          .where((element) => element.hiredStatus == HireStatus.pending)
           .toList();
       submittedProjects = widget.projects!
-          .where((element) => !element.isAccepted && element.isSubmitted)
+          .where((element) => element.hiredStatus == HireStatus.notHired)
           .toList();
     }
   }
@@ -241,6 +283,7 @@ class _AllProjectsState extends State<AllProjects> {
       paddingListTop: 10,
       paddingListBottom: 0,
       paddingListHorizontal: 10,
+      scaleWhenAnimating: true,
       maxOpenSections: 1,
       headerBackgroundColorOpened: Colors.black54,
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
@@ -262,10 +305,11 @@ class _AllProjectsState extends State<AllProjects> {
           content: LimitedBox(
             maxHeight: MediaQuery.of(context).size.height / 2,
             child: ListView.builder(
-              controller: ScrollController(),
+              controller: ScrollController()
+                ..addListener(() => NavbarNotifier2.hideBottomNavBar = false),
               itemCount: activeProjects?.length ?? 0,
               itemBuilder: (context, index) {
-                activeProjects![index].isLoading = false;
+                // activeProjects![index].isLoading = false;
                 return StudentProjectItem(project: activeProjects![index]);
               },
             ),
@@ -274,7 +318,6 @@ class _AllProjectsState extends State<AllProjects> {
           contentBorderColor: Colors.black54,
         ),
         AccordionSection(
-          isOpen: true,
           leftIcon: const Icon(Icons.compare_rounded, color: Colors.white),
           header: Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 12.0),
@@ -291,10 +334,11 @@ class _AllProjectsState extends State<AllProjects> {
           content: LimitedBox(
               maxHeight: MediaQuery.of(context).size.height / 2,
               child: ListView.builder(
-                controller: ScrollController(),
+                controller: ScrollController()
+                  ..addListener(() => NavbarNotifier2.hideBottomNavBar = false),
                 itemCount: submittedProjects?.length ?? 0,
                 itemBuilder: (context, index) {
-                  submittedProjects![index].isLoading = false;
+                  // submittedProjects![index].isLoading = false;
                   return StudentProjectItem(project: submittedProjects![index]);
                 },
               )),

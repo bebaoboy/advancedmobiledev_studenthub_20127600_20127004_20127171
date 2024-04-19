@@ -429,7 +429,7 @@ class _MessageScreenState extends State<MessageScreen> {
     typings = [const types.User(id: "123", firstName: "Lam", lastName: "Quan")];
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
-      var num = r.nextInt(25);
+      var num = r.nextInt(30);
       // print(num);
       if (num <= 7) {
         typings = [
@@ -442,9 +442,11 @@ class _MessageScreenState extends State<MessageScreen> {
       } else if (num > 15 && num <= 20) {
         typings.add(const types.User(
             id: "2", firstName: "Jonnathan", lastName: "Nguyên"));
-      } else {
+      } else if (num < 25) {
         typings.add(
             const types.User(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+      } else {
+        typings.clear();
       }
       setState(() {});
     });

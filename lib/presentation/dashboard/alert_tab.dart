@@ -1,14 +1,27 @@
+// ignore_for_file: deprecated_member_use
+
+import 'dart:math';
+
+import 'package:another_transformer_page_view/another_transformer_page_view.dart';
+import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
+import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
+import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
+import 'package:flutter/rendering.dart';
 
-var colors = [
+var colorss = [
   Colors.red,
   Colors.green,
   Colors.blue,
@@ -23,6 +36,8 @@ var colors = [
   ...Colors.accents,
 ];
 
+List<Color> colors = [];
+
 class AlertTab extends StatefulWidget {
   const AlertTab({super.key, required this.scrollController});
   final ScrollController scrollController;
@@ -31,61 +46,123 @@ class AlertTab extends StatefulWidget {
   State<AlertTab> createState() => _AlertTabState();
 }
 
-class _AlertTabState extends State<AlertTab> {
-  final List<Map<String, dynamic>> alerts = [
-    {
-      'icon': Icons.star,
-      'title': 'You have submitted to join project "Javis - AI Copilot"',
-      'subtitle': '6/6/2024',
-      'action': null,
-    },
-    {
-      'icon': Icons.star,
-      'title':
-          'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-      'subtitle': '6/6/2024',
-      'action': 'Join',
-    },
-    {
-      'icon': Icons.star,
-      'title': 'You have offer to join project "Javis - AI Copilot"',
-      'subtitle': '6/6/2024',
-      'action': 'View offer',
-    },
-    {
-      'icon': Icons.star,
-      'title': 'Alex Jor',
-      'subtitle':
-          'I have read your requirement but I dont seem to...?\n6/6/2024',
-      'action': null,
-    },
-    {
-      'icon': Icons.star,
-      'title': 'Alex Jor',
-      'subtitle': 'Finish your project?\n6/6/2024',
-      'action': null,
-    },
-    {
-      'icon': Icons.star,
-      'title': 'Alex Jor',
-      'subtitle': 'How are you doing?\n6/6/2024',
-      'action': null,
-    },
+final List<Map<String, dynamic>> alerts = [
+  // OfferNotification(
+  //     projectId: "",
+  //     id: "",
+  //     receiver: Profile(objectId: ""),
+  //     sender: Profile(objectId: ""),
+  //     content: 'You have submitted to join project "Javis - AI Copilot'),
 
-    {
-      'icon': Icons.star,
-      'title': 'You have an offer to join project "Quantum Physics"',
-      'subtitle': '6/6/2024',
-      'action': 'View offer',
-    },
-    {
-      'icon': Icons.star,
-      'title': 'You have an offer to join project "HCMUS - Administration"',
-      'subtitle': '6/6/2024',
-      'action': 'View offer',
-    },
-    // Add more alerts here
-  ];
+  {
+    'icon': Icons.star,
+    'title': 'You have submitted to join project "Javis - AI Copilot"',
+    'subtitle': '6/6/2024',
+    'action': null,
+  },
+  {
+    'icon': Icons.star,
+    'title':
+        'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+    'subtitle': '6/6/2024',
+    'action': 'Join',
+  },
+  {
+    'icon': Icons.star,
+    'title': 'You have offer to join project "Javis - AI Copilot"',
+    'subtitle': '6/6/2024',
+    'action': 'View offer',
+  },
+  {
+    'icon': Icons.star,
+    'title': 'Alex Jor',
+    'subtitle': 'I have read your requirement but I dont seem to...?\n6/6/2024',
+    'action': null,
+  },
+  {
+    'icon': Icons.star,
+    'title': 'Alex Jor',
+    'subtitle': 'Finish your project?\n6/6/2024',
+    'action': null,
+  },
+  {
+    'icon': Icons.star,
+    'title': 'Alex Jor',
+    'subtitle': 'How are you doing?\n6/6/2024',
+    'action': null,
+  },
+
+  {
+    'icon': Icons.star,
+    'title': 'You have an offer to join project "Quantum Physics"',
+    'subtitle': '6/6/2024',
+    'action': 'View offer',
+  },
+  {
+    'icon': Icons.star,
+    'title': 'You have an offer to join project "HCMUS - Administration"',
+    'subtitle': '6/6/2024',
+    'action': 'View offer',
+  },
+  // Add more alerts here
+];
+
+class _AlertTabState extends State<AlertTab> {
+  var userStore = getIt<UserStore>();
+  bool hasOfferProposal = false;
+
+  List<Proposal> getOffer() {
+    if (hasOfferProposal) {
+      var p = userStore.user!.studentProfile!.proposalProjects!
+          .where(
+            (element) => element.hiredStatus == HireStatus.offer,
+          )
+          .toList();
+      return p;
+    } else {
+      return [];
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    hasOfferProposal = userStore.user != null &&
+        userStore.user!.studentProfile != null &&
+        userStore.user!.studentProfile!.proposalProjects != null &&
+        userStore.user!.studentProfile!.proposalProjects!.isNotEmpty;
+    colors = List.filled(getOffer().length, Colors.white);
+    for (int i = 0; i < (getOffer().length); i++) {
+      colors[i] = colorss[Random().nextInt(colorss.length)];
+    }
+    var today =
+        DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+    selectedDate = today;
+    activeDates
+        .addAll([for (int i = -7; i < 7; i++) today.add(Duration(days: i))]);
+    print(activeDates);
+    Future.delayed(const Duration(seconds: 1), () {
+      // dateController.animateToFocusDate(duration: const Duration(seconds: 1));
+    });
+    dateStyle = datePickerStyle;
+    monthStyle = monthPickerStyle;
+    listController = List.filled(activeDates.length, ScrollController());
+    for (var element in listController) {
+      element.addListener(
+        () {
+          if (element.position.userScrollDirection == ScrollDirection.reverse) {
+            hideBar(true);
+          } else {
+            hideBar(false);
+          }
+        },
+      );
+    }
+  }
+
+  hideBar(b) {
+    NavbarNotifier2.hideBottomNavBar = b;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -94,118 +171,431 @@ class _AlertTabState extends State<AlertTab> {
         child: _buildAlertsContent());
   }
 
+  var projectStore = getIt<ProjectStore>();
+  var topRowController = ScrollController();
+
   Widget _buildTopRowList() {
-    return Scrollbar(
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        shrinkWrap: true,
-        itemCount: colors.length,
-        itemBuilder: (context, index) {
-          return Container(
-            margin: const EdgeInsets.symmetric(horizontal: 15),
-            child: HeroFlutterLogo(
-              color: colors[index],
-              tag: index,
-              size: 100,
-              onTap: () => showAlbumDetailsDialog(context, index),
-            ),
-          );
-        },
-      ),
+    if (hasOfferProposal) {
+      return Stack(
+        children: [
+          for (int index = getOffer().length - 1; index >= 0; index--)
+            Center(
+              child: Container(
+                margin: EdgeInsets.only(
+                    left: index == 1 ? 10 : 15, right: index == 2 ? 7 : 15),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: HeroFlutterLogo(
+                    color: index == 2 ? Colors.white : colors[index],
+                    tag: index,
+                    size: 145,
+                    onTap: () {
+                      print(index);
+                      NavbarNotifier2.hideBottomNavBar = true;
+
+                      Navigator.of(
+                              NavigationService.navigatorKey.currentContext ??
+                                  context)
+                          .push(
+                        ModalExprollableRouteBuilder(
+                            pageBuilder: (_, __, ___) => OfferDetailsDialog(
+                                  index: index,
+                                  proposal: getOffer(),
+                                  onAcceptCallback: (proposal) {
+                                    var userStore = getIt<UserStore>();
+                                    var id = userStore
+                                        .user?.studentProfile?.objectId;
+                                    if (id != null && proposal != null) {
+                                      projectStore
+                                          .updateProposal(proposal, id)
+                                          .then(
+                                        (value) {
+                                          setState(() {});
+                                        },
+                                      );
+                                    }
+                                  },
+                                ),
+                            // Increase the transition durations and take a closer look at what's going on!
+                            transitionDuration:
+                                const Duration(milliseconds: 500),
+                            reverseTransitionDuration:
+                                const Duration(milliseconds: 300),
+                            // The next two lines are not required, but are recommended for better performance.
+                            dismissThresholdInset:
+                                const DismissThresholdInset(dragMargin: 10000)),
+                      )
+                          .then(
+                        (value) {
+                          NavbarNotifier2.hideBottomNavBar = false;
+                        },
+                      );
+                    },
+                  ),
+                ),
+              ),
+            )
+        ],
+      );
+
+      // Scrollbar(
+      //   controller: topRowController,
+      //   child: ListView.builder(
+      //     controller: topRowController,
+      //     shrinkWrap: true,
+      //     reverse: true,
+      //     itemCount: getOffer().length,
+      //     itemBuilder: (context, index) {
+      //       return Container(
+      //         margin: const EdgeInsets.only(right: 15, left: 5, top: 15),
+      //         child: ClipRRect(
+      //           borderRadius: BorderRadius.circular(12),
+      //           child: HeroFlutterLogo(
+      //             color: colors[index],
+      //             tag: index,
+      //             size: 125,
+      //             onTap: () {
+      //               print(index);
+      //               NavbarNotifier2.hideBottomNavBar = true;
+
+      //               Navigator.of(
+      //                       NavigationService.navigatorKey.currentContext ??
+      //                           context)
+      //                   .push(
+      //                 ModalExprollableRouteBuilder(
+      //                     pageBuilder: (_, __, ___) => OfferDetailsDialog(
+      //                           index: index,
+      //                           proposal: getOffer(),
+      //                           onAcceptCallback: (proposal) {
+      //                             var userStore = getIt<UserStore>();
+      //                             var id =
+      //                                 userStore.user?.studentProfile?.objectId;
+      //                             if (id != null && proposal != null) {
+      //                               projectStore
+      //                                   .updateProposal(proposal, id)
+      //                                   .then(
+      //                                 (value) {
+      //                                   setState(() {});
+      //                                 },
+      //                               );
+      //                             }
+      //                           },
+      //                         ),
+      //                     // Increase the transition durations and take a closer look at what's going on!
+      //                     transitionDuration: const Duration(milliseconds: 500),
+      //                     reverseTransitionDuration:
+      //                         const Duration(milliseconds: 300),
+      //                     // The next two lines are not required, but are recommended for better performance.
+      //                     dismissThresholdInset:
+      //                         const DismissThresholdInset(dragMargin: 10000)),
+      //               )
+      //                   .then(
+      //                 (value) {
+      //                   NavbarNotifier2.hideBottomNavBar = false;
+      //                 },
+      //               );
+      //             },
+      //           ),
+      //         ),
+      //       );
+      //     },
+      //   ),
+      // );
+    } else {
+      return Container(
+        margin: const EdgeInsets.only(left: 15, right: 15),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: HeroFlutterLogo(
+            color: Colors.white,
+            tag: -1,
+            size: 125,
+            onTap: () {},
+          ),
+        ),
+      );
+    }
+  }
+
+  TextStyle get datePickerStyle {
+    return const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.black,
     );
+  }
+
+  TextStyle get monthPickerStyle {
+    return const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.grey,
+    );
+  }
+
+  TextStyle get datePickerStyleToday {
+    return const TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.w600,
+      color: Colors.red,
+    );
+  }
+
+  TextStyle get monthPickerStyleToday {
+    return const TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w600,
+      color: Colors.red,
+    );
+  }
+
+  TextStyle dateStyle = const TextStyle(), monthStyle = const TextStyle();
+  List<ScrollController> listController = [];
+
+  DateTime selectedDate = DateTime.now();
+  IndexController alertPageController = IndexController();
+  final List<DateTime> activeDates = [];
+  final EasyInfiniteDateTimelineController dateController =
+      EasyInfiniteDateTimelineController();
+  int oldIndex = 7;
+
+  _datePickerSection() {
+    return Container(
+        // decoration: BoxDecoration(
+        //     border: Border.all(
+        //       color: Theme.of(context).colorScheme.primary,
+        //     ),
+        //     borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.only(),
+        child: EasyInfiniteDateTimeLine(
+          selectionMode: const SelectionMode.alwaysFirst(),
+          controller: dateController,
+          firstDate: activeDates.first,
+          focusDate: selectedDate,
+          lastDate: activeDates.last,
+          locale: getIt<LanguageStore>().locale,
+          onDateChange: (date) {
+            setState(() {
+              selectedDate = date;
+              print(date);
+            });
+            var i = activeDates.indexWhere(
+              (element) =>
+                  element.millisecondsSinceEpoch == date.millisecondsSinceEpoch,
+            );
+            if (i != -1) {
+              alertPageController.move(i, animation: (oldIndex - i).abs() == 1);
+              oldIndex = i;
+              print(i);
+            }
+          },
+          dayProps: EasyDayProps(
+            height: 60,
+            activeDayStyle: DayStyle(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Theme.of(context).colorScheme.primary,
+                    const Color.fromARGB(255, 255, 170, 170),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ));
+    //   DatePicker(
+    //     controller: dateController,
+    //     activeDates[0],
+    //     height: 130,
+    //     width: 80,
+    //     daysCount: activeDates.length, // fortnight
+    //     locale: getIt<LanguageStore>().locale,
+    //     initialSelectedDate: selectedDate,
+    //     selectionColor: const Color.fromARGB(255, 255, 48, 48),
+    //     selectedTextColor: Colors.white,
+    //     dateTextStyle: datePickerStyle,
+    //     monthTextStyle: monthPickerStyle,
+    //     onDateChange: (date) {
+    //       setState(() {
+    //         selectedDate = date;
+    //         print(date);
+    //       });
+    //       var i = activeDates.indexWhere(
+    //         (element) =>
+    //             element.millisecondsSinceEpoch == date.millisecondsSinceEpoch,
+    //       );
+    //       if (i != -1) {
+    //         alertPageController.move(i, animation: (oldIndex - i).abs() == 1);
+    //         oldIndex = i;
+    //         print(i);
+    //       }
+    //     },
+    //   ),
+    // );
   }
 
   Widget _buildAlertsContent() {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: ListView.separated(
-            controller: widget.scrollController,
-            itemCount: alerts.length + 1,
-            separatorBuilder: (context, index) =>
-                const Divider(color: Colors.black),
-            itemBuilder: (context, i) {
-              int index = i - 1;
-              if (i == 0) {
-                return SizedBox(height: 120, child: _buildTopRowList());
-              }
-              return GestureDetector(
-                onTap: () {
-                  //print('Tile clicked');
-                  // You can replace the print statement with your function
-                },
-                child: ListTile(
-                  leading: Icon(alerts[index]['icon']),
-                  title: Text(alerts[index]['title']),
-                  subtitle: Text(alerts[index]['subtitle']),
-                  trailing: alerts[index]['action'] != null
-                      ? ElevatedButton(
-                          onPressed: () {
-                            //print('${alerts[index]['action']} button clicked');
-                            if (alerts[index]['action'] != null) {
-                              if (alerts[index]['action'] == "Join") {
-                                Navigator.of(NavigationService
-                                        .navigatorKey.currentContext!)
-                                    .push(MaterialPageRoute2(
-                                        routeName: Routes.message,
-                                        arguments: "Javis - AI Copilot"));
-                              } else if (alerts[index]['action'] ==
-                                  "View offer") {
-                                showAlbumDetailsDialog(context, 2);
-                                NavbarNotifier2.hideBottomNavBar = true;
-                              }
-                            }
-                            // You can replace the print statement with your function
-                          },
-                          child: Text(Lang.get(alerts[index]['action'])),
-                        )
-                      : null,
-                ),
-              );
-            },
+    return Stack(children: [
+      Container(
+          height: 108,
+          width: 120,
+          margin: const EdgeInsets.only(
+            top: 2,
           ),
+          child: _buildTopRowList()),
+      Container(
+          margin: const EdgeInsets.only(top: 10, left: 120),
+          height: 110,
+          child: _datePickerSection()),
+      Container(
+        margin: const EdgeInsets.only(top: 120),
+        height: MediaQuery.of(context).size.height * 0.9,
+        child: TransformerPageView(
+          itemCount: activeDates.length,
+          index: 7, // middle page
+          controller: alertPageController,
+          transformer: DepthPageTransformer(),
+          onPageChanged: (value) {
+            dateController.animateToDate(activeDates[value ?? 0]);
+            setState(() {
+              selectedDate = activeDates[value ?? 0];
+            });
+            print(selectedDate);
+          },
+          itemBuilder: (context, index) {
+            return SingleChildScrollView(
+              controller: listController[index],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "New",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        alerts.where((e) => e["action"] == "Join").length,
+                    itemBuilder: (context, index) {
+                      return const CustomFollowNotifcation();
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Today",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount:
+                        alerts.where((e) => e["action"] == "View offer").length,
+                    itemBuilder: (context, index) {
+                      return const CustomFollowNotifcation();
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Oldest",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: alerts.where((e) => e["action"] == null).length,
+                    itemBuilder: (context, index) {
+                      return const CustomLikedNotifcation();
+                    },
+                  ),
+                ],
+              ),
+            );
+
+            ListView.separated(
+                controller: listController[index],
+                itemCount: alerts.length,
+                separatorBuilder: (context, index) =>
+                    const Divider(color: Colors.black),
+                itemBuilder: (context, index) {
+                  return GestureDetector(
+                    onTap: () {
+                      //print('Tile clicked');
+                      // You can replace the print statement with your function
+                    },
+                    child: ListTile(
+                      leading: Icon(alerts[index]['icon']),
+                      title: Text(alerts[index]['title']),
+                      subtitle: Text(alerts[index]['subtitle']),
+                      trailing: alerts[index]['action'] != null
+                          ? ElevatedButton(
+                              onPressed: () {
+                                //print('${alerts[index]['action']} button clicked');
+                                if (alerts[index]['action'] != null) {
+                                  if (alerts[index]['action'] == "Join") {
+                                    Navigator.of(NavigationService
+                                            .navigatorKey.currentContext!)
+                                        .push(MaterialPageRoute2(
+                                            routeName: Routes.message,
+                                            arguments: "Javis - AI Copilot"));
+                                  } else if (alerts[index]['action'] ==
+                                      "View offer") {
+                                    // showOfferDetailsDialog(context, 2);
+                                    // NavbarNotifier2.hideBottomNavBar = true;
+                                  }
+                                }
+                                // You can replace the print statement with your function
+                              },
+                              child: Text(Lang.get(alerts[index]['action'])),
+                            )
+                          : null,
+                    ),
+                  );
+                });
+          
+          },
         ),
-      ],
-    );
+      ),
+    ]);
   }
 }
 
-void showAlbumDetailsDialog(BuildContext context, int index) {
-  print(index);
-  NavbarNotifier2.hideBottomNavBar = true;
-
-  Navigator.of(NavigationService.navigatorKey.currentContext ?? context)
-      .push(
-    ModalExprollableRouteBuilder(
-        pageBuilder: (_, __, ___) => AlbumDetailsDialog(
-              index: index,
-            ),
-        // Increase the transition durations and take a closer look at what's going on!
-        transitionDuration: const Duration(milliseconds: 500),
-        reverseTransitionDuration: const Duration(milliseconds: 300),
-        // The next two lines are not required, but are recommended for better performance.
-        dismissThresholdInset: const DismissThresholdInset(dragMargin: 10000)),
-  )
-      .then(
-    (value) {
-      NavbarNotifier2.hideBottomNavBar = false;
-    },
-  );
-}
-
-class AlbumDetailsDialog extends StatefulWidget {
-  const AlbumDetailsDialog({
+class OfferDetailsDialog extends StatefulWidget {
+  const OfferDetailsDialog({
     super.key,
     required this.index,
+    required this.proposal,
+    required this.onAcceptCallback,
   });
 
   final int index;
+  final List<Proposal> proposal;
+  final Function(Proposal?) onAcceptCallback;
 
   @override
-  State<StatefulWidget> createState() => _AlbumDetailsDialogState();
+  State<StatefulWidget> createState() => _OfferDetailsDialogState();
 }
 
-class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
+class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
   late final ExprollablePageController controller;
 
   @override
@@ -232,259 +622,338 @@ class _AlbumDetailsDialogState extends State<AlbumDetailsDialog> {
   Widget build(BuildContext context) {
     return ExprollablePageView(
         controller: controller,
-        itemCount: colors.length,
+        itemCount: widget.proposal.length,
         itemBuilder: (context, page) {
           return PageGutter(
-            gutterWidth: 8,
-            child: AlbumDetailsContainer(
-              album: page,
-              controller: PageContentScrollController.of(context),
-            ),
-          );
-        });
-  }
-}
-
-class AlbumDetailsContainer extends StatelessWidget {
-  const AlbumDetailsContainer({
-    super.key,
-    required this.album,
-    required this.controller,
-  });
-
-  final int album;
-  final ScrollController? controller;
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Card(
-            margin: EdgeInsets.zero,
-            clipBehavior: Clip.antiAlias,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
-              ),
-            ),
-            child: Stack(children: [
-              Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: ListView.builder(
-                  controller: controller,
-                  itemCount: 3,
-                  itemBuilder: (_, index) {
-                    if (index == 0) {
-                      return Container(
-                        margin: const EdgeInsets.fromLTRB(30, 30, 30, 0),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(25),
-                          child: HeroFlutterLogo(
-                            color: colors[album],
-                            tag: album,
-                            size: 400,
-                            onTap: () => Navigator.of(context).pop(),
+              gutterWidth: 8,
+              child: Stack(
+                children: [
+                  Card(
+                      margin: EdgeInsets.zero,
+                      clipBehavior: Clip.antiAlias,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          topRight: Radius.circular(20),
+                        ),
+                      ),
+                      child: Stack(children: [
+                        Container(
+                          margin: const EdgeInsets.only(top: 00),
+                          child: ListView.builder(
+                            controller: PageContentScrollController.of(context),
+                            itemCount: 4,
+                            itemBuilder: (_, index) {
+                              if (index == 0) {
+                                return Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.only(left: 35),
+                                      child: Text(
+                                          "${widget.proposal[page].isHired ? "Accepted" : Lang.get("new_offer")} #$page"),
+                                    ),
+                                    const Align(
+                                        alignment: Alignment.topRight,
+                                        child: CloseButton()),
+                                  ],
+                                );
+                              }
+                              if (index == 1) {
+                                return Container(
+                                  margin:
+                                      const EdgeInsets.fromLTRB(30, 10, 30, 30),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(25),
+                                    child: HeroFlutterLogo(
+                                      color: colors[page],
+                                      tag: page,
+                                      size: MediaQuery.of(context).size.height *
+                                          0.4,
+                                      onTap: () => Navigator.of(context).pop(),
+                                    ),
+                                  ),
+                                );
+                              } else if (index == 2) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 0.0, horizontal: 10),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: <Widget>[
+                                      Center(
+                                        child: Text(
+                                          "Project Name: \n${widget.proposal[page].project?.title}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyLarge
+                                              ?.copyWith(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 18),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20.0, vertical: 20),
+                                          child: Text(
+                                            "${widget.proposal[page].coverLetter} \n${Lang.get('profile_common_body')}\n",
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomRight,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            ElevatedButton(
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primaryContainer,
+                                                surfaceTintColor:
+                                                    Colors.transparent,
+                                                minimumSize: Size(
+                                                    MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            2 -
+                                                        48,
+                                                    40), // NEW
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(12),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                // Navigator.of(context).pushNamed(
+                                                //     Routes.submitProposal,
+                                                //     arguments: widget.project);
+                                              },
+                                              child: Text(
+                                                Lang.get('save'),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium!
+                                                    .merge(TextStyle(
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .secondary)),
+                                              ),
+                                            ),
+                                            if (widget.proposal[page]
+                                                    .hiredStatus ==
+                                                HireStatus.offer)
+                                              ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      Theme.of(context)
+                                                          .colorScheme
+                                                          .primaryContainer,
+                                                  surfaceTintColor:
+                                                      Colors.transparent,
+                                                  minimumSize: Size(
+                                                      MediaQuery.of(context)
+                                                                  .size
+                                                                  .width /
+                                                              2 -
+                                                          48,
+                                                      40), // NEW
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            12),
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  // Navigator.of(context).pushNamed(
+                                                  //     Routes.submitProposal,
+                                                  //     arguments: widget.project);
+                                                  widget.proposal[page]
+                                                          .hiredStatus =
+                                                      HireStatus.hired;
+                                                  widget.onAcceptCallback(
+                                                      widget.proposal[page]);
+                                                },
+                                                child: Text(
+                                                  Lang.get('accept_offer'),
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodyMedium!
+                                                      .merge(TextStyle(
+                                                          color:
+                                                              Theme.of(context)
+                                                                  .colorScheme
+                                                                  .secondary)),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      Text(
+                                        Lang.get('profile_question_title_1'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      const SizedBox(
+                                        height: 50,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Center(
+                                            child: Text(
+                                              Lang.get(
+                                                  'profile_question_title_4'),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            Lang.get(
+                                                'profile_question_title_4'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                      // _buildEmailField(context),
+                                      // const SizedBox(
+                                      //   height: 25,
+                                      // ),
+                                      Text(
+                                        Lang.get('profile_common_body'),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyLarge,
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            Lang.get(
+                                                'profile_question_title_4'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 15,
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            Lang.get(
+                                                'profile_question_title_4'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall,
+                                          ),
+                                          const SizedBox(
+                                            height: 8,
+                                          ),
+                                          Text(
+                                            Lang.get('profile_common_body'),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          )
+                                        ],
+                                      ),
+                                      const SizedBox(
+                                        height: 25,
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }
+                              return const ListTile(
+                                  // onTap: () =>
+                                  //     debugPrint("onTap(index=$index, page=$index)"),
+                                  // title: Text("Item#$index"),
+                                  // subtitle: Text("Page#$index"),
+                                  );
+                            },
                           ),
                         ),
-                      );
-                    } else if (index == 2) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 8.0, horizontal: 10),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: <Widget>[
-                            Center(
-                              child: Text(
-                                "Project Name",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyLarge
-                                    ?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 18),
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Center(
-                              child: Text(
-                                Lang.get('profile_common_body'),
-                                style: Theme.of(context).textTheme.bodyLarge,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              Lang.get('profile_question_title_1'),
-                              style: Theme.of(context).textTheme.bodyLarge,
-                            ),
-                            const SizedBox(
-                              height: 50,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Center(
-                                  child: Text(
-                                    Lang.get('profile_question_title_4'),
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  textController: TextEditingController(),
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Lang.get('profile_question_title_4'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  textController: TextEditingController(),
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 25,
-                            ),
-                            // _buildEmailField(context),
-                            // const SizedBox(
-                            //   height: 25,
-                            // ),
-                            Container(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  RoundedButtonWidget(
-                                    buttonText: Lang.get('continue'),
-                                    buttonColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    textColor: Colors.white,
-                                    onPressed: () {},
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Lang.get('profile_question_title_4'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  textController: TextEditingController(),
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 15,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  Lang.get('profile_question_title_4'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                                const SizedBox(
-                                  height: 8,
-                                ),
-                                BorderTextField(
-                                  textController: TextEditingController(),
-                                  inputDecoration: const InputDecoration(
-                                      border: OutlineInputBorder(
-                                          borderSide:
-                                              BorderSide(color: Colors.black))),
-                                  onChanged: (value) {},
-                                  // onSubmitted: (value) =>
-                                  //     {FocusScope.of(context).requestFocus(_companyFocusNode)},
-                                  minLines: 3,
-                                  maxLines: 5,
-                                  errorText: null,
-                                  isIcon: false,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 25,
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-                    return const ListTile(
-                        // onTap: () =>
-                        //     debugPrint("onTap(index=$index, page=$index)"),
-                        // title: Text("Item#$index"),
-                        // subtitle: Text("Page#$index"),
-                        );
-                  },
-                ),
-              ),
-              const CloseButton(),
-            ])),
-      ],
-    );
+                      ])),
+                ],
+              ));
+        });
   }
 }
 
@@ -522,6 +991,7 @@ class HeroFlutterLogo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Hero(
+      transitionOnUserGestures: true,
       tag: tag,
       child: Material(
         color: color,
@@ -531,6 +1001,164 @@ class HeroFlutterLogo extends StatelessWidget {
             size: size,
           ),
         ),
+      ),
+    );
+  }
+}
+
+class CustomFollowNotifcation extends StatefulWidget {
+  const CustomFollowNotifcation({super.key});
+
+  @override
+  State<CustomFollowNotifcation> createState() =>
+      _CustomFollowNotifcationState();
+}
+
+class _CustomFollowNotifcationState extends State<CustomFollowNotifcation> {
+  bool follow = false;
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 20, backgroundColor: Colors.blue,
+            backgroundImage: Image.network(
+              width: 50,
+              height: 50,
+              'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+              fit: BoxFit.cover,
+            ).image,
+            // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+          ),
+          const SizedBox(
+            width: 15,
+          ),
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Dean Winchester",
+                  style: Theme.of(context)
+                      .textTheme
+                      .headline3!
+                      .copyWith(fontSize: 13)),
+              const SizedBox(
+                height: 5,
+              ),
+              Text("New following you  ",
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyText1!
+                      .copyWith(fontSize: 9)),
+            ],
+          ),
+          const Spacer(),
+          Align(
+            alignment: Alignment.centerRight,
+            child: Padding(
+              padding: const EdgeInsets.only(left: 0),
+              child: RoundedButtonWidget(
+                height: 40,
+                buttonColor: Theme.of(context).colorScheme.primary,
+                buttonTextSize: 10,
+                // textColor: follow == false ? Colors.white : mainText,
+                onPressed: () {
+                  setState(() {
+                    follow = !follow;
+                  });
+                },
+                buttonText: "Follow",
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomLikedNotifcation extends StatelessWidget {
+  const CustomLikedNotifcation({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2,8,8,8),
+      child: Row(
+        children: [
+          SizedBox(
+            height: 80,
+            width: 50,
+            child: Stack(children: [
+              const Padding(
+                padding: EdgeInsets.only(left: 10),
+                child: CircleAvatar(
+                  radius: 25,
+
+                  // backgroundImage: AssetImage("assets/imges/Avatar3.png"),
+                ),
+              ),
+              Positioned(
+                bottom: 10,
+                child: CircleAvatar(
+                  radius: 20, backgroundColor: Colors.blue,
+                  backgroundImage: Image.network(
+                    width: 50,
+                    height: 50,
+                    'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                    fit: BoxFit.cover,
+                  ).image,
+                  // backgroundImage: AssetImage("assets/imges/Avatar2.png"),
+                ),
+              ),
+            ]),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                RichText(
+                  maxLines: 2,
+                  text: TextSpan(
+                      text: "John Steve",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline3!
+                          .copyWith(fontSize: 15),
+                      children: [
+                        TextSpan(
+                          text: " and ",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 9),
+                        ),
+                        const TextSpan(text: "Sam Wincherter")
+                      ]),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text("Liked your recipe  ",
+                    style: Theme.of(context)
+                        .textTheme
+                        .subtitle1!
+                        .copyWith(fontSize: 9))
+              ],
+            ),
+          ),
+          Image.network(
+            "https://docs.flutter.dev/assets/images/404/dash_nest.png",
+            height: 64,
+            width: 64,
+          ),
+        ],
       ),
     );
   }
