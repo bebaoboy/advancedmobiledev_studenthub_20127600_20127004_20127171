@@ -60,8 +60,9 @@ class _DashBoardTabState extends State<DashBoardTab>
     //         duration: Duration(seconds: 1), curve: Curves.ease);
     //   }
     // });
-    future = projectStore
-        .getProjectByCompany(_userStore.user!.companyProfile!.objectId!);
+    future = projectStore.getProjectByCompany(
+        _userStore.user!.companyProfile!.objectId!,
+        setStateCallback: () => setState(() {}));
 
     scrollController.add(ScrollController());
     scrollController.add(ScrollController());

@@ -31,8 +31,9 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
   void initState() {
     super.initState();
     // tabController = TabController(length: 3, vsync: this);
-    future = _projectStore
-        .getStudentProposalProjects(_userStore.user!.studentProfile!.objectId!);
+    future = _projectStore.getStudentProposalProjects(
+        _userStore.user!.studentProfile!.objectId!,
+        setStateCallback: () => setState(() {}));
   }
 
   final _userStore = getIt<UserStore>();
@@ -121,7 +122,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 0,
+      initialIndex: 1,
       length: 3,
       child: Stack(children: [
         Padding(
@@ -288,9 +289,6 @@ class _AllProjectsState extends State<AllProjects> {
       headerPadding: const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
       children: [
         AccordionSection(
-          onOpenSection: () {
-            NavbarNotifier2.hideBottomNavBar = false;
-          },
           isOpen: true,
           leftIcon: const Icon(Icons.insights_rounded, color: Colors.white),
           headerBackgroundColor: Colors.black38,
@@ -307,7 +305,8 @@ class _AllProjectsState extends State<AllProjects> {
           content: LimitedBox(
             maxHeight: MediaQuery.of(context).size.height / 2,
             child: ListView.builder(
-              controller: ScrollController(),
+              controller: ScrollController()
+                ..addListener(() => NavbarNotifier2.hideBottomNavBar = false),
               itemCount: activeProjects?.length ?? 0,
               itemBuilder: (context, index) {
                 // activeProjects![index].isLoading = false;
@@ -319,10 +318,6 @@ class _AllProjectsState extends State<AllProjects> {
           contentBorderColor: Colors.black54,
         ),
         AccordionSection(
-          isOpen: true,
-          onOpenSection: () {
-            NavbarNotifier2.hideBottomNavBar = false;
-          },
           leftIcon: const Icon(Icons.compare_rounded, color: Colors.white),
           header: Padding(
             padding: const EdgeInsets.only(top: 12.0, left: 12.0),
@@ -339,7 +334,8 @@ class _AllProjectsState extends State<AllProjects> {
           content: LimitedBox(
               maxHeight: MediaQuery.of(context).size.height / 2,
               child: ListView.builder(
-                controller: ScrollController(),
+                controller: ScrollController()
+                  ..addListener(() => NavbarNotifier2.hideBottomNavBar = false),
                 itemCount: submittedProjects?.length ?? 0,
                 itemBuilder: (context, index) {
                   // submittedProjects![index].isLoading = false;

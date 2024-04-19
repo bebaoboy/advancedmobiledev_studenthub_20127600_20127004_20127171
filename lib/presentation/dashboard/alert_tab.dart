@@ -447,7 +447,7 @@ class _AlertTabState extends State<AlertTab> {
           ),
           child: _buildTopRowList()),
       Container(
-          margin: const EdgeInsets.only(top: 0, left: 120),
+          margin: const EdgeInsets.only(top: 10, left: 120),
           height: 110,
           child: _datePickerSection()),
       Container(

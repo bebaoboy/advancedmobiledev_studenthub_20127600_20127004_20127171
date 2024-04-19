@@ -373,6 +373,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             alignment: Alignment.topCenter,
             child: widget.searchList.isNotEmpty
                 ? Refazynist(
+                    setStateCallback: () => {},
                     scrollExtent: 30,
                     loaderBuilder: (bContext, bAnimation) {
                       return const LoadingScreenWidget();
@@ -1003,6 +1004,7 @@ class _ProjectTabState extends State<ProjectTab> {
                 Widget children;
                 if (snapshot.hasData) {
                   children = Refazynist(
+                      setStateCallback: () => setState(() {}),
                       loaderBuilder: (bContext, bAnimation) {
                         return const LoadingScreenWidget();
                       },
@@ -1034,9 +1036,7 @@ class _ProjectTabState extends State<ProjectTab> {
 
                         if (keywordId.isEmpty) {
                           print("on refesshh");
-                          setState(() {
-                            future = _projectStore.getAllProject(refazynistKey);
-                          });
+                          _projectStore.getAllProject(refazynistKey);
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);
 
@@ -1060,8 +1060,8 @@ class _ProjectTabState extends State<ProjectTab> {
                             (refazynistKey.currentState!.length() + 5)
                                 .clamp(0, p.length)));
 
-                        await Future.delayed(
-                            const Duration(seconds: 1)); // Fake internet delay
+                        await Future.delayed(const Duration(
+                            milliseconds: 500)); // Fake internet delay
                         return lazyList;
                       },
 

@@ -231,18 +231,11 @@ abstract class _ProjectStore with Store {
   // }
   Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
       {int count = 5}) async {
-    return await _getProjectsUseCase
-        .call(params: GetProjectParams())
-        .then((value) {
+    _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
       // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
       print("call api refesshh");
 
       Future.delayed(const Duration(seconds: 1), () async {
-        try {
-          await getStudentFavoriteProject(false);
-        } catch (e) {
-          // nothing changed
-        }
         final ProjectDataSource datasource = getIt<ProjectDataSource>();
 
         bool doneInit = false;
@@ -250,21 +243,20 @@ abstract class _ProjectStore with Store {
           _projects.projects?.clear();
           for (int i = 0; i < value.data!.length; i++) {
             if (i == 5 && !doneInit) {
-              // refazynistKey.currentState?.refresh();
               doneInit = true;
+              // refazynistKey.currentState?.refresh(
+              //     isFinal: false,
+              //     readyMade: _projects.projects!
+              //         .sublist(0, count.clamp(0, _projects.projects!.length))
+              //         .toList());
               print("refesshh");
             }
             var project = Project.fromMap(value.data![i]);
             project.isLoading = false;
-            var p = _favoriteProjects.projects!.firstWhereOrNull(
-              (e) => e.objectId == project.objectId,
-            );
-            if (p != null) {
-              project.isFavorite = true;
-            }
+
             addProject(project, sort: false);
 
-            datasource.insert(project);
+            // datasource.insert(project);
           }
           _projects.projects?.forEach(
             (element) => element.isLoading = false,
@@ -272,12 +264,33 @@ abstract class _ProjectStore with Store {
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
-          if (_projects.projects != null) {
-            refazynistKey.currentState?.refresh(
-                readyMade: _projects.projects!
-                    .sublist(0, count.clamp(0, _projects.projects!.length))
-                    .toList());
-          }
+          Future.delayed(Duration.zero, () async {
+            try {
+              await getStudentFavoriteProject(false);
+            } catch (e) {
+              // nothing changed
+            }
+            print("favorite refess ${_favoriteProjects.projects!.length}");
+            _favoriteProjects.projects?.forEach(
+              (element) {
+                var p = _projects.projects?.firstWhereOrNull(
+                  (e) => e.objectId == element.objectId,
+                );
+                if (p != null) {
+                  p.isFavorite = true;
+                }
+              },
+            );
+            if (_projects.projects != null) {
+              refazynistKey.currentState?.refresh(
+                  readyMade: _projects.projects!
+                      .sublist(0, count.clamp(0, _projects.projects!.length))
+                      .toList());
+            }
+            _projects.projects?.forEach(
+              (element) => datasource.insert(element),
+            );
+          });
         } else {
           _projects = value;
           _projects.projects?.forEach(
@@ -306,19 +319,18 @@ abstract class _ProjectStore with Store {
       });
 
       // _projects = value;
-
-      return ProjectList(
-        projects: List.filled(
-          5.clamp(0, (value.data ?? []).length),
-          Project(
-            title: "",
-            description: "",
-            timeCreated: DateTime.now(),
-          ),
-          growable: true,
-        ),
-      );
     });
+    return ProjectList(
+      projects: List.filled(
+        5,
+        Project(
+          title: "",
+          description: "",
+          timeCreated: DateTime.now(),
+        ),
+        growable: true,
+      ),
+    );
   }
 
   Future<ProjectList> getStudentFavoriteProject(bool force) async {
@@ -351,36 +363,40 @@ abstract class _ProjectStore with Store {
   }
 
   @action
-  Future<ProjectList> getProjectByCompany(String id, {Status? typeFlag}) async {
+  Future<ProjectList> getProjectByCompany(String id,
+      {Status? typeFlag, Function? setStateCallback}) async {
     print(
         "\n\n\n\n======================================\n GET PROJECT COMPANY ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n\n\n\n\n\n\n");
     var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
     final GetProjectByCompanyParams loginParams =
         GetProjectByCompanyParams(companyId: id, typeFlag: typeFlag?.index);
     try {
-      final value = await _getProjectByCompanyUseCase.call(params: loginParams);
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        print(value);
+      _getProjectByCompanyUseCase.call(params: loginParams).then(
+        (value) {
+          if (value.statusCode == HttpStatus.accepted ||
+              value.statusCode == HttpStatus.ok ||
+              value.statusCode == HttpStatus.created) {
+            print(value);
 
-        var result = ProjectList.fromJson(value.data["result"]);
-        _companyProjects = result;
+            var result = ProjectList.fromJson(value.data["result"]);
+            _companyProjects = result;
 
-        // TODO: lưu vào sharedpref
+            // TODO: lưu vào sharedpref
 
-        sharedPrefsHelper.saveCompanyProjects(_companyProjects);
+            sharedPrefsHelper.saveCompanyProjects(_companyProjects);
 
-        _companyProjects.projects?.sort(
-          (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-        );
-
-        return _companyProjects;
-      } else {
-        print(value.data);
-        _companyProjects = ProjectList(projects: []);
-        return Future.value(ProjectList(projects: []));
-      }
+            _companyProjects.projects?.sort(
+              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+            );
+            if (setStateCallback != null) setStateCallback();
+            return _companyProjects;
+          } else {
+            print(value.data);
+            _companyProjects = ProjectList(projects: []);
+            return Future.value(ProjectList(projects: []));
+          }
+        },
+      );
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
 
@@ -395,14 +411,15 @@ abstract class _ProjectStore with Store {
         }
       }
       print("cannot get profile company");
-      return Future.value(ProjectList(projects: []));
     }
+    return Future.value(ProjectList(projects: []));
+
     // //print(value);
   }
 
   @action
   Future<ProposalList> getStudentProposalProjects(String studentId,
-      {HireStatus? statusFlag}) async {
+      {HireStatus? statusFlag, Function? setStateCallback}) async {
     print(
         "\n\n\n\n======================================\n GET PROJECT COMPANY ========================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================================\n\n\n\n\n\n\n");
     final GetStudentProposalProjectsParams loginParams =
@@ -414,7 +431,7 @@ abstract class _ProjectStore with Store {
     try {
       final future =
           _getStudentProposalProjectsUseCase.call(params: loginParams);
-      return await future.then((value) {
+      future.then((value) {
         if (value.statusCode == HttpStatus.accepted ||
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
@@ -432,6 +449,8 @@ abstract class _ProjectStore with Store {
                 (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
               );
             }
+            if (setStateCallback != null) setStateCallback();
+
             return result;
 
             // TODO: lưu vào sharedpref
@@ -463,6 +482,6 @@ abstract class _ProjectStore with Store {
         }
       }
     }
-    return ProposalList(proposals: []);
+    return Future.value(ProposalList(proposals: []));
   }
 }
