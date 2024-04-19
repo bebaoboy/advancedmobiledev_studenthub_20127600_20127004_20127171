@@ -76,7 +76,7 @@ class LanguageButton extends StatelessWidget {
         leading: const Icon(
           Icons.language,
         ),
-        title: Text('Change Language'),
+        title: Text(Lang.get("home_tv_choose_language")),
         onTap: () {
           buildLanguageDialog();
         },

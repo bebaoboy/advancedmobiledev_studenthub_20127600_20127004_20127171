@@ -524,22 +524,23 @@ class _SettingScreenState extends State<SettingScreen> {
             ListTile(
                 leading: const Icon(Icons.settings),
                 onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return Scaffold(
-                      appBar: AppBar(
-                        title: Text('Settings'),
-                      ),
-                      body: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          ThemeButton(),
-                          LanguageButton(),
-                        ],
-                      ),
-                    );
-                  }));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute2(
+                          child: Scaffold(
+                        appBar: AppBar(
+                          title: Text(Lang.get("setting_text")),
+                        ),
+                        body: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            ThemeButton(),
+                            LanguageButton(),
+                          ],
+                        ),
+                      )));
                 },
                 title: Text(
                   Lang.get('setting_text'),
@@ -568,10 +569,29 @@ class _SettingScreenState extends State<SettingScreen> {
                 )),
             ListTile(
                 onTap: () {
-                  _userStore.logout();
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute2(routeName: Routes.login),
-                      (Route<dynamic> route) => false);
+                  showAnimatedDialog(
+                    context: context,
+                    barrierDismissible: true,
+                    builder: (BuildContext context) {
+                      return ClassicGeneralDialogWidget(
+                        contentText: Lang.get("logout_confirm"),
+                        negativeText: Lang.get('cancel'),
+                        positiveText: 'OK',
+                        onPositiveClick: () {
+                          _userStore.logout();
+                          Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute2(routeName: Routes.login),
+                              (Route<dynamic> route) => false);
+                        },
+                        onNegativeClick: () {
+                          Navigator.of(context).pop();
+                        },
+                      );
+                    },
+                    animationType: DialogTransitionType.size,
+                    curve: Curves.fastOutSlowIn,
+                    duration: const Duration(seconds: 1),
+                  );
                 },
                 leading: const Icon(Icons.logout),
                 title: Text(

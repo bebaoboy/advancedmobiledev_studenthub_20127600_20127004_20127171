@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:convert';
+
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -296,31 +298,34 @@ class Proposal extends MyObject {
   bool enabled;
   StudentProject? project;
 
-  Proposal.fromJson(Map<String, dynamic> json)
-      :
-        student = StudentProfile.fromMap(json["student"]),
+  Proposal.fromJson(Map<String, dynamic> json2)
+      : student = json2["student"] != null
+            ? StudentProfile.fromMap(json.decode(json2["student"]))
+            : StudentProfile(
+                objectId: json2["studentId"].toString(),
+                fullName: "Sample Student ${json2["studentId"]}"),
         // student = StudentProfile(
         //     objectId: json["studentId"].toString(),
         //     fullName: "Sample Student ${json["studentId"]}"),
-        coverLetter = json["coverLetter"] ?? "",
-        status = Status.values[((json["disableFlag"] ?? 0) as int)
+        coverLetter = json2["coverLetter"] ?? "",
+        status = Status.values[((json2["disableFlag"] ?? 0) as int)
             .clamp(0, Status.values.length - 1)],
-        hiredStatus = HireStatus.values[((json["statusFlag"] ?? 0) as int)
+        hiredStatus = HireStatus.values[((json2["statusFlag"] ?? 0) as int)
             .clamp(0, HireStatus.values.length - 1)],
-        projectId = json["projectId"].toString(),
-        enabled = json["disableFlag"] != 0,
-        project = json["project"] != null
-            ? StudentProject.fromMap(json["project"])
+        projectId = json2["projectId"].toString(),
+        enabled = json2["disableFlag"] != 0,
+        project = json2["project"] != null
+            ? StudentProject.fromMap(json2["project"])
             : null,
         super(
-            objectId: json["id"].toString(),
-            createdAt: json['createdAt'] != null
-                ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+            objectId: json2["id"].toString(),
+            createdAt: json2['createdAt'] != null
+                ? DateTime.tryParse(json2['createdAt']) ?? DateTime.now()
                 : DateTime.now(),
-            updatedAt: json['updatedAt'] != null
-                ? DateTime.tryParse(json['updatedAt']) ?? DateTime.now()
-                : json['createdAt'] != null
-                    ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+            updatedAt: json2['updatedAt'] != null
+                ? DateTime.tryParse(json2['updatedAt']) ?? DateTime.now()
+                : json2['createdAt'] != null
+                    ? DateTime.tryParse(json2['createdAt']) ?? DateTime.now()
                     : DateTime.now());
 
   Map<String, dynamic> toJson() {

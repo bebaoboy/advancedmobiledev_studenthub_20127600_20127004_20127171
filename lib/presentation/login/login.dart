@@ -28,6 +28,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -471,50 +472,57 @@ class _LoginScreenState extends State<LoginScreen> {
         //     : userStore.user!.email == "user2@gmail.com"
         //         ? utils.users[1]
         //         : utils.users[2];
-        while (userStore.user!.email.isEmpty) {}
-        var user = CubeUser(
-          login: userStore.user!.email,
-          email: userStore.user!.email,
-          fullName: userStore.user!.email.split("@").first.toUpperCase(),
-          password: DEFAULT_PASS,
-        );
-        Future.delayed(const Duration(seconds: 0), () async {
-          user = CubeUser(
-            login: userStore.user!.email,
-            email: userStore.user!.email,
-            fullName: userStore.user!.email.split("@").first.toUpperCase(),
-            password: DEFAULT_PASS,
-          );
+        CubeUser user;
 
-          if (CubeSessionManager.instance.isActiveSessionValid() &&
-              CubeSessionManager.instance.activeSession!.user != null) {
-            if (CubeChatConnection.instance.isAuthenticated()) {
-            } else {
-              _loginCube(context, user);
-            }
-          } else {
-            // create session
-            var value;
-            try {
-              value = await createSession(user);
-            } catch (e) {
-              log(e.toString(), "BEBAOBOY");
-              user = await signUp(user);
-              user.password ??= DEFAULT_PASS;
-
-              value = await createSession(user);
-            }
-            var cb = await getUserByLogin(user.login!);
-            if (cb != null) user = cb;
-            user.password ??= DEFAULT_PASS;
-            print(user);
-            utils.users.add(user);
-            _loginCube(context, user);
+        if (userStore.user != null && userStore.user!.email.isNotEmpty) {
+          if (userStore.savedUsers.firstWhereOrNull(
+                (element) => element.email == userStore.user!.email,
+              ) ==
+              null) {
+            userStore.savedUsers.add(userStore.user!);
           }
-        });
+          Future.delayed(const Duration(seconds: 0), () async {
+            try {
+              user = CubeUser(
+                login: userStore.user!.email,
+                email: userStore.user!.email,
+                fullName: userStore.user!.email.split("@").first.toUpperCase(),
+                password: DEFAULT_PASS,
+              );
+              if (CubeSessionManager.instance.isActiveSessionValid() &&
+                  CubeSessionManager.instance.activeSession!.user != null) {
+                if (CubeChatConnection.instance.isAuthenticated()) {
+                } else {
+                  _loginCube(context, user);
+                }
+              } else {
+                // create session
+                var value;
+                try {
+                  value = await createSession(user);
+                } catch (e) {
+                  log(e.toString(), "BEBAOBOY");
+                  user = await signUp(user);
+                  user.password ??= DEFAULT_PASS;
+
+                  value = await createSession(user);
+                }
+                var cb = await getUserByLogin(user.login!);
+                if (cb != null) user = cb;
+                user.password ??= DEFAULT_PASS;
+                print(user);
+                utils.users.add(user);
+                _loginCube(context, user);
+              }
+            } catch (e) {
+              print("cannot init cube");
+            }
+          });
+        }
+        // user = utils.users[2];
+        else {}
       } catch (e) {
-        print(e.toString());
-        print("error init cubit login screen");
+        ///
       }
     } else {
       // user = utils.users[2];

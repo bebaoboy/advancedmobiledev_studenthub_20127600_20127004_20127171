@@ -119,7 +119,7 @@ class _ProjectExperienceItemState extends State<ProjectExperienceItem> {
                     size: 45,
                   ),
                   Text(
-                    widget.projectExperience.link ?? 'No link attached',
+                    widget.projectExperience.link,
                   ),
                 ],
               ),

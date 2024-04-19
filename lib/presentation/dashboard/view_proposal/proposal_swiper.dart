@@ -25,6 +25,7 @@ class ProposalSwiper extends StatefulWidget {
 }
 
 class _ProposalSwiperState extends State<ProposalSwiper> {
+  // ignore: unused_field
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
   final ProjectStore _projectStore = getIt<ProjectStore>();
@@ -207,6 +208,7 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
   }
 
   // Animates the card back and forth to teach the user that it is swipable.
+  // ignore: unused_element
   Future<void> _shakeCard() async {
     const double distance = 30;
     // We can animate back and forth by chaining different animations.

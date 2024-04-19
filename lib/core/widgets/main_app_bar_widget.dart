@@ -2,12 +2,10 @@ import 'dart:math';
 
 import 'package:badges/badges.dart';
 
-import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_buttons.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/core/widgets/material_dialog/navigator.dart';
 import 'package:boilerplate/core/widgets/shared_preference_view.dart';
-import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
