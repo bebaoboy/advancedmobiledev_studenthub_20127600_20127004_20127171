@@ -90,7 +90,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
     _routes = [
       {
         '/': const Center(child: Text("????")),
-        Routes.favortieProject: getRoute(Routes.favortieProject, context),
+        Routes.favoriteProject: getRoute(Routes.favoriteProject, context),
       },
       {
         '/': const Center(child: Text("Pull it harder")),
@@ -161,7 +161,7 @@ class _WhatState extends State<What> with TickerProviderStateMixin {
   initItems() {
     items = [
       NavbarItem(
-         Icons.business,
+        Icons.business,
         'Projects',
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),

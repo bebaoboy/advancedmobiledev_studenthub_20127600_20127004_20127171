@@ -66,8 +66,11 @@ class _OpenContainerWrapper extends StatelessWidget {
                 //   context,
                 //   listen: false,
                 // ).currentlySelectedEmailId = id;
+
+                // ToDo: uncomment first line and comment second
+                // this is for testing               
                 if (project.isLoading) return;
-                openContainer();
+                  openContainer();
               },
               child: closedChild,
             ));

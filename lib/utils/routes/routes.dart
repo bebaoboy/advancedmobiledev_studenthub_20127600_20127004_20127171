@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
@@ -8,6 +9,8 @@ import 'package:boilerplate/presentation/dashboard/project_details_student.dart'
 import 'package:boilerplate/presentation/dashboard/project_post/project_post.dart';
 import 'package:boilerplate/presentation/dashboard/project_update/project_update.dart';
 import 'package:boilerplate/presentation/dashboard/submit_project_proposal/submit_project_proposal.dart';
+import 'package:boilerplate/presentation/dashboard/view_proposal/proposal_swiper.dart';
+import 'package:boilerplate/presentation/dashboard/view_proposal/view_student_profile.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/forget_password.dart';
@@ -49,7 +52,7 @@ class Routes {
   static const String setting = '/settings';
   static const String projectDetails = '/projectDetails';
   static const String projectPost = '/project-post';
-  static const String favortieProject = "/favortie-project";
+  static const String favoriteProject = "/favorite-project";
   static const String projectDetailsStudent = '/projectDetailsStudent';
   static const String forgetPassword = '/forgetPassword';
   static const String forgetPasswordSent = '/forgetPasswordSent';
@@ -59,6 +62,9 @@ class Routes {
   static const String submitProposal = '/submitProposal';
   static const String message = "/message";
   static const String updateProject = "/updateProject";
+  static const String viewProjectProposals = "/viewProjectProposals";
+  static const String viewProjectProposalsCard = "/viewProjectProposalsCard";
+  static const String companyViewStudentProfile = "/viewStudentProfile";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -78,7 +84,9 @@ class Routes {
     profileStudentStep3: const ProfileStudentStep3Screen(),
     projectDetails: const Placeholder(),
     projectPost: const ProjectPostScreen(),
-    favortieProject: const FavoriteScreen(projectList: [],),
+    favoriteProject: const FavoriteScreen(
+      projectList: [],
+    ),
     projectDetailsStudent: const Placeholder(),
     forgetPassword: const ForgetPasswordScreen(),
     forgetPasswordSent: const ForgetPasswordSentScreen(),
@@ -87,6 +95,9 @@ class Routes {
     submitProposal: const Placeholder(),
     message: const Placeholder(),
     updateProject: const Placeholder(),
+    viewProjectProposalsCard: const Placeholder(),
+    viewProjectProposals: const Placeholder(),
+    companyViewStudentProfile: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
@@ -130,7 +141,8 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.projectDetailsStudent) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
-        return ProjectDetailsStudentScreen(project: arguments["project"] as StudentProject);
+        return ProjectDetailsStudentScreen(
+            project: arguments["project"] as StudentProject);
       }
     }
 
@@ -150,6 +162,19 @@ getRoute(name, context, {arguments}) {
       }
     }
 
+    if (name == Routes.viewProjectProposalsCard) {
+      if (arguments != null) {
+        var b = arguments as Project;
+        return ProposalSwiper(project: b);
+      }
+    }
+
+    if (name == Routes.companyViewStudentProfile) {
+      if (arguments != null) {
+        var b = arguments as StudentProfile;
+        return ViewStudentProfile(studentProfile: b);
+      }
+    }
 
     return Routes._route[name] ??
         ErrorPage(

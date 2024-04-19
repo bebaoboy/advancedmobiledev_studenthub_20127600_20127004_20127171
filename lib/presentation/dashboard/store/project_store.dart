@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
+import 'package:boilerplate/domain/usecase/project/get_project_proposals.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_favorite_project.dart';
 import 'package:boilerplate/domain/usecase/project/get_student_proposal_projects.dart';
@@ -25,12 +26,13 @@ class ProjectStore = _ProjectStore with _$ProjectStore;
 
 abstract class _ProjectStore with Store {
   _ProjectStore(
-      this._getProjectsUseCase,
-      this._getProjectByCompanyUseCase,
-      this._getStudentProposalProjectsUseCase,
-      this._getStudentFavoriteProjectUseCase,
-      this._saveStudentFavoriteProjectUseCase,
-      this._postProposalUseCase,
+    this._getProjectsUseCase,
+    this._getProjectByCompanyUseCase,
+    this._getStudentProposalProjectsUseCase,
+    this._getStudentFavoriteProjectUseCase,
+    this._saveStudentFavoriteProjectUseCase,
+    this._postProposalUseCase,
+    this._getProjectProposalsUseCase,
       this._updateProposalUseCase) {
     // _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
     //   _favoriteProjects = value;
@@ -46,6 +48,7 @@ abstract class _ProjectStore with Store {
   final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
   final SaveStudentFavoriteProjectUseCase _saveStudentFavoriteProjectUseCase;
   final PostProposalUseCase _postProposalUseCase;
+  final GetProjectProposals _getProjectProposalsUseCase;
   final UpdateProposalUseCase _updateProposalUseCase;
 
   @observable
@@ -119,23 +122,35 @@ abstract class _ProjectStore with Store {
     );
   }
 
-  Future<bool> postProposal(StudentProject project, String studentId) async {
+  Future<bool> postProposal(Proposal proposal, Project project) async {
     int status = 0;
     int disableFlag = 0;
 
-    var params = PostProposalParams(status, disableFlag, project.description,
-        int.parse(project.objectId!), int.parse(studentId));
+    var params = PostProposalParams(
+        status,
+        disableFlag,
+        proposal.coverLetter,
+        int.parse(proposal.project!.objectId!),
+        int.parse(proposal.student.objectId!));
     return await _postProposalUseCase.call(params: params).then((value) {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.ok ||
           value.statusCode == HttpStatus.created) {
-        // TODO: change to studentProfile.prooject
-        _studentProjects.projects!.add(project);
+        updateLocalProjectProposal(project, proposal);
         return true;
       } else {
         return false;
       }
     });
+  }
+
+  updateLocalProjectProposal(Project project, Proposal proposal) async {
+    if (_projects.projects == null || _projects.projects!.isEmpty) return;
+    int index = _projects.projects!
+        .indexWhere((Project element) => element.objectId == project.objectId);
+    if (index != -1) {
+      _projects.projects![index].proposal?.add(proposal);
+          }
   }
 
   Future<bool> updateProposal(Proposal project, String studentId) async {
@@ -415,6 +430,26 @@ abstract class _ProjectStore with Store {
     return Future.value(ProjectList(projects: []));
 
     // //print(value);
+  }
+
+  Future<ProposalList> getProjectProposals(Project project) async {
+    return await _getProjectProposalsUseCase
+        .call(params: project)
+        .then((value) {
+      project.proposal = value.proposals;
+      updateProjectList(project);
+      return value;
+    });
+  }
+
+  updateProjectList(Project project) async {
+    if (_projects.projects == null) return;
+    int index = _projects.projects!
+        .indexWhere((element) => element.objectId == project.objectId);
+
+    if (index != -1) {
+      _projects.projects![index] = project;
+    }
   }
 
   @action

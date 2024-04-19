@@ -5,7 +5,9 @@ import 'package:boilerplate/data/local/datasources/project/project_datasource.da
 import 'package:boilerplate/data/network/apis/project/project_api.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
@@ -123,8 +125,23 @@ class ProjectRepositoryImpl extends ProjectRepository {
   }
 
   @override
+  Future<ProposalList> getProjectProposals(Project params) async {
+    try {
+      var response = await _projectApi.getProjectProposals(params);
+      if (response.statusCode == HttpStatus.created ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.accepted) {
+        return ProposalList.fromJson(response.data['items']);
+      } else {
+        return ProposalList(proposals: List.empty(growable: true));
+      }
+    } catch (e) {
+      return ProposalList(proposals: List.empty(growable: true));
+    }
+  
   Future<Response> updateProposal(UpdateProposalParams params) async {
     var response = await _projectApi.updateProposal(params);
     return response;
   }
+}
 }

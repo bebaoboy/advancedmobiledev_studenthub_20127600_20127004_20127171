@@ -9,6 +9,7 @@ import 'package:boilerplate/core/widgets/material_dialog/navigator.dart';
 import 'package:boilerplate/core/widgets/shared_preference_view.dart';
 import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -183,6 +184,11 @@ class _MainAppBarState extends State<MainAppBar> {
                     Navigator.of(context).push(MaterialPageRoute2(
                         child: const SharedPreferenceView()));
                   },
+                  onDoubleTap: () {
+                    Navigator.of(context).push(MaterialPageRoute2(
+                        routeName: Routes.viewProjectProposalsCard,
+                        arguments: myProjects[0]));
+                  },
                   child: Text((_userStore.user != null &&
                               _userStore.user!.type == UserType.company
                           ? "© "
@@ -263,7 +269,12 @@ class _MainAppBarState extends State<MainAppBar> {
                   },
                   onDoubleTap: () {
                     // TODO: remove this badge test
-                    showRandomBadge();
+                    // showRandomBadge();
+                    Future.delayed(const Duration(seconds: 1), () {
+                      Navigator.of(context).push(MaterialPageRoute2(
+                          routeName: Routes.viewProjectProposalsCard,
+                          arguments: myProjects[0]));
+                    });
                     // AnimatedDialog.showBottomAnimatedDialog(
                     //   context,
                     //   onClose: (p0) => print("hiii"),

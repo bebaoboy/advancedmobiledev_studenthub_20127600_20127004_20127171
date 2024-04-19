@@ -1,4 +1,6 @@
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
 import 'package:boilerplate/domain/usecase/project/delete_project.dart';
@@ -31,6 +33,8 @@ abstract class ProjectRepository {
   Future saveStudentFavProject(ProjectList params);
 
   Future<Response> postProposal(PostProposalParams params);
+
+  Future<ProposalList> getProjectProposals(Project params);
 
   Future<Response> updateProposal(UpdateProposalParams params);
 }

@@ -894,7 +894,7 @@ class _ProjectTabState extends State<ProjectTab> {
                   child: IconButton(
                       onPressed: () {
                         NavbarNotifier2.pushNamed(
-                            Routes.favortieProject,
+                            Routes.favoriteProject,
                             NavbarNotifier2.currentIndex,
                             FavoriteScreen(
                                 projectList: _projectStore.projects
