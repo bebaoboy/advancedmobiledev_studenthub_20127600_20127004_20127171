@@ -39,13 +39,13 @@ class _OpenContainerWrapper extends StatelessWidget {
       closedColor: theme.cardColor,
       closedBuilder: (context, openContainer) {
         return InkWell(
-          splashColor: project.isArchived ? Colors.transparent : null,
+          splashColor: project.isArchive ? Colors.transparent : null,
           onTap: () {
             // Provider.of<EmailStore>(
             //   context,
             //   listen: false,
             // ).currentlySelectedEmailId = id;
-            if (project.enabled == Status.inactive) return;
+            if (project.isArchive) return;
             openContainer();
           },
           child: closedChild,
@@ -184,7 +184,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                 }
                 return false;
               },
-              secondaryBackground: widget.project.isArchived
+              secondaryBackground: widget.project.isArchive
                   ? null
                   : _DismissibleContainer(
                       icon: Text(Lang.get("archive"),
@@ -211,7 +211,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
             horizontal: Dimens.horizontal_padding, vertical: 5),
         child: ClipRect(
             child: Container(
-          foregroundDecoration: widget.project.enabled == Status.inactive
+          foregroundDecoration: widget.project.isArchive
               ? RotatedCornerDecoration.withColor(
                   color: Theme.of(context).colorScheme.primaryContainer,
                   spanBaselineShift: 4,
@@ -232,7 +232,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
-                color: widget.project.enabled == Status.inactive
+                color: widget.project.isArchive
                     ? Theme.of(context).colorScheme.onSurface.withOpacity(0.1)
                     : Theme.of(context).brightness == Brightness.dark
                         ? Theme.of(context)
@@ -336,7 +336,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                             widget.onShowBottomSheet!(widget.project),
                         icon: const Icon(Icons.more_horiz_outlined)),
                   ),
-                  // if (widget.project.enabled == Status.inactive)
+                  // if (widget.project.isArchive)
                   //   Positioned.fill(
                   //     child: ClipRect(
                   //         child: CornerBanner(

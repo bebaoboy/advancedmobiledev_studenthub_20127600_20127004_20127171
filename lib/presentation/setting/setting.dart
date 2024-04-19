@@ -481,9 +481,13 @@ class _SettingScreenState extends State<SettingScreen> {
                           duration: const Duration(seconds: 1),
                         );
                       } else {
-                        setState(() {
+                        try {
+                          setState(() {
+                            loading = true;
+                          });
+                        } catch (e) {
                           loading = true;
-                        });
+                        }
 
                         if (_userStore.user != null &&
                             _userStore.user!.studentProfile != null &&
@@ -501,15 +505,19 @@ class _SettingScreenState extends State<SettingScreen> {
                           await formStore.getProfileStudent(
                               _userStore.user!.studentProfile!.objectId!);
                         }
-                        setState(() {
+                        try {
+                          setState(() {
+                            loading = false;
+                          });
+                          navigate(
+                              context,
+                              _userStore.user != null &&
+                                      _userStore.user!.type == UserType.company
+                                  ? Routes.viewProfileCompany
+                                  : Routes.viewProfileStudent);
+                        } catch (e) {
                           loading = false;
-                        });
-                        navigate(
-                            context,
-                            _userStore.user != null &&
-                                    _userStore.user!.type == UserType.company
-                                ? Routes.viewProfileCompany
-                                : Routes.viewProfileStudent);
+                        }
                       }
                     }
                   }

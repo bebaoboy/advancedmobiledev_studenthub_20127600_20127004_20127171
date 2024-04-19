@@ -477,19 +477,20 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                         showAnimatedDialog(
                           context: context,
                           barrierDismissible: true,
-                          builder: (BuildContext context) {
+                          builder: (BuildContext ctx) {
                             return ClassicGeneralDialogWidget(
                               contentText:
                                   'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
                               negativeText: Lang.get('cancel'),
                               positiveText: 'Yes',
                               onPositiveClick: () async {
-                                Navigator.of(context).pop();
+                                Navigator.of(ctx).pop();
                                 final ProfileStudentStore infoStore =
                                     getIt<ProfileStudentStore>();
 
                                 await infoStore.getTechStack();
                                 await infoStore.getSkillset();
+
                                 Navigator.of(context).push(MaterialPageRoute2(
                                     routeName: Routes.profileStudent));
                                 return;
@@ -504,9 +505,13 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                           duration: const Duration(seconds: 1),
                         );
                       } else {
-                        setState(() {
+                        try {
+                          setState(() {
+                            loading = true;
+                          });
+                        } catch (e) {
                           loading = true;
-                        });
+                        }
 
                         if (_userStore.user != null &&
                             _userStore.user!.studentProfile != null &&
@@ -524,15 +529,19 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                           await formStore.getProfileStudent(
                               _userStore.user!.studentProfile!.objectId!);
                         }
-                        setState(() {
+                        try {
+                          setState(() {
+                            loading = false;
+                          });
+                          navigate(
+                              context,
+                              _userStore.user != null &&
+                                      _userStore.user!.type == UserType.company
+                                  ? Routes.viewProfileCompany
+                                  : Routes.viewProfileStudent);
+                        } catch (e) {
                           loading = false;
-                        });
-                        navigate(
-                            context,
-                            _userStore.user != null &&
-                                    _userStore.user!.type == UserType.company
-                                ? Routes.viewProfileCompany
-                                : Routes.viewProfileStudent);
+                        }
                       }
                     }
                   }

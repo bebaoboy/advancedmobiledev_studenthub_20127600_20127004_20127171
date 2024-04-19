@@ -396,8 +396,6 @@ abstract class _ProjectStore with Store {
             var result = ProjectList.fromJson(value.data["result"]);
             _companyProjects = result;
 
-            // TODO: lưu vào sharedpref
-
             sharedPrefsHelper.saveCompanyProjects(_companyProjects);
 
             _companyProjects.projects?.sort(
@@ -488,7 +486,6 @@ abstract class _ProjectStore with Store {
 
             return result;
 
-            // TODO: lưu vào sharedpref
           } catch (e) {
             // errorStore.errorMessage = "cannot save student profile";
             print("cannot get profile student ${e.toString()}");

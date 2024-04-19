@@ -250,26 +250,32 @@ class ProjectExperience extends MyObject {
 // ------------------- NOTIFICATION ------------------------------
 
 @JsonSerializable()
+
+/// Do not use this directly, use [OfferNotification] or [MessageObject]
 class NotificationObject extends MyObject {
   String id;
   Profile receiver;
   Profile sender;
   String content;
-  NotificationType type;
+  NotificationType get type => _type ?? NotificationType.text;
+  NotificationType? _type;
 
   NotificationObject({
     required this.id,
     required this.receiver,
     required this.sender,
-    required this.type,
+    required NotificationType type,
+    super.createdAt,
     this.content = "",
-  }) : super(objectId: id);
+  }) : super(objectId: id) {
+    _type = type;
+  }
   NotificationObject.fromJson(Map<String, dynamic> json)
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
         content = json['content'] ?? '',
-        type = NotificationType.values[json['type'] ?? 0];
+        _type = NotificationType.values[json['type'] ?? 0];
 }
 
 enum NotificationType {
@@ -288,9 +294,9 @@ class OfferNotification extends NotificationObject {
     required super.id,
     required super.receiver,
     required super.sender,
+    super.createdAt,
     super.content = "",
-    super.type = NotificationType.text,
-  });
+  }) : super(type: NotificationType.viewOffer);
 }
 
 enum MessageType {
@@ -299,17 +305,18 @@ enum MessageType {
 }
 
 @JsonSerializable()
-class Message extends NotificationObject {
+class MessageObject extends NotificationObject {
   MessageType messageType;
   InterviewSchedule? interviewSchedule;
 
-  Message({
+  MessageObject({
     required super.id,
     required super.receiver,
     required super.sender,
     super.content = "",
-    super.type = NotificationType.message,
+    required super.type,
     this.messageType = MessageType.message,
+    super.createdAt,
   });
 }
 

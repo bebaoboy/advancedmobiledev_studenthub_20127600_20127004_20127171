@@ -34,11 +34,19 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
           itemBuilder: (context, index) {
             return Row(
               children: [
-                Chip(
-                  side: const BorderSide(color: Colors.transparent),
-                  label: Text(
+                // Chip(
+                //   side: const BorderSide(color: Colors.transparent),
+                //   label: Text(
+                //     skills![index].name,
+                //     style: const TextStyle(color: Colors.red),
+                //   ),
+                // ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical:  8, horizontal: 15),
+                  decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.transparent), borderRadius: BorderRadius.circular(8) ),
+                  child: Text(
                     skills![index].name,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: Colors.red, fontWeight: FontWeight.w900, fontSize: 14),
                   ),
                 ),
                 const SizedBox(

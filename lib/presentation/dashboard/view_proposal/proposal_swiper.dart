@@ -69,94 +69,111 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
                 (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
               Widget children;
               if (snapshot.hasData) {
-                return Column(
+                return Stack(
                   children: [
-                    SizedBox(
-                      height: 600,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 25,
-                          right: 25,
-                          top: 50,
-                          bottom: 40,
-                        ),
-                        child: AppinioSwiper(
-                          onSwipeBegin: _swipeBegin,
-                          invertAngleOnBottomDrag: true,
-                          backgroundCardCount: 3,
-                          swipeOptions: const SwipeOptions.all(),
-                          controller: controller,
-                          onCardPositionChanged: (
-                            SwiperPosition position,
-                          ) {
-                            //debugPrint('${position.offset.toAxisDirection()}, '
-                            //    '${position.offset}, '
-                            //    '${position.angle}');
-                          },
-                          onSwipeEnd: _swipeEnd,
-                          onEnd: _onEnd,
-                          cardCount: snapshot.data!.proposals?.length ?? 0,
-                          cardBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute2(
-                                    routeName: Routes.companyViewStudentProfile,
-                                    arguments: snapshot
-                                        .data!.proposals?[index].student));
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 600,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 25,
+                              right: 25,
+                              top: 50,
+                              bottom: 40,
+                            ),
+                            child: AppinioSwiper(
+                              onSwipeBegin: _swipeBegin,
+                              invertAngleOnBottomDrag: true,
+                              backgroundCardCount: 3,
+                              swipeOptions: const SwipeOptions.symmetric(
+                                  horizontal: true),
+                              controller: controller,
+                              onCardPositionChanged: (
+                                SwiperPosition position,
+                              ) {
+                                //debugPrint('${position.offset.toAxisDirection()}, '
+                                //    '${position.offset}, '
+                                //    '${position.angle}');
                               },
-                              child: Stack(children: [
-                                Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 100,
+                              onSwipeEnd: _swipeEnd,
+                              onEnd: _onEnd,
+                              cardCount: snapshot.data!.proposals?.length ?? 0,
+                              cardBuilder: (BuildContext context, int index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute2(
+                                            routeName: Routes
+                                                .companyViewStudentProfile,
+                                            arguments: snapshot.data!
+                                                .proposals?[index].student));
+                                  },
+                                  child: Stack(children: [
+                                    Column(
+                                      children: [
+                                        const SizedBox(
+                                          height: 100,
+                                        ),
+                                        ProposalCardItem(
+                                          proposal:
+                                              snapshot.data!.proposals![index],
+                                        ),
+                                      ],
                                     ),
-                                    ProposalCardItem(
-                                      proposal:
-                                          snapshot.data!.proposals![index],
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 120),
-                                  child: Hero(
-                                    tag:
-                                        "studentImage${snapshot.data!.proposals![index].student.objectId}",
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade300,
-                                        shape: BoxShape.circle,
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 120),
+                                      child: Hero(
+                                        tag:
+                                            "studentImage${snapshot.data!.proposals![index].student.objectId}",
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.shade300,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const FlutterLogo(
+                                            size: 200,
+                                          ),
+                                        ),
                                       ),
-                                      child: const FlutterLogo(
-                                        size: 200,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                              ]),
-                            );
-                          },
+                                    )
+                                  ]),
+                                );
+                              },
+                            ),
+                          ),
                         ),
-                      ),
+                        IconTheme.merge(
+                          data: const IconThemeData(size: 40),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // TutorialAnimationButton(_shakeCard),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              customSwipeLeftButton(controller, () {}),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              customSwipeRightButton(controller, () {}),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
                     ),
-                    IconTheme.merge(
-                      data: const IconThemeData(size: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // TutorialAnimationButton(_shakeCard),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          customSwipeLeftButton(controller, () {}),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          customSwipeRightButton(controller, () {}),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                        ],
-                      ),
+                    Positioned(
+                      width: 200,
+                      height: 800,
+                      child: AnimatedOpacity(
+                          duration: Duration.zero,
+                          opacity: 0,
+                          child: Container(
+                            color: Colors.amber,
+                          )),
                     )
                   ],
                 );
@@ -172,8 +189,7 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
   }
 
   void _swipeBegin(
-      int previousIndex, int targetIndex, SwiperActivity activity) {
-  }
+      int previousIndex, int targetIndex, SwiperActivity activity) {}
 
   void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
     switch (activity) {

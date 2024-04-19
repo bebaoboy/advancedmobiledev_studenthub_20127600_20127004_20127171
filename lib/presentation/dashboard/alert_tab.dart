@@ -3,23 +3,25 @@
 import 'dart:math';
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
+import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
 import 'package:flutter/rendering.dart';
+import 'package:intl/intl.dart';
 
 var colorss = [
   Colors.red,
@@ -46,70 +48,158 @@ class AlertTab extends StatefulWidget {
   State<AlertTab> createState() => _AlertTabState();
 }
 
-final List<Map<String, dynamic>> alerts = [
-  // OfferNotification(
-  //     projectId: "",
-  //     id: "",
-  //     receiver: Profile(objectId: ""),
-  //     sender: Profile(objectId: ""),
-  //     content: 'You have submitted to join project "Javis - AI Copilot'),
-
-  {
-    'icon': Icons.star,
-    'title': 'You have submitted to join project "Javis - AI Copilot"',
-    'subtitle': '6/6/2024',
-    'action': null,
-  },
-  {
-    'icon': Icons.star,
-    'title':
-        'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-    'subtitle': '6/6/2024',
-    'action': 'Join',
-  },
-  {
-    'icon': Icons.star,
-    'title': 'You have offer to join project "Javis - AI Copilot"',
-    'subtitle': '6/6/2024',
-    'action': 'View offer',
-  },
-  {
-    'icon': Icons.star,
-    'title': 'Alex Jor',
-    'subtitle': 'I have read your requirement but I dont seem to...?\n6/6/2024',
-    'action': null,
-  },
-  {
-    'icon': Icons.star,
-    'title': 'Alex Jor',
-    'subtitle': 'Finish your project?\n6/6/2024',
-    'action': null,
-  },
-  {
-    'icon': Icons.star,
-    'title': 'Alex Jor',
-    'subtitle': 'How are you doing?\n6/6/2024',
-    'action': null,
-  },
-
-  {
-    'icon': Icons.star,
-    'title': 'You have an offer to join project "Quantum Physics"',
-    'subtitle': '6/6/2024',
-    'action': 'View offer',
-  },
-  {
-    'icon': Icons.star,
-    'title': 'You have an offer to join project "HCMUS - Administration"',
-    'subtitle': '6/6/2024',
-    'action': 'View offer',
-  },
-  // Add more alerts here
+final List<NotificationObject> alerts = [
+  NotificationObject(
+      type: NotificationType.text,
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "company 1",
+      ),
+      content: 'You have submitted to join project "Javis - AI Copilot',
+      createdAt: DateTime.now()),
+  NotificationObject(
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "company 1",
+      ),
+      type: NotificationType.joinInterview,
+      content:
+          'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+      createdAt: DateTime.now().subtract(const Duration(days: 7))),
+  OfferNotification(
+      projectId: "",
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "company 1",
+      ),
+      content: 'You have submitted to join project "Javis - AI Copilot',
+      createdAt: DateTime.now()),
+  NotificationObject(
+      type: NotificationType.message,
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "Alex Jor",
+      ),
+      content: 'I have read your requirement but I dont seem to...?\n6/6/2024',
+      createdAt: DateTime.now()),
+  NotificationObject(
+      type: NotificationType.message,
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "Alex Jor",
+      ),
+      content: 'Finish your project?',
+      createdAt: DateTime.now()),
+  NotificationObject(
+      type: NotificationType.message,
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "Alex Jor",
+      ),
+      content: 'How are you doing?',
+      createdAt: DateTime.now()),
+  OfferNotification(
+      projectId: "",
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "company 1",
+      ),
+      content: 'You have an offer to join project "HCMUS - Administration"',
+      createdAt: DateTime.now()),
+  OfferNotification(
+      projectId: "",
+      id: "",
+      receiver: StudentProfile(objectId: "", fullName: "student 1"),
+      sender: CompanyProfile(
+        objectId: "",
+        companyName: "company 1",
+      ),
+      content: 'You have an offer to join project "Quantum Physics"',
+      createdAt: DateTime.now()),
 ];
+
+// final List<Map<String, dynamic>> alerts = [
+//   // OfferNotification(
+//   //     projectId: "",
+//   //     id: "",
+//   //     receiver: Profile(objectId: ""),
+//   //     sender: Profile(objectId: ""),
+//   //     content: 'You have submitted to join project "Javis - AI Copilot'),
+
+//   {
+//     'icon': Icons.star,
+//     'title': 'You have submitted to join project "Javis - AI Copilot"',
+//     'subtitle': '6/6/2024',
+//     'action': null,
+//   },
+//   {
+//     'icon': Icons.star,
+//     'title':
+//         'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+//     'subtitle': '6/6/2024',
+//     'action': 'Join',
+//   },
+//   {
+//     'icon': Icons.star,
+//     'title': 'You have offer to join project "Javis - AI Copilot"',
+//     'subtitle': '6/6/2024',
+//     'action': 'View offer',
+//   },
+//   {
+//     'icon': Icons.star,
+//     'title': 'Alex Jor',
+//     'subtitle': 'I have read your requirement but I dont seem to...?\n6/6/2024',
+//     'action': null,
+//   },
+//   {
+//     'icon': Icons.star,
+//     'title': 'Alex Jor',
+//     'subtitle': 'Finish your project?\n6/6/2024',
+//     'action': null,
+//   },
+//   {
+//     'icon': Icons.star,
+//     'title': 'Alex Jor',
+//     'subtitle': 'How are you doing?\n6/6/2024',
+//     'action': null,
+//   },
+
+//   {
+//     'icon': Icons.star,
+//     'title': 'You have an offer to join project "Quantum Physics"',
+//     'subtitle': '6/6/2024',
+//     'action': 'View offer',
+//   },
+//   {
+//     'icon': Icons.star,
+//     'title': 'You have an offer to join project "HCMUS - Administration"',
+//     'subtitle': '6/6/2024',
+//     'action': 'View offer',
+//   },
+//   // Add more alerts here
+// ];
 
 class _AlertTabState extends State<AlertTab> {
   var userStore = getIt<UserStore>();
   bool hasOfferProposal = false;
+  List<NotificationObject> viewOffers = [],
+      texts = [],
+      messages = [],
+      joinInterviews = [];
 
   List<Proposal> getOffer() {
     if (hasOfferProposal) {
@@ -127,6 +217,12 @@ class _AlertTabState extends State<AlertTab> {
   @override
   void initState() {
     super.initState();
+    joinInterviews =
+        alerts.where((e) => e.type == NotificationType.joinInterview).toList();
+    viewOffers =
+        alerts.where((e) => e.type == NotificationType.viewOffer).toList();
+    texts = alerts.where((e) => e.type == NotificationType.text).toList();
+    messages = alerts.where((e) => e.type == NotificationType.message).toList();
     hasOfferProposal = userStore.user != null &&
         userStore.user!.studentProfile != null &&
         userStore.user!.studentProfile!.proposalProjects != null &&
@@ -141,6 +237,8 @@ class _AlertTabState extends State<AlertTab> {
     activeDates
         .addAll([for (int i = -7; i < 7; i++) today.add(Duration(days: i))]);
     print(activeDates);
+    showTime = List.filled(activeDates.length, false);
+
     Future.delayed(const Duration(seconds: 1), () {
       // dateController.animateToFocusDate(duration: const Duration(seconds: 1));
     });
@@ -358,6 +456,7 @@ class _AlertTabState extends State<AlertTab> {
   final EasyInfiniteDateTimelineController dateController =
       EasyInfiniteDateTimelineController();
   int oldIndex = 7;
+  List<bool> showTime = [];
 
   _datePickerSection() {
     return Container(
@@ -465,113 +564,151 @@ class _AlertTabState extends State<AlertTab> {
             });
             print(selectedDate);
           },
-          itemBuilder: (context, index) {
-            return SingleChildScrollView(
-              controller: listController[index],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "New",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1!
-                        .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount:
-                        alerts.where((e) => e["action"] == "Join").length,
-                    itemBuilder: (context, index) {
-                      return const CustomFollowNotifcation();
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Today",
+          itemBuilder: (context, i) {
+            return NotificationListener<ScrollNotification>(
+              onNotification: (scrollNotification) {
+                if (scrollNotification is ScrollStartNotification) {
+                  if (!showTime[i]) {
+                    setState(() {
+                      showTime[i] = true;
+                    });
+                  }
+                } else if (scrollNotification is ScrollUpdateNotification) {
+                } else if (scrollNotification is ScrollEndNotification) {
+                  setState(() {
+                    showTime[i] = false;
+                  });
+                }
+                return false;
+              },
+              child: SingleChildScrollView(
+                controller: listController[i],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "New",
                       style: Theme.of(context)
                           .textTheme
                           .headline1!
                           .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount:
-                        alerts.where((e) => e["action"] == "View offer").length,
-                    itemBuilder: (context, index) {
-                      return const CustomFollowNotifcation();
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Oldest",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline1!
-                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                    const SizedBox(
+                      height: 10,
                     ),
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: alerts.where((e) => e["action"] == null).length,
-                    itemBuilder: (context, index) {
-                      return const CustomLikedNotifcation();
-                    },
-                  ),
-                ],
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: joinInterviews.length,
+                      itemBuilder: (context, index) {
+                        return CustomFollowNotifcation(
+                          notificationObject: joinInterviews[index],
+                          showTime: showTime[i],
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "Today",
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: viewOffers.length,
+                      itemBuilder: (context, index) {
+                        return CustomFollowNotifcation(
+                          notificationObject: viewOffers[index],
+                          showTime: showTime[i],
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "Older",
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: texts.length,
+                      itemBuilder: (context, index) {
+                        return CustomLikedNotifcation(
+                          notificationObject: texts[index],
+                          showTime: showTime[i],
+                        );
+                      },
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text(
+                        "Oldest",
+                        style: Theme.of(context).textTheme.headline1!.copyWith(
+                            fontSize: 16, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        return CustomLikedNotifcation(
+                          notificationObject: messages[index],
+                          showTime: showTime[i],
+                        );
+                      },
+                    ),
+                  ],
+                ),
               ),
             );
 
-            ListView.separated(
-                controller: listController[index],
-                itemCount: alerts.length,
-                separatorBuilder: (context, index) =>
-                    const Divider(color: Colors.black),
-                itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      //print('Tile clicked');
-                      // You can replace the print statement with your function
-                    },
-                    child: ListTile(
-                      leading: Icon(alerts[index]['icon']),
-                      title: Text(alerts[index]['title']),
-                      subtitle: Text(alerts[index]['subtitle']),
-                      trailing: alerts[index]['action'] != null
-                          ? ElevatedButton(
-                              onPressed: () {
-                                //print('${alerts[index]['action']} button clicked');
-                                if (alerts[index]['action'] != null) {
-                                  if (alerts[index]['action'] == "Join") {
-                                    Navigator.of(NavigationService
-                                            .navigatorKey.currentContext!)
-                                        .push(MaterialPageRoute2(
-                                            routeName: Routes.message,
-                                            arguments: "Javis - AI Copilot"));
-                                  } else if (alerts[index]['action'] ==
-                                      "View offer") {
-                                    // showOfferDetailsDialog(context, 2);
-                                    // NavbarNotifier2.hideBottomNavBar = true;
-                                  }
-                                }
-                                // You can replace the print statement with your function
-                              },
-                              child: Text(Lang.get(alerts[index]['action'])),
-                            )
-                          : null,
-                    ),
-                  );
-                });
-          
+            // ListView.separated(
+            //     controller: listController[index],
+            //     itemCount: alerts.length,
+            //     separatorBuilder: (context, index) =>
+            //         const Divider(color: Colors.black),
+            //     itemBuilder: (context, index) {
+            //       return GestureDetector(
+            //         onTap: () {
+            //           //print('Tile clicked');
+            //           // You can replace the print statement with your function
+            //         },
+            //         child: ListTile(
+            //           leading: Icon(alerts[index]['icon']),
+            //           title: Text(alerts[index]['title']),
+            //           subtitle: Text(alerts[index]['subtitle']),
+            //           trailing: alerts[index]['action'] != null
+            //               ? ElevatedButton(
+            //                   onPressed: () {
+            //                     //print('${alerts[index]['action']} button clicked');
+            //                     if (alerts[index]['action'] != null) {
+            //                       if (alerts[index]['action'] == "Join") {
+            //                         Navigator.of(NavigationService
+            //                                 .navigatorKey.currentContext!)
+            //                             .push(MaterialPageRoute2(
+            //                                 routeName: Routes.message,
+            //                                 arguments: "Javis - AI Copilot"));
+            //                       } else if (alerts[index]['action'] ==
+            //                           "View offer") {
+            //                         // showOfferDetailsDialog(context, 2);
+            //                         // NavbarNotifier2.hideBottomNavBar = true;
+            //                       }
+            //                     }
+            //                     // You can replace the print statement with your function
+            //                   },
+            //                   child: Text(Lang.get(alerts[index]['action'])),
+            //                 )
+            //               : null,
+            //         ),
+            //       );
+            //     });
           },
         ),
       ),
@@ -1007,7 +1144,10 @@ class HeroFlutterLogo extends StatelessWidget {
 }
 
 class CustomFollowNotifcation extends StatefulWidget {
-  const CustomFollowNotifcation({super.key});
+  const CustomFollowNotifcation(
+      {super.key, required this.notificationObject, required this.showTime});
+  final NotificationObject notificationObject;
+  final bool showTime;
 
   @override
   State<CustomFollowNotifcation> createState() =>
@@ -1018,147 +1158,226 @@ class _CustomFollowNotifcationState extends State<CustomFollowNotifcation> {
   bool follow = false;
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 20, backgroundColor: Colors.blue,
-            backgroundImage: Image.network(
-              width: 50,
-              height: 50,
-              'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-              fit: BoxFit.cover,
-            ).image,
-            // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
-          ),
-          const SizedBox(
-            width: 15,
-          ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Dean Winchester",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline3!
-                      .copyWith(fontSize: 13)),
-              const SizedBox(
-                height: 5,
-              ),
-              Text("New following you  ",
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyText1!
-                      .copyWith(fontSize: 9)),
-            ],
-          ),
-          const Spacer(),
-          Align(
-            alignment: Alignment.centerRight,
-            child: Padding(
-              padding: const EdgeInsets.only(left: 0),
-              child: RoundedButtonWidget(
-                height: 40,
-                buttonColor: Theme.of(context).colorScheme.primary,
-                buttonTextSize: 10,
-                // textColor: follow == false ? Colors.white : mainText,
-                onPressed: () {
-                  setState(() {
-                    follow = !follow;
-                  });
-                },
-                buttonText: "Follow",
+    return InkWell(
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 20, backgroundColor: Colors.blue,
+              backgroundImage: Image.network(
+                width: 50,
+                height: 50,
+                'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                fit: BoxFit.cover,
+              ).image,
+              // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(widget.notificationObject.sender.getName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3!
+                              .copyWith(fontSize: 13)),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: widget.showTime ? 1 : 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Text(
+                              textAlign: TextAlign.center,
+                              DateFormat("HH:mm")
+                                  .format(widget.notificationObject.createdAt!)
+                                  .toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline3!
+                                  .copyWith(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w300)),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  LimitedBox(
+                    maxHeight: 200,
+                    child: AutoSizeText(widget.notificationObject.content,
+                        maxLines: 2,
+                        maxFontSize: 10,
+                        minFontSize: 9,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyText1!),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+            Align(
+              alignment: Alignment.centerRight,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 0),
+                child: RoundedButtonWidget(
+                  height: 40,
+                  buttonColor: Theme.of(context).colorScheme.primary,
+                  buttonTextSize: 10,
+                  // textColor: follow == false ? Colors.white : mainText,
+                  onPressed: () {
+                    setState(() {
+                      follow = !follow;
+                    });
+                  },
+                  buttonText: widget.notificationObject.type ==
+                          NotificationType.viewOffer
+                      ? "View"
+                      : "Join",
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class CustomLikedNotifcation extends StatelessWidget {
-  const CustomLikedNotifcation({super.key});
+class CustomLikedNotifcation extends StatefulWidget {
+  const CustomLikedNotifcation(
+      {super.key, required this.notificationObject, required this.showTime});
+  final NotificationObject notificationObject;
+  final bool showTime;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(2,8,8,8),
-      child: Row(
-        children: [
-          SizedBox(
-            height: 80,
-            width: 50,
-            child: Stack(children: [
-              const Padding(
-                padding: EdgeInsets.only(left: 10),
-                child: CircleAvatar(
-                  radius: 25,
+  State<CustomLikedNotifcation> createState() => _CustomLikedNotifcationState();
+}
 
-                  // backgroundImage: AssetImage("assets/imges/Avatar3.png"),
+class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(2, 8, 8, 8),
+        child: Row(
+          children: [
+            SizedBox(
+              height: 80,
+              width: 50,
+              child: Stack(children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Icon(
+                    widget.notificationObject.type == NotificationType.text
+                        ? Icons.text_snippet
+                        : Icons.chat,
+                    size: 45,
+                  ),
                 ),
-              ),
-              Positioned(
-                bottom: 10,
-                child: CircleAvatar(
-                  radius: 20, backgroundColor: Colors.blue,
-                  backgroundImage: Image.network(
-                    width: 50,
-                    height: 50,
-                    'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                    fit: BoxFit.cover,
-                  ).image,
-                  // backgroundImage: AssetImage("assets/imges/Avatar2.png"),
+                Positioned(
+                  bottom: 10,
+                  child: CircleAvatar(
+                    radius: 20, backgroundColor: Colors.blue,
+                    backgroundImage: Image.network(
+                      width: 50,
+                      height: 50,
+                      'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+                      fit: BoxFit.cover,
+                    ).image,
+                    // backgroundImage: AssetImage("assets/imges/Avatar2.png"),
+                  ),
                 ),
-              ),
-            ]),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                RichText(
-                  maxLines: 2,
-                  text: TextSpan(
-                      text: "John Steve",
+              ]),
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Wrap(
+                    children: [
+                      RichText(
+                        maxLines: 2,
+                        text: TextSpan(
+                            text: widget.notificationObject.sender.getName,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(fontSize: 13),
+                            children: [
+                              TextSpan(
+                                text: " and ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(fontSize: 9),
+                              ),
+                              const TextSpan(text: "you")
+                            ]),
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      AnimatedOpacity(
+                        duration: const Duration(milliseconds: 200),
+                        opacity: widget.showTime ? 1 : 0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(
+                                  color: Theme.of(context).colorScheme.primary),
+                              borderRadius: BorderRadius.circular(12)),
+                          child: Text(
+                              textAlign: TextAlign.center,
+                              DateFormat("HH:mm")
+                                  .format(widget.notificationObject.createdAt!)
+                                  .toString(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline3!
+                                  .copyWith(
+                                      fontSize: 9,
+                                      fontWeight: FontWeight.w300)),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  Text(widget.notificationObject.content,
                       style: Theme.of(context)
                           .textTheme
-                          .headline3!
-                          .copyWith(fontSize: 15),
-                      children: [
-                        TextSpan(
-                          text: " and ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(fontSize: 9),
-                        ),
-                        const TextSpan(text: "Sam Wincherter")
-                      ]),
-                ),
-                const SizedBox(
-                  height: 10,
-                ),
-                Text("Liked your recipe  ",
-                    style: Theme.of(context)
-                        .textTheme
-                        .subtitle1!
-                        .copyWith(fontSize: 9))
-              ],
+                          .bodyText1!
+                          .copyWith(fontSize: 10))
+                ],
+              ),
             ),
-          ),
-          Image.network(
-            "https://docs.flutter.dev/assets/images/404/dash_nest.png",
-            height: 64,
-            width: 64,
-          ),
-        ],
+            Image.network(
+              "https://docs.flutter.dev/assets/images/404/dash_nest.png",
+              height: 64,
+              width: 64,
+            ),
+          ],
+        ),
       ),
     );
   }
