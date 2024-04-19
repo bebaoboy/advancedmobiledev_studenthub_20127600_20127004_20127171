@@ -399,6 +399,9 @@ class _ProfileStudentScreenState extends State<ProfileStudentScreen> {
                         elevation: 8,
                         pressElevation: 9,
                         key: ObjectKey(profile),
+                        deleteIconColor: _themeStore.isPlatformDark(context)
+                            ? Colors.white
+                            : Colors.black,
                         label: Text(profile.name),
                         labelStyle: const TextStyle(fontSize: 10),
                         visualDensity: VisualDensity.compact,

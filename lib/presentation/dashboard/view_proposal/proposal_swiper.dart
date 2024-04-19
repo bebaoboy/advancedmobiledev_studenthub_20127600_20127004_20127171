@@ -14,6 +14,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class ProposalSwiper extends StatefulWidget {
   final Project project;
@@ -24,7 +25,8 @@ class ProposalSwiper extends StatefulWidget {
   State<StatefulWidget> createState() => _ProposalSwiperState();
 }
 
-class _ProposalSwiperState extends State<ProposalSwiper> {
+class _ProposalSwiperState extends State<ProposalSwiper>
+    with SingleTickerProviderStateMixin {
   // ignore: unused_field
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
@@ -33,6 +35,13 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
 
   late Future<ProposalList> future;
 
+  double _opacityLeft = 0;
+  double _opacityRight = 0;
+  static const int maxAngle = 16;
+  double defaultOffSetX = 13.1;
+  String currentActionName = '';
+  bool isMoving = false;
+
   @override
   void initState() {
     if (widget.project.proposal == null) {
@@ -40,28 +49,39 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
     } else {
       future = Future.value(ProposalList(proposals: widget.project.proposal));
     }
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF9354B9),
       appBar: _buildAppBar(),
       body: _buildBody(),
     );
+  }
+
+  void hideAllHovering() {
+    setState(() {
+      _opacityLeft = 0;
+      _opacityRight = 0;
+    });
   }
 
   Widget _buildBody() {
     return SafeArea(
       child: Container(
         height: MediaQuery.of(context).size.height,
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
             gradient: LinearGradient(
-                colors: [Color(0xFF4051A9), Color(0xFF9354B9)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                stops: [0.1, 0.9])),
+          colors: [
+            // Color(0xFF4051A9), Color(0xFF9354B9)
+            Theme.of(context).colorScheme.primary,
+            Theme.of(context).colorScheme.secondary,
+          ],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        )),
         margin: const EdgeInsets.only(top: 10),
         child: FutureBuilder<ProposalList>(
             future: future,
@@ -69,97 +89,161 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
                 (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
               Widget children;
               if (snapshot.hasData) {
-                return Column(
-                  children: [
-                    SizedBox(
-                      height: 600,
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          left: 25,
-                          right: 25,
-                          top: 50,
-                          bottom: 40,
-                        ),
-                        child: AppinioSwiper(
-                          onSwipeBegin: _swipeBegin,
-                          invertAngleOnBottomDrag: true,
-                          backgroundCardCount: 3,
-                          swipeOptions: const SwipeOptions.all(),
-                          controller: controller,
-                          onCardPositionChanged: (
-                            SwiperPosition position,
-                          ) {
-                            //debugPrint('${position.offset.toAxisDirection()}, '
-                            //    '${position.offset}, '
-                            //    '${position.angle}');
-                          },
-                          onSwipeEnd: _swipeEnd,
-                          onEnd: _onEnd,
-                          cardCount: snapshot.data!.proposals?.length ?? 0,
-                          cardBuilder: (BuildContext context, int index) {
-                            return InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(MaterialPageRoute2(
-                                    routeName: Routes.companyViewStudentProfile,
-                                    arguments: snapshot
-                                        .data!.proposals?[index].student));
-                              },
-                              child: Stack(children: [
-                                Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 100,
-                                    ),
-                                    ProposalCardItem(
-                                      proposal:
-                                          snapshot.data!.proposals![index],
-                                    ),
-                                  ],
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 120),
-                                  child: Hero(
-                                    tag:
-                                        "studentImage${snapshot.data!.proposals![index].student.objectId}",
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey.shade300,
-                                        shape: BoxShape.circle,
+                return Stack(children: [
+                  Column(
+                    children: [
+                      SizedBox(
+                        height: 600,
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                            left: 25,
+                            right: 25,
+                            top: 50,
+                            bottom: 40,
+                          ),
+                          child: AppinioSwiper(
+                            invertAngleOnBottomDrag: true,
+                            backgroundCardCount: 3,
+                            swipeOptions:
+                                const SwipeOptions.symmetric(horizontal: true),
+                            controller: controller,
+                            onCardPositionChanged: (
+                              SwiperPosition position,
+                            ) {
+                              if (position.offset ==
+                                  Offset(defaultOffSetX, 0)) {
+                                hideAllHovering();
+                              }
+
+                              if (position.offset.toAxisDirection() ==
+                                  AxisDirection.left) {
+                                setState(() {
+                                  _opacityLeft =
+                                      position.angle.abs().roundToDouble() /
+                                          maxAngle;
+                                });
+                                setState(() {
+                                  currentActionName = "Reject";
+                                });
+                              } else {
+                                setState(() {
+                                  _opacityLeft = 0;
+                                });
+                              }
+
+                              if (position.offset.toAxisDirection() ==
+                                  AxisDirection.right) {
+                                setState(() {
+                                  currentActionName = "Send hired";
+                                  setState(() {
+                                    _opacityRight =
+                                        position.angle.abs().roundToDouble() /
+                                            maxAngle;
+                                  });
+                                });
+                              } else {
+                                setState(() {
+                                  _opacityRight = 0;
+                                });
+                              }
+
+                              debugPrint(
+                                  '${position.offset.toAxisDirection()}, '
+                                  '${position.offset}, '
+                                  '${position.angle}');
+                            },
+                            onSwipeEnd: _swipeEnd,
+                            onEnd: _onEnd,
+                            cardCount: snapshot.data!.proposals?.length ?? 0,
+                            cardBuilder: (BuildContext context, int index) {
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(MaterialPageRoute2(
+                                      routeName:
+                                          Routes.companyViewStudentProfile,
+                                      arguments: snapshot
+                                          .data!.proposals?[index].student));
+                                },
+                                child: Stack(children: [
+                                  Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 40,
                                       ),
-                                      child: const FlutterLogo(
-                                        size: 200,
-                                      ),
-                                    ),
+                                      Observer(
+                                        builder: (context) => ProposalCardItem(
+                                          currentActionName,
+                                          _opacityLeft,
+                                          proposal:
+                                              snapshot.data!.proposals![index],
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                )
-                              ]),
-                            );
-                          },
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 120, top: 50),
+                                    child: Hero(
+                                      tag:
+                                          "studentImage${snapshot.data!.proposals![index].student.objectId}",
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade300,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: const FlutterLogo(
+                                          size: 200,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                ]),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                      IconTheme.merge(
+                        data: const IconThemeData(size: 40),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            // TutorialAnimationButton(_shakeCard),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                            customSwipeLeftButton(controller, () {}),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            customSwipeRightButton(controller, () {}),
+                            const SizedBox(
+                              width: 20,
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
+                  Positioned(
+                    width: 200,
+                    height: MediaQuery.of(context).size.height,
+                    child: AnimatedOpacity(
+                      duration: const Duration(microseconds: 200),
+                      opacity: _opacityLeft,
+                      child: Container(
+                        color: Theme.of(context).colorScheme.primary,
+                        child: Text(
+                          currentActionName,
+                          style: const TextStyle(
+                            fontSize: 30,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
-                    IconTheme.merge(
-                      data: const IconThemeData(size: 40),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // TutorialAnimationButton(_shakeCard),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                          customSwipeLeftButton(controller, () {}),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          customSwipeRightButton(controller, () {}),
-                          const SizedBox(
-                            width: 20,
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                );
+                  ),
+                ]);
               } else if (snapshot.hasError) {
                 return const Text("Error fetching proposals");
               } else {
@@ -171,32 +255,44 @@ class _ProposalSwiperState extends State<ProposalSwiper> {
     );
   }
 
-  void _swipeBegin(
-      int previousIndex, int targetIndex, SwiperActivity activity) {
-  }
-
   void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
     switch (activity) {
       case Swipe():
         log('The card was swiped to the : ${activity.direction}');
 
-        if (activity.direction == AxisDirection.down ||
-            activity.direction == AxisDirection.up) {
-          return;
-        } else if (activity.direction == AxisDirection.right) {
-          // ToDo: update proposal status
+        if (activity.direction == AxisDirection.right) {
+          // ToDo: update proposal status value = 2
+          if (_projectStore.currentProps.proposals == null ||
+              _projectStore.currentProps.proposals!.isEmpty) return;
+          _projectStore.currentProps.proposals![targetIndex].hiredStatus =
+              HireStatus.hired;
+          _projectStore.updateProposal(
+              _projectStore.currentProps.proposals![targetIndex],
+              _userStore.user!.studentProfile!.objectId!);
+        } else {
+          if (_projectStore.currentProps.proposals == null ||
+              _projectStore.currentProps.proposals!.isEmpty) return;
+          // Reject proposal
+          _projectStore.currentProps.proposals![targetIndex].hiredStatus =
+              HireStatus.notHired;
+          _projectStore.updateProposal(
+              _projectStore.currentProps.proposals![targetIndex],
+              _userStore.user!.studentProfile!.objectId!);
         }
-
+        hideAllHovering();
         log('previous index: $previousIndex, target index: $targetIndex');
         break;
       case Unswipe():
+        hideAllHovering();
         log('A ${activity.direction.name} swipe was undone.');
         log('previous index: $previousIndex, target index: $targetIndex');
         break;
       case CancelSwipe():
+        hideAllHovering();
         log('A swipe was cancelled');
         break;
       case DrivenActivity():
+        hideAllHovering();
         log('Driven Activity');
         break;
     }

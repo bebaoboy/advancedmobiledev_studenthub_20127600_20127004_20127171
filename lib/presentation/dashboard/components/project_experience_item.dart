@@ -32,15 +32,23 @@ class _ProjectExperienceItemState extends State<ProjectExperienceItem> {
           itemBuilder: (context, index) {
             return Row(
               children: [
-                Chip(
-                  side: const BorderSide(color: Colors.transparent),
-                  label: Text(
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(8)),
+                  child: Text(
                     skills![index].name,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14),
                   ),
                 ),
                 const SizedBox(
-                  width: 4.0,
+                  width: 8,
                 ),
               ],
             );
@@ -54,12 +62,13 @@ class _ProjectExperienceItemState extends State<ProjectExperienceItem> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: Dimens.horizontal_padding - 3,
+          horizontal: Dimens.horizontal_padding,
           vertical: Dimens.vertical_padding),
       child: Container(
-        decoration: const BoxDecoration(
-            border:
-                Border(bottom: BorderSide(width: 0.4, color: Colors.black87))),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+            border: Border.all(width: 0.4, color: Colors.black87),
+            borderRadius: BorderRadius.circular(10)),
         alignment: Alignment.center,
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -71,42 +80,23 @@ class _ProjectExperienceItemState extends State<ProjectExperienceItem> {
                 children: [
                   const Icon(
                     Icons.title,
-                    size: 45,
+                    size: 30,
                   ),
                   Text(
                     widget.projectExperience.name,
                     style: const TextStyle(
-                        fontSize: 26, fontWeight: FontWeight.bold),
+                        fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Icon(
-                    Icons.description,
-                    size: 45,
-                  ),
-                  Text(
-                    widget.projectExperience.description,
-                    style: const TextStyle(fontSize: 20),
-                    maxLines: 4,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  const Text("Skills"),
-                  _buildChip(widget.projectExperience.skills),
-                ],
+              child: Text(
+                widget.projectExperience.description,
+                style: const TextStyle(fontSize: 20),
+                maxLines: 4,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             Padding(
@@ -116,7 +106,7 @@ class _ProjectExperienceItemState extends State<ProjectExperienceItem> {
                 children: [
                   const Icon(
                     Icons.link,
-                    size: 45,
+                    size: 26,
                   ),
                   Text(
                     widget.projectExperience.link,

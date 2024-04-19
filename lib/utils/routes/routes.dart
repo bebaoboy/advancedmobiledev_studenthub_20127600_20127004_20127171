@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/dashboard/project_update/project_update
 import 'package:boilerplate/presentation/dashboard/submit_project_proposal/submit_project_proposal.dart';
 import 'package:boilerplate/presentation/dashboard/view_proposal/proposal_swiper.dart';
 import 'package:boilerplate/presentation/dashboard/view_proposal/view_student_profile.dart';
+import 'package:boilerplate/presentation/dashboard/view_proposal/view_student_profile2.dart';
 import 'package:boilerplate/presentation/home/home.dart';
 import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/login/forget_password.dart';
@@ -65,6 +66,7 @@ class Routes {
   static const String viewProjectProposals = "/viewProjectProposals";
   static const String viewProjectProposalsCard = "/viewProjectProposalsCard";
   static const String companyViewStudentProfile = "/viewStudentProfile";
+  static const String companyViewStudentProfile2 = "/viewStudentProfile2";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -98,6 +100,7 @@ class Routes {
     viewProjectProposalsCard: const Placeholder(),
     viewProjectProposals: const Placeholder(),
     companyViewStudentProfile: const Placeholder(),
+    companyViewStudentProfile2: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
@@ -173,6 +176,13 @@ getRoute(name, context, {arguments}) {
       if (arguments != null) {
         var b = arguments as StudentProfile;
         return ViewStudentProfile(studentProfile: b);
+      }
+    }
+
+    if (name == Routes.companyViewStudentProfile2) {
+      if (arguments != null) {
+        var b = arguments as StudentProfile;
+        return ViewStudentProfile2(studentProfile: b);
       }
     }
 

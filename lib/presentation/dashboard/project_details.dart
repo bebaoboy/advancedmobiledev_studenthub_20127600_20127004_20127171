@@ -17,6 +17,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -67,14 +68,48 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
-            child: Text(
-              widget.project.title,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  widget.project.title,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24),
+                ),
+                Visibility(
+                  visible: widget.project.countProposals > 0,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute2(
+                          routeName: Routes.viewProjectProposalsCard,
+                          arguments: widget.project));
+                    },
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            const Icon(Icons.credit_card_rounded),
+                            const Text(
+                              "Proposals",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w500, fontSize: 12),
+                            ),
+                            Text('${widget.project.countProposals} new',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w500, fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           DefaultTabController(
             initialIndex: widget.initialIndex ?? 0,
-            length: 4,
+            length: 3,
             child: Stack(children: [
               SegmentedTabControl(
                 height: Dimens.tab_height + 8,
@@ -83,12 +118,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 tabTextColor: Colors.black45,
                 selectedTabTextColor: Colors.white,
                 backgroundColor: Colors.grey.shade300,
-                textStyle: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .copyWith(fontSize: 11.7),
+                textStyle: Theme.of(context).textTheme.bodyText1!,
+                //.copyWith(fontSize: 11.7),
                 tabs: const [
-                  SegmentTab(label: 'Proposals'),
+                  // SegmentTab(label: 'Proposals'),
                   SegmentTab(label: 'Detail'),
                   SegmentTab(label: 'Message'),
                   SegmentTab(label: 'Hired'),
@@ -101,25 +134,25 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   child: TabBarView(
                     physics: const BouncingScrollPhysics(),
                     children: [
-                      ProposalTabLayout(
-                          proposals: widget.project.proposal,
-                          onHired: (index) {
-                            print("hired");
-                            setState(() {
-                              try {
-                                // TODO: use a callback, cannot access projectStore.companyProject here
-                                // widget.project.hired != null
-                                //     ? widget.project.hired!.add(widget
-                                //         .project.proposal!
-                                //         .elementAt(index))
-                                //     : widget.project.hired = [
-                                //         widget.project.proposal!.elementAt(index)
-                                //       ];
-                              } catch (e) {
-                                print("error hire student");
-                              }
-                            });
-                          }),
+                      // ProposalTabLayout(
+                      //     proposals: widget.project.proposal,
+                      //     onHired: (index) {
+                      //       print("hired");
+                      //       setState(() {
+                      //         try {
+                      //           // TODO: use a callback, cannot access projectStore.companyProject here
+                      //           // widget.project.hired != null
+                      //           //     ? widget.project.hired!.add(widget
+                      //           //         .project.proposal!
+                      //           //         .elementAt(index))
+                      //           //     : widget.project.hired = [
+                      //           //         widget.project.proposal!.elementAt(index)
+                      //           //       ];
+                      //         } catch (e) {
+                      //           print("error hire student");
+                      //         }
+                      //       });
+                      //     }),
                       DetailTabLayout(
                         project: widget.project,
                       ),
@@ -195,14 +228,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
   @override
   void initState() {
     super.initState();
-    // int differenceWithToday = widget.project.getModifiedTimeCreated();
-    // if (differenceWithToday == 0) {
-    //   createdText = Lang.get("created_now");
-    // } else if (differenceWithToday == 1) {
-    //   createdText = 'Created 1 day ago';
-    // } else {
-    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-    // }
+
     createdText =
         "Created: ${DateFormat("HH:mm").format(widget.project.timeCreated.toLocal())}";
     createdText2 = timeago.format(
@@ -213,16 +239,6 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
       updatedText =
           "Edit at ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())}";
     }
-    // var userStore = getIt<UserStore>();
-    // userStore.getCompanyProfile(widget.project.companyId).then(
-    //   (value) {
-    //     if (value != null) {
-    //       name = value.companyName;
-    //       print(name);
-    //       setState(() {});
-    //     }
-    //   },
-    // );
   }
 
   String name = "";

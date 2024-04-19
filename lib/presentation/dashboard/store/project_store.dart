@@ -26,13 +26,13 @@ class ProjectStore = _ProjectStore with _$ProjectStore;
 
 abstract class _ProjectStore with Store {
   _ProjectStore(
-    this._getProjectsUseCase,
-    this._getProjectByCompanyUseCase,
-    this._getStudentProposalProjectsUseCase,
-    this._getStudentFavoriteProjectUseCase,
-    this._saveStudentFavoriteProjectUseCase,
-    this._postProposalUseCase,
-    this._getProjectProposalsUseCase,
+      this._getProjectsUseCase,
+      this._getProjectByCompanyUseCase,
+      this._getStudentProposalProjectsUseCase,
+      this._getStudentFavoriteProjectUseCase,
+      this._saveStudentFavoriteProjectUseCase,
+      this._postProposalUseCase,
+      this._getProjectProposalsUseCase,
       this._updateProposalUseCase) {
     // _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
     //   _favoriteProjects = value;
@@ -74,6 +74,10 @@ abstract class _ProjectStore with Store {
       ProjectList(projects: List.empty(growable: true));
 
   List<Project> get favoriteProjects => _favoriteProjects.projects ?? [];
+
+  @observable
+  ProposalList currentProps =
+      ProposalList(proposals: List.empty(growable: true));
 
   @observable
   bool postSuccess = false;
@@ -150,7 +154,7 @@ abstract class _ProjectStore with Store {
         .indexWhere((Project element) => element.objectId == project.objectId);
     if (index != -1) {
       _projects.projects![index].proposal?.add(proposal);
-          }
+    }
   }
 
   Future<bool> updateProposal(Proposal project, String studentId) async {
@@ -437,6 +441,7 @@ abstract class _ProjectStore with Store {
         .call(params: project)
         .then((value) {
       project.proposal = value.proposals;
+      currentProps.proposals = value.proposals;
       updateProjectList(project);
       return value;
     });
