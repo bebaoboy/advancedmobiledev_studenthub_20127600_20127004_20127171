@@ -72,13 +72,14 @@ class LanguageButton extends StatelessWidget {
     }
 
     Widget buildLanguageButton() {
-      return IconButton(
-        onPressed: () {
-          buildLanguageDialog();
-        },
-        icon: const Icon(
+      return ListTile(
+        leading: const Icon(
           Icons.language,
         ),
+        title: Text('Change Language'),
+        onTap: () {
+          buildLanguageDialog();
+        },
       );
     }
 

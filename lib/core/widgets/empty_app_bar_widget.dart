@@ -33,8 +33,8 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
                     },
                     child: Text(Lang.get('appbar_title')))),
             actions: [
-              LanguageButton(),
-              ThemeButton(),
+              // LanguageButton(),
+              // ThemeButton(),
               IconButton(
                 onPressed: () {
                   Navigator.of(context)
@@ -65,8 +65,8 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
                     },
                     child: Text(Lang.get('appbar_title')))),
             actions: [
-              LanguageButton(),
-              ThemeButton(),
+              // LanguageButton(),
+              // ThemeButton(),
               IconButton(
                 onPressed: () {
                   Navigator.of(context)

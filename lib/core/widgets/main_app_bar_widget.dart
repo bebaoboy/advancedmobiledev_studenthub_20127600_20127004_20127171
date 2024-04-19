@@ -386,10 +386,10 @@ class _MainAppBarState extends State<MainAppBar> {
             actions: [
               // _buildLanguageButton(),
               // _buildThemeButton(),
-              LanguageButton(),
-              if (widget.theme) ThemeButton(),
+              // LanguageButton(),
+              // if (widget.theme) ThemeButton(),
               _buildProfileButton(),
-              _buildLogoutButton(),
+              // _buildLogoutButton(),
             ],
             // )
           )
@@ -426,10 +426,10 @@ class _MainAppBarState extends State<MainAppBar> {
             actions: [
               // _buildLanguageButton(),
               // _buildThemeButton(),
-              LanguageButton(),
-              if (widget.theme) ThemeButton(),
+              // LanguageButton(),
+              // if (widget.theme) ThemeButton(),
               _buildProfileButton(),
-              _buildLogoutButton(),
+              // _buildLogoutButton(),
             ],
             // )
           );
