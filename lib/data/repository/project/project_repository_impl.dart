@@ -138,10 +138,12 @@ class ProjectRepositoryImpl extends ProjectRepository {
     } catch (e) {
       return ProposalList(proposals: List.empty(growable: true));
     }
+  }
   
+  @override
   Future<Response> updateProposal(UpdateProposalParams params) async {
     var response = await _projectApi.updateProposal(params);
     return response;
   }
-}
+
 }
