@@ -176,17 +176,17 @@ abstract class _ProjectFormStore with Store {
               timeCreated: DateTime.now(),
               numberOfStudents: numberOfStudents,
               companyId: companyId,
-              enabled: typeFlag ? Status.active : Status.inactive,
+              enabled: Status.none,
               id: id));
-          projectStore.updateCompanyProject(Project(
-              title: title,
-              description: description,
-              scope: Scope.values[projectScopeFlag],
-              timeCreated: DateTime.now(),
-              numberOfStudents: numberOfStudents,
-              companyId: companyId,
-              enabled: typeFlag ? Status.active : Status.inactive,
-              id: id));
+          // projectStore.updateCompanyProject(Project(
+          //     title: title,
+          //     description: description,
+          //     scope: Scope.values[projectScopeFlag],
+          //     timeCreated: DateTime.now(),
+          //     numberOfStudents: numberOfStudents,
+          //     companyId: companyId,
+          //     enabled: typeFlag ? Status.active : Status.inactive,
+          //     id: id));
           var updateStore = getIt<UpdateProjectFormStore>();
           // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
           updateStore.updateResult.notifyListeners();

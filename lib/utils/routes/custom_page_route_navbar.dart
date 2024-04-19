@@ -671,7 +671,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   Widget build(BuildContext context) {
-    print("build nav");
+    // print("build nav");
     // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: () async {
@@ -766,7 +766,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                               // curve: Curves.ease);
                             }
                           }
-                          print(refreshState);
+                          // print(refreshState);
                         },
                         menuItems: items),
                   ),

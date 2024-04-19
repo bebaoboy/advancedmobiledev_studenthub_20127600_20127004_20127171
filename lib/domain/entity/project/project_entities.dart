@@ -45,6 +45,8 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   Scope scope;
   Status enabled;
   bool isFavorite;
+  bool get isWorking => enabled == Status.active;
+  bool get isArchive => enabled == Status.inactive;
 
   ProjectBase(
       {this.isLoading = true,
@@ -79,8 +81,6 @@ class Project extends ProjectBase {
   List<Proposal>? proposal;
   List<Proposal>? messages;
   DateTime timeCreated = DateTime.now();
-  bool get isWorking => enabled == Status.active;
-  bool get isArchived => enabled == Status.inactive;
   String companyId;
 
   int? _countProposals;
@@ -158,6 +158,7 @@ class Project extends ProjectBase {
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
         countHired: json["countHired"],
+        // TODO: typeFlag change 0, 1, 2(Archive)
         enabled: Status.values[json["typeFlag"] ?? 0],
         isFavorite: fav);
   }
@@ -168,12 +169,12 @@ class Project extends ProjectBase {
       "projectScopeFlag": scope.index,
       "title": title,
       "description": description,
-      "typeFlag": enabled == Status.active ? 0 : 1,
+      "typeFlag": Status.values[enabled.index].index,
       "countHired": countHired,
       "countMessages": countMessages,
       "countProposals": countProposals,
       "id": objectId,
-      "isArchived": isArchived,
+      "isArchived": isArchive,
       "isWorking": isWorking,
       "numberOfStudents": numberOfStudents,
       "scope": scope.index,
@@ -186,7 +187,7 @@ class Project extends ProjectBase {
 
   @override
   String toString() {
-    return "\ncompanyId: $companyId\nid: $objectId\ntitle: $title \ndescription: $description";
+    return "\ncompanyId: $companyId\nid: $objectId\ntitle: $title \ndescription: $description \nenabled: $enabled";
   }
 }
 
@@ -242,6 +243,8 @@ class StudentProject extends Project {
       numberOfStudents: json['numberOfStudents'] ?? 0,
       id: (json["id"] ?? "").toString(),
       projectId: (json["projectId"] ?? "").toString(),
+      // TODO: typeFlag change 0, 1, 2(Archive)
+
       enabled: Status.values[json["typeFlag"] ?? 0],
     );
   }
@@ -284,7 +287,8 @@ extension HireStatusTitle on HireStatus {
   }
 }
 
-enum Status { active, inactive }
+// TODO: change none to index 0
+enum Status { active, inactive, none }
 
 @JsonSerializable()
 class Proposal extends MyObject {

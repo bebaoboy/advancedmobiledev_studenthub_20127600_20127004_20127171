@@ -37,7 +37,7 @@ class MovableOverlayState extends State<MovableOverlay>
   late final AnimationController _toggleFloatingAnimationController;
   late final AnimationController _dragAnimationController;
   late PIPViewCorner _corner;
-  Offset _dragOffset = Offset.zero;
+  Offset _dragOffset = const Offset(0, 20);
   var _isDragging = false;
   var _isFloating = false;
   Widget? _bottomWidgetGhost;
@@ -63,7 +63,7 @@ class MovableOverlayState extends State<MovableOverlay>
       vsync: this,
     );
     bottomChild = widget.bottomWidget;
-    _dragOffset = Offset.zero;
+    _dragOffset = const Offset(0, 20);
   }
 
   @override
@@ -85,7 +85,7 @@ class MovableOverlayState extends State<MovableOverlay>
         _isFloating = true;
         print("floating");
         _toggleFloatingAnimationController.forward();
-        _dragOffset = Offset.zero;
+        _dragOffset = const Offset(0, 20);
         fullyExpand = true;
         _scaleFactor = 1;
         _baseScaleFactor = 1;
@@ -133,7 +133,7 @@ class MovableOverlayState extends State<MovableOverlay>
     // });
     // _dragAnimationController.forward().whenCompleteOrCancel(() {
     //   _dragAnimationController.value = 0;
-    //   _dragOffset = Offset.zero;
+    //   _dragOffset = const Offset(0, 20);
     // });
   }
 
@@ -362,11 +362,11 @@ class MovableOverlayState extends State<MovableOverlay>
                                           if (!fullyExpand) {
                                             _scaleFactor = 1;
                                             fullyExpand = true;
-                                            _dragOffset = Offset.zero;
+                                            _dragOffset = const Offset(0, 20);
                                           } else {
                                             _scaleFactor = 0.5;
                                             fullyExpand = false;
-                                            _dragOffset = Offset.zero;
+                                            _dragOffset = const Offset(0, 20);
                                           }
                                         });
                                       },
@@ -423,11 +423,11 @@ class MovableOverlayState extends State<MovableOverlay>
                                         if (!fullyExpand) {
                                           _scaleFactor = 1;
                                           fullyExpand = true;
-                                          _dragOffset = Offset.zero;
+                                          _dragOffset = const Offset(0, 20);
                                         } else {
                                           _scaleFactor = 0.5;
                                           fullyExpand = false;
-                                          _dragOffset = Offset.zero;
+                                          _dragOffset = const Offset(0, 20);
                                         }
                                       });
                                     },

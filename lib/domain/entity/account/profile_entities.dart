@@ -8,6 +8,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class Profile extends MyObject {
+  String get getName => "";
   Profile.fromJson(Map<String, dynamic> json);
   Profile({
     required super.objectId,
@@ -16,6 +17,8 @@ class Profile extends MyObject {
 
 @JsonSerializable()
 class StudentProfile extends Profile {
+  @override
+  String get getName => fullName;
   String fullName;
   // String userId;
   String education;
@@ -109,7 +112,7 @@ class StudentProfile extends Profile {
     if (map == null) return StudentProfile();
     return StudentProfile(
       title: map['title'] ?? '',
-      fullName: map['fullname'] ?? '',
+      fullName: map['fullname'] ?? 'Sample Student ${map["id"].toString()}',
       education: map['education'] ?? '',
       introduction: map['introduction'] ?? '',
       yearOfExperience: map['yearOfExperience'] ?? 0,
@@ -171,6 +174,9 @@ extension CompanyScopeTitle on CompanyScope {
 @JsonSerializable()
 class CompanyProfile extends Profile {
   // String userId;
+  @override
+  String get getName => companyName;
+
   String profileName;
   String companyName;
   String email;
@@ -181,10 +187,10 @@ class CompanyProfile extends Profile {
   CompanyProfile({
     // required this.userId,
     required this.companyName,
-    required this.profileName,
-    required this.email,
-    required this.website,
-    required this.description,
+    this.profileName = "",
+    this.email = "",
+    this.website = "",
+    this.description = "",
     this.scope = CompanyScope.solo,
     super.objectId = "",
   });

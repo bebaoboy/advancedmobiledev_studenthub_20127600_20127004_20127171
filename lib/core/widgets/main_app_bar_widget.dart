@@ -16,7 +16,6 @@ import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:lottie/lottie.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
@@ -49,42 +48,6 @@ class _MainAppBarState extends State<MainAppBar> {
     );
   }
 
-  Widget _buildLogoutButton() {
-    // final UserStore userStore = getIt<UserStore>();
-
-    return widget.isHomePage
-        ? IconButton(
-            onPressed: () {
-              showAnimatedDialog(
-                context: context,
-                barrierDismissible: true,
-                builder: (BuildContext context) {
-                  return ClassicGeneralDialogWidget(
-                    contentText: Lang.get("logout_confirm"),
-                    negativeText: Lang.get('cancel'),
-                    positiveText: 'OK',
-                    onPositiveClick: () {
-                      _userStore.logout();
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute2(routeName: Routes.login),
-                          (Route<dynamic> route) => false);
-                    },
-                    onNegativeClick: () {
-                      Navigator.of(context).pop();
-                    },
-                  );
-                },
-                animationType: DialogTransitionType.size,
-                curve: Curves.fastOutSlowIn,
-                duration: const Duration(seconds: 1),
-              );
-            },
-            icon: const Icon(
-              Icons.power_settings_new,
-            ),
-          )
-        : const SizedBox();
-  }
 
   // Widget _buildLanguageButton() {
   //   return IconButton(

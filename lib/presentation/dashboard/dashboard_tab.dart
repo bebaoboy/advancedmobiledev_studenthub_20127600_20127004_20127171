@@ -304,7 +304,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   return ArchivedProjects(
                     projects: [
                       ...projectStore.companyProjects.where(
-                        (element) => element.isArchived,
+                        (element) => element.isArchive,
                       )
                     ],
                     scrollController: widget.scrollController[2],
@@ -341,9 +341,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   Lang.get('project_item_view_proposal'),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: project.enabled == Status.inactive
-                          ? Colors.grey.shade500
-                          : null),
+                      color: project.isArchive ? Colors.grey.shade500 : null),
                 )),
             onPressed: (_) {
               Future.delayed(const Duration(milliseconds: 500), () {
@@ -360,9 +358,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 child: Text(Lang.get('project_item_view_message'),
                     style: TextStyle(
                         fontWeight: FontWeight.normal,
-                        color: project.enabled == Status.inactive
-                            ? Colors.grey.shade500
-                            : null))),
+                        color:
+                            project.isArchive ? Colors.grey.shade500 : null))),
             onPressed: (_) {
               Future.delayed(const Duration(milliseconds: 500), () {
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
@@ -378,9 +375,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
               child: Text(Lang.get('project_item_view_hired'),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: project.enabled == Status.inactive
-                          ? Colors.grey.shade500
-                          : null)),
+                      color: project.isArchive ? Colors.grey.shade500 : null)),
             ),
             onPressed: (_) {
               Future.delayed(const Duration(milliseconds: 500), () {
@@ -400,9 +395,8 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 child: Text(Lang.get('project_item_view_job_posting'),
                     style: TextStyle(
                         fontWeight: FontWeight.normal,
-                        color: project.enabled == Status.inactive
-                            ? Colors.grey.shade500
-                            : null))),
+                        color:
+                            project.isArchive ? Colors.grey.shade500 : null))),
             onPressed: (_) {
               Future.delayed(const Duration(milliseconds: 500), () {
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
@@ -419,9 +413,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   Lang.get('project_item_edit_job_posting'),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: project.enabled == Status.inactive
-                          ? Colors.grey.shade500
-                          : null),
+                      color: project.isArchive ? Colors.grey.shade500 : null),
                 )),
             onPressed: (_) {
               Future.delayed(const Duration(milliseconds: 500), () {
@@ -437,9 +429,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
               child: Text(Lang.get('project_item_remove_job_posting'),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: project.enabled == Status.inactive
-                          ? Colors.grey.shade500
-                          : null)),
+                      color: project.isArchive ? Colors.grey.shade500 : null)),
             ),
             onPressed: (_) {
               var p = (projectStore.companyProjects).firstWhereOrNull(
@@ -457,7 +447,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                 projectStore.deleteCompanyProject(p);
               }
               setState(() {
-                p?.enabled = Status.active;
+                // p?.enabled = Status.active;
               });
             }),
         BottomSheetAction(
@@ -469,9 +459,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
               child: Text(Lang.get("project_start_working"),
                   style: TextStyle(
                       fontWeight: FontWeight.normal,
-                      color: project.enabled == Status.inactive
-                          ? Colors.grey.shade500
-                          : null))),
+                      color: project.isArchive ? Colors.grey.shade500 : null))),
           onPressed: (_) {
             //print(project.title);
             var p = (projectStore.companyProjects).firstWhereOrNull(
@@ -492,6 +480,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   statusFlag: Status.inactive.index);
             }
             setState(() {
+              // TODO: put it to working or none
               p?.enabled = Status.active;
             });
           },
@@ -500,7 +489,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
             title: Container(
                 alignment: Alignment.topLeft,
                 child: Text(
-                    project.enabled == Status.active
+                    project.isWorking
                         ? Lang.get("project_close")
                         : Lang.get("project_open"),
                     style: const TextStyle(fontWeight: FontWeight.normal))),
@@ -526,14 +515,12 @@ class _ProjectTabsState extends State<ProjectTabs> {
                     p.description,
                     p.numberOfStudents,
                     p.scope,
-                    statusFlag: p.enabled == Status.active
+                    statusFlag: p.isWorking
                         ? Status.inactive.index
                         : Status.active.index);
               }
               setState(() {
-                p?.enabled = p.enabled == Status.active
-                    ? Status.inactive
-                    : Status.active;
+                p?.enabled = p.isWorking ? Status.inactive : Status.active;
               });
             }),
       ],
@@ -574,7 +561,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
           var p = projectStore.companyProjects.firstWhereOrNull(
             (element) => element.objectId == project.objectId,
           );
-          if (project.isArchived) {
+          if (project.isArchive) {
             if (p != null) {
               Toastify.show(
                   context,
@@ -590,6 +577,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   statusFlag: Status.active.index);
             }
             setState(() {
+              // TODO: put it to working or none
               p?.enabled = Status.active;
             });
             return true;
