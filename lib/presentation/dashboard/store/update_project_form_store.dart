@@ -165,10 +165,12 @@ abstract class _UpdateProjectFormStore with Store {
       } else {
         errorStore.errorMessage = response.data['errorDetails'][0];
         updateResult.value = false;
+        print(response.data);
       }
     } catch (e) {
       errorStore.errorMessage = 'Update failed';
       updateResult.value = false;
+      print(e.toString());
     }
     // ignore: invalid_use_of_visible_for_testing_member
     updateResult.notifyListeners();

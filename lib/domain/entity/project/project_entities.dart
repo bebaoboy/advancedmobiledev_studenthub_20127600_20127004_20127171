@@ -295,7 +295,6 @@ class Proposal extends MyObject {
   StudentProfile student;
   String coverLetter;
   HireStatus hiredStatus;
-  Status status;
   bool get isHired => hiredStatus == HireStatus.hired;
   String projectId;
   bool enabled;
@@ -311,12 +310,12 @@ class Proposal extends MyObject {
         //     objectId: json["studentId"].toString(),
         //     fullName: "Sample Student ${json["studentId"]}"),
         coverLetter = json2["coverLetter"] ?? "",
-        status = Status.values[((json2["disableFlag"] ?? 0) as int)
-            .clamp(0, Status.values.length - 1)],
+        // status = Status.values[((json2["disableFlag"] ?? 0) as int)
+        //     .clamp(0, Status.values.length - 1)],
         hiredStatus = HireStatus.values[((json2["statusFlag"] ?? 0) as int)
             .clamp(0, HireStatus.values.length - 1)],
         projectId = json2["projectId"].toString(),
-        enabled = json2["disableFlag"] != 0,
+        enabled = json2["disableFlag"] == 0,
         project = json2["project"] != null
             ? StudentProject.fromMap(json2["project"])
             : null,
@@ -351,7 +350,6 @@ class Proposal extends MyObject {
     required this.student,
     this.coverLetter = "",
     this.hiredStatus = HireStatus.pending,
-    this.status = Status.inactive,
     this.projectId = "",
     this.enabled = true,
     String id = "",

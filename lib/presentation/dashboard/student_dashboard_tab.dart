@@ -163,7 +163,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                             (e.hiredStatus == HireStatus.notHired ||
                                 e.hiredStatus == HireStatus.pending))
                         .toList(),
-                  ),
+                 ),
                   WorkingProjects(
                       scrollController: widget.pageController,
                       projects: userStore.user?.studentProfile?.proposalProjects

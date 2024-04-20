@@ -160,7 +160,7 @@ abstract class _ProjectStore with Store {
   Future<bool> updateProposal(Proposal project, String studentId) async {
     var params = UpdateProposalParams(
       project.hiredStatus.index,
-      project.status == Status.active ? 1: 0,
+      project.enabled ? 0 : 1,
       project.coverLetter,
       int.parse(project.objectId!),
     );
@@ -193,7 +193,7 @@ abstract class _ProjectStore with Store {
           }
           return true;
         } else {
-          print(value.data["result"].toString());
+          print(value.data.toString());
 
           return false;
         }

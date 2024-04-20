@@ -17,7 +17,6 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -25,7 +24,7 @@ class ProjectDetailsPage extends StatefulWidget {
   final Project project;
   final int? initialIndex;
   const ProjectDetailsPage(
-      {super.key, required this.project, this.initialIndex = 1});
+      {super.key, required this.project, this.initialIndex = 0});
 
   @override
   State<ProjectDetailsPage> createState() => _ProjectDetailsPageState();
@@ -258,7 +257,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                 flex: 1,
                 fit: FlexFit.loose,
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.70,
+                  height: MediaQuery.of(context).size.height * 0.75,
                   child: Column(mainAxisSize: MainAxisSize.min, children: [
                     Container(
                       // margin: const EdgeInsetsDirectional.only(

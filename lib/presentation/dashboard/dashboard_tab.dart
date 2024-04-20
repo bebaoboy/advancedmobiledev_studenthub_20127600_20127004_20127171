@@ -344,6 +344,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                       color: project.isArchive ? Colors.grey.shade500 : null),
                 )),
             onPressed: (_) {
+              // TODO: coi proposal students
               Future.delayed(const Duration(milliseconds: 500), () {
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
@@ -366,7 +367,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         context)
                     .push(MaterialPageRoute2(
                         routeName: Routes.projectDetails,
-                        arguments: {"project": project, "index": 2}));
+                        arguments: {"project": project, "index": 1}));
               });
             }),
         BottomSheetAction(
@@ -383,7 +384,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         context)
                     .push(MaterialPageRoute2(
                         routeName: Routes.projectDetails,
-                        arguments: {"project": project, "index": 3}));
+                        arguments: {"project": project, "index": 2}));
               });
             }),
         BottomSheetAction(
@@ -403,7 +404,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         context)
                     .push(MaterialPageRoute2(
                         routeName: Routes.projectDetails,
-                        arguments: {"project": project, "index": 1}));
+                        arguments: {"project": project, "index": 0}));
               });
             }),
         BottomSheetAction(
@@ -518,6 +519,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         : Status.active.index);
               }
               setState(() {
+                // TODO: put it to working or none
                 p?.enabled = p.isWorking ? Status.inactive : Status.active;
               });
             }),

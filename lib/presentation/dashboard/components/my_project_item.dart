@@ -228,7 +228,25 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           BoxShadow(color: Colors.yellowAccent, blurRadius: 8),
                         ],
                       )))
-              : null,
+              : widget.project.isWorking
+                  ? const RotatedCornerDecoration.withColor(
+                      color: Colors.green,
+                      spanBaselineShift: 4,
+                      badgeSize: Size(84, 84),
+                      badgeCornerRadius: Radius.circular(8),
+                      badgePosition: BadgePosition.topEnd,
+                      textSpan: TextSpan(
+                          text: "Working",
+                          style: TextStyle(
+                            fontSize: 14,
+                            letterSpacing: 1,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              BoxShadow(
+                                  color: Colors.yellowAccent, blurRadius: 8),
+                            ],
+                          )))
+                  : null,
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -269,12 +287,11 @@ class _MyProjectItemState extends State<MyProjectItem> {
                               .textTheme
                               .labelSmall!
                               .copyWith(fontWeight: FontWeight.w200)),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 500),
-                        height: widget.project.isWorking ? null : 20,
+                      SizedBox(
+                        height: !widget.project.isArchive ? null : 20,
                         width: width * 8,
                         child: AutoSizeText(widget.project.description,
-                            maxLines: widget.project.isWorking ? 5 : 1,
+                            maxLines: !widget.project.isArchive ? 5 : 1,
                             overflow: TextOverflow.ellipsis,
                             style: Theme.of(context).textTheme.bodyLarge),
                       ),

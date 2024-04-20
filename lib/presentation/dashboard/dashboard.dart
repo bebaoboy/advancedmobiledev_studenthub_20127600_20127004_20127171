@@ -48,6 +48,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     //     }
     //   },
     // );
+    print("init state navbar");
     _pageController.addListener(
       () {
         setState(() {
