@@ -237,7 +237,7 @@ class _AlertTabState extends State<AlertTab> {
     activeDates
         .addAll([for (int i = -7; i < 7; i++) today.add(Duration(days: i))]);
     print(activeDates);
-    showTime = List.filled(activeDates.length, false);
+    showTime = List.filled(activeDates.length, true);
 
     Future.delayed(const Duration(seconds: 1), () {
       // dateController.animateToFocusDate(duration: const Duration(seconds: 1));
@@ -565,107 +565,96 @@ class _AlertTabState extends State<AlertTab> {
             print(selectedDate);
           },
           itemBuilder: (context, i) {
-            return NotificationListener<ScrollNotification>(
-              onNotification: (scrollNotification) {
-                if (scrollNotification is ScrollStartNotification) {
-                  if (!showTime[i]) {
-                    setState(() {
-                      showTime[i] = true;
-                    });
-                  }
-                } else if (scrollNotification is ScrollUpdateNotification) {
-                } else if (scrollNotification is ScrollEndNotification) {
-                  setState(() {
-                    showTime[i] = false;
-                  });
-                }
-                return false;
-              },
-              child: SingleChildScrollView(
-                controller: listController[i],
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "New",
+            return SingleChildScrollView(
+              controller: listController[i],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "New",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline1!
+                        .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: joinInterviews.length,
+                    itemBuilder: (context, index) {
+                      return CustomFollowNotifcation(
+                        notificationObject: joinInterviews[index],
+                        showTime: showTime[i],
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Today",
                       style: Theme.of(context)
                           .textTheme
                           .headline1!
                           .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
-                      height: 10,
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: viewOffers.length,
+                    itemBuilder: (context, index) {
+                      return CustomFollowNotifcation(
+                        notificationObject: viewOffers[index],
+                        showTime: showTime[i],
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Older",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: joinInterviews.length,
-                      itemBuilder: (context, index) {
-                        return CustomFollowNotifcation(
-                          notificationObject: joinInterviews[index],
-                          showTime: showTime[i],
-                        );
-                      },
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: texts.length,
+                    itemBuilder: (context, index) {
+                      return CustomLikedNotifcation(
+                        notificationObject: texts[index],
+                        showTime: showTime[i],
+                      );
+                    },
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Text(
+                      "Oldest",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline1!
+                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "Today",
-                        style: Theme.of(context).textTheme.headline1!.copyWith(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: viewOffers.length,
-                      itemBuilder: (context, index) {
-                        return CustomFollowNotifcation(
-                          notificationObject: viewOffers[index],
-                          showTime: showTime[i],
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "Older",
-                        style: Theme.of(context).textTheme.headline1!.copyWith(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: texts.length,
-                      itemBuilder: (context, index) {
-                        return CustomLikedNotifcation(
-                          notificationObject: texts[index],
-                          showTime: showTime[i],
-                        );
-                      },
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Text(
-                        "Oldest",
-                        style: Theme.of(context).textTheme.headline1!.copyWith(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    ListView.builder(
-                      physics: const NeverScrollableScrollPhysics(),
-                      shrinkWrap: true,
-                      itemCount: messages.length,
-                      itemBuilder: (context, index) {
-                        return CustomLikedNotifcation(
-                          notificationObject: messages[index],
-                          showTime: showTime[i],
-                        );
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                  ListView.builder(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      return CustomLikedNotifcation(
+                        notificationObject: messages[index],
+                        showTime: showTime[i],
+                      );
+                    },
+                  ),
+                ],
               ),
             );
 

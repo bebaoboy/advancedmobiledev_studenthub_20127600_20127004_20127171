@@ -435,116 +435,116 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
             ListTile(
                 onTap: () async {
                   //int n = Random().nextInt(3);
-                  if (_userStore.user != null &&
-                      _userStore.user!.type != UserType.naught) {
-                    if (_userStore.user!.type == UserType.company) {
-                      if (_userStore.user!.companyProfile == null) {
-                        showAnimatedDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext context) {
-                            return ClassicGeneralDialogWidget(
-                              contentText:
-                                  'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                              negativeText: Lang.get('cancel'),
-                              positiveText: 'Yes',
-                              onPositiveClick: () {
-                                Navigator.of(context).pop();
+                  // if (_userStore.user != null &&
+                  //     _userStore.user!.type != UserType.naught) {
+                  //   if (_userStore.user!.type == UserType.company) {
+                  //     if (_userStore.user!.companyProfile == null) {
+                  //       showAnimatedDialog(
+                  //         context: context,
+                  //         barrierDismissible: true,
+                  //         builder: (BuildContext context) {
+                  //           return ClassicGeneralDialogWidget(
+                  //             contentText:
+                  //                 'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
+                  //             negativeText: Lang.get('cancel'),
+                  //             positiveText: 'Yes',
+                  //             onPositiveClick: () {
+                  //               Navigator.of(context).pop();
 
-                                Navigator.of(context).push(MaterialPageRoute2(
-                                    routeName: Routes.profile));
-                                return;
-                              },
-                              onNegativeClick: () {
-                                Navigator.of(context).pop();
-                              },
-                            );
-                          },
-                          animationType: DialogTransitionType.size,
-                          curve: Curves.fastOutSlowIn,
-                          duration: const Duration(seconds: 1),
-                        );
-                      } else {
-                        navigate(
-                            context,
-                            _userStore.user != null &&
-                                    _userStore.user!.type == UserType.company
-                                ? Routes.viewProfileCompany
-                                : Routes.viewProfileStudent);
-                      }
-                    } else {
-                      if (_userStore.user!.studentProfile == null) {
-                        showAnimatedDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext ctx) {
-                            return ClassicGeneralDialogWidget(
-                              contentText:
-                                  'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                              negativeText: Lang.get('cancel'),
-                              positiveText: 'Yes',
-                              onPositiveClick: () async {
-                                Navigator.of(ctx).pop();
-                                final ProfileStudentStore infoStore =
-                                    getIt<ProfileStudentStore>();
+                  //               Navigator.of(context).push(MaterialPageRoute2(
+                  //                   routeName: Routes.profile));
+                  //               return;
+                  //             },
+                  //             onNegativeClick: () {
+                  //               Navigator.of(context).pop();
+                  //             },
+                  //           );
+                  //         },
+                  //         animationType: DialogTransitionType.size,
+                  //         curve: Curves.fastOutSlowIn,
+                  //         duration: const Duration(seconds: 1),
+                  //       );
+                  //     } else {
+                  //       navigate(
+                  //           context,
+                  //           _userStore.user != null &&
+                  //                   _userStore.user!.type == UserType.company
+                  //               ? Routes.viewProfileCompany
+                  //               : Routes.viewProfileStudent);
+                  //     }
+                  //   } else {
+                  //     if (_userStore.user!.studentProfile == null) {
+                  //       showAnimatedDialog(
+                  //         context: context,
+                  //         barrierDismissible: true,
+                  //         builder: (BuildContext ctx) {
+                  //           return ClassicGeneralDialogWidget(
+                  //             contentText:
+                  //                 'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
+                  //             negativeText: Lang.get('cancel'),
+                  //             positiveText: 'Yes',
+                  //             onPositiveClick: () async {
+                  //               Navigator.of(ctx).pop();
+                  //               final ProfileStudentStore infoStore =
+                  //                   getIt<ProfileStudentStore>();
 
-                                await infoStore.getTechStack();
-                                await infoStore.getSkillset();
+                  //               await infoStore.getTechStack();
+                  //               await infoStore.getSkillset();
 
-                                Navigator.of(context).push(MaterialPageRoute2(
-                                    routeName: Routes.profileStudent));
-                                return;
-                              },
-                              onNegativeClick: () {
-                                Navigator.of(context).pop();
-                              },
-                            );
-                          },
-                          animationType: DialogTransitionType.size,
-                          curve: Curves.fastOutSlowIn,
-                          duration: const Duration(seconds: 1),
-                        );
-                      } else {
-                        try {
-                          setState(() {
-                            loading = true;
-                          });
-                        } catch (e) {
-                          loading = true;
-                        }
+                  //               Navigator.of(context).push(MaterialPageRoute2(
+                  //                   routeName: Routes.profileStudent));
+                  //               return;
+                  //             },
+                  //             onNegativeClick: () {
+                  //               Navigator.of(context).pop();
+                  //             },
+                  //           );
+                  //         },
+                  //         animationType: DialogTransitionType.size,
+                  //         curve: Curves.fastOutSlowIn,
+                  //         duration: const Duration(seconds: 1),
+                  //       );
+                  //     } else {
+                  //       try {
+                  //         setState(() {
+                  //           loading = true;
+                  //         });
+                  //       } catch (e) {
+                  //         loading = true;
+                  //       }
 
-                        if (_userStore.user != null &&
-                            _userStore.user!.studentProfile != null &&
-                            _userStore.user!.studentProfile!.objectId != null) {
-                          final ProfileStudentStore infoStore =
-                              getIt<ProfileStudentStore>();
+                  //       if (_userStore.user != null &&
+                  //           _userStore.user!.studentProfile != null &&
+                  //           _userStore.user!.studentProfile!.objectId != null) {
+                  //         final ProfileStudentStore infoStore =
+                  //             getIt<ProfileStudentStore>();
 
-                          infoStore.setStudentId(
-                              _userStore.user!.studentProfile!.objectId!);
-                          await infoStore.getInfo().then(
-                                (value) {},
-                              );
-                          final ProfileStudentFormStore formStore =
-                              getIt<ProfileStudentFormStore>();
-                          await formStore.getProfileStudent(
-                              _userStore.user!.studentProfile!.objectId!);
-                        }
-                        try {
-                          setState(() {
-                            loading = false;
-                          });
-                          navigate(
-                              context,
-                              _userStore.user != null &&
-                                      _userStore.user!.type == UserType.company
-                                  ? Routes.viewProfileCompany
-                                  : Routes.viewProfileStudent);
-                        } catch (e) {
-                          loading = false;
-                        }
-                      }
-                    }
-                  }
+                  //         infoStore.setStudentId(
+                  //             _userStore.user!.studentProfile!.objectId!);
+                  //         await infoStore.getInfo().then(
+                  //               (value) {},
+                  //             );
+                  //         final ProfileStudentFormStore formStore =
+                  //             getIt<ProfileStudentFormStore>();
+                  //         await formStore.getProfileStudent(
+                  //             _userStore.user!.studentProfile!.objectId!);
+                  //       }
+                  //       try {
+                  //         setState(() {
+                  //           loading = false;
+                  //         });
+                  //         navigate(
+                  //             context,
+                  //             _userStore.user != null &&
+                  //                     _userStore.user!.type == UserType.company
+                  //                 ? Routes.viewProfileCompany
+                  //                 : Routes.viewProfileStudent);
+                  //       } catch (e) {
+                  //         loading = false;
+                  //       }
+                  //     }
+                  //   }
+                  // }
                 },
                 leading: const Icon(Icons.person),
                 title: Text(

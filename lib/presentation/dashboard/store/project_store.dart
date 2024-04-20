@@ -288,6 +288,7 @@ abstract class _ProjectStore with Store {
               await getStudentFavoriteProject(false);
             } catch (e) {
               // nothing changed
+              print("error getting fav");
             }
             print("favorite refess ${_favoriteProjects.projects!.length}");
             _favoriteProjects.projects?.forEach(
@@ -311,6 +312,12 @@ abstract class _ProjectStore with Store {
             );
           });
         } else {
+           try {
+              await getStudentFavoriteProject(false);
+            } catch (e) {
+              // nothing changed
+              print("error getting fav");
+            }
           _projects = value;
           _projects.projects?.forEach(
             (element) => element.isLoading = false,
@@ -361,6 +368,10 @@ abstract class _ProjectStore with Store {
         _favoriteProjects.projects?.sort(
           (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
         );
+        _favoriteProjects.projects?.forEach((element) {
+          element.isLoading = false;
+          element.isFavorite = true;
+        });
         return _favoriteProjects;
       });
     } else {
@@ -375,6 +386,10 @@ abstract class _ProjectStore with Store {
           _favoriteProjects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
+          _favoriteProjects.projects?.forEach((element) {
+            element.isLoading = false;
+            element.isFavorite = true;
+          });
           return _favoriteProjects;
         });
       }
@@ -391,7 +406,7 @@ abstract class _ProjectStore with Store {
         GetProjectByCompanyParams(companyId: id, typeFlag: typeFlag?.index);
     try {
       _getProjectByCompanyUseCase.call(params: loginParams).then(
-        (value) {
+        (value) async {
           if (value.statusCode == HttpStatus.accepted ||
               value.statusCode == HttpStatus.ok ||
               value.statusCode == HttpStatus.created) {
@@ -409,11 +424,36 @@ abstract class _ProjectStore with Store {
             return _companyProjects;
           } else {
             print(value.data);
-            _companyProjects = ProjectList(projects: []);
+            var companys = await sharedPrefsHelper.getCompanyProjects();
+            if (companys.projects != null && companys.projects!.isNotEmpty) {
+              {
+                _companyProjects = companys;
+                _companyProjects.projects?.sort(
+                  (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+                );
+                if (setStateCallback != null) setStateCallback();
+
+                return _companyProjects;
+              }
+            }
             return Future.value(ProjectList(projects: []));
           }
         },
-      );
+      ).onError((error, stackTrace) async {
+        var companys = await sharedPrefsHelper.getCompanyProjects();
+        if (companys.projects != null && companys.projects!.isNotEmpty) {
+          {
+            _companyProjects = companys;
+            _companyProjects.projects?.sort(
+              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+            );
+            if (setStateCallback != null) setStateCallback();
+
+            return _companyProjects;
+          }
+        }
+        return Future.value(ProjectList(projects: []));
+      });
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
 
@@ -424,7 +464,9 @@ abstract class _ProjectStore with Store {
           _companyProjects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
-          return companys;
+          if (setStateCallback != null) setStateCallback();
+
+          return _companyProjects;
         }
       }
       print("cannot get profile company");
@@ -434,6 +476,7 @@ abstract class _ProjectStore with Store {
     // //print(value);
   }
 
+  /// lấy proposal của 1 project
   Future<ProposalList> getProjectProposals(Project project) async {
     return await _getProjectProposalsUseCase
         .call(params: project)
@@ -469,7 +512,7 @@ abstract class _ProjectStore with Store {
     try {
       final future =
           _getStudentProposalProjectsUseCase.call(params: loginParams);
-      future.then((value) {
+      future.then((value) async {
         if (value.statusCode == HttpStatus.accepted ||
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
@@ -490,7 +533,6 @@ abstract class _ProjectStore with Store {
             if (setStateCallback != null) setStateCallback();
 
             return result;
-
           } catch (e) {
             // errorStore.errorMessage = "cannot save student profile";
             print("cannot get profile student ${e.toString()}");
@@ -498,10 +540,48 @@ abstract class _ProjectStore with Store {
           }
         } else {
           print(value.data);
+          var companys = await sharedPrefsHelper.getStudentProjects();
+
+          if (companys.proposals != null && companys.proposals!.isNotEmpty) {
+            {
+              if (userStore.user != null &&
+                  userStore.user!.studentProfile != null) {
+                userStore.user!.studentProfile!.proposalProjects =
+                    companys.proposals;
+                userStore.user!.studentProfile!.proposalProjects?.sort(
+                  (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+                );
+              }
+              if (setStateCallback != null) setStateCallback();
+
+              return userStore.user!.studentProfile!.proposalProjects;
+            }
+          }
           return ProposalList(proposals: []);
         }
         // //print(value);
-      });
+      }).onError(
+        (error, stackTrace) async {
+          var companys = await sharedPrefsHelper.getStudentProjects();
+
+          if (companys.proposals != null && companys.proposals!.isNotEmpty) {
+            {
+              if (userStore.user != null &&
+                  userStore.user!.studentProfile != null) {
+                userStore.user!.studentProfile!.proposalProjects =
+                    companys.proposals;
+                userStore.user!.studentProfile!.proposalProjects?.sort(
+                  (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+                );
+              }
+              if (setStateCallback != null) setStateCallback();
+
+              return companys;
+            }
+          }
+          return Future.value(ProposalList(proposals: []));
+        },
+      );
     } catch (e) {
       var companys = await sharedPrefsHelper.getStudentProjects();
 
@@ -515,6 +595,8 @@ abstract class _ProjectStore with Store {
               (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
             );
           }
+          if (setStateCallback != null) setStateCallback();
+
           return companys;
         }
       }

@@ -476,8 +476,8 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                       0,
                                       Education("School Name",
                                           readOnly: false,
-                                          startYear: DateTime(2002),
-                                          endYear: DateTime(2002)));
+                                          startYear: DateTime.now(),
+                                          endYear: DateTime.now()));
                                   setEducation();
                                 })
                               },
@@ -888,8 +888,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                                             50,
                                                         1),
                                                     lastDate: DateTime(
-                                                        DateTime.now().year +
-                                                            50,
+                                                        DateTime.now().year + 4,
                                                         1),
                                                     selectedDate:
                                                         _educations[index]
@@ -955,8 +954,10 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                                             50,
                                                         1),
                                                     lastDate: DateTime(
-                                                        DateTime.now().year +
-                                                            50,
+                                                        _educations[index]
+                                                                .startYear
+                                                                .year +
+                                                            4,
                                                         1),
                                                     // save the selected date to _selectedDate DateTime variable.
                                                     // It's used to set the previous selected date when
@@ -966,6 +967,17 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                                             .endYear,
                                                     onChanged:
                                                         (DateTime dateTime) {
+                                                      if (dateTime.year <
+                                                          _educations[index]
+                                                              .startYear
+                                                              .year) {
+                                                        FlushbarHelper
+                                                            .createInformation(
+                                                          message:
+                                                              "End year ${dateTime.year} must be equal or later than start year: ${_educations[index].startYear.year}!",
+                                                        ).show(context);
+                                                        return;
+                                                      }
                                                       setState(() {
                                                         _educations[index]
                                                             .endYear = dateTime;

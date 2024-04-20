@@ -488,7 +488,7 @@ class _SettingScreenState extends State<SettingScreen> {
                         } catch (e) {
                           loading = true;
                         }
-
+                        try {
                         if (_userStore.user != null &&
                             _userStore.user!.studentProfile != null &&
                             _userStore.user!.studentProfile!.objectId != null) {
@@ -504,6 +504,9 @@ class _SettingScreenState extends State<SettingScreen> {
                               getIt<ProfileStudentFormStore>();
                           await formStore.getProfileStudent(
                               _userStore.user!.studentProfile!.objectId!);
+                        }
+                        } catch(e) {
+                          ///
                         }
                         try {
                           setState(() {
