@@ -2,7 +2,6 @@ import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_experience_item.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ViewStudentProfile2 extends StatefulWidget {
   final StudentProfile studentProfile;
@@ -42,7 +41,7 @@ class _ViewStudentProfile2State extends State<ViewStudentProfile2> {
                     widget.studentProfile.educations!.isNotEmpty,
                 child: Container(
                     alignment: Alignment.topLeft,
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: const Text("Education",
                         style: TextStyle(fontSize: 26)))),
             SizedBox(

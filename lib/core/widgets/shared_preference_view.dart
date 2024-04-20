@@ -140,6 +140,50 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
     );
   }
 
+  Widget getStudentProposal() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+          alignment: Alignment.topLeft,
+          child: Wrap(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                    "Result: ${_userStore.user?.studentProfile?.proposalProjects?.length}"),
+              ),
+              ListTile(
+                title: const Text(
+                  "Student proposals",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                  ),
+                ),
+                subtitle: LimitedBox(
+                    maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                          child: Text(_userStore.user != null &&
+                                  _userStore.user!.studentProfile != null &&
+                                  _userStore.user!.studentProfile!
+                                          .proposalProjects !=
+                                      null &&
+                                  _userStore.user!.studentProfile!
+                                      .proposalProjects!.isNotEmpty
+                              ? _userStore.user!.studentProfile!.proposalProjects!
+                                  .map(
+                                    (e) => "${toStringPretty(e.toJson())}\n",
+                                  )
+                                  .join("\n")
+                              : "No student proposals")),
+                    )),
+              ),
+            ],
+          )),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -165,6 +209,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                     ),
                     getAllProject(),
                     getProject(),
+                    getStudentProposal(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 30, horizontal: 10),

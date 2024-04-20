@@ -4,7 +4,6 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 class ViewStudentProfile extends StatefulWidget {
   final StudentProfile studentProfile;

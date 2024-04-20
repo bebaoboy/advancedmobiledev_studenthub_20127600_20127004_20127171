@@ -230,9 +230,6 @@ class LoggingInterceptor extends Interceptor {
     DioError err,
     ErrorInterceptorHandler handler,
   ) {
-    if (level == Level.none) {
-      return handler.next(err);
-    }
     String s = "";
 
     logPrint!('[DIO]<-- HTTP FAILED: $err');
@@ -240,6 +237,10 @@ class LoggingInterceptor extends Interceptor {
     Future.delayed(Duration.zero, () {
       spPrint("$s\n${toStringPretty(err)}");
     });
+
+    if (level == Level.none) {
+      return handler.next(err);
+    }
 
     return handler.next(err);
   }
