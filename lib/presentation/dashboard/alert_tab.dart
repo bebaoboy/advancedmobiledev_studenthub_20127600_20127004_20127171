@@ -1156,6 +1156,10 @@ class _CustomFollowNotifcationState extends State<CustomFollowNotifcation> {
             CircleAvatar(
               radius: 20, backgroundColor: Colors.blue,
               backgroundImage: Image.network(
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.error_outline,
+                  size: 45,
+                ),
                 width: 50,
                 height: 50,
                 'https://docs.flutter.dev/assets/images/404/dash_nest.png',
@@ -1284,6 +1288,10 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                   child: CircleAvatar(
                     radius: 20, backgroundColor: Colors.blue,
                     backgroundImage: Image.network(
+                      errorBuilder: (context, error, stackTrace) => const Icon(
+                        Icons.error_outline,
+                        size: 45,
+                      ),
                       width: 50,
                       height: 50,
                       'https://docs.flutter.dev/assets/images/404/dash_nest.png',
@@ -1361,6 +1369,10 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
               ),
             ),
             Image.network(
+              errorBuilder: (context, error, stackTrace) => const Icon(
+                Icons.error_outline,
+                size: 45,
+              ),
               "https://docs.flutter.dev/assets/images/404/dash_nest.png",
               height: 64,
               width: 64,
