@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_card_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/swiper_button.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/dashboard/view_proposal/store/card_state_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -15,7 +16,6 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 
 class ProposalSwiper extends StatefulWidget {
   final Project project;
@@ -32,20 +32,12 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
   final ProjectStore _projectStore = getIt<ProjectStore>();
+  final CardStateStore _cardStateStore = getIt<CardStateStore>();
   final AppinioSwiperController controller = AppinioSwiperController();
 
   late Future<ProposalList> future;
-
-  @observable
-  double _opacityLeft = 0;
-
-  double _opacityRight = 0;
-  static const int maxAngle = 16;
+  static const double maxAngle = 12;
   double defaultOffSetX = 13.1;
-
-  @observable
-  String currentActionName = '';
-  bool isMoving = false;
 
   @override
   void initState() {
@@ -64,13 +56,6 @@ class _ProposalSwiperState extends State<ProposalSwiper>
       appBar: _buildAppBar(),
       body: _buildBody(),
     );
-  }
-
-  void hideAllHovering() {
-    setState(() {
-      _opacityLeft = 0;
-      _opacityRight = 0;
-    });
   }
 
   Widget _buildBody() {
@@ -117,43 +102,31 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                             ) {
                               if (position.offset ==
                                   Offset(defaultOffSetX, 0)) {
-                                hideAllHovering();
+                                ();
+                                _cardStateStore.reset();
                               }
+
+                              _cardStateStore.changeOpacity(
+                                  (position.angle.abs().roundToDouble() /
+                                          maxAngle)
+                                      .clamp(0, 1));
 
                               if (position.offset.toAxisDirection() ==
                                   AxisDirection.left) {
-                                setState(() {
-                                  _opacityLeft =
-                                      position.angle.abs().roundToDouble() /
-                                          maxAngle;
-                                });
-                                setState(() {
-                                  currentActionName = "Reject";
-                                });
-                              } else {
-                                setState(() {
-                                  _opacityLeft = 0;
-                                });
+                                _cardStateStore.changeStateToReject(
+                                    HireStatus.notHired.title);
                               }
 
                               if (position.offset.toAxisDirection() ==
                                   AxisDirection.right) {
-                                setState(() {
-                                  currentActionName = "Send hired";
-                                  _opacityRight =
-                                      position.angle.abs().roundToDouble() /
-                                          maxAngle;
-                                });
-                              } else {
-                                setState(() {
-                                  _opacityRight = 0;
-                                });
+                                _cardStateStore
+                                    .changeStateToHire(HireStatus.offer.title);
                               }
 
-                              debugPrint(
-                                  '${position.offset.toAxisDirection()}, '
-                                  '${position.offset}, '
-                                  '${position.angle}');
+                              // debugPrint(
+                              //     '${position.offset.toAxisDirection()}, '
+                              //     '${position.offset}, '
+                              //     '${position.angle}');
                             },
                             onSwipeEnd: _swipeEnd,
                             onEnd: _onEnd,
@@ -168,37 +141,57 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                           .data!.proposals?[index].student));
                                 },
                                 child: Stack(children: [
-                                  Column(
-                                    children: [
-                                      const SizedBox(
-                                        height: 40,
-                                      ),
-                                      Observer(
-                                        builder: (context) => ProposalCardItem(
-                                          currentActionName,
-                                          _opacityLeft,
-                                          proposal:
-                                              snapshot.data!.proposals![index],
-                                        ),
-                                      )
-                                    ],
+                                  const SizedBox(
+                                    height: 40,
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 110, top: 50),
-                                    child: Hero(
-                                      tag:
-                                          "studentImage${snapshot.data!.proposals![index].student.objectId}",
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey.shade300,
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: const FlutterLogo(
-                                          size: 220,
+                                  Stack(
+                                    children: [
+                                      ProposalCardItem(
+                                        proposal:
+                                            snapshot.data!.proposals![index],
+                                      ),
+                                      SizedBox(
+                                        height: 470,
+                                        child: Observer(
+                                          builder: (context) => AnimatedOpacity(
+                                            opacity: _cardStateStore.opacity,
+                                            duration: const Duration(
+                                                milliseconds: 200),
+                                            child: Card(
+                                              elevation: 8,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          32)),
+                                              color:
+                                                  _cardStateStore.index == index
+                                                      ? _cardStateStore.color
+                                                      : null,
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                alignment: _cardStateStore
+                                                            .actionName ==
+                                                        HireStatus
+                                                            .notHired.title
+                                                    ? Alignment.topRight
+                                                    : Alignment.topLeft,
+                                                child: _cardStateStore.index ==
+                                                        index
+                                                    ? (Text(
+                                                        _cardStateStore
+                                                            .actionName,
+                                                        style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 30)))
+                                                    : Container(),
+                                              ),
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   )
                                 ]),
                               );
@@ -228,24 +221,6 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                       )
                     ],
                   ),
-                  Positioned(
-                    width: 200,
-                    height: MediaQuery.of(context).size.height,
-                    child: AnimatedOpacity(
-                      duration: const Duration(microseconds: 200),
-                      opacity: _opacityLeft,
-                      child: Container(
-                        color: Theme.of(context).colorScheme.primary,
-                        child: Text(
-                          currentActionName,
-                          style: const TextStyle(
-                            fontSize: 30,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
                 ]);
               } else if (snapshot.hasError) {
                 return const Text("Error fetching proposals");
@@ -262,10 +237,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
     switch (activity) {
       case Swipe():
         log('The card was swiped to the : ${activity.direction}');
-
-        if (activity.currentOffset == Offset(defaultOffSetX, 0)) {
-          return;
-        }
+        _cardStateStore.reset();
+        _cardStateStore.index = targetIndex;
+        // print(_cardStateStore.index);
 
         if (activity.direction == AxisDirection.right) {
           // ToDo: update proposal status value = 2
@@ -286,20 +260,20 @@ class _ProposalSwiperState extends State<ProposalSwiper>
               _projectStore.currentProps.proposals![targetIndex],
               _userStore.user!.studentProfile!.objectId!);
         }
-        hideAllHovering();
+
         log('previous index: $previousIndex, target index: $targetIndex');
         break;
       case Unswipe():
-        hideAllHovering();
+        _cardStateStore.reset();
         log('A ${activity.direction.name} swipe was undone.');
         log('previous index: $previousIndex, target index: $targetIndex');
         break;
       case CancelSwipe():
-        hideAllHovering();
+        _cardStateStore.reset();
         log('A swipe was cancelled');
         break;
       case DrivenActivity():
-        hideAllHovering();
+        _cardStateStore.reset();
         log('Driven Activity');
         break;
     }
@@ -307,6 +281,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
 
   void _onEnd() {
     log('end reached!');
+    _cardStateStore.reset();
     Navigator.pop(context);
   }
 

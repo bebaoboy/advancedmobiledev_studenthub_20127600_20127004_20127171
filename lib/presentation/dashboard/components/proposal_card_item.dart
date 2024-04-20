@@ -3,15 +3,11 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:mobx/mobx.dart';
 
 // ignore: must_be_immutable
 class ProposalCardItem extends StatefulWidget {
-  String name = '';
-  double opacity = 0;
   final Proposal proposal;
-  ProposalCardItem(name, opacity, {super.key, required this.proposal});
+  const ProposalCardItem({super.key, required this.proposal});
 
   @override
   State<ProposalCardItem> createState() => _ProposalCardItemState();
@@ -68,10 +64,6 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
   @override
   Widget build(BuildContext context) {
     final profile = widget.proposal.student;
-
-    @observable
-    var color = widget.name == 'Reject' ? Colors.red : Colors.green;
-    print(color);
 
     return Stack(children: [
       SizedBox(
@@ -148,22 +140,17 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
           ),
         ),
       ),
-      Positioned(
-        height: 700,
-        right: 10,
-        top: 10,
-        child: Observer(
-          builder: (context) => AnimatedOpacity(
-            opacity: widget.opacity,
-            duration: const Duration(milliseconds: 200),
-            child: Container(
-              alignment: widget.name == 'Rejects'
-                  ? Alignment.topLeft
-                  : Alignment.topRight,
-              height: 410,
-              color: Colors.red,
-              child: Text(widget.name,
-                  style: const TextStyle(color: Colors.white)),
+      Padding(
+        padding: const EdgeInsets.only(left: 110, top: 10),
+        child: Hero(
+          tag: "studentImage${widget.proposal.student.objectId}",
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade300,
+              shape: BoxShape.circle,
+            ),
+            child: const FlutterLogo(
+              size: 220,
             ),
           ),
         ),

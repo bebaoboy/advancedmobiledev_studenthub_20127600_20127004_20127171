@@ -56,6 +56,7 @@ import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
+import 'package:boilerplate/presentation/dashboard/view_proposal/store/card_state_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
@@ -76,6 +77,8 @@ mixin StoreModule {
     getIt.registerFactory(
       () => FormStore(getIt<FormErrorStore>(), getIt<ErrorStore>()),
     );
+
+    getIt.registerFactory(() => CardStateStore());
     getIt.registerFactory(() => ForgetPasswordFormErrorStore());
     getIt.registerFactory(
       () => ProfileFormErrorStore(),
