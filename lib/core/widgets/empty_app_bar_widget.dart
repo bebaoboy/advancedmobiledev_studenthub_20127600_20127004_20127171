@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/widgets/shared_preference_view.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -79,5 +80,12 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size(0.0, 60.0);
-}
+  Size get preferredSize => Size(
+      0.0,
+      NavigationService.navigatorKey.currentContext != null
+          ? MediaQuery.of(NavigationService.navigatorKey.currentContext!)
+                      .orientation ==
+                  Orientation.landscape
+              ? 30
+              : 60
+          : 60);}

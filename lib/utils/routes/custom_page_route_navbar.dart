@@ -178,12 +178,12 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
           isExtended: widget.decoration!.isExtended,
           enableFeedback: widget.decoration!.enableFeedback,
           backgroundColor:
-              widget.decoration!.backgroundColor ?? theme.colorScheme.surface,
+              widget.decoration!.backgroundColor ?? theme.colorScheme.primaryContainer.withOpacity(0.5),
           elevation: widget.decoration!.elevation ??
               theme.navigationRailTheme.elevation,
           selectedIconTheme: widget.decoration!.selectedIconTheme ??
               theme.iconTheme
-                  .copyWith(color: theme.colorScheme.onSecondaryContainer),
+                  .copyWith(color: theme.colorScheme.primary),
           indicatorColor: widget.decoration!.indicatorColor ??
               theme.colorScheme.secondaryContainer,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -196,6 +196,8 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
       }
 
       return NavigationRail(
+          minWidth: 40,
+          minExtendedWidth: 140,
           elevation: navigationRailDefaultDecoration.elevation,
           onDestinationSelected: (x) {
             widget.onItemTapped(x);
@@ -213,10 +215,10 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
           selectedIconTheme:
               navigationRailDefaultDecoration.selectedIconTheme ??
                   theme.iconTheme
-                      .copyWith(color: theme.colorScheme.onSecondaryContainer),
+                      .copyWith(color: theme.colorScheme.primary),
           extended: navigationRailDefaultDecoration.isExtended,
           backgroundColor: navigationRailDefaultDecoration.backgroundColor ??
-              theme.colorScheme.surface,
+              theme.colorScheme.secondary,
           destinations:
               widget.menuItems.mapIndexed((int i, NavbarItem menuItem) {
             return NavigationRailDestination(
@@ -590,9 +592,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
   double getPadding() {
     if (widget.isDesktop) {
       if (widget.decoration!.isExtended) {
-        return 256.0;
+        return 140;
       } else {
-        return 72.0;
+        return 40;
       }
     }
     return 0;

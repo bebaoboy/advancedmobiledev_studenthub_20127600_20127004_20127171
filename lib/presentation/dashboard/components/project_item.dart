@@ -12,8 +12,99 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:skeletonizer/skeletonizer.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+class SwipeToDismissWrap extends StatefulWidget {
+  final Widget child;
+
+  const SwipeToDismissWrap({super.key, required this.child});
+
+  @override
+  State<SwipeToDismissWrap> createState() => _SwipeToDismissWrapState();
+}
+
+class _SwipeToDismissWrapState extends State<SwipeToDismissWrap> {
+  bool _swipeInProgress = false;
+  late double _startPosX;
+
+  final double _swipeStartAreaWidth = 120;
+  final double _swipeMinLength = 100;
+  bool dismiss = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragStart: (details) {
+        if (details.localPosition.dx < _swipeStartAreaWidth) {
+          _swipeInProgress = true;
+          _startPosX = details.localPosition.dx;
+        }
+      },
+      onHorizontalDragUpdate: (details) {
+        if (_swipeInProgress &&
+            details.localPosition.dx > _startPosX + _swipeMinLength) {
+          // HapticFeedback.mediumImpact();
+          // Navigator.of(context).pop();
+          if (!dismiss) {
+            setState(() {
+              dismiss = true;
+            });
+          }
+        } else {
+          if (dismiss) {
+            setState(() {
+              dismiss = false;
+            });
+          }
+        }
+      },
+      onHorizontalDragEnd: (details) {
+        if (dismiss) {
+          HapticFeedback.mediumImpact();
+          Navigator.of(context).pop();
+        }
+      },
+      onVerticalDragDown: (_) => _swipeInProgress = dismiss = false,
+      child: Stack(
+        children: [
+          widget.child,
+          Positioned.fill(
+            child: IgnorePointer(
+              child: Stack(
+                children: [
+                  AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: dismiss ? 0.8 : 0,
+                      child: Container(
+                        color: Colors.white,
+                      )),
+                  AnimatedOpacity(
+                      duration: const Duration(milliseconds: 300),
+                      opacity: dismiss ? 1 : 0,
+                      child: const Center(
+                        child: Text(
+                          "Release to dismiss",
+                          style: TextStyle(fontSize: 25),
+                        ),
+                      )),
+                      AnimatedOpacity(
+                      duration: const Duration(milliseconds: 100),
+                      opacity: dismiss ? 1 : 0,
+                      child: const Padding(
+                        padding: EdgeInsets.only(top: 18.0, left: 5),
+                        child: Icon(Icons.arrow_back, size: 30,),
+                      ))
+                ],
+              ),
+            ),
+          )
+        ],
+      ),
+    );
+  }
+}
 
 class _OpenContainerWrapper extends StatelessWidget {
   _OpenContainerWrapper({
@@ -33,12 +124,16 @@ class _OpenContainerWrapper extends StatelessWidget {
       transitionDuration: const Duration(milliseconds: 500),
       openBuilder: (context, closedContainer) {
         if (_userStore.getCurrentType() == UserType.company) {
-          return ProjectDetailsPage(
-            project: project,
+          return SwipeToDismissWrap(
+            child: ProjectDetailsPage(
+              project: project,
+            ),
           );
         } else {
-          return ProjectDetailsStudentApplyScreen(
-            project: project,
+          return SwipeToDismissWrap(
+            child: ProjectDetailsStudentApplyScreen(
+              project: project,
+            ),
           );
         }
       },
@@ -68,9 +163,9 @@ class _OpenContainerWrapper extends StatelessWidget {
                 // ).currentlySelectedEmailId = id;
 
                 // ToDo: uncomment first line and comment second
-                // this is for testing               
+                // this is for testing
                 if (project.isLoading) return;
-                  openContainer();
+                openContainer();
               },
               child: closedChild,
             ));

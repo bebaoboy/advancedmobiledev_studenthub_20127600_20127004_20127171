@@ -11,52 +11,52 @@ class ProjectExperienceItem extends StatefulWidget {
 }
 
 class _ProjectExperienceItemState extends State<ProjectExperienceItem> {
-  Widget _buildChip(List<Skill>? skills) {
-    skills ??= <Skill>[
-      Skill('hello1', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-    ];
+  // Widget _buildChip(List<Skill>? skills) {
+  //   skills ??= <Skill>[
+  //     Skill('hello1', 'something', '0'),
+  //     Skill('hello2', 'something', '0'),
+  //     Skill('hello2', 'something', '0'),
+  //     Skill('hello2', 'something', '0'),
+  //     Skill('hello2', 'something', '0'),
+  //     Skill('hello2', 'something', '0'),
+  //     Skill('hello2', 'something', '0'),
+  //   ];
 
-    return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.05,
-      child: Scrollbar(
-        child: ListView.builder(
-          physics: const ClampingScrollPhysics(),
-          scrollDirection: Axis.horizontal,
-          itemCount: skills.length,
-          itemBuilder: (context, index) {
-            return Row(
-              children: [
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: Colors.transparent),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Text(
-                    skills![index].name,
-                    style: const TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 14),
-                  ),
-                ),
-                const SizedBox(
-                  width: 8,
-                ),
-              ],
-            );
-          },
-        ),
-      ),
-    );
-  }
+  //   return SizedBox(
+  //     height: MediaQuery.of(context).size.height * 0.05,
+  //     child: Scrollbar(
+  //       child: ListView.builder(
+  //         physics: const ClampingScrollPhysics(),
+  //         scrollDirection: Axis.horizontal,
+  //         itemCount: skills.length,
+  //         itemBuilder: (context, index) {
+  //           return Row(
+  //             children: [
+  //               Container(
+  //                 padding:
+  //                     const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+  //                 decoration: BoxDecoration(
+  //                     color: Colors.white,
+  //                     border: Border.all(color: Colors.transparent),
+  //                     borderRadius: BorderRadius.circular(8)),
+  //                 child: Text(
+  //                   skills![index].name,
+  //                   style: const TextStyle(
+  //                       color: Colors.red,
+  //                       fontWeight: FontWeight.w900,
+  //                       fontSize: 14),
+  //                 ),
+  //               ),
+  //               const SizedBox(
+  //                 width: 8,
+  //               ),
+  //             ],
+  //           );
+  //         },
+  //       ),
+  //     ),
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {

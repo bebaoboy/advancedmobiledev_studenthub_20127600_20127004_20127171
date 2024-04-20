@@ -11,6 +11,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -288,6 +289,8 @@ class _AlertTabState extends State<AlertTab> {
                     tag: index,
                     size: 145,
                     onTap: () {
+                      if (userStore.user != null &&
+                          userStore.user!.type != UserType.student) return;
                       print(index);
                       NavbarNotifier2.hideBottomNavBar = true;
 

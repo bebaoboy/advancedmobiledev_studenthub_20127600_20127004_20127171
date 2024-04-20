@@ -10,6 +10,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -29,7 +30,15 @@ class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   State<MainAppBar> createState() => _MainAppBarState();
 
   @override
-  Size get preferredSize => const Size(0.0, 60.0);
+  Size get preferredSize => Size(
+      0.0,
+      NavigationService.navigatorKey.currentContext != null
+          ? MediaQuery.of(NavigationService.navigatorKey.currentContext!)
+                      .orientation ==
+                  Orientation.landscape
+              ? 30
+              : 60
+          : 60);
 }
 
 class _MainAppBarState extends State<MainAppBar> {
@@ -47,7 +56,6 @@ class _MainAppBarState extends State<MainAppBar> {
       icon: const Icon(Icons.account_circle, size: 25),
     );
   }
-
 
   // Widget _buildLanguageButton() {
   //   return IconButton(

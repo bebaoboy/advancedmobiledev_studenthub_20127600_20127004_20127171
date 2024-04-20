@@ -307,17 +307,19 @@ abstract class _ProjectStore with Store {
                       .sublist(0, count.clamp(0, _projects.projects!.length))
                       .toList());
             }
-            _projects.projects?.forEach(
-              (element) => datasource.insert(element),
-            );
+            Future.delayed(Duration.zero, () {
+              _projects.projects?.forEach(
+                (element) => datasource.insert(element),
+              );
+            });
           });
         } else {
-           try {
-              await getStudentFavoriteProject(false);
-            } catch (e) {
-              // nothing changed
-              print("error getting fav");
-            }
+          try {
+            await getStudentFavoriteProject(false);
+          } catch (e) {
+            // nothing changed
+            print("error getting fav");
+          }
           _projects = value;
           _projects.projects?.forEach(
             (element) => element.isLoading = false,
