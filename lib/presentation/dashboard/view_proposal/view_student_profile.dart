@@ -15,8 +15,10 @@ class ViewStudentProfile extends StatefulWidget {
 
 class _ViewStudentProfileState extends State<ViewStudentProfile> {
   bool checkIfValid() {
-    return widget.studentProfile.projectExperience != null &&
-        widget.studentProfile.projectExperience!.isNotEmpty;
+    return (widget.studentProfile.projectExperience != null &&
+            widget.studentProfile.projectExperience!.isNotEmpty) ||
+        (widget.studentProfile.educations != null &&
+            widget.studentProfile.educations!.isNotEmpty);
   }
 
   @override

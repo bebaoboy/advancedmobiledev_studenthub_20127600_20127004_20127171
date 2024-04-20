@@ -302,7 +302,9 @@ class Proposal extends MyObject {
 
   Proposal.fromJson(Map<String, dynamic> json2)
       : student = json2["student"] != null
-            ? StudentProfile.fromMap(json.decode(json2["student"]))
+            ? (json2["student"] is String
+                ? StudentProfile.fromMap(json.decode(json2["student"]))
+                : StudentProfile.fromMap(json2["student"]))
             : StudentProfile(
                 objectId: json2["studentId"].toString(),
                 fullName: "Sample Student ${json2["studentId"]}"),

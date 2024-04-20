@@ -44,25 +44,31 @@ class _ViewStudentProfile2State extends State<ViewStudentProfile2> {
                     padding: const EdgeInsets.all(20),
                     child: const Text("Education",
                         style: TextStyle(fontSize: 26)))),
-            SizedBox(
-              height: 250,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.studentProfile.educations?.length ?? 0,
-                  itemBuilder: (context, index) {
-                    return AspectRatio(
-                      aspectRatio: 1,
-                      child: Card(
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: SizedBox(
+                height: 250,
+                child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: widget.studentProfile.educations?.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return AspectRatio(
+                        aspectRatio: 1,
+                        child: Card(
+                            child: Padding(
+                          padding: const EdgeInsets.all(8.0),
                           child: Column(
-                        children: [
-                          Text(widget
-                              .studentProfile.educations![index].schoolName),
-                          Text(
-                              "${widget.studentProfile.educations![index].startYear} - ${widget.studentProfile.educations![index].endYear}")
-                        ],
-                      )),
-                    );
-                  }),
+                            children: [
+                              Text(widget.studentProfile.educations![index]
+                                  .schoolName),
+                              Text(
+                                  "${widget.studentProfile.educations![index].startYear} - ${widget.studentProfile.educations![index].endYear}")
+                            ],
+                          ),
+                        )),
+                      );
+                    }),
+              ),
             ),
           ],
         ),

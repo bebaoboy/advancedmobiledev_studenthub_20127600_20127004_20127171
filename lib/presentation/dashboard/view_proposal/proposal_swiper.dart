@@ -41,7 +41,8 @@ class _ProposalSwiperState extends State<ProposalSwiper>
 
   @override
   void initState() {
-    if (widget.project.proposal == null || widget.project.proposal!.isEmpty) {
+    if (widget.project.proposal != null &&
+        widget.project.proposal!.isNotEmpty) {
       future = _projectStore.getProjectProposals(widget.project);
     } else {
       future = Future.value(ProposalList(proposals: widget.project.proposal));
@@ -79,149 +80,162 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                 (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
               Widget children;
               if (snapshot.hasData) {
-                return Stack(children: [
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: 600,
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                            left: 25,
-                            right: 25,
-                            top: 50,
-                            bottom: 40,
-                          ),
-                          child: AppinioSwiper(
-                            invertAngleOnBottomDrag: true,
-                            backgroundCardCount: 3,
-                            swipeOptions:
-                                const SwipeOptions.symmetric(horizontal: true),
-                            controller: controller,
-                            onCardPositionChanged: (
-                              SwiperPosition position,
-                            ) {
-                              if (position.offset ==
-                                  Offset(defaultOffSetX, 0)) {
-                                ();
-                                _cardStateStore.reset();
-                              }
+                if (snapshot.data!.proposals!.isEmpty) {
+                  return Container(
+                    alignment: Alignment.center,
+                    child: const Text('There is no cards to display'),
+                  );
+                } else {
+                  return Stack(children: [
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: 600,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              left: 25,
+                              right: 25,
+                              top: 50,
+                              bottom: 40,
+                            ),
+                            child: AppinioSwiper(
+                              invertAngleOnBottomDrag: true,
+                              backgroundCardCount: 3,
+                              swipeOptions: const SwipeOptions.symmetric(
+                                  horizontal: true),
+                              controller: controller,
+                              onCardPositionChanged: (
+                                SwiperPosition position,
+                              ) {
+                                if (position.offset ==
+                                    Offset(defaultOffSetX, 0)) {
+                                  ();
+                                  _cardStateStore.reset();
+                                }
 
-                              _cardStateStore.changeOpacity(
-                                  (position.angle.abs().roundToDouble() /
-                                          maxAngle)
-                                      .clamp(0, 1));
+                                _cardStateStore.changeOpacity(
+                                    (position.angle.abs().roundToDouble() /
+                                            maxAngle)
+                                        .clamp(0, 1));
 
-                              if (position.offset.toAxisDirection() ==
-                                  AxisDirection.left) {
-                                _cardStateStore.changeStateToReject(
-                                    HireStatus.notHired.title);
-                              }
+                                if (position.offset.toAxisDirection() ==
+                                    AxisDirection.left) {
+                                  _cardStateStore.changeStateToReject(
+                                      HireStatus.notHired.title);
+                                }
 
-                              if (position.offset.toAxisDirection() ==
-                                  AxisDirection.right) {
-                                _cardStateStore
-                                    .changeStateToHire(HireStatus.offer.title);
-                              }
+                                if (position.offset.toAxisDirection() ==
+                                    AxisDirection.right) {
+                                  _cardStateStore.changeStateToHire(
+                                      HireStatus.offer.title);
+                                }
 
-                              // debugPrint(
-                              //     '${position.offset.toAxisDirection()}, '
-                              //     '${position.offset}, '
-                              //     '${position.angle}');
-                            },
-                            onSwipeEnd: _swipeEnd,
-                            onEnd: _onEnd,
-                            cardCount: snapshot.data!.proposals?.length ?? 0,
-                            cardBuilder: (BuildContext context, int index) {
-                              return InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(MaterialPageRoute2(
-                                      routeName:
-                                          Routes.companyViewStudentProfile,
-                                      arguments: snapshot
-                                          .data!.proposals?[index].student));
-                                },
-                                child: Stack(children: [
-                                  const SizedBox(
-                                    height: 40,
-                                  ),
-                                  Stack(
-                                    children: [
-                                      ProposalCardItem(
-                                        proposal:
-                                            snapshot.data!.proposals![index],
-                                      ),
-                                      SizedBox(
-                                        height: 470,
-                                        child: Observer(
-                                          builder: (context) => AnimatedOpacity(
-                                            opacity: _cardStateStore.opacity,
-                                            duration: const Duration(
-                                                milliseconds: 200),
-                                            child: Card(
-                                              elevation: 8,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          32)),
-                                              color:
-                                                  _cardStateStore.index == index
-                                                      ? _cardStateStore.color
-                                                      : null,
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10),
-                                                alignment: _cardStateStore
-                                                            .actionName ==
-                                                        HireStatus
-                                                            .notHired.title
-                                                    ? Alignment.topRight
-                                                    : Alignment.topLeft,
-                                                child: _cardStateStore.index ==
+                                // debugPrint(
+                                //     '${position.offset.toAxisDirection()}, '
+                                //     '${position.offset}, '
+                                //     '${position.angle}');
+                              },
+                              onSwipeEnd: _swipeEnd,
+                              onEnd: _onEnd,
+                              cardCount: snapshot.data!.proposals?.length ?? 0,
+                              cardBuilder: (BuildContext context, int index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute2(
+                                            routeName: Routes
+                                                .companyViewStudentProfile,
+                                            arguments: snapshot.data!
+                                                .proposals?[index].student));
+                                  },
+                                  child: Stack(children: [
+                                    const SizedBox(
+                                      height: 40,
+                                    ),
+                                    Stack(
+                                      children: [
+                                        ProposalCardItem(
+                                          proposal:
+                                              snapshot.data!.proposals![index],
+                                        ),
+                                        SizedBox(
+                                          height: 470,
+                                          child: Observer(
+                                            builder: (context) =>
+                                                AnimatedOpacity(
+                                              opacity: _cardStateStore.opacity,
+                                              duration: const Duration(
+                                                  milliseconds: 200),
+                                              child: Card(
+                                                elevation: 8,
+                                                shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            32)),
+                                                color: _cardStateStore.index ==
                                                         index
-                                                    ? (Text(
-                                                        _cardStateStore
-                                                            .actionName,
-                                                        style: const TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 30)))
-                                                    : Container(),
+                                                    ? _cardStateStore.color
+                                                    : null,
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10),
+                                                  alignment: _cardStateStore
+                                                              .actionName ==
+                                                          HireStatus
+                                                              .notHired.title
+                                                      ? Alignment.topRight
+                                                      : Alignment.topLeft,
+                                                  child: _cardStateStore
+                                                              .index ==
+                                                          index
+                                                      ? (Text(
+                                                          _cardStateStore
+                                                              .actionName,
+                                                          style:
+                                                              const TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                      30)))
+                                                      : Container(),
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  )
-                                ]),
-                              );
-                            },
+                                      ],
+                                    )
+                                  ]),
+                                );
+                              },
+                            ),
                           ),
                         ),
-                      ),
-                      IconTheme.merge(
-                        data: const IconThemeData(size: 40),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // TutorialAnimationButton(_shakeCard),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                            customSwipeLeftButton(controller, () {}),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            customSwipeRightButton(controller, () {}),
-                            const SizedBox(
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ]);
+                        IconTheme.merge(
+                          data: const IconThemeData(size: 40),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // TutorialAnimationButton(_shakeCard),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              customSwipeLeftButton(controller, () {}),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              customSwipeRightButton(controller, () {}),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ]);
+                }
               } else if (snapshot.hasError) {
                 return const Text("Error fetching proposals");
               } else {

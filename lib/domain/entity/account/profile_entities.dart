@@ -110,9 +110,17 @@ class StudentProfile extends Profile {
 
   factory StudentProfile.fromMap(Map<String, dynamic>? map) {
     if (map == null) return StudentProfile();
+    var user = map['user'];
+    var name;
+    if (user != null) {
+      name = map['user']['fullname'];
+    } else {
+      name = map['fullname'] ?? 'Sample Student ${map["id"].toString()}';
+    }
+
     return StudentProfile(
       title: map['title'] ?? '',
-      fullName: map['fullname'] ?? 'Sample Student ${map["id"].toString()}',
+      fullName: name,
       education: map['education'] ?? '',
       introduction: map['introduction'] ?? '',
       yearOfExperience: map['yearOfExperience'] ?? 0,

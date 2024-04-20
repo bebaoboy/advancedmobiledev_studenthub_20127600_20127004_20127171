@@ -131,12 +131,12 @@ class ProjectRepositoryImpl extends ProjectRepository {
       if (response.statusCode == HttpStatus.created ||
           response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.accepted) {
-        return ProposalList.fromJson(response.data['items']);
+        return ProposalList.fromJson(response.data['result']['items']);
       } else {
-        return ProposalList(proposals: List.empty(growable: true));
+        return ProposalList(proposals: params.proposal);
       }
     } catch (e) {
-      return ProposalList(proposals: List.empty(growable: true));
+      return ProposalList(proposals: params.proposal);
     }
   }
   
