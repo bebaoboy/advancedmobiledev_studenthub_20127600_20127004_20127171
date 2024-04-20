@@ -105,7 +105,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          widget.project.project?.title ?? "Untitled",
+                          (widget.project.project?.title ?? "Untitled") + (" (id = ${widget.project.objectId})"),
                           style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
                         Text(submittedText),

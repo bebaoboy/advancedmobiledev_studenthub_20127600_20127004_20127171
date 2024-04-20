@@ -31,7 +31,8 @@ class _ProjectDetailsStudentScreenState
   void initState() {
     super.initState();
     updatedText =
-        "Updated at ${DateFormat("HH:mm dd-MM-yyyy").format(widget.project.timeCreated.toLocal())}";
+        "Updated at ${DateFormat("HH:mm dd-MM-yyyy").format((widget.project.updatedAt ?? widget.project.createdAt!).toLocal())}";
+
   }
 
   @override

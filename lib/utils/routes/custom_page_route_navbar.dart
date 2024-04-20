@@ -171,6 +171,7 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
     }
 
     Widget buildNavigationRail() {
+      // TODO: change width cua navbar + baclground + selected color
       if (widget.decoration != null) {
         navigationRailDefaultDecoration =
             navigationRailDefaultDecoration.copyWith(

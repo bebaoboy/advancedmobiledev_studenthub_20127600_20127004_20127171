@@ -174,7 +174,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   ArchiveProjects(
                     scrollController: ScrollController(),
                     projects: userStore.user?.studentProfile?.proposalProjects
-                        ?.where((e) => e.project != null && e.enabled)
+                        ?.where((e) => e.project != null && !e.enabled)
                         .toList(),
                   ),
                 ]),

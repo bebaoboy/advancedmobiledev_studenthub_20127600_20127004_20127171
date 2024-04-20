@@ -42,11 +42,13 @@ class _HomeScreenState extends State<HomeScreen> {
           infoStore.getInfo().then(
                 (value) {},
               );
-
+              
           // TODO: check welcome
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute2(routeName: Routes.dashboard),
-          );
+          Future.delayed(const Duration(seconds: 1), () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute2(routeName: Routes.dashboard),
+            );
+          });
         } else {
           if (mounted) {
             setState(() {
@@ -75,8 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
         appBar: _buildAppBar(),
         body: !enabled
             ? const Center(
-            child: LoadingScreenWidget(size: 80,),
-          )
+                child: LoadingScreenWidget(
+                  size: 80,
+                ),
+              )
             : Align(
                 alignment: Alignment.topCenter,
                 child: Padding(
