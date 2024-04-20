@@ -469,15 +469,13 @@ class _ProjectTabsState extends State<ProjectTabs> {
               Toastify.show(
                   context,
                   "",
-                  p.isWorking
-                      ? Lang.get("archive_successfully")
-                      : Lang.get("unarchive_successfully"),
+                  Lang.get("start_working_project"),
                   aboveNavbar: !NavbarNotifier2.isNavbarHidden,
                   ToastificationType.success,
                   () {});
               updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
                   p.title, p.description, p.numberOfStudents, p.scope,
-                  statusFlag: Status.inactive.index);
+                  statusFlag: Status.active.index);
             }
             setState(() {
               // TODO: put it to working or none

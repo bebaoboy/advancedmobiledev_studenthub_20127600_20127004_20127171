@@ -3,6 +3,8 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 
 // ignore: must_be_immutable
 class ProposalCardItem extends StatefulWidget {
@@ -66,6 +68,8 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
   @override
   Widget build(BuildContext context) {
     final profile = widget.proposal.student;
+
+    @observable
     var color = widget.name == 'Reject' ? Colors.red : Colors.green;
     print(color);
 
@@ -148,17 +152,19 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
         height: 700,
         right: 10,
         top: 10,
-        child: AnimatedOpacity(
-          opacity: widget.opacity,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            alignment: widget.name == 'Rejects'
-                ? Alignment.topLeft
-                : Alignment.topRight,
-            height: 410,
-            color: Colors.red,
-            child:
-                Text(widget.name, style: const TextStyle(color: Colors.white)),
+        child: Observer(
+          builder: (context) => AnimatedOpacity(
+            opacity: widget.opacity,
+            duration: const Duration(milliseconds: 200),
+            child: Container(
+              alignment: widget.name == 'Rejects'
+                  ? Alignment.topLeft
+                  : Alignment.topRight,
+              height: 410,
+              color: Colors.red,
+              child: Text(widget.name,
+                  style: const TextStyle(color: Colors.white)),
+            ),
           ),
         ),
       ),

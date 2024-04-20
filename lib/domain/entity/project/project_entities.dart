@@ -287,8 +287,7 @@ extension HireStatusTitle on HireStatus {
   }
 }
 
-// TODO: change none to index 0
-enum Status { active, inactive, none }
+enum Status { none, active, inactive }
 
 @JsonSerializable()
 class Proposal extends MyObject {

@@ -15,6 +15,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:mobx/mobx.dart';
 
 class ProposalSwiper extends StatefulWidget {
   final Project project;
@@ -35,16 +36,20 @@ class _ProposalSwiperState extends State<ProposalSwiper>
 
   late Future<ProposalList> future;
 
+  @observable
   double _opacityLeft = 0;
+
   double _opacityRight = 0;
   static const int maxAngle = 16;
   double defaultOffSetX = 13.1;
+
+  @observable
   String currentActionName = '';
   bool isMoving = false;
 
   @override
   void initState() {
-    if (widget.project.proposal == null) {
+    if (widget.project.proposal == null || widget.project.proposal!.isEmpty) {
       future = _projectStore.getProjectProposals(widget.project);
     } else {
       future = Future.value(ProposalList(proposals: widget.project.proposal));
@@ -135,11 +140,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                   AxisDirection.right) {
                                 setState(() {
                                   currentActionName = "Send hired";
-                                  setState(() {
-                                    _opacityRight =
-                                        position.angle.abs().roundToDouble() /
-                                            maxAngle;
-                                  });
+                                  _opacityRight =
+                                      position.angle.abs().roundToDouble() /
+                                          maxAngle;
                                 });
                               } else {
                                 setState(() {
@@ -182,7 +185,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 120, top: 50),
+                                        left: 110, top: 50),
                                     child: Hero(
                                       tag:
                                           "studentImage${snapshot.data!.proposals![index].student.objectId}",
@@ -192,7 +195,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                           shape: BoxShape.circle,
                                         ),
                                         child: const FlutterLogo(
-                                          size: 200,
+                                          size: 220,
                                         ),
                                       ),
                                     ),
@@ -260,12 +263,16 @@ class _ProposalSwiperState extends State<ProposalSwiper>
       case Swipe():
         log('The card was swiped to the : ${activity.direction}');
 
+        if (activity.currentOffset == Offset(defaultOffSetX, 0)) {
+          return;
+        }
+
         if (activity.direction == AxisDirection.right) {
           // ToDo: update proposal status value = 2
           if (_projectStore.currentProps.proposals == null ||
               _projectStore.currentProps.proposals!.isEmpty) return;
           _projectStore.currentProps.proposals![targetIndex].hiredStatus =
-              HireStatus.hired;
+              HireStatus.offer;
           _projectStore.updateProposal(
               _projectStore.currentProps.proposals![targetIndex],
               _userStore.user!.studentProfile!.objectId!);
