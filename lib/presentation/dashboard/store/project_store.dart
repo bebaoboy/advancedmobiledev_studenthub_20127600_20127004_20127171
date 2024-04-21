@@ -268,8 +268,16 @@ abstract class _ProjectStore with Store {
               //     readyMade: _projects.projects!
               //         .sublist(0, count.clamp(0, _projects.projects!.length))
               //         .toList());
+              _projects.projects?.forEach(
+                (element) => element.isLoading = false,
+              );
               if (setStateCallback != null) setStateCallback();
-
+              if (_projects.projects != null) {
+                refazynistKey.currentState?.refresh(
+                    readyMade: _projects.projects!
+                        .sublist(0, count.clamp(0, _projects.projects!.length))
+                        .toList());
+              }
               print("refesshh");
             }
             var project = Project.fromMap(value.data![i]);
@@ -279,9 +287,6 @@ abstract class _ProjectStore with Store {
 
             // datasource.insert(project);
           }
-          _projects.projects?.forEach(
-            (element) => element.isLoading = false,
-          );
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
