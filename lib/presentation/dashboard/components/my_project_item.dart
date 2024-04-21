@@ -309,7 +309,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               Text(
-                                'Proposals',
+                                'Total',
                                 style: Theme.of(context).textTheme.bodyLarge,
                               )
                             ],

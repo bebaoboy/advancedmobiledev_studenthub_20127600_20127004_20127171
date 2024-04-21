@@ -77,9 +77,9 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
 class Project extends ProjectBase {
   // var id = const Uuid().v4();
   int numberOfStudents;
-  List<Proposal>? hired;
+  // List<Proposal>? hired;
   List<Proposal>? proposal;
-  List<Proposal>? messages;
+  // List<Proposal>? messages;
   DateTime timeCreated = DateTime.now();
   String companyId;
 
@@ -88,17 +88,17 @@ class Project extends ProjectBase {
   int? _countHired;
 
   int get countProposals => _countProposals ?? proposal?.length ?? 0;
-  int get countMessages => _countMessages ?? messages?.length ?? 0;
-  int get countHired => _countHired ?? hired?.length ?? 0;
+  int get countMessages => proposal?.where((element) => element.hiredStatus == HireStatus.pending,).length ?? 0;
+  int get countHired => proposal?.where((element) => element.hiredStatus == HireStatus.hired,).length ?? 0;
 
   Project({
     required super.title,
     required super.description,
     super.scope = Scope.short,
     this.numberOfStudents = 1,
-    this.hired,
+    // this.hired,
     this.proposal,
-    this.messages,
+    // this.messages,
     required this.timeCreated,
     super.updatedAt,
     super.isFavorite = false,
@@ -113,13 +113,13 @@ class Project extends ProjectBase {
       _countProposals = countProposals;
       if (proposal != null) assert(_countProposals == proposal!.length);
     }
-    if (countMessages != null) {
-      _countHired = countHired;
-      if (hired != null) assert(_countHired == hired!.length);
-    }
     if (countHired != null) {
+      _countHired = countHired;
+      // if (hired != null) assert(_countHired == hired!.length);
+    }
+    if (countMessages != null) {
       _countMessages = countMessages;
-      if (messages != null) assert(_countMessages == messages!.length);
+      // if (messages != null) assert(_countMessages == messages!.length);
     }
   }
 

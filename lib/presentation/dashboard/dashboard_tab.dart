@@ -61,8 +61,13 @@ class _DashBoardTabState extends State<DashBoardTab>
     //   }
     // });
     future = projectStore.getProjectByCompany(
-        _userStore.user!.companyProfile!.objectId!,
-        setStateCallback: () => setState(() {}));
+        _userStore.user!.companyProfile!.objectId!, setStateCallback: () {
+      try {
+        setState(() {});
+      } catch (e) {
+        ///
+      }
+    });
 
     scrollController.add(ScrollController());
     scrollController.add(ScrollController());

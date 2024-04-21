@@ -70,10 +70,13 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  widget.project.title,
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 24),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: AutoSizeText(
+                    widget.project.title,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 24),
+                  ),
                 ),
                 Visibility(
                   visible: widget.project.countProposals > 0,
@@ -156,17 +159,17 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         project: widget.project,
                       ),
                       MessageTabLayout(
-                          messages: widget.project.messages == null
+                          messages: widget.project.proposal == null
                               ? []
-                              : widget.project.messages!
+                              : widget.project.proposal!.where((element) => element.hiredStatus == HireStatus.pending,)
                                   .map(
                                     (e) => e.student,
                                   )
                                   .toList()),
                       HiredTabLayout(
-                          hired: widget.project.hired == null
+                          hired: widget.project.proposal == null
                               ? []
-                              : widget.project.hired!
+                              : widget.project.proposal!.where((element) => element.hiredStatus == HireStatus.hired,)
                                   .map(
                                     (e) => e.student,
                                   )

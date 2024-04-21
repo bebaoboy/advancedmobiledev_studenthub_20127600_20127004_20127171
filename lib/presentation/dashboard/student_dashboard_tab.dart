@@ -32,8 +32,13 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
     super.initState();
     // tabController = TabController(length: 3, vsync: this);
     future = _projectStore.getStudentProposalProjects(
-        _userStore.user!.studentProfile!.objectId!,
-        setStateCallback: () => setState(() {}));
+        _userStore.user!.studentProfile!.objectId!, setStateCallback: () {
+      try {
+        setState(() {});
+      } catch (e) {
+        ///
+      }
+    });
   }
 
   final _userStore = getIt<UserStore>();
@@ -163,7 +168,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                             (e.hiredStatus == HireStatus.notHired ||
                                 e.hiredStatus == HireStatus.pending))
                         .toList(),
-                 ),
+                  ),
                   WorkingProjects(
                       scrollController: widget.pageController,
                       projects: userStore.user?.studentProfile?.proposalProjects
