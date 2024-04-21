@@ -639,7 +639,9 @@ class _ProjectTabState extends State<ProjectTab> {
     loadSearchHistory().then(
       (value) => searchHistory = value,
     );
-    future = _projectStore.getAllProject(refazynistKey);
+    future = _projectStore.getAllProject(refazynistKey, setStateCallback: () {
+      setState(() {});
+    });
   }
 
   // ignore: prefer_final_fields
@@ -1036,7 +1038,10 @@ class _ProjectTabState extends State<ProjectTab> {
 
                         if (keywordId.isEmpty) {
                           print("on refesshh");
-                          _projectStore.getAllProject(refazynistKey);
+                          _projectStore.getAllProject(refazynistKey,
+                              setStateCallback: () {
+                            setState(() {});
+                          });
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);
 

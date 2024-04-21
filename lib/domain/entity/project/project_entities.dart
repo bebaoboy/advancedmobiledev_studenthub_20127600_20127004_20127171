@@ -351,7 +351,7 @@ class Proposal extends MyObject {
     required this.project,
     required this.student,
     this.coverLetter = "",
-    this.hiredStatus = HireStatus.pending,
+    this.hiredStatus = HireStatus.notHired,
     this.projectId = "",
     this.enabled = true,
     String id = "",

@@ -1,8 +1,11 @@
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -18,11 +21,20 @@ class ProjectDetailsStudentApplyScreen extends StatefulWidget {
 class _ProjectDetailsStudentApplyScreenState
     extends State<ProjectDetailsStudentApplyScreen> {
   var updatedText = "";
+  bool hasAlreadyApplied = false;
   @override
   void initState() {
     super.initState();
     updatedText =
         "Updated at ${DateFormat("HH:mm dd-MM-yyyy").format(widget.project.timeCreated.toLocal())}";
+    var userStore = getIt<UserStore>();
+    hasAlreadyApplied = userStore.user != null &&
+        userStore.user!.studentProfile != null &&
+        userStore.user!.studentProfile!.proposalProjects != null &&
+        userStore.user!.studentProfile!.proposalProjects!.firstWhereOrNull(
+              (element) => element.projectId == widget.project.objectId,
+            ) ==
+            null;
   }
 
   @override
@@ -213,30 +225,31 @@ class _ProjectDetailsStudentApplyScreenState
                               color: Theme.of(context).colorScheme.secondary)),
                     ),
                   ),
-
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
-                      surfaceTintColor: Colors.transparent,
-                      minimumSize: Size(
-                          MediaQuery.of(context).size.width / 2 - 48,
-                          40), // NEW
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3),
+                  if (!hasAlreadyApplied)
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        surfaceTintColor: Colors.transparent,
+                        minimumSize: Size(
+                            MediaQuery.of(context).size.width / 2 - 48,
+                            40), // NEW
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(3),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(Routes.submitProposal,
+                            arguments: widget.project);
+                      },
+                      child: Text(
+                        Lang.get('apply_now'),
+                        style: Theme.of(context).textTheme.bodyMedium!.merge(
+                            TextStyle(
+                                color:
+                                    Theme.of(context).colorScheme.secondary)),
                       ),
                     ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.submitProposal,
-                          arguments: widget.project);
-                    },
-                    child: Text(
-                      Lang.get('apply_now'),
-                      style: Theme.of(context).textTheme.bodyMedium!.merge(
-                          TextStyle(
-                              color: Theme.of(context).colorScheme.secondary)),
-                    ),
-                  ),
                 ],
               ),
             ),

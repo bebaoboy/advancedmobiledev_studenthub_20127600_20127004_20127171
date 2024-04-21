@@ -249,7 +249,7 @@ abstract class _ProjectStore with Store {
   //   });
   // }
   Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
-      {int count = 5}) async {
+      {int count = 5, Function? setStateCallback}) async {
     _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
       // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
       print("call api refesshh");
@@ -268,6 +268,8 @@ abstract class _ProjectStore with Store {
               //     readyMade: _projects.projects!
               //         .sublist(0, count.clamp(0, _projects.projects!.length))
               //         .toList());
+              if (setStateCallback != null) setStateCallback();
+
               print("refesshh");
             }
             var project = Project.fromMap(value.data![i]);
@@ -283,6 +285,7 @@ abstract class _ProjectStore with Store {
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
+          if (setStateCallback != null) setStateCallback();
           Future.delayed(Duration.zero, () async {
             try {
               await getStudentFavoriteProject(false);
