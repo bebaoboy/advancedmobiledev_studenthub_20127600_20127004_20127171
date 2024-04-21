@@ -250,123 +250,142 @@ abstract class _ProjectStore with Store {
   // }
   Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
       {int count = 5, Function? setStateCallback}) async {
+    final ProjectDataSource datasource = getIt<ProjectDataSource>();
+    if (postSuccess) return Future.value(_projects);
+
     _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
       // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
       print("call api refesshh");
 
       Future.delayed(const Duration(seconds: 1), () async {
-        final ProjectDataSource datasource = getIt<ProjectDataSource>();
-
-        bool doneInit = false;
+        // bool doneInit = false;
+        Map<String, int> maps = {};
         if (value.data != null) {
+          postSuccess = false;
           _projects.projects?.clear();
           for (int i = 0; i < value.data!.length; i++) {
-            if (i == 5 && !doneInit) {
-              doneInit = true;
-              // refazynistKey.currentState?.refresh(
-              //     isFinal: false,
-              //     readyMade: _projects.projects!
-              //         .sublist(0, count.clamp(0, _projects.projects!.length))
-              //         .toList());
-              _projects.projects?.forEach(
-                (element) => element.isLoading = false,
-              );
-              if (setStateCallback != null) setStateCallback();
-              if (_projects.projects != null) {
-                refazynistKey.currentState?.refresh(
-                    readyMade: _projects.projects!
-                        .sublist(0, count.clamp(0, _projects.projects!.length))
-                        .toList());
-              }
-              print("refesshh");
-            }
+            // if (i == 5 && !doneInit) {
+            //   doneInit = true;
+            //   print("refesshh");
+            // }
             var project = Project.fromMap(value.data![i]);
             project.isLoading = false;
+            maps[project.objectId!] = i;
 
             addProject(project, sort: false);
 
             // datasource.insert(project);
           }
-          _projects.projects?.sort(
-            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-          );
-          if (setStateCallback != null) setStateCallback();
-          Future.delayed(Duration.zero, () async {
-            try {
-              await getStudentFavoriteProject(false);
-            } catch (e) {
-              // nothing changed
-              print("error getting fav");
-            }
-            print("favorite refess ${_favoriteProjects.projects!.length}");
-            _favoriteProjects.projects?.forEach(
-              (element) {
-                var p = _projects.projects?.firstWhereOrNull(
-                  (e) => e.objectId == element.objectId,
-                );
-                if (p != null) {
-                  p.isFavorite = true;
-                }
-              },
-            );
-            if (_projects.projects != null) {
-              refazynistKey.currentState?.refresh(
-                  readyMade: _projects.projects!
-                      .sublist(0, count.clamp(0, _projects.projects!.length))
-                      .toList());
-            }
-            Future.delayed(Duration.zero, () {
-              _projects.projects?.forEach(
-                (element) => datasource.insert(element),
-              );
-            });
-          });
-        } else {
+          // _projects.projects?.sort(
+          //   (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          // );
+          // if (setStateCallback != null) setStateCallback();
+          // if (_projects.projects != null && _projects.projects!.isNotEmpty) {
+          //   refazynistKey.currentState?.refresh(
+          //       readyMade: _projects.projects!
+          //           .sublist(0, count.clamp(0, _projects.projects!.length))
+          //           .toList());
+          // }
+        }
+        Future.delayed(Duration.zero, () async {
           try {
             await getStudentFavoriteProject(false);
           } catch (e) {
             // nothing changed
             print("error getting fav");
           }
-          _projects = value;
-          _projects.projects?.forEach(
-            (element) => element.isLoading = false,
-          );
-          _favoriteProjects.projects?.forEach(
-            (element) {
-              var p = _projects.projects!.firstWhereOrNull(
-                (e) => e.objectId == element.objectId,
-              );
-              if (p != null) {
-                p.isFavorite = true;
-              }
-            },
-          );
+          print("favorite refess ${_favoriteProjects.projects!.length}");
+          if (_projects.projects != null) {
+            _favoriteProjects.projects?.forEach(
+              (element) {
+                var m = maps[element.objectId];
+                if (m != null) {
+                  _projects.projects![m].isFavorite = true;
+                } else {
+                  var p = _projects.projects!.firstWhereOrNull(
+                    (e) => e.objectId == element.objectId,
+                  );
+                  if (p != null) {
+                    p.isFavorite = true;
+                  }
+                }
+              },
+            );
+          }
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
+          postSuccess = true;
+
+          if (setStateCallback != null) setStateCallback();
+
           if (_projects.projects != null) {
             refazynistKey.currentState?.refresh(
                 readyMade: _projects.projects!
                     .sublist(0, count.clamp(0, _projects.projects!.length))
                     .toList());
           }
-        }
+          postSuccess = false;
+          Future.delayed(Duration.zero, () {
+            _projects.projects?.forEach(
+              (element) => datasource.insert(element),
+            );
+          });
+        });
+
+        // else {
+        //   try {
+        //     await getStudentFavoriteProject(false);
+        //   } catch (e) {
+        //     // nothing changed
+        //     print("error getting fav");
+        //   }
+        //   _projects = value;
+        //   _projects.projects?.forEach(
+        //     (element) => element.isLoading = false,
+        //   );
+        //   _favoriteProjects.projects?.forEach(
+        //     (element) {
+        //       var p = _projects.projects!.firstWhereOrNull(
+        //         (e) => e.objectId == element.objectId,
+        //       );
+        //       if (p != null) {
+        //         p.isFavorite = true;
+        //       }
+        //     },
+        //   );
+        //   _projects.projects?.sort(
+        //     (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+        //   );
+        //   if (_projects.projects != null) {
+        //     refazynistKey.currentState?.refresh(
+        //         readyMade: _projects.projects!
+        //             .sublist(0, count.clamp(0, _projects.projects!.length))
+        //             .toList());
+        //   }
+        // }
       });
 
       // _projects = value;
     });
-    return ProjectList(
-      projects: List.filled(
-        5,
-        Project(
-          title: "",
-          description: "",
-          timeCreated: DateTime.now(),
-        ),
-        growable: true,
-      ),
+    await datasource.getProjectsFromDb().then(
+      (value) {
+        _projects = value;
+      },
     );
+    _projects.projects?.sort(
+      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+    );
+    _projects.projects?.forEach(
+      (element) => element.isLoading = false,
+    );
+    if (_projects.projects != null) {
+      refazynistKey.currentState?.refresh(
+          readyMade: _projects.projects!
+              .sublist(0, count.clamp(0, _projects.projects!.length))
+              .toList());
+    }
+    return Future.value(_projects);
   }
 
   Future<ProjectList> getStudentFavoriteProject(bool force) async {

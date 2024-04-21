@@ -403,10 +403,12 @@ class RefazynistState extends State<Refazynist> {
   /// Remove loader on the end on list when lazy load in progress
   Future<void> removeLoader() async {
     if (_loaderShowing) {
-      _animatedListKey.currentState!.removeItem(_items.length,
+      if (_items.isNotEmpty) {
+        _animatedListKey.currentState!.removeItem(_items.length,
           (riContext, rAnimation) {
         return widget.loaderBuilder(riContext, rAnimation);
       }, duration: widget.removeDuration);
+      }
 
       await Future.delayed(widget.removeDuration);
 

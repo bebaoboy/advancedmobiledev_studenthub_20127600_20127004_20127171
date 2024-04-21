@@ -5,6 +5,7 @@ import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/loading_list.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/searchbar_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
@@ -24,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:smooth_sheets/smooth_sheets.dart';
+import 'package:toastification/toastification.dart';
 
 class SearchFilter {
   Scope? scope;
@@ -640,8 +642,16 @@ class _ProjectTabState extends State<ProjectTab> {
       (value) => searchHistory = value,
     );
     future = _projectStore.getAllProject(refazynistKey, setStateCallback: () {
-      setState(() {});
+      try {
+        Toastify.show(
+            context, "", "Finish loading", ToastificationType.success, () {});
+        setState(() {});
+      } catch (e) {
+        ///
+      }
     });
+    Toastify.show(
+        context, "", "Loading project...", ToastificationType.info, () {});
   }
 
   // ignore: prefer_final_fields
@@ -775,17 +785,19 @@ class _ProjectTabState extends State<ProjectTab> {
     if (yOffset == 0) {
       yOffset = MediaQuery.of(context).size.height;
     }
-    var l = _projectStore.projects
-        .map(
-          (e) => e.companyId,
-        )
-        .toSet()
-        .toList();
-    l.insert(0, "");
-    l.sort(
-      (a, b) => a.compareTo(b),
-    );
-    _list = l;
+    if (_list.isEmpty) {
+      var l = _projectStore.projects
+          .map(
+            (e) => e.companyId,
+          )
+          .toSet()
+          .toList();
+      l.insert(0, "");
+      l.sort(
+        (a, b) => a.compareTo(b),
+      );
+      _list = l;
+    }
     return Stack(
       // mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -935,7 +947,21 @@ class _ProjectTabState extends State<ProjectTab> {
           right: 0,
           top: 55,
           width: 150,
-          child: CustomDropdown<String>.search(
+          child: CustomDropdown<String>.searchRequest(
+            futureRequest: (p0) {
+              var l = _projectStore.projects
+                  .map(
+                    (e) => e.companyId,
+                  )
+                  .toSet()
+                  .toList();
+              l.insert(0, "");
+              l.sort(
+                (a, b) => a.compareTo(b),
+              );
+              _list = l;
+              return Future.value(_list);
+            },
             hideSelectedFieldWhenExpanded: false,
             closedHeaderPadding: const EdgeInsets.only(left: 40),
             decoration: const CustomDropdownDecoration(
@@ -1040,6 +1066,8 @@ class _ProjectTabState extends State<ProjectTab> {
                           print("on refesshh");
                           _projectStore.getAllProject(refazynistKey,
                               setStateCallback: () {
+                            Toastify.show(context, "", "Finish loading",
+                                ToastificationType.success, () {});
                             setState(() {});
                           });
                         }
@@ -1052,6 +1080,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       // Refazynist: It's for lazy load
 
                       onLazy: () async {
+                        if (!_projectStore.postSuccess) return [];
                         lazyCount += 5;
                         List<Project> lazyList = [];
                         if (refazynistKey.currentState!.length() ==
