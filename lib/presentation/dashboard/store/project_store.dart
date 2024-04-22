@@ -441,7 +441,7 @@ abstract class _ProjectStore with Store {
               value.statusCode == HttpStatus.created) {
             print(value);
 
-            var result = ProjectList.fromJson(value.data["result"]);
+            var result = ProjectList.fromJsonWithPrefix(value.data["result"]);
             _companyProjects = result;
 
             sharedPrefsHelper.saveCompanyProjects(_companyProjects);
