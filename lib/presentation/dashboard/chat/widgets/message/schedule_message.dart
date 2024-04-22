@@ -8,8 +8,7 @@ import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
 
 import '../../conditional/conditional.dart';
@@ -20,7 +19,7 @@ import '../../conditional/conditional.dart';
 /// ratio is very small or very big.
 
 // ignore: must_be_immutable
-class ScheduleMessageType extends types.Message {
+class ScheduleMessageType extends AbstractChatMessage {
   double? width;
   double? height;
   int messageWidth;
@@ -42,19 +41,19 @@ class ScheduleMessageType extends types.Message {
       required this.messageWidth});
 
   @override
-  types.Message copyWith(
-      {types.User? author,
+  AbstractChatMessage copyWith(
+      {ChatUser? author,
       int? createdAt,
       String? id,
       Map<String, dynamic>? metadata,
       String? remoteId,
-      types.Message? repliedMessage,
+      AbstractChatMessage? repliedMessage,
       String? roomId,
       bool? showStatus,
-      types.Status? status,
+      Status? status,
       int? updatedAt}) {
     return ScheduleMessageType(
-        author: author ?? const types.User(id: ""),
+        author: author ?? const ChatUser(id: ""),
         id: id ?? "",
         type: type,
         messageWidth: messageWidth);
@@ -90,19 +89,19 @@ class ScheduleMessageType extends types.Message {
     };
   }
 
-  static types.Message fromJson(Map<String, dynamic> json) {
+  static AbstractChatMessage fromJson(Map<String, dynamic> json) {
     return ScheduleMessageType(
       messageWidth: 1,
-      author: const types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
-      type: types.MessageType.schedule,
-      status: types.Status.delivered,
+      author: const ChatUser(id: "1", firstName: "Bao", lastName: "Doe,"),
+      type: AbstractMessageType.schedule,
+      status: Status.delivered,
       createdAt: json['createdAt'] as int?,
       id: json['id'] as String,
       metadata: json['metadata'] as Map<String, dynamic>?,
       remoteId: json['remoteId'] as String?,
       repliedMessage: json['repliedMessage'] == null
           ? null
-          : types.Message.fromJson(
+          : AbstractChatMessage.fromJson(
               json['repliedMessage'] as Map<String, dynamic>),
       roomId: json['roomId'] as String?,
       showStatus: json['showStatus'] as bool?,
@@ -114,7 +113,7 @@ class ScheduleMessageType extends types.Message {
 ///
 ///
 class ScheduleMessage extends StatefulWidget {
-  /// Creates an image message widget based on [types.ScheduleMessage].
+  /// Creates an image message widget based on [ScheduleMessage].
   const ScheduleMessage({
     super.key,
     this.imageHeaders,
@@ -138,7 +137,7 @@ class ScheduleMessage extends StatefulWidget {
     required Conditional conditional,
   })? imageProviderBuilder;
 
-  /// [types.ScheduleMessage].
+  /// [ScheduleMessage].
   final ScheduleMessageType message;
 
   /// Maximum message width.

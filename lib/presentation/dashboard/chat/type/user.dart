@@ -10,9 +10,9 @@ enum Role { admin, agent, moderator, user }
 /// A class that represents user.
 @JsonSerializable()
 @immutable
-abstract class User extends Equatable {
+abstract class ChatUser extends Equatable {
   /// Creates a user.
-  const User._({
+  const ChatUser._({
     this.createdAt,
     this.firstName,
     required this.id,
@@ -24,7 +24,7 @@ abstract class User extends Equatable {
     this.updatedAt,
   });
 
-  const factory User({
+  const factory ChatUser({
     int? createdAt,
     String? firstName,
     required String id,
@@ -37,7 +37,7 @@ abstract class User extends Equatable {
   }) = _User;
 
   /// Creates user from a map (decoded JSON).
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+  factory ChatUser.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
 
   /// Created user timestamp, in ms.
   final int? createdAt;
@@ -80,7 +80,7 @@ abstract class User extends Equatable {
         updatedAt,
       ];
 
-  User copyWith({
+  ChatUser copyWith({
     int? createdAt,
     String? firstName,
     String? id,
@@ -97,7 +97,7 @@ abstract class User extends Equatable {
 }
 
 /// A utility class to enable better copyWith.
-class _User extends User {
+class _User extends ChatUser {
   const _User({
     super.createdAt,
     super.firstName,
@@ -111,7 +111,7 @@ class _User extends User {
   }) : super._();
 
   @override
-  User copyWith({
+  ChatUser copyWith({
     dynamic createdAt = _Unset,
     dynamic firstName = _Unset,
     String? id,

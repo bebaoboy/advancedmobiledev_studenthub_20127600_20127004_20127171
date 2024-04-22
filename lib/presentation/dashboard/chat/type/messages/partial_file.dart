@@ -11,7 +11,7 @@ part 'partial_file.g.dart';
 @immutable
 class PartialFile {
   /// Creates a partial file message with all variables file can have.
-  /// Use [FileMessage] to create a full message.
+  /// Use [AbstractFileMessage] to create a full message.
   /// You can use [FileMessage.fromPartial] constructor to create a full
   /// message from a partial one.
   const PartialFile({
@@ -37,7 +37,7 @@ class PartialFile {
   final String name;
 
   /// Message that is being replied to with the current message.
-  final Message? repliedMessage;
+  final AbstractChatMessage? repliedMessage;
 
   /// Size of the file in bytes.
   final num size;

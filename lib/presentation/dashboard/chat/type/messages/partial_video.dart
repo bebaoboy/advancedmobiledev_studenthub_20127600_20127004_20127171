@@ -11,7 +11,7 @@ part 'partial_video.g.dart';
 @immutable
 class PartialVideo {
   /// Creates a partial video message with all variables video can have.
-  /// Use [VideoMessage] to create a full message.
+  /// Use [AbstractVideoMessage] to create a full message.
   /// You can use [VideoMessage.fromPartial] constructor to create a full
   /// message from a partial one.
   const PartialVideo({
@@ -38,7 +38,7 @@ class PartialVideo {
   final String name;
 
   /// Message that is being replied to with the current message.
-  final Message? repliedMessage;
+  final AbstractChatMessage? repliedMessage;
 
   /// Size of the video in bytes.
   final num size;

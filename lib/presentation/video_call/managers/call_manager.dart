@@ -307,7 +307,7 @@ class CallManager {
       PARAM_CALL_OPPONENTS: currentCall.opponentsIds.join(','),
     };
 
-    params.notificationType = NotificationType.PUSH;
+    params.notificationType = CubeNotificationType.PUSH;
     params.environment = CubeEnvironment.DEVELOPMENT;
     params.usersIds = currentCall.opponentsIds.toList();
 

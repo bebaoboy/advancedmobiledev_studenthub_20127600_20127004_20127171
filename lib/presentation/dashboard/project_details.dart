@@ -7,7 +7,6 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
@@ -387,11 +386,9 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                     ),
                   ]),
                 )),
-            if (userStore.user != null &&
-                userStore.user!.companyProfile != null &&
-                userStore.user!.type == UserType.company &&
+            if (
                 widget.project.companyId ==
-                    userStore.user!.companyProfile!.objectId!)
+                    userStore.companyId)
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(

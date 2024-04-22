@@ -999,9 +999,7 @@ class _ProjectTabState extends State<ProjectTab> {
                     //   width: 20,
                     // ),
                     Text(
-                      (_userStore.user != null &&
-                                  _userStore.user!.companyProfile != null &&
-                                  _userStore.user!.companyProfile!.objectId ==
+                      (_userStore.companyId ==
                                       item
                               ? "(You) "
                               : "") +

@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 
 part 'system_message.g.dart';
 
@@ -10,10 +10,10 @@ part 'system_message.g.dart';
 /// you want.
 @JsonSerializable()
 @immutable
-abstract class SystemMessage extends Message {
+abstract class AbstractSystemMessage extends AbstractChatMessage {
   /// Creates a custom message.
-  const SystemMessage._({
-    super.author = const User(id: 'system'),
+  const AbstractSystemMessage._({
+    super.author = const ChatUser(id: 'system'),
     super.createdAt,
     required super.id,
     super.metadata,
@@ -23,27 +23,27 @@ abstract class SystemMessage extends Message {
     super.showStatus,
     super.status,
     required this.text,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.system);
+  }) : super(type: type ?? AbstractMessageType.system);
 
-  const factory SystemMessage({
-    User author,
+  const factory AbstractSystemMessage({
+    ChatUser author,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
     required String text,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
   }) = _SystemMessage;
 
   /// Creates a custom message from a map (decoded JSON).
-  factory SystemMessage.fromJson(Map<String, dynamic> json) =>
+  factory AbstractSystemMessage.fromJson(Map<String, dynamic> json) =>
       _$SystemMessageFromJson(json);
 
   /// System message content (could be text or translation key).
@@ -66,13 +66,13 @@ abstract class SystemMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     String? id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
@@ -87,7 +87,7 @@ abstract class SystemMessage extends Message {
 }
 
 /// A utility class to enable better copyWith.
-class _SystemMessage extends SystemMessage {
+class _SystemMessage extends AbstractSystemMessage {
   const _SystemMessage({
     super.author,
     super.createdAt,
@@ -104,8 +104,8 @@ class _SystemMessage extends SystemMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     String? id,
     dynamic metadata = _Unset,
@@ -127,7 +127,7 @@ class _SystemMessage extends SystemMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

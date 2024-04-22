@@ -82,7 +82,9 @@ abstract class _UserStore with Store {
   }
 
   // public variable
+  @computed
   User? get user => _user;
+
   List<User> savedUsers = [];
 
   // use cases:-----------------------------------------------------------------
@@ -138,6 +140,20 @@ abstract class _UserStore with Store {
 
   @observable
   User? _user;
+
+  @computed
+  String get currentId => _user == null
+      ? "-1"
+      : (_user!.type == UserType.company && _user!.companyProfile != null)
+          ? (_user!.companyProfile!.objectId ?? "-1")
+          : (_user!.type == UserType.student && _user!.studentProfile != null)
+              ? (_user!.studentProfile!.objectId ?? "-1")
+              : "-1";
+  @computed
+  String? get companyId => _user?.type == UserType.company ? _user?.companyProfile?.objectId : null;
+
+  @computed
+  String? get studentId => _user?.type == UserType.student ? _user?.studentProfile?.objectId : null;
 
   @observable
   ObservableFuture<Response?> loginFuture = emptyLoginResponse;

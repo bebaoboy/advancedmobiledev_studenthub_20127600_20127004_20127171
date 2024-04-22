@@ -2,8 +2,7 @@ import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/input.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart'
     show LinkPreview, regexLink;
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
@@ -12,7 +11,7 @@ import '../../models/util.dart';
 
 /// A class that represents text message widget with optional link preview.
 class TextMessage extends StatelessWidget {
-  /// Creates a text message widget from a [types.TextMessage] class.
+  /// Creates a text message widget from a [TextMessageAbstract] class.
   const TextMessage({
     super.key,
     required this.emojiEnlargementBehavior,
@@ -33,16 +32,15 @@ class TextMessage extends StatelessWidget {
   /// See [Message.hideBackgroundOnEmojiMessages].
   final bool hideBackgroundOnEmojiMessages;
 
-  /// [types.TextMessage].
-  final types.TextMessage message;
+  /// [TextMessageAbstract].
+  final TextMessageAbstract message;
 
   /// This is to allow custom user name builder
   /// By using this we can fetch newest user info based on id.
-  final Widget Function(types.User)? nameBuilder;
+  final Widget Function(ChatUser)? nameBuilder;
 
   /// See [LinkPreview.onPreviewDataFetched].
-  final void Function(types.TextMessage, types.PreviewData)?
-      onPreviewDataFetched;
+  final void Function(TextMessageAbstract, PreviewData)? onPreviewDataFetched;
 
   /// Customisation options for the [TextMessage].
   final TextMessageOptions options;
@@ -59,7 +57,7 @@ class TextMessage extends StatelessWidget {
   final Function onTapCallback;
 
   Widget _linkPreview(
-    types.User user,
+    ChatUser user,
     double width,
     BuildContext context,
   ) {
@@ -90,14 +88,14 @@ class TextMessage extends StatelessWidget {
     );
   }
 
-  void _onPreviewDataFetched(types.PreviewData previewData) {
+  void _onPreviewDataFetched(PreviewData previewData) {
     if (message.previewData == null) {
       onPreviewDataFetched?.call(message, previewData);
     }
   }
 
   Widget _textWidgetBuilder(
-    types.User user,
+    ChatUser user,
     BuildContext context,
     bool enlargeEmojis,
   ) {
@@ -296,7 +294,7 @@ class UserName extends StatelessWidget {
   });
 
   /// Author to show name from.
-  final types.User author;
+  final ChatUser author;
 
   @override
   Widget build(BuildContext context) {

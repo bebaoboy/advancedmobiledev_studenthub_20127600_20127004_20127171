@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 import 'partial_video.dart';
 
 part 'video_message.g.dart';
@@ -10,9 +10,9 @@ part 'video_message.g.dart';
 /// A class that represents video message.
 @JsonSerializable()
 @immutable
-abstract class VideoMessage extends Message {
+abstract class AbstractVideoMessage extends AbstractChatMessage {
   /// Creates a video message.
-  const VideoMessage._({
+  const AbstractVideoMessage._({
     required super.author,
     super.createdAt,
     this.height,
@@ -25,38 +25,38 @@ abstract class VideoMessage extends Message {
     super.showStatus,
     required this.size,
     super.status,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
     required this.uri,
     this.width,
-  }) : super(type: type ?? MessageType.video);
+  }) : super(type: type ?? AbstractMessageType.video);
 
-  const factory VideoMessage({
-    required User author,
+  const factory AbstractVideoMessage({
+    required ChatUser author,
     int? createdAt,
     double? height,
     required String id,
     Map<String, dynamic>? metadata,
     required String name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     required num size,
     Status? status,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
     required String uri,
     double? width,
   }) = _VideoMessage;
 
   /// Creates a video message from a map (decoded JSON).
-  factory VideoMessage.fromJson(Map<String, dynamic> json) =>
+  factory AbstractVideoMessage.fromJson(Map<String, dynamic> json) =>
       _$VideoMessageFromJson(json);
 
   /// Creates a full video message from a partial one.
-  factory VideoMessage.fromPartial({
-    required User author,
+  factory AbstractVideoMessage.fromPartial({
+    required ChatUser author,
     int? createdAt,
     required String id,
     required PartialVideo partialVideo,
@@ -79,7 +79,7 @@ abstract class VideoMessage extends Message {
         showStatus: showStatus,
         size: partialVideo.size,
         status: status,
-        type: MessageType.video,
+        type: AbstractMessageType.video,
         updatedAt: updatedAt,
         uri: partialVideo.uri,
         width: partialVideo.width,
@@ -121,15 +121,15 @@ abstract class VideoMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     double? height,
     String? id,
     Map<String, dynamic>? metadata,
     String? name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     num? size,
@@ -145,7 +145,7 @@ abstract class VideoMessage extends Message {
 }
 
 /// A utility class to enable better copyWith.
-class _VideoMessage extends VideoMessage {
+class _VideoMessage extends AbstractVideoMessage {
   const _VideoMessage({
     required super.author,
     super.createdAt,
@@ -166,8 +166,8 @@ class _VideoMessage extends VideoMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     dynamic height = _Unset,
     String? id,
@@ -195,7 +195,7 @@ class _VideoMessage extends VideoMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

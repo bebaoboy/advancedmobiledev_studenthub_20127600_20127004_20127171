@@ -1,7 +1,6 @@
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 
 import '../../conditional/conditional.dart';
 import '../../models/util.dart';
@@ -11,7 +10,7 @@ import '../../models/util.dart';
 /// if the image is narrow, renders image in form of a file if aspect
 /// ratio is very small or very big.
 class ImageMessage extends StatefulWidget {
-  /// Creates an image message widget based on [types.ImageMessage].
+  /// Creates an image message widget based on [AbstractImageMessage].
   const ImageMessage({
     super.key,
     this.imageHeaders,
@@ -30,8 +29,8 @@ class ImageMessage extends StatefulWidget {
     required Conditional conditional,
   })? imageProviderBuilder;
 
-  /// [types.ImageMessage].
-  final types.ImageMessage message;
+  /// [AbstractImageMessage].
+  final AbstractImageMessage message;
 
   /// Maximum message width.
   final int messageWidth;

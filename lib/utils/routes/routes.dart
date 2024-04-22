@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
@@ -138,7 +139,7 @@ getRoute(name, context, {arguments}) {
     if (name == Routes.message) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
-        return MessageScreen(title: arguments as String);
+        return MessageScreen(chatUser: arguments as ChatUser);
       }
     }
     if (name == Routes.projectDetailsStudent) {

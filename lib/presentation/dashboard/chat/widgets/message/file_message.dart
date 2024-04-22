@@ -1,20 +1,19 @@
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 
 import '../../models/util.dart';
 
 /// A class that represents file message widget.
 class FileMessage extends StatelessWidget {
-  /// Creates a file message widget based on a [types.FileMessage].
+  /// Creates a file message widget based on a [AbstractFileMessage].
   const FileMessage({
     super.key,
     required this.message,
   });
 
-  /// [types.FileMessage].
-  final types.FileMessage message;
+  /// [AbstractFileMessage].
+  final AbstractFileMessage message;
 
   @override
   Widget build(BuildContext context) {

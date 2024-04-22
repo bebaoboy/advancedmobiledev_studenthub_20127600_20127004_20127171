@@ -235,12 +235,7 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                                       loading = true;
                                     });
 
-                                    if (_userStore.user != null &&
-                                        _userStore.user!.studentProfile !=
-                                            null &&
-                                        _userStore.user!.studentProfile!
-                                                .objectId !=
-                                            null) {
+                                    if (_userStore.studentId != null) {
                                       final ProfileStudentStore infoStore =
                                           getIt<ProfileStudentStore>();
 
@@ -341,7 +336,6 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
         _userStore.success = true;
-        // TODO: check welcome
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(
               routeName: Routes.home,

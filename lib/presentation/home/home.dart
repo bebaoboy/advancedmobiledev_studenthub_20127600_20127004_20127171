@@ -43,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 (value) {},
               );
               
-          // TODO: check welcome
           Future.delayed(const Duration(seconds: 1), () {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute2(routeName: Routes.dashboard),
@@ -128,7 +127,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-                                  // TODO: check welcome
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute2(
                                         routeName: Routes.dashboard),
@@ -194,7 +192,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-                                  // TODO: check welcome
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute2(
                                         routeName: Routes.dashboard),

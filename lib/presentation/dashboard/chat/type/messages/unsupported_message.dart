@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 
 part 'unsupported_message.g.dart';
 
@@ -12,9 +12,9 @@ part 'unsupported_message.g.dart';
 /// to unsupported.
 @JsonSerializable()
 @immutable
-abstract class UnsupportedMessage extends Message {
+abstract class AbstractUnsupportedMessage extends AbstractChatMessage {
   /// Creates an unsupported message.
-  const UnsupportedMessage._({
+  const AbstractUnsupportedMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -24,26 +24,26 @@ abstract class UnsupportedMessage extends Message {
     super.roomId,
     super.showStatus,
     super.status,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.unsupported);
+  }) : super(type: type ?? AbstractMessageType.unsupported);
 
-  const factory UnsupportedMessage({
-    required User author,
+  const factory AbstractUnsupportedMessage({
+    required ChatUser author,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
   }) = _UnsupportedMessage;
 
   /// Creates an unsupported message from a map (decoded JSON).
-  factory UnsupportedMessage.fromJson(Map<String, dynamic> json) =>
+  factory AbstractUnsupportedMessage.fromJson(Map<String, dynamic> json) =>
       _$UnsupportedMessageFromJson(json);
 
   /// Equatable props.
@@ -62,13 +62,13 @@ abstract class UnsupportedMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     String? id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
@@ -82,7 +82,7 @@ abstract class UnsupportedMessage extends Message {
 }
 
 /// A utility class to enable better copyWith.
-class _UnsupportedMessage extends UnsupportedMessage {
+class _UnsupportedMessage extends AbstractUnsupportedMessage {
   const _UnsupportedMessage({
     required super.author,
     super.createdAt,
@@ -98,8 +98,8 @@ class _UnsupportedMessage extends UnsupportedMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     String? id,
     dynamic metadata = _Unset,
@@ -120,7 +120,7 @@ class _UnsupportedMessage extends UnsupportedMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

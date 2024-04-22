@@ -12,7 +12,7 @@ part 'partial_text.g.dart';
 @immutable
 class PartialText {
   /// Creates a partial text message with all variables text can have.
-  /// Use [TextMessage] to create a full message.
+  /// Use [TextMessageAbstract] to create a full message.
   /// You can use [TextMessage.fromPartial] constructor to create a full
   /// message from a partial one.
   const PartialText({
@@ -33,7 +33,7 @@ class PartialText {
   final PreviewData? previewData;
 
   /// Message that is being replied to with the current message.
-  final Message? repliedMessage;
+  final AbstractChatMessage? repliedMessage;
 
   /// User's message.
   final String text;

@@ -3,14 +3,13 @@
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 
 /// this widget is used to render voice note container
 /// with ist full functionality
 
 class AudioMessageWidget extends StatefulWidget {
-  types.AudioMessage message;
+  AbstractAudioMessage message;
   final Color senderColor;
   final Color inActiveAudioSliderColor;
   final Color activeAudioSliderColor;

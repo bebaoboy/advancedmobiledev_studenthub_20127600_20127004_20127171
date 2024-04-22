@@ -1,8 +1,7 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import '../../models/util.dart';
 
 class TypingIndicator extends StatefulWidget {
@@ -224,7 +223,7 @@ class TypingWidget extends StatelessWidget {
   final TypingIndicatorMode mode;
 
   /// Handler for multi user typing text.
-  String _multiUserTextBuilder(List<types.User> author) {
+  String _multiUserTextBuilder(List<ChatUser> author) {
     if (author.isEmpty) {
       return '';
     } else if (author.length == 1) {
@@ -237,7 +236,7 @@ class TypingWidget extends StatelessWidget {
   }
 
   /// Used to specify width of stacking avatars based on number of authors.
-  double _getStackingWidth(List<types.User> author, double indicatorWidth) {
+  double _getStackingWidth(List<ChatUser> author, double indicatorWidth) {
     if (author.length == 1) {
       return indicatorWidth * 0.06;
     } else if (author.length == 2) {
@@ -310,7 +309,7 @@ class AvatarHandler extends StatelessWidget {
   });
 
   final BuildContext context;
-  final List<types.User> author;
+  final List<ChatUser> author;
 
   @override
   Widget build(BuildContext context) {
@@ -372,7 +371,7 @@ class TypingAvatar extends StatelessWidget {
   });
 
   final BuildContext context;
-  final types.User author;
+  final ChatUser author;
 
   @override
   Widget build(BuildContext context) {
@@ -447,8 +446,8 @@ class TypingIndicatorOptions {
   final TypingIndicatorMode typingMode;
 
   /// Author(s) for [TypingIndicator].
-  /// By default its empty list which hides the indicator, see [types.User].
-  final List<types.User> typingUsers;
+  /// By default its empty list which hides the indicator, see [ChatUser].
+  final List<ChatUser> typingUsers;
 
   /// Allows to set custom [TypingWidget].
   final Widget? customTypingWidget;
@@ -470,7 +469,7 @@ class TypingIndicatorOptions {
 
   final Widget Function(
     BuildContext context,
-    List<types.User> author,
+    List<ChatUser> author,
     TextStyle? style,
   )? multiUserTextBuilder;
 }

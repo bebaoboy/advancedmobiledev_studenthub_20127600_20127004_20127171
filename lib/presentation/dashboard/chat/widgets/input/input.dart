@@ -4,8 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
 import '../../models/util.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart'
@@ -39,9 +38,9 @@ class Input extends StatefulWidget {
   final VoidCallback? onAttachmentPressed;
   final VoidCallback? onFirstIconPressed;
 
-  /// Will be called on [SendButton] tap. Has [types.PartialText] which can
-  /// be transformed to [types.TextMessage] and added to the messages list.
-  final void Function(types.PartialText) onSendPressed;
+  /// Will be called on [SendButton] tap. Has [PartialText] which can
+  /// be transformed to [TextMessageAbstract] and added to the messages list.
+  final void Function(PartialText) onSendPressed;
 
   /// Customisation options for the [Input].
   final InputOptions options;
@@ -87,21 +86,24 @@ class _InputState extends State<Input> {
         widget.options.textEditingController ?? InputTextFieldController();
     widget.scrollController.addListener(
       () {
-        final buttonPadding = Chat.theme.inputPadding.copyWith(left: 16, right: 16);
-        if (widget.scrollController.position.userScrollDirection == ScrollDirection.reverse) {
-      if (visibility != 0) {
-        setState(() {
-          visibility = 0;
-        });
-      }
-    }
-    if (widget.scrollController.position.userScrollDirection == ScrollDirection.forward) {
-      if (visibility == 0) {
-        setState(() {
-          visibility = buttonPadding.bottom + buttonPadding.top + 24;
-        });
-      }
-    }
+        final buttonPadding =
+            Chat.theme.inputPadding.copyWith(left: 16, right: 16);
+        if (widget.scrollController.position.userScrollDirection ==
+            ScrollDirection.reverse) {
+          if (visibility != 0) {
+            setState(() {
+              visibility = 0;
+            });
+          }
+        }
+        if (widget.scrollController.position.userScrollDirection ==
+            ScrollDirection.forward) {
+          if (visibility == 0) {
+            setState(() {
+              visibility = buttonPadding.bottom + buttonPadding.top + 24;
+            });
+          }
+        }
       },
     );
     _handleSendButtonVisibilityModeChange();
@@ -124,7 +126,7 @@ class _InputState extends State<Input> {
   void _handleSendPressed() {
     final trimmedText = _textController.text.trim();
     if (trimmedText != '') {
-      final partialText = types.PartialText(text: trimmedText);
+      final partialText = PartialText(text: trimmedText);
       widget.onSendPressed(partialText);
 
       if (widget.options.inputClearMode == InputClearMode.always) {

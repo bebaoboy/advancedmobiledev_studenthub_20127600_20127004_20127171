@@ -29,9 +29,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         if (userStore.user != null) {
           // var projectStore = getIt<ProjectStore>();
           // await projectStore.getAllProject();
-          if (userStore.user!.type == UserType.company &&
-              userStore.user!.companyProfile != null &&
-              userStore.user!.companyProfile!.objectId != null) {
+          if (userStore.companyId != null) {
             // await projectStore
             //     .getProjectByCompany(userStore.user!.companyProfile!.objectId!);
           }

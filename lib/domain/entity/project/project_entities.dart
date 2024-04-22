@@ -158,7 +158,6 @@ class Project extends ProjectBase {
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
         countHired: json["countHired"],
-        // TODO: typeFlag change 0, 1, 2(Archive)
         enabled: Status.values[json["typeFlag"] ?? 0],
         isFavorite: fav);
   }
@@ -243,8 +242,6 @@ class StudentProject extends Project {
       numberOfStudents: json['numberOfStudents'] ?? 0,
       id: (json["id"] ?? "").toString(),
       projectId: (json["projectId"] ?? "").toString(),
-      // TODO: typeFlag change 0, 1, 2(Archive)
-
       enabled: Status.values[json["typeFlag"] ?? 0],
     );
   }

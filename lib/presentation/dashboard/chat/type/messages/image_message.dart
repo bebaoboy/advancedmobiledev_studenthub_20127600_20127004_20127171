@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 import 'partial_image.dart';
 
 part 'image_message.g.dart';
@@ -10,9 +10,9 @@ part 'image_message.g.dart';
 /// A class that represents image message.
 @JsonSerializable()
 @immutable
-abstract class ImageMessage extends Message {
+abstract class AbstractImageMessage extends AbstractChatMessage {
   /// Creates an image message.
-  const ImageMessage._({
+  const AbstractImageMessage._({
     required super.author,
     super.createdAt,
     this.height,
@@ -25,38 +25,38 @@ abstract class ImageMessage extends Message {
     super.showStatus,
     required this.size,
     super.status,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
     required this.uri,
     this.width,
-  }) : super(type: type ?? MessageType.image);
+  }) : super(type: type ?? AbstractMessageType.image);
 
-  const factory ImageMessage({
-    required User author,
+  const factory AbstractImageMessage({
+    required ChatUser author,
     int? createdAt,
     double? height,
     required String id,
     Map<String, dynamic>? metadata,
     required String name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     required num size,
     Status? status,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
     required String uri,
     double? width,
   }) = _ImageMessage;
 
   /// Creates an image message from a map (decoded JSON).
-  factory ImageMessage.fromJson(Map<String, dynamic> json) =>
+  factory AbstractImageMessage.fromJson(Map<String, dynamic> json) =>
       _$ImageMessageFromJson(json);
 
   /// Creates a full image message from a partial one.
-  factory ImageMessage.fromPartial({
-    required User author,
+  factory AbstractImageMessage.fromPartial({
+    required ChatUser author,
     int? createdAt,
     required String id,
     required PartialImage partialImage,
@@ -79,7 +79,7 @@ abstract class ImageMessage extends Message {
         showStatus: showStatus,
         size: partialImage.size,
         status: status,
-        type: MessageType.image,
+        type: AbstractMessageType.image,
         updatedAt: updatedAt,
         uri: partialImage.uri,
         width: partialImage.width,
@@ -121,15 +121,15 @@ abstract class ImageMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     double? height,
     String? id,
     Map<String, dynamic>? metadata,
     String? name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     num? size,
@@ -145,7 +145,7 @@ abstract class ImageMessage extends Message {
 }
 
 /// A utility class to enable better copyWith.
-class _ImageMessage extends ImageMessage {
+class _ImageMessage extends AbstractImageMessage {
   const _ImageMessage({
     required super.author,
     super.createdAt,
@@ -166,8 +166,8 @@ class _ImageMessage extends ImageMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     dynamic height = _Unset,
     String? id,
@@ -195,7 +195,7 @@ class _ImageMessage extends ImageMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,
