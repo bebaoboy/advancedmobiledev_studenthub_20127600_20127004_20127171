@@ -20,7 +20,6 @@ import 'package:boilerplate/presentation/setting/settings_drawer.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
-import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -422,20 +421,23 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container();
   }
 
-  _loginCube(context, user) async {
+  _loginCube(context, CubeUser user, CubeSession ss) async {
+    // CubeSessionManager.instance.activeSession =
+    //     CubeSession.fromJson({"user": user.toJson(), "token":"${user.avatar}"});
+    // CubeSessionManager.instance.activeSession!.user = user;
     await CubeChatConnection.instance.login(user).then((cubeUser) async {
-      SharedPrefs.saveNewUser(cubeUser);
+      SharedPrefs.saveNewUser(cubeUser, ss: ss);
       log(cubeUser.toString(), "BEBAOBOY");
-      if (CubeChatConnection.instance.isAuthenticated() &&
-          CubeChatConnection.instance.currentUser != null) {
-        // log(
-        //     (CubeSessionManager.instance.activeSession!.user == null)
-        //         .toString(),
-        //     "BEBAOBOY");
-      }
-      initForegroundService();
-
-      CallManager.instance.init(context);
+      // if (CubeChatConnection.instance.isAuthenticated() &&
+      //     CubeChatConnection.instance.currentUser != null) {
+      //   // log(
+      //   //     (CubeSessionManager.instance.activeSession!.user == null)
+      //   //         .toString(),
+      //   //     "BEBAOBOY");
+      // }
+      // initForegroundService();
+      CallManager.instance
+          .init(NavigationService.navigatorKey.currentContext ?? context);
 
       await PushNotificationsManager.instance.init();
 
@@ -450,84 +452,194 @@ class _LoginScreenState extends State<LoginScreen> {
 
   initCube(context) async {
     final UserStore userStore = getIt<UserStore>();
-    // CubeUser user;
+    CubeUser user;
 
-    if (userStore.user != null) {
-      try {
-        if (CubeChatConnection.instance.currentUser != null &&
-            !userStore.user!.email.contains(
-                CubeChatConnection.instance.currentUser!.login ?? "????")) {
-          print("change user --- LOGING OUT cb");
-          await SharedPreferences.getInstance().then((preference) async {
-            PushNotificationsManager.instance.unsubscribe();
-            CallManager.instance.destroy();
-            CubeChatConnection.instance.destroy();
-
-            SharedPrefs.deleteUserData();
-            await signOut();
-          });
-        }
-        // var user = userStore.user!.email == "user1@gmail.com"
-        //     ? utils.users[0]
-        //     : userStore.user!.email == "user2@gmail.com"
-        //         ? utils.users[1]
-        //         : utils.users[2];
-        CubeUser user;
-
-        if (userStore.user != null && userStore.user!.email.isNotEmpty) {
-          if (userStore.savedUsers.firstWhereOrNull(
-                (element) => element.email == userStore.user!.email,
-              ) ==
-              null) {
-            userStore.savedUsers.add(userStore.user!);
-          }
-          Future.delayed(const Duration(seconds: 0), () async {
-            try {
-              user = CubeUser(
-                login: userStore.user!.email,
-                email: userStore.user!.email,
-                fullName: userStore.user!.email.split("@").first.toUpperCase(),
-                password: DEFAULT_PASS,
-              );
-              if (CubeSessionManager.instance.isActiveSessionValid() &&
-                  CubeSessionManager.instance.activeSession!.user != null) {
-                if (CubeChatConnection.instance.isAuthenticated()) {
-                } else {
-                  _loginCube(context, user);
-                }
-              } else {
-                // create session
-                var value;
-                try {
-                  value = await createSession(user);
-                } catch (e) {
-                  log(e.toString(), "BEBAOBOY");
-                  user = await signUp(user);
-                  user.password ??= DEFAULT_PASS;
-
-                  value = await createSession(user);
-                }
-                var cb = await getUserByLogin(user.login!);
-                if (cb != null) user = cb;
-                user.password ??= DEFAULT_PASS;
-                print(user);
-                utils.users.add(user);
-                _loginCube(context, user);
-              }
-            } catch (e) {
-              print("cannot init cube");
-            }
-          });
-        }
-        // user = utils.users[2];
-        else {}
-      } catch (e) {
-        ///
+    if (userStore.user != null && userStore.user!.email.isNotEmpty) {
+      if (userStore.savedUsers.firstWhereOrNull(
+            (element) => element.email == userStore.user!.email,
+          ) ==
+          null) {
+        userStore.savedUsers.add(userStore.user!);
       }
-    } else {
-      // user = utils.users[2];
+      Future.delayed(const Duration(seconds: 0), () async {
+        try {
+          user = CubeUser(
+            login: userStore.user!.email,
+            email: userStore.user!.email,
+            fullName: userStore.user!.email.split("@").first.toUpperCase(),
+            password: DEFAULT_PASS,
+          );
+
+          var k = await SharedPrefs.getUser();
+          if (k != null) {
+            user.avatar = k.avatar;
+            user.id = k.id;
+            CubeSessionManager.instance.activeSession = CubeSession.fromJson({
+              "user": user.toJson(),
+              "token": "${user.avatar}",
+              "token_expiration_date": DateTime(2099).toString()
+            });
+            CubeSessionManager.instance.activeSession!.user = user;
+            utils.users.add(user);
+          } else {
+            CubeSession value;
+
+            try {
+              value = await createSession(user);
+            } catch (e) {
+              log(e.toString(), "BEBAOBOY");
+              user = await signUp(user);
+              user.password ??= DEFAULT_PASS;
+
+              value = await createSession(user);
+            }
+            var cb = await getUserByLogin(user.login!);
+            if (cb != null) user = cb;
+            user.password ??= DEFAULT_PASS;
+            utils.users.add(user);
+          }
+
+          if (CubeSessionManager.instance.isActiveSessionValid() &&
+              CubeSessionManager.instance.activeSession!.user != null) {
+            if (CubeChatConnection.instance.isAuthenticated()) {
+            } else {
+              _loginCube(
+                  context, user, CubeSessionManager.instance.activeSession!);
+            }
+          } else {
+            // create session
+            // try {
+            //   value = await createSession(user);
+            // } catch (e) {
+            //   log(e.toString(), "BEBAOBOY");
+            //   user = await signUp(user);
+            //   user.password ??= DEFAULT_PASS;
+
+            //   value = await createSession(user);
+            // }
+            // var cb = await getUserByLogin(user.login!);
+            // if (cb != null) user = cb;
+            // user.password ??= DEFAULT_PASS;
+            print(user);
+            utils.users.add(user);
+            _loginCube(
+                context, user, CubeSessionManager.instance.activeSession!);
+          }
+        } catch (e) {
+          print("cannot init cube");
+        }
+      });
     }
+    // user = utils.users[2];
+    else {}
   }
+
+  // _loginCube(context, user) async {
+  //   await CubeChatConnection.instance.login(user).then((cubeUser) async {
+  //     SharedPrefs.saveNewUser(cubeUser);
+  //     log(cubeUser.toString(), "BEBAOBOY");
+  //     if (CubeChatConnection.instance.isAuthenticated() &&
+  //         CubeChatConnection.instance.currentUser != null) {
+  //       // log(
+  //       //     (CubeSessionManager.instance.activeSession!.user == null)
+  //       //         .toString(),
+  //       //     "BEBAOBOY");
+  //     }
+  //     initForegroundService();
+
+  //     CallManager.instance.init(context);
+
+  //     await PushNotificationsManager.instance.init();
+
+  //     WorkMangerHelper.registerProfileFetch();
+  //   }).catchError((exception) {
+  //     //_processLoginError(exception);
+
+  //     log(exception.toString(), "BEBAOBOY");
+  //     return;
+  //   });
+  // }
+
+  // initCube(context) async {
+  //   final UserStore userStore = getIt<UserStore>();
+  //   // CubeUser user;
+
+  //   if (userStore.user != null) {
+  //     try {
+  //       if (CubeChatConnection.instance.currentUser != null &&
+  //           !userStore.user!.email.contains(
+  //               CubeChatConnection.instance.currentUser!.login ?? "????")) {
+  //         print("change user --- LOGING OUT cb");
+  //         await SharedPreferences.getInstance().then((preference) async {
+  //           PushNotificationsManager.instance.unsubscribe();
+  //           CallManager.instance.destroy();
+  //           CubeChatConnection.instance.destroy();
+
+  //           SharedPrefs.deleteUserData();
+  //           await signOut();
+  //         });
+  //       }
+  //       // var user = userStore.user!.email == "user1@gmail.com"
+  //       //     ? utils.users[0]
+  //       //     : userStore.user!.email == "user2@gmail.com"
+  //       //         ? utils.users[1]
+  //       //         : utils.users[2];
+  //       CubeUser user;
+
+  //       if (userStore.user != null && userStore.user!.email.isNotEmpty) {
+  //         if (userStore.savedUsers.firstWhereOrNull(
+  //               (element) => element.email == userStore.user!.email,
+  //             ) ==
+  //             null) {
+  //           userStore.savedUsers.add(userStore.user!);
+  //         }
+  //         Future.delayed(const Duration(seconds: 0), () async {
+  //           try {
+  //             user = CubeUser(
+  //               login: userStore.user!.email,
+  //               email: userStore.user!.email,
+  //               fullName: userStore.user!.email.split("@").first.toUpperCase(),
+  //               password: DEFAULT_PASS,
+  //             );
+  //             if (CubeSessionManager.instance.isActiveSessionValid() &&
+  //                 CubeSessionManager.instance.activeSession!.user != null) {
+  //               if (CubeChatConnection.instance.isAuthenticated()) {
+  //               } else {
+  //                 _loginCube(context, user);
+  //               }
+  //             } else {
+  //               // create session
+  //               var value;
+  //               try {
+  //                 value = await createSession(user);
+  //               } catch (e) {
+  //                 log(e.toString(), "BEBAOBOY");
+  //                 user = await signUp(user);
+  //                 user.password ??= DEFAULT_PASS;
+
+  //                 value = await createSession(user);
+  //               }
+  //               var cb = await getUserByLogin(user.login!);
+  //               if (cb != null) user = cb;
+  //               user.password ??= DEFAULT_PASS;
+  //               print(user);
+  //               utils.users.add(user);
+  //               _loginCube(context, user);
+  //             }
+  //           } catch (e) {
+  //             print("cannot init cube");
+  //           }
+  //         });
+  //       }
+  //       // user = utils.users[2];
+  //       else {}
+  //     } catch (e) {
+  //       ///
+  //     }
+  //   } else {
+  //     // user = utils.users[2];
+  //   }
+  // }
 
   bool error = false;
   // General Methods:-----------------------------------------------------------

@@ -99,20 +99,20 @@ class PushNotificationsManager {
       subscribe(newToken);
     });
 
-    // ConnectycubeFlutterCallKit.onTokenRefreshed = (token) {
-    //   log('[onTokenRefresh] VoIP token: $token', TAG);
-    //   subscribe(token);
-    // };
+    ConnectycubeFlutterCallKit.onTokenRefreshed = (token) {
+      log('[onTokenRefresh] VoIP token: $token', TAG);
+      subscribe(token);
+    };
 
-    // ConnectycubeFlutterCallKit.getToken().then((token) {
-    //   log('[getToken] VoIP token: $token', TAG);
-    //   if (token != null) {
-    //     subscribe(token);
-    //   }
-    // });
+    ConnectycubeFlutterCallKit.getToken().then((token) {
+      log('[getToken] VoIP token: $token', TAG);
+      if (token != null) {
+        subscribe(token);
+      }
+    });
 
-    // ConnectycubeFlutterCallKit.onCallRejectedWhenTerminated =
-    //     onCallRejectedWhenTerminated;
+    ConnectycubeFlutterCallKit.onCallRejectedWhenTerminated =
+        onCallRejectedWhenTerminated;
   }
 
   subscribe(String token) async {
