@@ -52,7 +52,7 @@ abstract class AbstractFileMessage extends AbstractChatMessage {
 
   /// Creates a file message from a map (decoded JSON).
   factory AbstractFileMessage.fromJson(Map<String, dynamic> json) =>
-      _$FileMessageFromJson(json);
+      _$AbstractFileMessageFromJson(json);
 
   /// Creates a full file message from a partial one.
   factory AbstractFileMessage.fromPartial({
@@ -142,7 +142,7 @@ abstract class AbstractFileMessage extends AbstractChatMessage {
 
   /// Converts a file message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$FileMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractFileMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.

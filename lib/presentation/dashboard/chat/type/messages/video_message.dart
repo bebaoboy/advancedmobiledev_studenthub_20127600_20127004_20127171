@@ -52,7 +52,7 @@ abstract class AbstractVideoMessage extends AbstractChatMessage {
 
   /// Creates a video message from a map (decoded JSON).
   factory AbstractVideoMessage.fromJson(Map<String, dynamic> json) =>
-      _$VideoMessageFromJson(json);
+      _$AbstractVideoMessageFromJson(json);
 
   /// Creates a full video message from a partial one.
   factory AbstractVideoMessage.fromPartial({
@@ -141,7 +141,7 @@ abstract class AbstractVideoMessage extends AbstractChatMessage {
 
   /// Converts an video message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$VideoMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractVideoMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.

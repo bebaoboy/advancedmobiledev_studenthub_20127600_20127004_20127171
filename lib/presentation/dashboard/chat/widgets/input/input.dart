@@ -39,7 +39,7 @@ class Input extends StatefulWidget {
   final VoidCallback? onFirstIconPressed;
 
   /// Will be called on [SendButton] tap. Has [PartialText] which can
-  /// be transformed to [TextMessageAbstract] and added to the messages list.
+  /// be transformed to [AbstractTextMessage] and added to the messages list.
   final void Function(PartialText) onSendPressed;
 
   /// Customisation options for the [Input].

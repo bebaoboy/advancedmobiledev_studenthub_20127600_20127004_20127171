@@ -11,9 +11,9 @@ part 'text_message.g.dart';
 /// A class that represents text message.
 @JsonSerializable()
 @immutable
-abstract class TextMessageAbstract extends AbstractChatMessage {
+abstract class AbstractTextMessage extends AbstractChatMessage {
   /// Creates a text message.
-  const TextMessageAbstract._({
+  const AbstractTextMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -29,7 +29,7 @@ abstract class TextMessageAbstract extends AbstractChatMessage {
     super.updatedAt,
   }) : super(type: type ?? AbstractMessageType.text);
 
-  const factory TextMessageAbstract({
+  const factory AbstractTextMessage({
     required ChatUser author,
     int? createdAt,
     required String id,
@@ -46,11 +46,11 @@ abstract class TextMessageAbstract extends AbstractChatMessage {
   }) = _TextMessage;
 
   /// Creates a text message from a map (decoded JSON).
-  factory TextMessageAbstract.fromJson(Map<String, dynamic> json) =>
-      _$TextMessageFromJson(json);
+  factory AbstractTextMessage.fromJson(Map<String, dynamic> json) =>
+      _$AbstractTextMessageFromJson(json);
 
   /// Creates a full text message from a partial one.
-  factory TextMessageAbstract.fromPartial({
+  factory AbstractTextMessage.fromPartial({
     required ChatUser author,
     int? createdAt,
     required String id,
@@ -118,11 +118,11 @@ abstract class TextMessageAbstract extends AbstractChatMessage {
 
   /// Converts a text message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$TextMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractTextMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _TextMessage extends TextMessageAbstract {
+class _TextMessage extends AbstractTextMessage {
   const _TextMessage({
     required super.author,
     super.createdAt,

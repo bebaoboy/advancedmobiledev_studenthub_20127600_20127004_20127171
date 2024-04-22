@@ -44,7 +44,7 @@ abstract class AbstractUnsupportedMessage extends AbstractChatMessage {
 
   /// Creates an unsupported message from a map (decoded JSON).
   factory AbstractUnsupportedMessage.fromJson(Map<String, dynamic> json) =>
-      _$UnsupportedMessageFromJson(json);
+      _$AbstractUnsupportedMessageFromJson(json);
 
   /// Equatable props.
   @override
@@ -78,7 +78,7 @@ abstract class AbstractUnsupportedMessage extends AbstractChatMessage {
   /// Converts an unsupported message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$UnsupportedMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractUnsupportedMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.

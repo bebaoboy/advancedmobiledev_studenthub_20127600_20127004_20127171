@@ -12,7 +12,7 @@ part 'partial_text.g.dart';
 @immutable
 class PartialText {
   /// Creates a partial text message with all variables text can have.
-  /// Use [TextMessageAbstract] to create a full message.
+  /// Use [AbstractTextMessage] to create a full message.
   /// You can use [TextMessage.fromPartial] constructor to create a full
   /// message from a partial one.
   const PartialText({

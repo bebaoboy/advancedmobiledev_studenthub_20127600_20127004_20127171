@@ -268,7 +268,7 @@ class Chat extends StatefulWidget {
       onMessageVisibilityChanged;
 
   /// See [Message.onPreviewDataFetched].
-  final void Function(TextMessageAbstract, PreviewData)? onPreviewDataFetched;
+  final void Function(AbstractTextMessage, PreviewData)? onPreviewDataFetched;
 
   /// See [Input.onSendPressed].
   final void Function(PartialText) onSendPressed;
@@ -295,7 +295,7 @@ class Chat extends StatefulWidget {
 
   /// See [Message.textMessageBuilder].
   final Widget Function(
-    TextMessageAbstract, {
+    AbstractTextMessage, {
     required int messageWidth,
     required bool showName,
   })? textMessageBuilder;
@@ -568,7 +568,7 @@ class ChatState extends State<Chat> {
   }
 
   void _onPreviewDataFetched(
-    TextMessageAbstract message,
+    AbstractTextMessage message,
     PreviewData previewData,
   ) {
     widget.onPreviewDataFetched?.call(message, previewData);

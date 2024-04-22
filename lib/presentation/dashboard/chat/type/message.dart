@@ -66,7 +66,7 @@ abstract class AbstractChatMessage extends Equatable {
       case AbstractMessageType.system:
         return AbstractSystemMessage.fromJson(json);
       case AbstractMessageType.text:
-        return TextMessageAbstract.fromJson(json);
+        return AbstractTextMessage.fromJson(json);
       case AbstractMessageType.unsupported:
         return AbstractUnsupportedMessage.fromJson(json);
       case AbstractMessageType.video:

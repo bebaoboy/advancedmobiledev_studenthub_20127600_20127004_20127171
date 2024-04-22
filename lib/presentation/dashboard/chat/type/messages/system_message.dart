@@ -44,7 +44,7 @@ abstract class AbstractSystemMessage extends AbstractChatMessage {
 
   /// Creates a custom message from a map (decoded JSON).
   factory AbstractSystemMessage.fromJson(Map<String, dynamic> json) =>
-      _$SystemMessageFromJson(json);
+      _$AbstractSystemMessageFromJson(json);
 
   /// System message content (could be text or translation key).
   final String text;
@@ -83,7 +83,7 @@ abstract class AbstractSystemMessage extends AbstractChatMessage {
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$SystemMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractSystemMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.

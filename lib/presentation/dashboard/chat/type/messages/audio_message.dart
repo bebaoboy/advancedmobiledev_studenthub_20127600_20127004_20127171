@@ -54,7 +54,7 @@ abstract class AbstractAudioMessage extends AbstractChatMessage {
 
   /// Creates an audio message from a map (decoded JSON).
   factory AbstractAudioMessage.fromJson(Map<String, dynamic> json) =>
-      _$AudioMessageFromJson(json);
+      _$AbstractAudioMessageFromJson(json);
 
   /// Creates a full audio message from a partial one.
   factory AbstractAudioMessage.fromPartial({
@@ -149,7 +149,7 @@ abstract class AbstractAudioMessage extends AbstractChatMessage {
 
   /// Converts an audio message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$AudioMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractAudioMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.

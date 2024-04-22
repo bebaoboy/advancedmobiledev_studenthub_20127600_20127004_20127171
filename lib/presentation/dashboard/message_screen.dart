@@ -402,11 +402,11 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _handlePreviewDataFetched(
-    TextMessageAbstract message,
+    AbstractTextMessage message,
     PreviewData previewData,
   ) {
     final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as TextMessageAbstract).copyWith(
+    final updatedMessage = (_messages[index] as AbstractTextMessage).copyWith(
       previewData: previewData,
     );
     print("update");
@@ -417,7 +417,7 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _handleSendPressed(PartialText message) {
-    final textMessage = TextMessageAbstract(
+    final textMessage = AbstractTextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),

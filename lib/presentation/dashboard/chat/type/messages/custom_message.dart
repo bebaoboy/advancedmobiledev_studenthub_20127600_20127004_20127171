@@ -43,7 +43,7 @@ abstract class AbstractCustomMessage extends AbstractChatMessage {
 
   /// Creates a custom message from a map (decoded JSON).
   factory AbstractCustomMessage.fromJson(Map<String, dynamic> json) =>
-      _$CustomMessageFromJson(json);
+      _$AbstractCustomMessageFromJson(json);
 
   /// Creates a full custom message from a partial one.
   factory AbstractCustomMessage.fromPartial({
@@ -103,7 +103,7 @@ abstract class AbstractCustomMessage extends AbstractChatMessage {
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$CustomMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractCustomMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.

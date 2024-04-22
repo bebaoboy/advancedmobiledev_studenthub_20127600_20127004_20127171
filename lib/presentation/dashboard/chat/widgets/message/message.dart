@@ -100,7 +100,7 @@ class Message extends StatefulWidget {
       {required BuildContext context})? customStatusBuilder;
 
   /// Controls the enlargement behavior of the emojis in the
-  /// [TextMessageAbstract].
+  /// [AbstractTextMessage].
   /// Defaults to [EmojiEnlargementBehavior.multi].
   final EmojiEnlargementBehavior emojiEnlargementBehavior;
 
@@ -161,7 +161,7 @@ class Message extends StatefulWidget {
       onMessageVisibilityChanged;
 
   /// See [TextMessage.onPreviewDataFetched].
-  final void Function(TextMessageAbstract, PreviewData)? onPreviewDataFetched;
+  final void Function(AbstractTextMessage, PreviewData)? onPreviewDataFetched;
 
   /// Rounds border of the message to visually group messages together.
   final bool roundBorder;
@@ -186,7 +186,7 @@ class Message extends StatefulWidget {
 
   /// Build a text message inside predefined bubble.
   final Widget Function(
-    TextMessageAbstract, {
+    AbstractTextMessage, {
     required int messageWidth,
     required bool showName,
   })? textMessageBuilder;
@@ -320,7 +320,7 @@ class _MessageState extends State<Message> {
                   messageWidth: widget.messageWidth,
                 );
         case AbstractMessageType.text:
-          final textMessage = widget.message as TextMessageAbstract;
+          final textMessage = widget.message as AbstractTextMessage;
           return widget.textMessageBuilder != null
               ? widget.textMessageBuilder!(
                   textMessage,
@@ -364,7 +364,7 @@ class _MessageState extends State<Message> {
               emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
               hideBackgroundOnEmojiMessages:
                   widget.hideBackgroundOnEmojiMessages,
-              message: TextMessageAbstract(
+              message: AbstractTextMessage(
                   text: "<${Lang.get("error")}>\n${e.toString()}",
                   id: const Uuid().v4(),
                   author: widget.message.author),
@@ -408,10 +408,10 @@ class _MessageState extends State<Message> {
     final currentUserIsAuthor = user.id == widget.message.author.id;
     final enlargeEmojis =
         widget.emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
-            widget.message is TextMessageAbstract &&
+            widget.message is AbstractTextMessage &&
             isConsistsOfEmojis(
               widget.emojiEnlargementBehavior,
-              widget.message as TextMessageAbstract,
+              widget.message as AbstractTextMessage,
             );
     final messageBorderRadius = Chat.theme.messageBorderRadius;
     final borderRadius = widget.bubbleRtlAlignment == BubbleRtlAlignment.left

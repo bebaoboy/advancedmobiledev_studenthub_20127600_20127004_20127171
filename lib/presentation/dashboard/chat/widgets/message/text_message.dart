@@ -11,7 +11,7 @@ import '../../models/util.dart';
 
 /// A class that represents text message widget with optional link preview.
 class TextMessage extends StatelessWidget {
-  /// Creates a text message widget from a [TextMessageAbstract] class.
+  /// Creates a text message widget from a [AbstractTextMessage] class.
   const TextMessage({
     super.key,
     required this.emojiEnlargementBehavior,
@@ -32,15 +32,15 @@ class TextMessage extends StatelessWidget {
   /// See [Message.hideBackgroundOnEmojiMessages].
   final bool hideBackgroundOnEmojiMessages;
 
-  /// [TextMessageAbstract].
-  final TextMessageAbstract message;
+  /// [AbstractTextMessage].
+  final AbstractTextMessage message;
 
   /// This is to allow custom user name builder
   /// By using this we can fetch newest user info based on id.
   final Widget Function(ChatUser)? nameBuilder;
 
   /// See [LinkPreview.onPreviewDataFetched].
-  final void Function(TextMessageAbstract, PreviewData)? onPreviewDataFetched;
+  final void Function(AbstractTextMessage, PreviewData)? onPreviewDataFetched;
 
   /// Customisation options for the [TextMessage].
   final TextMessageOptions options;

@@ -52,7 +52,7 @@ abstract class AbstractImageMessage extends AbstractChatMessage {
 
   /// Creates an image message from a map (decoded JSON).
   factory AbstractImageMessage.fromJson(Map<String, dynamic> json) =>
-      _$ImageMessageFromJson(json);
+      _$AbstractImageMessageFromJson(json);
 
   /// Creates a full image message from a partial one.
   factory AbstractImageMessage.fromPartial({
@@ -141,7 +141,7 @@ abstract class AbstractImageMessage extends AbstractChatMessage {
 
   /// Converts an image message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$ImageMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractImageMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
