@@ -1,3 +1,4 @@
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:flutter/material.dart';
 
 class NavbarItem {
@@ -7,6 +8,7 @@ class NavbarItem {
     this.backgroundColor,
     this.child,
     this.selectedIcon,
+    this.badge = const NavbarBadge()
   });
 
   /// IconData for the navbar item
@@ -26,6 +28,9 @@ class NavbarItem {
   /// Widget to show when the item is selected
   final Widget? selectedIcon;
 
+  /// Your initial badge configuration for this item, this is totally optional
+  final NavbarBadge badge;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -35,7 +40,8 @@ class NavbarItem {
           text == other.text &&
           child.runtimeType == other.child.runtimeType &&
           selectedIcon.runtimeType == other.selectedIcon.runtimeType &&
-          backgroundColor == other.backgroundColor;
+          backgroundColor == other.backgroundColor &&
+          badge == other.badge;
 
   @override
   int get hashCode =>
@@ -43,7 +49,8 @@ class NavbarItem {
       text.hashCode ^
       child.hashCode ^
       selectedIcon.hashCode ^
-      backgroundColor.hashCode;
+      backgroundColor.hashCode ^
+      badge.hashCode;
 }
 
 /// Decoration class for the navbar [NavbarType.standard]

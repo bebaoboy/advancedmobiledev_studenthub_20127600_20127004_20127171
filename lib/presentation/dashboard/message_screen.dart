@@ -5,12 +5,15 @@ import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/dashboard/components/schedule_bottom_sheet.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:collection/collection.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -83,6 +86,40 @@ class _MessageScreenState extends State<MessageScreen> {
     timer?.cancel();
   }
 
+  void updateMessageReactions(MessageReaction reaction, String id,
+      {bool remove = false, bool add = false}) {
+    // log('[_updateCubeMessageReactionss]');
+    var msg = _messages.firstWhereOrNull((msg) => msg.id == reaction.messageId);
+
+    if (msg == null) return;
+
+    if (reaction.addReaction != null) {
+      if (!(msg.reactions?.own.contains(reaction.addReaction) ?? false)) {
+        msg.reactions!.own.add(reaction.addReaction!);
+
+        msg.reactions!.total[reaction.addReaction!] =
+            msg.reactions!.total[reaction.addReaction] == null
+                ? 1
+                : msg.reactions!.total[reaction.addReaction]! + 1;
+      }
+    }
+
+    if (reaction.removeReaction != null) {
+      if ((msg.reactions?.own.contains(reaction.removeReaction) ?? false)) {
+        msg.reactions!.own.remove(reaction.removeReaction!);
+
+        msg.reactions!.total[reaction.removeReaction!] =
+            msg.reactions!.total[reaction.removeReaction] != null &&
+                    msg.reactions!.total[reaction.removeReaction]! > 0
+                ? msg.reactions!.total[reaction.removeReaction]! - 1
+                : 0;
+      }
+
+      msg.reactions!.total.removeWhere((key, value) => value == 0);
+    }
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     // print("build chat");
@@ -90,6 +127,29 @@ class _MessageScreenState extends State<MessageScreen> {
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Chat(
+        performEmoji: (Emoji emoji, AbstractChatMessage message) {
+          if ((message.reactions?.own.isNotEmpty ?? false) &&
+              (message.reactions?.own.contains(emoji.emoji) ?? false)) {
+            updateMessageReactions(
+                MessageReaction("9", "", message.id,
+                    removeReaction: emoji.emoji),
+                message.id,
+                remove: true);
+            // removeMessageReaction(message.id!, emoji.emoji);
+            // updateMessageReactions(CubeMessageReactions(
+            //     id!, _cubeDialog.dialogId!, message.messageId!,
+            //     removeReaction: emoji.emoji));
+          } else {
+            updateMessageReactions(
+                MessageReaction("9", "", message.id, addReaction: emoji.emoji),
+                message.id,
+                add: true);
+            // addMessageReaction(message.messageId!, emoji.emoji);
+            // updateMessageReactions(CubeMessageReactions(
+            //     id!, _cubeDialog.dialogId!, message.messageId!,
+            //     addReaction: emoji.emoji));
+          }
+        },
         scrollPhysics: const ClampingScrollPhysics(),
         typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
         messages: _messages,
@@ -424,6 +484,13 @@ class _MessageScreenState extends State<MessageScreen> {
       status: Status.delivered,
       text: message.text,
     );
+    messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+      "content": message.text,
+      "projectId": 150,
+      "senderId": 34,
+      "receiverId": 9, // notification
+      "messageFlag": 0 // default 0 for message, 1 for interview
+    });
 
     _addMessage(textMessage);
   }

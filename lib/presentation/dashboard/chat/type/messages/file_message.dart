@@ -12,7 +12,7 @@ part 'file_message.g.dart';
 @immutable
 abstract class AbstractFileMessage extends AbstractChatMessage {
   /// Creates a file message.
-  const AbstractFileMessage._({
+   AbstractFileMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -31,7 +31,7 @@ abstract class AbstractFileMessage extends AbstractChatMessage {
     required this.uri,
   }) : super(type: type ?? AbstractMessageType.file);
 
-  const factory AbstractFileMessage({
+   factory AbstractFileMessage({
     required ChatUser author,
     int? createdAt,
     required String id,
@@ -147,7 +147,7 @@ abstract class AbstractFileMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _FileMessage extends AbstractFileMessage {
-  const _FileMessage({
+   _FileMessage({
     required super.author,
     super.createdAt,
     required super.id,

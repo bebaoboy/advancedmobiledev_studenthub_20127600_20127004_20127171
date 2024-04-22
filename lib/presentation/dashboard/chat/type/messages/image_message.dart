@@ -12,7 +12,7 @@ part 'image_message.g.dart';
 @immutable
 abstract class AbstractImageMessage extends AbstractChatMessage {
   /// Creates an image message.
-  const AbstractImageMessage._({
+   AbstractImageMessage._({
     required super.author,
     super.createdAt,
     this.height,
@@ -31,7 +31,7 @@ abstract class AbstractImageMessage extends AbstractChatMessage {
     this.width,
   }) : super(type: type ?? AbstractMessageType.image);
 
-  const factory AbstractImageMessage({
+   factory AbstractImageMessage({
     required ChatUser author,
     int? createdAt,
     double? height,
@@ -146,7 +146,7 @@ abstract class AbstractImageMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _ImageMessage extends AbstractImageMessage {
-  const _ImageMessage({
+   _ImageMessage({
     required super.author,
     super.createdAt,
     super.height,

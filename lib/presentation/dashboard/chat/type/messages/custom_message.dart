@@ -13,7 +13,7 @@ part 'custom_message.g.dart';
 @immutable
 abstract class AbstractCustomMessage extends AbstractChatMessage {
   /// Creates a custom message.
-  const AbstractCustomMessage._({
+   AbstractCustomMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -27,7 +27,7 @@ abstract class AbstractCustomMessage extends AbstractChatMessage {
     super.updatedAt,
   }) : super(type: type ?? AbstractMessageType.custom);
 
-  const factory AbstractCustomMessage({
+   factory AbstractCustomMessage({
     required ChatUser author,
     int? createdAt,
     required String id,
@@ -108,7 +108,7 @@ abstract class AbstractCustomMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _CustomMessage extends AbstractCustomMessage {
-  const _CustomMessage({
+   _CustomMessage({
     required super.author,
     super.createdAt,
     required super.id,

@@ -58,6 +58,7 @@ dependencies:
   enhanced_paginated_view:
   equatable: ^2.0.5
   exprollable_page_view:
+  emoji_picker_flutter:
   # easy_date_timeline: 
   # F
   file_picker:

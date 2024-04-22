@@ -14,7 +14,7 @@ part 'unsupported_message.g.dart';
 @immutable
 abstract class AbstractUnsupportedMessage extends AbstractChatMessage {
   /// Creates an unsupported message.
-  const AbstractUnsupportedMessage._({
+   AbstractUnsupportedMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -28,7 +28,7 @@ abstract class AbstractUnsupportedMessage extends AbstractChatMessage {
     super.updatedAt,
   }) : super(type: type ?? AbstractMessageType.unsupported);
 
-  const factory AbstractUnsupportedMessage({
+   factory AbstractUnsupportedMessage({
     required ChatUser author,
     int? createdAt,
     required String id,
@@ -83,7 +83,7 @@ abstract class AbstractUnsupportedMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _UnsupportedMessage extends AbstractUnsupportedMessage {
-  const _UnsupportedMessage({
+   _UnsupportedMessage({
     required super.author,
     super.createdAt,
     required super.id,

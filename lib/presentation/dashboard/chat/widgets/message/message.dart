@@ -1,7 +1,9 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:uuid/uuid.dart';
@@ -58,6 +60,7 @@ class Message extends StatefulWidget {
     this.videoMessageBuilder,
     this.errorMessageBuilder,
     this.scheduleMessageBuilder,
+    required this.performEmoji,
   });
 
   /// Build an audio message inside predefined bubble.
@@ -127,6 +130,7 @@ class Message extends StatefulWidget {
 
   /// Any message type.
   AbstractChatMessage message;
+  Function(Emoji emoji, AbstractChatMessage message) performEmoji;
 
   /// Maximum message width.
   final int messageWidth;
@@ -481,9 +485,19 @@ class _MessageState extends State<Message> {
         children: [
           if (!currentUserIsAuthor && widget.showUserAvatars) _avatarBuilder(),
           if (currentUserIsAuthor && widget.isLeftStatus) _statusIcon(context),
+          if (currentUserIsAuthor)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20, right: 4.0),
+              child: GestureDetector(
+                onTap: () => reactOnMessage(
+                    widget.message, context, widget.performEmoji),
+                child: const Icon(Icons.add_reaction_outlined,
+                    size: 16, color: Colors.grey),
+              ),
+            ),
           ConstrainedBox(
             constraints: BoxConstraints(
-              maxWidth: widget.messageWidth.toDouble(),
+              maxWidth: widget.messageWidth.toDouble() + 30.0,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -521,6 +535,10 @@ class _MessageState extends State<Message> {
                           enlargeEmojis,
                         ),
                 ),
+                if (widget.message.reactions != null &&
+                    widget.message.reactions!.total.isNotEmpty)
+                  getReactionsWidget(
+                      widget.message, widget.message.id, widget.performEmoji),
                 AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
                   height: dateVisibility ? 40 : 0,
@@ -533,6 +551,16 @@ class _MessageState extends State<Message> {
             ),
           ),
           if (currentUserIsAuthor && !widget.isLeftStatus) _statusIcon(context),
+          if (!currentUserIsAuthor)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 20, right: 4.0),
+              child: GestureDetector(
+                onTap: () => reactOnMessage(
+                    widget.message, context, widget.performEmoji),
+                child: const Icon(Icons.add_reaction_outlined,
+                    size: 16, color: Colors.grey),
+              ),
+            ),
         ],
       ),
     );

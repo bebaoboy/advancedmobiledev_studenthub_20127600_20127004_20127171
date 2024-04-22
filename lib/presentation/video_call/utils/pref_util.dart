@@ -25,17 +25,14 @@ class SharedPrefs {
     return completer.future;
   }
 
-  static Future<bool> saveNewUser(CubeUser cubeUser, {CubeSession? ss}) {
+  static Future<bool> saveNewUser(CubeUser cubeUser) {
     return getPrefs().then((prefs) {
       prefs.setString(prefUserLogin, cubeUser.login!);
       prefs.setString(prefUserPsw, cubeUser.password!);
       prefs.setString(prefUserName, cubeUser.fullName!);
       prefs.setInt(prefUserId, cubeUser.id!);
-      // if (cubeUser.avatar != null) {
-      //   prefs.setString(prefUserAvatar, cubeUser.avatar!);
-      // }
-      if (ss != null) {
-        prefs.setString(prefUserAvatar, ss.token ?? "");
+      if (cubeUser.avatar != null) {
+        prefs.setString(prefUserAvatar, cubeUser.avatar!);
       }
 
       return Future.value(true);

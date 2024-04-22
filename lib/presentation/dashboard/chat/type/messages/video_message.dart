@@ -12,7 +12,7 @@ part 'video_message.g.dart';
 @immutable
 abstract class AbstractVideoMessage extends AbstractChatMessage {
   /// Creates a video message.
-  const AbstractVideoMessage._({
+   AbstractVideoMessage._({
     required super.author,
     super.createdAt,
     this.height,
@@ -31,7 +31,7 @@ abstract class AbstractVideoMessage extends AbstractChatMessage {
     this.width,
   }) : super(type: type ?? AbstractMessageType.video);
 
-  const factory AbstractVideoMessage({
+   factory AbstractVideoMessage({
     required ChatUser author,
     int? createdAt,
     double? height,
@@ -146,7 +146,7 @@ abstract class AbstractVideoMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _VideoMessage extends AbstractVideoMessage {
-  const _VideoMessage({
+   _VideoMessage({
     required super.author,
     super.createdAt,
     super.height,

@@ -1,3 +1,4 @@
+import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -32,7 +33,7 @@ enum Status { delivered, error, seen, sending, sent }
 /// every message will have.
 @immutable
 abstract class AbstractChatMessage extends Equatable {
-  const AbstractChatMessage({
+  AbstractChatMessage({
     required this.author,
     this.createdAt,
     required this.id,
@@ -108,6 +109,8 @@ abstract class AbstractChatMessage extends Equatable {
 
   /// Updated message timestamp, in ms.
   final int? updatedAt;
+
+  final CubeMessageReactions? reactions = CubeMessageReactions();
 
   /// Creates a copy of the message with an updated data.
   AbstractChatMessage copyWith({

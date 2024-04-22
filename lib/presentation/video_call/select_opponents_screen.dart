@@ -41,6 +41,7 @@ class _SelectOpponentsScreenState extends State<SelectOpponentsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
@@ -68,33 +69,35 @@ class _SelectOpponentsScreenState extends State<SelectOpponentsScreen> {
               inputAction: TextInputAction.next,
               autoFocus: false,
               onFieldSubmitted: (value) async {
-                await getUsers({"login": _textController.text})
-                    .then((cubeUser) => {
-                          if (cubeUser != null)
-                            // ignore: avoid_function_literals_in_foreach_calls
-                            cubeUser.items.forEach(
-                              (element) {
-                                try {
-                                  setState(() {
-                                    if (widget.users.firstWhereOrNull(
+                if (_textController.text.trim().isNotEmpty) {
+                  await getUsers({"login": _textController.text})
+                      .then((cubeUser) => {
+                            if (cubeUser != null)
+                              // ignore: avoid_function_literals_in_foreach_calls
+                              cubeUser.items.forEach(
+                                (element) {
+                                  try {
+                                    setState(() {
+                                      if (widget.users.firstWhereOrNull(
+                                            (e) => e.id == element.id,
+                                          ) ==
+                                          null) {
+                                        widget.users.add(element);
+                                      }
+                                    });
+                                    if (utils.users.firstWhereOrNull(
                                           (e) => e.id == element.id,
                                         ) ==
                                         null) {
-                                      widget.users.add(element);
+                                      utils.users.add(element);
                                     }
-                                  });
-                                  if (utils.users.firstWhereOrNull(
-                                        (e) => e.id == element.id,
-                                      ) ==
-                                      null) {
-                                    utils.users.add(element);
+                                  } catch (e) {
+                                    print("");
                                   }
-                                } catch (e) {
-                                  print("");
-                                }
-                              },
-                            )
-                        });
+                                },
+                              )
+                          });
+                }
               },
               errorText: null,
             ),
@@ -154,21 +157,17 @@ class BodyLayout extends StatefulWidget {
   final List<CubeUser> users;
 
   @override
-  State<StatefulWidget> createState() {
-    return _BodyLayoutState(currentUser);
-  }
+  State<StatefulWidget> createState() => _BodyLayoutState();
 
   const BodyLayout(this.currentUser, {super.key, required this.users});
 }
 
 class _BodyLayoutState extends State<BodyLayout> {
-  final CubeUser currentUser;
   late Set<int> _selectedUsers;
-
-  _BodyLayoutState(this.currentUser);
 
   @override
   Widget build(BuildContext context) {
+    print("build");
     return Container(
         padding:
             const EdgeInsets.only(top: 48, left: 48, right: 48, bottom: 12),
@@ -220,9 +219,10 @@ class _BodyLayoutState extends State<BodyLayout> {
     // CubeUser? currentUser = CubeChatConnection.instance.currentUser;
 
     return ListView.builder(
+      physics: const ClampingScrollPhysics(),
       controller: ScrollController(),
       itemCount: widget.users.length,
-      shrinkWrap: true,
+      shrinkWrap: false,
       itemBuilder: (context, index) {
         return Card(
           child: CheckboxListTile(
@@ -251,9 +251,7 @@ class _BodyLayoutState extends State<BodyLayout> {
   void initState() {
     super.initState();
     _selectedUsers = {};
-    if (widget.users.isEmpty) {
-      widget.users.addAll(
-          utils.users.where((user) => user.id != currentUser.id).toList());
-    }
+    print("init");
+
   }
 }

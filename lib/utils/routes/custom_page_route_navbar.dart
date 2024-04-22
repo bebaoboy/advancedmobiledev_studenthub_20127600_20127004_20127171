@@ -177,13 +177,12 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
             navigationRailDefaultDecoration.copyWith(
           isExtended: widget.decoration!.isExtended,
           enableFeedback: widget.decoration!.enableFeedback,
-          backgroundColor:
-              widget.decoration!.backgroundColor ?? theme.colorScheme.primaryContainer.withOpacity(0.5),
+          backgroundColor: widget.decoration!.backgroundColor ??
+              theme.colorScheme.primaryContainer.withOpacity(0.5),
           elevation: widget.decoration!.elevation ??
               theme.navigationRailTheme.elevation,
           selectedIconTheme: widget.decoration!.selectedIconTheme ??
-              theme.iconTheme
-                  .copyWith(color: theme.colorScheme.primary),
+              theme.iconTheme.copyWith(color: theme.colorScheme.primary),
           indicatorColor: widget.decoration!.indicatorColor ??
               theme.colorScheme.secondaryContainer,
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -214,8 +213,7 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
               navigationRailDefaultDecoration.unselectedIconTheme,
           selectedIconTheme:
               navigationRailDefaultDecoration.selectedIconTheme ??
-                  theme.iconTheme
-                      .copyWith(color: theme.colorScheme.primary),
+                  theme.iconTheme.copyWith(color: theme.colorScheme.primary),
           extended: navigationRailDefaultDecoration.isExtended,
           backgroundColor: navigationRailDefaultDecoration.backgroundColor ??
               theme.colorScheme.secondary,
@@ -466,6 +464,10 @@ class NavbarRouter2 extends NavbarRouter {
   ///
   ///
   ///
+  ///
+  /// Set to true will hide the badges when the tap on the navbar icon.
+  final bool hideBadgeOnPageChanged;
+
   final IndexController pageController;
   NavbarRouter2(
       {super.key,
@@ -482,6 +484,7 @@ class NavbarRouter2 extends NavbarRouter {
       this.backButtonBehavior = BackButtonBehavior.exit,
       this.onCurrentTabClicked,
       this.onBackButtonPressed,
+      this.hideBadgeOnPageChanged = true,
       required this.pageController})
       : assert(destinations.length >= 2,
             "Destinations length must be greater than or equal to 2"),
@@ -527,12 +530,20 @@ class _NavbarRouterState extends State<NavbarRouter2>
       return;
     }
     NavbarNotifier2.length = widget.destinations.length;
+
+    List<NavbarBadge> badges = [];
     for (int i = 0; i < NavbarNotifier2.length; i++) {
       final navbaritem = widget.destinations[i].navbarItem;
-      keys.add(GlobalKey<NavigatorState>(debugLabel: navbaritem.text));
+      keys.add(GlobalKey<NavigatorState>());
       items.add(navbaritem);
+      badges.add(navbaritem.badge);
     }
     NavbarNotifier2.setKeys(keys);
+
+    // set badge list here
+    NavbarNotifier2.setBadges(badges);
+    NavbarNotifier2.hideBadgeOnPageChanged = widget.hideBadgeOnPageChanged;
+
     if (!isUpdate) {
       initAnimation();
       NavbarNotifier2.index = widget.initialIndex;
@@ -571,7 +582,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   void didUpdateWidget(covariant NavbarRouter2 oldWidget) {
-    print("update");
+    // print("update");
     if (widget.destinationAnimationCurve !=
             oldWidget.destinationAnimationCurve ||
         widget.destinationAnimationDuration !=

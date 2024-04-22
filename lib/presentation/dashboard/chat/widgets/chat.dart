@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
@@ -32,9 +33,12 @@ class Chat extends StatefulWidget {
   static const lightTheme = DefaultChatTheme();
   static const darkTheme = DarkChatTheme();
   static ChatTheme theme = const DefaultChatTheme();
+  
+  final Function(Emoji emoji, AbstractChatMessage message) performEmoji;
 
   /// Creates a chat widget.
   const Chat({
+    required this.performEmoji,
     super.key,
     this.audioMessageBuilder,
     this.avatarBuilder,
@@ -488,6 +492,7 @@ class ChatState extends State<Chat> {
                     maxWidth,
                   ).floor();
         final Widget msgWidget = Message(
+          performEmoji: widget.performEmoji,
           scheduleMessageBuilder: widget.scheduleMessageBuilder,
           audioMessageBuilder: widget.audioMessageBuilder,
           avatarBuilder: widget.avatarBuilder,

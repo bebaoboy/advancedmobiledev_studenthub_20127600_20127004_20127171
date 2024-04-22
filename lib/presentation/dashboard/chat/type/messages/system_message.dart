@@ -12,7 +12,7 @@ part 'system_message.g.dart';
 @immutable
 abstract class AbstractSystemMessage extends AbstractChatMessage {
   /// Creates a custom message.
-  const AbstractSystemMessage._({
+   AbstractSystemMessage._({
     super.author = const ChatUser(id: 'system'),
     super.createdAt,
     required super.id,
@@ -27,7 +27,7 @@ abstract class AbstractSystemMessage extends AbstractChatMessage {
     super.updatedAt,
   }) : super(type: type ?? AbstractMessageType.system);
 
-  const factory AbstractSystemMessage({
+  factory AbstractSystemMessage({
     ChatUser author,
     int? createdAt,
     required String id,
@@ -88,7 +88,7 @@ abstract class AbstractSystemMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _SystemMessage extends AbstractSystemMessage {
-  const _SystemMessage({
+ _SystemMessage({
     super.author,
     super.createdAt,
     required super.id,

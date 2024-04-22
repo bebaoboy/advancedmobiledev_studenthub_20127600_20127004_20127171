@@ -238,7 +238,7 @@ class _MainAppBarState extends State<MainAppBar> {
                   },
                   onDoubleTap: () {
                     // TODO: remove this badge test
-                    // showRandomBadge();
+                    showRandomBadge();
                     Future.delayed(const Duration(seconds: 1), () {
                       Navigator.of(context).push(MaterialPageRoute2(
                           routeName: Routes.viewProjectProposalsCard,
@@ -350,9 +350,9 @@ class _MainAppBarState extends State<MainAppBar> {
     ];
     int r = Random().nextInt(100);
     var b = Random().nextBool();
-    NavbarNotifier2.setBadges(
+    NavbarNotifier2.updateBadge(
         0,
-        ShowBadge(
+        NavbarBadge(
             badgeText: "${b ? r : ""}",
             color: b
                 ? null
@@ -362,9 +362,9 @@ class _MainAppBarState extends State<MainAppBar> {
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
     b = Random().nextBool();
-    NavbarNotifier2.setBadges(
+    NavbarNotifier2.updateBadge(
         1,
-        ShowBadge(
+        NavbarBadge(
             badgeText: "${b ? r : ""}",
             color: b
                 ? null
@@ -374,9 +374,9 @@ class _MainAppBarState extends State<MainAppBar> {
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
     b = Random().nextBool();
-    NavbarNotifier2.setBadges(
+    NavbarNotifier2.updateBadge(
         2,
-        ShowBadge(
+        NavbarBadge(
             badgeText: "${b ? r : ""}",
             color: b
                 ? null
@@ -386,9 +386,9 @@ class _MainAppBarState extends State<MainAppBar> {
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
     b = Random().nextBool();
-    NavbarNotifier2.setBadges(
+    NavbarNotifier2.updateBadge(
         3,
-        ShowBadge(
+        NavbarBadge(
             badgeText: "${b ? r : ""}",
             color: b
                 ? null

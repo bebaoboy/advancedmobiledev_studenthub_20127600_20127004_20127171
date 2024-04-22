@@ -6,6 +6,7 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
@@ -24,21 +25,22 @@ class ScheduleMessageType extends AbstractChatMessage {
   double? height;
   int messageWidth;
 
-  ScheduleMessageType(
-      {required super.author,
-      super.createdAt,
-      required super.id,
-      super.metadata,
-      super.remoteId,
-      super.repliedMessage,
-      super.roomId,
-      super.showStatus,
-      super.status,
-      super.updatedAt,
-      this.width = 200,
-      this.height = 100,
-      required super.type,
-      required this.messageWidth});
+  ScheduleMessageType({
+    required super.author,
+    super.createdAt,
+    required super.id,
+    super.metadata,
+    super.remoteId,
+    super.repliedMessage,
+    super.roomId,
+    super.showStatus,
+    super.status,
+    super.updatedAt,
+    this.width = 200,
+    this.height = 100,
+    required super.type,
+    required this.messageWidth,
+  });
 
   @override
   AbstractChatMessage copyWith(
@@ -51,7 +53,8 @@ class ScheduleMessageType extends AbstractChatMessage {
       String? roomId,
       bool? showStatus,
       Status? status,
-      int? updatedAt}) {
+      int? updatedAt,
+      List<MessageReaction>? reactions}) {
     return ScheduleMessageType(
         author: author ?? const ChatUser(id: ""),
         id: id ?? "",
@@ -385,11 +388,15 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               //print("hey");
                               // TODO: change route url
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => SelectOpponentsScreen(
-                                    CubeSessionManager
-                                        .instance.activeSession!.user!,
-                                    users: List.empty(growable: true)),
-                              ));
+                                  builder: (context) => SelectOpponentsScreen(
+                                      CubeSessionManager
+                                          .instance.activeSession!.user!,
+                                      users: users
+                                          .where((user) =>
+                                              user.id !=
+                                              CubeSessionManager.instance
+                                                  .activeSession!.user!.id)
+                                          .toList())));
                             },
                           )
                         : Expanded(

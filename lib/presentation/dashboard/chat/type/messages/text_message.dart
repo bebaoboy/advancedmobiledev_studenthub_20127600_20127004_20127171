@@ -13,7 +13,7 @@ part 'text_message.g.dart';
 @immutable
 abstract class AbstractTextMessage extends AbstractChatMessage {
   /// Creates a text message.
-  const AbstractTextMessage._({
+   AbstractTextMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -29,7 +29,7 @@ abstract class AbstractTextMessage extends AbstractChatMessage {
     super.updatedAt,
   }) : super(type: type ?? AbstractMessageType.text);
 
-  const factory AbstractTextMessage({
+   factory AbstractTextMessage({
     required ChatUser author,
     int? createdAt,
     required String id,
@@ -123,7 +123,7 @@ abstract class AbstractTextMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _TextMessage extends AbstractTextMessage {
-  const _TextMessage({
+   _TextMessage({
     required super.author,
     super.createdAt,
     required super.id,

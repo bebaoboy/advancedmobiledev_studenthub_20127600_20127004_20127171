@@ -12,7 +12,7 @@ part 'audio_message.g.dart';
 @immutable
 abstract class AbstractAudioMessage extends AbstractChatMessage {
   /// Creates an audio message.
-  const AbstractAudioMessage._({
+   AbstractAudioMessage._({
     required super.author,
     super.createdAt,
     required this.duration,
@@ -32,7 +32,7 @@ abstract class AbstractAudioMessage extends AbstractChatMessage {
     this.waveForm,
   }) : super(type: type ?? AbstractMessageType.audio);
 
-  const factory AbstractAudioMessage({
+   factory AbstractAudioMessage({
     required ChatUser author,
     int? createdAt,
     required Duration duration,
@@ -154,7 +154,7 @@ abstract class AbstractAudioMessage extends AbstractChatMessage {
 
 /// A utility class to enable better copyWith.
 class _AudioMessage extends AbstractAudioMessage {
-  const _AudioMessage({
+   _AudioMessage({
     required super.author,
     super.createdAt,
     required super.duration,
