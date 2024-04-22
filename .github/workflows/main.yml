@@ -8,7 +8,9 @@ on:
       - phasing2
       - phasing3
       - phasing4
-      - sprint7
+      - sprint8-chat
+      - sprint8
+
   push:
     branches:
       - test

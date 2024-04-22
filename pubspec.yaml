@@ -138,6 +138,7 @@ dependencies:
   # smooth_page_indicator:
   swipeable_page_route:
   size_helper:
+  socket_io_client:
   # T
   to_string_pretty:
   tuple: 

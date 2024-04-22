@@ -52,7 +52,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
     _loadMessages();
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
-    messageNotifier = MessageNotifierProvider(id: widget.chatUser.id);
+    // project id
+    messageNotifier = MessageNotifierProvider(id: "150");
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
       var num = r.nextInt(30);
@@ -194,7 +195,7 @@ class _MessageScreenState extends State<MessageScreen> {
           return ListenableBuilder(
             listenable: messageNotifier,
             builder: (BuildContext context, Widget? child) {
-              return Text(msg);
+              return Text(messageNotifier.inbox.firstOrNull ?? "");
             },
           );
         },
