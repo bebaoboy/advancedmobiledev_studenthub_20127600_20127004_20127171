@@ -18,7 +18,7 @@ class ProjectList {
   factory ProjectList.fromJsonWithPrefix(List<dynamic> json) {
     List<Project>? projects = <Project>[];
     projects =
-        json.map((p) => Project.fromMap(p['project'], fav: true)).toList();
+        json.map((p) => Project.fromMap(p['project'] ?? p, fav: true)).toList();
     for (var element in projects) {
       element.isLoading = false;
     }
