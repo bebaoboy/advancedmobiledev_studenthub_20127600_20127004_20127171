@@ -1,4 +1,4 @@
-// ignore_for_file: overridden_fields
+// ignore_for_file: overridden_fields, unused_field
 
 import 'dart:convert';
 
@@ -266,23 +266,23 @@ class StudentProject extends Project {
 // ------------------- PROPOSAL ------------------------------
 
 enum HireStatus {
-  notHired,
-  pending,
-  offer,
-  hired,
+  notHired, /// statusFlag = waiting
+  pending, /// statusFlag = active
+  offer, /// offer from company
+  hired, /// hired
 }
 
 extension HireStatusTitle on HireStatus {
   String get title {
     switch (this) {
       case HireStatus.pending:
-        return 'Hired after sent';
+        return 'Company send chat';
       case HireStatus.hired:
         return 'Hired';
       case HireStatus.offer:
         return 'Offered';
       default:
-        return 'Not hired';
+        return 'Waiting';
     }
   }
 }
