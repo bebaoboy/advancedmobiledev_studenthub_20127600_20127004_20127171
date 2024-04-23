@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/widgets/loading_list.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
@@ -50,6 +51,8 @@ abstract class _ProjectStore with Store {
   final PostProposalUseCase _postProposalUseCase;
   final GetProjectProposals _getProjectProposalsUseCase;
   final UpdateProposalUseCase _updateProposalUseCase;
+
+  final ErrorStore errorStore = getIt<ErrorStore>();
 
   @observable
   ProjectList _projects = ProjectList(projects: List.empty(growable: true));
@@ -143,6 +146,7 @@ abstract class _ProjectStore with Store {
         updateLocalProjectProposal(project, proposal);
         return true;
       } else {
+        errorStore.errorMessage = value.data['errorDetails'];
         return false;
       }
     });

@@ -64,8 +64,7 @@ class ProjectApi {
   }
 
   Future<Response> postProposal(PostProposalParams params) async {
-    return await _dioClient.dio.post(
-        Interpolator(Endpoints.postProposal)({"studentId": params.studentId}),
+    return await _dioClient.dio.post(Endpoints.postProposal,
         data: {
           "projectId": params.projectId,
           "studentId": params.studentId,
