@@ -187,6 +187,9 @@ abstract class _ProjectStore with Store {
                 p.enabled = project.enabled;
                 p.coverLetter = project.coverLetter;
               }
+              
+              // TODO: remove if reject (disableFlag)
+
               sharedPrefsHelper.saveStudentProjects(ProposalList(
                   proposals: userStore.user!.studentProfile!.proposalProjects));
 

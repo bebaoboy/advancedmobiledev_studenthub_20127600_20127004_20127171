@@ -6,7 +6,6 @@ import 'package:boilerplate/core/widgets/xmpp/chat/Message.dart';
 import 'package:boilerplate/core/widgets/xmpp/data/Jid.dart';
 import 'package:boilerplate/core/widgets/xmpp/elements/stanzas/MessageStanza.dart';
 
-
 class ChatManager {
   static Map<Connection, ChatManager> instances = {};
 
@@ -27,7 +26,7 @@ class ChatManager {
         .where((abstractStanza) => abstractStanza is MessageStanza)
         .map((stanza) => stanza as MessageStanza?)
         .listen((stanza) {
-      var message = Message.fromStanza(stanza!);
+      var message = StanzaMessage.fromStanza(stanza!);
       // find jid different from mine
       var buddyJid =
           _connection.fullJid.userAtDomain == message.to!.userAtDomain

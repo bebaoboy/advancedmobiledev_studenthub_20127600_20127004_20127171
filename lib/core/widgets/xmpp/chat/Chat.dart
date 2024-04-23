@@ -25,21 +25,21 @@ class ChatImpl implements Chat {
   ChatState? get remoteState => _remoteState;
 
   @override
-  List<Message>? messages = [];
+  List<StanzaMessage>? messages = [];
 
-  final StreamController<Message> _newMessageController =
+  final StreamController<StanzaMessage> _newMessageController =
       StreamController.broadcast();
   final StreamController<ChatState?> _remoteStateController =
       StreamController.broadcast();
 
   @override
-  Stream<Message> get newMessageStream => _newMessageController.stream;
+  Stream<StanzaMessage> get newMessageStream => _newMessageController.stream;
   @override
   Stream<ChatState?> get remoteStateStream => _remoteStateController.stream;
 
   ChatImpl(this._jid, this._connection);
 
-  void parseMessage(Message message) {
+  void parseMessage(StanzaMessage message) {
     if (message.type == MessageStanzaType.CHAT) {
       if (message.text != null && message.text!.isNotEmpty) {
         messages!.add(message);
@@ -60,7 +60,7 @@ class ChatImpl implements Chat {
     stanza.toJid = _jid;
     stanza.fromJid = _connection.fullJid;
     stanza.body = text;
-    var message = Message.fromStanza(stanza);
+    var message = StanzaMessage.fromStanza(stanza);
     messages!.add(message);
     _newMessageController.add(message);
     _connection.writeStanza(stanza);
@@ -86,9 +86,9 @@ abstract class Chat {
   Jid get jid;
   ChatState? get myState;
   ChatState? get remoteState;
-  Stream<Message> get newMessageStream;
+  Stream<StanzaMessage> get newMessageStream;
   Stream<ChatState?> get remoteStateStream;
-  List<Message>? messages;
+  List<StanzaMessage>? messages;
   void sendMessage(String text);
   set myState(ChatState? state);
 }

@@ -1,12 +1,12 @@
-class MessageStatus {
+class CubeMessageStatus {
   int userId;
   String messageId;
   String? dialogId;
 
-  MessageStatus(this.userId, this.messageId, this.dialogId);
+  CubeMessageStatus(this.userId, this.messageId, this.dialogId);
 }
 
-class EditedMessageStatus extends MessageStatus {
+class EditedMessageStatus extends CubeMessageStatus {
   String updatedBody;
 
   EditedMessageStatus(

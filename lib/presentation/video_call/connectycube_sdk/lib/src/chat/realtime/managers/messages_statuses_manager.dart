@@ -12,19 +12,19 @@ import '../utils/messages_utils.dart';
 class MessagesStatusesManager extends MessagesManager {
   static final Map<Connection, MessagesStatusesManager> _instances = {};
 
-  late StreamController<MessageStatus> _deliveredStreamController;
-  late StreamController<MessageStatus> _readStreamController;
+  late StreamController<CubeMessageStatus> _deliveredStreamController;
+  late StreamController<CubeMessageStatus> _readStreamController;
   late StreamController<EditedMessageStatus> _editStreamController;
-  late StreamController<MessageStatus> _deleteStreamController;
+  late StreamController<CubeMessageStatus> _deleteStreamController;
 
-  Stream<MessageStatus> get deliveredStream =>
+  Stream<CubeMessageStatus> get deliveredStream =>
       _deliveredStreamController.stream;
 
-  Stream<MessageStatus> get readStream => _readStreamController.stream;
+  Stream<CubeMessageStatus> get readStream => _readStreamController.stream;
 
   Stream<EditedMessageStatus> get editedStream => _editStreamController.stream;
 
-  Stream<MessageStatus> get deletedStream => _deleteStreamController.stream;
+  Stream<CubeMessageStatus> get deletedStream => _deleteStreamController.stream;
 
   MessagesStatusesManager._private(super.connection) {
     _deliveredStreamController = StreamController.broadcast();
@@ -85,10 +85,10 @@ class MessagesStatusesManager extends MessagesManager {
 
     if ('received' == messageStatus) {
       _deliveredStreamController
-          .add(MessageStatus(userId, messageId, dialogId));
+          .add(CubeMessageStatus(userId, messageId, dialogId));
       return true;
     } else if ('displayed' == messageStatus) {
-      _readStreamController.add(MessageStatus(userId, messageId, dialogId));
+      _readStreamController.add(CubeMessageStatus(userId, messageId, dialogId));
       return true;
     }
 
@@ -142,7 +142,7 @@ class MessagesStatusesManager extends MessagesManager {
       userId = getUserIdFromGroupChatJid(from);
     }
 
-    _deleteStreamController.add(MessageStatus(userId, messageId, dialogId));
+    _deleteStreamController.add(CubeMessageStatus(userId, messageId, dialogId));
 
     return true;
   }

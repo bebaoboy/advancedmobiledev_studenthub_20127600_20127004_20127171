@@ -5,7 +5,7 @@ import 'package:collection/collection.dart' show IterableExtension;
 import '../elements/XmppElement.dart';
 import '../logger/Log.dart';
 
-class Message {
+class StanzaMessage {
   static String TAG = 'Message';
   MessageStanza messageStanza;
   Jid? to;
@@ -26,7 +26,7 @@ class Message {
 
   String? get messageId => _messageId;
 
-  Message(this.messageStanza, this.to, this.from, this.text, this.time,
+  StanzaMessage(this.messageStanza, this.to, this.from, this.text, this.time,
       {String? stanzaId = '',
       String? threadId = '',
       bool isForwarded = false,
@@ -47,8 +47,8 @@ class Message {
 
   ChatState? get chatState => _chatState;
 
-  static Message fromStanza(MessageStanza stanza) {
-    Message? message;
+  static StanzaMessage fromStanza(MessageStanza stanza) {
+    StanzaMessage? message;
     var isCarbon = stanza.children.any(
         (element) => (element.name == 'sent' || element.name == 'received'));
     var isArchivedMessage =
@@ -62,7 +62,7 @@ class Message {
     return message;
   }
 
-  static Message? _parseCarbon(MessageStanza stanza) {
+  static StanzaMessage? _parseCarbon(MessageStanza stanza) {
     var carbon = stanza.children.firstWhereOrNull(
         (element) => (element.name == 'sent' || element.name == 'received'))!;
     try {
@@ -89,7 +89,7 @@ class Message {
           var dateTime = _parseDelayed(forwarded);
           var delayed = dateTime != null;
           dateTime ??= DateTime.now();
-          return Message(stanza, to, from, body, dateTime,
+          return StanzaMessage(stanza, to, from, body, dateTime,
               threadId: threadId,
               isForwarded: true,
               isDelayed: delayed,
@@ -103,7 +103,7 @@ class Message {
     return null;
   }
 
-  static Message? _parseArchived(MessageStanza stanza) {
+  static StanzaMessage? _parseArchived(MessageStanza stanza) {
     var result = stanza.children
         .firstWhereOrNull((element) => (element.name == 'result'));
 
@@ -134,7 +134,7 @@ class Message {
           var delayed = dateTime != null;
           dateTime ??= DateTime.now();
           var chatState = _parseState(message);
-          return Message(stanza, to, from, body, dateTime,
+          return StanzaMessage(stanza, to, from, body, dateTime,
               threadId: threadId,
               isForwarded: true,
               queryId: queryId,
@@ -204,8 +204,8 @@ class Message {
     return ChatState.INACTIVE;
   }
 
-  static Message _parseRegularMessage(MessageStanza stanza) {
-    return Message(
+  static StanzaMessage _parseRegularMessage(MessageStanza stanza) {
+    return StanzaMessage(
         stanza, stanza.toJid, stanza.fromJid, stanza.body, DateTime.now(),
         chatState: _parseState(stanza),
         threadId: stanza.thread,

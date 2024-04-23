@@ -251,7 +251,7 @@ class ProjectExperience extends MyObject {
 
 @JsonSerializable()
 
-/// Do not use this directly, use [OfferNotification] or [MessageObject]
+/// Our class
 class NotificationObject extends MyObject {
   String id;
   Profile receiver;
@@ -305,6 +305,8 @@ enum MessageType {
 }
 
 @JsonSerializable()
+
+/// Our class
 class MessageObject extends NotificationObject {
   MessageType messageType;
   InterviewSchedule? interviewSchedule;

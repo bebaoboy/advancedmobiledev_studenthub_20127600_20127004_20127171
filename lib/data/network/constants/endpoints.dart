@@ -1,4 +1,3 @@
-
 class Endpoints {
   Endpoints._();
 
@@ -15,8 +14,19 @@ class Endpoints {
   // unused
   static const String getPosts = "/api/posts";
 
-  // project
 
+  //////////////////////////////////// chat /////////////////////////////////
+  
+  /// để hiện lên tab message?
+    static const String getMessageByProject = "$baseUrl/api/message/{projectId}"; 
+    /// all message of a chat
+    static const String getMessageByProjectAndUser = "$baseUrl/api/message/{projectId}/user/{userId}";
+    /// all message of yourself
+    static const String getAllChat = "$baseUrl/api/message";
+
+    // static const String getAllMessagePaging = "$baseUrl/api/message/get/page";
+
+  //////////////////////////////////// project /////////////////////////////////
   // all project in dashboard
   static const String getProjects = "$baseUrl/api/project"; // done
   /*
@@ -58,17 +68,19 @@ class Endpoints {
   static const String getStudentProposalProjects =
       "$baseUrl/api/proposal/project/{studentId}"; // done
   static const String getCandidatesOfProject =
-      "$baseUrl/api/proposal/getByProjectId/{projectId}";
-  // offset (number), limit(number), q(string), 
-  // order(e.g. order=createdAt:DESC), statusFlag(string) 
+      "$baseUrl/api/proposal/getByProjectId/{projectId}"; // done
+  // offset (number), limit(number), q(string),
+  // order(e.g. order=createdAt:DESC), statusFlag(string)
 
-  static const String postProposal = "$baseUrl/api/proposal";
-  static const String updateProposal = "$baseUrl/api/proposal/{id}";
+  static const String postProposal = "$baseUrl/api/proposal"; // done
+  static const String updateProposal = "$baseUrl/api/proposal/{id}"; // done
 
-  static const String addNewProject = "$baseUrl/api/project";
-  static const String deleteProject = "$baseUrl/api/project/{projectId}";
-  static const String updateProject = "$baseUrl/api/project/{projectId}";
-  static const String getUserFavoriteProjects =
+  static const String addNewProject = "$baseUrl/api/project"; // done
+  static const String deleteProject =
+      "$baseUrl/api/project/{projectId}"; // done
+  static const String updateProject =
+      "$baseUrl/api/project/{projectId}"; // done
+  static const String getUserFavoriteProjects = // done
       "$baseUrl/api/favoriteProject/{studentId}";
 
   // use to remove from favorite list
@@ -77,7 +89,7 @@ class Endpoints {
 //   "disableFlag": 1
 // }"
   static const String updateUserFavoriteProject =
-      "$baseUrl/api/favoriteProject/{studentId}";
+      "$baseUrl/api/favoriteProject/{studentId}"; // done
 
   //auth endpoints
   static const String signUp = "$baseUrl/api/auth/sign-up"; // done
@@ -119,7 +131,7 @@ class Endpoints {
   }
 } */
 
-  // user endpoints
+  //////////////////////////////////// user /////////////////////////////////
   static const String resetPassword = "$baseUrl/api/user/{id}"; // done
   static const String getUsers = "$baseUrl/api/user"; // done
   static const String changePassword =
@@ -127,7 +139,7 @@ class Endpoints {
   static const String forgetPassword =
       "$baseUrl/api/user/forgotPassword"; // done
 
-  // profile
+  //////////////////////////////////// profile /////////////////////////////////
   static const String addProfileCompany =
       "$baseUrl/api/profile/company"; // done
   static const String updateProfileCompany =
@@ -206,13 +218,15 @@ class Endpoints {
       "$baseUrl/api/profile/student/{studentId}/transcript"; // done
 
   static const String deleteResume =
-      "$baseUrl/api/profile/student/{studentId}/resume";
+      "$baseUrl/api/profile/student/{studentId}/resume"; // done
 
   static const String deleteTranscript =
-      "$baseUrl/api/profile/student/{studentId}/transcript";
+      "$baseUrl/api/profile/student/{studentId}/transcript"; // done
 
-  static const String getTechStack = "$baseUrl/api/techstack/getAllTechStack";
-  static const String getSkillset = "$baseUrl/api/skillset/getAllSkillSet";
+  static const String getTechStack =
+      "$baseUrl/api/techstack/getAllTechStack"; // done
+  static const String getSkillset =
+      "$baseUrl/api/skillset/getAllSkillSet"; // done
   static const String addTechStack = "$baseUrl/api/techstack/createTechStack";
   static const String addSkillset = "$baseUrl/api/skillset/createSkillSet";
 }
