@@ -112,7 +112,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                           Toastify.show(context, '', "Sent successfully",
                               ToastificationType.success, () {});
                           Future.delayed(const Duration(seconds: 2), () {
-                            Navigator.pop(context);
+                            Navigator.pop(context, true);
                           });
                         } else {
                           Toastify.show(

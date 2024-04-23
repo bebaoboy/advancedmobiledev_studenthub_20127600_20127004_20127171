@@ -1,7 +1,5 @@
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
-import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -135,7 +133,6 @@ class _MessageTabState extends State<MessageTab> {
                     return InkWell(
                       onTap: () {
                         //print('Tile clicked');
-                        var userStore = getIt<UserStore>();
                         Navigator.of(
                                 NavigationService.navigatorKey.currentContext!)
                             .push(MaterialPageRoute2(

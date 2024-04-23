@@ -488,7 +488,7 @@ class _MessageScreenState extends State<MessageScreen> {
       "content": message.text,
       "projectId": 150,
       "senderId": 34,
-      "receiverId": 9, // notification
+      "receiverId": 94, // notification
       "messageFlag": 0 // default 0 for message, 1 for interview
     });
 

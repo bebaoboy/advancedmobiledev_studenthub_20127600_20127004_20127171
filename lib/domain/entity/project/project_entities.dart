@@ -87,9 +87,23 @@ class Project extends ProjectBase {
   int? _countMessages;
   int? _countHired;
 
+  int get countNewProposals => countProposals - countMessages - countHired;
+
   int get countProposals => _countProposals ?? proposal?.length ?? 0;
-  int get countMessages => proposal?.where((element) => element.hiredStatus == HireStatus.pending,).length ?? 0;
-  int get countHired => proposal?.where((element) => element.hiredStatus == HireStatus.hired,).length ?? 0;
+  int get countMessages =>
+      proposal
+          ?.where(
+            (element) => element.hiredStatus == HireStatus.pending,
+          )
+          .length ??
+      0;
+  int get countHired =>
+      proposal
+          ?.where(
+            (element) => element.hiredStatus == HireStatus.hired,
+          )
+          .length ??
+      0;
 
   Project({
     required super.title,
@@ -263,10 +277,18 @@ class StudentProject extends Project {
 // ------------------- PROPOSAL ------------------------------
 
 enum HireStatus {
-  notHired, /// statusFlag = waiting
-  pending, /// statusFlag = active
-  offer, /// offer from company
-  hired, /// hired
+  notHired,
+
+  /// statusFlag = waiting
+  pending,
+
+  /// statusFlag = active
+  offer,
+
+  /// offer from company
+  hired,
+
+  /// hired
 }
 
 extension HireStatusTitle on HireStatus {
@@ -278,6 +300,8 @@ extension HireStatusTitle on HireStatus {
         return 'Hired';
       case HireStatus.offer:
         return 'Offered';
+      case HireStatus.notHired:
+        return 'Reject';
       default:
         return 'Waiting';
     }

@@ -47,19 +47,18 @@ class MessageNotifierProvider with ChangeNotifier {
     textSocketHandler.on('SEND_MESSAGE', (data) => print("send $data"));
 
     // noti student id/company id
-    textSocketHandler.on('NOTI_9', (data) {
+    textSocketHandler.on('NOTI_94', (data) {
       print("notification $data");
       addInbox(data);
     });
     textSocketHandler.on('ERROR', (data) => print("error $data"));
     textSocketHandler.onDisconnect((_) => print('disconnect'));
 
-    // user id
     textSocketHandler.emit("SEND_MESSAGE", {
       "content": "Test receiving noti from project $id, sender 34, recv 9",
       "projectId": 1,
       "senderId": 34,
-      "receiverId": 9, // notification
+      "receiverId": 94, // notification
       "messageFlag": 0 // default 0 for message, 1 for interview
     });
   }

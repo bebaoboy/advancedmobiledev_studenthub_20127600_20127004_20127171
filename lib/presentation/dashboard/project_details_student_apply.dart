@@ -33,7 +33,7 @@ class _ProjectDetailsStudentApplyScreenState
         userStore.user!.studentProfile!.proposalProjects != null &&
         userStore.user!.studentProfile!.proposalProjects!.firstWhereOrNull(
               (element) => element.projectId == widget.project.objectId,
-            ) ==
+            ) !=
             null;
   }
 
@@ -239,8 +239,16 @@ class _ProjectDetailsStudentApplyScreenState
                         ),
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(Routes.submitProposal,
-                            arguments: widget.project);
+                        Navigator.of(context)
+                            .pushNamed(Routes.submitProposal,
+                                arguments: widget.project)
+                            .then((value) {
+                          if (value != null && value == true) {
+                            setState(() {
+                              hasAlreadyApplied = true;
+                            });
+                          }
+                        });
                       },
                       child: Text(
                         Lang.get('apply_now'),

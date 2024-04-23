@@ -58,6 +58,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     );
   }
 
+  // getRealNewCountProposals() {
+  //   return widget.project.countProposals -
+  //       widget.project.countHired -
+  //       widget.project.countMessages;
+  // }
+
   Widget _buildBody() {
     return SingleChildScrollView(
       controller: ScrollController(),
@@ -78,7 +84,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   ),
                 ),
                 Visibility(
-                  visible: widget.project.countProposals > 0,
+                  visible: widget.project.countNewProposals > 0,
                   child: GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute2(
@@ -96,7 +102,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               style: TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 12),
                             ),
-                            Text('${widget.project.countProposals} new',
+                            Text('${widget.project.countNewProposals} new',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 12)),
                           ],
@@ -160,7 +166,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                       MessageTabLayout(
                           messages: widget.project.proposal == null
                               ? []
-                              : widget.project.proposal!.where((element) => element.hiredStatus == HireStatus.pending,)
+                              : widget.project.proposal!
+                                  .where(
+                                    (element) =>
+                                        element.hiredStatus ==
+                                        HireStatus.pending,
+                                  )
                                   .map(
                                     (e) => e.student,
                                   )
@@ -168,7 +179,11 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                       HiredTabLayout(
                           hired: widget.project.proposal == null
                               ? []
-                              : widget.project.proposal!.where((element) => element.hiredStatus == HireStatus.hired,)
+                              : widget.project.proposal!
+                                  .where(
+                                    (element) =>
+                                        element.hiredStatus == HireStatus.hired,
+                                  )
                                   .map(
                                     (e) => e.student,
                                   )
@@ -386,9 +401,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                     ),
                   ]),
                 )),
-            if (
-                widget.project.companyId ==
-                    userStore.companyId)
+            if (widget.project.companyId == userStore.companyId)
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(

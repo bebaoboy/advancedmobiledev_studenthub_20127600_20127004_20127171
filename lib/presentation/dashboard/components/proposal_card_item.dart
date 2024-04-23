@@ -103,7 +103,7 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                       fontWeight: FontWeight.w400,
                       fontSize: 16),
                 ),
-                _buildChip(profile.skillSet!.isEmpty ? null : profile.skillSet),
+                _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty ? null : profile.skillSet),
                 const SizedBox(
                   height: 24,
                 ),
