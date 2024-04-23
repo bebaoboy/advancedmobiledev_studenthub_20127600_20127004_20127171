@@ -1,3 +1,4 @@
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
           infoStore.getInfo().then(
                 (value) {},
               );
-              
+
           // TODO: check welcome
           Future.delayed(const Duration(seconds: 1), () {
             Navigator.of(context).pushReplacement(
@@ -69,6 +70,30 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   final UserStore _userStore = getIt<UserStore>();
+
+  Future<void> createTextNotification() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 10,
+        channelKey: 'basic_channel',
+        title: 'Text Notification',
+        body: 'This is a simple text notification',
+      ),
+    );
+  }
+
+  Future<void> createImageNotification() async {
+    await AwesomeNotifications().createNotification(
+      content: NotificationContent(
+        id: 11,
+        channelKey: 'basic_channel',
+        title: 'Image Notification',
+        body: 'This notification has an image',
+        notificationLayout: NotificationLayout.BigPicture,
+        bigPicture: 'asset://assets/images/image.png',
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -241,6 +266,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         const SizedBox(height: 25),
                         Text(Lang.get('home_description')),
+                        ElevatedButton(
+                          onPressed: () => createTextNotification(),
+                          child: Text('Show Text Notification'),
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () => createImageNotification(),
+                          child: Text('Show Image Notification'),
+                        ),
                       ],
                     ),
                   ),

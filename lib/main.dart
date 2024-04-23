@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:isolate';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
@@ -82,6 +83,21 @@ void callbackDispatcher() {
 
 Future<void> main() async {
   runZonedGuarded(() async {
+    AwesomeNotifications().initialize(
+      // set the default icon
+      'resource://drawable/image',
+      [
+        NotificationChannel(
+          channelKey: 'basic_channel',
+          channelName: 'Basic Notifications',
+          channelDescription:
+              'This is the description of the basic notifications channel',
+          defaultColor: Colors.teal,
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+        ),
+      ],
+    );
     WidgetsFlutterBinding.ensureInitialized();
     await setPreferredOrientations();
 
