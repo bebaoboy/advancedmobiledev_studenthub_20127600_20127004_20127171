@@ -11,7 +11,6 @@ import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/managers/push_notifications_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
-import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/presentation/video_call/utils/pref_util.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -207,7 +206,7 @@ class _SplashScreenState extends State<SplashScreen>
         //         .toString(),
         //     "BEBAOBOY");
       }
-      initForegroundService();
+      // initForegroundService();
       CallManager.instance.init(context);
 
       await PushNotificationsManager.instance.init();

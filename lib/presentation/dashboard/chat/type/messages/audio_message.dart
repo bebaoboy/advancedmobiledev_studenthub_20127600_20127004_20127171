@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 import 'partial_audio.dart';
 
 part 'audio_message.g.dart';
@@ -10,9 +10,9 @@ part 'audio_message.g.dart';
 /// A class that represents audio message.
 @JsonSerializable()
 @immutable
-abstract class AudioMessage extends Message {
+abstract class AbstractAudioMessage extends AbstractChatMessage {
   /// Creates an audio message.
-  const AudioMessage._({
+   AbstractAudioMessage._({
     required super.author,
     super.createdAt,
     required this.duration,
@@ -26,14 +26,14 @@ abstract class AudioMessage extends Message {
     super.showStatus,
     required this.size,
     super.status,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
     required this.uri,
     this.waveForm,
-  }) : super(type: type ?? MessageType.audio);
+  }) : super(type: type ?? AbstractMessageType.audio);
 
-  const factory AudioMessage({
-    required User author,
+   factory AbstractAudioMessage({
+    required ChatUser author,
     int? createdAt,
     required Duration duration,
     required String id,
@@ -41,24 +41,24 @@ abstract class AudioMessage extends Message {
     String? mimeType,
     required String name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     required num size,
     Status? status,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
     required String uri,
     List<double>? waveForm,
   }) = _AudioMessage;
 
   /// Creates an audio message from a map (decoded JSON).
-  factory AudioMessage.fromJson(Map<String, dynamic> json) =>
-      _$AudioMessageFromJson(json);
+  factory AbstractAudioMessage.fromJson(Map<String, dynamic> json) =>
+      _$AbstractAudioMessageFromJson(json);
 
   /// Creates a full audio message from a partial one.
-  factory AudioMessage.fromPartial({
-    required User author,
+  factory AbstractAudioMessage.fromPartial({
+    required ChatUser author,
     int? createdAt,
     required String id,
     required PartialAudio partialAudio,
@@ -82,7 +82,7 @@ abstract class AudioMessage extends Message {
         showStatus: showStatus,
         size: partialAudio.size,
         status: status,
-        type: MessageType.audio,
+        type: AbstractMessageType.audio,
         updatedAt: updatedAt,
         uri: partialAudio.uri,
         waveForm: partialAudio.waveForm,
@@ -128,8 +128,8 @@ abstract class AudioMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     Duration? duration,
     String? id,
@@ -137,7 +137,7 @@ abstract class AudioMessage extends Message {
     String? mimeType,
     String? name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     num? size,
@@ -149,12 +149,12 @@ abstract class AudioMessage extends Message {
 
   /// Converts an audio message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$AudioMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractAudioMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _AudioMessage extends AudioMessage {
-  const _AudioMessage({
+class _AudioMessage extends AbstractAudioMessage {
+   _AudioMessage({
     required super.author,
     super.createdAt,
     required super.duration,
@@ -175,8 +175,8 @@ class _AudioMessage extends AudioMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     Duration? duration,
     String? id,
@@ -206,7 +206,7 @@ class _AudioMessage extends AudioMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

@@ -1,3 +1,4 @@
+import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
@@ -10,10 +11,10 @@ import 'messages/system_message.dart';
 import 'messages/text_message.dart';
 import 'messages/unsupported_message.dart';
 import 'messages/video_message.dart';
-import 'user.dart' show User;
+import 'user.dart' show ChatUser;
 
 /// All possible message types.
-enum MessageType {
+enum AbstractMessageType {
   audio,
   custom,
   file,
@@ -31,8 +32,8 @@ enum Status { delivered, error, seen, sending, sent }
 /// An abstract class that contains all variables and methods
 /// every message will have.
 @immutable
-abstract class Message extends Equatable {
-  const Message({
+abstract class AbstractChatMessage extends Equatable {
+  AbstractChatMessage({
     required this.author,
     this.createdAt,
     required this.id,
@@ -48,36 +49,36 @@ abstract class Message extends Equatable {
 
   /// Creates a particular message from a map (decoded JSON).
   /// Type is determined by the `type` field.
-  factory Message.fromJson(Map<String, dynamic> json) {
-    final type = MessageType.values.firstWhere(
+  factory AbstractChatMessage.fromJson(Map<String, dynamic> json) {
+    final type = AbstractMessageType.values.firstWhere(
       (e) => e.name == json['type'],
-      orElse: () => MessageType.unsupported,
+      orElse: () => AbstractMessageType.unsupported,
     );
 
     switch (type) {
-      case MessageType.audio:
-        return AudioMessage.fromJson(json);
-      case MessageType.custom:
-        return CustomMessage.fromJson(json);
-      case MessageType.file:
-        return FileMessage.fromJson(json);
-      case MessageType.image:
-        return ImageMessage.fromJson(json);
-      case MessageType.system:
-        return SystemMessage.fromJson(json);
-      case MessageType.text:
-        return TextMessage.fromJson(json);
-      case MessageType.unsupported:
-        return UnsupportedMessage.fromJson(json);
-      case MessageType.video:
-        return VideoMessage.fromJson(json);
-      case MessageType.schedule:
+      case AbstractMessageType.audio:
+        return AbstractAudioMessage.fromJson(json);
+      case AbstractMessageType.custom:
+        return AbstractCustomMessage.fromJson(json);
+      case AbstractMessageType.file:
+        return AbstractFileMessage.fromJson(json);
+      case AbstractMessageType.image:
+        return AbstractImageMessage.fromJson(json);
+      case AbstractMessageType.system:
+        return AbstractSystemMessage.fromJson(json);
+      case AbstractMessageType.text:
+        return AbstractTextMessage.fromJson(json);
+      case AbstractMessageType.unsupported:
+        return AbstractUnsupportedMessage.fromJson(json);
+      case AbstractMessageType.video:
+        return AbstractVideoMessage.fromJson(json);
+      case AbstractMessageType.schedule:
         return ScheduleMessageType.fromJson(json);
     }
   }
 
   /// User who sent this message.
-  final User author;
+  final ChatUser author;
 
   /// Created message timestamp, in ms.
   final int? createdAt;
@@ -92,7 +93,7 @@ abstract class Message extends Equatable {
   final String? remoteId;
 
   /// Message that is being replied to with the current message.
-  final Message? repliedMessage;
+  final AbstractChatMessage? repliedMessage;
 
   /// ID of the room where this message is sent.
   final String? roomId;
@@ -103,20 +104,22 @@ abstract class Message extends Equatable {
   /// Message [Status].
   final Status? status;
 
-  /// [MessageType].
-  final MessageType type;
+  /// [AbstractMessageType].
+  final AbstractMessageType type;
 
   /// Updated message timestamp, in ms.
   final int? updatedAt;
 
+  final CubeMessageReactions? reactions = CubeMessageReactions();
+
   /// Creates a copy of the message with an updated data.
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     String? id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,

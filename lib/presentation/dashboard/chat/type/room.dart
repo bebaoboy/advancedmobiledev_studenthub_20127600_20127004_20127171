@@ -31,12 +31,12 @@ abstract class Room extends Equatable {
     int? createdAt,
     required String id,
     String? imageUrl,
-    List<Message>? lastMessages,
+    List<AbstractChatMessage>? lastMessages,
     Map<String, dynamic>? metadata,
     String? name,
     required RoomType? type,
     int? updatedAt,
-    required List<User> users,
+    required List<ChatUser> users,
   }) = _Room;
 
   /// Creates room from a map (decoded JSON).
@@ -53,7 +53,7 @@ abstract class Room extends Equatable {
   final String? imageUrl;
 
   /// List of last messages this room has received.
-  final List<Message>? lastMessages;
+  final List<AbstractChatMessage>? lastMessages;
 
   /// Additional custom metadata or attributes related to the room.
   final Map<String, dynamic>? metadata;
@@ -69,7 +69,7 @@ abstract class Room extends Equatable {
   final int? updatedAt;
 
   /// List of users which are in the room.
-  final List<User> users;
+  final List<ChatUser> users;
 
   /// Equatable props.
   @override
@@ -95,12 +95,12 @@ abstract class Room extends Equatable {
     int? createdAt,
     String? id,
     String? imageUrl,
-    List<Message>? lastMessages,
+    List<AbstractChatMessage>? lastMessages,
     Map<String, dynamic>? metadata,
     String? name,
     RoomType? type,
     int? updatedAt,
-    List<User>? users,
+    List<ChatUser>? users,
   });
 
   /// Converts room to the map representation, encodable to JSON.
@@ -131,7 +131,7 @@ class _Room extends Room {
     dynamic name = _Unset,
     dynamic type = _Unset,
     dynamic updatedAt = _Unset,
-    List<User>? users,
+    List<ChatUser>? users,
   }) =>
       _Room(
         createdAt: createdAt == _Unset ? this.createdAt : createdAt as int?,
@@ -139,7 +139,7 @@ class _Room extends Room {
         imageUrl: imageUrl == _Unset ? this.imageUrl : imageUrl as String?,
         lastMessages: lastMessages == _Unset
             ? this.lastMessages
-            : lastMessages as List<Message>?,
+            : lastMessages as List<AbstractChatMessage>?,
         metadata: metadata == _Unset
             ? this.metadata
             : metadata as Map<String, dynamic>?,

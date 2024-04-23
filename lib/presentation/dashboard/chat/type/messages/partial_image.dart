@@ -11,7 +11,7 @@ part 'partial_image.g.dart';
 @immutable
 class PartialImage {
   /// Creates a partial image message with all variables image can have.
-  /// Use [ImageMessage] to create a full message.
+  /// Use [AbstractImageMessage] to create a full message.
   /// You can use [ImageMessage.fromPartial] constructor to create a full
   /// message from a partial one.
   const PartialImage({
@@ -38,7 +38,7 @@ class PartialImage {
   final String name;
 
   /// Message that is being replied to with the current message.
-  final Message? repliedMessage;
+  final AbstractChatMessage? repliedMessage;
 
   /// Size of the image in bytes.
   final num size;

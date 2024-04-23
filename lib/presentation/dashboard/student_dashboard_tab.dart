@@ -66,12 +66,8 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
                   ),
 
                   // Conditional rendering based on whether (widget.projects ?? []) is empty or not
-                  (_userStore.user != null &&
-                          _userStore.user!.studentProfile != null &&
-                          _userStore.user!.studentProfile!.proposalProjects !=
-                              null &&
-                          _userStore
-                              .user!.studentProfile!.proposalProjects!.isEmpty)
+                  (_userStore.user?.studentProfile?.proposalProjects ?? [])
+                          .isEmpty
                       ? Column(
                           children: [
                             Align(

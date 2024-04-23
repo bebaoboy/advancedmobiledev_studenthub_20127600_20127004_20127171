@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 import 'partial_file.dart';
 
 part 'file_message.g.dart';
@@ -10,9 +10,9 @@ part 'file_message.g.dart';
 /// A class that represents file message.
 @JsonSerializable()
 @immutable
-abstract class FileMessage extends Message {
+abstract class AbstractFileMessage extends AbstractChatMessage {
   /// Creates a file message.
-  const FileMessage._({
+   AbstractFileMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -26,13 +26,13 @@ abstract class FileMessage extends Message {
     super.showStatus,
     required this.size,
     super.status,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
     required this.uri,
-  }) : super(type: type ?? MessageType.file);
+  }) : super(type: type ?? AbstractMessageType.file);
 
-  const factory FileMessage({
-    required User author,
+   factory AbstractFileMessage({
+    required ChatUser author,
     int? createdAt,
     required String id,
     bool? isLoading,
@@ -40,23 +40,23 @@ abstract class FileMessage extends Message {
     String? mimeType,
     required String name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     required num size,
     Status? status,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
     required String uri,
   }) = _FileMessage;
 
   /// Creates a file message from a map (decoded JSON).
-  factory FileMessage.fromJson(Map<String, dynamic> json) =>
-      _$FileMessageFromJson(json);
+  factory AbstractFileMessage.fromJson(Map<String, dynamic> json) =>
+      _$AbstractFileMessageFromJson(json);
 
   /// Creates a full file message from a partial one.
-  factory FileMessage.fromPartial({
-    required User author,
+  factory AbstractFileMessage.fromPartial({
+    required ChatUser author,
     int? createdAt,
     required String id,
     bool? isLoading,
@@ -81,7 +81,7 @@ abstract class FileMessage extends Message {
         showStatus: showStatus,
         size: partialFile.size,
         status: status,
-        type: MessageType.file,
+        type: AbstractMessageType.file,
         updatedAt: updatedAt,
         uri: partialFile.uri,
       );
@@ -122,8 +122,8 @@ abstract class FileMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     String? id,
     bool? isLoading,
@@ -131,7 +131,7 @@ abstract class FileMessage extends Message {
     String? mimeType,
     String? name,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     num? size,
@@ -142,12 +142,12 @@ abstract class FileMessage extends Message {
 
   /// Converts a file message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$FileMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractFileMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _FileMessage extends FileMessage {
-  const _FileMessage({
+class _FileMessage extends AbstractFileMessage {
+   _FileMessage({
     required super.author,
     super.createdAt,
     required super.id,
@@ -167,8 +167,8 @@ class _FileMessage extends FileMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     dynamic height = _Unset,
     String? id,
@@ -199,7 +199,7 @@ class _FileMessage extends FileMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

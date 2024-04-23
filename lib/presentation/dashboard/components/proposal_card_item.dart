@@ -89,7 +89,7 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                   textAlign: TextAlign.left,
                 ),
                 Text(
-                  profile.fullName,
+                  "${profile.fullName} - ${widget.proposal.objectId}",
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.w400,
@@ -103,7 +103,7 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                       fontWeight: FontWeight.w400,
                       fontSize: 16),
                 ),
-                _buildChip(profile.skillSet),
+                _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty ? null : profile.skillSet),
                 const SizedBox(
                   height: 24,
                 ),

@@ -136,7 +136,7 @@ class CubePlatform {
   static const String ANDROID = "android";
 }
 
-class NotificationType {
+class CubeNotificationType {
   static const String PUSH = "push";
   static const String EMAIL = "email";
 }

@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../message.dart';
 import '../preview_data.dart' show PreviewData;
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 import 'partial_text.dart';
 
 part 'text_message.g.dart';
@@ -11,9 +11,9 @@ part 'text_message.g.dart';
 /// A class that represents text message.
 @JsonSerializable()
 @immutable
-abstract class TextMessage extends Message {
+abstract class AbstractTextMessage extends AbstractChatMessage {
   /// Creates a text message.
-  const TextMessage._({
+   AbstractTextMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -25,33 +25,33 @@ abstract class TextMessage extends Message {
     super.showStatus,
     super.status,
     required this.text,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.text);
+  }) : super(type: type ?? AbstractMessageType.text);
 
-  const factory TextMessage({
-    required User author,
+   factory AbstractTextMessage({
+    required ChatUser author,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
     PreviewData? previewData,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
     required String text,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
   }) = _TextMessage;
 
   /// Creates a text message from a map (decoded JSON).
-  factory TextMessage.fromJson(Map<String, dynamic> json) =>
-      _$TextMessageFromJson(json);
+  factory AbstractTextMessage.fromJson(Map<String, dynamic> json) =>
+      _$AbstractTextMessageFromJson(json);
 
   /// Creates a full text message from a partial one.
-  factory TextMessage.fromPartial({
-    required User author,
+  factory AbstractTextMessage.fromPartial({
+    required ChatUser author,
     int? createdAt,
     required String id,
     required PartialText partialText,
@@ -73,7 +73,7 @@ abstract class TextMessage extends Message {
         showStatus: showStatus,
         status: status,
         text: partialText.text,
-        type: MessageType.text,
+        type: AbstractMessageType.text,
         updatedAt: updatedAt,
       );
 
@@ -101,14 +101,14 @@ abstract class TextMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     String? id,
     Map<String, dynamic>? metadata,
     PreviewData? previewData,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
@@ -118,12 +118,12 @@ abstract class TextMessage extends Message {
 
   /// Converts a text message to the map representation, encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$TextMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractTextMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _TextMessage extends TextMessage {
-  const _TextMessage({
+class _TextMessage extends AbstractTextMessage {
+   _TextMessage({
     required super.author,
     super.createdAt,
     required super.id,
@@ -140,8 +140,8 @@ class _TextMessage extends TextMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     String? id,
     dynamic metadata = _Unset,
@@ -167,7 +167,7 @@ class _TextMessage extends TextMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

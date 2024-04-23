@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/widgets/loading_list.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
@@ -50,6 +51,8 @@ abstract class _ProjectStore with Store {
   final PostProposalUseCase _postProposalUseCase;
   final GetProjectProposals _getProjectProposalsUseCase;
   final UpdateProposalUseCase _updateProposalUseCase;
+
+  final ErrorStore errorStore = getIt<ErrorStore>();
 
   @observable
   ProjectList _projects = ProjectList(projects: List.empty(growable: true));
@@ -143,6 +146,7 @@ abstract class _ProjectStore with Store {
         updateLocalProjectProposal(project, proposal);
         return true;
       } else {
+        errorStore.errorMessage = value.data['errorDetails'];
         return false;
       }
     });
@@ -223,6 +227,15 @@ abstract class _ProjectStore with Store {
     );
   }
 
+  Future changeToStatus(HireStatus status, Proposal proposal) async {
+    UpdateProposalParams params = UpdateProposalParams(
+        status.index,
+        proposal.enabled ? 0 : 1,
+        proposal.coverLetter,
+        int.parse(proposal.objectId!));
+    await _updateProposalUseCase.call(params: params);
+  }
+
   /// descending created date order
   // Future<ProjectList> getAllProject() async {
   //   try {
@@ -250,73 +263,96 @@ abstract class _ProjectStore with Store {
   // }
   Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
       {int count = 5, Function? setStateCallback}) async {
-    final ProjectDataSource datasource = getIt<ProjectDataSource>();
-    if (postSuccess) return Future.value(_projects);
-
     _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
       // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
       print("call api refesshh");
 
       Future.delayed(const Duration(seconds: 1), () async {
-        // bool doneInit = false;
-        Map<String, int> maps = {};
+        final ProjectDataSource datasource = getIt<ProjectDataSource>();
+
+        bool doneInit = false;
         if (value.data != null) {
-          postSuccess = false;
           _projects.projects?.clear();
           for (int i = 0; i < value.data!.length; i++) {
-            // if (i == 5 && !doneInit) {
-            //   doneInit = true;
-            //   print("refesshh");
-            // }
+            if (i == 5 && !doneInit) {
+              doneInit = true;
+              // refazynistKey.currentState?.refresh(
+              //     isFinal: false,
+              //     readyMade: _projects.projects!
+              //         .sublist(0, count.clamp(0, _projects.projects!.length))
+              //         .toList());
+              // if (setStateCallback != null) setStateCallback();
+
+              print("refesshh");
+            }
             var project = Project.fromMap(value.data![i]);
             project.isLoading = false;
-            maps[project.objectId!] = i;
 
             addProject(project, sort: false);
 
             // datasource.insert(project);
           }
-          // _projects.projects?.sort(
-          //   (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-          // );
-          // if (setStateCallback != null) setStateCallback();
-          // if (_projects.projects != null && _projects.projects!.isNotEmpty) {
-          //   refazynistKey.currentState?.refresh(
-          //       readyMade: _projects.projects!
-          //           .sublist(0, count.clamp(0, _projects.projects!.length))
-          //           .toList());
-          // }
-        }
-        Future.delayed(Duration.zero, () async {
+          _projects.projects?.forEach(
+            (element) => element.isLoading = false,
+          );
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          if (setStateCallback != null) setStateCallback();
+          Future.delayed(Duration.zero, () async {
+            try {
+              await getStudentFavoriteProject(false);
+            } catch (e) {
+              // nothing changed
+              print("error getting fav");
+            }
+            print("favorite refess ${_favoriteProjects.projects!.length}");
+            _favoriteProjects.projects?.forEach(
+              (element) {
+                var p = _projects.projects?.firstWhereOrNull(
+                  (e) => e.objectId == element.objectId,
+                );
+                if (p != null) {
+                  p.isFavorite = true;
+                }
+              },
+            );
+            if (_projects.projects != null) {
+              refazynistKey.currentState?.refresh(
+                  readyMade: _projects.projects!
+                      .sublist(0, count.clamp(0, _projects.projects!.length))
+                      .toList());
+            }
+            Future.delayed(Duration.zero, () {
+              _projects.projects?.forEach(
+                (element) => datasource.insert(element),
+              );
+            });
+          });
+        } else {
           try {
             await getStudentFavoriteProject(false);
           } catch (e) {
             // nothing changed
             print("error getting fav");
           }
-          print("favorite refess ${_favoriteProjects.projects!.length}");
-          if (_projects.projects != null) {
-            _favoriteProjects.projects?.forEach(
-              (element) {
-                var m = maps[element.objectId];
-                if (m != null) {
-                  _projects.projects![m].isFavorite = true;
-                } else {
-                  var p = _projects.projects!.firstWhereOrNull(
-                    (e) => e.objectId == element.objectId,
-                  );
-                  if (p != null) {
-                    p.isFavorite = true;
-                  }
-                }
-              },
-            );
-          }
+          _projects = value;
+          _projects.projects?.forEach(
+            (element) => element.isLoading = false,
+          );
+          _favoriteProjects.projects?.forEach(
+            (element) {
+              var p = _projects.projects!.firstWhereOrNull(
+                (e) => e.objectId == element.objectId,
+              );
+              if (p != null) {
+                p.isFavorite = true;
+              }
+            },
+          );
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
-          postSuccess = true;
-
           if (setStateCallback != null) setStateCallback();
 
           if (_projects.projects != null) {
@@ -325,67 +361,22 @@ abstract class _ProjectStore with Store {
                     .sublist(0, count.clamp(0, _projects.projects!.length))
                     .toList());
           }
-          postSuccess = false;
-          Future.delayed(Duration.zero, () {
-            _projects.projects?.forEach(
-              (element) => datasource.insert(element),
-            );
-          });
-        });
-
-        // else {
-        //   try {
-        //     await getStudentFavoriteProject(false);
-        //   } catch (e) {
-        //     // nothing changed
-        //     print("error getting fav");
-        //   }
-        //   _projects = value;
-        //   _projects.projects?.forEach(
-        //     (element) => element.isLoading = false,
-        //   );
-        //   _favoriteProjects.projects?.forEach(
-        //     (element) {
-        //       var p = _projects.projects!.firstWhereOrNull(
-        //         (e) => e.objectId == element.objectId,
-        //       );
-        //       if (p != null) {
-        //         p.isFavorite = true;
-        //       }
-        //     },
-        //   );
-        //   _projects.projects?.sort(
-        //     (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-        //   );
-        //   if (_projects.projects != null) {
-        //     refazynistKey.currentState?.refresh(
-        //         readyMade: _projects.projects!
-        //             .sublist(0, count.clamp(0, _projects.projects!.length))
-        //             .toList());
-        //   }
-        // }
+        }
       });
 
       // _projects = value;
     });
-    await datasource.getProjectsFromDb().then(
-      (value) {
-        _projects = value;
-      },
+    return ProjectList(
+      projects: List.filled(
+        5,
+        Project(
+          title: "",
+          description: "",
+          timeCreated: DateTime.now(),
+        ),
+        growable: true,
+      ),
     );
-    _projects.projects?.sort(
-      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-    );
-    _projects.projects?.forEach(
-      (element) => element.isLoading = false,
-    );
-    if (_projects.projects != null) {
-      refazynistKey.currentState?.refresh(
-          readyMade: _projects.projects!
-              .sublist(0, count.clamp(0, _projects.projects!.length))
-              .toList());
-    }
-    return Future.value(_projects);
   }
 
   Future<ProjectList> getStudentFavoriteProject(bool force) async {
@@ -453,10 +444,10 @@ abstract class _ProjectStore with Store {
             return _companyProjects;
           } else {
             print(value.data);
-            var companys = await sharedPrefsHelper.getCompanyProjects();
-            if (companys.projects != null && companys.projects!.isNotEmpty) {
+            var companies = await sharedPrefsHelper.getCompanyProjects();
+            if (companies.projects != null && companies.projects!.isNotEmpty) {
               {
-                _companyProjects = companys;
+                _companyProjects = companies;
                 _companyProjects.projects?.sort(
                   (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
                 );
@@ -469,10 +460,10 @@ abstract class _ProjectStore with Store {
           }
         },
       ).onError((error, stackTrace) async {
-        var companys = await sharedPrefsHelper.getCompanyProjects();
-        if (companys.projects != null && companys.projects!.isNotEmpty) {
+        var companies = await sharedPrefsHelper.getCompanyProjects();
+        if (companies.projects != null && companies.projects!.isNotEmpty) {
           {
-            _companyProjects = companys;
+            _companyProjects = companies;
             _companyProjects.projects?.sort(
               (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
             );
@@ -486,10 +477,10 @@ abstract class _ProjectStore with Store {
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
 
-      var companys = await sharedPrefsHelper.getCompanyProjects();
-      if (companys.projects != null && companys.projects!.isNotEmpty) {
+      var companies = await sharedPrefsHelper.getCompanyProjects();
+      if (companies.projects != null && companies.projects!.isNotEmpty) {
         {
-          _companyProjects = companys;
+          _companyProjects = companies;
           _companyProjects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
@@ -506,13 +497,17 @@ abstract class _ProjectStore with Store {
   }
 
   /// lấy proposal của 1 project
-  Future<ProposalList> getProjectProposals(Project project) async {
+  Future<ProposalList> getProjectProposals(Project project,
+      {bool Function(Proposal)? filter}) async {
     return await _getProjectProposalsUseCase
         .call(params: project)
         .then((value) {
       project.proposal = value.proposals;
       currentProps.proposals = value.proposals;
       updateProjectList(project);
+      if (filter != null) {
+        value.proposals = value.proposals!.where(filter).toList();
+      }
       return value;
     });
   }
@@ -569,14 +564,14 @@ abstract class _ProjectStore with Store {
           }
         } else {
           print(value.data);
-          var companys = await sharedPrefsHelper.getStudentProjects();
+          var companies = await sharedPrefsHelper.getStudentProjects();
 
-          if (companys.proposals != null && companys.proposals!.isNotEmpty) {
+          if (companies.proposals != null && companies.proposals!.isNotEmpty) {
             {
               if (userStore.user != null &&
                   userStore.user!.studentProfile != null) {
                 userStore.user!.studentProfile!.proposalProjects =
-                    companys.proposals;
+                    companies.proposals;
                 userStore.user!.studentProfile!.proposalProjects?.sort(
                   (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
                 );
@@ -591,42 +586,42 @@ abstract class _ProjectStore with Store {
         // //print(value);
       }).onError(
         (error, stackTrace) async {
-          var companys = await sharedPrefsHelper.getStudentProjects();
+          var companies = await sharedPrefsHelper.getStudentProjects();
 
-          if (companys.proposals != null && companys.proposals!.isNotEmpty) {
+          if (companies.proposals != null && companies.proposals!.isNotEmpty) {
             {
               if (userStore.user != null &&
                   userStore.user!.studentProfile != null) {
                 userStore.user!.studentProfile!.proposalProjects =
-                    companys.proposals;
+                    companies.proposals;
                 userStore.user!.studentProfile!.proposalProjects?.sort(
                   (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
                 );
               }
               if (setStateCallback != null) setStateCallback();
 
-              return companys;
+              return companies;
             }
           }
           return Future.value(ProposalList(proposals: []));
         },
       );
     } catch (e) {
-      var companys = await sharedPrefsHelper.getStudentProjects();
+      var companies = await sharedPrefsHelper.getStudentProjects();
 
-      if (companys.proposals != null && companys.proposals!.isNotEmpty) {
+      if (companies.proposals != null && companies.proposals!.isNotEmpty) {
         {
           if (userStore.user != null &&
               userStore.user!.studentProfile != null) {
             userStore.user!.studentProfile!.proposalProjects =
-                companys.proposals;
+                companies.proposals;
             userStore.user!.studentProfile!.proposalProjects?.sort(
               (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
             );
           }
           if (setStateCallback != null) setStateCallback();
 
-          return companys;
+          return companies;
         }
       }
     }

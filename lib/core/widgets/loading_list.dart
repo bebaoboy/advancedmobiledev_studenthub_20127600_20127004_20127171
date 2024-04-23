@@ -405,9 +405,9 @@ class RefazynistState extends State<Refazynist> {
     if (_loaderShowing) {
       if (_items.isNotEmpty) {
         _animatedListKey.currentState!.removeItem(_items.length,
-          (riContext, rAnimation) {
-        return widget.loaderBuilder(riContext, rAnimation);
-      }, duration: widget.removeDuration);
+            (riContext, rAnimation) {
+          return widget.loaderBuilder(riContext, rAnimation);
+        }, duration: widget.removeDuration);
       }
 
       await Future.delayed(widget.removeDuration);

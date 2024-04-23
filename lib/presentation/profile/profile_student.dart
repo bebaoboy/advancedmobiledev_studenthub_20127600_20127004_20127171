@@ -77,11 +77,7 @@ class _SearchDropdownState extends State<SearchDropdown> {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<TechStack>.searchRequest(
-      initialItem: userStore.user != null &&
-              userStore.user!.studentProfile != null &&
-              userStore.user!.studentProfile!.techStack != null
-          ? userStore.user!.studentProfile!.techStack!
-          : _list[0],
+      initialItem: userStore.user?.studentProfile?.techStack ?? _list[0],
       futureRequest: (p0) {
         return Future.microtask(
           () {

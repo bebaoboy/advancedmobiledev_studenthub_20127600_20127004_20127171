@@ -5,8 +5,7 @@ name: Deploy to Firebase Hosting on merge
 'on':
   push:
     branches:
-      - sprint7
-      - sprint7-viewoffer
+      - sprint8-chat
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest

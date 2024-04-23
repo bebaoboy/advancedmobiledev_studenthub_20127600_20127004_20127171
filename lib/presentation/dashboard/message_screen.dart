@@ -2,24 +2,25 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:boilerplate/presentation/dashboard/components/schedule_bottom_sheet.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:collection/collection.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -28,423 +29,50 @@ import 'package:uuid/uuid.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 
-class ScheduleBottomSheet extends StatefulWidget {
-  const ScheduleBottomSheet({super.key, required this.filter});
-  final InterviewSchedule? filter;
-
-  @override
-  State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
-}
-
-class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
-  TextEditingController startDate = TextEditingController();
-  TextEditingController endDate = TextEditingController();
-  TextEditingController title = TextEditingController();
-
-  late final InterviewSchedule itv;
-
-  @override
-  void initState() {
-    super.initState();
-    itv = widget.filter ??
-        InterviewSchedule(
-            startDate: DateTime.now(),
-            endDate: DateTime.now(),
-            title: "Null meeting");
-    title.text = (itv.title).toString();
-    startDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.startDate)).toString();
-    endDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.endDate)).toString();
-  }
-
-  Future<DateTime?> showDateTimePicker({
-    required BuildContext context,
-    DateTime? initialDate,
-    DateTime? firstDate,
-    DateTime? lastDate,
-  }) async {
-    initialDate ??= DateTime.now();
-    firstDate ??= initialDate.subtract(const Duration(days: 365 * 100));
-    lastDate ??= firstDate.add(const Duration(days: 365 * 200));
-
-    final DateTime? selectedDate = await showDatePicker(
-      context: context,
-      initialDatePickerMode: DatePickerMode.day,
-      initialDate: initialDate,
-      firstDate: firstDate,
-      lastDate: lastDate,
-    );
-
-    if (selectedDate == null) return null;
-
-    if (!context.mounted) return selectedDate;
-
-    final TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    return selectedTime == null
-        ? selectedDate
-        : DateTime(
-            selectedDate.year,
-            selectedDate.month,
-            selectedDate.day,
-            selectedTime.hour,
-            selectedTime.minute,
-          );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ScrollableSheet(
-      keyboardDismissBehavior: const SheetKeyboardDismissBehavior.onDragDown(
-        isContentScrollAware: true,
-      ),
-      child: Container(
-        decoration: const ShapeDecoration(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(16)),
-          ),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: SheetContentScaffold(
-            appBar: AppBar(
-              title: Text(Lang.get("schedule_interview")),
-            ),
-            body: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: SingleChildScrollView(
-                controller: ScrollController(),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const SizedBox(
-                      height: 44,
-                    ),
-                    TextField(
-                      controller: title,
-                      keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
-                        hintText: Lang.get("nothing_here"),
-                        floatingLabelBehavior: FloatingLabelBehavior.always,
-                        border: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2)),
-                        enabledBorder: const OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 2)),
-                        labelText: Lang.get("title"),
-                      ),
-                      onChanged: (value) {
-                        itv.title = value;
-                        // itv.endDate = int.tryParse(value) ?? 2;
-                      },
-                    ),
-                    const Divider(height: 32),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: TextField(
-                              controller: startDate,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                hintText: "None",
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2)),
-                                enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2)),
-                                labelText: Lang.get('profile_project_start'),
-                              ),
-                              onChanged: (value) {
-                                // itv.endDate = int.tryParse(value) ?? 2;
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextFieldWidget(
-                                onTap: () async {
-                                  DateTime? pickedDate =
-                                      await showDateTimePicker(
-                                          context: context,
-                                          initialDate: itv.startDate,
-                                          firstDate: itv.startDate,
-                                          //DateTime.now() - not to allow to choose before today.
-                                          lastDate: itv.startDate
-                                              .add(const Duration(days: 1)));
-
-                                  if (pickedDate != null) {
-                                    ////print(pickedDate);
-                                    setState(() {
-                                      itv.startDate = pickedDate;
-                                      startDate.text =
-                                          (DateFormat("EEEE dd/MM/yyyy HH:MM")
-                                                  .format(itv.startDate))
-                                              .toString();
-                                    });
-                                  }
-                                },
-                                inputDecoration: const InputDecoration(
-                                  floatingLabelBehavior:
-                                      FloatingLabelBehavior.never,
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 2)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 2)),
-                                ),
-                                isIcon: false,
-                                label: Text(
-                                  Lang.get('profile_project_start'),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
-                                enabled: true,
-                                enableInteractiveSelection: false,
-                                canRequestFocus: false,
-                                readOnly: true,
-                                fontSize: 15,
-                                hint: "Tap",
-                                inputType: TextInputType.emailAddress,
-                                icon: null,
-                                textController: null,
-                                inputAction: TextInputAction.next,
-                                autoFocus: false,
-                                onChanged: (value) {
-                                  //_projects[index].proficiency = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
-                                },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
-                                errorText: null
-                                // _formStore
-                                //             .formErrorStore.userEmail ==
-                                //         null
-                                //     ? null
-                                //     : AppLocalizations.of(context).get(
-                                //         _formStore.formErrorStore.userEmail),
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 32),
-                    Flexible(
-                      fit: FlexFit.loose,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: TextField(
-                              controller: endDate,
-                              keyboardType: TextInputType.text,
-                              decoration: InputDecoration(
-                                hintText: "None",
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.always,
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2)),
-                                enabledBorder: const OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.black, width: 2)),
-                                labelText: Lang.get('profile_project_end'),
-                              ),
-                              onChanged: (value) {
-                                // itv.endDate = int.tryParse(value) ?? 2;
-                              },
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Expanded(
-                            child: TextFieldWidget(
-                                onTap: () async {
-                                  DateTime? pickedDate =
-                                      await showDateTimePicker(
-                                          context: context,
-                                          initialDate: itv.endDate,
-                                          firstDate: itv.endDate,
-                                          //DateTime.now() - not to allow to choose before today.
-                                          lastDate: itv.endDate
-                                              .add(const Duration(days: 1)));
-
-                                  if (pickedDate != null) {
-                                    ////print(pickedDate);
-                                    setState(() {
-                                      itv.endDate = pickedDate;
-                                      endDate.text =
-                                          (DateFormat("EEEE dd/MM/yyyy HH:MM")
-                                                  .format(itv.endDate))
-                                              .toString();
-                                    });
-                                  }
-                                },
-                                floatingLabelBehavior:
-                                    FloatingLabelBehavior.never,
-                                inputDecoration: const InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 2)),
-                                  enabledBorder: OutlineInputBorder(
-                                      borderSide: BorderSide(
-                                          color: Colors.black, width: 2)),
-                                ),
-                                label: Text(
-                                  Lang.get('profile_project_end'),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary),
-                                ),
-                                isIcon: false,
-                                enabled: true,
-                                enableInteractiveSelection: false,
-                                canRequestFocus: false,
-                                readOnly: true,
-                                fontSize: 15,
-                                inputType: TextInputType.emailAddress,
-                                icon: null,
-                                textController: null,
-                                inputAction: TextInputAction.next,
-                                autoFocus: false,
-                                onChanged: (value) {
-                                  //_projects[index].proficiency = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
-                                },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
-                                errorText: null
-                                // _formStore
-                                //             .formErrorStore.userEmail ==
-                                //         null
-                                //     ? null
-                                //     : AppLocalizations.of(context).get(
-                                //         _formStore.formErrorStore.userEmail),
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const Divider(height: 32),
-                    Text(itv.getDuration().toString()),
-                  ],
-                ),
-              ),
-            ),
-            bottomBar: StickyBottomBarVisibility(
-              child: BottomAppBar(
-                height: 70,
-                surfaceTintColor: Colors.white,
-                child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Flexible(
-                      //   fit: FlexFit.tight,
-                      //   child: TextButton(
-                      //     onPressed: () {
-                      //       widget.onSheetDismissed();
-                      //     },
-                      //     child: const Text(Lang.get('Cancel'),
-                      //   ),
-                      // ),
-                      // const SizedBox(width: 16),
-                      RoundedButtonWidget(
-                        buttonColor: Theme.of(context).colorScheme.primary,
-                        onPressed: () {
-                          itv.clear();
-                        },
-                        buttonText: Lang.get("cancel"),
-                      ),
-                      const SizedBox(width: 12),
-                      RoundedButtonWidget(
-                        buttonColor: Theme.of(context).colorScheme.primary,
-                        onPressed: () {
-                          Navigator.pop(context, itv);
-                        },
-                        buttonText: Lang.get("send"),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )),
-      ),
-    );
-  }
-}
-
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key, required this.title});
-  final String title;
+  const MessageScreen({super.key, required this.chatUser});
+  final ChatUser chatUser;
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  List<types.Message> _messages = [];
-  List<types.User> typings = [];
-  final _user = const types.User(
+  List<AbstractChatMessage> _messages = [];
+  List<ChatUser> typings = [];
+  final _user = const ChatUser(
     id: '1',
   );
   Timer? timer;
+  late MessageNotifierProvider messageNotifier;
+  String msg = "";
+
   @override
   void initState() {
     super.initState();
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
+
     _loadMessages();
-    typings = [const types.User(id: "123", firstName: "Lam", lastName: "Quan")];
+    typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
+    // project id
+    messageNotifier = MessageNotifierProvider(id: "150");
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
       var num = r.nextInt(30);
       // print(num);
       if (num <= 7) {
         typings = [
-          const types.User(id: "1", firstName: "Nam Hà", lastName: "Hồng Dăm")
+          const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng Dăm")
         ];
       } else if (num > 7 && num < 15) {
-        typings = [
-          const types.User(id: "3", firstName: "Bảo", lastName: "Minh")
-        ];
+        typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
       } else if (num > 15 && num <= 20) {
-        typings.add(const types.User(
+        typings.add(const ChatUser(
             id: "2", firstName: "Jonnathan", lastName: "Nguyên"));
       } else if (num < 25) {
-        typings.add(
-            const types.User(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+        typings
+            .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
       } else {
         typings.clear();
       }
@@ -452,17 +80,202 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
-  void _addMessage(types.Message message) {
-    setState(() {
-      _messages.insert(0, message);
-      _sortMessages();
-    });
-  }
-
   @override
   void dispose() {
     super.dispose();
     timer?.cancel();
+  }
+
+  void updateMessageReactions(MessageReaction reaction, String id,
+      {bool remove = false, bool add = false}) {
+    // log('[_updateCubeMessageReactionss]');
+    var msg = _messages.firstWhereOrNull((msg) => msg.id == reaction.messageId);
+
+    if (msg == null) return;
+
+    if (reaction.addReaction != null) {
+      if (!(msg.reactions?.own.contains(reaction.addReaction) ?? false)) {
+        msg.reactions!.own.add(reaction.addReaction!);
+
+        msg.reactions!.total[reaction.addReaction!] =
+            msg.reactions!.total[reaction.addReaction] == null
+                ? 1
+                : msg.reactions!.total[reaction.addReaction]! + 1;
+      }
+    }
+
+    if (reaction.removeReaction != null) {
+      if ((msg.reactions?.own.contains(reaction.removeReaction) ?? false)) {
+        msg.reactions!.own.remove(reaction.removeReaction!);
+
+        msg.reactions!.total[reaction.removeReaction!] =
+            msg.reactions!.total[reaction.removeReaction] != null &&
+                    msg.reactions!.total[reaction.removeReaction]! > 0
+                ? msg.reactions!.total[reaction.removeReaction]! - 1
+                : 0;
+      }
+
+      msg.reactions!.total.removeWhere((key, value) => value == 0);
+    }
+    setState(() {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // print("build chat");
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: _buildAppBar(context),
+      body: Chat(
+        performEmoji: (Emoji emoji, AbstractChatMessage message) {
+          if ((message.reactions?.own.isNotEmpty ?? false) &&
+              (message.reactions?.own.contains(emoji.emoji) ?? false)) {
+            updateMessageReactions(
+                MessageReaction("9", "", message.id,
+                    removeReaction: emoji.emoji),
+                message.id,
+                remove: true);
+            // removeMessageReaction(message.id!, emoji.emoji);
+            // updateMessageReactions(CubeMessageReactions(
+            //     id!, _cubeDialog.dialogId!, message.messageId!,
+            //     removeReaction: emoji.emoji));
+          } else {
+            updateMessageReactions(
+                MessageReaction("9", "", message.id, addReaction: emoji.emoji),
+                message.id,
+                add: true);
+            // addMessageReaction(message.messageId!, emoji.emoji);
+            // updateMessageReactions(CubeMessageReactions(
+            //     id!, _cubeDialog.dialogId!, message.messageId!,
+            //     addReaction: emoji.emoji));
+          }
+        },
+        scrollPhysics: const ClampingScrollPhysics(),
+        typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
+        messages: _messages,
+        onAttachmentPressed: _handleAttachmentPressed,
+        onFirstIconPressed: () => showScheduleBottomSheet(context),
+        onMessageTap: _handleMessageTap,
+        onPreviewDataFetched: _handlePreviewDataFetched,
+        onSendPressed: _handleSendPressed,
+        showUserAvatars: true,
+        showUserNames: true,
+        audioMessageBuilder: (p0, {required messageWidth}) {
+          return AudioMessageWidget(
+            message: p0,
+            name: p0.name,
+            senderColor: Theme.of(context).colorScheme.primary,
+            inActiveAudioSliderColor: Colors.amber,
+            activeAudioSliderColor: Colors.red,
+          );
+        },
+        scheduleMessageBuilder: (p0, {required messageWidth}) {
+          var t = InterviewSchedule.fromJson(p0.metadata!);
+          // print(t);
+          // print(messageWidth);
+          // print(t.objectId);
+          return ScheduleMessage(
+              onMenuCallback: (scheduleFilter) async {
+                showAdaptiveActionSheet(
+                  title: Text(
+                    "Interview ${Lang.get("option")}",
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  context: NavigationService.navigatorKey.currentContext!,
+                  isDismissible: true,
+                  barrierColor: Colors.black87,
+                  actions: <BottomSheetAction>[
+                    BottomSheetAction(
+                      title: Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(
+                            Lang.get('reschedule'),
+                            style:
+                                const TextStyle(fontWeight: FontWeight.normal),
+                          )),
+                      onPressed: (context) async {
+                        ////print(scheduleFilter);
+                        await Future.delayed(const Duration(microseconds: 500))
+                            .then((value) {
+                          showScheduleBottomSheet(_scaffoldKey.currentContext!,
+                              flt: scheduleFilter, id: p0.id);
+                        });
+                      },
+                    ),
+                    BottomSheetAction(
+                      visibility: !t.isCancel,
+                      title: Container(
+                          alignment: Alignment.topLeft,
+                          child: Text(Lang.get('cancel'),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w100))),
+                      onPressed: (context) {
+                        int i = _messages
+                            .indexWhere((element) => element.id == p0.id);
+                        if (i != -1) {
+                          setState(() {
+                            _messages[i] = ScheduleMessageType(
+                                messageWidth:
+                                    (MediaQuery.of(context).size.width * 0.9)
+                                        .round(),
+                                author: widget.chatUser,
+                                id: const Uuid().v4(),
+                                type: AbstractMessageType.schedule,
+                                status: Status.delivered,
+                                createdAt:
+                                    DateTime.now().millisecondsSinceEpoch,
+                                metadata: {
+                                  ..._messages[i].metadata!,
+                                  "isCancel": true,
+                                });
+                            _sortMessages();
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                );
+              },
+              scheduleFilter: InterviewSchedule(
+                  isCancel: t.isCancel,
+                  endDate: t.endDate,
+                  startDate: t.startDate,
+                  title: t.title),
+              message: ScheduleMessageType(
+                  author: p0.author,
+                  id: p0.id,
+                  type: p0.type,
+                  messageWidth:
+                      (MediaQuery.of(context).size.width * 0.9).round()),
+              messageWidth: MediaQuery.of(context).size.width * 0.9);
+        },
+        customMessageBuilder: (p0, {required messageWidth}) {
+          return ListenableBuilder(
+            listenable: messageNotifier,
+            builder: (BuildContext context, Widget? child) {
+              return Text(messageNotifier.inbox.firstOrNull ?? "");
+            },
+          );
+        },
+        // theme: const DefaultChatTheme(
+        //   // seenIcon: Text(
+        //   //   'read',
+        //   //   style: TextStyle(
+        //   //     fontSize: 10.0,
+        //   //   ),
+        //   // ),
+        // ),
+      ),
+    );
+  }
+
+  void _addMessage(AbstractChatMessage message) {
+    setState(() {
+      _messages.insert(0, message);
+      _sortMessages();
+    });
   }
 
   void _sortMessages() {
@@ -539,12 +352,12 @@ class _MessageScreenState extends State<MessageScreen> {
     );
 
     if (result != null && result.files.single.path != null) {
-      final message = types.FileMessage(
+      final message = AbstractFileMessage(
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         id: const Uuid().v4(),
         mimeType: lookupMimeType(result.files.single.path!),
-        status: types.Status.delivered,
+        status: Status.delivered,
         name: result.files.single.name,
         size: result.files.single.size,
         uri: result.files.single.path!,
@@ -560,13 +373,13 @@ class _MessageScreenState extends State<MessageScreen> {
     );
 
     if (result != null && result.files.single.path != null) {
-      final message = types.AudioMessage(
+      final message = AbstractAudioMessage(
         duration: Duration.zero,
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
         id: const Uuid().v4(),
         mimeType: lookupMimeType(result.files.single.path!),
-        status: types.Status.delivered,
+        status: Status.delivered,
         name: result.files.single.name,
         size: result.files.single.size,
         uri: result.files.single.path!,
@@ -587,10 +400,10 @@ class _MessageScreenState extends State<MessageScreen> {
       final bytes = await result.readAsBytes();
       final image = await decodeImageFromList(bytes);
 
-      final message = types.ImageMessage(
+      final message = AbstractImageMessage(
         author: _user,
         createdAt: DateTime.now().millisecondsSinceEpoch,
-        status: types.Status.delivered,
+        status: Status.delivered,
         height: image.height.toDouble(),
         id: const Uuid().v4(),
         name: result.name,
@@ -603,8 +416,8 @@ class _MessageScreenState extends State<MessageScreen> {
     }
   }
 
-  void _handleMessageTap(BuildContext _, types.Message message) async {
-    if (message is types.FileMessage) {
+  void _handleMessageTap(BuildContext _, AbstractChatMessage message) async {
+    if (message is AbstractFileMessage) {
       var localPath = message.uri;
 
       if (message.uri.startsWith('http')) {
@@ -612,7 +425,7 @@ class _MessageScreenState extends State<MessageScreen> {
           final index =
               _messages.indexWhere((element) => element.id == message.id);
           final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
+              (_messages[index] as AbstractFileMessage).copyWith(
             isLoading: true,
           );
 
@@ -634,7 +447,7 @@ class _MessageScreenState extends State<MessageScreen> {
           final index =
               _messages.indexWhere((element) => element.id == message.id);
           final updatedMessage =
-              (_messages[index] as types.FileMessage).copyWith(
+              (_messages[index] as AbstractFileMessage).copyWith(
             isLoading: null,
           );
 
@@ -649,11 +462,11 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _handlePreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
+    AbstractTextMessage message,
+    PreviewData previewData,
   ) {
     final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as types.TextMessage).copyWith(
+    final updatedMessage = (_messages[index] as AbstractTextMessage).copyWith(
       previewData: previewData,
     );
     print("update");
@@ -663,14 +476,21 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
-  void _handleSendPressed(types.PartialText message) {
-    final textMessage = types.TextMessage(
+  void _handleSendPressed(PartialText message) {
+    final textMessage = AbstractTextMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),
-      status: types.Status.delivered,
+      status: Status.delivered,
       text: message.text,
     );
+    messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+      "content": message.text,
+      "projectId": 150,
+      "senderId": 34,
+      "receiverId": 94, // notification
+      "messageFlag": 0 // default 0 for message, 1 for interview
+    });
 
     _addMessage(textMessage);
   }
@@ -678,9 +498,9 @@ class _MessageScreenState extends State<MessageScreen> {
   void _loadMessages() async {
     final response = await rootBundle.loadString('assets/messages.json');
     final jsonList = jsonDecode(response) as List;
-    List<types.Message> messages = [];
+    List<AbstractChatMessage> messages = [];
     for (var e in jsonList) {
-      var r = types.Message.fromJson(e as Map<String, dynamic>);
+      var r = AbstractChatMessage.fromJson(e as Map<String, dynamic>);
       if (!messages.contains(r)) {
         messages.add(r);
       } else {
@@ -707,12 +527,11 @@ class _MessageScreenState extends State<MessageScreen> {
         if (value != null) {
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
-              author:
-                  const types.User(id: "1", firstName: "Bao", lastName: "Doe,"),
+              author: widget.chatUser,
               id: const Uuid().v4(),
-              type: types.MessageType.schedule,
+              type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
-              status: types.Status.delivered,
+              status: Status.delivered,
               metadata: value.toJson()));
           ////print(filter);
           return value;
@@ -725,12 +544,11 @@ class _MessageScreenState extends State<MessageScreen> {
               _messages[i] = ScheduleMessageType(
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
-                  author: const types.User(
-                      id: "1", firstName: "Bao", lastName: "Doe,"),
+                  author: widget.chatUser,
                   id: const Uuid().v4(),
-                  type: types.MessageType.schedule,
+                  type: AbstractMessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
-                  status: types.Status.delivered,
+                  status: Status.delivered,
                   metadata: {
                     "title": value.title,
                     "endDate": value.endDate,
@@ -749,141 +567,11 @@ class _MessageScreenState extends State<MessageScreen> {
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  @override
-  Widget build(BuildContext context) {
-    // print("build chat");
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: _buildAppBar(context),
-      body: Chat(
-        scrollPhysics: const ClampingScrollPhysics(),
-        typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
-        messages: _messages,
-        onAttachmentPressed: _handleAttachmentPressed,
-        onFirstIconPressed: () => showScheduleBottomSheet(context),
-        onMessageTap: _handleMessageTap,
-        onPreviewDataFetched: _handlePreviewDataFetched,
-        onSendPressed: _handleSendPressed,
-        showUserAvatars: true,
-        showUserNames: true,
-        audioMessageBuilder: (p0, {required messageWidth}) {
-          return AudioMessageWidget(
-            message: p0,
-            name: p0.name,
-            senderColor: Theme.of(context).colorScheme.primary,
-            inActiveAudioSliderColor: Colors.amber,
-            activeAudioSliderColor: Colors.red,
-          );
-        },
-        scheduleMessageBuilder: (p0, {required messageWidth}) {
-          var t = InterviewSchedule.fromJson(p0.metadata!);
-          // print(t);
-          // print(messageWidth);
-          // print(t.objectId);
-          return ScheduleMessage(
-              onMenuCallback: (scheduleFilter) async {
-                showAdaptiveActionSheet(
-                  title: Text(
-                    "Interview ${Lang.get("option")}",
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  context: NavigationService.navigatorKey.currentContext!,
-                  isDismissible: true,
-                  barrierColor: Colors.black87,
-                  actions: <BottomSheetAction>[
-                    BottomSheetAction(
-                      title: Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            Lang.get('reschedule'),
-                            style:
-                                const TextStyle(fontWeight: FontWeight.normal),
-                          )),
-                      onPressed: (context) async {
-                        ////print(scheduleFilter);
-                        await Future.delayed(const Duration(microseconds: 500))
-                            .then((value) {
-                          showScheduleBottomSheet(_scaffoldKey.currentContext!,
-                              flt: scheduleFilter, id: p0.id);
-                        });
-                      },
-                    ),
-                    BottomSheetAction(
-                      visibility: !t.isCancel,
-                      title: Container(
-                          alignment: Alignment.topLeft,
-                          child: Text(Lang.get('cancel'),
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w100))),
-                      onPressed: (context) {
-                        int i = _messages
-                            .indexWhere((element) => element.id == p0.id);
-                        if (i != -1) {
-                          setState(() {
-                            _messages[i] = ScheduleMessageType(
-                                messageWidth:
-                                    (MediaQuery.of(context).size.width * 0.9)
-                                        .round(),
-                                author: const types.User(
-                                    id: "1",
-                                    firstName: "Bao",
-                                    lastName: "Doe,"),
-                                id: const Uuid().v4(),
-                                type: types.MessageType.schedule,
-                                status: types.Status.delivered,
-                                createdAt:
-                                    DateTime.now().millisecondsSinceEpoch,
-                                metadata: {
-                                  ..._messages[i].metadata!,
-                                  "isCancel": true,
-                                });
-                            _sortMessages();
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                );
-              },
-              scheduleFilter: InterviewSchedule(
-                  isCancel: t.isCancel,
-                  endDate: t.endDate,
-                  startDate: t.startDate,
-                  title: t.title),
-              message: ScheduleMessageType(
-                  author: p0.author,
-                  id: p0.id,
-                  type: p0.type,
-                  messageWidth:
-                      (MediaQuery.of(context).size.width * 0.9).round()),
-              messageWidth: MediaQuery.of(context).size.width * 0.9);
-        },
-        customMessageBuilder: (p0, {required messageWidth}) {
-          return const Center(
-            child: Text(
-              "custom nè",
-              style: TextStyle(fontWeight: FontWeight.w900),
-            ),
-          );
-        },
-        // theme: const DefaultChatTheme(
-        //   // seenIcon: Text(
-        //   //   'read',
-        //   //   style: TextStyle(
-        //   //     fontSize: 10.0,
-        //   //   ),
-        //   // ),
-        // ),
-      ),
-    );
-  }
-
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
-      title: widget.title,
+      title:
+          "${widget.chatUser.firstName ?? "No name"} ${widget.chatUser.lastName ?? ""}",
       openScheduleDialog: () async {
         ////print("schedule dialog");
         await Future.delayed(const Duration(microseconds: 500)).then((value) {

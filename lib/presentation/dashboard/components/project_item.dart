@@ -89,12 +89,15 @@ class _SwipeToDismissWrapState extends State<SwipeToDismissWrap> {
                           style: TextStyle(fontSize: 25),
                         ),
                       )),
-                      AnimatedOpacity(
+                  AnimatedOpacity(
                       duration: const Duration(milliseconds: 100),
                       opacity: dismiss ? 1 : 0,
                       child: const Padding(
                         padding: EdgeInsets.only(top: 18.0, left: 5),
-                        child: Icon(Icons.arrow_back, size: 30,),
+                        child: Icon(
+                          Icons.arrow_back,
+                          size: 30,
+                        ),
                       ))
                 ],
               ),
@@ -508,15 +511,16 @@ class _ProjectItem2State extends State<ProjectItem2> {
                     Flexible(
                       // height: 100,
                       child: AutoSizeText(
-                        words: widget.keyword != null
-                            ? {
-                                widget.keyword!: HighlightedWord(
-                                  onTap: () {
-                                    print("match");
-                                  },
-                                ),
-                              }
-                            : null,
+                        words:
+                            widget.keyword != null
+                                ? {
+                                    widget.keyword!: HighlightedWord(
+                                      onTap: () {
+                                        print("match");
+                                      },
+                                    ),
+                                  }
+                                : null,
                         matchDecoration: BoxDecoration(
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(50),

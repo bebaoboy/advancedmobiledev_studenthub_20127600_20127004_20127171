@@ -41,7 +41,7 @@ class PartialAudio {
   final String name;
 
   /// Message that is being replied to with the current message.
-  final Message? repliedMessage;
+  final AbstractChatMessage? repliedMessage;
 
   /// Size of the audio in bytes.
   final num size;

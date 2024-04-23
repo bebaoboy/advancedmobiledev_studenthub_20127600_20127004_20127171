@@ -1,6 +1,7 @@
 // ignore_for_file: unused_local_variable
 
 import 'package:appinio_swiper/appinio_swiper.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:flutter/material.dart';
 
 Widget swipeRightButton(AppinioSwiperController controller) {
@@ -147,7 +148,8 @@ Widget swipeLeftButton(AppinioSwiperController controller) {
 }
 
 Widget customSwipeLeftButton(
-    AppinioSwiperController controller, Function? sendMessage) {
+    AppinioSwiperController controller, Function? sendMessage, HireStatus hireStatus) {
+  final String buttonText = hireStatus == HireStatus.pending ? "Message" : "Send Message";
   return ListenableBuilder(
       listenable: controller,
       builder: (context, child) {
@@ -167,10 +169,10 @@ Widget customSwipeLeftButton(
         return Container(
             alignment: Alignment.center,
             child: MaterialButton(
-              onPressed: sendMessage!() ?? () {},
+              onPressed: () => sendMessage!() ?? () {},
               textColor: Colors.black,
               color: Colors.grey.shade300,
-              child: const Text('Send Message'),
+              child: Text(buttonText),
             ));
       });
 }

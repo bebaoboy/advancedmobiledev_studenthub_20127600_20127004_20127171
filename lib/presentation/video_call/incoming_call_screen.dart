@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, deprecated_member_use
 
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +18,7 @@ class IncomingCallScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     _callSession.onSessionClosed = (callSession) {
       log("_onSessionClosed", TAG);
-      Navigator.pop(context);
+      Navigator.pop(NavigationService.navigatorKey.currentContext ?? context);
     };
 
     return WillPopScope(
@@ -36,7 +37,8 @@ class IncomingCallScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(top: 36, bottom: 8),
-                  child: Text(Lang.get('from'), style: const TextStyle(fontSize: 20)),
+                  child: Text(Lang.get('from'),
+                      style: const TextStyle(fontSize: 20)),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 86),
@@ -99,6 +101,7 @@ class IncomingCallScreen extends StatelessWidget {
 
   void _rejectCall(BuildContext context, P2PSession callSession) {
     CallManager.instance.reject(callSession.sessionId, false);
+    Navigator.pop(context);
   }
 
   Future<bool> _onBackPressed(BuildContext context) {

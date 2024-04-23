@@ -48,11 +48,7 @@ class _TechStackDropdownState extends State<TechStackDropdown> {
   @override
   Widget build(BuildContext context) {
     return CustomDropdown<TechStack>.searchRequest(
-      initialItem: userStore.user != null &&
-              userStore.user!.studentProfile != null &&
-              userStore.user!.studentProfile!.techStack != null
-          ? userStore.user!.studentProfile!.techStack!
-          : _list[0],
+      initialItem: userStore.user?.studentProfile?.techStack ?? _list[0],
       futureRequest: (p0) {
         return Future.microtask(
           () {
@@ -353,11 +349,8 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
 
                   // Skillset
                   ChipsInput<Skill>(
-                    initialChips: _userStore.user != null &&
-                            _userStore.user!.studentProfile != null &&
-                            _userStore.user!.studentProfile!.skillSet != null
-                        ? _userStore.user!.studentProfile!.skillSet!
-                        : [],
+                    initialChips:
+                        _userStore.user?.studentProfile?.skillSet ?? [],
                     onChipTapped: _onChipTapped,
                     decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(left: 13),

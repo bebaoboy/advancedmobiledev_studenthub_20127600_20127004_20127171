@@ -1,4 +1,5 @@
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -136,7 +137,10 @@ class _MessageTabState extends State<MessageTab> {
                                 NavigationService.navigatorKey.currentContext!)
                             .push(MaterialPageRoute2(
                                 routeName: Routes.message,
-                                arguments: messages[index]['name']));
+                                arguments: ChatUser(
+                                    //id: userStore.currentId,
+                                    id: "9",
+                                    firstName: messages[index]['name'])));
                         // You can replace the print statement with your function
                       },
                       child: ListTile(

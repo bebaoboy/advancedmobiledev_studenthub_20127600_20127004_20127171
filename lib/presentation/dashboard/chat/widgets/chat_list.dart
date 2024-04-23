@@ -2,8 +2,7 @@ import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:diffutil_dart/diffutil.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 import 'input/typing_indicator.dart';
 
@@ -100,8 +99,8 @@ class _ChatListState extends State<ChatList>
       widget.items,
       equalityChecker: (item1, item2) {
         if (item1 is Map<String, Object> && item2 is Map<String, Object>) {
-          final message1 = item1['message']! as types.Message;
-          final message2 = item2['message']! as types.Message;
+          final message1 = item1['message']! as AbstractChatMessage;
+          final message2 = item2['message']! as AbstractChatMessage;
 
           return message1.id == message2.id;
         } else {
@@ -167,8 +166,8 @@ class _ChatListState extends State<ChatList>
       final item = widget.items[1];
 
       if (oldItem is Map<String, Object> && item is Map<String, Object>) {
-        final oldMessage = oldItem['message']! as types.Message;
-        final message = item['message']! as types.Message;
+        final oldMessage = oldItem['message']! as AbstractChatMessage;
+        final message = item['message']! as AbstractChatMessage;
 
         // Compare items to fire only on newly added messages.
         if (oldMessage.id != message.id) {
@@ -196,9 +195,9 @@ class _ChatListState extends State<ChatList>
   Key? _valueKeyForItem(Object item) =>
       _mapMessage(item, (message) => ValueKey(message.id));
 
-  T? _mapMessage<T>(Object maybeMessage, T Function(types.Message) f) {
+  T? _mapMessage<T>(Object maybeMessage, T Function(AbstractChatMessage) f) {
     if (maybeMessage is Map<String, Object>) {
-      return f(maybeMessage['message'] as types.Message);
+      return f(maybeMessage['message'] as AbstractChatMessage);
     }
     return null;
   }

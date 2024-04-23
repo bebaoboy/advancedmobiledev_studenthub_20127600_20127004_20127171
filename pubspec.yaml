@@ -59,6 +59,7 @@ dependencies:
   enhanced_paginated_view:
   equatable: ^2.0.5
   exprollable_page_view:
+  emoji_picker_flutter:
   # easy_date_timeline: 
   # F
   file_picker:
@@ -139,6 +140,7 @@ dependencies:
   # smooth_page_indicator:
   swipeable_page_route:
   size_helper:
+  socket_io_client:
   # T
   to_string_pretty:
   tuple: 

@@ -7,7 +7,6 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
@@ -59,6 +58,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     );
   }
 
+  // getRealNewCountProposals() {
+  //   return widget.project.countProposals -
+  //       widget.project.countHired -
+  //       widget.project.countMessages;
+  // }
+
   Widget _buildBody() {
     return SingleChildScrollView(
       controller: ScrollController(),
@@ -79,7 +84,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   ),
                 ),
                 Visibility(
-                  visible: widget.project.countProposals > 0,
+                  visible: widget.project.countNewProposals > 0,
                   child: GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute2(
@@ -97,7 +102,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                               style: TextStyle(
                                   fontWeight: FontWeight.w500, fontSize: 12),
                             ),
-                            Text('${widget.project.countProposals} new',
+                            Text('${widget.project.countNewProposals} new',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500, fontSize: 12)),
                           ],
@@ -161,7 +166,12 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                       MessageTabLayout(
                           messages: widget.project.proposal == null
                               ? []
-                              : widget.project.proposal!.where((element) => element.hiredStatus == HireStatus.pending,)
+                              : widget.project.proposal!
+                                  .where(
+                                    (element) =>
+                                        element.hiredStatus ==
+                                        HireStatus.pending,
+                                  )
                                   .map(
                                     (e) => e.student,
                                   )
@@ -169,7 +179,11 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                       HiredTabLayout(
                           hired: widget.project.proposal == null
                               ? []
-                              : widget.project.proposal!.where((element) => element.hiredStatus == HireStatus.hired,)
+                              : widget.project.proposal!
+                                  .where(
+                                    (element) =>
+                                        element.hiredStatus == HireStatus.hired,
+                                  )
                                   .map(
                                     (e) => e.student,
                                   )
@@ -232,14 +246,14 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
     super.initState();
 
     createdText =
-        "Created: ${DateFormat("HH:mm").format(widget.project.timeCreated.toLocal())}";
+        "Created: ${DateFormat("HH:mm dd/MM/yyyy").format(widget.project.timeCreated.toLocal())}";
     createdText2 = timeago.format(
         locale: _languageStore.locale, widget.project.timeCreated);
 
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated) {
       updatedText =
-          "Edit at ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())}";
+          "Edit at ${DateFormat("HH:mm dd/MM/yyyy").format(widget.project.updatedAt!.toLocal())}";
     }
   }
 
@@ -387,11 +401,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                     ),
                   ]),
                 )),
-            if (userStore.user != null &&
-                userStore.user!.companyProfile != null &&
-                userStore.user!.type == UserType.company &&
-                widget.project.companyId ==
-                    userStore.user!.companyProfile!.objectId!)
+            if (widget.project.companyId == userStore.companyId)
               Align(
                 alignment: Alignment.bottomRight,
                 child: Row(

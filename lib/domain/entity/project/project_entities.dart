@@ -87,9 +87,23 @@ class Project extends ProjectBase {
   int? _countMessages;
   int? _countHired;
 
+  int get countNewProposals => countProposals - countMessages - countHired;
+
   int get countProposals => _countProposals ?? proposal?.length ?? 0;
-  int get countMessages => proposal?.where((element) => element.hiredStatus == HireStatus.pending,).length ?? 0;
-  int get countHired => proposal?.where((element) => element.hiredStatus == HireStatus.hired,).length ?? 0;
+  int get countMessages =>
+      proposal
+          ?.where(
+            (element) => element.hiredStatus == HireStatus.pending,
+          )
+          .length ??
+      0;
+  int get countHired =>
+      proposal
+          ?.where(
+            (element) => element.hiredStatus == HireStatus.hired,
+          )
+          .length ??
+      0;
 
   Project({
     required super.title,
@@ -158,7 +172,6 @@ class Project extends ProjectBase {
         countProposals: json["countProposals"],
         countMessages: json["countMessages"],
         countHired: json["countHired"],
-        // TODO: typeFlag change 0, 1, 2(Archive)
         enabled: Status.values[json["typeFlag"] ?? 0],
         isFavorite: fav);
   }
@@ -243,8 +256,6 @@ class StudentProject extends Project {
       numberOfStudents: json['numberOfStudents'] ?? 0,
       id: (json["id"] ?? "").toString(),
       projectId: (json["projectId"] ?? "").toString(),
-      // TODO: typeFlag change 0, 1, 2(Archive)
-
       enabled: Status.values[json["typeFlag"] ?? 0],
     );
   }
@@ -266,10 +277,18 @@ class StudentProject extends Project {
 // ------------------- PROPOSAL ------------------------------
 
 enum HireStatus {
-  notHired, /// statusFlag = waiting
-  pending, /// statusFlag = active
-  offer, /// offer from company
-  hired, /// hired
+  notHired,
+
+  /// statusFlag = waiting
+  pending,
+
+  /// statusFlag = active
+  offer,
+
+  /// offer from company
+  hired,
+
+  /// hired
 }
 
 extension HireStatusTitle on HireStatus {
@@ -281,6 +300,8 @@ extension HireStatusTitle on HireStatus {
         return 'Hired';
       case HireStatus.offer:
         return 'Offered';
+      case HireStatus.notHired:
+        return 'Reject';
       default:
         return 'Waiting';
     }

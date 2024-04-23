@@ -36,15 +36,17 @@ class _HomeScreenState extends State<HomeScreen> {
             _userStore.user!.type != UserType.naught &&
             _userStore.user!.email.isNotEmpty) {
           print("switch account navigate home");
-          final ProfileStudentStore infoStore = getIt<ProfileStudentStore>();
-          if (_userStore.user!.studentProfile != null) {
-            infoStore.setStudentId(_userStore.user!.studentProfile!.objectId!);
+          if (_userStore.user!.type == UserType.student) {
+            final ProfileStudentStore infoStore = getIt<ProfileStudentStore>();
+            if (_userStore.user!.studentProfile != null) {
+              infoStore
+                  .setStudentId(_userStore.user!.studentProfile!.objectId!);
+            }
+            infoStore.getInfo().then(
+                  (value) {},
+                );
           }
-          infoStore.getInfo().then(
-                (value) {},
-              );
 
-          // TODO: check welcome
           Future.delayed(const Duration(seconds: 1), () {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute2(routeName: Routes.dashboard),
@@ -153,7 +155,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-                                  // TODO: check welcome
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute2(
                                         routeName: Routes.dashboard),
@@ -219,7 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-                                  // TODO: check welcome
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute2(
                                         routeName: Routes.dashboard),

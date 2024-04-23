@@ -55,7 +55,7 @@ Future<void> sendPushAboutRejectFromKilledState(
   params.parameters[PARAM_SIGNAL_TYPE] = SIGNAL_TYPE_REJECT_CALL;
   params.parameters[PARAM_IOS_VOIP] = 1;
 
-  params.notificationType = NotificationType.PUSH;
+  params.notificationType = CubeNotificationType.PUSH;
   params.environment = CubeEnvironment.DEVELOPMENT;
   params.usersIds = [callerId];
 

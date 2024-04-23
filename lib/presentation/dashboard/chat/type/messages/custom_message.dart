@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
 import '../message.dart';
-import '../user.dart' show User;
+import '../user.dart' show ChatUser;
 import 'partial_custom.dart';
 
 part 'custom_message.g.dart';
@@ -11,9 +11,9 @@ part 'custom_message.g.dart';
 /// you want.
 @JsonSerializable()
 @immutable
-abstract class CustomMessage extends Message {
+abstract class AbstractCustomMessage extends AbstractChatMessage {
   /// Creates a custom message.
-  const CustomMessage._({
+   AbstractCustomMessage._({
     required super.author,
     super.createdAt,
     required super.id,
@@ -23,31 +23,31 @@ abstract class CustomMessage extends Message {
     super.roomId,
     super.showStatus,
     super.status,
-    MessageType? type,
+    AbstractMessageType? type,
     super.updatedAt,
-  }) : super(type: type ?? MessageType.custom);
+  }) : super(type: type ?? AbstractMessageType.custom);
 
-  const factory CustomMessage({
-    required User author,
+   factory AbstractCustomMessage({
+    required ChatUser author,
     int? createdAt,
     required String id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
-    MessageType? type,
+    AbstractMessageType? type,
     int? updatedAt,
   }) = _CustomMessage;
 
   /// Creates a custom message from a map (decoded JSON).
-  factory CustomMessage.fromJson(Map<String, dynamic> json) =>
-      _$CustomMessageFromJson(json);
+  factory AbstractCustomMessage.fromJson(Map<String, dynamic> json) =>
+      _$AbstractCustomMessageFromJson(json);
 
   /// Creates a full custom message from a partial one.
-  factory CustomMessage.fromPartial({
-    required User author,
+  factory AbstractCustomMessage.fromPartial({
+    required ChatUser author,
     int? createdAt,
     required String id,
     required PartialCustom partialCustom,
@@ -67,7 +67,7 @@ abstract class CustomMessage extends Message {
         roomId: roomId,
         showStatus: showStatus,
         status: status,
-        type: MessageType.custom,
+        type: AbstractMessageType.custom,
         updatedAt: updatedAt,
       );
 
@@ -87,13 +87,13 @@ abstract class CustomMessage extends Message {
       ];
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     int? createdAt,
     String? id,
     Map<String, dynamic>? metadata,
     String? remoteId,
-    Message? repliedMessage,
+    AbstractChatMessage? repliedMessage,
     String? roomId,
     bool? showStatus,
     Status? status,
@@ -103,12 +103,12 @@ abstract class CustomMessage extends Message {
   /// Converts a custom message to the map representation,
   /// encodable to JSON.
   @override
-  Map<String, dynamic> toJson() => _$CustomMessageToJson(this);
+  Map<String, dynamic> toJson() => _$AbstractCustomMessageToJson(this);
 }
 
 /// A utility class to enable better copyWith.
-class _CustomMessage extends CustomMessage {
-  const _CustomMessage({
+class _CustomMessage extends AbstractCustomMessage {
+   _CustomMessage({
     required super.author,
     super.createdAt,
     required super.id,
@@ -123,8 +123,8 @@ class _CustomMessage extends CustomMessage {
   }) : super._();
 
   @override
-  Message copyWith({
-    User? author,
+  AbstractChatMessage copyWith({
+    ChatUser? author,
     dynamic createdAt = _Unset,
     String? id,
     dynamic metadata = _Unset,
@@ -145,7 +145,7 @@ class _CustomMessage extends CustomMessage {
         remoteId: remoteId == _Unset ? this.remoteId : remoteId as String?,
         repliedMessage: repliedMessage == _Unset
             ? this.repliedMessage
-            : repliedMessage as Message?,
+            : repliedMessage as AbstractChatMessage?,
         roomId: roomId == _Unset ? this.roomId : roomId as String?,
         showStatus:
             showStatus == _Unset ? this.showStatus : showStatus as bool?,

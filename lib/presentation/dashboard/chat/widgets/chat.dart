@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
-    as types;
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart' show PhotoViewComputedScale;
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -33,9 +33,12 @@ class Chat extends StatefulWidget {
   static const lightTheme = DefaultChatTheme();
   static const darkTheme = DarkChatTheme();
   static ChatTheme theme = const DefaultChatTheme();
+  
+  final Function(Emoji emoji, AbstractChatMessage message) performEmoji;
 
   /// Creates a chat widget.
   const Chat({
+    required this.performEmoji,
     super.key,
     this.audioMessageBuilder,
     this.avatarBuilder,
@@ -105,16 +108,16 @@ class Chat extends StatefulWidget {
   });
 
   /// See [Message.audioMessageBuilder].
-  final Widget Function(types.AudioMessage, {required int messageWidth})?
+  final Widget Function(AbstractAudioMessage, {required int messageWidth})?
       audioMessageBuilder;
 
   /// See [Message.avatarBuilder].
-  final Widget Function(types.User author)? avatarBuilder;
+  final Widget Function(ChatUser author)? avatarBuilder;
 
   /// See [Message.bubbleBuilder].
   final Widget Function(
     Widget child, {
-    required types.Message message,
+    required AbstractChatMessage message,
     required bool nextMessageInGroup,
   })? bubbleBuilder;
 
@@ -128,7 +131,7 @@ class Chat extends StatefulWidget {
   final String Function(DateTime)? customDateHeaderText;
 
   /// See [Message.customMessageBuilder].
-  final Widget Function(types.CustomMessage, {required int messageWidth})?
+  final Widget Function(AbstractCustomMessage, {required int messageWidth})?
       customMessageBuilder;
 
   /// See [Message.customMessageBuilder].
@@ -136,8 +139,8 @@ class Chat extends StatefulWidget {
       scheduleMessageBuilder;
 
   /// See [Message.customStatusBuilder].
-  final Widget Function(types.Message message, {required BuildContext context})?
-      customStatusBuilder;
+  final Widget Function(AbstractChatMessage message,
+      {required BuildContext context})? customStatusBuilder;
 
   /// Allows you to customize the date format. IMPORTANT: only for the date, do not return time here. See [timeFormat] to customize the time format. [dateLocale] will be ignored if you use this, so if you want a localized date make sure you initialize your [DateFormat] with a locale. See [customDateHeaderText] for more customization.
   final DateFormat? dateFormat;
@@ -171,7 +174,7 @@ class Chat extends StatefulWidget {
   final Widget? emptyState;
 
   /// See [Message.fileMessageBuilder].
-  final Widget Function(types.FileMessage, {required int messageWidth})?
+  final Widget Function(AbstractFileMessage, {required int messageWidth})?
       fileMessageBuilder;
 
   /// Time (in ms) between two messages when we will visually group them.
@@ -189,7 +192,7 @@ class Chat extends StatefulWidget {
   final Map<String, String>? imageHeaders;
 
   /// See [Message.imageMessageBuilder].
-  final Widget Function(types.ImageMessage, {required int messageWidth})?
+  final Widget Function(AbstractImageMessage, {required int messageWidth})?
       imageMessageBuilder;
 
   /// This feature allows you to use a custom image provider.
@@ -223,18 +226,18 @@ class Chat extends StatefulWidget {
   /// use [customBottomWidget] instead.
   final Widget? listBottomWidget;
 
-  /// List of [types.Message] to render in the chat widget.
-  final List<types.Message> messages;
+  /// List of [AbstractChatMessage] to render in the chat widget.
+  final List<AbstractChatMessage> messages;
 
   /// See [Message.nameBuilder].
-  final Widget Function(types.User)? nameBuilder;
+  final Widget Function(ChatUser)? nameBuilder;
 
   /// See [Input.onAttachmentPressed].
   final VoidCallback? onAttachmentPressed;
   final VoidCallback? onFirstIconPressed;
 
   /// See [Message.onAvatarTap].
-  final void Function(types.User)? onAvatarTap;
+  final void Function(ChatUser)? onAvatarTap;
 
   /// Called when user taps on background.
   final VoidCallback? onBackgroundTap;
@@ -246,30 +249,33 @@ class Chat extends StatefulWidget {
   final double? onEndReachedThreshold;
 
   /// See [Message.onMessageDoubleTap].
-  final void Function(BuildContext context, types.Message)? onMessageDoubleTap;
+  final void Function(BuildContext context, AbstractChatMessage)?
+      onMessageDoubleTap;
 
   /// See [Message.onMessageLongPress].
-  final void Function(BuildContext context, types.Message)? onMessageLongPress;
+  final void Function(BuildContext context, AbstractChatMessage)?
+      onMessageLongPress;
 
   /// See [Message.onMessageStatusLongPress].
-  final void Function(BuildContext context, types.Message)?
+  final void Function(BuildContext context, AbstractChatMessage)?
       onMessageStatusLongPress;
 
   /// See [Message.onMessageStatusTap].
-  final void Function(BuildContext context, types.Message)? onMessageStatusTap;
+  final void Function(BuildContext context, AbstractChatMessage)?
+      onMessageStatusTap;
 
   /// See [Message.onMessageTap].
-  final void Function(BuildContext context, types.Message)? onMessageTap;
+  final void Function(BuildContext context, AbstractChatMessage)? onMessageTap;
 
   /// See [Message.onMessageVisibilityChanged].
-  final void Function(types.Message, bool visible)? onMessageVisibilityChanged;
+  final void Function(AbstractChatMessage, bool visible)?
+      onMessageVisibilityChanged;
 
   /// See [Message.onPreviewDataFetched].
-  final void Function(types.TextMessage, types.PreviewData)?
-      onPreviewDataFetched;
+  final void Function(AbstractTextMessage, PreviewData)? onPreviewDataFetched;
 
   /// See [Input.onSendPressed].
-  final void Function(types.PartialText) onSendPressed;
+  final void Function(PartialText) onSendPressed;
 
   /// See [ChatList.scrollController].
   /// If provided, you cannot use the scroll to message functionality.
@@ -289,11 +295,11 @@ class Chat extends StatefulWidget {
   final bool showUserNames;
 
   /// Builds a system message outside of any bubble.
-  final Widget Function(types.SystemMessage)? systemMessageBuilder;
+  final Widget Function(AbstractSystemMessage)? systemMessageBuilder;
 
   /// See [Message.textMessageBuilder].
   final Widget Function(
-    types.TextMessage, {
+    AbstractTextMessage, {
     required int messageWidth,
     required bool showName,
   })? textMessageBuilder;
@@ -316,7 +322,7 @@ class Chat extends StatefulWidget {
   final bool usePreviewData;
 
   /// See [InheritedUser.user].
-  static const types.User user = types.User(id: "1");
+  static const ChatUser user = ChatUser(id: "1");
 
   /// See [Message.userAgent].
   final String? userAgent;
@@ -325,11 +331,11 @@ class Chat extends StatefulWidget {
   final bool? useTopSafeAreaInset;
 
   /// See [Message.videoMessageBuilder].
-  final Widget Function(types.VideoMessage, {required int messageWidth})?
+  final Widget Function(AbstractVideoMessage, {required int messageWidth})?
       videoMessageBuilder;
 
   /// See [Message.slidableMessageBuilder].
-  final Widget Function(types.Message, Widget msgWidget)?
+  final Widget Function(AbstractChatMessage, Widget msgWidget)?
       slidableMessageBuilder;
 
   /// See [Message.isLeftStatus].
@@ -466,15 +472,17 @@ class ChatState extends State<Chat> {
       );
     } else {
       final map = object as Map<String, Object>;
-      final message = map['message']! as types.Message;
+      final message = map['message']! as AbstractChatMessage;
 
       final Widget messageWidget;
 
-      if (message is types.SystemMessage) {
+      if (message is AbstractSystemMessage) {
         messageWidget = widget.systemMessageBuilder?.call(message) ??
             SystemMessage(message: message.text);
       } else {
-        final maxWidth = message.type == types.MessageType.schedule ? (constraints.maxWidth * 0.8).round() : Chat.theme.messageMaxWidth;
+        final maxWidth = message.type == AbstractMessageType.schedule
+            ? (constraints.maxWidth * 0.8).round()
+            : Chat.theme.messageMaxWidth;
         final messageWidth =
             widget.showUserAvatars && message.author.id != Chat.user.id
                 ? min(constraints.maxWidth * widget.messageWidthRatio, maxWidth)
@@ -484,6 +492,7 @@ class ChatState extends State<Chat> {
                     maxWidth,
                   ).floor();
         final Widget msgWidget = Message(
+          performEmoji: widget.performEmoji,
           scheduleMessageBuilder: widget.scheduleMessageBuilder,
           audioMessageBuilder: widget.audioMessageBuilder,
           avatarBuilder: widget.avatarBuilder,
@@ -506,7 +515,7 @@ class ChatState extends State<Chat> {
           onMessageStatusLongPress: widget.onMessageStatusLongPress,
           onMessageStatusTap: widget.onMessageStatusTap,
           onMessageTap: (context, tappedMessage) {
-            if (tappedMessage is types.ImageMessage &&
+            if (tappedMessage is AbstractImageMessage &&
                 widget.disableImageGallery != true) {
               _onImagePressed(tappedMessage);
             }
@@ -517,13 +526,13 @@ class ChatState extends State<Chat> {
           onPreviewDataFetched: _onPreviewDataFetched,
           roundBorder: map['nextMessageInGroup'] == true,
           showAvatar: map['nextMessageInGroup'] == false &&
-              message.type != types.MessageType.schedule,
+              message.type != AbstractMessageType.schedule,
           showName: map['showName'] == true,
           showStatus: map['showStatus'] == true &&
-              message.type != types.MessageType.schedule,
+              message.type != AbstractMessageType.schedule,
           isLeftStatus: widget.isLeftStatus,
           showUserAvatars: widget.showUserAvatars &&
-              message.type != types.MessageType.schedule,
+              message.type != AbstractMessageType.schedule,
           textMessageBuilder: widget.textMessageBuilder,
           textMessageOptions: widget.textMessageOptions,
           usePreviewData: widget.usePreviewData,
@@ -553,7 +562,7 @@ class ChatState extends State<Chat> {
     _galleryPageController = null;
   }
 
-  void _onImagePressed(types.ImageMessage message) {
+  void _onImagePressed(AbstractImageMessage message) {
     final initialPage = _gallery.indexWhere(
       (element) => element.id == message.id && element.uri == message.uri,
     );
@@ -564,8 +573,8 @@ class ChatState extends State<Chat> {
   }
 
   void _onPreviewDataFetched(
-    types.TextMessage message,
-    types.PreviewData previewData,
+    AbstractTextMessage message,
+    PreviewData previewData,
   ) {
     widget.onPreviewDataFetched?.call(message, previewData);
   }
@@ -578,7 +587,7 @@ class ChatState extends State<Chat> {
       if (object is UnreadHeaderData) {
         chatMessageAutoScrollIndexById[_unreadHeaderId] = i;
       } else if (object is Map<String, Object>) {
-        final message = object['message']! as types.Message;
+        final message = object['message']! as AbstractChatMessage;
         chatMessageAutoScrollIndexById[message.id] = i;
       }
       i++;
