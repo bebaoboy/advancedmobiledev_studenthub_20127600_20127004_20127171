@@ -89,7 +89,7 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                   textAlign: TextAlign.left,
                 ),
                 Text(
-                  profile.fullName,
+                  "${profile.fullName} - ${widget.proposal.objectId}",
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.w400,

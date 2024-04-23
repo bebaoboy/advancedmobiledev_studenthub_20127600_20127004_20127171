@@ -59,6 +59,16 @@ class _ProposalSwiperState extends State<ProposalSwiper>
     );
   }
 
+  int initialIndex = 0;
+
+  setInitialIndex(newIndex) {
+    setState(() {
+      initialIndex = newIndex;
+      controller.setCardIndex(newIndex);
+    });
+    print(initialIndex);
+  }
+
   Widget _buildBody() {
     return SafeArea(
       child: Container(
@@ -104,6 +114,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                               swipeOptions: const SwipeOptions.symmetric(
                                   horizontal: true),
                               controller: controller,
+                              initialIndex: initialIndex,
                               onCardPositionChanged: (
                                 SwiperPosition position,
                               ) {
@@ -226,6 +237,59 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 width: 10,
                               ),
                               customSwipeRightButton(controller, () {}),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        IconTheme.merge(
+                          data: const IconThemeData(size: 40),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // TutorialAnimationButton(_shakeCard),
+                              const SizedBox(
+                                width: 20,
+                              ),
+                              MaterialButton(
+                                onPressed: () {
+                                  setState(() {
+                                    var newIndex = (_cardStateStore.index - 1)
+                                        .clamp(
+                                            0,
+                                            snapshot.data!.proposals!.length -
+                                                1);
+                                    _cardStateStore.index = newIndex;
+                                    setInitialIndex(newIndex);
+                                  });
+                                },
+                                textColor: Colors.black,
+                                color: Colors.grey.shade300,
+                                child: const Text('Previous'),
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              MaterialButton(
+                                onPressed: () {
+                                  setState(() {
+                                    var newIndex = (_cardStateStore.index + 1)
+                                        .clamp(
+                                            0,
+                                            snapshot.data!.proposals!.length -
+                                                1);
+                                    _cardStateStore.index = newIndex;
+                                    setInitialIndex(newIndex);
+                                  });
+                                },
+                                textColor: Colors.black,
+                                color: Colors.grey.shade300,
+                                child: const Text('Next'),
+                              ),
                               const SizedBox(
                                 width: 20,
                               ),
