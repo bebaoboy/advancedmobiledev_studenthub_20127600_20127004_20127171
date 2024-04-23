@@ -384,6 +384,9 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                     key: refazynistKey,
                     sharedPreferencesName: "",
                     onInit: () async {
+                      Future.delayed(const Duration(seconds: 1), () {
+                        refazynistKey.currentState!.refresh();
+                      });
                       return widget.searchList.sublist(
                           0, lazyCount.clamp(0, widget.searchList.length));
                     },
@@ -418,10 +421,10 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                       }
 
                       lazyList.addAll(widget.searchList.sublist(
-                          max(refazynistKey.currentState!.length() - 1, 0),
+                          min(refazynistKey.currentState!.length(),
+                              widget.searchList.length),
                           (refazynistKey.currentState!.length() + 5)
                               .clamp(0, widget.searchList.length)));
-
                       await Future.delayed(
                           const Duration(seconds: 1)); // Fake internet delay
                       return lazyList;
@@ -544,7 +547,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
       title: widget.filter != null
           ? AutoSizeText(
-              "Filter: ${widget.filter!}",
+              "Result: ${widget.searchList.length} Filter: ${widget.filter!}",
               maxLines: 3,
               minFontSize: 12,
             )
@@ -740,7 +743,7 @@ class _ProjectTabState extends State<ProjectTab> {
             }
           },
           filter: filter,
-          keyword: keyword,
+          keyword: keyword.isNotEmpty ? keyword : null,
           searchList: getSearchList(),
           onSheetDismissed: () {
             setState(() {
@@ -819,9 +822,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       if (p0.trim().isNotEmpty) searchHistory.add(p0.trim());
                       saveSearchHistory(searchHistory);
                     });
-                    await showSearchBottomSheet(context).then(
-                      (value) => setState(() {}),
-                    );
+                    await showSearchBottomSheet(context);
                   },
                   width: MediaQuery.of(context).size.width,
                   textController: controller,
@@ -837,9 +838,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       searchHistory.add(project.trim());
                     }
                     saveSearchHistory(searchHistory);
-                    await showSearchBottomSheet(context).then(
-                      (value) => setState(() {}),
-                    );
+                    await showSearchBottomSheet(context);
                   },
                   // initialText:
                   // readOnly:
@@ -999,11 +998,7 @@ class _ProjectTabState extends State<ProjectTab> {
                     //   width: 20,
                     // ),
                     Text(
-                      (_userStore.companyId ==
-                                      item
-                              ? "(You) "
-                              : "") +
-                          item,
+                      (_userStore.companyId == item ? "(You) " : "") + item,
                       style: isSelected
                           ? const TextStyle(fontWeight: FontWeight.bold)
                           : null,
