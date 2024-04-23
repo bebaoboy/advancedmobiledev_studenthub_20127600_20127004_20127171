@@ -231,14 +231,14 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
     super.initState();
 
     createdText =
-        "Created: ${DateFormat("HH:mm").format(widget.project.timeCreated.toLocal())}";
+        "Created: ${DateFormat("HH:mm dd/MM/yyyy").format(widget.project.timeCreated.toLocal())}";
     createdText2 = timeago.format(
         locale: _languageStore.locale, widget.project.timeCreated);
 
     if (widget.project.updatedAt != null &&
         widget.project.updatedAt! != widget.project.timeCreated) {
       updatedText =
-          "Edit at ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())}";
+          "Edit at ${DateFormat("HH:mm dd/MM/yyyy").format(widget.project.updatedAt!.toLocal())}";
     }
   }
 

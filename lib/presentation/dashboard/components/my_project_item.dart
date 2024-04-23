@@ -131,8 +131,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
         .inCaps;
 
     if (widget.project.updatedAt != null &&
-        widget.project.updatedAt! != widget.project.timeCreated &&
-        widget.project.updatedAt!.day == DateTime.now().day) {
+        widget.project.updatedAt! != widget.project.timeCreated) {
       // updatedText =
       //     "\t(Updated: ${DateFormat("HH:mm").format(widget.project.updatedAt!.toLocal())})";
       updatedText =

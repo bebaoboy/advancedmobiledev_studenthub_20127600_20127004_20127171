@@ -1078,7 +1078,7 @@ class _ProjectTabState extends State<ProjectTab> {
                       // Refazynist: It's for lazy load
 
                       onLazy: () async {
-                        if (!_projectStore.postSuccess) return [];
+                        // if (_projectStore.postSuccess) return [];
                         lazyCount += 5;
                         List<Project> lazyList = [];
                         if (refazynistKey.currentState!.length() ==

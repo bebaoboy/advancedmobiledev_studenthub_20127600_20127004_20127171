@@ -259,7 +259,7 @@ abstract class _ProjectStore with Store {
 
       Future.delayed(const Duration(seconds: 1), () async {
         // bool doneInit = false;
-        Map<String, int> maps = {};
+        // Map<String, int> maps = {};
         if (value.data != null) {
           postSuccess = false;
           _projects.projects?.clear();
@@ -270,7 +270,7 @@ abstract class _ProjectStore with Store {
             // }
             var project = Project.fromMap(value.data![i]);
             project.isLoading = false;
-            maps[project.objectId!] = i;
+            // maps[project.objectId!] = i;
 
             addProject(project, sort: false);
 
@@ -298,16 +298,11 @@ abstract class _ProjectStore with Store {
           if (_projects.projects != null) {
             _favoriteProjects.projects?.forEach(
               (element) {
-                var m = maps[element.objectId];
-                if (m != null) {
-                  _projects.projects![m].isFavorite = true;
-                } else {
-                  var p = _projects.projects!.firstWhereOrNull(
-                    (e) => e.objectId == element.objectId,
-                  );
-                  if (p != null) {
-                    p.isFavorite = true;
-                  }
+                var p = _projects.projects!.firstWhereOrNull(
+                  (e) => e.objectId == element.objectId,
+                );
+                if (p != null) {
+                  p.isFavorite = true;
                 }
               },
             );
