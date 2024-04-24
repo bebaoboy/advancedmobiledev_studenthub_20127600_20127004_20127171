@@ -1,5 +1,7 @@
 // ignore_for_file: overridden_fields
 
+import 'dart:convert';
+
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
@@ -316,10 +318,28 @@ class MessageObject extends NotificationObject {
     required super.receiver,
     required super.sender,
     super.content = "",
-    required super.type,
+    super.type = NotificationType.message,
     this.messageType = MessageType.message,
+    // this.interviewSchedule,
     super.createdAt,
   });
+
+  MessageObject.fromJson(Map<String, dynamic> json2)
+      : messageType = MessageType.values[json2["type"] ?? 0],
+        super(
+            id: json2["id"],
+            receiver: Profile.fromJson(json.decode(json2["receiver"])),
+            sender: Profile.fromJson(json.decode(json2["sender"])),
+            type: NotificationType.message);
+
+  String toJson() {
+    return json.encode({
+      "type": messageType.index,
+      "id": id,
+      "receiver": receiver.toJson(),
+      "sender": sender.toJson()
+    });
+  }
 }
 
 @JsonSerializable()

@@ -35,9 +35,12 @@ abstract class _ProjectStore with Store {
       this._postProposalUseCase,
       this._getProjectProposalsUseCase,
       this._updateProposalUseCase) {
-    // _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
-    //   _favoriteProjects = value;
-    // });
+    try {
+      getStudentFavoriteProject(false);
+    } catch (e) {
+      // nothing changed
+      print("error getting fav");
+    }
   }
 
   // company
@@ -187,7 +190,7 @@ abstract class _ProjectStore with Store {
                 p.enabled = project.enabled;
                 p.coverLetter = project.coverLetter;
               }
-              
+
               // TODO: remove if reject (disableFlag)
 
               sharedPrefsHelper.saveStudentProjects(ProposalList(
@@ -295,31 +298,39 @@ abstract class _ProjectStore with Store {
 
             // datasource.insert(project);
           }
-          _projects.projects?.forEach(
-            (element) => element.isLoading = false,
-          );
+          print("favorite refess ${_favoriteProjects.projects!.length}");
+
+          _projects.projects?.forEach((element) {
+            element.isLoading = false;
+            var b = _favoriteProjects.projects?.firstWhereOrNull(
+              (e) => element.objectId == e.companyId,
+            );
+            if (b != null) {
+              element.isFavorite = true;
+            }
+          });
           _projects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
           if (setStateCallback != null) setStateCallback();
           Future.delayed(Duration.zero, () async {
-            try {
-              await getStudentFavoriteProject(false);
-            } catch (e) {
-              // nothing changed
-              print("error getting fav");
-            }
+            // try {
+            //   getStudentFavoriteProject(false);
+            // } catch (e) {
+            //   // nothing changed
+            //   print("error getting fav");
+            // }
             print("favorite refess ${_favoriteProjects.projects!.length}");
-            _favoriteProjects.projects?.forEach(
-              (element) {
-                var p = _projects.projects?.firstWhereOrNull(
-                  (e) => e.objectId == element.objectId,
-                );
-                if (p != null) {
-                  p.isFavorite = true;
-                }
-              },
-            );
+            // _favoriteProjects.projects?.forEach(
+            //   (element) {
+            //     var p = _projects.projects?.firstWhereOrNull(
+            //       (e) => e.objectId == element.objectId,
+            //     );
+            //     if (p != null) {
+            //       p.isFavorite = true;
+            //     }
+            //   },
+            // );
             if (_projects.projects != null) {
               refazynistKey.currentState?.refresh(
                   readyMade: _projects.projects!
@@ -333,12 +344,12 @@ abstract class _ProjectStore with Store {
             });
           });
         } else {
-          try {
-            await getStudentFavoriteProject(false);
-          } catch (e) {
-            // nothing changed
-            print("error getting fav");
-          }
+          // try {
+          //   await getStudentFavoriteProject(false);
+          // } catch (e) {
+          //   // nothing changed
+          //   print("error getting fav");
+          // }
           _projects = value;
           _projects.projects?.forEach(
             (element) => element.isLoading = false,
@@ -383,25 +394,8 @@ abstract class _ProjectStore with Store {
   }
 
   Future<ProjectList> getStudentFavoriteProject(bool force) async {
-    if (force) {
-      return await _getStudentFavoriteProjectUseCase
-          .call(params: null)
-          .then((value) {
-        _favoriteProjects = value;
-        _favoriteProjects.projects?.sort(
-          (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-        );
-        _favoriteProjects.projects?.forEach((element) {
-          element.isLoading = false;
-          element.isFavorite = true;
-        });
-        return _favoriteProjects;
-      });
-    } else {
-      if (_favoriteProjects.projects != null &&
-          _favoriteProjects.projects!.isNotEmpty) {
-        return Future.value(_favoriteProjects);
-      } else {
+    try {
+      if (force) {
         return await _getStudentFavoriteProjectUseCase
             .call(params: null)
             .then((value) {
@@ -415,7 +409,30 @@ abstract class _ProjectStore with Store {
           });
           return _favoriteProjects;
         });
+      } else {
+        if (_favoriteProjects.projects != null &&
+            _favoriteProjects.projects!.isNotEmpty) {
+          return Future.value(_favoriteProjects);
+        } else {
+          return await _getStudentFavoriteProjectUseCase
+              .call(params: null)
+              .then((value) {
+            _favoriteProjects = value;
+            _favoriteProjects.projects?.sort(
+              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+            );
+            _favoriteProjects.projects?.forEach((element) {
+              element.isLoading = false;
+              element.isFavorite = true;
+            });
+            return _favoriteProjects;
+          });
+        }
       }
+    } catch (e) {
+      print(e.toString());
+      print("errror favorite");
+      return Future.value(_favoriteProjects);
     }
   }
 

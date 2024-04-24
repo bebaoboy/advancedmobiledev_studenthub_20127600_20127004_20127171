@@ -869,6 +869,7 @@ class _ProjectTabState extends State<ProjectTab> {
                     title: Text(project),
                     contentPadding: const EdgeInsets.only(left: 5),
                     trailing: IconButton(
+                      tooltip: "Clear text",
                       icon: const Icon(Icons.close),
                       onPressed: () {
                         setState(() {
@@ -883,6 +884,7 @@ class _ProjectTabState extends State<ProjectTab> {
                 Positioned(
                   right: 35,
                   child: IconButton(
+                      tooltip: "Filter",
                       onPressed: () async {
                         setState(() {
                           NavbarNotifier2.hideBottomNavBar = true;
@@ -905,6 +907,7 @@ class _ProjectTabState extends State<ProjectTab> {
                 Positioned(
                   right: 70,
                   child: IconButton(
+                      tooltip: "Favorite",
                       onPressed: () {
                         NavbarNotifier2.pushNamed(
                             Routes.favoriteProject,

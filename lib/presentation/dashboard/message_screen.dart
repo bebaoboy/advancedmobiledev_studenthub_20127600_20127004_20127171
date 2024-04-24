@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
@@ -10,6 +11,7 @@ import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_ind
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/dashboard/components/schedule_bottom_sheet.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:collection/collection.dart';
@@ -476,6 +478,8 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
+  var userStore = getIt<UserStore>();
+
   void _handleSendPressed(PartialText message) {
     final textMessage = AbstractTextMessage(
       author: _user,
@@ -484,13 +488,15 @@ class _MessageScreenState extends State<MessageScreen> {
       status: Status.delivered,
       text: message.text,
     );
-    messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
-      "content": message.text,
-      "projectId": 150,
-      "senderId": 34,
-      "receiverId": 94, // notification
-      "messageFlag": 0 // default 0 for message, 1 for interview
-    });
+    if (userStore.user != null && userStore.user!.objectId != null) {
+      messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+        "content": message.text,
+        "projectId": 150,
+        "senderId": userStore.user!.objectId,
+        "receiverId": 94, // notification
+        "messageFlag": 0 // default 0 for message, 1 for interview
+      });
+    }
 
     _addMessage(textMessage);
   }

@@ -8,11 +8,22 @@ import 'package:json_annotation/json_annotation.dart';
 
 @JsonSerializable()
 class Profile extends MyObject {
-  String get getName => "";
-  Profile.fromJson(Map<String, dynamic> json);
+  String name;
+  String get getName => name;
+  Profile.fromJson(Map<String, dynamic> json)
+      : name = json["name"],
+        super(objectId: json["id"]);
   Profile({
     required super.objectId,
+    this.name = "Name",
   });
+  Map<String, dynamic> toMap() {
+    return {"id": objectId, "name": name};
+  }
+
+  String toJson() {
+    return json.encode(toMap());
+  }
 }
 
 @JsonSerializable()
@@ -88,6 +99,7 @@ class StudentProfile extends Profile {
 //     };
 //   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'title': title,
@@ -154,6 +166,7 @@ class StudentProfile extends Profile {
     );
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory StudentProfile.fromJson(String source) =>
@@ -237,6 +250,7 @@ class CompanyProfile extends Profile {
     );
   }
 
+  @override
   Map<String, dynamic> toMap() {
     return {
       'profileName': profileName,
@@ -249,6 +263,7 @@ class CompanyProfile extends Profile {
     };
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory CompanyProfile.fromJson(String source) =>

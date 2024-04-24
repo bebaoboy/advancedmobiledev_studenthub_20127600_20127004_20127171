@@ -55,8 +55,8 @@ class MessageNotifierProvider with ChangeNotifier {
     textSocketHandler.onDisconnect((_) => print('disconnect'));
 
     textSocketHandler.emit("SEND_MESSAGE", {
-      "content": "Test receiving noti from project $id, sender 34, recv 9",
-      "projectId": 1,
+      "content": "Test receiving noti from project $id",
+      "projectId": id,
       "senderId": 34,
       "receiverId": 94, // notification
       "messageFlag": 0 // default 0 for message, 1 for interview

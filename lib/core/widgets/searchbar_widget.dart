@@ -14,13 +14,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> saveSearchHistory(Set<String> history) async {
   final prefs = await SharedPreferences.getInstance();
-  await prefs.setStringList(Preferences.project_search_history, history.where((e) =>e.trim().isNotEmpty).toList());
+  await prefs.setStringList(Preferences.project_search_history,
+      history.where((e) => e.trim().isNotEmpty).toList());
 }
 
 Future<Set<String>> loadSearchHistory() async {
   final prefs = await SharedPreferences.getInstance();
   final history = prefs.getStringList(Preferences.project_search_history) ?? [];
-  return history.where((e) =>e.trim().isNotEmpty,).toSet();
+  return history
+      .where(
+        (e) => e.trim().isNotEmpty,
+      )
+      .toSet();
 }
 
 class AnimSearchBar2 extends StatefulWidget {
@@ -205,7 +210,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
         child: Stack(
           children: [
             ///Using Animated Positioned widget to expand and shrink the widget
-             AnimatedPositioned(
+            AnimatedPositioned(
               duration: Duration(milliseconds: widget.animationDurationInMilli),
               left: (toggle == 0) ? 20.0 : 2,
               right: 2,
@@ -282,8 +287,8 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                               const TextStyle(color: Colors.black),
                           cursorColor: Colors.black,
                           decoration: InputDecoration(
-                            contentPadding:
-                                const EdgeInsets.only(bottom: 5, right: 100, left: 5),
+                            contentPadding: const EdgeInsets.only(
+                                bottom: 5, right: 100, left: 5),
                             isDense: true,
                             floatingLabelBehavior: FloatingLabelBehavior.never,
                             labelText: widget.helpText,
@@ -310,7 +315,7 @@ class _AnimSearchBar2State extends State<AnimSearchBar2>
                 ),
               ),
             ),
-AnimatedPositioned(
+            AnimatedPositioned(
               duration: Duration(milliseconds: widget.animationDurationInMilli),
               top: 1.0,
               right: 7.0,
@@ -373,6 +378,8 @@ AnimatedPositioned(
                       ///suffixIcon is of type Icon
                       child: widget.suffixIcon ??
                           IconButton(
+                            tooltip: "Clear text",
+
                             padding: const EdgeInsets.only(left: 20),
                             alignment: Alignment.centerRight,
                             icon: const Icon(
@@ -419,7 +426,7 @@ AnimatedPositioned(
                 ),
               ),
             ),
-           
+
             ///Using material widget here to get the ripple effect on the prefix icon
             Material(
               /// can add custom color or the color will be white

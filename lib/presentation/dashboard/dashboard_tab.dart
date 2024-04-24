@@ -3,11 +3,14 @@
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:animated_list_plus/transitions.dart';
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
@@ -20,6 +23,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -122,6 +126,48 @@ class _DashBoardTabState extends State<DashBoardTab>
   late final TabController tabController;
   List<ScrollController> scrollController = [];
 
+  testNotification() {
+    Future.delayed(Duration.zero, () async {
+      NotificationHelper.scheduleNewNotification();
+      NotificationHelper.createTextNotification();
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      NotificationHelper.createTextNotification(
+        id: 100,
+        title:
+            'Emojis are awesome too! ${Emojis.smile_face_with_tongue}${Emojis.smile_rolling_on_the_floor_laughing}${Emojis.emotion_red_heart}',
+        body:
+            'Simple body with a bunch of Emojis! ${Emojis.transport_police_car} ${Emojis.animals_dog} ${Emojis.flag_UnitedStates} ${Emojis.person_baby}',
+      );
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      NotificationHelper.createImageNotification();
+      await Future.delayed(const Duration(milliseconds: 500));
+      NotificationHelper.createBigTextNotification();
+
+      await Future.delayed(const Duration(seconds: 2));
+      for (int i = 0; i < 5; i++) {
+        NotificationHelper.createMessageNotification(
+            msg: MessageObject(
+                id: "$i",
+                content: "Test msg $i",
+                receiver: Profile(objectId: "1", name: "Quan"),
+                sender: Profile(objectId: "2", name: "Bao Bao Baby Boo")),
+            projectId: "150",
+            id: 15 + i);
+        // NotificationHelper.createMessageNotification(
+        //     msg: MessageObject(
+        //         id: "${i * 2}",
+        //         content: "msg ${i * 2}",
+        //         receiver: Profile(objectId: "2", name: "Quan"),
+        //         sender: Profile(objectId: "1", name: "Bao")),
+        //     projectId: "150",
+        //     id: 15 + i * 2);
+        await Future.delayed(const Duration(milliseconds: 500));
+      }
+    });
+  }
+
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
     return FutureBuilder<ProjectList>(
@@ -138,7 +184,12 @@ class _DashBoardTabState extends State<DashBoardTab>
                   children: [
                     Align(
                       alignment: Alignment.topLeft,
-                      child: Text(Lang.get('dashboard_your_job')),
+                      child: GestureDetector(
+                        child: Text(Lang.get('dashboard_your_job')),
+                        onTap: () {
+                          testNotification();
+                        },
+                      ),
                     ),
                     const Spacer(),
                     Align(
