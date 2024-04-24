@@ -11,14 +11,14 @@ class Profile extends MyObject {
   String name;
   String get getName => name;
   Profile.fromJson(Map<String, dynamic> json)
-      : name = json["name"],
-        super(objectId: json["id"]);
+      : name = json["fullname"],
+        super(objectId: json["id"].toString());
   Profile({
     required super.objectId,
     this.name = "Name",
   });
   Map<String, dynamic> toMap() {
-    return {"id": objectId, "name": name};
+    return {"id": objectId, "fullname": name};
   }
 
   String toJson() {

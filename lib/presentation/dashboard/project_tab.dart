@@ -1068,7 +1068,9 @@ class _ProjectTabState extends State<ProjectTab> {
                           });
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);
-
+                        p.sort(
+                          (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+                        );
                         return p.sublist(0, lazyCount.clamp(0, p.length));
                       },
 

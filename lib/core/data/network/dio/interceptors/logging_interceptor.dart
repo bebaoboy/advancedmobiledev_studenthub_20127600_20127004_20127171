@@ -100,7 +100,7 @@ class LoggingInterceptor extends Interceptor {
   SharedPreferences? sharedPref;
   sp(String o) async {
     List<String> s = sharedPref!.getStringList("dio") ?? [];
-    await sharedPref!.setStringList("dio", [o, ...s]);
+    await sharedPref!.setStringList("dio", ["${DateTime.now()}\n$o", ...s]);
   }
 
   spPrint(String s) {

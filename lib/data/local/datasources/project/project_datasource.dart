@@ -88,7 +88,7 @@ class ProjectDataSource {
   }
 
   Future<int> delete(Project project) async {
-    final finder = Finder(filter: Filter.byKey(project.objectId));
+    final finder = Finder(filter: Filter.byKey(int.parse(project.objectId!)));
     return await _projectStore.delete(
       _sembastClient.database,
       finder: finder,

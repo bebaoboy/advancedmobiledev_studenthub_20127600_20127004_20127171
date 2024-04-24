@@ -1,6 +1,6 @@
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
-import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
+import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:dio/dio.dart';
 import 'package:interpolator/interpolator.dart';
 

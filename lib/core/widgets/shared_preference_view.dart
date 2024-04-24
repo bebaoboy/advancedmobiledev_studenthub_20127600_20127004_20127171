@@ -1,6 +1,8 @@
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
+import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
@@ -18,6 +20,8 @@ class SharedPreferenceView extends StatefulWidget {
 class _SharedPreferenceViewState extends State<SharedPreferenceView> {
   final UserStore _userStore = getIt<UserStore>();
   final ProjectStore _projectStore = getIt<ProjectStore>();
+  final ProjectDataSource datasource = getIt<ProjectDataSource>();
+
   List<String> dioList = [];
 
   Future<List<Widget>> getAllPrefs() async {
@@ -171,7 +175,8 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                                       null &&
                                   _userStore.user!.studentProfile!
                                       .proposalProjects!.isNotEmpty
-                              ? _userStore.user!.studentProfile!.proposalProjects!
+                              ? _userStore
+                                  .user!.studentProfile!.proposalProjects!
                                   .map(
                                     (e) => "${toStringPretty(e.toJson())}\n",
                                   )
@@ -181,6 +186,63 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
               ),
             ],
           )),
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dbFuture = datasource.getProjectsFromDb();
+  }
+
+  late Future<ProjectList> dbFuture;
+
+  Widget getAllProjectDatabase() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+          alignment: Alignment.topLeft,
+          child: FutureBuilder<ProjectList>(
+              future: dbFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var projects = snapshot.data!.projects ?? [];
+                  var r = projects;
+                  r.sort(
+                    (a, b) => int.parse(a.objectId!)
+                        .compareTo(int.parse(b.objectId!)),
+                  );
+                  return Wrap(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Result: ${projects.length}"),
+                    ),
+                    ListTile(
+                        title: const Text(
+                          "Database projects",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
+                        ),
+                        subtitle: LimitedBox(
+                            maxHeight: MediaQuery.of(context).size.height * 0.8,
+                            child: Scrollbar(
+                              child: SingleChildScrollView(
+                                child: Text(projects.isNotEmpty
+                                    ? r
+                                        .map(
+                                          (e) => e.toString(),
+                                        )
+                                        .join("\n")
+                                    : "No projects from database"),
+                              ),
+                            )))
+                  ]);
+                } else {
+                  return const Text("No projects from database");
+                }
+              })),
     );
   }
 
@@ -210,6 +272,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                     getAllProject(),
                     getProject(),
                     getStudentProposal(),
+                    getAllProjectDatabase(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 30, horizontal: 10),

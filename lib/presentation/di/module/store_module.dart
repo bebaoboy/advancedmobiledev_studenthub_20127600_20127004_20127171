@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
+import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
+import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
@@ -53,6 +55,7 @@ import 'package:boilerplate/domain/usecase/user/login_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
@@ -201,6 +204,13 @@ mixin StoreModule {
           getIt<UpdateFavoriteProjectUseCase>(),
           getIt<ErrorStore>(),
           getIt<ProjectStore>()),
+    );
+
+    getIt.registerSingleton<ChatStore>(
+      ChatStore(
+        getIt<GetMessageByProjectAndUsersUseCase>(),
+        getIt<GetAllChatsUseCase>(),
+      ),
     );
   }
 }

@@ -337,10 +337,20 @@ abstract class _ProjectStore with Store {
                       .sublist(0, count.clamp(0, _projects.projects!.length))
                       .toList());
             }
-            Future.delayed(Duration.zero, () {
-              _projects.projects?.forEach(
-                (element) => datasource.insert(element),
-              );
+            Future.delayed(Duration.zero, () async {
+              var list = await datasource.getProjectsFromDb();
+              _projects.projects?.forEach((element) {
+                datasource.insert(element);
+              });
+              list.projects?.forEach((element) {
+                if (_projects.projects?.firstWhereOrNull(
+                      (e) => element.objectId == e.objectId,
+                    ) ==
+                    null) {
+                  print("delete ${element.objectId}");
+                  datasource.delete(element);
+                }
+              });
             });
           });
         } else {

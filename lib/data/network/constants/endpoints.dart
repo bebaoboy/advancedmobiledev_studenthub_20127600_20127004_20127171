@@ -14,17 +14,18 @@ class Endpoints {
   // unused
   static const String getPosts = "/api/posts";
 
-
   //////////////////////////////////// chat /////////////////////////////////
-  
-  /// để hiện lên tab message?
-    static const String getMessageByProject = "$baseUrl/api/message/{projectId}"; 
-    /// all message of a chat
-    static const String getMessageByProjectAndUser = "$baseUrl/api/message/{projectId}/user/{userId}";
-    /// all message of yourself
-    static const String getAllChat = "$baseUrl/api/message";
 
-    // static const String getAllMessagePaging = "$baseUrl/api/message/get/page";
+  /// để hiện lên tab message?
+  static const String getMessageByProject = "$baseUrl/api/message/{projectId}";
+
+  /// all message of a chat
+  static const String getMessageByProjectAndUser =
+      "$baseUrl/api/message/{projectId}/user/{userId}"; // done
+  /// all message of yourself
+  static const String getAllChat = "$baseUrl/api/message"; // done
+
+  // static const String getAllMessagePaging = "$baseUrl/api/message/get/page";
 
   //////////////////////////////////// project /////////////////////////////////
   // all project in dashboard

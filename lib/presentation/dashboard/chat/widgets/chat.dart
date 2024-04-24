@@ -33,7 +33,7 @@ class Chat extends StatefulWidget {
   static const lightTheme = DefaultChatTheme();
   static const darkTheme = DarkChatTheme();
   static ChatTheme theme = const DefaultChatTheme();
-  
+
   final Function(Emoji emoji, AbstractChatMessage message) performEmoji;
 
   /// Creates a chat widget.
@@ -107,21 +107,21 @@ class Chat extends StatefulWidget {
     this.scheduleMessageBuilder,
   });
 
-  /// See [Message.audioMessageBuilder].
+  /// See [MessageWidget.audioMessageBuilder].
   final Widget Function(AbstractAudioMessage, {required int messageWidth})?
       audioMessageBuilder;
 
-  /// See [Message.avatarBuilder].
+  /// See [MessageWidget.avatarBuilder].
   final Widget Function(ChatUser author)? avatarBuilder;
 
-  /// See [Message.bubbleBuilder].
+  /// See [MessageWidget.bubbleBuilder].
   final Widget Function(
     Widget child, {
     required AbstractChatMessage message,
     required bool nextMessageInGroup,
   })? bubbleBuilder;
 
-  /// See [Message.bubbleRtlAlignment].
+  /// See [MessageWidget.bubbleRtlAlignment].
   final BubbleRtlAlignment? bubbleRtlAlignment;
 
   /// Allows you to replace the default Input widget e.g. if you want to create a channel view. If you're looking for the bottom widget added to the chat list, see [listBottomWidget] instead.
@@ -130,15 +130,15 @@ class Chat extends StatefulWidget {
   /// If [dateFormat], [dateLocale] and/or [timeFormat] is not enough to customize date headers in your case, use this to return an arbitrary string based on a [DateTime] of a particular message. Can be helpful to return "Today" if [DateTime] is today. IMPORTANT: this will replace all default date headers, so you must handle all cases yourself, like for example today, yesterday and before. Or you can just return the same date header for any message.
   final String Function(DateTime)? customDateHeaderText;
 
-  /// See [Message.customMessageBuilder].
+  /// See [MessageWidget.customMessageBuilder].
   final Widget Function(AbstractCustomMessage, {required int messageWidth})?
       customMessageBuilder;
 
-  /// See [Message.customMessageBuilder].
+  /// See [MessageWidget.customMessageBuilder].
   final Widget Function(ScheduleMessageType, {required int messageWidth})?
       scheduleMessageBuilder;
 
-  /// See [Message.customStatusBuilder].
+  /// See [MessageWidget.customStatusBuilder].
   final Widget Function(AbstractChatMessage message,
       {required BuildContext context})? customStatusBuilder;
 
@@ -165,7 +165,7 @@ class Chat extends StatefulWidget {
   /// Disable automatic image preview on tap.
   final bool? disableImageGallery;
 
-  /// See [Message.emojiEnlargementBehavior].
+  /// See [MessageWidget.emojiEnlargementBehavior].
   final EmojiEnlargementBehavior emojiEnlargementBehavior;
 
   /// Allows you to change what the user sees when there are no messages.
@@ -173,7 +173,7 @@ class Chat extends StatefulWidget {
   /// in this case.
   final Widget? emptyState;
 
-  /// See [Message.fileMessageBuilder].
+  /// See [MessageWidget.fileMessageBuilder].
   final Widget Function(AbstractFileMessage, {required int messageWidth})?
       fileMessageBuilder;
 
@@ -182,7 +182,7 @@ class Chat extends StatefulWidget {
   /// is lower than this threshold, they will be visually grouped.
   final int groupMessagesThreshold;
 
-  /// See [Message.hideBackgroundOnEmojiMessages].
+  /// See [MessageWidget.hideBackgroundOnEmojiMessages].
   final bool hideBackgroundOnEmojiMessages;
 
   /// See [ImageGallery.options].
@@ -191,7 +191,7 @@ class Chat extends StatefulWidget {
   /// Headers passed to all network images used in the chat.
   final Map<String, String>? imageHeaders;
 
-  /// See [Message.imageMessageBuilder].
+  /// See [MessageWidget.imageMessageBuilder].
   final Widget Function(AbstractImageMessage, {required int messageWidth})?
       imageMessageBuilder;
 
@@ -229,14 +229,14 @@ class Chat extends StatefulWidget {
   /// List of [AbstractChatMessage] to render in the chat widget.
   final List<AbstractChatMessage> messages;
 
-  /// See [Message.nameBuilder].
+  /// See [MessageWidget.nameBuilder].
   final Widget Function(ChatUser)? nameBuilder;
 
   /// See [Input.onAttachmentPressed].
   final VoidCallback? onAttachmentPressed;
   final VoidCallback? onFirstIconPressed;
 
-  /// See [Message.onAvatarTap].
+  /// See [MessageWidget.onAvatarTap].
   final void Function(ChatUser)? onAvatarTap;
 
   /// Called when user taps on background.
@@ -248,30 +248,30 @@ class Chat extends StatefulWidget {
   /// See [ChatList.onEndReachedThreshold].
   final double? onEndReachedThreshold;
 
-  /// See [Message.onMessageDoubleTap].
+  /// See [MessageWidget.onMessageDoubleTap].
   final void Function(BuildContext context, AbstractChatMessage)?
       onMessageDoubleTap;
 
-  /// See [Message.onMessageLongPress].
+  /// See [MessageWidget.onMessageLongPress].
   final void Function(BuildContext context, AbstractChatMessage)?
       onMessageLongPress;
 
-  /// See [Message.onMessageStatusLongPress].
+  /// See [MessageWidget.onMessageStatusLongPress].
   final void Function(BuildContext context, AbstractChatMessage)?
       onMessageStatusLongPress;
 
-  /// See [Message.onMessageStatusTap].
+  /// See [MessageWidget.onMessageStatusTap].
   final void Function(BuildContext context, AbstractChatMessage)?
       onMessageStatusTap;
 
-  /// See [Message.onMessageTap].
+  /// See [MessageWidget.onMessageTap].
   final void Function(BuildContext context, AbstractChatMessage)? onMessageTap;
 
-  /// See [Message.onMessageVisibilityChanged].
+  /// See [MessageWidget.onMessageVisibilityChanged].
   final void Function(AbstractChatMessage, bool visible)?
       onMessageVisibilityChanged;
 
-  /// See [Message.onPreviewDataFetched].
+  /// See [MessageWidget.onPreviewDataFetched].
   final void Function(AbstractTextMessage, PreviewData)? onPreviewDataFetched;
 
   /// See [Input.onSendPressed].
@@ -287,7 +287,7 @@ class Chat extends StatefulWidget {
   /// Controls if and how the chat should scroll to the newest unread message.
   final ScrollToUnreadOptions scrollToUnreadOptions;
 
-  /// See [Message.showUserAvatars].
+  /// See [MessageWidget.showUserAvatars].
   final bool showUserAvatars;
 
   /// Show user names for received messages. Useful for a group chat. Will be
@@ -297,14 +297,14 @@ class Chat extends StatefulWidget {
   /// Builds a system message outside of any bubble.
   final Widget Function(AbstractSystemMessage)? systemMessageBuilder;
 
-  /// See [Message.textMessageBuilder].
+  /// See [MessageWidget.textMessageBuilder].
   final Widget Function(
     AbstractTextMessage, {
     required int messageWidth,
     required bool showName,
   })? textMessageBuilder;
 
-  /// See [Message.textMessageOptions].
+  /// See [MessageWidget.textMessageOptions].
   final TextMessageOptions textMessageOptions;
 
   /// Chat theme. Extend [ChatTheme] class to create your own theme or use
@@ -318,27 +318,27 @@ class Chat extends StatefulWidget {
   /// Used to show typing users with indicator. See [TypingIndicatorOptions].
   final TypingIndicatorOptions typingIndicatorOptions;
 
-  /// See [Message.usePreviewData].
+  /// See [MessageWidget.usePreviewData].
   final bool usePreviewData;
 
   /// See [InheritedUser.user].
   static const ChatUser user = ChatUser(id: "1");
 
-  /// See [Message.userAgent].
+  /// See [MessageWidget.userAgent].
   final String? userAgent;
 
   /// See [ChatList.useTopSafeAreaInset].
   final bool? useTopSafeAreaInset;
 
-  /// See [Message.videoMessageBuilder].
+  /// See [MessageWidget.videoMessageBuilder].
   final Widget Function(AbstractVideoMessage, {required int messageWidth})?
       videoMessageBuilder;
 
-  /// See [Message.slidableMessageBuilder].
+  /// See [MessageWidget.slidableMessageBuilder].
   final Widget Function(AbstractChatMessage, Widget msgWidget)?
       slidableMessageBuilder;
 
-  /// See [Message.isLeftStatus].
+  /// See [MessageWidget.isLeftStatus].
   /// If true, status will be shown on the left side of the message.
   /// If false, status will be shown on the right side of the message.
   /// Default value is false.
@@ -491,7 +491,7 @@ class ChatState extends State<Chat> {
                     constraints.maxWidth * (widget.messageWidthRatio + 0.06),
                     maxWidth,
                   ).floor();
-        final Widget msgWidget = Message(
+        final Widget msgWidget = MessageWidget(
           performEmoji: widget.performEmoji,
           scheduleMessageBuilder: widget.scheduleMessageBuilder,
           audioMessageBuilder: widget.audioMessageBuilder,

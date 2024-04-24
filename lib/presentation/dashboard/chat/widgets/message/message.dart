@@ -20,9 +20,9 @@ import 'text_message.dart';
 /// messages and status. Sets maximum width for a message for
 /// a nice look on larger screens.
 // ignore: must_be_immutable
-class Message extends StatefulWidget {
+class MessageWidget extends StatefulWidget {
   /// Creates a particular message from any message type.
-  Message({
+  MessageWidget({
     super.key,
     this.audioMessageBuilder,
     this.avatarBuilder,
@@ -209,10 +209,10 @@ class Message extends StatefulWidget {
       videoMessageBuilder;
 
   @override
-  State<Message> createState() => _MessageState();
+  State<MessageWidget> createState() => _MessageWidgetState();
 }
 
-class _MessageState extends State<Message> {
+class _MessageWidgetState extends State<MessageWidget> {
   bool dateVisibility = false;
   String dateString = "";
 
@@ -639,7 +639,7 @@ class UserAvatar extends StatelessWidget {
   /// Author to show image and name initials from.
   final ChatUser author;
 
-  /// See [Message.bubbleRtlAlignment].
+  /// See [MessageWidget.bubbleRtlAlignment].
   final BubbleRtlAlignment? bubbleRtlAlignment;
 
   /// See [Chat.imageHeaders].

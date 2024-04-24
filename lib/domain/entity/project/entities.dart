@@ -320,16 +320,18 @@ class MessageObject extends NotificationObject {
     super.content = "",
     super.type = NotificationType.message,
     this.messageType = MessageType.message,
-    // this.interviewSchedule,
+    this.interviewSchedule,
     super.createdAt,
   });
 
   MessageObject.fromJson(Map<String, dynamic> json2)
       : messageType = MessageType.values[json2["type"] ?? 0],
+        interviewSchedule = json2["interview"],
         super(
-            id: json2["id"],
-            receiver: Profile.fromJson(json.decode(json2["receiver"])),
-            sender: Profile.fromJson(json.decode(json2["sender"])),
+            createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
+            id: json2["id"].toString(),
+            receiver: Profile.fromJson(json2["receiver"] != null && json2["receiver"] is String ?json.decode(json2["receiver"]) : json2["receiver"]),
+            sender: Profile.fromJson(json2["sender"] != null && json2["sender"] is String ? json.decode(json2["sender"]): json2["sender"]),
             type: NotificationType.message);
 
   String toJson() {

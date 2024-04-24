@@ -1,4 +1,6 @@
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -45,6 +47,18 @@ class _MessageTabState extends State<MessageTab> {
     },
     // Add more messages here
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(seconds: 2), () async {
+      // chatStore.getAllChat();
+      chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
+      // chatStore.getMessageByProjectAndUsers(projectId: "150", userId: "94");
+    });
+  }
+
+  var chatStore = getIt<ChatStore>();
 
   @override
   Widget build(BuildContext context) {
