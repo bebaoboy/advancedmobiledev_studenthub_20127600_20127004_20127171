@@ -45,6 +45,13 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
         }
       },
     );
+    if (widget.initialIndex != null && widget.initialIndex == -1) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.of(context).push(MaterialPageRoute2(
+            routeName: Routes.viewProjectProposalsCard,
+            arguments: widget.project));
+      });
+    }
   }
 
   final _updateStore = getIt<UpdateProjectFormStore>();
@@ -115,7 +122,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             ),
           ),
           DefaultTabController(
-            initialIndex: widget.initialIndex ?? 0,
+            initialIndex: (widget.initialIndex ?? 0).clamp(0, 2),
             length: 3,
             child: Stack(children: [
               SegmentedTabControl(
@@ -147,7 +154,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                       //       print("hired");
                       //       setState(() {
                       //         try {
-                      //           // TODO: use a callback, cannot access projectStore.companyProject here
+                      //           // ToDO: use a callback, cannot access projectStore.companyProject here
                       //           // widget.project.hired != null
                       //           //     ? widget.project.hired!.add(widget
                       //           //         .project.proposal!
@@ -164,18 +171,16 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         project: widget.project,
                       ),
                       MessageTabLayout(
-                          messages: widget.project.proposal == null
-                              ? []
-                              : widget.project.proposal!
-                                  .where(
-                                    (element) =>
-                                        element.hiredStatus ==
-                                        HireStatus.pending,
-                                  )
-                                  .map(
-                                    (e) => e.student,
-                                  )
-                                  .toList()),
+                        messages: widget.project.proposal == null
+                            ? []
+                            : widget.project.proposal!
+                                .where(
+                                  (element) =>
+                                      element.hiredStatus == HireStatus.pending,
+                                )
+                                .toList(),
+                        onHired: (i) {},
+                      ),
                       HiredTabLayout(
                           hired: widget.project.proposal == null
                               ? []
@@ -506,9 +511,11 @@ class HiredTabLayout extends StatelessWidget {
 }
 
 class MessageTabLayout extends StatelessWidget {
-  final List<StudentProfile>? messages;
+  final List<Proposal>? messages;
 
-  const MessageTabLayout({super.key, required this.messages});
+  const MessageTabLayout(
+      {super.key, required this.messages, required this.onHired});
+  final Function? onHired;
 
   @override
   Widget build(BuildContext context) {
@@ -518,9 +525,10 @@ class MessageTabLayout extends StatelessWidget {
             controller: ScrollController(),
             itemCount: messages?.length ?? 0,
             itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(messages![index].fullName),
-              );
+              return ProposalItem(
+                  proposal: messages![index],
+                  // pending: false,
+                  onHired: () => onHired!(index));
             },
           );
   }

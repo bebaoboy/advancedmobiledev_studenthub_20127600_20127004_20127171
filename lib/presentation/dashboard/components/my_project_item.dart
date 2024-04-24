@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -31,6 +32,9 @@ class _OpenContainerWrapper extends StatelessWidget {
           project: project,
         );
       },
+      routeSettings: RouteSettings(
+          name: "${Routes.projectDetails}/${project.objectId}",
+          arguments: {"project": project}),
       openColor: theme.cardColor,
       closedShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(12)),

@@ -119,9 +119,9 @@ class Routes {
   };
 }
 
-getRoute(name, context, {arguments}) {
+getRoute(String name, context, {arguments}) {
   try {
-    if (name == Routes.projectDetails) {
+    if (name.startsWith(Routes.projectDetails)) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
         return ProjectDetailsPage(
@@ -136,13 +136,13 @@ getRoute(name, context, {arguments}) {
       }
     }
 
-    if (name == Routes.message) {
+    if (name.startsWith(Routes.message)) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
         return MessageScreen(chatUser: arguments as ChatUser);
       }
     }
-    if (name == Routes.projectDetailsStudent) {
+    if (name.startsWith(Routes.projectDetailsStudent)) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
         return ProjectDetailsStudentScreen(

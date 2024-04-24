@@ -147,13 +147,14 @@ class _MessageTabState extends State<MessageTab> {
                     return InkWell(
                       onTap: () {
                         //print('Tile clicked');
+                        var id = "9";
                         Navigator.of(
                                 NavigationService.navigatorKey.currentContext!)
                             .push(MaterialPageRoute2(
-                                routeName: Routes.message,
+                                routeName: "${Routes.message}/$id",
                                 arguments: ChatUser(
                                     //id: userStore.currentId,
-                                    id: "9",
+                                    id: id,
                                     firstName: messages[index]['name'])));
                         // You can replace the print statement with your function
                       },

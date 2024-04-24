@@ -6,6 +6,7 @@ import 'package:boilerplate/data/network/apis/user/user_api.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 import 'package:uuid/uuid.dart';
@@ -65,6 +66,7 @@ class WorkMangerHelper {
   static const Duration LONG_DELAY = Duration(minutes: 30);
 
   static registerProfileFetch() async {
+    if (kIsWeb) return;
     Workmanager().registerPeriodicTask(
       WorkerTask.fetchProfile.identifier,
       WorkerTask.fetchProfile.name + const Uuid().v4(),

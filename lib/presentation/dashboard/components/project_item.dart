@@ -11,6 +11,7 @@ import 'package:boilerplate/presentation/dashboard/project_details_student_apply
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:skeletonizer/skeletonizer.dart';
@@ -140,6 +141,10 @@ class _OpenContainerWrapper extends StatelessWidget {
           );
         }
       },
+      routeSettings: RouteSettings(
+          name:
+              "${_userStore.getCurrentType() == UserType.company ? Routes.projectDetails : Routes.projectDetailsStudent}/${project.objectId}",
+          arguments: {"project": project}),
       openColor: theme.cardColor,
       openShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(25)),
@@ -511,16 +516,15 @@ class _ProjectItem2State extends State<ProjectItem2> {
                     Flexible(
                       // height: 100,
                       child: AutoSizeText(
-                        words:
-                            widget.keyword != null
-                                ? {
-                                    widget.keyword!: HighlightedWord(
-                                      onTap: () {
-                                        print("match");
-                                      },
-                                    ),
-                                  }
-                                : null,
+                        words: widget.keyword != null
+                            ? {
+                                widget.keyword!: HighlightedWord(
+                                  onTap: () {
+                                    print("match");
+                                  },
+                                ),
+                              }
+                            : null,
                         matchDecoration: BoxDecoration(
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(50),

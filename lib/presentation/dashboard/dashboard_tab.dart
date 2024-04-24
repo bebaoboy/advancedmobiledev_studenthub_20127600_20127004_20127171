@@ -400,13 +400,13 @@ class _ProjectTabsState extends State<ProjectTabs> {
                       color: project.isArchive ? Colors.grey.shade500 : null),
                 )),
             onPressed: (_) {
-              // TODO: coi proposal students
+              // TODO: coi proposal students -> index = -1
               Future.delayed(const Duration(milliseconds: 500), () {
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
                     .push(MaterialPageRoute2(
                         routeName: Routes.projectDetails,
-                        arguments: {"project": project}));
+                        arguments: {"project": project, "index": -1}));
               });
             }),
         BottomSheetAction(

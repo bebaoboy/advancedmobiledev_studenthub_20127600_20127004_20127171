@@ -29,9 +29,7 @@ class OnBoarding extends StatelessWidget {
                 try {
                   var datasource = getIt<ProjectDataSource>();
 
-                  // TODO: disable delete all
                   datasource.deleteAll();
-                  //
                 } catch (e) {
                   //
                 }

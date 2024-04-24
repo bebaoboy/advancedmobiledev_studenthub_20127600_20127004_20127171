@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
@@ -9,6 +10,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
@@ -69,19 +71,34 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
     isLinkTranscript = ValueNotifier<bool>(true);
     Future.delayed(Duration.zero, () async {
       if (cvController.text.isNotEmpty) {
-        _cvImage = await FilePreview.getThumbnail(cvController.text,
-            isCV: true,
-            changeValue: changeValue,
-            retrieveFilePathAfterDownload: (s) =>
-                _cv = PlatformFile(path: s, name: s, size: 1));
+        if (kIsWeb) {
+          AnchorElement anchorElement = AnchorElement(href: cvController.text);
+          anchorElement.download = "Your CV";
+          anchorElement.click();
+        } else {
+          _cvImage = await FilePreview.getThumbnail(cvController.text,
+              isCV: true,
+              changeValue: changeValue,
+              retrieveFilePathAfterDownload: (s) =>
+                  _cv = PlatformFile(path: s, name: s, size: 1));
+        }
       }
       if (transcriptController.text.isNotEmpty) {
-        _transcriptImage = await FilePreview.getThumbnail(
-            transcriptController.text,
-            isCV: false,
-            changeValue: changeValue,
-            retrieveFilePathAfterDownload: (s) =>
-                _transcript = PlatformFile(path: s, name: s, size: 1));
+        if (kIsWeb) {
+          Future.delayed(const Duration(seconds: 1), () {
+            AnchorElement anchorElement =
+                AnchorElement(href: transcriptController.text);
+            anchorElement.download = "Your transcript";
+            anchorElement.click();
+          });
+        } else {
+          _transcriptImage = await FilePreview.getThumbnail(
+              transcriptController.text,
+              isCV: false,
+              changeValue: changeValue,
+              retrieveFilePathAfterDownload: (s) =>
+                  _transcript = PlatformFile(path: s, name: s, size: 1));
+        }
       }
       print(_cvImage.toString());
       setState(() {

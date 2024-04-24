@@ -39,7 +39,8 @@ class NotificationHelper {
 
   static Future<void> createBigTextNotification(
       {String? title = 'Big Text Notification',
-      String? body = 'This is a big text notification This is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notification'}) async {
+      String? body =
+          'This is a big text notification This is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notification'}) async {
     await _create(
       content: NotificationContent(
         id: 13,
@@ -160,6 +161,7 @@ class NotificationHelper {
 
   static ReceivePort? receivePort;
   static Future<void> initializeIsolateReceivePort() async {
+    if (kIsWeb) return;
     receivePort = ReceivePort('Notification action port in main isolate')
       ..listen(
           (silentData) => onActionReceivedImplementationMethod(silentData));
@@ -174,6 +176,8 @@ class NotificationHelper {
   ///  *********************************************
   ///  Notifications events are only delivered after call this method
   static Future<void> startListeningNotificationEvents() async {
+    if (kIsWeb) return;
+
     AwesomeNotifications()
         .setListeners(onActionReceivedMethod: onActionReceivedMethod);
   }
