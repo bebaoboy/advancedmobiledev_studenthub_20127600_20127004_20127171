@@ -35,8 +35,12 @@ abstract class _ProjectStore with Store {
       this._postProposalUseCase,
       this._getProjectProposalsUseCase,
       this._updateProposalUseCase) {
+    init();
+  }
+
+  init() async {
     try {
-      getStudentFavoriteProject(false);
+      await getStudentFavoriteProject(false);
     } catch (e) {
       // nothing changed
       print("error getting fav");
@@ -303,7 +307,7 @@ abstract class _ProjectStore with Store {
           _projects.projects?.forEach((element) {
             element.isLoading = false;
             var b = _favoriteProjects.projects?.firstWhereOrNull(
-              (e) => element.objectId == e.companyId,
+              (e) => element.objectId == e.objectId,
             );
             if (b != null) {
               element.isFavorite = true;
