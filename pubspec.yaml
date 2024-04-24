@@ -151,6 +151,7 @@ dependencies:
   uuid:
   url_launcher:
   universal_io:
+  universal_html:
   # V
   validators: ^3.0.0
   visibility_detector: ^0.4.0+2

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'dart:html';
+import "package:universal_html/html.dart" show AnchorElement;
 
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 // import 'package:boilerplate/constants/assets.dart';
