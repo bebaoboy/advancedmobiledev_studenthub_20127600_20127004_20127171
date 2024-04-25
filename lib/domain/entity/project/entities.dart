@@ -328,10 +328,17 @@ class MessageObject extends NotificationObject {
       : messageType = MessageType.values[json2["type"] ?? 0],
         interviewSchedule = json2["interview"],
         super(
+            content: json2["content"] ?? "Null",
             createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
             id: json2["id"].toString(),
-            receiver: Profile.fromJson(json2["receiver"] != null && json2["receiver"] is String ?json.decode(json2["receiver"]) : json2["receiver"]),
-            sender: Profile.fromJson(json2["sender"] != null && json2["sender"] is String ? json.decode(json2["sender"]): json2["sender"]),
+            receiver: Profile.fromJson(
+                json2["receiver"] != null && json2["receiver"] is String
+                    ? json.decode(json2["receiver"])
+                    : json2["receiver"]),
+            sender: Profile.fromJson(
+                json2["sender"] != null && json2["sender"] is String
+                    ? json.decode(json2["sender"])
+                    : json2["sender"]),
             type: NotificationType.message);
 
   String toJson() {
@@ -339,7 +346,8 @@ class MessageObject extends NotificationObject {
       "type": messageType.index,
       "id": id,
       "receiver": receiver.toJson(),
-      "sender": sender.toJson()
+      "sender": sender.toJson(),
+      "createdAt": (createdAt ?? DateTime.now()).toString()
     });
   }
 }

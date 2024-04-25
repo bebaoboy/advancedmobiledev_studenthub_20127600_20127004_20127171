@@ -37,7 +37,7 @@ abstract class _ChatStore with Store {
   @action
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {
     try {
-      _getAllChatsUseCase.call(params: GetMessageByProjectAndUserParams()).then(
+      return _getAllChatsUseCase.call(params: GetMessageByProjectAndUserParams()).then<List<WrapMessageList>>(
         (value) async {
           if (value.isNotEmpty) {
             print(value);

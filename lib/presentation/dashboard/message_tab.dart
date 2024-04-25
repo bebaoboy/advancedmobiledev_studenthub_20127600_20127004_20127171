@@ -1,7 +1,11 @@
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -16,46 +20,48 @@ class MessageTab extends StatefulWidget {
 }
 
 class _MessageTabState extends State<MessageTab> {
-  final List<Map<String, dynamic>> messages = [
-    {
-      'icon': Icons.message,
-      'name': 'Luis Pham',
-      'role': 'Senior frontend developer (Fintech)',
-      'message': 'Clear expectation about your project or deliverables',
-      'date': '6/6/2024'
-    },
-    {
-      'icon': Icons.message,
-      'name': 'John Doe',
-      'role': 'Junior backend developer (Healthcare)',
-      'message': 'Looking forward to working with you',
-      'date': '7/6/2024'
-    },
-    {
-      'icon': Icons.message,
-      'name': 'Xingapore',
-      'role': 'Sey',
-      'message': 'Clear expectation about your project or deliverables',
-      'date': '6/6/2024'
-    },
-    {
-      'icon': Icons.message,
-      'name': 'Malaysia Nguyen',
-      'role': 'Doctor',
-      'message': 'Looking forward to working with you',
-      'date': '7/6/2024'
-    },
-    // Add more messages here
-  ];
+  // final List<Map<String, dynamic>> messages = [
+  //   {
+  //     'icon': Icons.message,
+  //     'name': 'Luis Pham',
+  //     'role': 'Senior frontend developer (Fintech)',
+  //     'message': 'Clear expectation about your project or deliverables',
+  //     'date': '6/6/2024'
+  //   },
+  //   {
+  //     'icon': Icons.message,
+  //     'name': 'John Doe',
+  //     'role': 'Junior backend developer (Healthcare)',
+  //     'message': 'Looking forward to working with you',
+  //     'date': '7/6/2024'
+  //   },
+  //   {
+  //     'icon': Icons.message,
+  //     'name': 'Xingapore',
+  //     'role': 'Sey',
+  //     'message': 'Clear expectation about your project or deliverables',
+  //     'date': '6/6/2024'
+  //   },
+  //   {
+  //     'icon': Icons.message,
+  //     'name': 'Malaysia Nguyen',
+  //     'role': 'Doctor',
+  //     'message': 'Looking forward to working with you',
+  //     'date': '7/6/2024'
+  //   },
+  //   // Add more messages here
+  // ];
+
+  late Future getAllChatFuture;
 
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () async {
-      // chatStore.getAllChat();
-      chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
-      // chatStore.getMessageByProjectAndUsers(projectId: "150", userId: "94");
-    });
+    // Future.delayed(const Duration(milliseconds: 500), () async {
+    getAllChatFuture = chatStore.getAllChat();
+    // chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
+    // chatStore.getMessageByProjectAndUsers(projectId: "150", userId: "94");
+    // });
   }
 
   var chatStore = getIt<ChatStore>();
@@ -122,66 +128,94 @@ class _MessageTabState extends State<MessageTab> {
     );
   }
 
+  var userStore = getIt<UserStore>();
+
   Widget _buildMessageContent() {
     return Stack(
       children: <Widget>[
-        Positioned.fill(
-          top: 60,
-          child: PlaneIndicator(
-            onRefresh: () => Future.delayed(const Duration(seconds: 3)),
-            child: Stack(children: [
-              Positioned.fill(
-                top: 30,
-                child: ListView.separated(
-                  controller: widget.scrollController,
-                  itemCount: messages.length + 1,
-                  separatorBuilder: (context, index) =>
-                      const Divider(color: Colors.black),
-                  itemBuilder: (context, i) {
-                    if (i == 0) {
-                      return Container(
-                          margin: const EdgeInsets.only(top: 15),
-                          child: _buildTopRowList());
-                    }
-                    int index = i - 1;
-                    return InkWell(
-                      onTap: () {
-                        //print('Tile clicked');
-                        var id = "9";
-                        Navigator.of(
-                                NavigationService.navigatorKey.currentContext!)
-                            .push(MaterialPageRoute2(
-                                routeName: "${Routes.message}/$id",
-                                arguments: ChatUser(
-                                    //id: userStore.currentId,
-                                    id: id,
-                                    firstName: messages[index]['name'])));
-                        // You can replace the print statement with your function
-                      },
-                      child: ListTile(
-                        tileColor: Colors.transparent,
-                        leading: Icon(messages[index]
-                            ['icon']), // Replace with actual icons
-                        title: Text(
-                          messages[index]['name'],
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+        FutureBuilder(
+            future: getAllChatFuture,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                List<WrapMessageList> messages = snapshot.data;
+                return Positioned.fill(
+                  top: 60,
+                  child: PlaneIndicator(
+                    onRefresh: () => Future.delayed(const Duration(seconds: 3)),
+                    child: Stack(children: [
+                      Positioned.fill(
+                        top: 30,
+                        child: ListView.separated(
+                          controller: widget.scrollController,
+                          itemCount: messages.length + 1,
+                          separatorBuilder: (context, index) =>
+                              const Divider(color: Colors.black),
+                          itemBuilder: (context, i) {
+                            if (i == 0) {
+                              return Container(
+                                  margin: const EdgeInsets.only(top: 15),
+                                  child: _buildTopRowList());
+                            }
+                            int index = i - 1;
+                            return InkWell(
+                              onTap: () {
+                                //print('Tile clicked');
+                                var id = "9";
+                                Navigator.of(NavigationService
+                                        .navigatorKey.currentContext!)
+                                    .push(MaterialPageRoute2(
+                                        routeName: "${Routes.message}/$id",
+                                        arguments: WrapMessageList(
+                                            messages: messages[index].messages,
+                                            chatUser: ChatUser(
+                                                //id: userStore.currentId,
+                                                id: id,
+                                                firstName:
+                                                    "${messages[index].chatUser.firstName}"))));
+                                // You can replace the print statement with your function
+                              },
+                              child: ListTile(
+                                tileColor: Colors.transparent,
+                                leading: const Icon(
+                                    Icons.message), // Replace with actual icons
+                                title: Text(
+                                  messages[index].project?.title ??
+                                      "Project ${messages[index].project?.objectId}",
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    // Text(messages[index]['role']),
+                                    Text(messages[index]
+                                        .messages!
+                                        .first
+                                        .content),
+                                  ],
+                                ),
+                                trailing: Text(messages[index]
+                                        .messages
+                                        ?.first
+                                        .createdAt
+                                        .toString() ??
+                                    DateTime.now().toString()),
+                              ),
+                            );
+                          },
                         ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(messages[index]['role']),
-                            Text(messages[index]['message']),
-                          ],
-                        ),
-                        trailing: Text(messages[index]['date']),
                       ),
-                    );
-                  },
-                ),
-              ),
-            ]),
-          ),
-        ),
+                    ]),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return const Center(
+                  child: Text("No message"),
+                );
+              } else {
+                return const LoadingScreenWidget();
+              }
+            }),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(

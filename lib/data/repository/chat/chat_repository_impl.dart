@@ -10,6 +10,7 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/chat/chat_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
   final ChatApi _chatApi;
@@ -34,7 +35,12 @@ class ChatRepositoryImpl extends ChatRepository {
               j.add(MessageObject.fromJson(element));
             }
             var p = Project.fromMap(element["project"]);
-            WrapMessageList ml = WrapMessageList(messages: j, project: p);
+            WrapMessageList ml = WrapMessageList(
+                messages: j,
+                project: p,
+                chatUser: ChatUser(
+                    id: j.first.sender.objectId ?? "-1",
+                    firstName: j.first.sender.getName));
             list.add(ml);
           }
 
@@ -64,7 +70,16 @@ class ChatRepositoryImpl extends ChatRepository {
             for (var element in json) {
               List<MessageObject> j = [];
               j.add(MessageObject.fromJson(element));
-              WrapMessageList ml = WrapMessageList(messages: j);
+              WrapMessageList ml = WrapMessageList(
+                  messages: j,
+                  project: Project(
+                      id: params.projectId,
+                      title: "",
+                      timeCreated: DateTime.now(),
+                      description: ""),
+                  chatUser: ChatUser(
+                      id: j.first.sender.objectId ?? "-1",
+                      firstName: j.first.sender.getName));
               list.add(ml);
             }
 

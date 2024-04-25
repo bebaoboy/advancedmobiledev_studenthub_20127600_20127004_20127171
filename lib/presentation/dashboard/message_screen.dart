@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
@@ -32,8 +33,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key, required this.chatUser});
-  final ChatUser chatUser;
+  const MessageScreen({super.key, required this.chatObject});
+  final WrapMessageList chatObject;
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
@@ -52,6 +53,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     super.initState();
+    print(widget.chatObject.messages);
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
 
@@ -222,7 +224,7 @@ class _MessageScreenState extends State<MessageScreen> {
                                 messageWidth:
                                     (MediaQuery.of(context).size.width * 0.9)
                                         .round(),
-                                author: widget.chatUser,
+                                author: widget.chatObject.chatUser,
                                 id: const Uuid().v4(),
                                 type: AbstractMessageType.schedule,
                                 status: Status.delivered,
@@ -533,7 +535,7 @@ class _MessageScreenState extends State<MessageScreen> {
         if (value != null) {
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
-              author: widget.chatUser,
+              author: widget.chatObject.chatUser,
               id: const Uuid().v4(),
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -550,7 +552,7 @@ class _MessageScreenState extends State<MessageScreen> {
               _messages[i] = ScheduleMessageType(
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
-                  author: widget.chatUser,
+                  author: widget.chatObject.chatUser,
                   id: const Uuid().v4(),
                   type: AbstractMessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -577,7 +579,7 @@ class _MessageScreenState extends State<MessageScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
       title:
-          "${widget.chatUser.firstName ?? "No name"} ${widget.chatUser.lastName ?? ""}",
+          "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""}",
       openScheduleDialog: () async {
         ////print("schedule dialog");
         await Future.delayed(const Duration(microseconds: 500)).then((value) {
