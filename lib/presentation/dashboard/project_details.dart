@@ -141,13 +141,13 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   // SegmentTab(label: 'Proposals'),
                   const SegmentTab(label: 'Detail'),
                   SegmentTab(
-                      label: 'Message (${widget.project.proposal!.where(
+                      label: 'Message (${widget.project.proposal?.where(
                             (element) =>
                                 element.hiredStatus == HireStatus.pending ||
                                 element.hiredStatus == HireStatus.offer,
                           ).length})'),
                   SegmentTab(
-                      label: 'Hired  (${widget.project.proposal!.where(
+                      label: 'Hired  (${widget.project.proposal?.where(
                             (element) =>
                                 element.hiredStatus == HireStatus.hired,
                           ).length})'),
