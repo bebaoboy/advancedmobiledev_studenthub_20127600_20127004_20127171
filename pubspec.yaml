@@ -28,7 +28,7 @@ dependencies:
   animated_custom_dropdown:
   animated_list_plus:
   # anim_search_bar:
-  animated_segmented_tab_control: 
+  animated_segmented_tab_control: ^1.2.1
   # adaptive_action_sheet:
   animated_tree_view: ^2.1.0
   another_transformer_page_view:
