@@ -160,12 +160,46 @@ class _MessageTabState extends State<MessageTab> {
                             return InkWell(
                               onTap: () {
                                 //print('Tile clicked');
-                                var id = "9";
+                                var id = "9"; // id này chỉ để test socket
+                                // TODO: get all msg for this receiver and project id: using getMessageByProjectAndUser
+                                /*
+                                {
+  "result": [
+    {
+      "id": 249,
+      "createdAt": "2024-04-23T16:09:43.731Z",
+      "content": "Gvggghhh",
+      "sender": {
+        "id": 34,
+        "fullname": "bao bao"
+      },
+      "receiver": {
+        "id": 94,
+        "fullname": "quan"
+      },
+      "interview": null
+    },
+    {
+      "id": 251,
+      "createdAt": "2024-04-23T16:27:26.848Z",
+      "content": "Hi",
+      "sender": {
+        "id": 34,
+        "fullname": "bao bao"
+      },
+      "receiver": {
+        "id": 94,
+        "fullname": "quan"
+      },
+      "interview": null
+    },
+                                 */
                                 Navigator.of(NavigationService
                                         .navigatorKey.currentContext!)
                                     .push(MaterialPageRoute2(
                                         routeName: "${Routes.message}/$id",
                                         arguments: WrapMessageList(
+                                            project: messages[index].project,
                                             messages: messages[index].messages,
                                             chatUser: ChatUser(
                                                 //id: userStore.currentId,
@@ -179,27 +213,35 @@ class _MessageTabState extends State<MessageTab> {
                                 leading: const Icon(
                                     Icons.message), // Replace with actual icons
                                 title: Text(
-                                  messages[index].project?.title ??
-                                      "Project ${messages[index].project?.objectId}",
+                                  "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName}",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),
                                 subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
                                   children: [
                                     // Text(messages[index]['role']),
+
                                     Text(messages[index]
                                         .messages!
                                         .first
                                         .content),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Text(
+                                      messages[index]
+                                              .messages
+                                              ?.first
+                                              .createdAt
+                                              .toString() ??
+                                          DateTime.now().toString(),
+                                      style: const TextStyle(fontSize: 12),
+                                      textAlign: TextAlign.end,
+                                    )
                                   ],
                                 ),
-                                trailing: Text(messages[index]
-                                        .messages
-                                        ?.first
-                                        .createdAt
-                                        .toString() ??
-                                    DateTime.now().toString()),
                               ),
                             );
                           },
