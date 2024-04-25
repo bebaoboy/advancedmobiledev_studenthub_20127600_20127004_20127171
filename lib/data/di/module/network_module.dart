@@ -2,6 +2,7 @@ import 'package:boilerplate/core/data/network/dio/configs/dio_configs.dart';
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/auth_interceptor.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/logging_interceptor.dart';
+import 'package:boilerplate/core/data/network/dio/interceptors/retry_interceptor.dart';
 import 'package:boilerplate/data/network/apis/chat/chat_api.dart';
 import 'package:boilerplate/data/network/apis/posts/post_api.dart';
 import 'package:boilerplate/data/network/apis/profile/profile_api.dart';
@@ -22,6 +23,7 @@ mixin NetworkModule {
 
     // interceptors:------------------------------------------------------------
     getIt.registerSingleton<LoggingInterceptor>(LoggingInterceptor());
+    getIt.registerSingleton<RetryInterceptor>(RetryInterceptor());
     getIt.registerSingleton<ErrorInterceptor>(ErrorInterceptor(getIt()));
     getIt.registerSingleton<AuthInterceptor>(
       AuthInterceptor(
@@ -46,8 +48,9 @@ mixin NetworkModule {
         ..addInterceptors(
           [
             getIt<AuthInterceptor>(),
-            getIt<ErrorInterceptor>(),
+            // getIt<ErrorInterceptor>(),
             getIt<LoggingInterceptor>(),
+            getIt<RetryInterceptor>(),
           ],
         ),
     );
