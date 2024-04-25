@@ -44,16 +44,16 @@ class _ProposalSwiperState extends State<ProposalSwiper>
 
   @override
   void initState() {
-    if (widget.project.proposal != null &&
-        widget.project.proposal!.isNotEmpty) {
-      future = _projectStore.getProjectProposals(widget.project,
-          filter: (element) => element.hiredStatus == HireStatus.notHired);
-    } else {
+    // if (widget.project.proposal != null &&
+    //     widget.project.proposal!.isNotEmpty) {
+    //   future = _projectStore.getProjectProposals(widget.project,
+    //       filter: (element) => element.hiredStatus == HireStatus.notHired);
+    // } else {
       future = Future.value(ProposalList(
           proposals: widget.project.proposal!
               .where((element) => element.hiredStatus == HireStatus.notHired)
               .toList()));
-    }
+    // }
 
     // _shakeCard();
     super.initState();

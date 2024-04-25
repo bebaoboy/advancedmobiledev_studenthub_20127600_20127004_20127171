@@ -94,6 +94,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   visible: widget.project.countNewProposals > 0,
                   child: GestureDetector(
                     onTap: () {
+                      widget.project.proposal?.forEach(
+                        (element) => print(element.hiredStatus),
+                      );
                       Navigator.of(context).push(MaterialPageRoute2(
                           routeName: Routes.viewProjectProposalsCard,
                           arguments: widget.project));
@@ -132,13 +135,22 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 tabTextColor: Colors.black45,
                 selectedTabTextColor: Colors.white,
                 backgroundColor: Colors.grey.shade300,
-                textStyle: Theme.of(context).textTheme.bodyText1!,
+                textStyle: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 12),
                 //.copyWith(fontSize: 11.7),
-                tabs: const [
+                tabs: [
                   // SegmentTab(label: 'Proposals'),
-                  SegmentTab(label: 'Detail'),
-                  SegmentTab(label: 'Message'),
-                  SegmentTab(label: 'Hired'),
+                  const SegmentTab(label: 'Detail'),
+                  SegmentTab(
+                      label: 'Message (${widget.project.proposal!.where(
+                            (element) =>
+                                element.hiredStatus == HireStatus.pending ||
+                                element.hiredStatus == HireStatus.offer,
+                          ).length})'),
+                  SegmentTab(
+                      label: 'Hired  (${widget.project.proposal!.where(
+                            (element) =>
+                                element.hiredStatus == HireStatus.hired,
+                          ).length})'),
                 ],
               ),
               Padding(
@@ -176,10 +188,14 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                             : widget.project.proposal!
                                 .where(
                                   (element) =>
-                                      element.hiredStatus == HireStatus.pending,
+                                      element.hiredStatus ==
+                                          HireStatus.pending ||
+                                      element.hiredStatus == HireStatus.offer,
                                 )
-                                .toList(),
-                        onHired: (i) {},
+                                .toList()..sort((a, b) => b.hiredStatus.index.compareTo(a.hiredStatus.index)),
+                        onHired: (i) {
+                          //TODO: hired student
+                        },
                       ),
                       HiredTabLayout(
                           hired: widget.project.proposal == null
@@ -188,9 +204,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                   .where(
                                     (element) =>
                                         element.hiredStatus == HireStatus.hired,
-                                  )
-                                  .map(
-                                    (e) => e.student,
                                   )
                                   .toList()),
                     ],
@@ -485,7 +498,7 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
 }
 
 class HiredTabLayout extends StatelessWidget {
-  final List<StudentProfile>? hired;
+  final List<Proposal>? hired;
 
   const HiredTabLayout({super.key, required this.hired});
 

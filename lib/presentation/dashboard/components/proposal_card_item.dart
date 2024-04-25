@@ -97,6 +97,14 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                   textAlign: TextAlign.left,
                 ),
                 Text(
+                  widget.proposal.coverLetter,
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onPrimary,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 10),
+                  textAlign: TextAlign.left,
+                ),
+                Text(
                   profile.education,
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,

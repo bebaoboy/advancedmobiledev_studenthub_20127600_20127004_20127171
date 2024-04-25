@@ -1,10 +1,11 @@
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class HiredItem extends StatefulWidget {
-  final StudentProfile hired;
+  final Proposal hired;
   final bool pending;
   // final Function? onHired;
   const HiredItem({
@@ -59,30 +60,28 @@ class _HiredItemState extends State<HiredItem> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(widget.hired.getName,
+                      Text(widget.hired.student.getName,
                           style: Theme.of(context).textTheme.bodyLarge),
-                      Text(widget.hired.education,
+                      Text(widget.hired.student.education,
                           style: Theme.of(context).textTheme.bodyLarge)
                     ],
                   )
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(widget.hired.title,
-                    style: Theme.of(context).textTheme.bodyLarge),
-                // ToDo: need a field for expertise
-                Text(Lang.get('excellent'),
-                    style: Theme.of(context).textTheme.bodyLarge),
-              ],
-            ),
+            Text(widget.hired.coverLetter,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyLarge),
+            // ToDo: need a field for expertise
+
+            Text(Lang.get('excellent'),
+                style: Theme.of(context).textTheme.bodyLarge),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
-                child: Text(widget.hired.introduction,
+                child: Text(widget.hired.student.introduction,
                     style: Theme.of(context).textTheme.bodyLarge),
               ),
             ),

@@ -30,7 +30,8 @@ class _ProposalItemState extends State<ProposalItem> {
   @override
   Widget build(BuildContext context) {
     var buttonHireText = 'Hire';
-    if (widget.proposal.isHired) {
+    if (widget.proposal.isHired ||
+        widget.proposal.hiredStatus == HireStatus.offer) {
       buttonHireText = 'Sent hired offer';
     }
 
@@ -51,33 +52,35 @@ class _ProposalItemState extends State<ProposalItem> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.person,
                     size: 45,
+                    color: widget.proposal.hiredStatus == HireStatus.offer
+                        ? Theme.of(context).colorScheme.primary
+                        : null,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(widget.proposal.student.fullName,
-                          style: Theme.of(context).textTheme.bodyLarge),
-                      Text(widget.proposal.student.education,
-                          style: Theme.of(context).textTheme.bodyLarge)
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyLarge
+                              ?.copyWith(fontWeight: FontWeight.bold)),
+                      // Text(widget.proposal.student.education,
+                      //     style: Theme.of(context).textTheme.bodyLarge)
                     ],
                   )
                 ],
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(widget.proposal.student.title,
-                    style: Theme.of(context).textTheme.bodyLarge),
-                // ToDo: need a field for expertise
-                Text(Lang.get('excellent'),
-                    style: Theme.of(context).textTheme.bodyLarge),
-              ],
-            ),
+            Text(widget.proposal.coverLetter,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.bodyLarge),
+            Text(Lang.get('excellent'),
+                style: Theme.of(context).textTheme.bodyLarge),
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: SizedBox(
@@ -101,12 +104,14 @@ class _ProposalItemState extends State<ProposalItem> {
                   ),
                   MaterialButton(
                     enableFeedback: !widget.proposal.isHired,
-                    color: !widget.proposal.isHired
+                    color: (!widget.proposal.isHired &&
+                            widget.proposal.hiredStatus != HireStatus.offer)
                         ? Theme.of(context).primaryColor
                         : Colors.grey.shade600,
                     textColor: Colors.white,
                     onPressed: () {
-                      if (!widget.proposal.isHired) {
+                      if (!widget.proposal.isHired &&
+                          widget.proposal.hiredStatus != HireStatus.offer) {
                         //print('send a hire notification');
                         showAnimatedDialog(
                           context: context,
