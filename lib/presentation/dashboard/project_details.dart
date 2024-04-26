@@ -4,11 +4,12 @@ import 'package:animated_segmented_tab_control/animated_segmented_tab_control.da
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
+import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/dashboard/store/update_project_form_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -18,6 +19,7 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:timeago/timeago.dart' as timeago;
+import 'package:toastification/toastification.dart';
 
 class ProjectDetailsPage extends StatefulWidget {
   final Project project;
@@ -55,6 +57,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   }
 
   final _updateStore = getIt<UpdateProjectFormStore>();
+  final _projectStore = getIt<ProjectStore>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,12 +67,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
       body: _buildBody(),
     );
   }
-
-  // getRealNewCountProposals() {
-  //   return widget.project.countProposals -
-  //       widget.project.countHired -
-  //       widget.project.countMessages;
-  // }
 
   Widget _buildBody() {
     return SingleChildScrollView(
@@ -135,7 +132,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 tabTextColor: Colors.black45,
                 selectedTabTextColor: Colors.white,
                 backgroundColor: Colors.grey.shade300,
-                textStyle: Theme.of(context).textTheme.bodyText1?.copyWith(fontSize: 12),
+                textStyle: Theme.of(context)
+                    .textTheme
+                    .bodyText1
+                    ?.copyWith(fontSize: 12),
                 //.copyWith(fontSize: 11.7),
                 tabs: [
                   // SegmentTab(label: 'Proposals'),
@@ -160,25 +160,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   child: TabBarView(
                     physics: const BouncingScrollPhysics(),
                     children: [
-                      // ProposalTabLayout(
-                      //     proposals: widget.project.proposal,
-                      //     onHired: (index) {
-                      //       print("hired");
-                      //       setState(() {
-                      //         try {
-                      //           // ToDO: use a callback, cannot access projectStore.companyProject here
-                      //           // widget.project.hired != null
-                      //           //     ? widget.project.hired!.add(widget
-                      //           //         .project.proposal!
-                      //           //         .elementAt(index))
-                      //           //     : widget.project.hired = [
-                      //           //         widget.project.proposal!.elementAt(index)
-                      //           //       ];
-                      //         } catch (e) {
-                      //           print("error hire student");
-                      //         }
-                      //       });
-                      //     }),
                       DetailTabLayout(
                         project: widget.project,
                       ),
@@ -192,9 +173,22 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                                           HireStatus.pending ||
                                       element.hiredStatus == HireStatus.offer,
                                 )
-                                .toList()..sort((a, b) => b.hiredStatus.index.compareTo(a.hiredStatus.index)),
-                        onHired: (i) {
+                                .toList()
+                          ..sort((a, b) => b.hiredStatus.index
+                              .compareTo(a.hiredStatus.index)),
+                        onHired: (Proposal p) {
                           //TODO: hired student
+                          p.hiredStatus = HireStatus.offer;
+                          _projectStore
+                              .updateProposal(p, "something")
+                              .then((value) {
+                            if (value) {
+                              setState(() {});
+                            } else {
+                              Toastify.show(context, "", "Failed to send hire",
+                                  ToastificationType.error, () {});
+                            }
+                          });
                         },
                       ),
                       HiredTabLayout(
@@ -528,7 +522,7 @@ class MessageTabLayout extends StatelessWidget {
 
   const MessageTabLayout(
       {super.key, required this.messages, required this.onHired});
-  final Function? onHired;
+  final Function(Proposal p)? onHired;
 
   @override
   Widget build(BuildContext context) {
@@ -541,7 +535,7 @@ class MessageTabLayout extends StatelessWidget {
               return ProposalItem(
                   proposal: messages![index],
                   // pending: false,
-                  onHired: () => onHired!(index));
+                  onHired: () => onHired!(messages![index]));
             },
           );
   }

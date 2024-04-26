@@ -5,6 +5,7 @@ import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
@@ -18,9 +19,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:collection/collection.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -43,6 +42,7 @@ class MessageScreen extends StatefulWidget {
 class _MessageScreenState extends State<MessageScreen> {
   List<AbstractChatMessage> _messages = [];
   List<ChatUser> typings = [];
+
   final _user = const ChatUser(
     id: '1',
   );
@@ -50,13 +50,20 @@ class _MessageScreenState extends State<MessageScreen> {
   late MessageNotifierProvider messageNotifier;
   String msg = "";
 
+  late Future currentMessageList;
+  var chatStore = getIt<ChatStore>();
+  var userStore = getIt<UserStore>();
+
   @override
   void initState() {
     super.initState();
-    print(widget.chatObject.messages);
+    // print(widget.chatObject.messages);
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
 
+    currentMessageList = chatStore.getMessageByProjectAndUsers(
+        userId: userStore.currentId,
+        projectId: widget.chatObject.project!.objectId!);
     _loadMessages();
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
     // project id
@@ -480,8 +487,6 @@ class _MessageScreenState extends State<MessageScreen> {
     });
   }
 
-  var userStore = getIt<UserStore>();
-
   void _handleSendPressed(PartialText message) {
     final textMessage = AbstractTextMessage(
       author: _user,
@@ -504,17 +509,22 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _loadMessages() async {
-    final response = await rootBundle.loadString('assets/messages.json');
-    final jsonList = jsonDecode(response) as List;
-    List<AbstractChatMessage> messages = [];
-    for (var e in jsonList) {
-      var r = AbstractChatMessage.fromJson(e as Map<String, dynamic>);
-      if (!messages.contains(r)) {
-        messages.add(r);
-      } else {
-        ////print("duplicated id: " + r.id);
-      }
-    }
+    /// default
+    /// final response = await rootBundle.loadString('assets/messages.json');
+    /// final jsonList = jsonDecode(response) as List;
+    /// List<AbstractChatMessage> messages = [];
+    /// for (var e in jsonList) {
+    ///  var r = AbstractChatMessage.fromJson(e as Map<String, dynamic>);
+    ///  if (!messages.contains(r)) {
+    ///    messages.add(r);
+    ///  } else {
+    ////print("duplicated id: " + r.id);
+    ///  }
+    /// }
+
+    final messages = await chatStore.getMessageByProjectAndUsers(
+        userId: userStore.currentId,
+        projectId: widget.chatObject.project!.objectId!);
 
     setState(() {
       _messages = messages;

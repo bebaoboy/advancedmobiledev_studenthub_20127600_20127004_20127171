@@ -1,7 +1,6 @@
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -160,18 +159,14 @@ class _MessageTabState extends State<MessageTab> {
                             return InkWell(
                               onTap: () {
                                 //print('Tile clicked');
-                                var id = "9";
+                                String id = messages[index].chatUser.id;
                                 Navigator.of(NavigationService
                                         .navigatorKey.currentContext!)
                                     .push(MaterialPageRoute2(
                                         routeName: "${Routes.message}/$id",
                                         arguments: WrapMessageList(
                                             messages: messages[index].messages,
-                                            chatUser: ChatUser(
-                                                //id: userStore.currentId,
-                                                id: id,
-                                                firstName:
-                                                    "${messages[index].chatUser.firstName}"))));
+                                            chatUser: messages[index].chatUser)));
                                 // You can replace the print statement with your function
                               },
                               child: ListTile(
