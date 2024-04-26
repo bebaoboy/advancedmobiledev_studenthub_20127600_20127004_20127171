@@ -1,9 +1,7 @@
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
@@ -160,7 +158,18 @@ class _MessageTabState extends State<MessageTab> {
                             return InkWell(
                               onTap: () {
                                 //print('Tile clicked');
-                                var id = "9"; // id này chỉ để test socket
+                                String id = messages[index]
+                                    .chatUser
+                                    .id; // id này chỉ để test socket
+
+                                chatStore.getMessageByProjectAndUsers(
+                                    userId: messages[index]
+                                        .messages!
+                                        .first
+                                        .receiver
+                                        .objectId!,
+                                    projectId:
+                                        messages[index].project!.objectId!);
                                 // TODO: get all msg for this receiver and project id: using getMessageByProjectAndUser
                                 /*
                                 {
@@ -201,11 +210,8 @@ class _MessageTabState extends State<MessageTab> {
                                         arguments: WrapMessageList(
                                             project: messages[index].project,
                                             messages: messages[index].messages,
-                                            chatUser: ChatUser(
-                                                //id: userStore.currentId,
-                                                id: id,
-                                                firstName:
-                                                    "${messages[index].chatUser.firstName}"))));
+                                            chatUser:
+                                                messages[index].chatUser)));
                                 // You can replace the print statement with your function
                               },
                               child: ListTile(

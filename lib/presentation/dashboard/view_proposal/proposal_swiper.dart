@@ -49,10 +49,10 @@ class _ProposalSwiperState extends State<ProposalSwiper>
     //   future = _projectStore.getProjectProposals(widget.project,
     //       filter: (element) => element.hiredStatus == HireStatus.notHired);
     // } else {
-      future = Future.value(ProposalList(
-          proposals: widget.project.proposal!
-              .where((element) => element.hiredStatus == HireStatus.notHired)
-              .toList()));
+    future = Future.value(ProposalList(
+        proposals: widget.project.proposal!
+            .where((element) => element.hiredStatus == HireStatus.notHired)
+            .toList()));
     // }
 
     // _shakeCard();
@@ -156,7 +156,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 _cardStateStore.changeOpacity(
                                     (position.angle.abs().roundToDouble() /
                                             maxAngle)
-                                        .clamp(0.5, 1));
+                                        .clamp(0.2, 1));
 
                                 if (position.offset.toAxisDirection() ==
                                     AxisDirection.left) {
@@ -255,6 +255,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                             ),
                           ),
                         ),
+                        const SizedBox(
+                          height: 20,
+                        ),
                         IconTheme.merge(
                           data: const IconThemeData(size: 40),
                           child: Row(
@@ -291,6 +294,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 width: 20,
                               ),
                               MaterialButton(
+                                enableFeedback: index != 0,
                                 onPressed: () {
                                   setState(() {
                                     var newIndex = (_cardStateStore.index - 1)
@@ -310,6 +314,8 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 width: 10,
                               ),
                               MaterialButton(
+                                enableFeedback:
+                                    index != widget.project.proposal!.length,
                                 onPressed: () {
                                   setState(() {
                                     var newIndex = (_cardStateStore.index + 1)

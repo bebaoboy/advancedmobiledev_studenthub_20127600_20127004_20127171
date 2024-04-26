@@ -1,11 +1,13 @@
 import 'dart:math';
 
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart' show PhotoViewComputedScale;
 import 'package:scroll_to_index/scroll_to_index.dart';
@@ -19,6 +21,7 @@ import 'message/message.dart';
 import 'message/text_message.dart';
 import 'input/typing_indicator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
+import 'package:lottie/lottie.dart';
 
 logg(String? message, [String? tag]) {
   debugPrint("CB-SDK: ${tag ?? "BEBAOBOY"}: $message");
@@ -364,6 +367,7 @@ class ChatState extends State<Chat> {
 
   late final AutoScrollController _scrollController;
   final ThemeStore _themeStore = getIt<ThemeStore>();
+  final chatStore = getIt<ChatStore>();
 
   @override
   void initState() {
@@ -637,46 +641,67 @@ class ChatState extends State<Chat> {
           color: Chat.theme.backgroundColor,
           child: Column(
             children: [
-              Flexible(
-                child: widget.messages.isEmpty
-                    ? SizedBox.expand(
-                        child: _emptyStateBuilder(),
-                      )
-                    : GestureDetector(
-                        onTap: () {
-                          FocusManager.instance.primaryFocus?.unfocus();
-                          widget.onBackgroundTap?.call();
-                        },
-                        child: LayoutBuilder(builder: (
-                          BuildContext context,
-                          BoxConstraints constraints,
-                        ) {
-                          //print("rebuild");
-                          return ChatList(
-                            bottomWidget: widget.listBottomWidget,
-                            bubbleRtlAlignment: widget.bubbleRtlAlignment!,
-                            isLastPage: widget.isLastPage,
-                            itemBuilder: (Object item, int? index) =>
-                                _messageBuilder(
-                              item,
-                              constraints,
-                              index,
-                            ),
-                            items: _chatMessages,
-                            keyboardDismissBehavior:
-                                widget.keyboardDismissBehavior,
-                            onEndReached: widget.onEndReached,
-                            onEndReachedThreshold: widget.onEndReachedThreshold,
-                            scrollController: _scrollController,
-                            scrollPhysics: widget.scrollPhysics,
-                            typingIndicatorOptions:
-                                widget.typingIndicatorOptions,
-                            useTopSafeAreaInset:
-                                widget.useTopSafeAreaInset ?? isMobile,
-                          );
-                        }),
+              Observer(builder: (context) {
+                if (chatStore.isFetching) {
+                  return Flexible(
+                    child: SizedBox.expand(
+                      child: Align(
+                        alignment: Alignment.topCenter,
+                        child: Lottie.asset(
+                          'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                          fit: BoxFit.cover,
+                          width: 80, // Adjust the width and height as needed
+                          height: 80,
+                          repeat:
+                              true, // Set to true if you want the animation to loop
+                        ),
                       ),
-              ),
+                    ),
+                  );
+                } else {
+                  return Flexible(
+                    child: widget.messages.isEmpty
+                        ? SizedBox.expand(
+                            child: _emptyStateBuilder(),
+                          )
+                        : GestureDetector(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              widget.onBackgroundTap?.call();
+                            },
+                            child: LayoutBuilder(builder: (
+                              BuildContext context,
+                              BoxConstraints constraints,
+                            ) {
+                              //print("rebuild");
+                              return ChatList(
+                                bottomWidget: widget.listBottomWidget,
+                                bubbleRtlAlignment: widget.bubbleRtlAlignment!,
+                                isLastPage: widget.isLastPage,
+                                itemBuilder: (Object item, int? index) =>
+                                    _messageBuilder(
+                                  item,
+                                  constraints,
+                                  index,
+                                ),
+                                items: _chatMessages,
+                                keyboardDismissBehavior:
+                                    widget.keyboardDismissBehavior,
+                                onEndReached: widget.onEndReached,
+                                onEndReachedThreshold:
+                                    widget.onEndReachedThreshold,
+                                scrollController: _scrollController,
+                                scrollPhysics: widget.scrollPhysics,
+                                typingIndicatorOptions:
+                                    widget.typingIndicatorOptions,
+                                useTopSafeAreaInset:
+                                    widget.useTopSafeAreaInset ?? isMobile,
+                              );
+                            }),
+                          ),
+                  );
+                }
+              }),
               widget.customBottomWidget ??
                   Input(
                     isAttachmentUploading: widget.isAttachmentUploading,
