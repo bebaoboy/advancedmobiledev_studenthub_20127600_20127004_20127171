@@ -42,8 +42,8 @@ class MessageScreen extends StatefulWidget {
 }
 
 class _MessageScreenState extends State<MessageScreen> {
-  List<AbstractChatMessage> _messages = [];
   List<ChatUser> typings = [];
+  // List<AbstractChatMessage> _messages = [];
 
   late ChatUser _user;
   Timer? timer;
@@ -53,6 +53,11 @@ class _MessageScreenState extends State<MessageScreen> {
   final chatStore = getIt<ChatStore>();
   final userStore = getIt<UserStore>();
 
+  void _messageNotifierListener() {
+    final newMessage = messageNotifier.inbox.first;
+    _addMessage(newMessage);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,11 +65,13 @@ class _MessageScreenState extends State<MessageScreen> {
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
 
-    _user = ChatUser(id: userStore.currentId);
+    _user = widget.chatObject.chatUser;
 
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
     // project id
-    messageNotifier = MessageNotifierProvider(id: "150");
+    messageNotifier = MessageNotifierProvider(
+        id: widget.chatObject.project!.objectId!, senderName: _user.firstName!);
+    messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
       var num = r.nextInt(30);
@@ -92,12 +99,14 @@ class _MessageScreenState extends State<MessageScreen> {
   void dispose() {
     super.dispose();
     timer?.cancel();
+    messageNotifier.removeListener(_messageNotifierListener);
   }
 
   void updateMessageReactions(MessageReaction reaction, String id,
       {bool remove = false, bool add = false}) {
     // log('[_updateCubeMessageReactionss]');
-    var msg = _messages.firstWhereOrNull((msg) => msg.id == reaction.messageId);
+    var msg = chatStore.currentProjectMessages
+        .firstWhereOrNull((msg) => msg.id == reaction.messageId);
 
     if (msg == null) return;
 
@@ -224,22 +233,25 @@ class _MessageScreenState extends State<MessageScreen> {
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w100))),
                         onPressed: (context) {
-                          int i = _messages
+                          int i = chatStore.currentProjectMessages
                               .indexWhere((element) => element.id == p0.id);
                           if (i != -1) {
                             setState(() {
-                              _messages[i] = ScheduleMessageType(
-                                  messageWidth:
-                                      (MediaQuery.of(context).size.width * 0.9)
-                                          .round(),
-                                  author: widget.chatObject.chatUser,
-                                  id: const Uuid().v4(),
-                                  type: AbstractMessageType.schedule,
-                                  status: Status.delivered,
-                                  createdAt:
-                                      DateTime.now().millisecondsSinceEpoch,
-                                  metadata: {
-                                    ..._messages[i].metadata!,
+                              chatStore.currentProjectMessages[i] =
+                                  ScheduleMessageType(
+                                      messageWidth:
+                                          (MediaQuery.of(context).size.width *
+                                                  0.9)
+                                              .round(),
+                                      author: widget.chatObject.chatUser,
+                                      id: const Uuid().v4(),
+                                      type: AbstractMessageType.schedule,
+                                      status: Status.delivered,
+                                      createdAt:
+                                          DateTime.now().millisecondsSinceEpoch,
+                                      metadata: {
+                                    ...chatStore
+                                        .currentProjectMessages[i].metadata!,
                                     "isCancel": true,
                                   });
                               _sortMessages();
@@ -267,7 +279,9 @@ class _MessageScreenState extends State<MessageScreen> {
             return ListenableBuilder(
               listenable: messageNotifier,
               builder: (BuildContext context, Widget? child) {
-                return Text(messageNotifier.inbox.firstOrNull ?? "");
+                return Text(
+                    (messageNotifier.inbox.firstOrNull as AbstractTextMessage)
+                        .text);
               },
             );
           },
@@ -283,14 +297,13 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _addMessage(AbstractChatMessage message) {
-    setState(() {
-      _messages.insert(0, message);
-      _sortMessages();
-    });
+    chatStore.currentProjectMessages.insert(0, message);
+    // chatStore.currentProjectMessages.insert(0, message);
+    _sortMessages();
   }
 
   void _sortMessages() {
-    _messages.sort((a, b) {
+    chatStore.currentProjectMessages.sort((a, b) {
       if (a.createdAt == null) {
         return -1;
       } else if (b.createdAt == null) {
@@ -433,15 +446,16 @@ class _MessageScreenState extends State<MessageScreen> {
 
       if (message.uri.startsWith('http')) {
         try {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
+          final index = chatStore.currentProjectMessages
+              .indexWhere((element) => element.id == message.id);
           final updatedMessage =
-              (_messages[index] as AbstractFileMessage).copyWith(
+              (chatStore.currentProjectMessages[index] as AbstractFileMessage)
+                  .copyWith(
             isLoading: true,
           );
 
           setState(() {
-            _messages[index] = updatedMessage;
+            chatStore.currentProjectMessages[index] = updatedMessage;
           });
 
           final client = http.Client();
@@ -455,15 +469,16 @@ class _MessageScreenState extends State<MessageScreen> {
             await file.writeAsBytes(bytes);
           }
         } finally {
-          final index =
-              _messages.indexWhere((element) => element.id == message.id);
+          final index = chatStore.currentProjectMessages
+              .indexWhere((element) => element.id == message.id);
           final updatedMessage =
-              (_messages[index] as AbstractFileMessage).copyWith(
+              (chatStore.currentProjectMessages[index] as AbstractFileMessage)
+                  .copyWith(
             isLoading: null,
           );
 
           setState(() {
-            _messages[index] = updatedMessage;
+            chatStore.currentProjectMessages[index] = updatedMessage;
           });
         }
       }
@@ -476,14 +491,17 @@ class _MessageScreenState extends State<MessageScreen> {
     AbstractTextMessage message,
     PreviewData previewData,
   ) {
-    final index = _messages.indexWhere((element) => element.id == message.id);
-    final updatedMessage = (_messages[index] as AbstractTextMessage).copyWith(
+    final index = chatStore.currentProjectMessages
+        .indexWhere((element) => element.id == message.id);
+    final updatedMessage =
+        (chatStore.currentProjectMessages[index] as AbstractTextMessage)
+            .copyWith(
       previewData: previewData,
     );
     print("update");
     setState(() {
       logg("loaded preview");
-      _messages[index] = updatedMessage;
+      chatStore.currentProjectMessages[index] = updatedMessage;
     });
   }
 
@@ -502,22 +520,22 @@ class _MessageScreenState extends State<MessageScreen> {
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
         // default for testing
-        messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
-          "content": message.text.trim(),
-          "projectId": 150,
-          "senderId": userStore.user!.objectId,
-          "receiverId": 94, // notification
-          "messageFlag": 0 // default 0 for message, 1 for interview
-        });
-
-        // ToDo: uncomment to send real message;
         // messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
         //   "content": message.text.trim(),
-        //   "projectId": widget.chatObject.project!.objectId!,
+        //   "projectId": 150,
         //   "senderId": userStore.user!.objectId,
-        //   "receiverId": _user.id, // notification
-        //   "messageFlag": 0
+        //   "receiverId": 94, // notification
+        //   "messageFlag": 0 // default 0 for message, 1 for interview
         // });
+
+        // ToDo: uncomment to send real message;
+        messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+          "content": message.text.trim(),
+          "projectId": widget.chatObject.project!.objectId!,
+          "senderId": userStore.user!.objectId!,
+          "receiverId": _user.id, // notification
+          "messageFlag": 0
+        });
       }
     }
 
@@ -539,10 +557,10 @@ class _MessageScreenState extends State<MessageScreen> {
       }
     }
 
-    setState(() {
-      _messages = chatStore.currentProjectMessages;
-      _sortMessages();
-    });
+    // setState(() {
+    //   _messages = chatStore.currentProjectMessages;
+    //   _sortMessages();
+    // });
   }
 
   Future<InterviewSchedule?> showScheduleBottomSheet(BuildContext context,
@@ -569,10 +587,11 @@ class _MessageScreenState extends State<MessageScreen> {
         }
       } else {
         if (value != null) {
-          int i = _messages.indexWhere((element) => element.id == id);
+          int i = chatStore.currentProjectMessages
+              .indexWhere((element) => element.id == id);
           if (i != -1) {
             setState(() {
-              _messages[i] = ScheduleMessageType(
+              chatStore.currentProjectMessages[i] = ScheduleMessageType(
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
                   author: widget.chatObject.chatUser,
@@ -602,7 +621,7 @@ class _MessageScreenState extends State<MessageScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
       title:
-          "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""}",
+          "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""} (${widget.chatObject.chatUser.id})",
       openScheduleDialog: () async {
         ////print("schedule dialog");
         await Future.delayed(const Duration(microseconds: 500)).then((value) {

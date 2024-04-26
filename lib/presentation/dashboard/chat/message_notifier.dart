@@ -1,20 +1,29 @@
 // ignore_for_file: library_prefixes
 
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
+import 'package:uuid/uuid.dart';
 
 class MessageNotifierProvider with ChangeNotifier {
   late final IO.Socket textSocketHandler;
 
   /// Project ID
   final String id;
+  final _sharePrefHelper = getIt<SharedPreferenceHelper>();
+  final String senderName;
 
-  MessageNotifierProvider({required this.id}) : super() {
+  MessageNotifierProvider({required this.id, required this.senderName})
+      : super() {
     initSocket();
   }
 
   initSocket() async {
+    int userId = await _sharePrefHelper.currentUserId;
+    if (userId == 0) return;
     print(id);
     textSocketHandler = IO.io(
         "https://api.studenthub.dev", // Server url
@@ -43,30 +52,48 @@ class MessageNotifierProvider with ChangeNotifier {
       print('err connect');
       // socket.emit('msg', 'test');
     });
-    textSocketHandler.on('RECEIVE_MESSAGE', (data) => print("receive $data"));
+
+    // ToDo: add to noti and also handle send on noti
+    textSocketHandler.on('RECEIVE_MESSAGE', (data) {
+      if (data['senderId'] == userId) return;
+      print("receive $data");
+    });
     textSocketHandler.on('SEND_MESSAGE', (data) => print("send $data"));
 
     // noti student id/company id
-    textSocketHandler.on('NOTI_94', (data) {
+    textSocketHandler.on('NOTI_$userId', (data) {
       print("notification $data");
       addInbox(data);
     });
     textSocketHandler.on('ERROR', (data) => print("error $data"));
     textSocketHandler.onDisconnect((_) => print('disconnect'));
 
-    textSocketHandler.emit("SEND_MESSAGE", {
-      "content": "Test receiving noti from project $id",
-      "projectId": id,
-      "senderId": 34,
-      "receiverId": 94, // notification
-      "messageFlag": 0 // default 0 for message, 1 for interview
-    });
+    // textSocketHandler.emit("SEND_MESSAGE", {
+    //   "content": "Test receiving noti from project $id",
+    //   "projectId": id,
+    //   "senderId": 34,
+    //   "receiverId": userId, // notification
+    //   "messageFlag": 0 // default 0 for message, 1 for interview
+    // });
   }
 
-  List<String> inbox = [];
+  List<AbstractChatMessage> inbox = [];
 
   void addInbox(Map<String, dynamic> message) {
-    inbox.insert(0, message["content"].toString());
+    var e = <String, dynamic>{
+      ...message,
+      'id': const Uuid().v4(),
+      'type': message['messageFlag'] == 0 ? 'text' : 'interview',
+      'text': message['content'],
+      'status': 'seen',
+      'interview': message['interview'] ?? {},
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
+      'author': {
+        "firstName": senderName,
+        "id": message['senderId'].toString(),
+      }
+    };
+    inbox.insert(0, AbstractChatMessage.fromJson(e));
     print(message);
     notifyListeners();
   }

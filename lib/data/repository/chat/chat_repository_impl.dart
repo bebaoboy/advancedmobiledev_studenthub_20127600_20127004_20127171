@@ -22,23 +22,28 @@ class ChatRepositoryImpl extends ChatRepository {
   Future<List<WrapMessageList>> getAllChat(
       GetMessageByProjectAndUserParams params) async {
     return await _chatApi.getAllChat(params).then(
-      (value) {
+      (value) async {
         if (value.statusCode == HttpStatus.accepted ||
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           List json = value.data["result"];
           List<WrapMessageList> list = [];
+          int currentId = await _sharedPrefHelper.currentUserId;
+
           for (var element in json) {
             List<MessageObject> j = [];
             j.add(MessageObject.fromJson(element));
             var p = Project.fromMap(element["project"]);
-            WrapMessageList ml = WrapMessageList(
-                messages: j,
-                project: p,
-                chatUser: ChatUser(
-                    id: j.first.sender.objectId ?? "-1",
-                    firstName: j.first.receiver.getName));
-            list.add(ml);
+
+            if (j.first.sender.objectId != currentId.toString()) {
+              WrapMessageList ml = WrapMessageList(
+                  messages: j,
+                  project: p,
+                  chatUser: ChatUser(
+                      id: j.first.sender.objectId ?? "-1",
+                      firstName: j.first.sender.getName));
+              list.add(ml);
+            }
           }
           list.sort(
             (a, b) => (a.messages != null && b.messages != null)
@@ -83,7 +88,6 @@ class ChatRepositoryImpl extends ChatRepository {
                 'author': {
                   "firstName": element['receiver']['fullname'],
                   "id": element['receiver']['id'].toString(),
-                  "lastName": ""
                 }
               };
               var acm = AbstractChatMessage.fromJson(e);
