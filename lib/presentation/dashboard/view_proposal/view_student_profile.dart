@@ -128,7 +128,7 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
               decoration: BoxDecoration(
                   border: Border.all(color: Colors.black),
                   borderRadius: const BorderRadius.all(Radius.circular(10))),
-              height: 200,
+              height: 150,
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: GridView.builder(
@@ -165,7 +165,7 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
             Visibility(
               visible: checkIfValid(),
               child: Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.only(top: 10, right: 30, bottom: 20),
                 alignment: Alignment.bottomRight,
                 child: MaterialButton(
                   shape: RoundedRectangleBorder(

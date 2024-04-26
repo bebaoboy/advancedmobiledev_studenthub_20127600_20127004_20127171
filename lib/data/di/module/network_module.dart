@@ -48,9 +48,9 @@ mixin NetworkModule {
         ..addInterceptors(
           [
             getIt<AuthInterceptor>(),
-            // getIt<ErrorInterceptor>(),
+            getIt<ErrorInterceptor>(),
             getIt<LoggingInterceptor>(),
-            getIt<RetryInterceptor>(),
+            // getIt<RetryInterceptor>(),
           ],
         ),
     );

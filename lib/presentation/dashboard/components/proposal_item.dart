@@ -1,4 +1,5 @@
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/type/user.dart';
@@ -6,6 +7,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class ProposalItem extends StatefulWidget {
@@ -48,7 +50,7 @@ class _ProposalItemState extends State<ProposalItem> {
           Navigator.push(
               context,
               MaterialPageRoute2(
-                routeName: Routes.viewProfileStudent,
+                routeName: Routes.companyViewStudentProfile,
                 arguments: widget.proposal.student,
               ));
         },
@@ -76,11 +78,12 @@ class _ProposalItemState extends State<ProposalItem> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(widget.proposal.student.fullName,
+                        Text(widget.proposal.student.fullName.toTitleCase(),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyLarge
-                                ?.copyWith(fontWeight: FontWeight.bold)),
+                                ?.copyWith(
+                                    fontWeight: FontWeight.bold, fontSize: 16)),
                         // Text(widget.proposal.student.education,
                         //     style: Theme.of(context).textTheme.bodyLarge)
                       ],

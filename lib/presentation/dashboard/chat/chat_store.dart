@@ -34,6 +34,22 @@ abstract class _ChatStore with Store {
   @observable
   Map<String, WrapMessageList> _projectMessages = {};
 
+  static ObservableFuture<List?> emptyLoginResponse =
+      ObservableFuture.value(null);
+
+  @observable
+  ObservableFuture<List?> fetchChatHistoryFuture = emptyLoginResponse;
+
+  @observable
+  bool get isFetching => fetchChatHistoryFuture.status == FutureStatus.pending;
+
+  // ToDo:
+  // for storing sent message while in fetching mode
+  // or better other type of media
+  // could consider adding connectivity to it
+  @observable
+  Map<ChatUser, String> pendingMessage = <ChatUser, String>{};
+
   List<MessageObject> getProjectMessages(String id) =>
       _projectMessages.containsKey(id)
           ? _projectMessages[id]!.messages ?? []
@@ -128,7 +144,7 @@ abstract class _ChatStore with Store {
       return Future.value([]);
     }
     try {
-      _getMessageByProjectAndUsersUseCase
+      final future = _getMessageByProjectAndUsersUseCase
           .call(
               params: GetMessageByProjectAndUserParams(
                   userId: userId, projectId: projectId))
@@ -155,6 +171,8 @@ abstract class _ChatStore with Store {
       ).onError((error, stackTrace) async {
         return Future.value([]);
       });
+
+      fetchChatHistoryFuture = ObservableFuture(future);
     } catch (e) {
       print("Cannot get chat history for this project");
     }

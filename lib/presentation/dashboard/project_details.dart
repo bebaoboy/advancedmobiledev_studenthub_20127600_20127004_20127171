@@ -2,6 +2,7 @@
 
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
@@ -82,7 +83,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 0.55,
                   child: AutoSizeText(
-                    widget.project.title,
+                    widget.project.title.toTitleCase(),
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 24),
                   ),
@@ -154,9 +155,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.only(top: 60),
+                padding: const EdgeInsets.only(top: 60, bottom: 20),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.75,
+                  height: MediaQuery.of(context).size.height,
                   child: TabBarView(
                     physics: const BouncingScrollPhysics(),
                     children: [
@@ -177,7 +178,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                           ..sort((a, b) => b.hiredStatus.index
                               .compareTo(a.hiredStatus.index)),
                         onHired: (Proposal p) {
-                          //TODO: hired student
                           p.hiredStatus = HireStatus.offer;
                           _projectStore
                               .updateProposal(p, "something")
@@ -304,6 +304,9 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
                             controller: ScrollController(),
                             child: Text(widget.project.description)),
                       ),
+                    ),
+                    const SizedBox(
+                      height: 20,
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -504,10 +507,6 @@ class HiredTabLayout extends StatelessWidget {
             controller: ScrollController(),
             itemCount: hired?.length ?? 0,
             itemBuilder: (context, index) {
-              // return ListTile(
-              //   title: Text(hired![index].name),
-              // );
-
               return HiredItem(
                 hired: hired![index],
                 pending: false,

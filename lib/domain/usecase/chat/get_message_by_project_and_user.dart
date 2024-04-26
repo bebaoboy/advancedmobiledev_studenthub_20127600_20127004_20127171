@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
-import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/repository/chat/chat_repository.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 

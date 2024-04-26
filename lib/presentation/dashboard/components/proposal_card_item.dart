@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -16,13 +17,13 @@ class ProposalCardItem extends StatefulWidget {
 class _ProposalCardItemState extends State<ProposalCardItem> {
   Widget _buildChip(List<Skill>? skills) {
     skills ??= <Skill>[
-      Skill('hello1', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
-      Skill('hello2', 'something', '0'),
+      Skill('Demo skill 1', 'something', '0'),
+      Skill('Demo skill 2', 'something', '0'),
+      Skill('Demo skill 3', 'something', '0'),
+      Skill('Demo skill 4', 'something', '0'),
+      Skill('Demo skill 5', 'something', '0'),
+      Skill('Demo skill 6', 'something', '0'),
+      Skill('Demo skill 7', 'something', '0'),
     ];
 
     return SizedBox(
@@ -89,7 +90,8 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                   textAlign: TextAlign.left,
                 ),
                 Text(
-                  "${profile.fullName} - ${widget.proposal.objectId}",
+                  ("${profile.fullName} - ${widget.proposal.objectId}")
+                      .toTitleCase(),
                   style: TextStyle(
                       color: Theme.of(context).colorScheme.onPrimary,
                       fontWeight: FontWeight.w400,
@@ -111,7 +113,9 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                       fontWeight: FontWeight.w400,
                       fontSize: 16),
                 ),
-                _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty ? null : profile.skillSet),
+                _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty
+                    ? null
+                    : profile.skillSet),
                 const SizedBox(
                   height: 24,
                 ),
@@ -157,7 +161,8 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
               color: Colors.grey.shade300,
               shape: BoxShape.circle,
             ),
-            child: const FlutterLogo(
+            child: const Icon(
+              Icons.person,
               size: 220,
             ),
           ),

@@ -73,14 +73,16 @@ class ChatRepositoryImpl extends ChatRepository {
             for (var element in data) {
               var e = <String, dynamic>{
                 ...element,
+                'id': element['id'].toString(),
                 'type': 'text',
                 'text': element['content'],
-                'status': '',
-                'createdAt': DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
+                'status': 'seen',
+                'interview': element['interview'] ?? {},
+                'createdAt':
+                    DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
                 'author': {
                   "firstName": element['receiver']['fullname'],
                   "id": element['receiver']['id'].toString(),
-                  "imageUrl": "",
                   "lastName": ""
                 }
               };
