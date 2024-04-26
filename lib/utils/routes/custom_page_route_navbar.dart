@@ -815,10 +815,15 @@ class MaterialPageRouteNavBar extends PageRouteBuilder {
         context,
         animation,
         secondaryAnimation,
-        ScaleTransition(
-            scale: animation.drive(Tween(begin: 0.0, end: 1.0)
-                .chain(CurveTween(curve: Curves.ease))),
-            child: FadeTransition(opacity: animation, child: child))
+        SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(animation),
+            child: FadeTransition(
+              opacity: animation.drive(Tween(begin: 0.9, end: 1.0)),
+              child: child,
+            ))
         // ScaleTransition(scale: animation, child: child,),
         // SharedAxisTransition(
         //   fillColor: Colors.transparent.withOpacity(0),

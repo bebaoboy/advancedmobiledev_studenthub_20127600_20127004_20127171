@@ -30,19 +30,22 @@ class ChatRepositoryImpl extends ChatRepository {
           List<WrapMessageList> list = [];
           for (var element in json) {
             List<MessageObject> j = [];
-            List r = element["messages"];
-            for (var element in r) {
-              j.add(MessageObject.fromJson(element));
-            }
+            j.add(MessageObject.fromJson(element));
             var p = Project.fromMap(element["project"]);
             WrapMessageList ml = WrapMessageList(
                 messages: j,
                 project: p,
                 chatUser: ChatUser(
                     id: j.first.sender.objectId ?? "-1",
-                    firstName: j.first.sender.getName));
+                    firstName: j.first.receiver.getName));
             list.add(ml);
           }
+          list.sort(
+            (a, b) => (a.messages != null && b.messages != null)
+                ? b.messages!.first.createdAt!
+                    .compareTo(a.messages!.first.createdAt!)
+                : 0,
+          );
 
           return list;
         } else {
