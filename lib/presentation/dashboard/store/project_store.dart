@@ -34,13 +34,11 @@ abstract class _ProjectStore with Store {
       this._saveStudentFavoriteProjectUseCase,
       this._postProposalUseCase,
       this._getProjectProposalsUseCase,
-      this._updateProposalUseCase) {
-    init();
-  }
+      this._updateProposalUseCase);
 
-  init() async {
+  Future init() async {
     try {
-      await getStudentFavoriteProject(false);
+      return getStudentFavoriteProject(false);
     } catch (e) {
       // nothing changed
       print("error getting fav");
@@ -303,60 +301,64 @@ abstract class _ProjectStore with Store {
             // datasource.insert(project);
           }
           print("favorite refess ${_favoriteProjects.projects!.length}");
-
-          _projects.projects?.forEach((element) {
-            element.isLoading = false;
-            var b = _favoriteProjects.projects?.firstWhereOrNull(
-              (e) => element.objectId == e.objectId,
-            );
-            if (b != null) {
-              element.isFavorite = true;
-            }
-          });
-          _projects.projects?.sort(
-            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-          );
-          if (setStateCallback != null) setStateCallback();
-          Future.delayed(Duration.zero, () async {
-            // try {
-            //   getStudentFavoriteProject(false);
-            // } catch (e) {
-            //   // nothing changed
-            //   print("error getting fav");
-            // }
-            print("favorite refess ${_favoriteProjects.projects!.length}");
-            // _favoriteProjects.projects?.forEach(
-            //   (element) {
-            //     var p = _projects.projects?.firstWhereOrNull(
-            //       (e) => e.objectId == element.objectId,
-            //     );
-            //     if (p != null) {
-            //       p.isFavorite = true;
-            //     }
-            //   },
-            // );
-            if (_projects.projects != null) {
-              refazynistKey.currentState?.refresh(
-                  readyMade: _projects.projects!
-                      .sublist(0, count.clamp(0, _projects.projects!.length))
-                      .toList());
-            }
-            Future.delayed(Duration.zero, () async {
-              var list = await datasource.getProjectsFromDb();
+          init().then(
+            (value) {
               _projects.projects?.forEach((element) {
-                datasource.insert(element);
-              });
-              list.projects?.forEach((element) {
-                if (_projects.projects?.firstWhereOrNull(
-                      (e) => element.objectId == e.objectId,
-                    ) ==
-                    null) {
-                  print("delete ${element.objectId}");
-                  datasource.delete(element);
+                element.isLoading = false;
+                var b = _favoriteProjects.projects?.firstWhereOrNull(
+                  (e) => element.objectId == e.objectId,
+                );
+                if (b != null) {
+                  element.isFavorite = true;
                 }
               });
-            });
-          });
+              _projects.projects?.sort(
+                (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+              );
+              if (setStateCallback != null) setStateCallback();
+              Future.delayed(Duration.zero, () async {
+                // try {
+                //   getStudentFavoriteProject(false);
+                // } catch (e) {
+                //   // nothing changed
+                //   print("error getting fav");
+                // }
+                print("favorite refess ${_favoriteProjects.projects!.length}");
+                // _favoriteProjects.projects?.forEach(
+                //   (element) {
+                //     var p = _projects.projects?.firstWhereOrNull(
+                //       (e) => e.objectId == element.objectId,
+                //     );
+                //     if (p != null) {
+                //       p.isFavorite = true;
+                //     }
+                //   },
+                // );
+                if (_projects.projects != null) {
+                  refazynistKey.currentState?.refresh(
+                      readyMade: _projects.projects!
+                          .sublist(
+                              0, count.clamp(0, _projects.projects!.length))
+                          .toList());
+                }
+                Future.delayed(Duration.zero, () async {
+                  var list = await datasource.getProjectsFromDb();
+                  _projects.projects?.forEach((element) {
+                    datasource.insert(element);
+                  });
+                  list.projects?.forEach((element) {
+                    if (_projects.projects?.firstWhereOrNull(
+                          (e) => element.objectId == e.objectId,
+                        ) ==
+                        null) {
+                      print("delete ${element.objectId}");
+                      datasource.delete(element);
+                    }
+                  });
+                });
+              });
+            },
+          );
         } else {
           // try {
           //   await getStudentFavoriteProject(false);
@@ -364,31 +366,34 @@ abstract class _ProjectStore with Store {
           //   // nothing changed
           //   print("error getting fav");
           // }
-          _projects = value;
-          _projects.projects?.forEach(
-            (element) => element.isLoading = false,
-          );
-          _favoriteProjects.projects?.forEach(
-            (element) {
-              var p = _projects.projects!.firstWhereOrNull(
-                (e) => e.objectId == element.objectId,
-              );
-              if (p != null) {
-                p.isFavorite = true;
-              }
-            },
-          );
-          _projects.projects?.sort(
-            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-          );
-          if (setStateCallback != null) setStateCallback();
 
-          if (_projects.projects != null) {
-            refazynistKey.currentState?.refresh(
-                readyMade: _projects.projects!
-                    .sublist(0, count.clamp(0, _projects.projects!.length))
-                    .toList());
-          }
+          init().then((value) {
+            _projects = value;
+            _projects.projects?.forEach(
+              (element) => element.isLoading = false,
+            );
+            _favoriteProjects.projects?.forEach(
+              (element) {
+                var p = _projects.projects!.firstWhereOrNull(
+                  (e) => e.objectId == element.objectId,
+                );
+                if (p != null) {
+                  p.isFavorite = true;
+                }
+              },
+            );
+            _projects.projects?.sort(
+              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+            );
+            if (setStateCallback != null) setStateCallback();
+
+            if (_projects.projects != null) {
+              refazynistKey.currentState?.refresh(
+                  readyMade: _projects.projects!
+                      .sublist(0, count.clamp(0, _projects.projects!.length))
+                      .toList());
+            }
+          });
         }
       });
 

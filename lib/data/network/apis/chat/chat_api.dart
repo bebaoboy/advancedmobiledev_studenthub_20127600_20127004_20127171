@@ -20,8 +20,12 @@ class ChatApi {
           Interpolator(Endpoints.getMessageByProjectAndUser)(
               {"projectId": params.projectId, "userId": params.userId}),
         )
-        .onError(
-            (DioException error, stackTrace) => Future.value(error.response));
+        .onError((DioException error, stackTrace) => Future.value(
+                    error.response ??
+                        Response(requestOptions: RequestOptions()))
+                .whenComplete(
+              () => _dioClient.clearDio(),
+            ));
   }
 
   Future<Response> getAllChat(GetMessageByProjectAndUserParams params) async {
@@ -29,29 +33,11 @@ class ChatApi {
         .get(
           Endpoints.getAllChat,
         )
-        .onError(
-            (DioException error, stackTrace) => Future.value(error.response));
+        .onError((DioException error, stackTrace) => Future.value(
+                    error.response ??
+                        Response(requestOptions: RequestOptions()))
+                .whenComplete(
+              () => _dioClient.clearDio(),
+            ));
   }
-
-  // Future<Response> postProposal(PostProposalParams params) async {
-  //   return await _dioClient.dio.post(Endpoints.postProposal, data: {
-  //     "projectId": params.projectId,
-  //     "studentId": params.studentId,
-  //     "coverLetter": params.coverLetter,
-  //     "statusFlag": params.status,
-  //     "disableFlag": params.disableFlag
-  //   }).onError(
-  //       (DioException error, stackTrace) => Future.value(error.response));
-  // }
-
-  // Future<Response> updateProposal(UpdateProposalParams params) async {
-  //   return await _dioClient.dio.patch(
-  //       Interpolator(Endpoints.updateProposal)({"id": params.proposalId}),
-  //       data: {
-  //         "coverLetter": params.coverLetter,
-  //         "statusFlag": params.status,
-  //         "disableFlag": params.disableFlag
-  //       }).onError(
-  //       (DioException error, stackTrace) => Future.value(error.response));
-  // }
 }

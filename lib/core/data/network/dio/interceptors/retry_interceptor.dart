@@ -35,8 +35,8 @@ class RetryInterceptor extends Interceptor {
       ..addAll(extra.toExtra());
 
     if (shouldLog) {
-      //print(
-      // '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
+      print(
+          '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
     }
     // We retry with the updated options
     final DioClient dio = getIt<DioClient>();
@@ -52,7 +52,7 @@ class RetryInterceptor extends Interceptor {
           options: err.requestOptions.toOptions(),
         )
         .then((value) => handler.resolve(value),
-            onError: (error) => handler.reject(error));
+            onError: (error) => handler.next(err));
   }
 }
 

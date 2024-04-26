@@ -99,8 +99,12 @@ class LoggingInterceptor extends Interceptor {
 
   SharedPreferences? sharedPref;
   sp(String o) async {
+    try {
     List<String> s = sharedPref!.getStringList("dio") ?? [];
     sharedPref!.setStringList("dio", ["${DateTime.now()}\n$o", ...s]);
+    } catch(e) {
+      ///
+    }
   }
 
   spPrint(String s) {
