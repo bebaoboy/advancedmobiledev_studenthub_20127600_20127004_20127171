@@ -5,6 +5,8 @@ import 'configs/dio_configs.dart';
 class DioClient {
   final DioConfigs dioConfigs;
   final Dio _dio;
+  final Dio _dio2;
+  bool _isBusy = false;
 
   DioClient({required this.dioConfigs})
       : _dio = Dio()
@@ -20,9 +22,23 @@ class DioClient {
               .putIfAbsent("Access-Control-Allow-Headers", () => "Content-Type")
           ..options
               .headers
-              .putIfAbsent("Access-Control-Allow-Credentials", () => "true");
+              .putIfAbsent("Access-Control-Allow-Credentials", () => "true"),
+        _dio2 = Dio();
 
-  Dio get dio => _dio;
+  Dio get dio {
+    if (!_isBusy) {
+      _isBusy = true;
+      return _dio;
+    } else {
+      print("Dio is busy BEBAOBOY");
+      return _dio2;
+    }
+  }
+
+  void clearDio() {
+    _isBusy = false;
+    print("Dio is free now BEBAOBOY");
+  }
 
   Dio addInterceptors(Iterable<Interceptor> interceptors) {
     return _dio..interceptors.addAll(interceptors);

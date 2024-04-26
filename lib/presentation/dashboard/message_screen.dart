@@ -602,7 +602,7 @@ class _MessageScreenState extends State<MessageScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
       title:
-          "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""}",
+          "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""} (${widget.chatObject.chatUser.id})",
       openScheduleDialog: () async {
         ////print("schedule dialog");
         await Future.delayed(const Duration(microseconds: 500)).then((value) {

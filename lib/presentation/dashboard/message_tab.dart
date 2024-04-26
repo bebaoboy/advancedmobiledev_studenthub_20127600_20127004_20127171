@@ -219,7 +219,7 @@ class _MessageTabState extends State<MessageTab> {
                                 leading: const Icon(
                                     Icons.message), // Replace with actual icons
                                 title: Text(
-                                  "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName}",
+                                  "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName} (${messages[index].chatUser.id})",
                                   style: const TextStyle(
                                       fontWeight: FontWeight.bold),
                                 ),

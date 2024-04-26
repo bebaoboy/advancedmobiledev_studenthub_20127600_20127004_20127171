@@ -40,7 +40,6 @@ abstract class _ChatStore with Store {
   @observable
   ObservableFuture<List?> fetchChatHistoryFuture = emptyLoginResponse;
 
-  @observable
   bool get isFetching => fetchChatHistoryFuture.status == FutureStatus.pending;
 
   // ToDo:
