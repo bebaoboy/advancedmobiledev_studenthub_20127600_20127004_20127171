@@ -1,9 +1,12 @@
 class DBConstants {
+  
+
   DBConstants._();
 
   // Store Name
   static const String STORE_NAME = 'demo';
   static const String PROJECT_STORE_NAME = 'project';
+  static const String CHAT_STORE_NAME = 'chat';
 
   // DB Name
   static const DB_NAME = 'advance_mobile.db';

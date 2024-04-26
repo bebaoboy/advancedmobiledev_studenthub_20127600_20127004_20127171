@@ -93,7 +93,9 @@ class Project extends ProjectBase {
   int get countMessages =>
       proposal
           ?.where(
-            (element) => element.hiredStatus == HireStatus.pending,
+            (element) =>
+                element.hiredStatus == HireStatus.pending ||
+                element.hiredStatus == HireStatus.offer,
           )
           .length ??
       0;

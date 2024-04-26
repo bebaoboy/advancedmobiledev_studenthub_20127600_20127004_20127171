@@ -5,6 +5,7 @@ import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:mobx/mobx.dart';
 
 part 'chat_store.g.dart';
@@ -26,10 +27,29 @@ abstract class _ChatStore with Store {
 
   List<WrapMessageList> get messages => _messages;
 
+  List<AbstractChatMessage> _currentProjectMessages = [];
+  List<AbstractChatMessage> get currentProjectMessages =>
+      _currentProjectMessages;
+
   @observable
   Map<String, WrapMessageList> _projectMessages = {};
 
-  List<MessageObject> getprojectMessages(String id) =>
+  static ObservableFuture<List?> emptyLoginResponse =
+      ObservableFuture.value(null);
+
+  @observable
+  ObservableFuture<List?> fetchChatHistoryFuture = emptyLoginResponse;
+
+  bool get isFetching => fetchChatHistoryFuture.status == FutureStatus.pending;
+
+  // ToDo:
+  // for storing sent message while in fetching mode
+  // or better other type of media
+  // could consider adding connectivity to it
+  @observable
+  Map<ChatUser, String> pendingMessage = <ChatUser, String>{};
+
+  List<MessageObject> getProjectMessages(String id) =>
       _projectMessages.containsKey(id)
           ? _projectMessages[id]!.messages ?? []
           : [];
@@ -37,7 +57,9 @@ abstract class _ChatStore with Store {
   @action
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {
     try {
-      _getAllChatsUseCase.call(params: GetMessageByProjectAndUserParams()).then(
+      return _getAllChatsUseCase
+          .call(params: GetMessageByProjectAndUserParams())
+          .then<List<WrapMessageList>>(
         (value) async {
           if (value.isNotEmpty) {
             print(value);
@@ -109,8 +131,11 @@ abstract class _ChatStore with Store {
   }
 
   /// userId của người NHẬN (sender)
+  /// takes in userId and projectId
+  /// this should fetch back the new content
+  /// whenever user switch account type
   @action
-  Future<List<WrapMessageList>> getMessageByProjectAndUsers(
+  Future<List<AbstractChatMessage>> getMessageByProjectAndUsers(
       {required String userId,
       required String projectId,
       Function? setStateCallback}) async {
@@ -118,71 +143,37 @@ abstract class _ChatStore with Store {
       return Future.value([]);
     }
     try {
-      _getMessageByProjectAndUsersUseCase.call(params: GetMessageByProjectAndUserParams(userId: userId, projectId: projectId)).then(
+      final future = _getMessageByProjectAndUsersUseCase
+          .call(
+              params: GetMessageByProjectAndUserParams(
+                  userId: userId, projectId: projectId))
+          .then(
         (value) async {
           if (value.isNotEmpty) {
             print(value);
 
-            _messages = value;
+            _currentProjectMessages = value;
 
             // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
-            for (var element in _messages) {
-              element.messages?.sort(
-                (a, b) => b.createdAt!.compareTo(a.createdAt!),
-              );
-            }
+            _currentProjectMessages.sort(
+              (a, b) => b.createdAt!.compareTo(a.createdAt!),
+            );
 
             if (setStateCallback != null) setStateCallback();
-            return _messages;
+            return _currentProjectMessages;
           } else {
             print(value);
-            // var companies = await sharedPrefsHelper.getCompanyMessages();
-            // if (companies.messages != null && companies.messages!.isNotEmpty) {
-            //   {
-            //     _companyMessages = companies;
-            //     _companyMessages.messages?.sort(
-            //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-            //     );
-            //     if (setStateCallback != null) setStateCallback();
-
-            //     return _companyMessages;
-            //   }
-            // }
             return Future.value([]);
           }
         },
       ).onError((error, stackTrace) async {
-        // var companies = await sharedPrefsHelper.getCompanyMessages();
-        // if (companies.messages != null && companies.messages!.isNotEmpty) {
-        //   {
-        //     _companyMessages = companies;
-        //     _companyMessages.messages?.sort(
-        //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-        //     );
-        //     if (setStateCallback != null) setStateCallback();
-
-        //     return _companyMessages;
-        //   }
-        // }
         return Future.value([]);
       });
+
+      fetchChatHistoryFuture = ObservableFuture(future);
     } catch (e) {
-      // errorStore.errorMessage = "cannot save student profile";
-
-      // var companies = await sharedPrefsHelper.getCompanyMessages();
-      // if (companies.messages != null && companies.messages!.isNotEmpty) {
-      //   {
-      //     _companyMessages = companies;
-      //     _companyMessages.messages?.sort(
-      //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-      //     );
-      //     if (setStateCallback != null) setStateCallback();
-
-      //     return _companyMessages;
-      //   }
-      // }
-      print("cannot get profile company");
+      print("Cannot get chat history for this project");
     }
     return Future.value([]);
 

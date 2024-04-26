@@ -278,7 +278,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                       Text(
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        widget.project.title,
+                        widget.project.title.toTitleCase(),
                         style: TextStyle(
                             color: Colors.green.shade400,
                             fontWeight: widget.project.isWorking

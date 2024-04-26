@@ -95,6 +95,21 @@ class SharedPreferenceHelper {
             .toList());
   }
 
+  Future<String> get currentId async {
+    if (await isLoggedIn) {
+      var currentUser = await user;
+      return Future.value((currentUser.type == UserType.company &&
+              currentUser.companyProfile != null)
+          ? (currentUser.companyProfile!.objectId ?? "-1")
+          : (currentUser.type == UserType.student &&
+                  currentUser.studentProfile != null)
+              ? (currentUser.studentProfile!.objectId)
+              : "-1");
+    } else {
+      return "-1";
+    }
+  }
+
   Future<User> get user async {
     String userEmail =
         _sharedPreference.getString(Preferences.current_user_email) ?? '';
@@ -124,6 +139,8 @@ class SharedPreferenceHelper {
       studentProfile: await studentProfile,
     );
   }
+
+  Future<int> get currentUserId async =>  _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
 
   Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
     if (studentProfile == null) {

@@ -2,16 +2,16 @@
 
 import 'dart:async';
 
+import 'package:boilerplate/core/data/network/dio/dio_client.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:dio/dio.dart';
 
 /// An interceptor that will try to send failed request again
 class RetryInterceptor extends Interceptor {
-  final Dio dio;
   final RetryOptions options;
   final bool shouldLog;
 
   RetryInterceptor({
-    required this.dio,
     RetryOptions? options,
     this.shouldLog = true,
   }) : options = options ?? const RetryOptions();
@@ -36,10 +36,12 @@ class RetryInterceptor extends Interceptor {
 
     if (shouldLog) {
       //print(
-          // '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
+      // '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
     }
     // We retry with the updated options
-    await dio
+    final DioClient dio = getIt<DioClient>();
+
+    await dio.dio
         .request(
           err.requestOptions.path,
           cancelToken: err.requestOptions.cancelToken,
@@ -91,8 +93,7 @@ class RetryOptions {
   /// with concurrency though).
   ///
   /// Defaults to [defaultRetryEvaluator].
-  RetryEvaluator get retryEvaluator =>
-      _retryEvaluator ?? defaultRetryEvaluator;
+  RetryEvaluator get retryEvaluator => _retryEvaluator ?? defaultRetryEvaluator;
 
   final RetryEvaluator? _retryEvaluator;
 
