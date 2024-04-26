@@ -18,8 +18,9 @@ class DioClient {
           ..options
               .headers
               .putIfAbsent("Access-Control-Allow-Headers", () => "Content-Type")
-          ..options.headers.putIfAbsent(
-              "Access-Control-Allow-Credentials", () => "true");
+          ..options
+              .headers
+              .putIfAbsent("Access-Control-Allow-Credentials", () => "true");
 
   Dio get dio => _dio;
 
