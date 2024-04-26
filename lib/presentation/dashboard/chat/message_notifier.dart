@@ -1,5 +1,10 @@
 // ignore_for_file: library_prefixes
 
+import 'dart:math';
+
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:flutter/foundation.dart' show ChangeNotifier;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
@@ -50,6 +55,15 @@ class MessageNotifierProvider with ChangeNotifier {
     textSocketHandler.on('NOTI_94', (data) {
       print("notification $data");
       addInbox(data);
+      NotificationHelper.createMessageNotification(
+          id: Random().nextInt(50),
+          projectId: "150",
+          msg: MessageObject(
+              id: Random().nextInt(5).toString(),
+              content: data["content"],
+              receiver: Profile(objectId: data["receiverId"], name: "Quan"),
+              sender: Profile(
+                  objectId: data["senderId"], name: "Bao Bao Baby Boo")));
     });
     textSocketHandler.on('ERROR', (data) => print("error $data"));
     textSocketHandler.onDisconnect((_) => print('disconnect'));
