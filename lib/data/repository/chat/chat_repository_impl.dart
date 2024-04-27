@@ -5,12 +5,14 @@ import 'dart:io';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/network/apis/chat/chat_api.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/chat/chat_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
   final ChatApi _chatApi;
@@ -67,6 +69,7 @@ class ChatRepositoryImpl extends ChatRepository {
   @override
   Future<List<AbstractChatMessage>> getMessageByProjectAndUser(
       GetMessageByProjectAndUserParams params) async {
+    var userStore = getIt<UserStore>();
     try {
       return await _chatApi.getMessageByProjectAndUser(params).then(
         (value) {
@@ -85,9 +88,13 @@ class ChatRepositoryImpl extends ChatRepository {
                 'interview': element['interview'] ?? {},
                 'createdAt':
                     DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
-                'author': {
+                'author': element['receiver']['id'].toString() != userStore.user!.objectId ? {
                   "firstName": element['receiver']['fullname'],
                   "id": element['receiver']['id'].toString(),
+                } : 
+                 {
+                  "firstName": element['sender']['fullname'],
+                  "id": element['sender']['id'].toString(),
                 }
               };
               var acm = AbstractChatMessage.fromJson(e);

@@ -31,7 +31,7 @@ class DioClient {
       return _dio;
     } else {
       print("Dio is busy BEBAOBOY");
-      return _dio2;
+      return _dio;
     }
   }
 

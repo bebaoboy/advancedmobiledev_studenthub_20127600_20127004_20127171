@@ -164,10 +164,7 @@ class _MessageTabState extends State<MessageTab> {
 
                                 chatStore.getMessageByProjectAndUsers(
                                     userId: messages[index]
-                                        .messages!
-                                        .first
-                                        .receiver
-                                        .objectId!,
+                                        .chatUser.id,
                                     projectId:
                                         messages[index].project!.objectId!);
                                 // TODO: get all msg for this receiver and project id: using getMessageByProjectAndUser

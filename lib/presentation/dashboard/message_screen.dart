@@ -66,6 +66,9 @@ class _MessageScreenState extends State<MessageScreen> {
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
 
     _user = widget.chatObject.chatUser;
+    // TODO: find a way to change this user to me
+    // Chat.user = ChatUser(
+    //     id: userStore.user!.objectId!, firstName: userStore.user!.name);
 
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
     // project id
@@ -508,7 +511,8 @@ class _MessageScreenState extends State<MessageScreen> {
   void _handleSendPressed(PartialText message) {
     if (message.text.isEmpty) return;
     final textMessage = AbstractTextMessage(
-      author: _user,
+      author: ChatUser(
+          id: userStore.user!.objectId!, firstName: userStore.user!.name),
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),
       status: Status.delivered,
