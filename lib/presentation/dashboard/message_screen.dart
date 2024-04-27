@@ -71,9 +71,9 @@ class _MessageScreenState extends State<MessageScreen> {
     //     id: userStore.user!.objectId!, firstName: userStore.user!.name);
 
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
-    // project id
-    messageNotifier = MessageNotifierProvider(
-        id: widget.chatObject.project!.objectId!, senderName: _user.firstName!);
+    me = ChatUser(
+        id: userStore.user!.objectId!, firstName: userStore.user!.name);
+    messageNotifier = MessageNotifierProvider(user: me, project: widget.chatObject.project);
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
@@ -140,6 +140,8 @@ class _MessageScreenState extends State<MessageScreen> {
     setState(() {});
   }
 
+  late ChatUser me;
+
   @override
   Widget build(BuildContext context) {
     // print("build chat");
@@ -147,7 +149,7 @@ class _MessageScreenState extends State<MessageScreen> {
         key: _scaffoldKey,
         appBar: _buildAppBar(context),
         body: Chat(
-          user: ChatUser(id: userStore.user!.objectId!),
+          user: me,
           performEmoji: (Emoji emoji, AbstractChatMessage message) {
             if ((message.reactions?.own.isNotEmpty ?? false) &&
                 (message.reactions?.own.contains(emoji.emoji) ?? false)) {
@@ -197,7 +199,7 @@ class _MessageScreenState extends State<MessageScreen> {
             // print(messageWidth);
             // print(t.objectId);
             return ScheduleMessage(
-                user: ChatUser(id: userStore.user!.objectId!),
+                user: me,
                 onMenuCallback: (scheduleFilter) async {
                   showAdaptiveActionSheet(
                     title: Text(

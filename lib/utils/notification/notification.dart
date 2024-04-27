@@ -73,9 +73,7 @@ class NotificationHelper {
           title: title ?? tittle,
           body: body ?? msg.content,
           notificationLayout: NotificationLayout.Messaging,
-          fullScreenIntent: true,
           wakeUpScreen: true,
-          autoDismissible: false,
           // largeIcon: 'resource://drawable/image',
           payload: {
             "type": "chat_messages",
@@ -236,6 +234,8 @@ class NotificationHelper {
                       title: "",
                       timeCreated: DateTime.now(),
                       description: ""),
+
+                      // TODO: sai sender name lmao
                 chatUser: ChatUser(
                     id: msg.sender.objectId ?? "-1",
                     firstName: msg.sender.getName),
