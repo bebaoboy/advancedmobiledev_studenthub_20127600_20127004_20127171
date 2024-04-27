@@ -99,7 +99,6 @@ class MessageNotifierProvider with ChangeNotifier {
 
   void addInbox(Map<String, dynamic> message) {
     // TODO: check api and change
-    // TODO: debug thông báo của ng gửi đến
     String mess = message["messageId"].toString();
 
     if (inbox.firstWhereOrNull(

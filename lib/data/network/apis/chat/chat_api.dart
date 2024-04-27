@@ -24,7 +24,7 @@ class ChatApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -37,7 +37,7 @@ class ChatApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 }

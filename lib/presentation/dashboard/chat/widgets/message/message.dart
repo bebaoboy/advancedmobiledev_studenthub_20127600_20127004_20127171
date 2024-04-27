@@ -62,7 +62,12 @@ class MessageWidget extends StatefulWidget {
     this.errorMessageBuilder,
     this.scheduleMessageBuilder,
     required this.performEmoji,
+    this.isLast = false,
+    this.isFirst = false,
   });
+
+  final bool isLast;
+  final bool isFirst;
 
   /// Build an audio message inside predefined bubble.
   final Widget Function(AbstractAudioMessage, {required int messageWidth})?

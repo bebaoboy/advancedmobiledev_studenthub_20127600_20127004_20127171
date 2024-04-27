@@ -108,6 +108,8 @@ abstract class _ChatStore with Store {
         //     return _companyMessages;
         //   }
         // }
+        print(error);
+        print(stackTrace);
         return Future.value([]);
       });
     } catch (e) {

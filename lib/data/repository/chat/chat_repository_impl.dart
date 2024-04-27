@@ -85,18 +85,20 @@ class ChatRepositoryImpl extends ChatRepository {
               var e = <String, dynamic>{
                 ...element,
                 'id': element['id'].toString(),
-                'type': 'text',
+                'type': element['interview'] != null ? "schedule" : 'text',
                 'text': element['content'],
                 'status': 'seen',
                 'interview': element['interview'] ?? {},
                 'createdAt':
                     DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
                 'author': {
-                        "firstName": element['sender']['fullname'],
-                        "id": element['sender']['id'].toString(),
-                      }
-                    
+                  "firstName": element['sender']['fullname'],
+                  "id": element['sender']['id'].toString(),
+                }
               };
+              if (element['interview'] != null) {
+                e.putIfAbsent("metadata", () => element['interview']);
+              }
               var acm = AbstractChatMessage.fromJson(e);
 
               if (!res.contains(acm)) {

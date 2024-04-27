@@ -4,6 +4,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
@@ -21,7 +22,6 @@ import 'message/message.dart';
 import 'message/text_message.dart';
 import 'input/typing_indicator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
-import 'package:lottie/lottie.dart';
 
 logg(String? message, [String? tag]) {
   debugPrint("CB-SDK: ${tag ?? "BEBAOBOY"}: $message");
@@ -54,14 +54,14 @@ class Chat extends StatefulWidget {
     this.customStatusBuilder,
     this.dateFormat,
     this.dateHeaderBuilder,
-    this.dateHeaderThreshold = 900000,
+    this.dateHeaderThreshold = 300000,
     this.dateIsUtc = false,
     this.dateLocale,
     this.disableImageGallery,
     this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
     this.emptyState,
     this.fileMessageBuilder,
-    this.groupMessagesThreshold = 60000,
+    this.groupMessagesThreshold = 300000,
     this.hideBackgroundOnEmojiMessages = true,
     this.imageGalleryOptions = const ImageGalleryOptions(
       maxScale: PhotoViewComputedScale.covered,
@@ -487,7 +487,7 @@ class ChatState extends State<Chat> {
       } else {
         final maxWidth = message.type == AbstractMessageType.schedule
             ? (constraints.maxWidth * 0.8).round()
-            : Chat.theme.messageMaxWidth;
+            : MediaQuery.of(context).size.width * 0.7;
         final messageWidth =
             widget.showUserAvatars && message.author.id != widget.user.id
                 ? min(constraints.maxWidth * widget.messageWidthRatio, maxWidth)
@@ -531,6 +531,8 @@ class ChatState extends State<Chat> {
           onMessageVisibilityChanged: widget.onMessageVisibilityChanged,
           onPreviewDataFetched: _onPreviewDataFetched,
           roundBorder: map['nextMessageInGroup'] == true,
+          isLast: map['isLast'] == true,
+          isFirst: map['isFirst'] == true,
           showAvatar: map['nextMessageInGroup'] == false &&
               message.type != AbstractMessageType.schedule,
           showName: map['showName'] == true,
@@ -645,18 +647,11 @@ class ChatState extends State<Chat> {
             children: [
               Observer(builder: (context) {
                 if (chatStore.isFetching) {
-                  return Flexible(
+                  return const Flexible(
                     child: SizedBox.expand(
                       child: Align(
                         alignment: Alignment.topCenter,
-                        child: Lottie.asset(
-                          'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                          fit: BoxFit.cover,
-                          width: 80, // Adjust the width and height as needed
-                          height: 80,
-                          repeat:
-                              true, // Set to true if you want the animation to loop
-                        ),
+                        child: LoadingScreenWidget(),
                       ),
                     ),
                   );

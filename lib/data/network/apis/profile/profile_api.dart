@@ -48,7 +48,7 @@ class ProfileApi {
     }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -59,7 +59,7 @@ class ProfileApi {
             data: {})
         .onError((DioException error, stackTrace) => Future.value(
             error.response ?? Response(requestOptions: RequestOptions())))
-        .whenComplete(() => _dioClient.clearDio());
+        .whenComplete(() => null);
   }
 
   Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
@@ -73,7 +73,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -84,7 +84,7 @@ class ProfileApi {
     }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -98,7 +98,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -111,7 +111,7 @@ class ProfileApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -123,7 +123,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -135,7 +135,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -148,7 +148,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -160,7 +160,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -174,7 +174,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -188,7 +188,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -200,7 +200,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -238,7 +238,7 @@ class ProfileApi {
     ).onError((DioException error, stackTrace) {
       return Future.value(
           error.response ?? Response(requestOptions: RequestOptions()));
-    }).whenComplete(() => _dioClient.clearDio());
+    }).whenComplete(() => null);
     // } catch (e) {
     //   return Future.value(Response(
     //       requestOptions: RequestOptions(),
@@ -259,7 +259,7 @@ class ProfileApi {
         .onError((DioException error, stackTrace) {
       return Future.value(
           error.response ?? Response(requestOptions: RequestOptions()));
-    }).whenComplete(() => _dioClient.clearDio());
+    }).whenComplete(() => null);
   }
 
   Future<Response> getTranscript(UpdateTranscriptParams params) async {
@@ -270,7 +270,7 @@ class ProfileApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -295,7 +295,7 @@ class ProfileApi {
       ).onError((DioException error, stackTrace) {
         return Future.value(
             error.response ?? Response(requestOptions: RequestOptions()));
-      }).whenComplete(() => _dioClient.clearDio());
+      }).whenComplete(() => null);
     } catch (e) {
       return Future.value(Response(
           requestOptions: RequestOptions(),
@@ -325,7 +325,7 @@ class ProfileApi {
         .onError((DioException error, stackTrace) {
       return Future.value(
           error.response ?? Response(requestOptions: RequestOptions()));
-    }).whenComplete(() => _dioClient.clearDio());
+    }).whenComplete(() => null);
     // } catch (e) {
     //   return Future.value(Response(
     //       requestOptions: RequestOptions(),
@@ -339,7 +339,7 @@ class ProfileApi {
     }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -348,7 +348,7 @@ class ProfileApi {
         data: {}).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -358,7 +358,7 @@ class ProfileApi {
     }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -367,7 +367,7 @@ class ProfileApi {
         data: {}).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 }
