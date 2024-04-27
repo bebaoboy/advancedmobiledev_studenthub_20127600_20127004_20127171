@@ -23,6 +23,7 @@ class ChatRepositoryImpl extends ChatRepository {
   @override
   Future<List<WrapMessageList>> getAllChat(
       GetMessageByProjectAndUserParams params) async {
+    var userStore = getIt<UserStore>();
     return await _chatApi.getAllChat(params).then(
       (value) async {
         if (value.statusCode == HttpStatus.accepted ||
@@ -37,15 +38,17 @@ class ChatRepositoryImpl extends ChatRepository {
             j.add(MessageObject.fromJson(element));
             var p = Project.fromMap(element["project"]);
 
-            if (j.first.sender.objectId != currentId.toString()) {
-              WrapMessageList ml = WrapMessageList(
-                  messages: j,
-                  project: p,
-                  chatUser: ChatUser(
-                      id: j.first.sender.objectId ?? "-1",
-                      firstName: j.first.sender.getName));
-              list.add(ml);
-            }
+            WrapMessageList ml = WrapMessageList(
+                messages: j,
+                project: p,
+                chatUser: j.first.sender.objectId! != userStore.user!.objectId
+                    ? ChatUser(
+                        id: j.first.sender.objectId ?? "-1",
+                        firstName: j.first.sender.getName)
+                    : ChatUser(
+                        id: j.first.receiver.objectId ?? "-1",
+                        firstName: j.first.receiver.getName));
+            list.add(ml);
           }
           list.sort(
             (a, b) => (a.messages != null && b.messages != null)
@@ -88,14 +91,11 @@ class ChatRepositoryImpl extends ChatRepository {
                 'interview': element['interview'] ?? {},
                 'createdAt':
                     DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
-                'author': element['receiver']['id'].toString() != userStore.user!.objectId ? {
-                  "firstName": element['receiver']['fullname'],
-                  "id": element['receiver']['id'].toString(),
-                } : 
-                 {
-                  "firstName": element['sender']['fullname'],
-                  "id": element['sender']['id'].toString(),
-                }
+                'author': {
+                        "firstName": element['receiver']['fullname'],
+                        "id": element['receiver']['id'].toString(),
+                      }
+                    
               };
               var acm = AbstractChatMessage.fromJson(e);
 
