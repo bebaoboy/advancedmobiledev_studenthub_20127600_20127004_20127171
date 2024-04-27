@@ -74,6 +74,7 @@ dependencies:
   flutter_linkify:
   flutter_parsed_text: ^2.2.1
   floating:
+  flutter_local_notifications: 
   # flutter_riverpod:
   flutter_typeahead:
   # flutter_chat_types: 
@@ -83,6 +84,7 @@ dependencies:
   flutter_file_downloader: ^1.2.2-dev.1
   flutter_onboarding_slider:
   flutter_corner_banner:
+  flutter_timezone:
   # G
   get_it: ^7.2.0
   google_fonts: ^6.2.1
@@ -146,6 +148,7 @@ dependencies:
   tuple: 
   toastification: ^1.2.1
   timeago:
+  timezone: ^0.9.2
   # tree_view_flutter: ^1.0.2
   # U
   uuid:

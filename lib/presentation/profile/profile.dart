@@ -227,7 +227,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-// <<<<<<< sprint6-update_project
 //   Widget _buildEmailField(BuildContext context) {
 //     return Observer(
 //       builder: (context) {
@@ -263,7 +262,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 //       },
 //     );
 //   }
-// =======
+
   // Widget _buildEmailField(BuildContext context) {
   //   return Observer(
   //     builder: (context) {
@@ -299,7 +298,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   //     },
   //   );
   // }
-// >>>>>>> sprint6-getprojectcompany
 
   Widget _buildRightSide() {
     return SingleChildScrollView(
@@ -407,7 +405,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPositiveClick: () {
                 Navigator.of(context).pop();
                 _userStore.user?.type = UserType.company;
-                // TODO: check welcome
+
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
                     .pushAndRemoveUntil(

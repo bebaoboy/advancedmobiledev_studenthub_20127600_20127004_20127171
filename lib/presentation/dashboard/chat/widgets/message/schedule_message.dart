@@ -4,10 +4,11 @@ import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
-import 'package:boilerplate/presentation/video_call/select_opponents_screen.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
@@ -388,17 +389,22 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             borderColor: Theme.of(context).colorScheme.primary,
                             onPressed: () {
                               //print("hey");
-                              // TODO: change route url
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => SelectOpponentsScreen(
-                                      CubeSessionManager
-                                          .instance.activeSession!.user!,
-                                      users: users
-                                          .where((user) =>
-                                              user.id !=
-                                              CubeSessionManager.instance
-                                                  .activeSession!.user!.id)
-                                          .toList())));
+
+                              // Navigator.of(context).push(MaterialPageRoute(
+                              //     builder: (context) => SelectOpponentsScreen(
+                              //         CubeSessionManager
+                              //             .instance.activeSession!.user!,
+                              //         users: users
+                              //             .where((user) =>
+                              //                 user.id !=
+                              //                 CubeSessionManager.instance
+                              //                     .activeSession!.user!.id)
+                              //             .toList())));
+
+                              Navigator.of(context).push(MaterialPageRoute2(
+                                  routeName:
+                                      "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
+                                  arguments: users));
                             },
                           )
                         : Expanded(

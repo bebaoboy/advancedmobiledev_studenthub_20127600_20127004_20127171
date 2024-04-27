@@ -191,6 +191,12 @@ abstract class _ProjectStore with Store {
                 p.hiredStatus = project.hiredStatus;
                 p.enabled = project.enabled;
                 p.coverLetter = project.coverLetter;
+
+                // if (!p.enabled) {
+                //   userStore.user!.studentProfile!.proposalProjects
+                //       !.firstWhere((element) => element.objectId == p.objectId)
+                //       .hiredStatus = HireStatus.notHired;
+                // } 
               }
 
               // TODO: remove if reject (disableFlag)

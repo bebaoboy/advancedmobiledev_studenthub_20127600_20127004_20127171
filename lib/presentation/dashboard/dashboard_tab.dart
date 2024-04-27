@@ -128,7 +128,7 @@ class _DashBoardTabState extends State<DashBoardTab>
 
   testNotification() {
     Future.delayed(Duration.zero, () async {
-      NotificationHelper.scheduleNewNotification();
+      NotificationHelper.scheduleNewNotification(0, 0, 0);
       NotificationHelper.createTextNotification();
       await Future.delayed(const Duration(milliseconds: 500));
 
@@ -400,7 +400,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
                       color: project.isArchive ? Colors.grey.shade500 : null),
                 )),
             onPressed: (_) {
-              // TODO: coi proposal students -> index = -1
               Future.delayed(const Duration(milliseconds: 500), () {
                 Navigator.of(NavigationService.navigatorKey.currentContext ??
                         context)
@@ -535,7 +534,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   statusFlag: Status.active.index);
             }
             setState(() {
-              // TODO: put it to working or none
               p?.enabled = Status.active;
             });
           },
@@ -575,7 +573,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         : Status.active.index);
               }
               setState(() {
-                // TODO: put it to working or none
                 p?.enabled = p.isWorking ? Status.inactive : Status.active;
               });
             }),
@@ -633,7 +630,6 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   statusFlag: Status.active.index);
             }
             setState(() {
-              // TODO: put it to working or none
               p?.enabled = Status.active;
             });
             return true;

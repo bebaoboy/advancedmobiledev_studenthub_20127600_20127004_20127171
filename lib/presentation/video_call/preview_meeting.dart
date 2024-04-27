@@ -14,18 +14,18 @@ import 'managers/push_notifications_manager.dart';
 import 'utils/configs.dart' as utils;
 import 'utils/pref_util.dart';
 
-class SelectOpponentsScreen extends StatefulWidget {
+class PreviewMeetingScreen extends StatefulWidget {
   final CubeUser currentUser;
   final List<CubeUser> users;
 
   @override
-  State<SelectOpponentsScreen> createState() => _SelectOpponentsScreenState();
+  State<PreviewMeetingScreen> createState() => _PreviewMeetingScreenState();
 
-  const SelectOpponentsScreen(this.currentUser,
+  const PreviewMeetingScreen(this.currentUser,
       {super.key, required this.users});
 }
 
-class _SelectOpponentsScreenState extends State<SelectOpponentsScreen> {
+class _PreviewMeetingScreenState extends State<PreviewMeetingScreen> {
   final TextEditingController _textController = TextEditingController();
 
   @override
@@ -201,6 +201,7 @@ class _BodyLayoutState extends State<BodyLayout> {
                   child: FloatingActionButton(
                     heroTag: "AudioCall",
                     backgroundColor: Colors.green,
+                    // TODO: nhập code / meeeting id, mở camera
                     onPressed: () => CallManager.instance.startNewCall(
                         context, CallType.AUDIO_CALL, _selectedUsers),
                     child: const Icon(

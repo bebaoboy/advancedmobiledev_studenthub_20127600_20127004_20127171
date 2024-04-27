@@ -121,7 +121,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   //   });
   // }
 
-  List<Widget> childs = [];
+  List<Widget> children = [];
   List<NavbarItem> items = [];
   List<Map<String, Widget>> _routes = [];
   DateTime oldTime = DateTime.now();

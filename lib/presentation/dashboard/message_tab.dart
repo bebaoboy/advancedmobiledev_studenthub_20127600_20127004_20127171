@@ -14,10 +14,10 @@ class MessageTab extends StatefulWidget {
   const MessageTab({super.key, required this.scrollController});
   final ScrollController scrollController;
   @override
-  State<MessageTab> createState() => _MessageTabState();
+  State<MessageTab> createState() => Singapore();
 }
 
-class _MessageTabState extends State<MessageTab> {
+class Singapore extends State<MessageTab> {
   // final List<Map<String, dynamic>> messages = [
   //   {
   //     'icon': Icons.message,
@@ -35,7 +35,7 @@ class _MessageTabState extends State<MessageTab> {
   //   },
   //   {
   //     'icon': Icons.message,
-  //     'name': 'Xingapore',
+  //     'name': 'Singapore',
   //     'role': 'Sey',
   //     'message': 'Clear expectation about your project or deliverables',
   //     'date': '6/6/2024'
@@ -166,14 +166,13 @@ class _MessageTabState extends State<MessageTab> {
                                     userId: messages[index].chatUser.id,
                                     projectId:
                                         messages[index].project!.objectId!);
-                                // TODO: get all msg for this receiver and project id: using getMessageByProjectAndUser
                                 /*
                                 {
   "result": [
     {
       "id": 249,
       "createdAt": "2024-04-23T16:09:43.731Z",
-      "content": "Gvggghhh",
+      "content": "Something",
       "sender": {
         "id": 34,
         "fullname": "bao bao"
