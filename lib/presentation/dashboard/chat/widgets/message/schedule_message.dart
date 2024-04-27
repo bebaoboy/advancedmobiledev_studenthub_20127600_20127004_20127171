@@ -125,6 +125,7 @@ class ScheduleMessage extends StatefulWidget {
     required this.messageWidth,
     required this.onMenuCallback,
     required this.scheduleFilter,
+    required this.user,
   });
 
   final Function(InterviewSchedule) onMenuCallback;
@@ -145,6 +146,7 @@ class ScheduleMessage extends StatefulWidget {
 
   /// Maximum message width.
   final double messageWidth;
+  final ChatUser user;
 
   @override
   State<ScheduleMessage> createState() => _ScheduleMessageState();
@@ -209,7 +211,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
 
   @override
   Widget build(BuildContext context) {
-    const user = Chat.user;
+    var user = widget.user;
 
     if (_size.aspectRatio == 0) {
       return Container(

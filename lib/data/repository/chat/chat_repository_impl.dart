@@ -31,7 +31,7 @@ class ChatRepositoryImpl extends ChatRepository {
             value.statusCode == HttpStatus.created) {
           List json = value.data["result"];
           List<WrapMessageList> list = [];
-          int currentId = await _sharedPrefHelper.currentUserId;
+          // int currentId = await _sharedPrefHelper.currentUserId;
 
           for (var element in json) {
             List<MessageObject> j = [];
@@ -72,7 +72,7 @@ class ChatRepositoryImpl extends ChatRepository {
   @override
   Future<List<AbstractChatMessage>> getMessageByProjectAndUser(
       GetMessageByProjectAndUserParams params) async {
-    var userStore = getIt<UserStore>();
+    // var userStore = getIt<UserStore>();
     try {
       return await _chatApi.getMessageByProjectAndUser(params).then(
         (value) {

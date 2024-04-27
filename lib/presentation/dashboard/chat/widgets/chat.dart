@@ -41,6 +41,7 @@ class Chat extends StatefulWidget {
 
   /// Creates a chat widget.
   const Chat({
+    required this.user,
     required this.performEmoji,
     super.key,
     this.audioMessageBuilder,
@@ -325,7 +326,7 @@ class Chat extends StatefulWidget {
   final bool usePreviewData;
 
   /// See [InheritedUser.user].
-  static const ChatUser user = ChatUser(id: "1");
+  final ChatUser user;
 
   /// See [MessageWidget.userAgent].
   final String? userAgent;
@@ -488,7 +489,7 @@ class ChatState extends State<Chat> {
             ? (constraints.maxWidth * 0.8).round()
             : Chat.theme.messageMaxWidth;
         final messageWidth =
-            widget.showUserAvatars && message.author.id != Chat.user.id
+            widget.showUserAvatars && message.author.id != widget.user.id
                 ? min(constraints.maxWidth * widget.messageWidthRatio, maxWidth)
                     .floor()
                 : min(
@@ -496,6 +497,7 @@ class ChatState extends State<Chat> {
                     maxWidth,
                   ).floor();
         final Widget msgWidget = MessageWidget(
+          user: widget.user,
           performEmoji: widget.performEmoji,
           scheduleMessageBuilder: widget.scheduleMessageBuilder,
           audioMessageBuilder: widget.audioMessageBuilder,
@@ -605,7 +607,7 @@ class ChatState extends State<Chat> {
     if (widget.messages.isNotEmpty) {
       final result = calculateChatMessages(
         widget.messages,
-        Chat.user,
+        widget.user,
         customDateHeaderText: widget.customDateHeaderText,
         dateFormat: widget.dateFormat,
         dateHeaderThreshold: widget.dateHeaderThreshold,
@@ -675,6 +677,7 @@ class ChatState extends State<Chat> {
                             ) {
                               //print("rebuild");
                               return ChatList(
+                                user: widget.user,
                                 bottomWidget: widget.listBottomWidget,
                                 bubbleRtlAlignment: widget.bubbleRtlAlignment!,
                                 isLastPage: widget.isLastPage,

@@ -24,7 +24,10 @@ class TextMessage extends StatelessWidget {
     required this.usePreviewData,
     this.userAgent,
     required this.onTapCallback,
+    required this.user,
   });
+
+  final ChatUser user;
 
   /// See [Message.emojiEnlargementBehavior].
   final EmojiEnlargementBehavior emojiEnlargementBehavior;
@@ -146,7 +149,6 @@ class TextMessage extends StatelessWidget {
         emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&
             isConsistsOfEmojis(emojiEnlargementBehavior, message);
     final theme = Chat.theme;
-    const user = Chat.user;
     final width = MediaQuery.of(context).size.width;
 
     if (usePreviewData && onPreviewDataFetched != null) {

@@ -17,6 +17,7 @@ class ImageMessage extends StatefulWidget {
     this.imageProviderBuilder,
     required this.message,
     required this.messageWidth,
+    required this.user,
   });
 
   /// See [Chat.imageHeaders].
@@ -34,6 +35,7 @@ class ImageMessage extends StatefulWidget {
 
   /// Maximum message width.
   final int messageWidth;
+  final ChatUser user;
 
   @override
   State<ImageMessage> createState() => _ImageMessageState();
@@ -99,7 +101,7 @@ class _ImageMessageState extends State<ImageMessage> {
 
   @override
   Widget build(BuildContext context) {
-    const user = Chat.user;
+    var user = widget.user;
 
     if (_size.aspectRatio == 0) {
       return Container(

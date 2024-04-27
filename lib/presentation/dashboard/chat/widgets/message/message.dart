@@ -23,6 +23,7 @@ import 'text_message.dart';
 class MessageWidget extends StatefulWidget {
   /// Creates a particular message from any message type.
   MessageWidget({
+    required this.user,
     super.key,
     this.audioMessageBuilder,
     this.avatarBuilder,
@@ -127,6 +128,8 @@ class MessageWidget extends StatefulWidget {
     required Map<String, String>? imageHeaders,
     required Conditional conditional,
   })? imageProviderBuilder;
+
+  final ChatUser user;
 
   /// Any message type.
   AbstractChatMessage message;
@@ -311,13 +314,17 @@ class _MessageWidgetState extends State<MessageWidget> {
           return widget.fileMessageBuilder != null
               ? widget.fileMessageBuilder!(fileMessage,
                   messageWidth: widget.messageWidth)
-              : FileMessage(message: fileMessage);
+              : FileMessage(
+                  message: fileMessage,
+                  user: widget.user,
+                );
         case AbstractMessageType.image:
           final imageMessage = widget.message as AbstractImageMessage;
           return widget.imageMessageBuilder != null
               ? widget.imageMessageBuilder!(imageMessage,
                   messageWidth: widget.messageWidth)
               : ImageMessage(
+                  user: widget.user,
                   imageHeaders: widget.imageHeaders,
                   imageProviderBuilder: widget.imageProviderBuilder,
                   message: imageMessage,
@@ -332,6 +339,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                   showName: widget.showName,
                 )
               : TextMessage(
+                  user: widget.user,
                   emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
                   hideBackgroundOnEmojiMessages:
                       widget.hideBackgroundOnEmojiMessages,
@@ -365,6 +373,7 @@ class _MessageWidgetState extends State<MessageWidget> {
               messageWidth: widget.messageWidth,
             )
           : TextMessage(
+              user: widget.user,
               emojiEnlargementBehavior: widget.emojiEnlargementBehavior,
               hideBackgroundOnEmojiMessages:
                   widget.hideBackgroundOnEmojiMessages,
@@ -408,7 +417,7 @@ class _MessageWidgetState extends State<MessageWidget> {
   @override
   Widget build(BuildContext context) {
     final query = MediaQuery.of(context);
-    const user = Chat.user;
+    var user = widget.user;
     final currentUserIsAuthor = user.id == widget.message.author.id;
     final enlargeEmojis =
         widget.emojiEnlargementBehavior != EmojiEnlargementBehavior.never &&

@@ -23,7 +23,10 @@ class ChatList extends StatefulWidget {
     this.scrollPhysics,
     this.typingIndicatorOptions,
     required this.useTopSafeAreaInset,
+    required this.user,
   });
+
+  final ChatUser user;
 
   /// A custom widget at the bottom of the list.
   final Widget? bottomWidget;
@@ -172,7 +175,7 @@ class _ChatListState extends State<ChatList>
         // Compare items to fire only on newly added messages.
         if (oldMessage.id != message.id) {
           // Run only for sent message.
-          if (message.author.id == Chat.user.id) {
+          if (message.author.id == widget.user.id) {
             // Delay to give some time for Flutter to calculate new
             // size after new message was added.
             Future.delayed(const Duration(milliseconds: 100), () {

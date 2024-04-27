@@ -147,6 +147,7 @@ class _MessageScreenState extends State<MessageScreen> {
         key: _scaffoldKey,
         appBar: _buildAppBar(context),
         body: Chat(
+          user: ChatUser(id: userStore.user!.objectId!),
           performEmoji: (Emoji emoji, AbstractChatMessage message) {
             if ((message.reactions?.own.isNotEmpty ?? false) &&
                 (message.reactions?.own.contains(emoji.emoji) ?? false)) {
@@ -196,6 +197,7 @@ class _MessageScreenState extends State<MessageScreen> {
             // print(messageWidth);
             // print(t.objectId);
             return ScheduleMessage(
+                user: ChatUser(id: userStore.user!.objectId!),
                 onMenuCallback: (scheduleFilter) async {
                   showAdaptiveActionSheet(
                     title: Text(
