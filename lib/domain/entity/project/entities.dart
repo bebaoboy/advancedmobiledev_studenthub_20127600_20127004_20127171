@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:uuid/uuid.dart';
@@ -322,11 +323,15 @@ class MessageObject extends NotificationObject {
     this.messageType = MessageType.message,
     this.interviewSchedule,
     super.createdAt,
+    this.project,
   });
+
+  Project? project;
 
   MessageObject.fromJson(Map<String, dynamic> json2)
       : messageType = MessageType.values[json2["type"] ?? 0],
         interviewSchedule = json2["interview"],
+        project = json2["projectId"] != null ? Project.fromMap(json2["projectId"]) : null,
         super(
             content: json2["content"] ?? "Null",
             createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
@@ -347,7 +352,8 @@ class MessageObject extends NotificationObject {
       "id": id,
       "receiver": receiver.toJson(),
       "sender": sender.toJson(),
-      "createdAt": (createdAt ?? DateTime.now()).toString()
+      "createdAt": (createdAt ?? DateTime.now()).toString(),
+      "projectId": project?.toJson(),
     });
   }
 }

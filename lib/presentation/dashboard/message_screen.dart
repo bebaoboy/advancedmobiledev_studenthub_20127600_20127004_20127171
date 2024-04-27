@@ -75,9 +75,10 @@ class _MessageScreenState extends State<MessageScreen> {
     _currentUserType = userStore.getCurrentType();
 
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
-    // project id
+    me = ChatUser(
+        id: userStore.user!.objectId!, firstName: userStore.user!.name);
     messageNotifier = MessageNotifierProvider(
-        id: widget.chatObject.project!.objectId!, senderName: _user.firstName!);
+        user: widget.chatObject.chatUser, project: widget.chatObject.project);
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
@@ -144,6 +145,8 @@ class _MessageScreenState extends State<MessageScreen> {
     setState(() {});
   }
 
+  late ChatUser me;
+
   @override
   Widget build(BuildContext context) {
     // print("build chat");
@@ -151,7 +154,7 @@ class _MessageScreenState extends State<MessageScreen> {
         key: _scaffoldKey,
         appBar: _buildAppBar(context),
         body: Chat(
-          user: ChatUser(id: userStore.user!.objectId!),
+          user: me,
           performEmoji: (Emoji emoji, AbstractChatMessage message) {
             if ((message.reactions?.own.isNotEmpty ?? false) &&
                 (message.reactions?.own.contains(emoji.emoji) ?? false)) {
@@ -201,7 +204,7 @@ class _MessageScreenState extends State<MessageScreen> {
             // print(messageWidth);
             // print(t.objectId);
             return ScheduleMessage(
-                user: ChatUser(id: userStore.user!.objectId!),
+                user: me,
                 onMenuCallback: (scheduleFilter) async {
                   if (_currentUserType == UserType.company) {
                     showAdaptiveActionSheet(
@@ -527,6 +530,8 @@ class _MessageScreenState extends State<MessageScreen> {
       status: Status.delivered,
       text: message.text,
     );
+    _addMessage(textMessage);
+
     if (userStore.user != null && userStore.user!.objectId != null) {
       if (chatStore.isFetching) {
         // ToDo: handle sending message if any in store after fetching
@@ -551,8 +556,6 @@ class _MessageScreenState extends State<MessageScreen> {
         });
       }
     }
-
-    _addMessage(textMessage);
   }
 
   /// For file reading

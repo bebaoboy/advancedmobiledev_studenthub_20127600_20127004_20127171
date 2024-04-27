@@ -225,9 +225,16 @@ class Singapore extends State<MessageTab> {
                                     // Text(messages[index]['role']),
 
                                     Text(messages[index]
-                                        .messages!
-                                        .first
-                                        .content),
+                                                .messages!
+                                                .first
+                                                .sender
+                                                .objectId !=
+                                            userStore.user!.objectId
+                                        ? messages[index]
+                                            .messages!
+                                            .first
+                                            .content
+                                        : "You: ${messages[index].messages!.first.content}"),
                                     const SizedBox(
                                       height: 20,
                                     ),
