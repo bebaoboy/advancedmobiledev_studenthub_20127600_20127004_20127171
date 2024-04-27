@@ -231,11 +231,11 @@ class NotificationHelper {
         NavigationService.navigatorKey.currentState?.push(MaterialPageRoute2(
             routeName: Routes.message,
             arguments: WrapMessageList(
-              project: Project(
-                      id: "-1",
-                      title: "",
-                      timeCreated: DateTime.now(),
-                      description: ""),
+                project: Project(
+                    id: "-1",
+                    title: "",
+                    timeCreated: DateTime.now(),
+                    description: ""),
                 chatUser: ChatUser(
                     id: msg.sender.objectId ?? "-1",
                     firstName: msg.sender.getName),
@@ -258,8 +258,8 @@ class NotificationHelper {
     print("long task done");
   }
 
-  /// unused
-  static Future<void> scheduleNewNotification() async {
+  static Future<void> scheduleNewNotification(
+      int? minute, int? hour, int? day) async {
     if (kIsWeb) return;
     bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
     if (!isAllowed) {
@@ -271,12 +271,14 @@ class NotificationHelper {
     }
     if (!isAllowed) return;
 
-    await myNotifyScheduleInHours(
+    await myNotifySchedule(
+        hoursFromNow: hour ?? 0,
+        minutesFromNow: minute ?? 0,
+        daysFromNow: day ?? 0,
         title: 'test',
         msg: 'test message',
         heroThumbUrl:
             'https://storage.googleapis.com/cms-storage-bucket/d406c736e7c4c57f5f61.png',
-        hoursFromNow: 5,
         username: 'test user',
         repeatNotif: false);
   }
@@ -290,15 +292,21 @@ class NotificationHelper {
   }
 }
 
-Future<void> myNotifyScheduleInHours({
-  required int hoursFromNow,
+Future<void> myNotifySchedule({
+  int hoursFromNow = 0,
+  int minutesFromNow = 0,
+  int daysFromNow = 0,
   required String heroThumbUrl,
   required String username,
   required String title,
   required String msg,
   bool repeatNotif = false,
 }) async {
-  var nowDate = DateTime.now().add(Duration(hours: hoursFromNow, seconds: 10));
+  var nowDate = DateTime.now().add(Duration(
+      hours: hoursFromNow,
+      seconds: 10,
+      minutes: minutesFromNow,
+      days: daysFromNow));
   await AwesomeNotifications().createNotification(
     schedule: NotificationCalendar(
       //weekday: nowDate.day,

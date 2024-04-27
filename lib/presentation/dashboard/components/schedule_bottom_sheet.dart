@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
-
 class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({super.key, required this.filter});
   final InterviewSchedule? filter;
@@ -23,6 +22,8 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
   TextEditingController title = TextEditingController();
 
   late final InterviewSchedule itv;
+
+  bool _isAllCorrect = true;
 
   @override
   void initState() {
@@ -344,37 +345,47 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             ),
             bottomBar: StickyBottomBarVisibility(
               child: BottomAppBar(
-                height: 70,
+                height: 120,
                 surfaceTintColor: Colors.white,
                 child: Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  child: Column(
                     children: [
-                      // Flexible(
-                      //   fit: FlexFit.tight,
-                      //   child: TextButton(
-                      //     onPressed: () {
-                      //       widget.onSheetDismissed();
-                      //     },
-                      //     child: const Text(Lang.get('Cancel'),
-                      //   ),
-                      // ),
-                      // const SizedBox(width: 16),
-                      RoundedButtonWidget(
-                        buttonColor: Theme.of(context).colorScheme.primary,
-                        onPressed: () {
-                          itv.clear();
-                        },
-                        buttonText: Lang.get("cancel"),
-                      ),
-                      const SizedBox(width: 12),
-                      RoundedButtonWidget(
-                        buttonColor: Theme.of(context).colorScheme.primary,
-                        onPressed: () {
-                          Navigator.pop(context, itv);
-                        },
-                        buttonText: Lang.get("send"),
+                      Visibility(
+                          visible: !_isAllCorrect,
+                          child: Container(
+                              alignment: Alignment.center,
+                              child:
+                                  const Text("Some fields are not correct"))),
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RoundedButtonWidget(
+                            buttonColor: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              itv.clear();
+                              Navigator.pop(context);
+                            },
+                            buttonText: Lang.get("cancel"),
+                          ),
+                          const SizedBox(width: 12),
+                          RoundedButtonWidget(
+                            buttonColor: Theme.of(context).colorScheme.primary,
+                            onPressed: () {
+                              if (title.text.isEmpty) {
+                                setState(() {
+                                  _isAllCorrect = false;
+                                });
+                              } else {
+                                setState(() {
+                                  _isAllCorrect = false;
+                                });
+                                Navigator.pop(context, itv);
+                              }
+                            },
+                            buttonText: Lang.get("send"),
+                          ),
+                        ],
                       ),
                     ],
                   ),

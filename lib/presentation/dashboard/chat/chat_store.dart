@@ -5,7 +5,9 @@ import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:mobx/mobx.dart';
 
 part 'chat_store.g.dart';
@@ -13,12 +15,13 @@ part 'chat_store.g.dart';
 class ChatStore = _ChatStore with _$ChatStore;
 
 abstract class _ChatStore with Store {
-  _ChatStore(
-      this._getMessageByProjectAndUsersUseCase, this._getAllChatsUseCase);
+  _ChatStore(this._getMessageByProjectAndUsersUseCase, this._getAllChatsUseCase,
+      this._scheduleInterviewUseCase);
 
   // student
   final GetMessageByProjectAndUsersUseCase _getMessageByProjectAndUsersUseCase;
   final GetAllChatsUseCase _getAllChatsUseCase;
+  final ScheduleInterviewUseCase _scheduleInterviewUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
 
@@ -178,5 +181,31 @@ abstract class _ChatStore with Store {
     return Future.value([]);
 
     // //print(value);
+  }
+
+  @action
+  Future<bool> scheduleInterview(
+      {required int projectId,
+      required String title,
+      required DateTime startTime,
+      required DateTime endTime}) async {
+    var params = InterviewParams("", "",
+        title: title,
+        startDate: startTime.toIso8601String(),
+        endDate: endTime.toIso8601String());
+
+    return await _scheduleInterviewUseCase.call(params: params).then((value) {
+      if (value == null) {
+        print('Schedule fail');
+        return false;
+      } else {
+        // Todo: schedule notification before interview 15min
+        Duration diff = endTime.difference(startTime);
+
+        NotificationHelper.scheduleNewNotification(
+            diff.inMinutes, diff.inHours, diff.inDays);
+        return true;
+      }
+    });
   }
 }

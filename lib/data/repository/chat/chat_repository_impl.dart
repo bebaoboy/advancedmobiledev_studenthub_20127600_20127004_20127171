@@ -120,10 +120,4 @@ class ChatRepositoryImpl extends ChatRepository {
       return [];
     }
   }
-
-  @override
-  Future<List<WrapMessageList>> getMessageOfOneChat() {
-    // TODO: implement getMessageOfOneChat
-    throw UnimplementedError();
-  }
 }

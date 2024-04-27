@@ -4,6 +4,7 @@ import 'package:boilerplate/core/data/network/dio/interceptors/auth_interceptor.
 import 'package:boilerplate/core/data/network/dio/interceptors/logging_interceptor.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/retry_interceptor.dart';
 import 'package:boilerplate/data/network/apis/chat/chat_api.dart';
+import 'package:boilerplate/data/network/apis/interview/interview_api.dart';
 import 'package:boilerplate/data/network/apis/posts/post_api.dart';
 import 'package:boilerplate/data/network/apis/profile/profile_api.dart';
 import 'package:boilerplate/data/network/apis/project/project_api.dart';
@@ -62,5 +63,6 @@ mixin NetworkModule {
         .registerSingleton(ProfileApi(getIt<DioClient>(), getIt<RestClient>()));
     getIt.registerSingleton(ProjectApi(getIt<DioClient>()));
     getIt.registerSingleton(ChatApi(getIt<DioClient>()));
+    getIt.registerSingleton(InterviewApi(getIt<DioClient>()));
   }
 }

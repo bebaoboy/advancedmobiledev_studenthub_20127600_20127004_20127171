@@ -230,4 +230,16 @@ class Endpoints {
       "$baseUrl/api/skillset/getAllSkillSet"; // done
   static const String addTechStack = "$baseUrl/api/techstack/createTechStack";
   static const String addSkillset = "$baseUrl/api/skillset/createSkillSet";
+
+  //////////////////////////////////// interview /////////////////////////////////
+
+  static const String getInterview = "$baseUrl/api/interview/{interviewId}";
+
+  // disable interview
+  static const String updateStateInterview =
+      "$baseUrl/api/interview/{interviewId}/disable";
+
+  static const String deleteInterview = "$baseUrl/api/interview/{interviewId}";
+  static const String updateInterview = "$baseUrl/api/interview/{interviewId}";
+  static const String postInterview = "$baseUrl/api/interview";
 }

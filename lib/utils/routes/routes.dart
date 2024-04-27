@@ -22,6 +22,8 @@ import 'package:boilerplate/presentation/login/forget_password_sent.dart';
 import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/profile/view_profile_company.dart';
 import 'package:boilerplate/presentation/profile/view_profile_student.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_calls.dart';
+import 'package:boilerplate/presentation/video_call/preview_meeting.dart';
 import 'package:boilerplate/presentation/welcome/welcome.dart';
 import 'package:boilerplate/presentation/profile/profile.dart';
 import 'package:boilerplate/presentation/profile/profile_student_step2.dart';
@@ -68,6 +70,7 @@ class Routes {
   static const String viewProjectProposalsCard = "/viewProjectProposalsCard";
   static const String companyViewStudentProfile = "/viewStudentProfile";
   static const String companyViewStudentProfile2 = "/viewStudentProfile2";
+  static const String previewMeeting = "/previewMeeting";
 
   static final _route = <String, Widget>{
     splash: const SplashScreen(),
@@ -102,6 +105,7 @@ class Routes {
     viewProjectProposals: const Placeholder(),
     companyViewStudentProfile: const Placeholder(),
     companyViewStudentProfile2: const Placeholder(),
+    previewMeeting: const Placeholder(),
   };
 
   static final routes = <String, WidgetBuilder>{
@@ -184,6 +188,19 @@ getRoute(String name, context, {arguments}) {
       if (arguments != null) {
         var b = arguments as StudentProfile;
         return ViewStudentProfile2(studentProfile: b);
+      }
+    }
+
+    if (name.startsWith(Routes.previewMeeting)) {
+      if (arguments != null) {
+        var users = arguments as List<CubeUser>;
+        return PreviewMeetingScreen(
+            CubeSessionManager.instance.activeSession!.user!,
+            users: users
+                .where((user) =>
+                    user.id !=
+                    CubeSessionManager.instance.activeSession!.user!.id)
+                .toList());
       }
     }
 

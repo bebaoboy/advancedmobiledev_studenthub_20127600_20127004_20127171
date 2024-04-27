@@ -7,7 +7,6 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class ProposalItem extends StatefulWidget {

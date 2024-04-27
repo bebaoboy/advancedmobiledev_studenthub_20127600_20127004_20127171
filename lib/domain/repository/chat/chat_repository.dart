@@ -6,6 +6,4 @@ abstract class ChatRepository {
   Future<List<AbstractChatMessage>> getMessageByProjectAndUser(
       GetMessageByProjectAndUserParams params);
   Future<List<WrapMessageList>> getAllChat(GetMessageByProjectAndUserParams params);
-
-  Future<List<WrapMessageList>> getMessageOfOneChat();
 }

@@ -5,6 +5,7 @@ import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
@@ -210,6 +211,7 @@ mixin StoreModule {
       ChatStore(
         getIt<GetMessageByProjectAndUsersUseCase>(),
         getIt<GetAllChatsUseCase>(),
+        getIt<ScheduleInterviewUseCase>(),
       ),
     );
   }

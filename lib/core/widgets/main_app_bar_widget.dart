@@ -237,7 +237,6 @@ class _MainAppBarState extends State<MainAppBar> {
                     );
                   },
                   onDoubleTap: () {
-                    // TODO: remove this badge test
                     showRandomBadge();
                     Future.delayed(const Duration(seconds: 1), () {
                       Navigator.of(context).push(MaterialPageRoute2(
@@ -341,7 +340,7 @@ class _MainAppBarState extends State<MainAppBar> {
       Colors.yellow,
       Colors.grey,
     ];
-    var anims = [
+    var animations = [
       BadgeAnimation.fade,
       BadgeAnimation.rotation,
       BadgeAnimation.scale,
@@ -358,7 +357,7 @@ class _MainAppBarState extends State<MainAppBar> {
                 ? null
                 : themeColorSeed[Random().nextInt(themeColorSeed.length)],
             showBadge: Random().nextInt(5) > 1,
-            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            badgeAnimation: animations[Random().nextInt(animations.length)](),
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
     b = Random().nextBool();
@@ -370,7 +369,7 @@ class _MainAppBarState extends State<MainAppBar> {
                 ? null
                 : themeColorSeed[Random().nextInt(themeColorSeed.length)],
             showBadge: Random().nextInt(5) > 1,
-            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            badgeAnimation: animations[Random().nextInt(animations.length)](),
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
     b = Random().nextBool();
@@ -382,7 +381,7 @@ class _MainAppBarState extends State<MainAppBar> {
                 ? null
                 : themeColorSeed[Random().nextInt(themeColorSeed.length)],
             showBadge: Random().nextInt(5) > 1,
-            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            badgeAnimation: animations[Random().nextInt(animations.length)](),
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
     b = Random().nextBool();
@@ -394,7 +393,7 @@ class _MainAppBarState extends State<MainAppBar> {
                 ? null
                 : themeColorSeed[Random().nextInt(themeColorSeed.length)],
             showBadge: Random().nextInt(5) > 1,
-            badgeAnimation: anims[Random().nextInt(anims.length)](),
+            badgeAnimation: animations[Random().nextInt(animations.length)](),
             animationDuration:
                 Duration(milliseconds: (Random().nextInt(5) + 5) * 600)));
   }
