@@ -36,7 +36,7 @@ class ProjectApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -53,7 +53,7 @@ class ProjectApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -71,7 +71,7 @@ class ProjectApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -85,7 +85,7 @@ class ProjectApi {
     }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -99,7 +99,7 @@ class ProjectApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -116,7 +116,7 @@ class ProjectApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -139,7 +139,7 @@ class ProjectApi {
                     error.response ??
                         Response(requestOptions: RequestOptions()))
                 .whenComplete(
-              () => _dioClient.clearDio(),
+              () => null,
             ));
   }
 
@@ -159,7 +159,7 @@ class ProjectApi {
         // Handle the case when error.response ?? Response(requestOptions: RequestOptions()) is null
         return Future.error('An error occurred: ${error.message}');
       }
-    }).whenComplete(() => _dioClient.clearDio());
+    }).whenComplete(() => null);
   }
 
   Future<Response> deleteProjects(DeleteProjectParams params) async {
@@ -182,7 +182,7 @@ class ProjectApi {
         }).onError((DioException error, stackTrace) => Future.value(
                 error.response ?? Response(requestOptions: RequestOptions()))
             .whenComplete(
-          () => _dioClient.clearDio(),
+          () => null,
         ));
   }
 
@@ -194,7 +194,7 @@ class ProjectApi {
             queryParameters: {})
         .onError((DioException error, stackTrace) => Future.value(
             error.response ?? Response(requestOptions: RequestOptions())))
-        .whenComplete(() => _dioClient.clearDio());
+        .whenComplete(() => null);
   }
 
   // Future<Response> filterProjects() async {

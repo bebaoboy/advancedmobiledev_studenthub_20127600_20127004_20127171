@@ -1,3 +1,5 @@
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:dio/dio.dart';
 
 import 'configs/dio_configs.dart';
@@ -31,7 +33,14 @@ class DioClient {
       return _dio;
     } else {
       print("Dio is busy BEBAOBOY");
-      return _dio;
+      if (NavigationService.navigatorKey.currentContext != null) {
+        NavbarNotifier2.showSnackBar(
+          NavigationService.navigatorKey.currentContext!,
+          "Dio is busy BEBAOBOY",
+          bottom: 60,
+        );
+      }
+      return _dio2;
     }
   }
 

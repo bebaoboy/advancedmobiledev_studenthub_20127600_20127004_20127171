@@ -330,8 +330,12 @@ class MessageObject extends NotificationObject {
 
   MessageObject.fromJson(Map<String, dynamic> json2)
       : messageType = MessageType.values[json2["type"] ?? 0],
-        interviewSchedule = json2["interview"],
-        project = json2["projectId"] != null ? Project.fromMap(json2["projectId"]) : null,
+        interviewSchedule = json2["interview"] != null
+            ? InterviewSchedule.fromJsonApi(json2["interview"])
+            : null,
+        project = json2["projectId"] != null
+            ? Project.fromMap(json2["projectId"])
+            : null,
         super(
             content: json2["content"] ?? "Null",
             createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
@@ -365,6 +369,7 @@ class InterviewSchedule extends MyObject {
   DateTime startDate = DateTime.now();
   DateTime endDate = DateTime.now();
   bool isCancel = false;
+  String meetingRoomId;
 
   InterviewSchedule({
     required this.title,
@@ -373,6 +378,9 @@ class InterviewSchedule extends MyObject {
     required this.endDate,
     this.isCancel = false,
     String id = "",
+    super.createdAt,
+    super.updatedAt,
+    this.meetingRoomId = "-1",
   }) : super(objectId: id);
 
   clear() {
@@ -402,7 +410,24 @@ class InterviewSchedule extends MyObject {
             ? DateTime.now()
             : json["startDate"] as DateTime,
         isCancel = json["isCancel"] ?? false,
-        super(objectId: json["id"] ?? const Uuid().v4());
+        meetingRoomId = "-1",
+        super(objectId: json["id"].toString());
+
+  InterviewSchedule.fromJsonApi(Map<String, dynamic> json)
+      : participants = json['participants'] ?? [],
+        title = (json['title'] ?? "Missing Title") as String,
+        endDate = json['endTime'] == null
+            ? DateTime.now().add(const Duration(hours: 1, minutes: 1))
+            : DateTime.tryParse(json['endTime']) ?? DateTime.now(),
+        startDate = json["startTime"] == null
+            ? DateTime.now()
+            : DateTime.tryParse(json['startTime']) ?? DateTime.now(),
+        isCancel = (json["disableFlag"] ?? 0) == 1,
+        meetingRoomId = (json["meetingRoomId"] ?? "-1").toString(),
+        super(
+            objectId: json["id"].toString(),
+            createdAt: DateTime.tryParse(json["createdAt"]) ?? DateTime.now(),
+            updatedAt: DateTime.tryParse(json["updatedAt"]) ?? DateTime.now());
 
   Map<String, dynamic> toJson() => {
         "title": title,

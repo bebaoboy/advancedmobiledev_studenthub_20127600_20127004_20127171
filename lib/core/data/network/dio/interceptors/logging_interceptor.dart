@@ -4,6 +4,8 @@ library dio_logging_interceptor;
 
 import 'dart:convert';
 
+import 'package:boilerplate/core/data/network/dio/dio_client.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,9 +102,9 @@ class LoggingInterceptor extends Interceptor {
   SharedPreferences? sharedPref;
   sp(String o) async {
     try {
-    List<String> s = sharedPref!.getStringList("dio") ?? [];
-    sharedPref!.setStringList("dio", ["${DateTime.now()}\n$o", ...s]);
-    } catch(e) {
+      List<String> s = sharedPref!.getStringList("dio") ?? [];
+      sharedPref!.setStringList("dio", ["${DateTime.now()}\n$o", ...s]);
+    } catch (e) {
       ///
     }
   }
@@ -225,6 +227,8 @@ class LoggingInterceptor extends Interceptor {
     Future.delayed(Duration.zero, () {
       spPrint(s);
     });
+    var dioClient = getIt<DioClient>();
+    dioClient.clearDio();
 
     return handler.next(response);
   }
@@ -245,7 +249,8 @@ class LoggingInterceptor extends Interceptor {
     if (level == Level.none) {
       return handler.next(err);
     }
-
+    var dioClient = getIt<DioClient>();
+    dioClient.clearDio();
     return handler.next(err);
   }
 

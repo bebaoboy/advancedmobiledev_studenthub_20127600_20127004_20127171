@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -15,6 +14,7 @@ import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart'
 import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:boilerplate/presentation/dashboard/components/all_schedule_bottom_sheet.dart';
 import 'package:boilerplate/presentation/dashboard/components/schedule_bottom_sheet.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
@@ -183,7 +183,10 @@ class _MessageScreenState extends State<MessageScreen> {
           typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
           messages: chatStore.currentProjectMessages,
           onAttachmentPressed: _handleAttachmentPressed,
-          onFirstIconPressed: () => showScheduleBottomSheet(context),
+          // onFirstIconPressed: () => showScheduleBottomSheet(context),
+          onFirstIconPressed: () {
+            showAllScheduleBottomSheet(context);
+          },
           onMessageTap: _handleMessageTap,
           onPreviewDataFetched: _handlePreviewDataFetched,
           onSendPressed: _handleSendPressed,
@@ -653,6 +656,25 @@ class _MessageScreenState extends State<MessageScreen> {
       return null;
       ////print("cancel schedule");
     });
+  }
+
+  Future<InterviewSchedule?> showAllScheduleBottomSheet(BuildContext context,
+      {InterviewSchedule? flt, String? id}) async {
+    return await Navigator.push<InterviewSchedule>(
+      context,
+      ModalSheetRoute(
+          builder: (context) => AllScheduleBottomSheet(
+                user: me,
+                scaffoldKey: _scaffoldKey,
+                filter: chatStore.currentProjectMessages
+                    .where((element) =>
+                        element.type == AbstractMessageType.schedule)
+                    .map(
+                      (e) => e as ScheduleMessageType,
+                    )
+                    .toList(),
+              )),
+    );
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();

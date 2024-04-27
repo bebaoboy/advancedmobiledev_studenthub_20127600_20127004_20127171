@@ -136,37 +136,43 @@ class Singapore extends State<MessageTab> {
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 List<WrapMessageList> messages = snapshot.data;
-                return Positioned.fill(
-                  top: 60,
-                  child: PlaneIndicator(
-                    onRefresh: () => Future.delayed(const Duration(seconds: 3)),
-                    child: Stack(children: [
-                      Positioned.fill(
-                        top: 30,
-                        child: ListView.separated(
-                          controller: widget.scrollController,
-                          itemCount: messages.length + 1,
-                          separatorBuilder: (context, index) =>
-                              const Divider(color: Colors.black),
-                          itemBuilder: (context, i) {
-                            if (i == 0) {
-                              return Container(
-                                  margin: const EdgeInsets.only(top: 15),
-                                  child: _buildTopRowList());
-                            }
-                            int index = i - 1;
-                            return InkWell(
-                              onTap: () {
-                                //print('Tile clicked');
-                                String id = messages[index]
-                                    .chatUser
-                                    .id; // id này chỉ để test socket
+                return messages.isEmpty
+                    ? const Center(
+                        child: Text("No message"),
+                      )
+                    : Positioned.fill(
+                        top: 60,
+                        child: PlaneIndicator(
+                          onRefresh: () =>
+                              Future.delayed(const Duration(seconds: 3)),
+                          child: Stack(children: [
+                            Positioned.fill(
+                              top: 30,
+                              child: ListView.separated(
+                                controller: widget.scrollController,
+                                itemCount: messages.length + 1,
+                                separatorBuilder: (context, index) =>
+                                    const Divider(color: Colors.black),
+                                itemBuilder: (context, i) {
+                                  if (i == 0) {
+                                    return Container(
+                                        margin: const EdgeInsets.only(top: 15),
+                                        child: _buildTopRowList());
+                                  }
+                                  int index = i - 1;
+                                  return InkWell(
+                                    onTap: () {
+                                      //print('Tile clicked');
+                                      String id = messages[index]
+                                          .chatUser
+                                          .id; // id này chỉ để test socket
 
-                                chatStore.getMessageByProjectAndUsers(
-                                    userId: messages[index].chatUser.id,
-                                    projectId:
-                                        messages[index].project!.objectId!);
-                                /*
+                                      chatStore.getMessageByProjectAndUsers(
+                                          userId: messages[index].chatUser.id,
+                                          projectId: messages[index]
+                                              .project!
+                                              .objectId!);
+                                      /*
                                 {
   "result": [
     {
@@ -198,66 +204,70 @@ class Singapore extends State<MessageTab> {
       "interview": null
     },
                                  */
-                                Navigator.of(NavigationService
-                                        .navigatorKey.currentContext!)
-                                    .push(MaterialPageRoute2(
-                                        routeName: "${Routes.message}/$id",
-                                        arguments: WrapMessageList(
-                                            project: messages[index].project,
-                                            messages: messages[index].messages,
-                                            chatUser:
-                                                messages[index].chatUser)));
-                                // You can replace the print statement with your function
-                              },
-                              child: ListTile(
-                                tileColor: Colors.transparent,
-                                leading: const Icon(
-                                    Icons.message), // Replace with actual icons
-                                title: Text(
-                                  "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName} (${messages[index].chatUser.id})",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    // Text(messages[index]['role']),
+                                      Navigator.of(NavigationService
+                                              .navigatorKey.currentContext!)
+                                          .push(MaterialPageRoute2(
+                                              routeName:
+                                                  "${Routes.message}/$id",
+                                              arguments: WrapMessageList(
+                                                  project:
+                                                      messages[index].project,
+                                                  messages:
+                                                      messages[index].messages,
+                                                  chatUser: messages[index]
+                                                      .chatUser)));
+                                      // You can replace the print statement with your function
+                                    },
+                                    child: ListTile(
+                                      tileColor: Colors.transparent,
+                                      leading: const Icon(Icons
+                                          .message), // Replace with actual icons
+                                      title: Text(
+                                        "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName} (${messages[index].chatUser.id})",
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          // Text(messages[index]['role']),
 
-                                    Text(messages[index]
-                                                .messages!
-                                                .first
-                                                .sender
-                                                .objectId !=
-                                            userStore.user!.objectId
-                                        ? messages[index]
-                                            .messages!
-                                            .first
-                                            .content
-                                        : "You: ${messages[index].messages!.first.content}"),
-                                    const SizedBox(
-                                      height: 20,
+                                          Text(messages[index]
+                                                      .messages!
+                                                      .first
+                                                      .sender
+                                                      .objectId !=
+                                                  userStore.user!.objectId
+                                              ? messages[index]
+                                                  .messages!
+                                                  .first
+                                                  .content
+                                              : "You: ${messages[index].messages!.first.content}"),
+                                          const SizedBox(
+                                            height: 20,
+                                          ),
+                                          Text(
+                                            messages[index]
+                                                    .messages
+                                                    ?.first
+                                                    .createdAt
+                                                    .toString() ??
+                                                DateTime.now().toString(),
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                            textAlign: TextAlign.end,
+                                          )
+                                        ],
+                                      ),
                                     ),
-                                    Text(
-                                      messages[index]
-                                              .messages
-                                              ?.first
-                                              .createdAt
-                                              .toString() ??
-                                          DateTime.now().toString(),
-                                      style: const TextStyle(fontSize: 12),
-                                      textAlign: TextAlign.end,
-                                    )
-                                  ],
-                                ),
+                                  );
+                                },
                               ),
-                            );
-                          },
+                            ),
+                          ]),
                         ),
-                      ),
-                    ]),
-                  ),
-                );
+                      );
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text("No message"),
