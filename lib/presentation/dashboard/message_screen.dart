@@ -73,7 +73,8 @@ class _MessageScreenState extends State<MessageScreen> {
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
     me = ChatUser(
         id: userStore.user!.objectId!, firstName: userStore.user!.name);
-    messageNotifier = MessageNotifierProvider(user: me, project: widget.chatObject.project);
+    messageNotifier = MessageNotifierProvider(
+        user: widget.chatObject.chatUser, project: widget.chatObject.project);
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
@@ -522,6 +523,8 @@ class _MessageScreenState extends State<MessageScreen> {
       status: Status.delivered,
       text: message.text,
     );
+    _addMessage(textMessage);
+
     if (userStore.user != null && userStore.user!.objectId != null) {
       if (chatStore.isFetching) {
         // ToDo: handle sending message if any in store after fetching
@@ -546,8 +549,6 @@ class _MessageScreenState extends State<MessageScreen> {
         });
       }
     }
-
-    _addMessage(textMessage);
   }
 
   // For file reading

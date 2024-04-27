@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
-import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -229,11 +228,7 @@ class NotificationHelper {
         NavigationService.navigatorKey.currentState?.push(MaterialPageRoute2(
             routeName: Routes.message,
             arguments: WrapMessageList(
-              project: Project(
-                      id: "-1",
-                      title: "",
-                      timeCreated: DateTime.now(),
-                      description: ""),
+              project: msg.project,
 
                       // TODO: sai sender name lmao
                 chatUser: ChatUser(

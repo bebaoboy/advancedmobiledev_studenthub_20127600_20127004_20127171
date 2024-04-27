@@ -881,7 +881,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                                             50,
                                                         1),
                                                     lastDate: DateTime(
-                                                        DateTime.now().year + 4,
+                                                        DateTime.now().year + 3,
                                                         1),
                                                     selectedDate:
                                                         _educations[index]

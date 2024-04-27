@@ -2,7 +2,6 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
@@ -49,10 +48,10 @@ abstract class _ChatStore with Store {
   @observable
   Map<ChatUser, String> pendingMessage = <ChatUser, String>{};
 
-  List<MessageObject> getProjectMessages(String id) =>
-      _projectMessages.containsKey(id)
-          ? _projectMessages[id]!.messages ?? []
-          : [];
+  // List<MessageObject> getProjectMessages(String id) =>
+  //     _projectMessages.containsKey(id)
+  //         ? _projectMessages[id]!.messages ?? []
+  //         : [];
 
   @action
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {

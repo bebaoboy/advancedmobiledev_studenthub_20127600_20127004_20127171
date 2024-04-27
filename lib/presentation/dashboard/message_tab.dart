@@ -163,8 +163,7 @@ class _MessageTabState extends State<MessageTab> {
                                     .id; // id này chỉ để test socket
 
                                 chatStore.getMessageByProjectAndUsers(
-                                    userId: messages[index]
-                                        .chatUser.id,
+                                    userId: messages[index].chatUser.id,
                                     projectId:
                                         messages[index].project!.objectId!);
                                 // TODO: get all msg for this receiver and project id: using getMessageByProjectAndUser
@@ -227,9 +226,16 @@ class _MessageTabState extends State<MessageTab> {
                                     // Text(messages[index]['role']),
 
                                     Text(messages[index]
-                                        .messages!
-                                        .first
-                                        .content),
+                                                .messages!
+                                                .first
+                                                .sender
+                                                .objectId !=
+                                            userStore.user!.objectId
+                                        ? messages[index]
+                                            .messages!
+                                            .first
+                                            .content
+                                        : "You: ${messages[index].messages!.first.content}"),
                                     const SizedBox(
                                       height: 20,
                                     ),
