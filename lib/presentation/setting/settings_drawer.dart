@@ -335,11 +335,9 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
         _userStore.success = true;
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute2(
-              routeName: Routes.home,
-            ),
-            (Route<dynamic> route) => false);
+        Navigator.of(context).pushReplacement(MaterialPageRoute2(
+          routeName: Routes.home,
+        ));
       });
     }
   }
@@ -559,7 +557,8 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                 },
                 title: Text(
                   Lang.get('setting_text'),
-                )),const Divider(
+                )),
+            const Divider(
               height: 3,
             ),
             ListTile(
@@ -619,8 +618,8 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
 
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context)
-          .pushAndRemoveUntil(MaterialPageRoute2(routeName: route), (_) => false);
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: route), (_) => false);
     });
 
     return Container();

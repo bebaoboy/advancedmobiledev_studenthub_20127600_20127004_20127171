@@ -1,8 +1,9 @@
-// ignore_for_file: no_logic_in_create_state
+// ignore_for_file: no_logic_in_create_state, deprecated_member_use
 
 import 'dart:io';
 
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:floating/floating.dart';
@@ -57,7 +58,9 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     WidgetsBinding.instance.removeObserver(this);
     try {
       stopBackgroundExecution();
-    } catch (e) {}
+    } catch (e) {
+      ///
+    }
     super.dispose();
   }
 
@@ -137,6 +140,7 @@ class BodyLayout extends StatefulWidget {
 class _BodyLayoutState extends State<BodyLayout> {
   late Set<int> _selectedUsers;
 
+  // ignore: prefer_final_fields
   bool _isCameraEnabled = true;
   bool _isSpeakerEnabled = Platform.isIOS ? false : true;
   bool _isMicMute = false;
@@ -153,6 +157,8 @@ class _BodyLayoutState extends State<BodyLayout> {
   final CubeStatsReportsManager _statsReportsManager =
       CubeStatsReportsManager();
 
+  late final Future<bool> future;
+
   _BodyLayoutState(this._callSession);
 
   @override
@@ -160,8 +166,9 @@ class _BodyLayoutState extends State<BodyLayout> {
     super.initState();
     _selectedUsers = {};
     _currentUserId = widget.currentUser.id!;
+    future = _addLocalMediaStream();
 
-    _callSession.onLocalStreamReceived = _addLocalMediaStream;
+    // _callSession.onLocalStreamReceived = _addLocalMediaStream;
     _callSession.onRemoteStreamReceived = _addRemoteMediaStream;
     _callSession.onSessionClosed = _onSessionClosed;
     _statsReportsManager.init(_callSession);
@@ -184,7 +191,9 @@ class _BodyLayoutState extends State<BodyLayout> {
           log('Error $e');
         }
       });
-    } catch (e) {}
+    } catch (e) {
+      ///
+    }
 
     super.dispose();
   }
@@ -261,6 +270,18 @@ class _BodyLayoutState extends State<BodyLayout> {
                     label: 'Switch Audio Input device',
                     onTap: () => _switchAudioInput(),
                   ),
+                  SpeedDialChild(
+                    elevation: 0,
+                    visible: true,
+                    child: Icon(
+                      Icons.cameraswitch,
+                      color: _isVideoEnabled() ? Colors.white : Colors.grey,
+                    ),
+                    backgroundColor: Colors.black38,
+                    foregroundColor: Colors.white,
+                    label: 'Switch Camera',
+                    onTap: () => _switchCamera(),
+                  ),
                 ],
               ),
               const Expanded(
@@ -313,10 +334,27 @@ class _BodyLayoutState extends State<BodyLayout> {
         MapEntry(newPrimaryUser, minorRenderers.remove(newPrimaryUser)!);
   }
 
-  Future<void> _addLocalMediaStream(MediaStream stream) async {
+  Future<bool> _addLocalMediaStream() async {
     // log("_addLocalMediaStream, stream Id: ${stream.id}", TAG);
-
+    final mediaConstraints = <String, dynamic>{
+      'audio': true,
+      'video': {
+        'mandatory': {
+          'minWidth':
+              '320', // Provide your own width, height and frame rate here
+          //     'maxWidth': '1080',
+          // 'maxHeight': '600',
+          'minHeight': '480',
+          'minFrameRate': '24',
+        },
+        'facingMode': 'user',
+        'optional': [],
+      }
+    };
+    var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    _callSession.localStream = stream;
     _addMediaStream(_currentUserId, stream);
+    return Future.value(true);
   }
 
   void _addRemoteMediaStream(session, int userId, MediaStream stream) {
@@ -340,41 +378,77 @@ class _BodyLayoutState extends State<BodyLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        padding:
-            const EdgeInsets.only(top: 48, left: 48, right: 48, bottom: 12),
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                RTCVideoView(primaryRenderer!.value,
-                    objectFit: primaryVideoFit, mirror: _isFrontCameraUsed),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: _getActionsPanel(),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: FloatingActionButton(
-                    heroTag: "VideoCall",
-                    backgroundColor: Colors.blue,
-                    onPressed: () => CallManager.instance.startNewCall(
-                        context, CallType.VIDEO_CALL, _selectedUsers),
-                    child: const Icon(
-                      Icons.videocam,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ));
+    return WillPopScope(
+      onWillPop: () {
+        try {
+          primaryRenderer?.value.srcObject = null;
+          primaryRenderer?.value.dispose();
+
+          minorRenderers.forEach((opponentId, renderer) {
+            // log("[dispose] dispose renderer for $opponentId", TAG);
+            try {
+              renderer.srcObject?.dispose();
+              renderer.srcObject = null;
+              renderer.dispose();
+            } catch (e) {
+              log('Error $e');
+            }
+          });
+        } catch (e) {
+          ///
+        }
+        return Future.value(true);
+      },
+      child: FutureBuilder<bool>(
+          future: future,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Container(
+                  padding: const EdgeInsets.only(
+                      top: 0, left: 48, right: 48, bottom: 12),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: 400,
+                        height: MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.height * 0.6 :  MediaQuery.of(context).size.height * 0.53,
+                        child: Stack(
+                          children: [
+                            RTCVideoView(primaryRenderer!.value,
+                                objectFit: primaryVideoFit,
+                                mirror: _isFrontCameraUsed),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: _getActionsPanel(),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: FloatingActionButton(
+                              heroTag: "VideoCall",
+                              backgroundColor: Colors.blue,
+                              onPressed: () => CallManager.instance
+                                  .startNewCall(context, CallType.VIDEO_CALL,
+                                      _selectedUsers),
+                              child: const Icon(
+                                Icons.videocam,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ));
+            } else {
+              return const LoadingScreenWidget();
+            }
+          }),
+    );
   }
 
   _switchSpeaker() {
