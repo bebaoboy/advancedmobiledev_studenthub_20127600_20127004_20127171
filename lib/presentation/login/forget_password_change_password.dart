@@ -269,8 +269,8 @@ class _ForgetPasswordChangePasswordScreenState
       //print("LOADING = $loading");
       loading = false;
       _userStore.shouldChangePass = false;
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: Routes.forgetPasswordDone));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: Routes.forgetPasswordDone), (_) => false);
     });
 
     return Container();

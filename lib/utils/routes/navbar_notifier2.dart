@@ -191,7 +191,7 @@ class NavbarBadge {
 
   final Key? key;
 
-  /// Use padding of [badgeStyle] or fontSize of [badgeTextStyle] to change size of the badge/dot. 
+  /// Use padding of [badgeStyle] or fontSize of [badgeTextStyle] to change size of the badge/dot.
   const NavbarBadge({
     this.key,
     this.badgeText = "",
@@ -487,8 +487,12 @@ class NavbarNotifier2 extends ChangeNotifier {
   }
 
   static void hideSnackBar(context) {
-    if (ScaffoldMessenger.of(context).mounted) {
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    try {
+      if (ScaffoldMessenger.of(context).mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      }
+    } catch (e) {
+      print("cannot hide nav because snackbar is building");
     }
   }
 
@@ -506,40 +510,44 @@ class NavbarNotifier2 extends ChangeNotifier {
       String? actionLabel,
       void Function()? onPressed,
       void Function()? onClosed}) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(
-          SnackBar(
-            dismissDirection: DismissDirection.none,
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(4),
-                topRight: Radius.circular(4),
+    try {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(
+            SnackBar(
+              dismissDirection: DismissDirection.none,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(4),
+                  topRight: Radius.circular(4),
+                ),
               ),
+              behavior: bottom != null
+                  ? SnackBarBehavior.floating
+                  : SnackBarBehavior.fixed,
+              content: Text(
+                message,
+              ),
+              duration: duration,
+              margin: bottom != null ? EdgeInsets.only(bottom: bottom) : null,
+              showCloseIcon: showCloseIcon,
+              action: actionLabel == null || onPressed == null
+                  ? null
+                  : SnackBarAction(
+                      label: actionLabel,
+                      onPressed: onPressed,
+                    ),
             ),
-            behavior: bottom != null
-                ? SnackBarBehavior.floating
-                : SnackBarBehavior.fixed,
-            content: Text(
-              message,
-            ),
-            duration: duration,
-            margin: bottom != null ? EdgeInsets.only(bottom: bottom) : null,
-            showCloseIcon: showCloseIcon,
-            action: actionLabel == null || onPressed == null
-                ? null
-                : SnackBarAction(
-                    label: actionLabel,
-                    onPressed: onPressed,
-                  ),
-          ),
-        )
-        .closed
-        .whenComplete(() {
-      if (onClosed != null) {
-        onClosed();
-      }
-    });
+          )
+          .closed
+          .whenComplete(() {
+        if (onClosed != null) {
+          onClosed();
+        }
+      });
+    } catch (e) {
+      print("cannot show nav because snackbar is building");
+    }
   }
 
   static void showSnackBar(BuildContext context, String message,
