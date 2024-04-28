@@ -40,7 +40,7 @@ class Routes {
   Routes._();
 
   //static variables
-  static const String splash = '/splash';
+  static const String splash = '/';
   static const String login = '/login';
   static const String signUp = '/signup';
   static const String signUpCompany = '/signup-company';
@@ -48,7 +48,7 @@ class Routes {
   static const String profileStudent = '/profile-student';
   static const String profileStudentStep2 = '/profile-student-step2';
   static const String profileStudentStep3 = '/profile-student-step3';
-  static const String home = '/post';
+  static const String home = '/home';
   static const String welcome = '/welcome';
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';

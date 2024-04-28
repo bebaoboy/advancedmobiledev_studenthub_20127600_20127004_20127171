@@ -43,16 +43,23 @@ class RetryInterceptor extends Interceptor {
 
     await dio.dio
         .request(
-          err.requestOptions.path,
-          cancelToken: err.requestOptions.cancelToken,
-          data: err.requestOptions.data,
-          onReceiveProgress: err.requestOptions.onReceiveProgress,
-          onSendProgress: err.requestOptions.onSendProgress,
-          queryParameters: err.requestOptions.queryParameters,
-          options: err.requestOptions.toOptions(),
-        )
-        .then((value) => handler.resolve(value),
-            onError: (error) => handler.next(err));
+      err.requestOptions.path,
+      cancelToken: err.requestOptions.cancelToken,
+      data: err.requestOptions.data,
+      onReceiveProgress: err.requestOptions.onReceiveProgress,
+      onSendProgress: err.requestOptions.onSendProgress,
+      queryParameters: err.requestOptions.queryParameters,
+      options: err.requestOptions.toOptions(),
+    )
+        .then((value) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      handler.resolve(value);
+    }).onError((error, stacktrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      handler.next(err);
+    });
   }
 }
 

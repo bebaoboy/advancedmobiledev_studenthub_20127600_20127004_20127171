@@ -411,7 +411,7 @@ class InterviewSchedule extends MyObject {
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = json["isCancel"] ?? false,
+        isCancel = (json["disableFlag"] ?? 0) == 1,
         meetingRoomId = "-1",
         meetingRoomCode = "-1",
         super(objectId: json["id"].toString());

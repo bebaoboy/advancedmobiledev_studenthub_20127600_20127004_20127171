@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/network/rest_client.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_student_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/add_skillset.dart';
@@ -45,21 +46,23 @@ class ProfileApi {
       "website": params.website,
       "description": params.description,
       "size": params.size,
-    }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getCompanyProfile(AddProfileCompanyParams params) async {
-    return await _dioClient.dio
-        .get(
-            Interpolator(Endpoints.getProfileCompany)({"companyId": params.id}),
-            data: {})
-        .onError((DioException error, stackTrace) => Future.value(
-            error.response ?? Response(requestOptions: RequestOptions())))
-        .whenComplete(() => null);
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getProfileCompany)({"companyId": params.id}),
+        data: {}).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateProfileCompany(AddProfileCompanyParams params) async {
@@ -70,22 +73,24 @@ class ProfileApi {
           "website": params.website,
           "description": params.description,
           "size": params.size,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> addProfileStudent(AddProfileStudentParams params) async {
     return await _dioClient.dio.post(Endpoints.addProfileStudent, data: {
       "techStackId": params.techStack,
       "skillSets": params.skillSet,
-    }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateProfileStudent(
@@ -95,24 +100,25 @@ class ProfileApi {
         data: {
           "techStackId": params.techStack,
           "skillSets": params.skillSet,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getProfileStudent(UpdateProfileStudentParams params) async {
     return await _dioClient.dio
         .get(
-          Interpolator(Endpoints.getProfileStudent)({"studentId": params.id}),
-        )
-        .onError((DioException error, stackTrace) => Future.value(
-                    error.response ??
-                        Response(requestOptions: RequestOptions()))
-                .whenComplete(
-              () => null,
-            ));
+      Interpolator(Endpoints.getProfileStudent)({"studentId": params.id}),
+    )
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateLanguage(UpdateLanguageParams params) async {
@@ -120,11 +126,12 @@ class ProfileApi {
         Interpolator(Endpoints.updateLanguage)({"studentId": params.studentId}),
         data: {
           "languages": params.languages,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getLanguage(UpdateLanguageParams params) async {
@@ -132,11 +139,12 @@ class ProfileApi {
         Interpolator(Endpoints.getLanguage)({"studentId": params.studentId}),
         data: {
           // "languages": params.languages,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateEducation(UpdateEducationParams params) async {
@@ -145,11 +153,12 @@ class ProfileApi {
             {"studentId": params.studentId}),
         data: {
           "education": params.educations,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getEducation(UpdateEducationParams params) async {
@@ -157,11 +166,12 @@ class ProfileApi {
         Interpolator(Endpoints.getEducation)({"studentId": params.studentId}),
         data: {
           // "education": params.educations,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateProjectExperience(
@@ -171,11 +181,12 @@ class ProfileApi {
             {"studentId": params.studentId}),
         data: {
           "experience": params.projectExperiences,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getProjectExperience(
@@ -185,11 +196,12 @@ class ProfileApi {
             {"studentId": params.studentId}),
         data: {
           // "experience": params.projectExperiences,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getResume(UpdateResumeParams params) async {
@@ -197,11 +209,12 @@ class ProfileApi {
         Interpolator(Endpoints.getResume)({"studentId": params.studentId}),
         data: {
           // "education": params.educations,
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateResume(UpdateResumeParams params) async {
@@ -236,9 +249,11 @@ class ProfileApi {
             'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
       },
     ).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
       return Future.value(
           error.response ?? Response(requestOptions: RequestOptions()));
-    }).whenComplete(() => null);
+    });
     // } catch (e) {
     //   return Future.value(Response(
     //       requestOptions: RequestOptions(),
@@ -257,9 +272,11 @@ class ProfileApi {
       // },
     )
         .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
       return Future.value(
           error.response ?? Response(requestOptions: RequestOptions()));
-    }).whenComplete(() => null);
+    });
   }
 
   Future<Response> getTranscript(UpdateTranscriptParams params) async {
@@ -293,9 +310,11 @@ class ProfileApi {
               'upload resume: progress: ${(count / total * 100).toStringAsFixed(0)}% ($count/$total)');
         },
       ).onError((DioException error, stackTrace) {
+        var dioClient = getIt<DioClient>();
+        dioClient.clearDio();
         return Future.value(
             error.response ?? Response(requestOptions: RequestOptions()));
-      }).whenComplete(() => null);
+      });
     } catch (e) {
       return Future.value(Response(
           requestOptions: RequestOptions(),
@@ -323,9 +342,11 @@ class ProfileApi {
       // },
     )
         .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
       return Future.value(
           error.response ?? Response(requestOptions: RequestOptions()));
-    }).whenComplete(() => null);
+    });
     // } catch (e) {
     //   return Future.value(Response(
     //       requestOptions: RequestOptions(),
@@ -336,38 +357,42 @@ class ProfileApi {
   Future<Response> addTechStack(AddTechStackParams params) async {
     return await _dioClient.dio.post(Endpoints.addTechStack, data: {
       "name": params.name,
-    }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getTechStack(AddTechStackParams params) async {
-    return await _dioClient.dio.get(Endpoints.getTechStack,
-        data: {}).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    return await _dioClient.dio.get(Endpoints.getTechStack, data: {}).onError(
+        (DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> addSkillset(AddSkillsetParams params) async {
     return await _dioClient.dio.post(Endpoints.addSkillset, data: {
       "name": params.name,
-    }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getSkillset(AddSkillsetParams params) async {
-    return await _dioClient.dio.get(Endpoints.getSkillset,
-        data: {}).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    return await _dioClient.dio.get(Endpoints.getSkillset, data: {}).onError(
+        (DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 }

@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/usecase/chat/disable_interview.dart';
 
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
+import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:mobx/mobx.dart';
@@ -14,13 +18,19 @@ part 'chat_store.g.dart';
 class ChatStore = _ChatStore with _$ChatStore;
 
 abstract class _ChatStore with Store {
-  _ChatStore(this._getMessageByProjectAndUsersUseCase, this._getAllChatsUseCase,
-      this._scheduleInterviewUseCase);
+  _ChatStore(
+      this._getMessageByProjectAndUsersUseCase,
+      this._getAllChatsUseCase,
+      this._scheduleInterviewUseCase,
+      this._disableInterviewUseCase,
+      this._updateInterviewUseCase);
 
   // student
   final GetMessageByProjectAndUsersUseCase _getMessageByProjectAndUsersUseCase;
   final GetAllChatsUseCase _getAllChatsUseCase;
   final ScheduleInterviewUseCase _scheduleInterviewUseCase;
+  final DisableInterviewUseCase _disableInterviewUseCase;
+  final UpdateInterviewUseCase _updateInterviewUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
 
@@ -208,5 +218,59 @@ abstract class _ChatStore with Store {
         return true;
       }
     });
+  }
+
+  @action
+  Future<bool> disableInterview({
+    required String interviewId,
+  }) async {
+    var params = InterviewParams(interviewId.toString(), "",
+        title: "", endDate: "", startDate: "");
+
+    try {
+      var response = await _disableInterviewUseCase.call(params: params);
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        // var data = response.data['result'];
+        print(response.data);
+        return true;
+      } else {
+        print(response.data);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  @action
+  Future<bool> updateInterview(
+      {required String interview,
+      required String title,
+      required DateTime startTime,
+      required DateTime endTime}) async {
+    var params = InterviewParams(interview, "",
+        title: title,
+        endDate: endTime.toIso8601String(),
+        startDate: startTime.toIso8601String());
+
+    try {
+      var response = await _updateInterviewUseCase.call(params: params);
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        // var data = response.data['result'];
+        print(response.data);
+        return true;
+      } else {
+        print(response.data);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 }

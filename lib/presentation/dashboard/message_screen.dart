@@ -262,7 +262,8 @@ class _MessageScreenState extends State<MessageScreen> {
                                                     0.9)
                                                 .round(),
                                         author: widget.chatObject.chatUser,
-                                        id: const Uuid().v4(),
+                                        id: chatStore
+                                            .currentProjectMessages[i].id,
                                         type: AbstractMessageType.schedule,
                                         status: Status.delivered,
                                         createdAt: DateTime.now()
@@ -274,6 +275,10 @@ class _MessageScreenState extends State<MessageScreen> {
                                     });
                                 _sortMessages();
                               });
+                              chatStore.disableInterview(
+                                  interviewId: chatStore
+                                      .currentProjectMessages[i].metadata!["id"]
+                                      .toString());
                             }
                           },
                         ),
@@ -282,6 +287,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   }
                 },
                 scheduleFilter: InterviewSchedule(
+                    id: t.objectId!,
                     isCancel: t.isCancel,
                     endDate: t.endDate,
                     startDate: t.startDate,
@@ -615,6 +621,7 @@ class _MessageScreenState extends State<MessageScreen> {
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
               author: widget.chatObject.chatUser,
+              // TODO: get interview id
               id: const Uuid().v4(),
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
@@ -643,11 +650,15 @@ class _MessageScreenState extends State<MessageScreen> {
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
                   author: widget.chatObject.chatUser,
-                  id: const Uuid().v4(),
+                  // TODO: get interview id
+                  id: id!,
                   type: AbstractMessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
                   status: Status.delivered,
+                  // TODO: get interview id
+
                   metadata: {
+                    "id": value.objectId,
                     "title": value.title,
                     "endDate": value.endDate,
                     "startDate": value.startDate,
@@ -655,6 +666,14 @@ class _MessageScreenState extends State<MessageScreen> {
                   });
               _sortMessages();
             });
+
+            // TODO: update schedule
+            chatStore.updateInterview(
+              interview: value.objectId!,
+              title: value.title,
+              endTime: value.endDate,
+              startTime: value.startDate,
+            );
           }
         }
       }

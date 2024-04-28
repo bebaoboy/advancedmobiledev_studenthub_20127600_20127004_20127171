@@ -208,7 +208,7 @@ class Singapore extends State<MessageTab> {
                                               .navigatorKey.currentContext!)
                                           .push(MaterialPageRoute2(
                                               routeName:
-                                                  "${Routes.message}/$id",
+                                                  "${Routes.message}/${messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
                                               arguments: WrapMessageList(
                                                   project:
                                                       messages[index].project,
