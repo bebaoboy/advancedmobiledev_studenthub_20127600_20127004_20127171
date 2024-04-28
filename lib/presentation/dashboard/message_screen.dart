@@ -19,6 +19,7 @@ import 'package:boilerplate/presentation/dashboard/components/schedule_bottom_sh
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:collection/collection.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -540,7 +541,7 @@ class _MessageScreenState extends State<MessageScreen> {
         // ToDo: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
-        // default for testing
+        /// default for testing
         // messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
         //   "content": message.text.trim(),
         //   "projectId": 150,
@@ -549,7 +550,6 @@ class _MessageScreenState extends State<MessageScreen> {
         //   "messageFlag": 0 // default 0 for message, 1 for interview
         // });
 
-        // ToDo: uncomment to send real message;
         messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
           "content": message.text.trim(),
           "projectId": widget.chatObject.project!.objectId!,
@@ -611,6 +611,7 @@ class _MessageScreenState extends State<MessageScreen> {
             "meeting_room_code": const Uuid().v1(),
             "meeting_room_id": const Uuid().v4()
           });
+
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
               author: widget.chatObject.chatUser,
@@ -619,6 +620,10 @@ class _MessageScreenState extends State<MessageScreen> {
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: Status.delivered,
               metadata: value.toJson()));
+
+          Duration diff = value.endDate.difference(value.startDate);
+          NotificationHelper.scheduleNewNotification(
+              diff.inMinutes, diff.inHours, diff.inDays);
         } else {
           Toastify.show(context, '', "Schedule interview fail",
               ToastificationType.error, () {});

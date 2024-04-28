@@ -5,6 +5,7 @@ import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -401,10 +402,16 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               //                     .activeSession!.user!.id)
                               //             .toList())));
 
-                              Navigator.of(context).push(MaterialPageRoute2(
-                                  routeName:
-                                      "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
-                                  arguments: users));
+                              // ToDo: pass in right id for call
+                              CallManager.instance.startPreviewMeeting(
+                                  context,
+                                  CallType.VIDEO_CALL,
+                                  {int.parse(user.id)},
+                                  widget.scheduleFilter);
+                              // Navigator.of(context).push(MaterialPageRoute2(
+                              //     routeName:
+                              //         "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
+                              //     arguments: users));
                             },
                           )
                         : Expanded(
