@@ -4,10 +4,16 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
-class ThemeButton extends StatelessWidget {
-  final ThemeStore _themeStore = getIt<ThemeStore>();
+class ThemeButton extends StatefulWidget {
 
-  ThemeButton({super.key});
+  const ThemeButton({super.key});
+
+  @override
+  State<ThemeButton> createState() => _ThemeButtonState();
+}
+
+class _ThemeButtonState extends State<ThemeButton> {
+  final ThemeStore _themeStore = getIt<ThemeStore>();
 
   @override
   Widget build(BuildContext context) {

@@ -198,9 +198,9 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                                   fontWeight: FontWeight.w600),
                               recognizer: TapGestureRecognizer()
                                 ..onTap = () {
-                                  Navigator.of(context).pushReplacement(
+                                  Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute2(
-                                          routeName: Routes.signUpCompany));
+                                          routeName: Routes.signUpCompany), (_) => false);
                                 }),
                         ],
                       ),

@@ -277,10 +277,10 @@ class _SplashScreenState extends State<SplashScreen>
           _controller.stop();
           // ignore: empty_catches
         } catch (e) {}
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+                routeName: userStore.isLoggedIn ? Routes.home : Routes.login), (_) => false);
       });
     }
     // user = utils.users[2];
@@ -290,10 +290,10 @@ class _SplashScreenState extends State<SplashScreen>
           _controller.stop();
           // ignore: empty_catches
         } catch (e) {}
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+                routeName: userStore.isLoggedIn ? Routes.home : Routes.login), (_) => false);
       });
     }
   }
@@ -310,7 +310,7 @@ class _SplashScreenState extends State<SplashScreen>
       _controller.stop();
     } finally {
       try {
-        // Navigator.pushReplacement(
+        // Navigator.pushAndRemoveUntil(
         //     context,
         //     MaterialPageRoute2(
         //         routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));

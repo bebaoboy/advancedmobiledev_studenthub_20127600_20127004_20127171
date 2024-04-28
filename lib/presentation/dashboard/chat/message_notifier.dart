@@ -12,7 +12,7 @@ import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:collection/collection.dart';
 
-import 'package:flutter/foundation.dart' show ChangeNotifier;
+import 'package:flutter/foundation.dart' show ChangeNotifier, kIsWeb;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:socket_io_client/socket_io_client.dart';
 
@@ -33,12 +33,18 @@ class MessageNotifierProvider with ChangeNotifier {
     print(user);
     // TODO: chỉnh thành token hiện tại
     textSocketHandler = IO.io(
-        "https://api.studenthub.dev", // Server url
+        "https://api.studenthub.dev", 
+        (kIsWeb ? // Server url
+        OptionBuilder().setQuery(
+            {'project_id': project?.objectId ?? -1}).setExtraHeaders({
+          'Authorization':
+              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQsImZ1bGxuYW1lIjoiYmFvIGJhbyIsImVtYWlsIjoiYmFvbWlua2h1eW5oQGdtYWlsLmNvbSIsInJvbGVzIjpbMCwxXSwiaWF0IjoxNzE0MjAyOTUzLCJleHAiOjE3MTU0MTI1NTN9.xZrUmpuCkpCYt_6acy0ATG3CA3jU9cFQ9URI2shCiCM',
+        }) :
         OptionBuilder().setTransports(['websocket']).setQuery(
             {'project_id': project?.objectId ?? -1}).setExtraHeaders({
           'Authorization':
               'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQsImZ1bGxuYW1lIjoiYmFvIGJhbyIsImVtYWlsIjoiYmFvbWlua2h1eW5oQGdtYWlsLmNvbSIsInJvbGVzIjpbMCwxXSwiaWF0IjoxNzE0MjAyOTUzLCJleHAiOjE3MTU0MTI1NTN9.xZrUmpuCkpCYt_6acy0ATG3CA3jU9cFQ9URI2shCiCM',
-        }).build());
+        })).build());
 
     //Add authorization to header
     // textSocketHandler.io.options?['extraHeaders'] = {

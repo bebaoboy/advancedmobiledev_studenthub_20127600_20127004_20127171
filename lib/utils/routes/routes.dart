@@ -125,6 +125,11 @@ class Routes {
 
 getRoute(String name, context, {arguments}) {
   try {
+    // print("route = $name, BEBAOBOY");
+    log("route = $name, BEBAOBOY");
+    if (name == "/") {
+      name = Routes.splash;
+    }
     if (name.startsWith(Routes.projectDetails)) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {

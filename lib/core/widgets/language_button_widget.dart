@@ -5,11 +5,16 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:material_dialog/material_dialog.dart';
 
-class LanguageButton extends StatelessWidget {
+class LanguageButton extends StatefulWidget {
+  const LanguageButton({super.key});
+
+  @override
+  State<LanguageButton> createState() => _LanguageButtonState();
+}
+
+class _LanguageButtonState extends State<LanguageButton> {
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final LanguageStore _languageStore = getIt<LanguageStore>();
-
-  LanguageButton({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -137,10 +137,12 @@ Future<void> main() async {
 
     if (!kIsWeb) {
       FlutterError.onError = (FlutterErrorDetails errorDetails) {
+        if (kIsWeb) return;
         FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
       };
       // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
       PlatformDispatcher.instance.onError = (error, stack) {
+        if (kIsWeb) kReleaseMode;
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return kReleaseMode;
       };

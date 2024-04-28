@@ -6,7 +6,6 @@ import 'package:boilerplate/core/widgets/animated_theme_app.dart';
 import 'package:boilerplate/core/widgets/animation_type.dart';
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
-import 'package:boilerplate/presentation/home/splashscreen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
@@ -52,8 +51,8 @@ class _MyAppState extends State<MyApp> {
     onGenerateRoute = (settings) {
       // //print((settings.name ?? "") + settings.arguments.toString());
       return MaterialPageRoute2(
-          routeName: settings.name ?? Routes.home,
-          arguments: settings.arguments);
+          routeName: settings.name ?? Routes.splash,
+          arguments: settings.name == Routes.splash ? null : settings.arguments);
     };
     builder = (context, child) {
       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
@@ -161,7 +160,7 @@ class _MyAppState extends State<MyApp> {
             // Built-in localization of basic text for Cupertino widgets
             GlobalCupertinoLocalizations.delegate,
           ],
-          home: const SplashScreen(),
+          initialRoute: "/",
           navigatorKey: NavigationService.navigatorKey,
           onGenerateRoute: onGenerateRoute,
         );

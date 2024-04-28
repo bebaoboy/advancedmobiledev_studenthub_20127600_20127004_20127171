@@ -1,9 +1,7 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
-import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/onboarding_screen.dart';
-import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
@@ -12,6 +10,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
+import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
 import 'package:boilerplate/presentation/setting/widgets/student_account_widget.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
@@ -550,28 +549,17 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
             ListTile(
                 leading: const Icon(Icons.settings),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute2(
-                          child: Scaffold(
-                        appBar: AppBar(
-                          title: Text(Lang.get("setting_text")),
-                        ),
-                        body: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            ThemeButton(),
-                            LanguageButton(),
-                          ],
-                        ),
-                      )));
+                  Navigator.push(context,
+                          MaterialPageRoute2(child: const RealSettingPage()))
+                      .then(
+                    (value) {
+                      setState(() {});
+                    },
+                  );
                 },
                 title: Text(
                   Lang.get('setting_text'),
-                )),
-            const Divider(
+                )),const Divider(
               height: 3,
             ),
             ListTile(
@@ -632,7 +620,7 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
       Navigator.of(context)
-          .pushReplacement(MaterialPageRoute2(routeName: route));
+          .pushAndRemoveUntil(MaterialPageRoute2(routeName: route), (_) => false);
     });
 
     return Container();

@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:animated_tree_view/animated_tree_view.dart';
-import 'package:boilerplate/core/widgets/language_button_widget.dart';
 import 'package:boilerplate/core/widgets/onboarding_screen.dart';
-import 'package:boilerplate/core/widgets/theme_button_widget.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
@@ -21,6 +21,8 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:material_dialog/material_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 import '../../di/service_locator.dart';
@@ -52,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ) ==
                   null))
         Account(
-            _userStore.user!.email.isNotEmpty
+            _userStore.user!=null && _userStore.user!.email.isNotEmpty
                 ? _userStore.user!
                 : User(email: "", name: "Guest", roles: [UserType.naught]),
             type: UserType.naught,
@@ -488,21 +490,21 @@ class _SettingScreenState extends State<SettingScreen> {
                           loading = true;
                         }
                         try {
-                        if (_userStore.studentId != null) {
-                          final ProfileStudentStore infoStore =
-                              getIt<ProfileStudentStore>();
+                          if (_userStore.studentId != null) {
+                            final ProfileStudentStore infoStore =
+                                getIt<ProfileStudentStore>();
 
-                          infoStore.setStudentId(
-                              _userStore.user!.studentProfile!.objectId!);
-                          await infoStore.getInfo().then(
-                                (value) {},
-                              );
-                          final ProfileStudentFormStore formStore =
-                              getIt<ProfileStudentFormStore>();
-                          await formStore.getProfileStudent(
-                              _userStore.user!.studentProfile!.objectId!);
-                        }
-                        } catch(e) {
+                            infoStore.setStudentId(
+                                _userStore.user!.studentProfile!.objectId!);
+                            await infoStore.getInfo().then(
+                                  (value) {},
+                                );
+                            final ProfileStudentFormStore formStore =
+                                getIt<ProfileStudentFormStore>();
+                            await formStore.getProfileStudent(
+                                _userStore.user!.studentProfile!.objectId!);
+                          }
+                        } catch (e) {
                           ///
                         }
                         try {
@@ -532,23 +534,13 @@ class _SettingScreenState extends State<SettingScreen> {
             ListTile(
                 leading: const Icon(Icons.settings),
                 onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute2(
-                          child: Scaffold(
-                        appBar: AppBar(
-                          title: Text(Lang.get("setting_text")),
-                        ),
-                        body: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            ThemeButton(),
-                            LanguageButton(),
-                          ],
-                        ),
-                      )));
+                  Navigator.push(context,
+                          MaterialPageRoute2(child: const RealSettingPage()))
+                      .then(
+                    (value) {
+                      setState(() {});
+                    },
+                  );
                 },
                 title: Text(
                   Lang.get('setting_text'),
@@ -613,8 +605,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context)
-          .pushReplacement(MaterialPageRoute2(routeName: route));
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute2(routeName: route), (_) => false);
     });
 
     return Container();
@@ -626,5 +618,123 @@ class _SettingScreenState extends State<SettingScreen> {
   void dispose() {
     // ToDO: implement dispose
     super.dispose();
+  }
+}
+
+class RealSettingPage extends StatefulWidget {
+  const RealSettingPage({super.key});
+
+  @override
+  State<RealSettingPage> createState() => _RealSettingPageState();
+}
+
+class _RealSettingPageState extends State<RealSettingPage> {
+  final LanguageStore _languageStore = getIt<LanguageStore>();
+
+  final ThemeStore _themeStore = getIt<ThemeStore>();
+  @override
+  Widget build(BuildContext context) {
+    showDialogModified<T>(
+        {required BuildContext context, required Widget child}) {
+      showDialog<T>(
+        context: context,
+        builder: (BuildContext context) => child,
+      ).then<void>((T? value) {
+        // The value passed to Navigator.pop() or null.
+      });
+    }
+
+    buildLanguageDialog() {
+      showDialogModified<String>(
+        context: context,
+        child: MaterialDialog(
+          borderRadius: 5.0,
+          enableFullWidth: true,
+          title: Text(
+            Lang.get('home_tv_choose_language'),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16.0,
+            ),
+          ),
+          headerColor: Theme.of(context).primaryColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          closeButtonColor: Colors.white,
+          enableCloseButton: true,
+          enableBackButton: false,
+          onCloseButtonClicked: () {
+            Navigator.of(context).pop();
+          },
+          children: _languageStore.supportedLanguages
+              .map(
+                (object) => ListTile(
+                  dense: true,
+                  contentPadding: const EdgeInsets.all(0.0),
+                  title: Text(
+                    object.language,
+                    style: TextStyle(
+                      color: _languageStore.locale == object.locale
+                          ? Theme.of(context).primaryColor
+                          : _themeStore.darkMode
+                              ? Colors.white
+                              : Colors.black,
+                    ),
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    // change user language based on selected locale
+                    _languageStore.changeLanguage(object.locale);
+                  },
+                ),
+              )
+              .toList(),
+        ),
+      );
+    }
+
+    Widget buildLanguageButton() {
+      return ListTile(
+        leading: const Icon(
+          Icons.language,
+        ),
+        title: Text(Lang.get("home_tv_choose_language")),
+        onTap: () {
+          buildLanguageDialog();
+        },
+      );
+    }
+
+    Widget buildThemeButton() {
+      return Observer(
+        builder: (context) {
+          return ListTile(
+            leading: Icon(
+              _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
+            ),
+            title: Text(Lang.get("home_tv_choose_theme")),
+            onTap: () {
+              _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+            },
+          );
+        },
+      );
+    }
+
+    return Observer(builder: (context) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(Lang.get("setting_text")),
+        ),
+        body: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            buildThemeButton(),
+            buildLanguageButton(),
+          ],
+        ),
+      );
+    });
   }
 }

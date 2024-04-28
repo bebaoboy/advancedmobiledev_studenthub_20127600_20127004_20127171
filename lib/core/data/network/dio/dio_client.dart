@@ -35,6 +35,7 @@ class DioClient {
       print("Dio is busy BEBAOBOY");
       if (NavigationService.navigatorKey.currentContext != null) {
         NavbarNotifier2.showSnackBar(
+          duration: const Duration(milliseconds: 100),
           NavigationService.navigatorKey.currentContext!,
           "Dio is busy BEBAOBOY",
           bottom: 60,

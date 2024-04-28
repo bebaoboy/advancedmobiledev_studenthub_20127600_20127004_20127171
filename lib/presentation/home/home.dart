@@ -29,8 +29,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(const Duration(milliseconds: 500), () {
       try {
         if (_userStore.shouldChangePass) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute2(
-              routeName: Routes.forgetPasswordChangePassword));
+          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute2(
+              routeName: Routes.forgetPasswordChangePassword), (_) => false);
         } else if (_userStore.user != null &&
             _userStore.user!.type != UserType.naught &&
             _userStore.user!.email.isNotEmpty) {
@@ -47,8 +47,8 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
           Future.delayed(const Duration(seconds: 1), () {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute2(routeName: Routes.dashboard),
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute2(routeName: Routes.dashboard), (_) => false
             );
           });
         } else {
@@ -130,9 +130,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-                                  Navigator.of(context).pushReplacement(
+                                  Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute2(
-                                        routeName: Routes.dashboard),
+                                        routeName: Routes.dashboard), (_) => false
                                   );
                                 } else {
                                   showAnimatedDialog(
@@ -195,9 +195,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       },
                                     );
                                   }
-                                  Navigator.of(context).pushReplacement(
+                                  Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute2(
-                                        routeName: Routes.dashboard),
+                                        routeName: Routes.dashboard), (_) => false
                                   );
                                 } else {
                                   showAnimatedDialog(
