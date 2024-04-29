@@ -127,9 +127,9 @@ class Routes {
 
 getRoute(String name, context, {arguments}) {
   try {
+    log("route = $name, BEBAOBOY");
     name = name.split(RegExp('(?=[/])'))[0];
     // print("route = $name, BEBAOBOY");
-    log("route = $name, BEBAOBOY");
     if (name == "/") {
       name = Routes.splash;
     }
@@ -215,7 +215,6 @@ getRoute(String name, context, {arguments}) {
       }
     }
 
-    // TODO: if name has /suffix, tách cái root name ra, vd: /message/150-34-94
     return Routes._route[name] ??
         ErrorPage(
           errorDetails: FlutterErrorDetails(exception: {

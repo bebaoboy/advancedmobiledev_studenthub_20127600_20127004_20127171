@@ -255,7 +255,7 @@ class _SplashScreenState extends State<SplashScreen>
               value = await createSession(user);
             } catch (e) {
               log(e.toString(), "BEBAOBOY");
-              user.login = "${userStore.user!.objectId}";
+              user.login = userStore.user!.email;
               user = await signUp(user);
               user.password ??= DEFAULT_PASS;
 

@@ -47,10 +47,11 @@ class ErrorPage extends StatelessWidget {
                 child: SingleChildScrollView(
                   controller: ScrollController(),
                   child: Text(
-                    kDebugMode
-                        // ? 'https://docs.flutter.dev/testing/errors'
-                        ? errorDetails.stack.toString()
-                        : Lang.get("sorry_text"),
+                    // kDebugMode
+                    //     // ? 'https://docs.flutter.dev/testing/errors'
+                    //     ? 
+                        errorDetails.stack.toString(),
+                        // : Lang.get("sorry_text"),
                     textAlign: TextAlign.left,
                     style: const TextStyle(color: Colors.black, fontSize: kDebugMode ? 10 : 20),
                   ),

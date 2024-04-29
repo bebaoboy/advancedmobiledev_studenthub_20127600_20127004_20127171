@@ -35,17 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
             _userStore.user!.type != UserType.naught &&
             _userStore.user!.email.isNotEmpty) {
           print("switch account navigate home");
-          if (_userStore.user!.type == UserType.student) {
-            final ProfileStudentStore infoStore = getIt<ProfileStudentStore>();
-            if (_userStore.user!.studentProfile != null) {
-              infoStore
-                  .setStudentId(_userStore.user!.studentProfile!.objectId!);
-            }
-            infoStore.getInfo().then(
-                  (value) {},
-                );
-          }
-
           Future.delayed(const Duration(seconds: 1), () {
             Navigator.of(context).pushAndRemoveUntil(
               MaterialPageRoute2(routeName: Routes.dashboard), (_) => false

@@ -18,6 +18,8 @@ import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
+import 'package:boilerplate/presentation/login/login.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
@@ -150,10 +152,12 @@ abstract class _UserStore with Store {
               ? (_user!.studentProfile!.objectId ?? "-1")
               : "-1";
   @computed
-  String? get companyId => _user?.type == UserType.company ? _user?.companyProfile?.objectId : null;
+  String? get companyId =>
+      _user?.type == UserType.company ? _user?.companyProfile?.objectId : null;
 
   @computed
-  String? get studentId => _user?.type == UserType.student ? _user?.studentProfile?.objectId : null;
+  String? get studentId =>
+      _user?.type == UserType.student ? _user?.studentProfile?.objectId : null;
 
   @observable
   ObservableFuture<Response?> loginFuture = emptyLoginResponse;
@@ -227,6 +231,10 @@ abstract class _UserStore with Store {
           _getMustChangePassUseCase.call(params: null).then((value) {
             shouldChangePass = value.res;
           });
+
+          if (NavigationService.navigatorKey.currentContext != null) {
+            initCube(NavigationService.navigatorKey.currentContext);
+          }
 
           // _getStudentFavoriteProjectUseCase.call(params: null);
         } else {

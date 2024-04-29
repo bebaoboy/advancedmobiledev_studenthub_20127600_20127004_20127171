@@ -717,6 +717,7 @@ class _MessageScreenState extends State<MessageScreen> {
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
+      isStudent: userStore.user?.type == UserType.student,
       title:
           "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""} (${widget.chatObject.chatUser.id})",
       openScheduleDialog: () async {

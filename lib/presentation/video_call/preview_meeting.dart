@@ -412,7 +412,10 @@ class _BodyLayoutState extends State<BodyLayout> {
                     children: [
                       SizedBox(
                         width: 400,
-                        height: MediaQuery.of(context).orientation == Orientation.portrait ? MediaQuery.of(context).size.height * 0.6 :  MediaQuery.of(context).size.height * 0.53,
+                        height: MediaQuery.of(context).orientation ==
+                                Orientation.portrait
+                            ? MediaQuery.of(context).size.height * 0.6
+                            : MediaQuery.of(context).size.height * 0.53,
                         child: Stack(
                           children: [
                             RTCVideoView(primaryRenderer!.value,

@@ -63,6 +63,10 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="FLUTTER_NOTIFICATION_CLICK" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
         </activity>
         <service android:name="de.julianassmann.flutter_background.IsolateHolderService" android:enabled="true" android:exported="false" android:foregroundServiceType="mediaProjection" />
     </application>

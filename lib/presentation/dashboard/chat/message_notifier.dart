@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
@@ -32,19 +33,22 @@ class MessageNotifierProvider with ChangeNotifier {
   initSocket() async {
     print(user);
     // TODO: chỉnh thành token hiện tại
+    var token = await getIt<SharedPreferenceHelper>().authToken;
     textSocketHandler = IO.io(
-        "https://api.studenthub.dev", 
-        (kIsWeb ? // Server url
-        OptionBuilder().setQuery(
-            {'project_id': project?.objectId ?? -1}).setExtraHeaders({
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQsImZ1bGxuYW1lIjoiYmFvIGJhbyIsImVtYWlsIjoiYmFvbWlua2h1eW5oQGdtYWlsLmNvbSIsInJvbGVzIjpbMCwxXSwiaWF0IjoxNzE0MjAyOTUzLCJleHAiOjE3MTU0MTI1NTN9.xZrUmpuCkpCYt_6acy0ATG3CA3jU9cFQ9URI2shCiCM',
-        }) :
-        OptionBuilder().setTransports(['websocket']).setQuery(
-            {'project_id': project?.objectId ?? -1}).setExtraHeaders({
-          'Authorization':
-              'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MzQsImZ1bGxuYW1lIjoiYmFvIGJhbyIsImVtYWlsIjoiYmFvbWlua2h1eW5oQGdtYWlsLmNvbSIsInJvbGVzIjpbMCwxXSwiaWF0IjoxNzE0MjAyOTUzLCJleHAiOjE3MTU0MTI1NTN9.xZrUmpuCkpCYt_6acy0ATG3CA3jU9cFQ9URI2shCiCM',
-        })).build());
+        "https://api.studenthub.dev",
+        (kIsWeb
+                ? // Server url
+                OptionBuilder().setQuery(
+                    {'project_id': project?.objectId ?? -1}).setExtraHeaders({
+                    'Authorization':
+                        'Bearer $token',
+                  })
+                : OptionBuilder().setTransports(['websocket']).setQuery(
+                    {'project_id': project?.objectId ?? -1}).setExtraHeaders({
+                    'Authorization':
+                        'Bearer $token',
+                  }))
+            .build());
 
     //Add authorization to header
     // textSocketHandler.io.options?['extraHeaders'] = {

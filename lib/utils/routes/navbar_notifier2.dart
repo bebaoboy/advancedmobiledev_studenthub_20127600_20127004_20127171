@@ -335,11 +335,7 @@ class NavbarNotifier2 extends ChangeNotifier {
   static void makeBadgeVisible(int index, bool visible) {
     if (index < 0 || index >= length) return;
     _badges[index] = _badges[index].copyWith(showBadge: visible);
-    try {
-      _singleton.notify();
-    } catch (e) {
-      ///
-    }
+    _singleton.notify();
   }
 
   static void setKeys(List<GlobalKey<NavigatorState>> value) {
@@ -359,7 +355,11 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static set index(int x) {
     _index = x;
-    if (hideBadgeOnPageChanged) makeBadgeVisible(x, false);
+    try {
+      if (hideBadgeOnPageChanged) makeBadgeVisible(x, false);
+    } catch (e) {
+      ///
+    }
     if (_navbarStackHistory.contains(x)) {
       _navbarStackHistory.remove(x);
     }
@@ -489,7 +489,11 @@ class NavbarNotifier2 extends ChangeNotifier {
   }
 
   void notify() {
-    notifyListeners();
+    try {
+      Future.delayed(Duration.zero, notifyListeners);
+    } catch (e) {
+      ///
+    }
   }
 
   static void hideSnackBar(context) {

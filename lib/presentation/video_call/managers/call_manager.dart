@@ -149,6 +149,7 @@ class CallManager {
     P2PSession callSession =
         _callClient!.createCallSession(callType, opponents);
     _currentCall = callSession;
+    log(CubeSessionManager.instance.activeSession.toString());
 
     Navigator.of(context).push(MaterialPageRoute2(
         routeName:

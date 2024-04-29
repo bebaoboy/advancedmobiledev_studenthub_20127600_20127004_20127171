@@ -54,7 +54,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   ) ==
                   null))
         Account(
-            _userStore.user!=null && _userStore.user!.email.isNotEmpty
+            _userStore.user != null && _userStore.user!.email.isNotEmpty
                 ? _userStore.user!
                 : User(email: "", name: "Guest", roles: [UserType.naught]),
             type: UserType.naught,
@@ -327,10 +327,9 @@ class _SettingScreenState extends State<SettingScreen> {
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
         _userStore.success = true;
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute2(
-              routeName: Routes.home,
-            ));
+        Navigator.of(context).pushReplacement(MaterialPageRoute2(
+          routeName: Routes.home,
+        ));
       });
     }
   }
