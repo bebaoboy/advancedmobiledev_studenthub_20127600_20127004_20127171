@@ -324,11 +324,7 @@ class NavbarNotifier2 extends ChangeNotifier {
 
     // We don't navigate to that item when we update its badge. So cannot use this.
     // NavbarNotifier.index = index;
-    try {
-      _singleton.notify();
-    } catch (e) {
-      ///
-    }
+    _singleton.notify();
   }
 
   /// Use to set the visibility of a badge using its [index].
@@ -355,10 +351,8 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static set index(int x) {
     _index = x;
-    try {
-      if (hideBadgeOnPageChanged) makeBadgeVisible(x, false);
-    } catch (e) {
-      ///
+    if (_badges.isNotEmpty && _badges[x].showBadge && hideBadgeOnPageChanged) {
+      _badges[x] = _badges[x].copyWith(showBadge: false);
     }
     if (_navbarStackHistory.contains(x)) {
       _navbarStackHistory.remove(x);
@@ -489,11 +483,7 @@ class NavbarNotifier2 extends ChangeNotifier {
   }
 
   void notify() {
-    try {
-      Future.delayed(Duration.zero, notifyListeners);
-    } catch (e) {
-      ///
-    }
+    notifyListeners();
   }
 
   static void hideSnackBar(context) {

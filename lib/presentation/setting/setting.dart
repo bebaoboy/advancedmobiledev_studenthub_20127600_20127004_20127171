@@ -327,9 +327,11 @@ class _SettingScreenState extends State<SettingScreen> {
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
         _userStore.success = true;
-        Navigator.of(context).pushReplacement(MaterialPageRoute2(
-          routeName: Routes.home,
-        ));
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute2(
+              routeName: Routes.home,
+            ),
+            (_) => false);
       });
     }
   }
@@ -603,8 +605,8 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: route));
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute2(routeName: route));
     });
 
     return Container();

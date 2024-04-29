@@ -80,11 +80,11 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       {
         '/': _userStore.user!.type == UserType.company
             ? KeepAlivePage(DashBoardTab(
-                key: const PageStorageKey(1),
+                key: const PageStorageKey(11),
                 pageController: _pageController,
               ))
             : KeepAlivePage(StudentDashBoardTab(
-                key: const PageStorageKey(1), pageController: sc[1])),
+                key: const PageStorageKey(12), pageController: sc[1])),
         // Routes.projectDetails: ProjectDetailsPage(
         //   project: Project(title: 'som', description: 'smm'),
         // ),

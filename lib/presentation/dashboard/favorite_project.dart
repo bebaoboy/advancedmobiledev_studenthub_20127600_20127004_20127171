@@ -39,7 +39,7 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   @override
   void initState() {
-    future = _projectStore.getStudentFavoriteProject(false,
+    future = _projectStore.getStudentFavoriteProject(true,
         refazynistKey: refazynistKey);
     super.initState();
   }

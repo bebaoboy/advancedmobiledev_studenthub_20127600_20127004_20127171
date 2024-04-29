@@ -687,7 +687,6 @@ class _MessageScreenState extends State<MessageScreen> {
               _sortMessages();
             });
 
-            // TODO: update schedule
             chatStore.updateInterview(
               interview: value.objectId!,
               title: value.title,

@@ -516,6 +516,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
   @override
   void initState() {
     super.initState();
+    print("init nav");
     initialize();
   }
 
@@ -577,6 +578,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
     }
     clearInitialization();
     NavbarNotifier2.removeAllListeners();
+    print("nav dispose");
     super.dispose();
   }
 

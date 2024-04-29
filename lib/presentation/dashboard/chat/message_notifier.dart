@@ -32,7 +32,6 @@ class MessageNotifierProvider with ChangeNotifier {
 
   initSocket() async {
     print(user);
-    // TODO: chỉnh thành token hiện tại
     var token = await getIt<SharedPreferenceHelper>().authToken;
     textSocketHandler = IO.io(
         "https://api.studenthub.dev",
@@ -108,7 +107,6 @@ class MessageNotifierProvider with ChangeNotifier {
   var rand = Random();
 
   void addInbox(Map<String, dynamic> message) {
-    // TODO: check api and change
     String mess = message["messageId"].toString();
 
     if (inbox.firstWhereOrNull(
