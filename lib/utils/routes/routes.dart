@@ -34,6 +34,7 @@ import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/signup/signup.dart';
 import 'package:boilerplate/presentation/signup/signup_company.dart';
 import 'package:boilerplate/presentation/signup/signup_student.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
@@ -126,6 +127,7 @@ class Routes {
 
 getRoute(String name, context, {arguments}) {
   try {
+    name = name.split(RegExp('(?=[/])'))[0];
     // print("route = $name, BEBAOBOY");
     log("route = $name, BEBAOBOY");
     if (name == "/") {
@@ -213,14 +215,19 @@ getRoute(String name, context, {arguments}) {
       }
     }
 
+    // TODO: if name has /suffix, tách cái root name ra, vd: /message/150-34-94
     return Routes._route[name] ??
         ErrorPage(
-          errorDetails: FlutterErrorDetails(
-              exception: {"summary": "Wrong route!", "stack": "name=$name"}),
+          errorDetails: FlutterErrorDetails(exception: {
+            "summary": Lang.get('404'),
+            "stack": "Page: name=$name"
+          }),
         );
   } catch (e) {
     return ErrorPage(
-        errorDetails: FlutterErrorDetails(
-            exception: {"summary": "Wrong route!", "stack": e.toString()}));
+        errorDetails: FlutterErrorDetails(exception: {
+      "summary": Lang.get('error_text'),
+      "stack": e.toString()
+    }));
   }
 }

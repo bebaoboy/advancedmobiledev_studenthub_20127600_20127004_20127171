@@ -30,7 +30,7 @@ class ScheduleInterviewUseCase
           response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.created) {
         var data = response.data['result'];
-        var interview = InterviewSchedule.fromJson(data);
+        var interview = InterviewSchedule.fromJsonApi(data);
         return interview;
       } else {
         print(response.data['errorDetails']);

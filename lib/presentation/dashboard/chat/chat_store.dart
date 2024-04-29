@@ -82,7 +82,9 @@ abstract class _ChatStore with Store {
 
             for (var element in _messages) {
               element.messages?.sort(
-                (a, b) => b.createdAt!.compareTo(a.createdAt!),
+                (a, b) {
+                  return b.updatedAt!.compareTo(a.updatedAt!);
+                },
               );
             }
 
@@ -171,7 +173,9 @@ abstract class _ChatStore with Store {
             // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
             _currentProjectMessages.sort(
-              (a, b) => b.createdAt!.compareTo(a.createdAt!),
+              (a, b) {
+                return b.updatedAt!.compareTo(a.updatedAt!);
+              },
             );
 
             if (setStateCallback != null) setStateCallback();
@@ -253,8 +257,8 @@ abstract class _ChatStore with Store {
       required DateTime endTime}) async {
     var params = InterviewParams(interview, "",
         title: title,
-        endDate: endTime.toIso8601String(),
-        startDate: startTime.toIso8601String());
+        endDate: endTime.toUtc().toIso8601String(),
+        startDate: startTime.toUtc().toIso8601String());
 
     try {
       var response = await _updateInterviewUseCase.call(params: params);

@@ -351,7 +351,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               ),
 
               AutoSizeText(
-                "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
+                "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:mm").format(widget.scheduleFilter.startDate.toLocal())}",
                 // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
@@ -361,7 +361,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 height: 10,
               ),
               AutoSizeText(
-                "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
+                "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:mm").format(widget.scheduleFilter.endDate.toLocal())}",
                 // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
@@ -376,20 +376,22 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (userStore.getCurrentType() == UserType.company)
-                      IconButton(
-                        onPressed: () {
-                          widget.onMenuCallback(widget.scheduleFilter);
-                        },
-                        icon: Icon(
-                          Icons.expand_circle_down_outlined,
-                          color: Theme.of(context).colorScheme.primary,
+                      if (!widget.scheduleFilter.endDate
+                          .isBefore(DateTime.now()))
+                        IconButton(
+                          onPressed: () {
+                            widget.onMenuCallback(widget.scheduleFilter);
+                          },
+                          icon: Icon(
+                            Icons.expand_circle_down_outlined,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                         ),
-                      ),
                     !widget.scheduleFilter.isCancel &&
                             !widget.scheduleFilter.endDate
                                 .isBefore(DateTime.now())
                         ? RoundedButtonWidget(
-                            buttonText: widget.scheduleFilter.startDate
+                            buttonText: !widget.scheduleFilter.startDate
                                     .isBefore(DateTime.now())
                                 ? "Join Early"
                                 : Lang.get("Join"),
@@ -426,7 +428,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             flex: 2,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: Text(
+                              child: Text(widget.scheduleFilter.isCancel ? "Meeting Canceled" :
                                 widget.scheduleFilter.endDate
                                         .isBefore(DateTime.now())
                                     ? "Meeting ended"

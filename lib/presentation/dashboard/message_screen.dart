@@ -203,7 +203,7 @@ class _MessageScreenState extends State<MessageScreen> {
             );
           },
           scheduleMessageBuilder: (p0, {required messageWidth}) {
-            var t = InterviewSchedule.fromJson(p0.metadata!);
+            var t = InterviewSchedule.fromJsonApi(p0.metadata!);
             // print(t);
             // print(messageWidth);
             // print(t.objectId);
@@ -294,8 +294,11 @@ class _MessageScreenState extends State<MessageScreen> {
                     title: t.title),
                 message: ScheduleMessageType(
                     author: p0.author,
+                    metadata: p0.metadata,
                     id: p0.id,
                     type: p0.type,
+                    createdAt: p0.createdAt,
+                    updatedAt: p0.updatedAt,
                     messageWidth:
                         (MediaQuery.of(context).size.width * 0.9).round()),
                 messageWidth: MediaQuery.of(context).size.width * 0.9);
@@ -607,16 +610,18 @@ class _MessageScreenState extends State<MessageScreen> {
           //         projectId: int.parse(widget.chatObject.project!.objectId!))
           //     .then((value1) {
           //   if (value1) {
-          messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", {
+          var ms = {
             "title": value.title,
             "projectId": widget.chatObject.project!.objectId!,
             "senderId": userStore.user!.objectId!,
             "receiverId": _user.id, // notification
-            "startTime": value.startDate.toIso8601String(),
-            "endTime": value.endDate.toIso8601String(),
+            "startTime": value.startDate.toUtc().toIso8601String(),
+            "endTime": value.endDate.toUtc().toIso8601String(),
             "meeting_room_code": const Uuid().v1(),
-            "meeting_room_id": const Uuid().v4()
-          });
+            "meeting_room_id": const Uuid().v4(),
+          };
+          // print(ms);
+          messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", ms);
 
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
@@ -626,7 +631,16 @@ class _MessageScreenState extends State<MessageScreen> {
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: Status.delivered,
-              metadata: value.toJson()));
+              metadata: {
+                "title": value.title,
+                "projectId": widget.chatObject.project!.objectId!,
+                "senderId": userStore.user!.objectId!,
+                "receiverId": _user.id, // notification
+                "startTime": value.startDate,
+                "endTime": value.endDate,
+                "meeting_room_code": const Uuid().v1(),
+                "meeting_room_id": const Uuid().v4(),
+              }));
 
           Duration diff = value.endDate.difference(value.startDate);
           NotificationHelper.scheduleNewNotification(
@@ -650,18 +664,15 @@ class _MessageScreenState extends State<MessageScreen> {
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
                   author: widget.chatObject.chatUser,
-                  // TODO: get interview id
                   id: id!,
                   type: AbstractMessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
                   status: Status.delivered,
-                  // TODO: get interview id
-
                   metadata: {
                     "id": value.objectId,
                     "title": value.title,
-                    "endDate": value.endDate,
-                    "startDate": value.startDate,
+                    "endTime": value.endDate,
+                    "startTime": value.startDate,
                     "isCancel": false,
                   });
               _sortMessages();

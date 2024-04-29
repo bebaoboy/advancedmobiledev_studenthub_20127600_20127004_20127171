@@ -24,11 +24,12 @@ class InterviewApi {
 
   Future<Response> updateInterview(params) async {
     return await _dioClient.dio.patch(
-        Interpolator(Endpoints.updateInterview)({"interviewId": params.interviewId}),
+        Interpolator(Endpoints.updateInterview)(
+            {"interviewId": params.interviewId}),
         data: {
           "title": params.title,
-          "startDate": params.startDate,
-          "endDate": params.endDate,
+          "startTime": params.startDate,
+          "endTime": params.endDate,
         }).onError((DioException error, stackTrace) {
       var dioClient = getIt<DioClient>();
       dioClient.clearDio();
@@ -39,11 +40,12 @@ class InterviewApi {
 
   Future<Response> deleteInterview(params) async {
     return await _dioClient.dio.delete(
-        Interpolator(Endpoints.deleteInterview)({"interviewId": params.interviewId}),
+        Interpolator(Endpoints.deleteInterview)(
+            {"interviewId": params.interviewId}),
         data: {
           "title": params.title,
-          "startDate": params.startDate,
-          "endDate": params.endDate,
+          "startTime": params.startDate,
+          "endTime": params.endDate,
         }).onError((DioException error, stackTrace) {
       var dioClient = getIt<DioClient>();
       dioClient.clearDio();

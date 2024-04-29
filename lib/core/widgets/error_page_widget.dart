@@ -34,10 +34,8 @@ class ErrorPage extends StatelessWidget {
             )),
             const SizedBox(height: 12),
             Text(
-              kDebugMode
-                  ? errorDetails.summary.toString()
-                  : Lang.get('error_text'),
-              textAlign: TextAlign.center,
+              errorDetails.summary.toString()
+,              textAlign: TextAlign.center,
               style: const TextStyle(
                   color: kDebugMode ? Colors.red : Colors.black,
                   fontWeight: FontWeight.bold,
@@ -54,7 +52,7 @@ class ErrorPage extends StatelessWidget {
                         ? errorDetails.stack.toString()
                         : Lang.get("sorry_text"),
                     textAlign: TextAlign.left,
-                    style: const TextStyle(color: Colors.black, fontSize: 10),
+                    style: const TextStyle(color: Colors.black, fontSize: kDebugMode ? 10 : 20),
                   ),
                 ),
               ),
