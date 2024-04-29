@@ -1,5 +1,6 @@
 // ignore_for_file: unused_element
 
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -309,7 +310,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       LimitedBox(
                         maxWidth: MediaQuery.of(context).size.width * 0.5,
                         child: AutoSizeText(
-                          widget.scheduleFilter.title,
+                          widget.scheduleFilter.title.toTitleCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           minFontSize: 7,
@@ -386,11 +387,11 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                         ),
                       ),
                     !widget.scheduleFilter.isCancel &&
-                            !widget.scheduleFilter.endDate
-                                .isBefore(DateTime.now())
+                            !DateTime.now()
+                                .isAfter(widget.scheduleFilter.endDate)
                         ? RoundedButtonWidget(
-                            buttonText: widget.scheduleFilter.startDate
-                                    .isBefore(DateTime.now())
+                            buttonText: DateTime.now()
+                                    .isBefore(widget.scheduleFilter.startDate)
                                 ? "Join Early"
                                 : Lang.get("Join"),
                             buttonTextSize: 12,
@@ -427,8 +428,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text(
-                                widget.scheduleFilter.endDate
-                                        .isBefore(DateTime.now())
+                                DateTime.now()
+                                        .isBefore(widget.scheduleFilter.endDate)
                                     ? "Meeting ended"
                                     : "Meeting Canceled!",
                                 style: TextStyle(

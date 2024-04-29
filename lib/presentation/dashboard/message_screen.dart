@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -601,25 +602,29 @@ class _MessageScreenState extends State<MessageScreen> {
           //         projectId: int.parse(widget.chatObject.project!.objectId!))
           //     .then((value1) {
           //   if (value1) {
+          value.meetingRoomCode = const Uuid().v1();
+          value.meetingRoomId = const Uuid().v4();
           messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", {
-            "title": value.title,
+            "title": value.title.toTitleCase().trim(),
             "projectId": widget.chatObject.project!.objectId!,
             "senderId": userStore.user!.objectId!,
             "receiverId": _user.id, // notification
             "startTime": value.startDate.toIso8601String(),
             "endTime": value.endDate.toIso8601String(),
-            "meeting_room_code": const Uuid().v1(),
-            "meeting_room_id": const Uuid().v4()
+            "meeting_room_code": value.meetingRoomCode,
+            "meeting_room_id": value.meetingRoomId,
           });
 
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
               author: widget.chatObject.chatUser,
-              id: const Uuid().v4(),
+              id: value.meetingRoomId,
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: Status.delivered,
               metadata: value.toJson()));
+
+          _sendMeetingCode(value);
 
           Duration diff = value.endDate.difference(value.startDate);
           NotificationHelper.scheduleNewNotification(
@@ -630,11 +635,13 @@ class _MessageScreenState extends State<MessageScreen> {
         }
         // });
 
-        ////print(filter);
+        // print(filter);
         return value;
         // }
       } else {
         if (value != null) {
+          value.meetingRoomCode = const Uuid().v1();
+          value.meetingRoomId = const Uuid().v4();
           int i = chatStore.currentProjectMessages
               .indexWhere((element) => element.id == id);
           if (i != -1) {
@@ -643,7 +650,7 @@ class _MessageScreenState extends State<MessageScreen> {
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
                   author: widget.chatObject.chatUser,
-                  id: const Uuid().v4(),
+                  id: value.meetingRoomId,
                   type: AbstractMessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
                   status: Status.delivered,
@@ -680,6 +687,18 @@ class _MessageScreenState extends State<MessageScreen> {
                     .toList(),
               )),
     );
+  }
+
+  _sendMeetingCode(InterviewSchedule interviewSchedule) {
+    messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+      "content": '''Meeting: ${interviewSchedule.title}
+Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
+          ''',
+      "projectId": widget.chatObject.project!.objectId!,
+      "senderId": _user.id,
+      "receiverId": userStore.user!.objectId!, // notification
+      "messageFlag": 0
+    });
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();

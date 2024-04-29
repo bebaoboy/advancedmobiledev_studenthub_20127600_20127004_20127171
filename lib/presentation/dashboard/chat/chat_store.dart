@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
+import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
 part 'chat_store.g.dart';
@@ -15,12 +20,13 @@ class ChatStore = _ChatStore with _$ChatStore;
 
 abstract class _ChatStore with Store {
   _ChatStore(this._getMessageByProjectAndUsersUseCase, this._getAllChatsUseCase,
-      this._scheduleInterviewUseCase);
+      this._scheduleInterviewUseCase, this._checkAvailUseCase);
 
   // student
   final GetMessageByProjectAndUsersUseCase _getMessageByProjectAndUsersUseCase;
   final GetAllChatsUseCase _getAllChatsUseCase;
   final ScheduleInterviewUseCase _scheduleInterviewUseCase;
+  final CheckMeetingAvailabilityUseCase _checkAvailUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
 
@@ -36,13 +42,31 @@ abstract class _ChatStore with Store {
   @observable
   Map<String, WrapMessageList> _projectMessages = {};
 
-  static ObservableFuture<List?> emptyLoginResponse =
+  static ObservableFuture<List?> emptyFetchResponse =
+      ObservableFuture.value(null);
+
+  static ObservableFuture<Response?> emptyCheckResponse =
       ObservableFuture.value(null);
 
   @observable
-  ObservableFuture<List?> fetchChatHistoryFuture = emptyLoginResponse;
+  ObservableFuture<List?> fetchChatHistoryFuture = emptyFetchResponse;
 
   bool get isFetching => fetchChatHistoryFuture.status == FutureStatus.pending;
+
+  @observable
+  ObservableFuture<Response?> checkFuture = emptyCheckResponse;
+
+  bool get isChecking => checkFuture.status == FutureStatus.pending;
+
+  @observable
+  String meetingCode = '';
+
+  void setCode(String value) {
+    meetingCode = value.trim();
+  }
+
+  @computed
+  bool get canCall => meetingCode.isNotEmpty;
 
   // ToDo:
   // for storing sent message while in fetching mode
@@ -190,7 +214,7 @@ abstract class _ChatStore with Store {
       required String title,
       required DateTime startTime,
       required DateTime endTime}) async {
-    var params = InterviewParams("", "",
+    var params = InterviewParams("", "", "", "",
         title: title,
         startDate: startTime.toIso8601String(),
         endDate: endTime.toIso8601String());
@@ -208,5 +232,33 @@ abstract class _ChatStore with Store {
         return true;
       }
     });
+  }
+
+  @action
+  Future<bool> checkMeetingAvailability(
+      InterviewSchedule info, String projectId) async {
+    try {
+      var params = InterviewParams(
+          info.objectId, "", info.meetingRoomId, info.meetingRoomCode,
+          title: info.title,
+          startDate: info.startDate.toIso8601String(),
+          endDate: info.endDate.toIso8601String());
+
+      var future = _checkAvailUseCase.call(params: params);
+      checkFuture = ObservableFuture(future);
+
+      var response = await future;
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.created ||
+          response.statusCode == HttpStatus.ok) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      errorStore.errorMessage = "Failed to check";
+      return false;
+    }
   }
 }

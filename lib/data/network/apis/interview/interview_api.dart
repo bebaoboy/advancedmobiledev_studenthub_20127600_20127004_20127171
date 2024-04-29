@@ -46,4 +46,14 @@ class InterviewApi {
         .onError(
             (DioException error, stackTrace) => Future.value(error.response));
   }
+
+  Future<Response> checkAvail(params) async {
+    return await _dioClient.dio.get(
+      Endpoints.checkAvail, data: {
+        "meeting_room_code": params.meetingCode,
+        "meeting_room_id": params.meetingId,
+      }
+    ).onError(
+        (DioException error, stackTrace) => Future.value(error.response));
+  }
 }
