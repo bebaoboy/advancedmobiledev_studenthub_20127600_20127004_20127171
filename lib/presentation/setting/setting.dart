@@ -327,11 +327,10 @@ class _SettingScreenState extends State<SettingScreen> {
         //     account.user.email, "", account.type, account.user.roles!,
         //     fastSwitch: true);
         _userStore.success = true;
-        Navigator.of(context).pushAndRemoveUntil(
+        Navigator.of(context).pushReplacement(
             MaterialPageRoute2(
               routeName: Routes.home,
-            ),
-            (Route<dynamic> route) => false);
+            ));
       });
     }
   }

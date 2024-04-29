@@ -1,8 +1,10 @@
 // ignore_for_file: empty_catches
 
 import 'package:boilerplate/core/widgets/pip/navigatable_pip_widget.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
@@ -135,6 +137,23 @@ class CallManager {
         CallKitManager.instance.processCallFinished(callSession.sessionId);
       }
     };
+  }
+
+  void startPreviewMeeting(BuildContext context, int callType,
+      Set<int> opponents, InterviewSchedule interviewSchedule) async {
+    if (opponents.isEmpty) return;
+
+    if (Platform.isIOS) {
+      Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
+    }
+    P2PSession callSession =
+        _callClient!.createCallSession(callType, opponents);
+    _currentCall = callSession;
+
+    Navigator.of(context).push(MaterialPageRoute2(
+        routeName:
+            "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
+        arguments: [users, interviewSchedule, callSession]));
   }
 
   void startNewCall(

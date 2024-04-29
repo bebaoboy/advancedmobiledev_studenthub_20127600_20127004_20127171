@@ -370,6 +370,7 @@ class InterviewSchedule extends MyObject {
   DateTime endDate = DateTime.now();
   bool isCancel = false;
   String meetingRoomId;
+  String meetingRoomCode;
 
   InterviewSchedule({
     required this.title,
@@ -381,6 +382,7 @@ class InterviewSchedule extends MyObject {
     super.createdAt,
     super.updatedAt,
     this.meetingRoomId = "-1",
+    this.meetingRoomCode = "-1",
   }) : super(objectId: id);
 
   clear() {
@@ -411,6 +413,7 @@ class InterviewSchedule extends MyObject {
             : json["startDate"] as DateTime,
         isCancel = json["isCancel"] ?? false,
         meetingRoomId = "-1",
+        meetingRoomCode = "-1",
         super(objectId: json["id"].toString());
 
   InterviewSchedule.fromJsonApi(Map<String, dynamic> json)
@@ -423,7 +426,8 @@ class InterviewSchedule extends MyObject {
             ? DateTime.now()
             : DateTime.tryParse(json['startTime']) ?? DateTime.now(),
         isCancel = (json["disableFlag"] ?? 0) == 1,
-        meetingRoomId = (json["meetingRoomId"] ?? "-1").toString(),
+        meetingRoomId = (json["meeting_room_id"] ?? "-1").toString(),
+        meetingRoomCode = (json["meeting_room_code"] ?? '-1').toString(),
         super(
             objectId: json["id"].toString(),
             createdAt: DateTime.tryParse(json["createdAt"]) ?? DateTime.now(),

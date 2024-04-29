@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
@@ -198,9 +199,12 @@ getRoute(String name, context, {arguments}) {
 
     if (name.startsWith(Routes.previewMeeting)) {
       if (arguments != null) {
-        var users = arguments as List<CubeUser>;
+        var users = arguments[0] as List<CubeUser>;
+        var interviewSchedule = arguments[1] as InterviewSchedule;
+        var callSession = arguments[2] as P2PSession;
         return PreviewMeetingScreen(
-            CubeSessionManager.instance.activeSession!.user!,
+            CubeSessionManager.instance.activeSession!.user!, callSession,
+            interviewSchedule: interviewSchedule,
             users: users
                 .where((user) =>
                     user.id !=

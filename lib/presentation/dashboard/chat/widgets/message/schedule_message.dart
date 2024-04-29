@@ -1,14 +1,16 @@
 // ignore_for_file: unused_element
 
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
-import 'package:boilerplate/presentation/video_call/utils/configs.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
@@ -210,6 +212,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
     super.dispose();
   }
 
+  var userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
     var user = widget.user;
@@ -306,7 +310,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       LimitedBox(
                         maxWidth: MediaQuery.of(context).size.width * 0.5,
                         child: AutoSizeText(
-                          widget.scheduleFilter.title,
+                          widget.scheduleFilter.title.toTitleCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           minFontSize: 7,
@@ -372,18 +376,24 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        widget.onMenuCallback(widget.scheduleFilter);
-                      },
-                      icon: Icon(
-                        Icons.expand_circle_down_outlined,
-                        color: Theme.of(context).colorScheme.primary,
+                    if (userStore.getCurrentType() == UserType.company)
+                      IconButton(
+                        onPressed: () {
+                          widget.onMenuCallback(widget.scheduleFilter);
+                        },
+                        icon: Icon(
+                          Icons.expand_circle_down_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
-                    ),
-                    !widget.scheduleFilter.isCancel
+                    !widget.scheduleFilter.isCancel &&
+                            !DateTime.now()
+                                .isAfter(widget.scheduleFilter.endDate)
                         ? RoundedButtonWidget(
-                            buttonText: Lang.get("Join"),
+                            buttonText: DateTime.now()
+                                    .isBefore(widget.scheduleFilter.startDate)
+                                ? "Join Early"
+                                : Lang.get("Join"),
                             buttonTextSize: 12,
                             textColor: Theme.of(context).colorScheme.primary,
                             borderColor: Theme.of(context).colorScheme.primary,
@@ -401,20 +411,33 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               //                     .activeSession!.user!.id)
                               //             .toList())));
 
-                              Navigator.of(context).push(MaterialPageRoute2(
-                                  routeName:
-                                      "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
-                                  arguments: users));
+                              // ToDo: pass in right id for call
+                              CallManager.instance.startPreviewMeeting(
+                                  context,
+                                  CallType.VIDEO_CALL,
+                                  {-1},
+                                  widget.scheduleFilter);
+                              // Navigator.of(context).push(MaterialPageRoute2(
+                              //     routeName:
+                              //         "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
+                              //     arguments: users));
                             },
                           )
                         : Expanded(
                             flex: 2,
-                            child: Text(
-                              "Meeting Canceled!",
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                DateTime.now()
+                                        .isBefore(widget.scheduleFilter.endDate)
+                                    ? "Meeting ended"
+                                    : "Meeting Canceled!",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
                             ),
                           ),
                   ],
