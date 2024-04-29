@@ -6,9 +6,10 @@ import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ChatAppBar(
-      {super.key, required this.title, required this.openScheduleDialog});
+      {super.key, required this.title, required this.openScheduleDialog, required this.isStudent});
   final String title;
   final Function openScheduleDialog;
+  final bool isStudent;
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
       actions: [
         // LanguageButton(),
         // ThemeButton(),
-        IconButton(
+        if(!isStudent) IconButton(
           onPressed: () {
             showBottomSheet();
           },

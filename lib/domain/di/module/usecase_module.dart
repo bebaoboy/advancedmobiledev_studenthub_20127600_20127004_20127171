@@ -5,10 +5,13 @@ import 'package:boilerplate/domain/repository/interview/interview_repository.dar
 import 'package:boilerplate/domain/repository/post/post_repository.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
+import 'package:boilerplate/domain/usecase/chat/delete_interview.dart';
+import 'package:boilerplate/domain/usecase/chat/disable_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
+import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/domain/usecase/post/delete_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
@@ -245,11 +248,10 @@ mixin UseCaseModule {
       UpdateProposalUseCase(getIt<ProjectRepository>()),
     );
 
+    // chat:--------------------------------------------------------------------
     getIt.registerSingleton<GetMessageByProjectAndUsersUseCase>(
       GetMessageByProjectAndUsersUseCase(getIt<ChatRepository>()),
     );
-
-    // chat:--------------------------------------------------------------------
 
     getIt.registerSingleton<GetAllChatsUseCase>(
       GetAllChatsUseCase(getIt<ChatRepository>()),
@@ -259,6 +261,18 @@ mixin UseCaseModule {
       ScheduleInterviewUseCase(getIt<InterviewRepository>()),
     );
 
+    getIt.registerSingleton<DisableInterviewUseCase>(
+      DisableInterviewUseCase(getIt<InterviewRepository>()),
+    );
+
+    getIt.registerSingleton<UpdateInterviewUseCase>(
+      UpdateInterviewUseCase(getIt<InterviewRepository>()),
+    );
+
+    getIt.registerSingleton<DeleteInterviewUseCase>(
+      DeleteInterviewUseCase(getIt<InterviewRepository>()),
+    );
+    
     getIt.registerSingleton<CheckMeetingAvailabilityUseCase>(
       CheckMeetingAvailabilityUseCase(getIt<InterviewRepository>()),
     );

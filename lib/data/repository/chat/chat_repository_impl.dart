@@ -91,6 +91,9 @@ class ChatRepositoryImpl extends ChatRepository {
                 'interview': element['interview'] ?? {},
                 'createdAt':
                     DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
+                'updatedAt':
+                    DateTime.parse(element['updatedAt'] ?? element['createdAt'])
+                        .millisecondsSinceEpoch,
                 'author': {
                   "firstName": element['sender']['fullname'],
                   "id": element['sender']['id'].toString(),

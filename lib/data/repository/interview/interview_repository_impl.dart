@@ -33,7 +33,7 @@ class InterviewRepositoryImpl extends InterviewRepository {
 
   @override
   Future<Response> updateMeeting(params) {
-    var response = _interviewApi.scheduleInterview(params);
+    var response = _interviewApi.updateInterview(params);
     return response;
   }
 }

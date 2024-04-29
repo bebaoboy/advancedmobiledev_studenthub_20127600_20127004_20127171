@@ -255,7 +255,7 @@ class _SplashScreenState extends State<SplashScreen>
               value = await createSession(user);
             } catch (e) {
               log(e.toString(), "BEBAOBOY");
-              user.login = "${userStore.user!.objectId}";
+              user.login = userStore.user!.email;
               user = await signUp(user);
               user.password ??= DEFAULT_PASS;
 
@@ -277,10 +277,14 @@ class _SplashScreenState extends State<SplashScreen>
           _controller.stop();
           // ignore: empty_catches
         } catch (e) {}
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login), (_) => false);
+        var ctx = NavigationService.navigatorKey.currentContext ?? context;
+        if (!Navigator.canPop(ctx)) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute2(
+                  routeName: userStore.isLoggedIn ? Routes.home : Routes.login),
+              (_) => false);
+        }
       });
     }
     // user = utils.users[2];
@@ -290,10 +294,14 @@ class _SplashScreenState extends State<SplashScreen>
           _controller.stop();
           // ignore: empty_catches
         } catch (e) {}
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login), (_) => false);
+        var ctx = NavigationService.navigatorKey.currentContext ?? context;
+        if (!Navigator.canPop(ctx)) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute2(
+                  routeName: userStore.isLoggedIn ? Routes.home : Routes.login),
+              (_) => false);
+        }
       });
     }
   }

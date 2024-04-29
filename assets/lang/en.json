@@ -246,6 +246,7 @@
   "start_working_project": "Make working done",
 
   "error_text": "Oops! Something went wrong!",
+  "404": "404, Page not found!",
   "sorry_text": "We encountered an error and have notified our engineering team about it. Sorry for this inconvenience :'(.",
   "reject_file_text": "File type not supported: ",
   "result": "Result",

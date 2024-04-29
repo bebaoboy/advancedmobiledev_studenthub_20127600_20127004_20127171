@@ -1,5 +1,6 @@
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/project/update_favorite.dart';
 import 'package:boilerplate/domain/usecase/project/create_project.dart';
@@ -32,47 +33,47 @@ class ProjectApi {
     }
     return await _dioClient.dio
         .get(Endpoints.getProjects, data: {}, queryParameters: q)
-        .onError((DioException error, stackTrace) => Future.value(
-                    error.response ??
-                        Response(requestOptions: RequestOptions()))
-                .whenComplete(
-              () => null,
-            ));
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getProjectByCompany(GetProjectByCompanyParams params) async {
     return await _dioClient.dio
         .get(
-          Interpolator(Endpoints.getCurrentCompanyProjects)(
-              {"companyId": params.companyId}),
-          queryParameters: params.typeFlag != null
-              ? {"typeFlag": params.typeFlag.toString()}
-              : null,
-        )
-        .onError((DioException error, stackTrace) => Future.value(
-                    error.response ??
-                        Response(requestOptions: RequestOptions()))
-                .whenComplete(
-              () => null,
-            ));
+      Interpolator(Endpoints.getCurrentCompanyProjects)(
+          {"companyId": params.companyId}),
+      queryParameters: params.typeFlag != null
+          ? {"typeFlag": params.typeFlag.toString()}
+          : null,
+    )
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getStudentProposalProjects(
       GetStudentProposalProjectsParams params) async {
     return await _dioClient.dio
         .get(
-          Interpolator(Endpoints.getStudentProposalProjects)(
-              {"studentId": params.studentId}),
-          queryParameters: params.statusFlag != null
-              ? {"statusFlag": params.statusFlag.toString()}
-              : null,
-        )
-        .onError((DioException error, stackTrace) => Future.value(
-                    error.response ??
-                        Response(requestOptions: RequestOptions()))
-                .whenComplete(
-              () => null,
-            ));
+      Interpolator(Endpoints.getStudentProposalProjects)(
+          {"studentId": params.studentId}),
+      queryParameters: params.statusFlag != null
+          ? {"statusFlag": params.statusFlag.toString()}
+          : null,
+    )
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> postProposal(PostProposalParams params) async {
@@ -82,11 +83,12 @@ class ProjectApi {
       "coverLetter": params.coverLetter,
       "statusFlag": params.status,
       "disableFlag": params.disableFlag
-    }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+    }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateProposal(UpdateProposalParams params) async {
@@ -96,28 +98,28 @@ class ProjectApi {
           "coverLetter": params.coverLetter,
           "statusFlag": params.status,
           "disableFlag": params.disableFlag
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getStudentFavoriteProjects(String studentId) async {
     return await _dioClient.dio
         .get(
-          Interpolator(Endpoints.getUserFavoriteProjects)(
-              {"studentId": studentId}),
-          // queryParameters: params.statusFlag != null
-          //     ? {"statusFlag": params.statusFlag.toString()}
-          //     : null,
-        )
-        .onError((DioException error, stackTrace) => Future.value(
-                    error.response ??
-                        Response(requestOptions: RequestOptions()))
-                .whenComplete(
-              () => null,
-            ));
+      Interpolator(Endpoints.getUserFavoriteProjects)({"studentId": studentId}),
+      // queryParameters: params.statusFlag != null
+      //     ? {"statusFlag": params.statusFlag.toString()}
+      //     : null,
+    )
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateCompanyProject(UpdateProjectParams params) async {
@@ -135,12 +137,12 @@ class ProjectApi {
             Interpolator(Endpoints.updateProject)(
                 {"projectId": params.projectId}),
             data: p)
-        .onError((DioException error, stackTrace) => Future.value(
-                    error.response ??
-                        Response(requestOptions: RequestOptions()))
-                .whenComplete(
-              () => null,
-            ));
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> createProjects(CreateProjectParams params) async {
@@ -152,6 +154,8 @@ class ProjectApi {
       "typeFlag": params.typeFlag ? 0 : 1,
       "numberOfStudents": params.numberOfStudents,
     }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
       if (error.response != null) {
         return Future.value(
             error.response ?? Response(requestOptions: RequestOptions()));
@@ -165,10 +169,12 @@ class ProjectApi {
   Future<Response> deleteProjects(DeleteProjectParams params) async {
     return await _dioClient.dio.delete(
         Interpolator(Endpoints.deleteProject)({"projectId": params.Id}),
-        data: {}).onError((DioException error,
-            stackTrace) =>
-        Future.value(
-            error.response ?? Response(requestOptions: RequestOptions())));
+        data: {}).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> updateFavoriteProjects(
@@ -179,22 +185,24 @@ class ProjectApi {
         data: {
           "projectId": int.parse(params.projectId),
           "disableFlag": params.disableFlag ? 0 : 1
-        }).onError((DioException error, stackTrace) => Future.value(
-                error.response ?? Response(requestOptions: RequestOptions()))
-            .whenComplete(
-          () => null,
-        ));
+        }).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   Future<Response> getProjectProposals(Project params) async {
-    return await _dioClient.dio
-        .get(
-            Interpolator(Endpoints.getCandidatesOfProject)(
-                {"projectId": params.objectId}),
-            queryParameters: {})
-        .onError((DioException error, stackTrace) => Future.value(
-            error.response ?? Response(requestOptions: RequestOptions())))
-        .whenComplete(() => null);
+    return await _dioClient.dio.get(
+        Interpolator(Endpoints.getCandidatesOfProject)(
+            {"projectId": params.objectId}),
+        queryParameters: {}).onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
   }
 
   // Future<Response> filterProjects() async {

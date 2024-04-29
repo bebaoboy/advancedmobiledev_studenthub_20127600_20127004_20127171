@@ -34,6 +34,7 @@ class DioClient {
     } else {
       print("Dio is busy BEBAOBOY");
       if (NavigationService.navigatorKey.currentContext != null) {
+        // TODO:Delete this line
         NavbarNotifier2.showSnackBar(
           duration: const Duration(milliseconds: 100),
           NavigationService.navigatorKey.currentContext!,

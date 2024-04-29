@@ -34,13 +34,14 @@ import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/signup/signup.dart';
 import 'package:boilerplate/presentation/signup/signup_company.dart';
 import 'package:boilerplate/presentation/signup/signup_student.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
   Routes._();
 
   //static variables
-  static const String splash = '/splash';
+  static const String splash = '/';
   static const String login = '/login';
   static const String signUp = '/signup';
   static const String signUpCompany = '/signup-company';
@@ -48,7 +49,7 @@ class Routes {
   static const String profileStudent = '/profile-student';
   static const String profileStudentStep2 = '/profile-student-step2';
   static const String profileStudentStep3 = '/profile-student-step3';
-  static const String home = '/post';
+  static const String home = '/home';
   static const String welcome = '/welcome';
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';
@@ -126,8 +127,9 @@ class Routes {
 
 getRoute(String name, context, {arguments}) {
   try {
-    // print("route = $name, BEBAOBOY");
     log("route = $name, BEBAOBOY");
+    name = name.split(RegExp('(?=[/])'))[0];
+    // print("route = $name, BEBAOBOY");
     if (name == "/") {
       name = Routes.splash;
     }
@@ -215,12 +217,16 @@ getRoute(String name, context, {arguments}) {
 
     return Routes._route[name] ??
         ErrorPage(
-          errorDetails: FlutterErrorDetails(
-              exception: {"summary": "Wrong route!", "stack": "name=$name"}),
+          errorDetails: FlutterErrorDetails(exception: {
+            "summary": Lang.get('404'),
+            "stack": "Page: name=$name"
+          }),
         );
   } catch (e) {
     return ErrorPage(
-        errorDetails: FlutterErrorDetails(
-            exception: {"summary": "Wrong route!", "stack": e.toString()}));
+        errorDetails: FlutterErrorDetails(exception: {
+      "summary": Lang.get('error_text'),
+      "stack": e.toString()
+    }));
   }
 }

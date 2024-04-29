@@ -134,7 +134,7 @@ Future<void> main() async {
     }
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
+    
     if (!kIsWeb) {
       FlutterError.onError = (FlutterErrorDetails errorDetails) {
         if (kIsWeb) return;
@@ -142,7 +142,7 @@ Future<void> main() async {
       };
       // Pass all uncaught asynchronous errors that aren't handled by the Flutter framework to Crashlytics
       PlatformDispatcher.instance.onError = (error, stack) {
-        if (kIsWeb) kReleaseMode;
+        if (kIsWeb) return kReleaseMode;
         FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
         return kReleaseMode;
       };

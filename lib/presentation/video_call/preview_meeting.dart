@@ -200,6 +200,8 @@ class _BodyLayoutState extends State<BodyLayout> {
   @override
   void dispose() {
     try {
+      CallManager.instance.hungUp();
+
       primaryRenderer?.value.srcObject = null;
       primaryRenderer?.value.dispose();
 

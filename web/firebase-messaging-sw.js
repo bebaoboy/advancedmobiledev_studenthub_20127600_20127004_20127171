@@ -12,8 +12,45 @@ firebase.initializeApp({
 });
 // Necessary to receive background messages:
 const messaging = firebase.messaging();
+const channel = new BroadcastChannel('sw-messages');
 
 // Optional:
 messaging.onBackgroundMessage((m) => {
   console.log("onBackgroundMessageWEBB", m);
+  // channel.postMessage(
+  //   m
+  // );
+});
+
+// messaging.setBackgroundMessageHandler(function (payload) {
+//   const promiseChain = clients
+//       .matchAll({
+//           type: "window",
+//           includeUncontrolled: true
+//       })
+//       .then(windowClients => {
+//           for (let i = 0; i < windowClients.length; i++) {
+//               const windowClient = windowClients[i];
+//               windowClient.postMessage(payload);
+//           }
+//       })
+//       .then(() => {
+//           const title = payload.notification.title;
+//           const options = {
+//               body: payload.notification.score
+//             };
+//           return registration.showNotification(title, options);
+//       });
+//   return promiseChain;
+// });
+
+self.addEventListener('notificationclick', function (event) {
+  console.log('notification clicked: ', event);
+  // if('FCM_MSG' in event.notification.data)
+  // {
+  //   console.log("onNotificationClickevent", {'fcm_data': event.notification.data.FCM_MSG, 'clicked' : 'true'});
+  //   channel.postMessage(
+  //     {'fcm_data': event.notification.data.FCM_MSG, 'clicked' : 'true'}
+  //   );
+  // }
 });

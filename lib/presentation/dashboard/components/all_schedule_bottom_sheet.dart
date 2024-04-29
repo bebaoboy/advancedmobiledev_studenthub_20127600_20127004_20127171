@@ -115,7 +115,7 @@ class _AllScheduleBottomSheetState extends State<AllScheduleBottomSheet> {
                   itemCount: widget.filter.length,
                   itemBuilder: (context, index) {
                     var p0 = widget.filter[index];
-                    var t = InterviewSchedule.fromJson(p0.metadata!);
+                    var t = InterviewSchedule.fromJsonApi(p0.metadata!);
 
                     return ScheduleMessage(
                         scheduleFilter: InterviewSchedule(

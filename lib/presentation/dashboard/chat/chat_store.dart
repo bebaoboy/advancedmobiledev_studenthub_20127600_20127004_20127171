@@ -3,12 +3,14 @@ import 'dart:io';
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/usecase/chat/disable_interview.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
+import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:dio/dio.dart';
@@ -19,13 +21,20 @@ part 'chat_store.g.dart';
 class ChatStore = _ChatStore with _$ChatStore;
 
 abstract class _ChatStore with Store {
-  _ChatStore(this._getMessageByProjectAndUsersUseCase, this._getAllChatsUseCase,
-      this._scheduleInterviewUseCase, this._checkAvailUseCase);
+  _ChatStore(
+      this._getMessageByProjectAndUsersUseCase,
+      this._getAllChatsUseCase,
+      this._scheduleInterviewUseCase,
+      this._checkAvailUseCase,
+      this._disableInterviewUseCase,
+      this._updateInterviewUseCase);
 
   // student
   final GetMessageByProjectAndUsersUseCase _getMessageByProjectAndUsersUseCase;
   final GetAllChatsUseCase _getAllChatsUseCase;
   final ScheduleInterviewUseCase _scheduleInterviewUseCase;
+  final DisableInterviewUseCase _disableInterviewUseCase;
+  final UpdateInterviewUseCase _updateInterviewUseCase;
   final CheckMeetingAvailabilityUseCase _checkAvailUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
@@ -96,7 +105,9 @@ abstract class _ChatStore with Store {
 
             for (var element in _messages) {
               element.messages?.sort(
-                (a, b) => b.createdAt!.compareTo(a.createdAt!),
+                (a, b) {
+                  return b.updatedAt!.compareTo(a.updatedAt!);
+                },
               );
             }
 
@@ -185,7 +196,9 @@ abstract class _ChatStore with Store {
             // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
             _currentProjectMessages.sort(
-              (a, b) => b.createdAt!.compareTo(a.createdAt!),
+              (a, b) {
+                return b.updatedAt!.compareTo(a.updatedAt!);
+              },
             );
 
             if (setStateCallback != null) setStateCallback();
@@ -235,6 +248,60 @@ abstract class _ChatStore with Store {
   }
 
   @action
+  Future<bool> disableInterview({
+    required String interviewId,
+  }) async {
+    var params = InterviewParams(interviewId.toString(), "", "", "",
+        title: "", endDate: "", startDate: "");
+
+    try {
+      var response = await _disableInterviewUseCase.call(params: params);
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        // var data = response.data['result'];
+        print(response.data);
+        return true;
+      } else {
+        print(response.data);
+        return false;
+      }
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  @action
+  Future<bool> updateInterview(
+      {required String interview,
+      required String title,
+      required DateTime startTime,
+      required DateTime endTime}) async {
+    var params = InterviewParams(interview, "", "", "",
+        title: title,
+        endDate: endTime.toUtc().toIso8601String(),
+        startDate: startTime.toUtc().toIso8601String());
+
+    try {
+      var response = await _updateInterviewUseCase.call(params: params);
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        // var data = response.data['result'];
+        print(response.data);
+        return true;
+      } else {
+        print(response.data);
+         return false;
+      }
+    } catch (e) {
+      print(e);
+
+      errorStore.errorMessage = "Failed to check";
+      return false;
+    }
+  }
   Future<bool> checkMeetingAvailability(
       InterviewSchedule info, String projectId) async {
     try {
@@ -257,6 +324,7 @@ abstract class _ChatStore with Store {
       }
     } catch (e) {
       print(e);
+
       errorStore.errorMessage = "Failed to check";
       return false;
     }

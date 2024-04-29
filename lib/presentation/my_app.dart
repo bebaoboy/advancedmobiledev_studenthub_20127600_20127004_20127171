@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     onGenerateRoute = (settings) {
-      // //print((settings.name ?? "") + settings.arguments.toString());
+      print((settings.name ?? "") + settings.arguments.toString());
       return MaterialPageRoute2(
           routeName: settings.name ?? Routes.splash,
           arguments: settings.name == Routes.splash ? null : settings.arguments);
