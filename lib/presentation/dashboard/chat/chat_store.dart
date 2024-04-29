@@ -25,7 +25,7 @@ abstract class _ChatStore with Store {
       this._getMessageByProjectAndUsersUseCase,
       this._getAllChatsUseCase,
       this._scheduleInterviewUseCase,
-      this._checkAvailUseCase
+      this._checkAvailUseCase,
       this._disableInterviewUseCase,
       this._updateInterviewUseCase);
 
