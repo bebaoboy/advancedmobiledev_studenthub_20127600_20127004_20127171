@@ -251,7 +251,7 @@ abstract class _ChatStore with Store {
   Future<bool> disableInterview({
     required String interviewId,
   }) async {
-    var params = InterviewParams(interviewId.toString(), "",
+    var params = InterviewParams(interviewId.toString(), "", "", "",
         title: "", endDate: "", startDate: "");
 
     try {
@@ -278,7 +278,7 @@ abstract class _ChatStore with Store {
       required String title,
       required DateTime startTime,
       required DateTime endTime}) async {
-    var params = InterviewParams(interview, "",
+    var params = InterviewParams(interview, "", "", "",
         title: title,
         endDate: endTime.toUtc().toIso8601String(),
         startDate: startTime.toUtc().toIso8601String());
