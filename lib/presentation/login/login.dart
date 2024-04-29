@@ -138,14 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
             builder: (context) {
               return Visibility(
                 visible: _userStore.isLoading,
-                // child: CustomProgressIndicatorWidget(),
-                child: GestureDetector(
-                    onTap: () {
-                      // setState(() {
-                      //   loading = false;
-                      // });
-                    },
-                    child: const LoadingScreen()),
+                child: LoadingScreen(text: _userStore.indicatorText),
               );
             },
           ),
@@ -385,6 +378,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget navigate(BuildContext context) {
     // print("${_userStore.user!.type.name} ${_userStore.user!.email}");
+
     if (_userStore.notification.isNotEmpty) {
       _showNotificationMessage(_userStore.notification);
       return Container();
@@ -402,8 +396,11 @@ class _LoginScreenState extends State<LoginScreen> {
       return Container();
     }
 
-    if (!_userStore.isLoading && !initializing) {
+    if (!_userStore.isLoading &&
+        !initializing &&
+        !_userStore.isFetchingProfile) {
       initializing = true;
+      _userStore.indicatorText = '';
       print("LOADING = ${_userStore.isLoading}");
       log("login", "BEBAOBOY");
       Future.delayed(const Duration(milliseconds: 1000), () async {

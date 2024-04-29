@@ -221,6 +221,7 @@
   "created_now": "Created just now",
 
   "loading": "Loading...",
+  "fetching_profile": "Fetching user profile...",
   "search": "Search",
   "student_needed": "Students needed",
   "proposal_less_than": "Proposal less than",

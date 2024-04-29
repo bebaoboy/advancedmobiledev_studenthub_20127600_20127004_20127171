@@ -611,7 +611,7 @@ class _MessageScreenState extends State<MessageScreen> {
           //         projectId: int.parse(widget.chatObject.project!.objectId!))
           //     .then((value1) {
           //   if (value1) {
-            value.meetingRoomCode = const Uuid().v1();
+          value.meetingRoomCode = const Uuid().v1();
           value.meetingRoomId = const Uuid().v4();
           var ms = {
             "title": value.title.toTitleCase().trim(),

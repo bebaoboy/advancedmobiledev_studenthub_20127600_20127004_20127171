@@ -65,6 +65,8 @@ abstract class _UserStore with Store {
       shouldChangePass = value.res;
     });
 
+    indicatorText = null;
+
     // savedUsers.add(User(
     //     email: "user1@gmail.com",
     //     name: "Hai Pham",
@@ -124,8 +126,16 @@ abstract class _UserStore with Store {
   static ObservableFuture<Response?> emptyLoginResponse =
       ObservableFuture.value(null);
 
+  static ObservableFuture<FetchProfileResult> emptyResult =
+      ObservableFuture.value(FetchProfileResult(false, [], [], "", "", false));
+
   // store variables:-----------------------------------------------------------
   bool isLoggedIn = false;
+
+  bool get isFetchingProfile => fetchFuture.status == FutureStatus.pending;
+
+  @observable
+  String? indicatorText;
 
   @observable
   bool success = false;
@@ -137,8 +147,7 @@ abstract class _UserStore with Store {
   bool shouldChangePass = false;
 
   @observable
-  FetchProfileResult profileResult =
-      FetchProfileResult(false, [], [], "", "", false);
+  ObservableFuture<FetchProfileResult> fetchFuture = emptyResult;
 
   @observable
   User? _user;
@@ -203,22 +212,27 @@ abstract class _UserStore with Store {
               roles: [],
               isVerified: true);
 
+          indicatorText = "fetching_profile";
           isLoggedIn = true;
 
-          profileResult = await _getProfileUseCase(params: true);
+          final profileResult = _getProfileUseCase(params: true);
+          fetchFuture = ObservableFuture(profileResult);
 
-          if (profileResult.status) {
-            userValue.companyProfile = profileResult.result[1] != null
-                ? profileResult.result[1] as CompanyProfile
-                : null;
-            userValue.studentProfile = profileResult.result[0] != null
-                ? profileResult.result[0] as StudentProfile
-                : null;
-            userValue.roles = profileResult.roles;
-            userValue.isVerified = profileResult.isVerified;
-            userValue.name = profileResult.name;
-            userValue.objectId = profileResult.id;
-          }
+          await profileResult.then((value) {
+            if (value.status) {
+              userValue.companyProfile = value.result[1] != null
+                  ? value.result[1] as CompanyProfile
+                  : null;
+              userValue.studentProfile = value.result[0] != null
+                  ? value.result[0] as StudentProfile
+                  : null;
+              userValue.roles = value.roles;
+              userValue.isVerified = value.isVerified;
+              userValue.name = value.name;
+              userValue.objectId = value.id;
+              indicatorText = null;
+            }
+          });
 
           // print(profileResult);
 
@@ -239,17 +253,20 @@ abstract class _UserStore with Store {
           // _getStudentFavoriteProjectUseCase.call(params: null);
         } else {
           notification = value.data['result'];
+          indicatorText = null;
         }
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
+        indicatorText = null;
       }
     }).catchError((e) {
       print(e);
       isLoggedIn = false;
       success = false;
+      indicatorText = null;
       //throw e;
     });
   }
