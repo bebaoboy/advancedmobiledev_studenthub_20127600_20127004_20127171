@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   checkIntro(context) {
-    Future.delayed(Duration.zero, () async {
+    Future.delayed(const Duration(seconds: 3), () async {
       bool firstTime = false;
       final prefs = await SharedPreferences.getInstance();
       firstTime = prefs.getBool(Preferences.first_time) ?? false;
@@ -97,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return await Navigator.push(
       context,
       ModalSheetRoute(
+        transitionDuration: const Duration(seconds: 1),
         builder: (context) => OnboardingSheet(
           height: MediaQuery.of(context).size.height,
           onSheetDismissed: () async {

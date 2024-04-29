@@ -196,7 +196,7 @@ abstract class _ProjectStore with Store {
                 //   userStore.user!.studentProfile!.proposalProjects
                 //       !.firstWhere((element) => element.objectId == p.objectId)
                 //       .hiredStatus = HireStatus.notHired;
-                // } 
+                // }
               }
 
               // TODO: remove if reject (disableFlag)
@@ -399,7 +399,17 @@ abstract class _ProjectStore with Store {
                       .sublist(0, count.clamp(0, _projects.projects!.length))
                       .toList());
             }
-          });
+          }).onError(
+            (error, stackTrace) {
+            if (setStateCallback != null) setStateCallback();
+              if (_projects.projects != null) {
+                refazynistKey.currentState?.refresh(
+                    readyMade: _projects.projects!
+                        .sublist(0, count.clamp(0, _projects.projects!.length))
+                        .toList());
+              }
+            },
+          );
         }
       });
 
@@ -418,7 +428,10 @@ abstract class _ProjectStore with Store {
     );
   }
 
-  Future<ProjectList> getStudentFavoriteProject(bool force) async {
+  Future<ProjectList> getStudentFavoriteProject(
+    bool force,
+    {GlobalKey<RefazynistState>? refazynistKey}
+  ) async {
     try {
       if (force) {
         return await _getStudentFavoriteProjectUseCase
@@ -432,11 +445,19 @@ abstract class _ProjectStore with Store {
             element.isLoading = false;
             element.isFavorite = true;
           });
+          refazynistKey?.currentState
+              ?.refresh(readyMade: _favoriteProjects.projects);
           return _favoriteProjects;
         });
       } else {
         if (_favoriteProjects.projects != null &&
             _favoriteProjects.projects!.isNotEmpty) {
+          _favoriteProjects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          refazynistKey?.currentState
+              ?.refresh(readyMade: _favoriteProjects.projects);
+
           return Future.value(_favoriteProjects);
         } else {
           return await _getStudentFavoriteProjectUseCase
@@ -450,6 +471,9 @@ abstract class _ProjectStore with Store {
               element.isLoading = false;
               element.isFavorite = true;
             });
+            refazynistKey?.currentState
+                ?.refresh(readyMade: _favoriteProjects.projects);
+
             return _favoriteProjects;
           });
         }
@@ -457,6 +481,9 @@ abstract class _ProjectStore with Store {
     } catch (e) {
       print(e.toString());
       print("errror favorite");
+      refazynistKey?.currentState
+          ?.refresh(readyMade: _favoriteProjects.projects);
+
       return Future.value(_favoriteProjects);
     }
   }

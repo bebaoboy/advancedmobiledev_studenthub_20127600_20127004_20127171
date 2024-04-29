@@ -34,7 +34,9 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
     future = _projectStore.getStudentProposalProjects(
         _userStore.user!.studentProfile!.objectId!, setStateCallback: () {
       try {
-        setState(() {});
+        setState(() {
+          loading = false;
+        });
       } catch (e) {
         ///
       }
@@ -44,6 +46,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
   final _userStore = getIt<UserStore>();
   final _projectStore = getIt<ProjectStore>();
   late Future<ProposalList> future;
+  bool loading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +58,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
       future: future,
       builder: (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
         Widget children;
-        if (snapshot.hasData) {
+        if (snapshot.hasData && !loading) {
           children = Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Column(

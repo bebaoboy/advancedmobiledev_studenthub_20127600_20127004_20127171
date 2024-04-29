@@ -169,7 +169,9 @@ Future<void> main() async {
     print(error.toString());
     print(stackTrace.toString());
     print("CRASHHHHHHHHHHHHHHHHHHHHHH app");
-    FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
+    if (!kIsWeb) {
+      FirebaseCrashlytics.instance.recordError(error, stackTrace, fatal: true);
+    }
   });
   // BackgroundFetch.registerHeadlessTask(backgroundFetchHeadlessTask);
 }

@@ -648,7 +648,19 @@ class _ProjectTabState extends State<ProjectTab> {
       try {
         Toastify.show(
             context, "", "Finish loading", ToastificationType.success, () {});
-        setState(() {});
+        setState(() {
+          var l = _projectStore.projects
+              .map(
+                (e) => e.companyId,
+              )
+              .toSet()
+              .toList();
+          l.insert(0, "");
+          l.sort(
+            (a, b) => a.compareTo(b),
+          );
+          _list = l;
+        });
       } catch (e) {
         ///
       }
@@ -1064,7 +1076,19 @@ class _ProjectTabState extends State<ProjectTab> {
                               setStateCallback: () {
                             Toastify.show(context, "", "Finish loading",
                                 ToastificationType.success, () {});
-                            setState(() {});
+                            setState(() {
+                              var l = _projectStore.projects
+                                  .map(
+                                    (e) => e.companyId,
+                                  )
+                                  .toSet()
+                                  .toList();
+                              l.insert(0, "");
+                              l.sort(
+                                (a, b) => a.compareTo(b),
+                              );
+                              _list = l;
+                            });
                           });
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);

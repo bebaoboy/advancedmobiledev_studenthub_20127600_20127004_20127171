@@ -39,7 +39,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
   @override
   void initState() {
-    future = _projectStore.getStudentFavoriteProject(false);
+    future = _projectStore.getStudentFavoriteProject(false,
+        refazynistKey: refazynistKey);
     super.initState();
   }
 
@@ -119,7 +120,8 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
 
                       onRefresh: () async {
                         lazyCount = 5;
-                        await _projectStore.getStudentFavoriteProject(true);
+                        await _projectStore.getStudentFavoriteProject(true,
+                            refazynistKey: refazynistKey);
 
                         return _projectStore.favoriteProjects.sublist(
                             0,

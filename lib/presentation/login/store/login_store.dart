@@ -132,7 +132,8 @@ abstract class _UserStore with Store {
   // store variables:-----------------------------------------------------------
   bool isLoggedIn = false;
 
-  bool get isFetchingProfile => fetchFuture.status == FutureStatus.pending;
+  @observable
+  bool isFetchingProfile = false;
 
   @observable
   String? indicatorText;
@@ -171,14 +172,17 @@ abstract class _UserStore with Store {
   @observable
   ObservableFuture<Response?> loginFuture = emptyLoginResponse;
 
-  @computed
-  bool get isLoading => loginFuture.status == FutureStatus.pending;
+  @observable
+  bool _isLoading = false;
+  bool get isLoading => _isLoading || isFetchingProfile;
 
   // actions:-------------------------------------------------------------------
   @action
   Future login(
       String email, String password, UserType type, List<UserType> roles,
       {fastSwitch = false}) async {
+    _isLoading = true;
+
     // //print(UserType.company.name);
     final LoginParams loginParams =
         LoginParams(username: email, password: password);
@@ -193,17 +197,17 @@ abstract class _UserStore with Store {
       await _saveLoginStatusUseCase.call(params: true);
       await _saveUserDataUseCase.call(params: value);
     }
-
+    _isLoading = true;
     await future.then((value) async {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.created ||
           value.statusCode == HttpStatus.ok) {
-        success = true;
-
         if (value.data['result'] is! String &&
             value.data['result']['token'] != null) {
           await _saveTokenUseCase.call(params: value.data['result']['token']);
           await _saveLoginStatusUseCase.call(params: true);
+          isFetchingProfile = true;
+          _isLoading = false;
 
           var userValue = User(
               // type: getUserType(type.name ?? UserType.naught.name),
@@ -232,6 +236,8 @@ abstract class _UserStore with Store {
               userValue.objectId = value.id;
               indicatorText = null;
             }
+            isFetchingProfile = false;
+            success = true;
           });
 
           // print(profileResult);
@@ -254,6 +260,8 @@ abstract class _UserStore with Store {
         } else {
           notification = value.data['result'];
           indicatorText = null;
+          isFetchingProfile = false;
+          _isLoading = false;
         }
       } else {
         success = false;
@@ -261,12 +269,17 @@ abstract class _UserStore with Store {
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
         indicatorText = null;
+        isFetchingProfile = false;
+        _isLoading = false;
       }
     }).catchError((e) {
       print(e);
       isLoggedIn = false;
       success = false;
       indicatorText = null;
+      isFetchingProfile = false;
+      _isLoading = false;
+
       //throw e;
     });
   }

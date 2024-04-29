@@ -312,6 +312,7 @@ class _AlertTabState extends State<AlertTab> {
                                           .then(
                                         (value) {
                                           setState(() {});
+                                          // TODO: hiện toast
                                         },
                                       );
                                     }
@@ -918,6 +919,7 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                   // Navigator.of(context).pushNamed(
                                                   //     Routes.submitProposal,
                                                   //     arguments: widget.project);
+                                                  // TODO: add confirm dialog
                                                   widget.proposal[page]
                                                           .hiredStatus =
                                                       HireStatus.hired;

@@ -618,8 +618,8 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
 
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute2(routeName: route), (_) => false);
+      Navigator.of(context).pushReplacement(
+          MaterialPageRoute2(routeName: route));
     });
 
     return Container();
