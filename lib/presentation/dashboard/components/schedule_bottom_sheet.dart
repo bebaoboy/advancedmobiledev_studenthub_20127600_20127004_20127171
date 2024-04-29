@@ -33,7 +33,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             startDate: DateTime.now(),
             endDate: DateTime.now(),
             title: "Null meeting");
-    title.text = (itv.title).toString();
+    title.text = '';
     startDate.text =
         (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.startDate.toLocal())).toString();
     endDate.text =

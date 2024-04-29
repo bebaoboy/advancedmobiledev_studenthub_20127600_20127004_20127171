@@ -11,8 +11,10 @@ class InterviewParams {
   String title;
   String startDate;
   String endDate;
+  String meetingCode;
+  String meetingId;
 
-  InterviewParams(this.interviewId, this.projectId,
+  InterviewParams(this.interviewId, this.projectId, this.meetingId, this.meetingCode,
       {required this.title, required this.startDate, required this.endDate});
 }
 

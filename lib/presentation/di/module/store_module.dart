@@ -4,6 +4,7 @@ import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
 import 'package:boilerplate/domain/repository/setting/setting_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/disable_interview.dart';
+import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
@@ -214,6 +215,7 @@ mixin StoreModule {
         getIt<GetMessageByProjectAndUsersUseCase>(),
         getIt<GetAllChatsUseCase>(),
         getIt<ScheduleInterviewUseCase>(),
+        getIt<CheckMeetingAvailabilityUseCase>(),
         getIt<DisableInterviewUseCase>(),
         getIt<UpdateInterviewUseCase>(),
       ),

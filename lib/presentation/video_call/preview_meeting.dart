@@ -2,8 +2,14 @@
 
 import 'dart:io';
 
+import 'package:boilerplate/core/widgets/toastify.dart';
+import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:floating/floating.dart';
@@ -12,6 +18,7 @@ import 'package:flutter/material.dart';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:toastification/toastification.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
 // import 'package:sembast/sembast.dart';
 
@@ -34,11 +41,13 @@ class PreviewMeetingScreen extends StatefulWidget {
 class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     with WidgetsBindingObserver {
   final P2PSession _callSession;
-
+  final codeController = TextEditingController();
   // ignore: unused_field
   static const String TAG = "PREVIEW_SCREEN";
 
   final floating = Floating();
+  final userStore = getIt<UserStore>();
+  final chatStore = getIt<ChatStore>();
 
   _PreviewMeetingScreenState(this._callSession);
 
@@ -56,12 +65,41 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    codeController.dispose();
     try {
       stopBackgroundExecution();
     } catch (e) {
       ///
     }
     super.dispose();
+  }
+
+  Widget _buildInterviewInfo() {
+    return Column(
+      children: [
+        Text('Meeting: ${widget.interviewSchedule.title}'),
+        Text('Meeting id: ${widget.interviewSchedule.meetingRoomId}'),
+        userStore.getCurrentType() == UserType.company
+            ? Text('Meeting code: ${widget.interviewSchedule.meetingRoomCode}')
+            : SizedBox(
+                width: 300,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: BorderTextField(
+                    icon: Icons.code,
+                    errorText: '',
+                    textController: codeController,
+                    hint: "Enter code",
+                    inputAction: TextInputAction.done,
+                    label: const Text('Code'),
+                    onChanged: (_) {
+                      chatStore.setCode(codeController.text);
+                    },
+                  ),
+                ),
+              ),
+      ],
+    );
   }
 
   @override
@@ -79,18 +117,9 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
           if (orientation == Orientation.portrait) {
             return Column(children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10),
-                child: Column(
-                  children: [
-                    Text('Meeting: ${widget.interviewSchedule.title}'),
-                    Text(
-                        'Meeting id: ${widget.interviewSchedule.meetingRoomId}'),
-                    Text(
-                        'Meeting code: ${widget.interviewSchedule.meetingRoomCode}'),
-                  ],
-                ),
-              ),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
+                  child: _buildInterviewInfo()),
               Expanded(
                   child: BodyLayout(widget.currentUser, _callSession,
                       users: widget.users,
@@ -104,17 +133,8 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
                         users: widget.users,
                         interviewInfo: widget.interviewSchedule)),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Column(
-                    children: [
-                      Text('Meeting: ${widget.interviewSchedule.title}'),
-                      Text(
-                          'Meeting id: ${widget.interviewSchedule.meetingRoomId}'),
-                      Text(
-                          'Meeting code: ${widget.interviewSchedule.meetingRoomCode}'),
-                    ],
-                  ),
-                ),
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: _buildInterviewInfo()),
               ],
             );
           }
@@ -158,6 +178,8 @@ class _BodyLayoutState extends State<BodyLayout> {
       CubeStatsReportsManager();
 
   late final Future<bool> future;
+  final userStore = getIt<UserStore>();
+  final chatStore = getIt<ChatStore>();
 
   _BodyLayoutState(this._callSession);
 
@@ -343,10 +365,10 @@ class _BodyLayoutState extends State<BodyLayout> {
       'video': {
         'mandatory': {
           'minWidth':
-              '320', // Provide your own width, height and frame rate here
+              '300', // Provide your own width, height and frame rate here
           //     'maxWidth': '1080',
           // 'maxHeight': '600',
-          'minHeight': '480',
+          'minHeight': '400',
           'minFrameRate': '24',
         },
         'facingMode': 'user',
@@ -405,7 +427,8 @@ class _BodyLayoutState extends State<BodyLayout> {
           future: future,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Container(
+              return Stack(children: [
+                Container(
                   padding: const EdgeInsets.only(
                       top: 0, left: 48, right: 48, bottom: 12),
                   child: Column(
@@ -436,9 +459,27 @@ class _BodyLayoutState extends State<BodyLayout> {
                             child: FloatingActionButton(
                               heroTag: "VideoCall",
                               backgroundColor: Colors.blue,
-                              onPressed: () => CallManager.instance
-                                  .startNewCall(context, CallType.VIDEO_CALL,
-                                      _selectedUsers),
+                              onPressed: () async {
+                                if (userStore.getCurrentType() ==
+                                    UserType.student) {
+                                  if (chatStore.canCall &&
+                                      await chatStore.checkMeetingAvailability(
+                                          widget.interviewInfo, "")) {
+                                    CallManager.instance.startNewCall(context,
+                                        CallType.VIDEO_CALL, _selectedUsers);
+                                  } else {
+                                    Toastify.show(
+                                        context,
+                                        '',
+                                        chatStore.errorStore.errorMessage,
+                                        ToastificationType.error,
+                                        () {});
+                                  }
+                                } else {
+                                  CallManager.instance.startNewCall(context,
+                                      CallType.VIDEO_CALL, _selectedUsers);
+                                }
+                              },
                               child: const Icon(
                                 Icons.videocam,
                                 color: Colors.white,
@@ -448,7 +489,16 @@ class _BodyLayoutState extends State<BodyLayout> {
                         ],
                       ),
                     ],
-                  ));
+                  ),
+                ),
+                Visibility(
+                    visible: chatStore.isChecking,
+                    child: const Center(
+                      child: LoadingScreenWidget(
+                        size: 80,
+                      ),
+                    )),
+              ]);
             } else {
               return const LoadingScreenWidget();
             }
