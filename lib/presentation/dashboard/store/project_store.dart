@@ -281,6 +281,8 @@ abstract class _ProjectStore with Store {
       // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
       print("call api refesshh");
 
+      init();
+
       Future.delayed(const Duration(seconds: 1), () async {
         final ProjectDataSource datasource = getIt<ProjectDataSource>();
 
@@ -311,7 +313,7 @@ abstract class _ProjectStore with Store {
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
 
-          init().then(
+          _getStudentFavoriteProjectUseCase.call(params: null).then(
             (value) {
               _projects.projects?.forEach((element) {
                 element.isLoading = false;
