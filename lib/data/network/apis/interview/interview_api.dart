@@ -22,6 +22,18 @@ class InterviewApi {
     });
   }
 
+  Future<Response> getInterview(params) async {
+    return await _dioClient.dio
+        .get(Interpolator(Endpoints.getInterview)(
+            {"interviewId": params.interviewId}))
+        .onError((DioException error, stackTrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      return Future.value(
+          error.response ?? Response(requestOptions: RequestOptions()));
+    });
+  }
+
   Future<Response> updateInterview(params) async {
     return await _dioClient.dio.patch(
         Interpolator(Endpoints.updateInterview)(
@@ -67,12 +79,10 @@ class InterviewApi {
   }
 
   Future<Response> checkAvail(params) async {
-    return await _dioClient.dio.get(
-      Endpoints.checkAvail, data: {
-        "meeting_room_code": params.meetingCode,
-        "meeting_room_id": params.meetingId,
-      }
-    ).onError(
+    return await _dioClient.dio.get(Endpoints.checkAvail, data: {
+      "meeting_room_code": params.meetingCode,
+      "meeting_room_id": params.meetingId,
+    }).onError(
         (DioException error, stackTrace) => Future.value(error.response));
   }
 }

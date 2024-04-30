@@ -611,8 +611,10 @@ class _MessageScreenState extends State<MessageScreen> {
           //         projectId: int.parse(widget.chatObject.project!.objectId!))
           //     .then((value1) {
           //   if (value1) {
-          value.meetingRoomCode = const Uuid().v1();
-          value.meetingRoomId = const Uuid().v4();
+          value.meetingRoomCode =
+              "code-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}";
+          value.meetingRoomId =
+              "${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}";
           var ms = {
             "title": value.title.toTitleCase().trim(),
             "projectId": widget.chatObject.project!.objectId!,
@@ -723,13 +725,33 @@ class _MessageScreenState extends State<MessageScreen> {
   _sendMeetingCode(InterviewSchedule interviewSchedule) {
     messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
       "content": '''Meeting: ${interviewSchedule.title}
+Meeting: ${interviewSchedule.meetingRoomId}
 Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
           ''',
       "projectId": widget.chatObject.project!.objectId!,
-      "senderId": _user.id,
-      "receiverId": userStore.user!.objectId!, // notification
+      "senderId": userStore.user!.objectId!,
+      "receiverId": _user.id, // notification
       "messageFlag": 0
     });
+
+    var e = <String, dynamic>{
+      "id": const Uuid().v4(),
+      'type': 'text',
+      'text': '''Meeting: ${interviewSchedule.title}
+Meeting: ${interviewSchedule.meetingRoomId}
+Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
+          ''',
+      'status': 'seen',
+      'interview': {},
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
+      'author': {
+        "firstName": userStore.user!.name,
+        "id": userStore.user!.objectId,
+      }
+    };
+
+    // TODO: add vô chat store
+    _addMessage(AbstractChatMessage.fromJson(e));
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();

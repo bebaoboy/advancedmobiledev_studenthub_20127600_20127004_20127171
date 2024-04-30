@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
+import 'package:boilerplate/domain/usecase/chat/get_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
@@ -27,7 +28,8 @@ abstract class _ChatStore with Store {
       this._scheduleInterviewUseCase,
       this._checkAvailUseCase,
       this._disableInterviewUseCase,
-      this._updateInterviewUseCase);
+      this._updateInterviewUseCase,
+      this._getInterviewUseCase);
 
   // student
   final GetMessageByProjectAndUsersUseCase _getMessageByProjectAndUsersUseCase;
@@ -35,6 +37,7 @@ abstract class _ChatStore with Store {
   final ScheduleInterviewUseCase _scheduleInterviewUseCase;
   final DisableInterviewUseCase _disableInterviewUseCase;
   final UpdateInterviewUseCase _updateInterviewUseCase;
+  final GetInterviewUseCase _getInterviewUseCase;
   final CheckMeetingAvailabilityUseCase _checkAvailUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
@@ -248,6 +251,29 @@ abstract class _ChatStore with Store {
   }
 
   @action
+  Future<InterviewSchedule?> getInterview({
+    required String interviewId,
+  }) async {
+    var params = InterviewParams(interviewId, "", "", "",
+        title: "", endDate: "", startDate: "");
+
+    return await _getInterviewUseCase.call(params: params).then((value) {
+      if (value == null) {
+        print('Get fail');
+        return null;
+      } else {
+        // Todo: schedule notification before interview 15min
+        // Duration diff = endTime.difference(startTime);
+
+        // NotificationHelper.scheduleNewNotification(
+        //     diff.inMinutes, diff.inHours, diff.inDays);
+        print(value);
+        return value;
+      }
+    });
+  }
+
+  @action
   Future<bool> disableInterview({
     required String interviewId,
   }) async {
@@ -293,7 +319,7 @@ abstract class _ChatStore with Store {
         return true;
       } else {
         print(response.data);
-         return false;
+        return false;
       }
     } catch (e) {
       print(e);
@@ -302,6 +328,7 @@ abstract class _ChatStore with Store {
       return false;
     }
   }
+
   Future<bool> checkMeetingAvailability(
       InterviewSchedule info, String projectId) async {
     try {

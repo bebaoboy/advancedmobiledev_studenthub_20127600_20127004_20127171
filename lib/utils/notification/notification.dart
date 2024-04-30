@@ -68,7 +68,7 @@ class NotificationHelper {
           id: id,
           category: NotificationCategory.Message,
           channelKey: 'message_channel',
-          groupKey: projectId,
+          groupKey: "$projectId-${msg.sender.objectId}",
           title: title ?? tittle,
           body: body ?? msg.content,
           notificationLayout: NotificationLayout.Messaging,

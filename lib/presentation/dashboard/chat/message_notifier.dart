@@ -7,6 +7,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 
@@ -39,13 +40,11 @@ class MessageNotifierProvider with ChangeNotifier {
                 ? // Server url
                 OptionBuilder().setQuery(
                     {'project_id': project?.objectId ?? -1}).setExtraHeaders({
-                    'Authorization':
-                        'Bearer $token',
+                    'Authorization': 'Bearer $token',
                   })
                 : OptionBuilder().setTransports(['websocket']).setQuery(
                     {'project_id': project?.objectId ?? -1}).setExtraHeaders({
-                    'Authorization':
-                        'Bearer $token',
+                    'Authorization': 'Bearer $token',
                   }))
             .build());
 
@@ -106,7 +105,7 @@ class MessageNotifierProvider with ChangeNotifier {
   var userStore = getIt<UserStore>();
   var rand = Random();
 
-  void addInbox(Map<String, dynamic> message) {
+  void addInbox(Map<String, dynamic> message) async {
     String mess = message["messageId"].toString();
 
     if (inbox.firstWhereOrNull(
@@ -120,28 +119,54 @@ class MessageNotifierProvider with ChangeNotifier {
           msg: MessageObject(
               project: project,
               id: mess,
-              content: message["content"],
+              content: message["content"] ?? message["title"],
               receiver: Profile(objectId: "-1", name: "Quan"),
               sender:
                   Profile(objectId: user.id, name: user.firstName ?? "null")));
-      var e = <String, dynamic>{
-        ...message,
-        "id": mess,
-        'type': message['messageFlag'] == 0 ? 'text' : 'interview',
-        'text': message['content'],
-        'status': 'seen',
-        'interview': message['interview'] ?? {},
-        'createdAt': DateTime.now().millisecondsSinceEpoch,
-        'author': {
-          "firstName": message["senderId"].toString() == user.id
-              ? user.firstName
-              : userStore.user!.name,
-          "id": message["senderId"].toString(),
-        }
-      };
 
-      // TODO: add vô chat store
-      inbox.insert(0, AbstractChatMessage.fromJson(e));
+      if (message['interviewId'] == null) {
+        // text msg
+        var e = <String, dynamic>{
+          ...message,
+          "id": mess,
+          'type': message['messageFlag'] == 0 ? 'text' : 'interview',
+          'text': message['content'],
+          'status': 'seen',
+          'interview': message['interview'] ?? {},
+          'createdAt': DateTime.now().millisecondsSinceEpoch,
+          'author': {
+            "firstName": message["senderId"].toString() == user.id
+                ? user.firstName
+                : userStore.user!.name,
+            "id": message["senderId"].toString(),
+          }
+        };
+
+        // TODO: add vô chat store
+        inbox.insert(0, AbstractChatMessage.fromJson(e));
+      } else {
+        // interview msg
+        var id = message["interviewId"].toString();
+        var projectStore = getIt<ChatStore>();
+        var interview = await projectStore.getInterview(interviewId: id);
+        var e = <String, dynamic>{
+          ...message,
+          "id": mess,
+          'type': 'interview',
+          'text': message['title'],
+          'status': 'seen',
+          'interview': interview?.toJson(),
+          'createdAt': DateTime.now().millisecondsSinceEpoch,
+          'author': {
+            "firstName": message["senderId"].toString() == user.id
+                ? user.firstName
+                : userStore.user!.name,
+            "id": message["senderId"].toString(),
+          }
+        };
+
+        inbox.insert(0, AbstractChatMessage.fromJson(e));
+      }
       notifyListeners();
     } else {
       print("trùng message id ${message["messageId"]}");

@@ -8,13 +8,13 @@ class InterviewRepositoryImpl extends InterviewRepository {
   InterviewRepositoryImpl(this._interviewApi);
 
   @override
-  Future<Response> checkAvailability(params){
+  Future<Response> checkAvailability(params) {
     var response = _interviewApi.checkAvail(params);
     return response;
   }
 
   @override
-  Future<Response> deleteMeeting(params){
+  Future<Response> deleteMeeting(params) {
     var response = _interviewApi.deleteInterview(params);
     return response;
   }
@@ -22,6 +22,12 @@ class InterviewRepositoryImpl extends InterviewRepository {
   @override
   Future<Response> disableMeeting(params) {
     var response = _interviewApi.disableInterview(params);
+    return response;
+  }
+
+  @override
+  Future<Response> getMeeting(params) {
+    var response = _interviewApi.getInterview(params);
     return response;
   }
 

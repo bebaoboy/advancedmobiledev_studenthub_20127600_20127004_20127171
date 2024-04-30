@@ -9,6 +9,7 @@ import 'package:boilerplate/domain/usecase/chat/delete_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/disable_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
+import 'package:boilerplate/domain/usecase/chat/get_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
@@ -269,10 +270,14 @@ mixin UseCaseModule {
       UpdateInterviewUseCase(getIt<InterviewRepository>()),
     );
 
+    getIt.registerSingleton<GetInterviewUseCase>(
+      GetInterviewUseCase(getIt<InterviewRepository>()),
+    );
+
     getIt.registerSingleton<DeleteInterviewUseCase>(
       DeleteInterviewUseCase(getIt<InterviewRepository>()),
     );
-    
+
     getIt.registerSingleton<CheckMeetingAvailabilityUseCase>(
       CheckMeetingAvailabilityUseCase(getIt<InterviewRepository>()),
     );
