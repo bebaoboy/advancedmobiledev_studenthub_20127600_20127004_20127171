@@ -13,7 +13,9 @@ import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
+import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
@@ -95,6 +97,7 @@ abstract class _ChatStore with Store {
   @action
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {
     try {
+      var userStore = getIt<UserStore>();
       return _getAllChatsUseCase
           .call(params: GetMessageByProjectAndUserParams())
           .then<List<WrapMessageList>>(
@@ -102,18 +105,48 @@ abstract class _ChatStore with Store {
           if (value.isNotEmpty) {
             print(value);
 
-            _messages = value;
-
-            // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
-
-            for (var element in _messages) {
-              element.messages?.sort(
-                (a, b) {
-                  return b.updatedAt!.compareTo(a.updatedAt!);
-                },
+            for (var v in value) {
+              var p = _messages.firstWhereOrNull(
+                (element) =>
+                    element.project?.objectId == v.project?.objectId &&
+                    element.chatUser.id == v.chatUser.id,
               );
-            }
+              if (p != null) {
+                p.messages = v.messages;
 
+                p.messages?.sort(
+                  (a, b) {
+                    return b.updatedAt!.compareTo(a.updatedAt!);
+                  },
+                );
+                if (p.messages?.firstOrNull?.sender.objectId ==
+                    userStore.user?.objectId) {
+                  p.lastSeenTime = p.messages?.firstOrNull?.updatedAt;
+                }
+              } else {
+                print("not found $v");
+                _messages.add(v);
+                _messages.last.messages?.sort(
+                  (a, b) {
+                    return b.updatedAt!.compareTo(a.updatedAt!);
+                  },
+                );
+                _messages.last.lastSeenTime =
+                    v.messages?.firstOrNull?.updatedAt;
+
+                // _messages.removeWhere(
+                //   (element) =>
+                //       element.project?.objectId == v.project?.objectId &&
+                //       element.chatUser.id == v.chatUser.id,
+                // );
+              }
+            }
+            _messages.sort(
+              (a, b) => (b.lastSeenTime == null || a.lastSeenTime == null)
+                  ? 0
+                  : b.lastSeenTime!.compareTo(a.lastSeenTime!),
+            );
+            // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
             if (setStateCallback != null) setStateCallback();
             return _messages;
           } else {
@@ -130,7 +163,7 @@ abstract class _ChatStore with Store {
             //     return _companyMessages;
             //   }
             // }
-            return Future.value([]);
+            return Future.value(_messages);
           }
         },
       ).onError((error, stackTrace) async {
@@ -148,7 +181,7 @@ abstract class _ChatStore with Store {
         // }
         print(error);
         print(stackTrace);
-        return Future.value([]);
+        return Future.value(_messages);
       });
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
@@ -166,9 +199,10 @@ abstract class _ChatStore with Store {
       //   }
       // }
       print("cannot get profile company");
-    }
-    return Future.value([]);
+      if (setStateCallback != null) setStateCallback();
 
+      return Future.value(_messages);
+    }
     // //print(value);
   }
 

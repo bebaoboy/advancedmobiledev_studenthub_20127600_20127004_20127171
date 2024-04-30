@@ -31,6 +31,8 @@ class ProjectApi {
       q.putIfAbsent("projectScopeFlag", () => params.projectScopeFlag);
       q.putIfAbsent("proposalsLessThan", () => params.proposalsLessThan);
     }
+    q.putIfAbsent("page", () => 1);
+    q.putIfAbsent("perPage", () => 100000);
     return await _dioClient.dio
         .get(Endpoints.getProjects, data: {}, queryParameters: q)
         .onError((DioException error, stackTrace) {

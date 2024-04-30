@@ -269,6 +269,7 @@ class NotificationObject extends MyObject {
     required this.sender,
     required NotificationType type,
     super.createdAt,
+    super.updatedAt,
     this.content = "",
   }) : super(objectId: id) {
     _type = type;
@@ -323,6 +324,7 @@ class MessageObject extends NotificationObject {
     this.messageType = MessageType.message,
     this.interviewSchedule,
     super.createdAt,
+    super.updatedAt,
     this.project,
   });
 
@@ -339,6 +341,7 @@ class MessageObject extends NotificationObject {
         super(
             content: json2["content"] ?? "Null",
             createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
+            updatedAt: DateTime.tryParse(json2["updatedAt"] ?? json2["createdAt"] ?? "") ?? DateTime.now(),
             id: json2["id"].toString(),
             receiver: Profile.fromJson(
                 json2["receiver"] != null && json2["receiver"] is String
@@ -358,6 +361,7 @@ class MessageObject extends NotificationObject {
       "receiver": receiver.toJson(),
       "sender": sender.toJson(),
       "createdAt": (createdAt ?? DateTime.now()).toString(),
+      "updatedAt": (updatedAt ?? createdAt ?? DateTime.now()).toString(),
       "projectId": project?.toJson(),
     });
   }

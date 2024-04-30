@@ -652,6 +652,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
               Widget? builder = const SizedBox();
               final nestedLength =
                   widget.destinations[index].destinations.length;
+              var newName = settings.name;
               for (int j = 0; j < nestedLength; j++) {
                 if (widget.destinations[index].destinations[j].route ==
                     settings.name) {
@@ -664,10 +665,15 @@ class _NavbarRouterState extends State<NavbarRouter2>
                   } else {
                     builder = widget.destinations[index].destinations[j].widget;
                   }
+                  newName =
+                      "${settings.name}${widget.destinations[index].destinations[j].route}";
+                  print("route $newName");
                 }
               }
-              return MaterialPageRouteNavBar(
-                  route: builder!, settings: settings);
+              return MaterialPageRouteNavBar(route: builder!, settings: settings
+                  // RouteSettings(
+                  //     name: newName, arguments: settings.arguments)
+                  );
             }),
       ),
     );
@@ -755,6 +761,10 @@ class _NavbarRouterState extends State<NavbarRouter2>
                               if (NavbarNotifier2.popAllRoutes(x)) {
                                 print("pop nun");
                               }
+                            }
+                            if (widget.hideBadgeOnPageChanged) {
+                              NavbarNotifier2.makeBadgeVisible(
+                                  NavbarNotifier2.currentIndex, false);
                             }
                             if (refreshState[NavbarNotifier2.currentIndex] >
                                 1) {

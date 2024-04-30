@@ -2,8 +2,10 @@
 
 import 'dart:async';
 import 'dart:isolate';
+import 'dart:math';
 import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -57,6 +59,7 @@ void callbackDispatcher() {
     var helper = WorkMangerHelper();
     var sharePref = await SharedPreferences.getInstance();
     var isLoggedIn = sharePref.getBool(Preferences.is_logged_in) ?? false;
+    var rand = Random();
 
     try {
       switch (currentTask) {
@@ -64,7 +67,49 @@ void callbackDispatcher() {
           {
             Log.d("main", "in a fetch profile");
             if (isLoggedIn) {
-              return await helper.fetchProfile();
+              var result = await helper.fetchProfile();
+              return result;
+            } else {
+              return Future.value(true);
+            }
+          }
+        case WorkerTask.fetchNotification:
+          {
+            Log.d("main", "fetching recent noti");
+            if (isLoggedIn) {
+              var result = await helper.fetchRecentNotification();
+              for (var notiOb in result) {
+                var channel = getChannelByMessageType(notiOb.type);
+                if (channel == NotificationChannelEnum.messageChannel) {
+                  if (notiOb is OfferNotification) {
+                    NotificationHelper.createMessageNotification(
+                        msg: MessageObject(
+                          id: notiOb.id,
+                          content: notiOb.content,
+                          receiver: notiOb.receiver,
+                          sender: notiOb.sender,
+                        ),
+                        projectId: notiOb.projectId,
+                        id: rand.nextInt(100000));
+                  } else {
+                    NotificationHelper.createMessageNotification(
+                        msg: MessageObject(
+                          id: notiOb.id,
+                          content: notiOb.content,
+                          receiver: notiOb.receiver,
+                          sender: notiOb.sender,
+                        ),
+                        projectId: "-1",
+                        id: rand.nextInt(100000));
+                  }
+                } else {
+                  NotificationHelper.createTextNotification(
+                      title: channel.name,
+                      body: notiOb.content,
+                      id: rand.nextInt(100000));
+                }
+              }
+              return Future.value(true);
             } else {
               return Future.value(true);
             }
@@ -134,7 +179,7 @@ Future<void> main() async {
     }
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    
+
     if (!kIsWeb) {
       FlutterError.onError = (FlutterErrorDetails errorDetails) {
         if (kIsWeb) return;

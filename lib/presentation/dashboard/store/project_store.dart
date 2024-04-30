@@ -38,7 +38,7 @@ abstract class _ProjectStore with Store {
 
   Future init() async {
     try {
-      return getStudentFavoriteProject(false);
+      return await getStudentFavoriteProject(false);
     } catch (e) {
       // nothing changed
       print("error getting fav");
@@ -281,12 +281,13 @@ abstract class _ProjectStore with Store {
       // projects = value.projects!.map((p) => Project.fromMap(p)).toList();
       print("call api refesshh");
 
-      init();
-
       Future.delayed(const Duration(seconds: 1), () async {
         final ProjectDataSource datasource = getIt<ProjectDataSource>();
 
         bool doneInit = false;
+        var fav = await _getStudentFavoriteProjectUseCase.call(params: null);
+        _favoriteProjects = fav;
+
         if (value.data != null) {
           _projects.projects?.clear();
           for (int i = 0; i < value.data!.length; i++) {
@@ -313,63 +314,61 @@ abstract class _ProjectStore with Store {
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
 
-          _getStudentFavoriteProjectUseCase.call(params: null).then(
-            (value) {
-              _projects.projects?.forEach((element) {
-                element.isLoading = false;
-                var b = _favoriteProjects.projects?.firstWhereOrNull(
-                  (e) => element.objectId == e.objectId,
-                );
-                if (b != null) {
-                  element.isFavorite = true;
-                }
-              });
+          _projects.projects?.forEach((element) {
+            element.isLoading = false;
+            var b = fav.projects?.firstWhereOrNull(
+              (e) => element.objectId == e.objectId,
+            );
+            if (b != null) {
+              element.isFavorite = true;
+            }
+          });
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          if (setStateCallback != null) setStateCallback();
+          Future.delayed(
+            Duration.zero,
+            () async {
+              // try {
+              //   getStudentFavoriteProject(false);
+              // } catch (e) {
+              //   // nothing changed
+              //   print("error getting fav");
+              // }
+              print("favorite refess ${_favoriteProjects.projects!.length}");
+              // _favoriteProjects.projects?.forEach(
+              //   (element) {
+              //     var p = _projects.projects?.firstWhereOrNull(
+              //       (e) => e.objectId == element.objectId,
+              //     );
+              //     if (p != null) {
+              //       p.isFavorite = true;
+              //     }
+              //   },
+              // );
               _projects.projects?.sort(
                 (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
               );
-              if (setStateCallback != null) setStateCallback();
+              if (_projects.projects != null) {
+                refazynistKey.currentState?.refresh(
+                    readyMade: _projects.projects!
+                        .sublist(0, count.clamp(0, _projects.projects!.length))
+                        .toList());
+              }
               Future.delayed(Duration.zero, () async {
-                // try {
-                //   getStudentFavoriteProject(false);
-                // } catch (e) {
-                //   // nothing changed
-                //   print("error getting fav");
-                // }
-                print("favorite refess ${_favoriteProjects.projects!.length}");
-                // _favoriteProjects.projects?.forEach(
-                //   (element) {
-                //     var p = _projects.projects?.firstWhereOrNull(
-                //       (e) => e.objectId == element.objectId,
-                //     );
-                //     if (p != null) {
-                //       p.isFavorite = true;
-                //     }
-                //   },
-                // );
-                _projects.projects?.sort(
-                  (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-                );
-                if (_projects.projects != null) {
-                  refazynistKey.currentState?.refresh(
-                      readyMade: _projects.projects!
-                          .sublist(
-                              0, count.clamp(0, _projects.projects!.length))
-                          .toList());
-                }
-                Future.delayed(Duration.zero, () async {
-                  var list = await datasource.getProjectsFromDb();
-                  _projects.projects?.forEach((element) {
-                    datasource.insert(element);
-                  });
-                  list.projects?.forEach((element) {
-                    if (_projects.projects?.firstWhereOrNull(
-                          (e) => element.objectId == e.objectId,
-                        ) ==
-                        null) {
-                      print("delete ${element.objectId}");
-                      datasource.delete(element);
-                    }
-                  });
+                var list = await datasource.getProjectsFromDb();
+                _projects.projects?.forEach((element) {
+                  datasource.insert(element);
+                });
+                list.projects?.forEach((element) {
+                  if (_projects.projects?.firstWhereOrNull(
+                        (e) => element.objectId == e.objectId,
+                      ) ==
+                      null) {
+                    print("delete ${element.objectId}");
+                    datasource.delete(element);
+                  }
                 });
               }).onError(
                 (error, stackTrace) {
@@ -406,59 +405,32 @@ abstract class _ProjectStore with Store {
           //   print("error getting fav");
           // }
 
-          getStudentFavoriteProject(true).then((value) async {
-            var list = await datasource.getProjectsFromDb();
-            _projects.projects = list.projects;
-            _projects.projects?.forEach(
-              (element) => element.isLoading = false,
-            );
-            _favoriteProjects.projects?.forEach(
-              (element) {
-                var p = _projects.projects!.firstWhereOrNull(
-                  (e) => e.objectId == element.objectId,
-                );
-                if (p != null) {
-                  p.isFavorite = true;
-                }
-              },
-            );
-            _projects.projects?.sort(
-              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-            );
-            if (setStateCallback != null) setStateCallback();
-
-            if (_projects.projects != null) {
-              refazynistKey.currentState?.refresh(
-                  readyMade: _projects.projects!
-                      .sublist(0, count.clamp(0, _projects.projects!.length))
-                      .toList());
-            }
-          }).onError(
-            (error, stackTrace) async {
-              var list = await datasource.getProjectsFromDb();
-              _projects.projects = list.projects;
-              _favoriteProjects.projects?.forEach(
-                (element) {
-                  var p = _projects.projects!.firstWhereOrNull(
-                    (e) => e.objectId == element.objectId,
-                  );
-                  if (p != null) {
-                    p.isFavorite = true;
-                  }
-                },
+          var list = await datasource.getProjectsFromDb();
+          _projects.projects = list.projects;
+          _projects.projects?.forEach(
+            (element) => element.isLoading = false,
+          );
+          fav.projects?.forEach(
+            (element) {
+              var p = _projects.projects!.firstWhereOrNull(
+                (e) => e.objectId == element.objectId,
               );
-              _projects.projects?.sort(
-                (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-              );
-              if (setStateCallback != null) setStateCallback();
-              if (_projects.projects != null) {
-                refazynistKey.currentState?.refresh(
-                    readyMade: _projects.projects!
-                        .sublist(0, count.clamp(0, _projects.projects!.length))
-                        .toList());
+              if (p != null) {
+                p.isFavorite = true;
               }
             },
           );
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          if (setStateCallback != null) setStateCallback();
+
+          if (_projects.projects != null) {
+            refazynistKey.currentState?.refresh(
+                readyMade: _projects.projects!
+                    .sublist(0, count.clamp(0, _projects.projects!.length))
+                    .toList());
+          }
         }
       });
 

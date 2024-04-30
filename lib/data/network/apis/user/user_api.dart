@@ -14,7 +14,7 @@ class UserApi {
   final DioClient dioClient;
 
   // injecting dio instance
-  UserApi({required this.dioClient});
+  UserApi(this.dioClient);
 
   Future<Response> resetPassword(String newPass) async {
     try {

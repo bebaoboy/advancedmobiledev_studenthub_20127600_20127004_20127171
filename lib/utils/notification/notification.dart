@@ -13,6 +13,40 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+enum NotificationChannelEnum {
+  messageChannel("message_channel_key", "Message channel",
+      "For receive message notification"),
+  interviewChannel("interview_channel_key", "Interview channel",
+      "For receive interview notification"),
+  basicChannel("basic_channel_key", "Basic channel", "For receive simple text"),
+  proposalChannel("proposal_channel_key", "Proposal channel",
+      "For receive proposal notification");
+
+  const NotificationChannelEnum(this.key, this.name, this.description);
+  final String name;
+  final String key;
+  final String description;
+}
+
+NotificationChannelEnum getChannelByMessageType(NotificationType type) {
+  switch (type) {
+    case NotificationType.joinInterview:
+      {
+        return NotificationChannelEnum.interviewChannel;
+      }
+    case NotificationType.message:
+      {
+        return NotificationChannelEnum.messageChannel;
+      }
+    case NotificationType.viewOffer:
+      {
+        return NotificationChannelEnum.proposalChannel;
+      }
+    default:
+      return NotificationChannelEnum.basicChannel;
+  }
+}
+
 class NotificationHelper {
   static Future<void> _create(
       {required NotificationContent content,
@@ -29,10 +63,10 @@ class NotificationHelper {
     await _create(
       content: NotificationContent(
         id: id,
-        channelKey: 'basic_channel',
+        channelKey: NotificationChannelEnum.basicChannel.key,
         title: title,
         body: body,
-        fullScreenIntent: true,
+        fullScreenIntent: false,
         wakeUpScreen: true,
       ),
     );
@@ -45,7 +79,7 @@ class NotificationHelper {
     await _create(
       content: NotificationContent(
         id: 13,
-        channelKey: 'basic_channel',
+        channelKey: NotificationChannelEnum.basicChannel.key,
         // title: title,
         body: title,
         notificationLayout: NotificationLayout.BigText,
@@ -67,7 +101,7 @@ class NotificationHelper {
         content: NotificationContent(
           id: id,
           category: NotificationCategory.Message,
-          channelKey: 'message_channel',
+          channelKey: NotificationChannelEnum.messageChannel.key,
           groupKey: "$projectId-${msg.sender.objectId}",
           title: title ?? tittle,
           body: body ?? msg.content,
@@ -127,9 +161,9 @@ class NotificationHelper {
       'resource://drawable/image',
       [
         NotificationChannel(
-          channelKey: 'basic_channel',
-          channelName: 'Basic Notifications',
-          channelDescription: 'Basic notifications channel',
+          channelKey: NotificationChannelEnum.basicChannel.key,
+          channelName: NotificationChannelEnum.basicChannel.name,
+          channelDescription: NotificationChannelEnum.basicChannel.description,
           defaultColor: Colors.teal,
           importance: NotificationImportance.High,
           channelShowBadge: true,
@@ -143,11 +177,30 @@ class NotificationHelper {
           channelShowBadge: true,
         ),
         NotificationChannel(
-          channelKey: 'message_channel',
-          channelName: 'Message Notifications',
-          channelDescription: 'Message notifications channel',
+          channelKey: NotificationChannelEnum.messageChannel.key,
+          channelName: NotificationChannelEnum.messageChannel.name,
+          channelDescription:
+              NotificationChannelEnum.messageChannel.description,
           defaultColor: Colors.red,
           importance: NotificationImportance.High,
+          channelShowBadge: true,
+        ),
+        NotificationChannel(
+          channelKey: NotificationChannelEnum.interviewChannel.key,
+          channelName: NotificationChannelEnum.interviewChannel.name,
+          channelDescription:
+              NotificationChannelEnum.interviewChannel.description,
+          defaultColor: Colors.green,
+          importance: NotificationImportance.High,
+          channelShowBadge: true,
+        ),
+        NotificationChannel(
+          channelKey: NotificationChannelEnum.proposalChannel.key,
+          channelName: NotificationChannelEnum.proposalChannel.name,
+          channelDescription:
+              NotificationChannelEnum.proposalChannel.description,
+          defaultColor: Colors.yellow,
+          importance: NotificationImportance.Default,
           channelShowBadge: true,
         ),
       ],
@@ -228,7 +281,7 @@ class NotificationHelper {
         NavigationService.navigatorKey.currentState?.push(MaterialPageRoute2(
             routeName: Routes.message,
             arguments: WrapMessageList(
-              project: msg.project,
+                project: msg.project,
                 chatUser: ChatUser(
                     id: msg.sender.objectId ?? "-1",
                     firstName: msg.sender.getName),

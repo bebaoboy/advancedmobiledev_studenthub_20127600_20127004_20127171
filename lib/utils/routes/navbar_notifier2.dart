@@ -320,6 +320,7 @@ class NavbarNotifier2 extends ChangeNotifier {
   ///
   static void updateBadge(int index, NavbarBadge badge) {
     if (index < 0 || index >= length) return;
+    print("update badge $index ${badge.badgeText}");
     _badges[index] = badge;
 
     // We don't navigate to that item when we update its badge. So cannot use this.

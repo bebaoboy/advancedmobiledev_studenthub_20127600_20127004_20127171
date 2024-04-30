@@ -467,55 +467,24 @@ class _ProjectItem2State extends State<ProjectItem2> {
     return _OpenContainerWrapper(
       project: widget.project,
       closedChild: LayoutBuilder(builder: (context, c) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
-          child: Stack(
-            children: [
-              Skeletonizer(
-                enabled: widget.project.isLoading,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(updatedText,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText1!
-                            .copyWith(fontSize: 12)),
-                    AutoSizeText(
-                      maxFontSize: 13,
-                      words: widget.keyword != null
-                          ? {
-                              widget.keyword!: HighlightedWord(
-                                onTap: () {
-                                  print("match");
-                                },
-                              ),
-                            }
-                          : null,
-                      matchDecoration: BoxDecoration(
-                        color: Colors.amber,
-                        borderRadius: BorderRadius.circular(50),
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      widget.project.title == ''
-                          ? Lang.get('project_item_no_title')
-                          : widget.project.title,
-                      style: TextStyle(
-                          color: Colors.green.shade400,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      Lang.get('project_item_description_header'),
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    Flexible(
-                      // height: 100,
-                      child: AutoSizeText(
+        return Skeletonizer(
+            enabled: widget.project.isLoading,
+            child: Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 15),
+              child: Stack(
+                children: [
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(updatedText,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(fontSize: 12)),
+                      AutoSizeText(
+                        maxFontSize: 13,
                         words: widget.keyword != null
                             ? {
                                 widget.keyword!: HighlightedWord(
@@ -529,53 +498,84 @@ class _ProjectItem2State extends State<ProjectItem2> {
                           color: Colors.amber,
                           borderRadius: BorderRadius.circular(50),
                         ),
-                        widget.project.description == ''
-                            ? Lang.get('project_item_blank')
-                            : widget.project.description,
-                        style: Theme.of(context).textTheme.bodyLarge,
-                        maxLines: 4,
-                        maxFontSize: 15,
+                        maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.justify,
+                        widget.project.title == ''
+                            ? Lang.get('project_item_no_title')
+                            : widget.project.title,
+                        style: TextStyle(
+                            color: Colors.green.shade400,
+                            fontWeight: FontWeight.bold),
                       ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        Lang.get('project_item_description_header'),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Flexible(
+                        // height: 100,
+                        child: AutoSizeText(
+                          words: widget.keyword != null
+                              ? {
+                                  widget.keyword!: HighlightedWord(
+                                    onTap: () {
+                                      print("match");
+                                    },
+                                  ),
+                                }
+                              : null,
+                          matchDecoration: BoxDecoration(
+                            color: Colors.amber,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          widget.project.description == ''
+                              ? Lang.get('project_item_blank')
+                              : widget.project.description,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                          maxLines: 4,
+                          maxFontSize: 15,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.justify,
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Text(
+                        '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Text(
+                        '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      Text(
+                        proposalText,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText1!
+                            .copyWith(fontSize: 14.0),
+                      ),
+                    ],
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: IconButton(
+                      color: Theme.of(context).colorScheme.primary,
+                      onPressed: () {
+                        setState(() {
+                          widget.onFavoriteTap(widget.project.objectId);
+                        });
+                      },
+                      icon: icon,
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    Text(
-                      '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                    Text(
-                      proposalText,
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(fontSize: 14.0),
-                    ),
-                  ],
-                ),
+                  )
+                ],
               ),
-              Positioned(
-                right: 0,
-                top: 0,
-                child: IconButton(
-                  color: Theme.of(context).colorScheme.primary,
-                  onPressed: () {
-                    setState(() {
-                      widget.onFavoriteTap(widget.project.objectId);
-                    });
-                  },
-                  icon: icon,
-                ),
-              )
-            ],
-          ),
-        );
+            ));
       }),
     );
   }

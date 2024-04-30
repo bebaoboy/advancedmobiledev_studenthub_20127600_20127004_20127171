@@ -58,7 +58,7 @@ mixin NetworkModule {
 
     // api's:-------------------------------------------------------------------
     getIt.registerSingleton(PostApi(getIt<DioClient>(), getIt<RestClient>()));
-    getIt.registerSingleton(UserApi(dioClient: getIt<DioClient>()));
+    getIt.registerSingleton(UserApi(getIt<DioClient>()));
     getIt
         .registerSingleton(ProfileApi(getIt<DioClient>(), getIt<RestClient>()));
     getIt.registerSingleton(ProjectApi(getIt<DioClient>()));
