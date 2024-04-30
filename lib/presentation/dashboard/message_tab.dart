@@ -7,6 +7,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -162,10 +163,20 @@ class Singapore extends State<MessageTab> {
                                         child: _buildTopRowList());
                                   }
                                   int index = i - 1;
-
                                   if (messages[index].lastSeenTime != null) {
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () {
+                                      NavbarNotifier2.updateBadge(
+                                          2,
+                                          NavbarBadge(
+                                              showBadge: true,
+                                              badgeText:
+                                                  "${messages.fold(0, (sum,item) => sum + item.newMessageCount)}"));
+                                    });
                                     print(
                                         "new message count after ${messages[index].lastSeenTime}: ${messages[index].newMessageCount}");
+                                  } else {
+                                    NavbarNotifier2.makeBadgeVisible(2, false);
                                   }
                                   return InkWell(
                                     onTap: () {
@@ -175,6 +186,9 @@ class Singapore extends State<MessageTab> {
                                           .id; // id này chỉ để test socket
 
                                       // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
+
+                                      chatStore.messages[index].lastSeenTime =
+                                          DateTime.now();
 
                                       chatStore.getMessageByProjectAndUsers(
                                           userId: messages[index].chatUser.id,
@@ -224,7 +238,12 @@ class Singapore extends State<MessageTab> {
                                                   messages:
                                                       messages[index].messages,
                                                   chatUser: messages[index]
-                                                      .chatUser)));
+                                                      .chatUser)))
+                                          .then(
+                                        (value) {
+                                          setState(() {});
+                                        },
+                                      );
                                       // You can replace the print statement with your function
                                     },
                                     child: ListTile(
@@ -249,24 +268,36 @@ class Singapore extends State<MessageTab> {
                                         children: [
                                           // Text(messages[index]['role']),
 
-                                          Text(messages[index]
-                                                      .messages!
-                                                      .first
-                                                      .sender
-                                                      .objectId !=
-                                                  userStore.user!.objectId
-                                              ? messages[index]
-                                                  .messages!
-                                                  .first
-                                                  .content
-                                              : "You: ${messages[index].messages!.first.content}"),
+                                          Text(
+                                            messages[index]
+                                                        .messages!
+                                                        .first
+                                                        .sender
+                                                        .objectId !=
+                                                    userStore.user!.objectId
+                                                ? messages[index]
+                                                    .messages!
+                                                    .first
+                                                    .content
+                                                : "You: ${messages[index].messages!.first.content}",
+                                            style: TextStyle(
+                                                fontWeight: messages[index]
+                                                            .newMessageCount >
+                                                        0
+                                                    ? FontWeight.bold
+                                                    : null),
+                                          ),
                                           const SizedBox(
                                             height: 20,
                                           ),
                                           Text(
                                             messages[index]
-                                                .lastSeenTime!.toLocal()
-                                                .toString(),
+                                                    .messages
+                                                    ?.firstOrNull
+                                                    ?.updatedAt
+                                                    ?.toLocal()
+                                                    .toString() ??
+                                                "null",
                                             style:
                                                 const TextStyle(fontSize: 12),
                                             textAlign: TextAlign.end,
