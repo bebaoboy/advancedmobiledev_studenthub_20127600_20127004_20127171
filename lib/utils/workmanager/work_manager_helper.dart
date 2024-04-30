@@ -2,14 +2,14 @@ import 'package:boilerplate/core/data/network/dio/configs/dio_configs.dart';
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/auth_interceptor.dart';
 import 'package:boilerplate/core/data/network/dio/interceptors/logging_interceptor.dart';
-import 'package:boilerplate/data/network/apis/user/user_api.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
-import 'package:uuid/uuid.dart';
 import 'package:workmanager/workmanager.dart';
 
 class WorkMangerHelper {
@@ -19,7 +19,7 @@ class WorkMangerHelper {
     return _singleton;
   }
 
-  final DioConfigs dioConfig = const DioConfigs(
+  static const DioConfigs dioConfig = DioConfigs(
     baseUrl: Endpoints.baseUrl,
     connectionTimeout: Endpoints.connectionTimeout,
     receiveTimeout: Endpoints.receiveTimeout,
@@ -27,7 +27,6 @@ class WorkMangerHelper {
 
   static late final SharedPreferences _sharedPreferences;
   static final DioClient _dioClient = _initializeDioClient();
-  static final UserApi _userApi = _initializeUserApi();
   // static final ProjectApi _projectApi = _initializeProjectApi();
 
   WorkMangerHelper._internal() {
@@ -37,7 +36,7 @@ class WorkMangerHelper {
   }
 
   static DioClient _initializeDioClient() {
-    return DioClient(dioConfigs: WorkMangerHelper().dioConfig)
+    return DioClient(dioConfigs: WorkMangerHelper.dioConfig)
       ..addInterceptors([
         AuthInterceptor(accessToken: () async {
           return WorkMangerHelper._sharedPreferences
@@ -45,10 +44,6 @@ class WorkMangerHelper {
         }),
         LoggingInterceptor(),
       ]);
-  }
-
-  static UserApi _initializeUserApi() {
-    return UserApi(dioClient: WorkMangerHelper._dioClient);
   }
 
   // static ProjectApi _initializeProjectApi() {
@@ -64,18 +59,36 @@ class WorkMangerHelper {
   // delay
   static const Duration SHORT_DELAY = Duration(seconds: 3);
   static const Duration LONG_DELAY = Duration(minutes: 30);
+  static const Duration NO_DELAY = Duration(seconds: 0);
 
   static registerProfileFetch() async {
     if (kIsWeb) return;
     Workmanager().registerPeriodicTask(
       WorkerTask.fetchProfile.identifier,
-      WorkerTask.fetchProfile.name + const Uuid().v4(),
+      WorkerTask.fetchProfile.name,
       tag: WorkerTask.fetchProfile.identifier,
       existingWorkPolicy: ExistingWorkPolicy.replace,
       initialDelay: SHORT_DELAY,
+      frequency: LOW_FREQUENCY,
+      backoffPolicy: BackoffPolicy.linear,
+      constraints: Constraints(networkType: NetworkType.connected),
+    );
+  }
+
+  static registerNotificationFetch() async {
+    if (kIsWeb) return;
+    Workmanager().registerPeriodicTask(
+      WorkerTask.fetchNotification.identifier,
+      WorkerTask.fetchNotification.name,
+      tag: WorkerTask.fetchNotification.identifier,
+      existingWorkPolicy: ExistingWorkPolicy.update,
+      initialDelay: NO_DELAY,
       frequency: NORMAL_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
-      constraints: Constraints(networkType: NetworkType.connected),
+      constraints: Constraints(
+        networkType: NetworkType.connected,
+        requiresBatteryNotLow: true,
+      ),
     );
   }
 
@@ -92,40 +105,139 @@ class WorkMangerHelper {
   //   );
   // }
 
+  Future<List<NotificationObject>> fetchRecentNotification() async {
+    return [
+      NotificationObject(
+          type: NotificationType.text,
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "company 1",
+          ),
+          content: 'You have submitted to join project "Javis - AI Copilot',
+          createdAt: DateTime.now()),
+      NotificationObject(
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "company 1",
+          ),
+          type: NotificationType.joinInterview,
+          content:
+              'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+          createdAt: DateTime.now().subtract(const Duration(days: 7))),
+      OfferNotification(
+          projectId: "",
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "company 1",
+          ),
+          content: 'You have submitted to join project "Javis - AI Copilot',
+          createdAt: DateTime.now()),
+      NotificationObject(
+          type: NotificationType.message,
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "Alex Jor",
+          ),
+          content:
+              'I have read your requirement but I dont seem to...?\n6/6/2024',
+          createdAt: DateTime.now()),
+      NotificationObject(
+          type: NotificationType.message,
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "Alex Jor",
+          ),
+          content: 'Finish your project?',
+          createdAt: DateTime.now()),
+      NotificationObject(
+          type: NotificationType.message,
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "Alex Jor",
+          ),
+          content: 'How are you doing?',
+          createdAt: DateTime.now()),
+      OfferNotification(
+          projectId: "",
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "company 1",
+          ),
+          content: 'You have an offer to join project "HCMUS - Administration"',
+          createdAt: DateTime.now()),
+      OfferNotification(
+          projectId: "",
+          id: "",
+          receiver: StudentProfile(objectId: "", fullName: "student 1"),
+          sender: CompanyProfile(
+            objectId: "",
+            companyName: "company 1",
+          ),
+          content: 'You have an offer to join project "Quantum Physics"',
+          createdAt: DateTime.now()),
+    ];
+  }
+
   Future<bool> fetchProfile() async {
-    var response = await WorkMangerHelper._userApi.getProfile();
-    if (response.statusCode == HttpStatus.accepted ||
-        response.statusCode == HttpStatus.ok ||
-        response.statusCode == HttpStatus.created) {
-      var studentData = response.data["result"]["student"];
-      StudentProfile? studentProfile;
-      if (studentData != null) {
-        studentProfile = StudentProfile.fromMap(studentData);
+    try {
+      var response = await WorkMangerHelper._dioClient.dio
+          .get(Endpoints.getProfile)
+          .onError((exception, stackTrace) {
+        return Response(
+          requestOptions: RequestOptions(),
+          statusCode: 400,
+        );
+      });
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        var studentData = response.data["result"]["student"];
+        StudentProfile? studentProfile;
+        if (studentData != null) {
+          studentProfile = StudentProfile.fromMap(studentData);
+        } else {
+          studentProfile = null;
+        }
+
+        var companyData = response.data["result"]["company"];
+        CompanyProfile? companyProfile;
+
+        if (companyData != null) {
+          companyProfile = CompanyProfile.fromMap(companyData);
+        } else {
+          companyProfile = null;
+        }
+
+        if (companyProfile != null) {
+          await _sharedPreferences.setString(
+              Preferences.company_profile, companyProfile.toJson());
+        }
+        if (studentProfile != null) {
+          await _sharedPreferences.setString(
+              Preferences.student_profile, studentProfile.toJson());
+        }
+
+        return Future.value(true);
       } else {
-        studentProfile = null;
+        return Future.value(false);
       }
-
-      var companyData = response.data["result"]["company"];
-      CompanyProfile? companyProfile;
-
-      if (companyData != null) {
-        companyProfile = CompanyProfile.fromMap(companyData);
-      } else {
-        companyProfile = null;
-      }
-
-      if (companyProfile != null) {
-        await _sharedPreferences.setString(
-            Preferences.company_profile, companyProfile.toJson());
-      }
-      if (studentProfile != null) {
-        await _sharedPreferences.setString(
-            Preferences.student_profile, studentProfile.toJson());
-      }
-
+    } catch (e) {
+      print(e);
       return Future.value(true);
-    } else {
-      return Future.value(false);
     }
   }
 }
@@ -134,6 +246,7 @@ enum WorkerTask {
   fetchProfile("periodic-profile-fetch", "profileFetchTask"),
   // fetchProject("periodic-project-fetch", "projectFetchTask"),
   purgeProjectsData("periodic-projects-purge", "purgeProjectsTask"),
+  fetchNotification("periodic-notification-fetch", "notificationFetchTask"),
   defaultTask("simple-identifier", 'simpleTask');
 
   const WorkerTask(this.identifier, this.name);
@@ -149,6 +262,8 @@ WorkerTask getWorkerTaskFromString(String task) {
     //   return WorkerTask.fetchProject;
     case "purgeProjectsTask":
       return WorkerTask.purgeProjectsData;
+    case "notificationFetchTask":
+      return WorkerTask.fetchNotification;
     default:
       return WorkerTask.defaultTask;
   }

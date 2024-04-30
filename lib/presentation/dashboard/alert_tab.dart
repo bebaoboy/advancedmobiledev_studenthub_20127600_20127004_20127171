@@ -601,7 +601,7 @@ class _AlertTabState extends State<AlertTab> {
                     shrinkWrap: true,
                     itemCount: joinInterviews.length,
                     itemBuilder: (context, index) {
-                      return CustomFollowNotifcation(
+                      return CustomFollowNotification(
                         notificationObject: joinInterviews[index],
                         showTime: showTime[i],
                       );
@@ -622,7 +622,7 @@ class _AlertTabState extends State<AlertTab> {
                     shrinkWrap: true,
                     itemCount: viewOffers.length,
                     itemBuilder: (context, index) {
-                      return CustomFollowNotifcation(
+                      return CustomFollowNotification(
                         notificationObject: viewOffers[index],
                         showTime: showTime[i],
                       );
@@ -1179,18 +1179,18 @@ class HeroFlutterLogo extends StatelessWidget {
   }
 }
 
-class CustomFollowNotifcation extends StatefulWidget {
-  const CustomFollowNotifcation(
+class CustomFollowNotification extends StatefulWidget {
+  const CustomFollowNotification(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomFollowNotifcation> createState() =>
-      _CustomFollowNotifcationState();
+  State<CustomFollowNotification> createState() =>
+      _CustomFollowNotificationState();
 }
 
-class _CustomFollowNotifcationState extends State<CustomFollowNotifcation> {
+class _CustomFollowNotificationState extends State<CustomFollowNotification> {
   bool follow = false;
   @override
   Widget build(BuildContext context) {

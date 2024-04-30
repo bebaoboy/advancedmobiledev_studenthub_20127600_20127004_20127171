@@ -12,6 +12,7 @@ import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -52,7 +53,8 @@ class _MyAppState extends State<MyApp> {
       print((settings.name ?? "") + settings.arguments.toString());
       return MaterialPageRoute2(
           routeName: settings.name ?? Routes.splash,
-          arguments: settings.name == Routes.splash ? null : settings.arguments);
+          arguments:
+              settings.name == Routes.splash ? null : settings.arguments);
     };
     builder = (context, child) {
       ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
@@ -73,6 +75,7 @@ class _MyAppState extends State<MyApp> {
     };
 
     if (!kIsWeb) requestNotificationsPermission();
+    WorkMangerHelper.registerNotificationFetch();
 
     // initPlatformState();
     super.initState();
