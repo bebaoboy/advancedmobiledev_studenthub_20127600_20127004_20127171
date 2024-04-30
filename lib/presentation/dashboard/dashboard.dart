@@ -71,14 +71,14 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     }
     _routes = [
       {
-        '/': KeepAlivePage(ProjectTab(
+        '/0': KeepAlivePage(ProjectTab(
           key: const PageStorageKey(0),
           scrollController: sc[0],
         )),
         Routes.favoriteProject: getRoute(Routes.favoriteProject, context),
       },
       {
-        '/': _userStore.user!.type == UserType.company
+        '/1': _userStore.user!.type == UserType.company
             ? KeepAlivePage(DashBoardTab(
                 key: const PageStorageKey(11),
                 pageController: _pageController,
@@ -91,7 +91,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         // Routes.project_post: getRoute(Routes.project_post),
       },
       {
-        '/': KeepAlivePage(MessageTab(
+        '/2': KeepAlivePage(MessageTab(
           key: const PageStorageKey(2),
           scrollController: sc[2],
         )),
@@ -99,7 +99,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         // ProfileEdit.route: ProfileEdit(),
       },
       {
-        '/': KeepAlivePage(AlertTab(
+        '/3': KeepAlivePage(AlertTab(
           key: const PageStorageKey(3),
           scrollController: sc[3],
         )),

@@ -460,25 +460,33 @@ class _BodyLayoutState extends State<BodyLayout> {
                               heroTag: "VideoCall",
                               backgroundColor: Colors.blue,
                               onPressed: () async {
-                                if (userStore.getCurrentType() ==
-                                    UserType.student) {
-                                  if (chatStore.canCall &&
-                                      await chatStore.checkMeetingAvailability(
-                                          widget.interviewInfo, "")) {
+                                // TODO: truyền ng cần gọi vào
+                                await getUsers({"login": ""})
+                                    .then((cubeUser) async {
+                                  if (cubeUser != null) {}
+                                  // ignore: avoid_func
+                                  if (userStore.getCurrentType() ==
+                                      UserType.student) {
+                                    if (chatStore.canCall &&
+                                        await chatStore
+                                            .checkMeetingAvailability(
+                                                widget.interviewInfo, "")) {
+                                      CallManager.instance.startNewCall(context,
+                                          CallType.VIDEO_CALL, _selectedUsers);
+                                    } else {
+                                      Toastify.show(
+                                          context,
+                                          '',
+                                          chatStore.errorStore.errorMessage,
+                                          ToastificationType.error,
+                                          () {});
+                                    }
+                                  } else {
+                                    _selectedUsers.add(_currentUserId);
                                     CallManager.instance.startNewCall(context,
                                         CallType.VIDEO_CALL, _selectedUsers);
-                                  } else {
-                                    Toastify.show(
-                                        context,
-                                        '',
-                                        chatStore.errorStore.errorMessage,
-                                        ToastificationType.error,
-                                        () {});
                                   }
-                                } else {
-                                  CallManager.instance.startNewCall(context,
-                                      CallType.VIDEO_CALL, _selectedUsers);
-                                }
+                                });
                               },
                               child: const Icon(
                                 Icons.videocam,

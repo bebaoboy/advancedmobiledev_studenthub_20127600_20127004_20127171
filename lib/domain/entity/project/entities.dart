@@ -354,6 +354,7 @@ class MessageObject extends NotificationObject {
     return json.encode({
       "type": messageType.index,
       "id": id,
+      "content": content,
       "receiver": receiver.toJson(),
       "sender": sender.toJson(),
       "createdAt": (createdAt ?? DateTime.now()).toString(),
