@@ -66,7 +66,7 @@ class NotificationHelper {
         channelKey: NotificationChannelEnum.basicChannel.key,
         title: title,
         body: body,
-        fullScreenIntent: true,
+        fullScreenIntent: false,
         wakeUpScreen: true,
       ),
     );
