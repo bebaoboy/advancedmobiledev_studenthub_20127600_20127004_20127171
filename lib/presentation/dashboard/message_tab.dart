@@ -163,7 +163,8 @@ class Singapore extends State<MessageTab> {
                                         child: _buildTopRowList());
                                   }
                                   int index = i - 1;
-                                  if (messages[index].lastSeenTime != null) {
+                                  if (messages[index].lastSeenTime != null &&
+                                      messages[index].newMessageCount > 0) {
                                     Future.delayed(const Duration(seconds: 1),
                                         () {
                                       NavbarNotifier2.updateBadge(
@@ -171,12 +172,16 @@ class Singapore extends State<MessageTab> {
                                           NavbarBadge(
                                               showBadge: true,
                                               badgeText:
-                                                  "${messages.fold(0, (sum,item) => sum + item.newMessageCount)}"));
+                                                  "${messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
                                     });
                                     print(
                                         "new message count after ${messages[index].lastSeenTime}: ${messages[index].newMessageCount}");
                                   } else {
-                                    NavbarNotifier2.makeBadgeVisible(2, false);
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () {
+                                      NavbarNotifier2.makeBadgeVisible(
+                                          2, false);
+                                    });
                                   }
                                   return InkWell(
                                     onTap: () {

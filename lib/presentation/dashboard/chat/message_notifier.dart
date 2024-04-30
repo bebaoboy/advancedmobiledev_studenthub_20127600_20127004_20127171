@@ -7,7 +7,6 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
-import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 
@@ -70,19 +69,21 @@ class MessageNotifierProvider with ChangeNotifier {
 
     // ToDo: add to noti and also handle send on noti
     textSocketHandler.on('RECEIVE_MESSAGE', (data) {
-      if (data["senderId"].toString() == userStore.user!.objectId) return;
+      if (data["notification"]["senderId"].toString() ==
+          userStore.user!.objectId) return;
 
-      print(data['senderId'].toString());
-      if (data['senderId'].toString() != user.id) return;
+      print(data["notification"]['senderId'].toString());
+      if (data["notification"]['senderId'].toString() != user.id) return;
       print("receive $data");
       addInbox(data, false);
     });
 
     textSocketHandler.on('RECEIVE_INTERVIEW', (data) {
-      if (data["senderId"].toString() == userStore.user!.objectId) return;
+      if (data["notification"]["senderId"].toString() ==
+          userStore.user!.objectId) return;
 
-      print(data['senderId'].toString());
-      if (data['senderId'].toString() != user.id) return;
+      print(data["notification"]['senderId'].toString());
+      if (data["notification"]['senderId'].toString() != user.id) return;
       print("receive interview $data");
       addInbox(data, true);
     });
@@ -97,8 +98,6 @@ class MessageNotifierProvider with ChangeNotifier {
     textSocketHandler.on('ERROR', (data) => print("error $data"));
     textSocketHandler.onDisconnect((_) {
       print('disconnect');
-      textSocketHandler.disconnect();
-      textSocketHandler.destroy();
     });
 
     // textSocketHandler.emit("SEND_MESSAGE", {
@@ -115,12 +114,13 @@ class MessageNotifierProvider with ChangeNotifier {
   var userStore = getIt<UserStore>();
   var rand = Random();
 
-  void addInbox(Map<String, dynamic> message, bool isInterview) async {
-    String mess = message["messageId"].toString();
+  void addInbox(Map<String, dynamic> msg, bool isInterview) async {
+    Map<String, dynamic> message = msg["notification"]["message"];
+    String mess = message["id"].toString();
     print("receive id: $mess");
 
     if (inbox.firstWhereOrNull(
-          (element) => element.id == message["messageId"].toString(),
+          (element) => element.id == message["id"].toString(),
         ) ==
         null) {
       print("project ${project?.objectId},message sentttttttttttt: $message");
@@ -142,12 +142,17 @@ class MessageNotifierProvider with ChangeNotifier {
         // text msg
         var e = <String, dynamic>{
           ...message,
+          "createdAt":
+              (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          "updatedAt":
+              (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
           "id": mess,
           'type': message['messageFlag'] == 0 ? 'text' : 'interview',
           'text': message['content'],
           'status': 'seen',
           'interview': message['interview'] ?? {},
-          'createdAt': DateTime.now().millisecondsSinceEpoch,
           'author': {
             "firstName": message["senderId"].toString() == user.id
                 ? user.firstName
@@ -164,21 +169,28 @@ class MessageNotifierProvider with ChangeNotifier {
           id: mess.isNotEmpty
               ? int.tryParse(mess) ?? rand.nextInt(100000)
               : rand.nextInt(100000),
-          body: "New interview: ${message['title']}",
+          body: "New interview: ${msg["notification"]["interview"]['title']}",
         );
 
         // interview msg
-        var id = message["interviewId"].toString();
-        var projectStore = getIt<ChatStore>();
-        var interview = await projectStore.getInterview(interviewId: id);
+        // var id = message["interviewId"].toString();
+        // var projectStore = getIt<ChatStore>();
+        // var interview = await projectStore.getInterview(interviewId: id);
+        var interview = msg["notification"]["interview"];
+
         var e = <String, dynamic>{
           ...message,
           "id": mess,
           'type': 'schedule',
           'text': message['title'],
           'status': 'seen',
-          'interview': interview?.toJson(),
-          'createdAt': DateTime.now().millisecondsSinceEpoch,
+          'interview': interview,
+          "createdAt":
+              (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          "updatedAt":
+              (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
           'author': {
             "firstName": message["senderId"].toString() == user.id
                 ? user.firstName
@@ -190,8 +202,12 @@ class MessageNotifierProvider with ChangeNotifier {
             "projectId": project?.objectId ?? "-1",
             "senderId": user.id,
             "receiverId": userStore.user!.objectId!, // notification
-            "startTime": interview?.startDate,
-            "endTime": interview?.endDate,
+            "createdAt": (DateTime.tryParse(interview?.createdAt ?? "") ??
+                    DateTime.now())
+                .millisecondsSinceEpoch,
+            "updatedAt": (DateTime.tryParse(interview?.updatedAt ?? "") ??
+                    DateTime.now())
+                .millisecondsSinceEpoch,
             "meeting_room_code": interview?.meetingRoomCode,
             "meeting_room_id": interview?.meetingRoomId,
           }
@@ -201,15 +217,14 @@ class MessageNotifierProvider with ChangeNotifier {
       }
       notifyListeners();
     } else {
-      print("trùng message id ${message["messageId"]}");
+      print("trùng message id ${message["id"]}");
     }
   }
 
   @override
   dispose() {
     super.dispose();
-    textSocketHandler.disconnect();
-    textSocketHandler.dispose();
-    textSocketHandler.destroy();
+    // TODO: find a way to close a socket and can reconnect again
+    textSocketHandler.close();
   }
 }

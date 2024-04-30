@@ -544,12 +544,12 @@ class _NavbarRouterState extends State<NavbarRouter2>
     // set badge list here
     NavbarNotifier2.setBadges(badges);
     NavbarNotifier2.hideBadgeOnPageChanged = widget.hideBadgeOnPageChanged;
+    widget.pageController.index = NavbarNotifier2.currentIndex;
 
     if (!isUpdate) {
       initAnimation();
       NavbarNotifier2.index = widget.initialIndex;
     }
-    widget.pageController.move(NavbarNotifier2.currentIndex);
     refreshState = List.filled(widget.destinations.length, 0);
   }
 
@@ -728,7 +728,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
                     duration: const Duration(milliseconds: 500),
                     padding: EdgeInsets.only(left: getPadding()),
                     child: TransformerPageView(
-                      index: 1,
+                      index: widget.initialIndex,
                       duration: const Duration(milliseconds: 500),
                       transformer: DepthPageTransformer(),
                       itemCount: NavbarNotifier2.length,

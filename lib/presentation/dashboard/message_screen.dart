@@ -257,6 +257,10 @@ class _MessageScreenState extends State<MessageScreen> {
                             int i = chatStore.currentProjectMessages
                                 .indexWhere((element) => element.id == p0.id);
                             if (i != -1) {
+                              chatStore.disableInterview(
+                                  interviewId: chatStore
+                                      .currentProjectMessages[i].metadata!["id"]
+                                      .toString());
                               setState(() {
                                 chatStore.currentProjectMessages[i] =
                                     ScheduleMessageType(
@@ -276,12 +280,9 @@ class _MessageScreenState extends State<MessageScreen> {
                                           .currentProjectMessages[i].metadata!,
                                       "isCancel": true,
                                     });
+
                                 _sortMessages();
                               });
-                              chatStore.disableInterview(
-                                  interviewId: chatStore
-                                      .currentProjectMessages[i].metadata!["id"]
-                                      .toString());
                             }
                           },
                         ),
@@ -340,9 +341,13 @@ class _MessageScreenState extends State<MessageScreen> {
       } else if (b.createdAt == null) {
         return 1;
       }
-      return a.createdAt!.compareTo(b.createdAt!) == -1
+      return (a.updatedAt ?? a.createdAt)!
+                  .compareTo((b.updatedAt ?? b.createdAt)!) ==
+              -1
           ? 1
-          : a.createdAt!.compareTo(b.createdAt!) == 1
+          : (a.updatedAt ?? a.createdAt)!
+                      .compareTo((b.updatedAt ?? b.createdAt)!) ==
+                  1
               ? -1
               : 0;
     });
@@ -614,9 +619,9 @@ class _MessageScreenState extends State<MessageScreen> {
           //     .then((value1) {
           //   if (value1) {
           value.meetingRoomCode =
-              "code-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}";
+              "code-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}-${const Uuid().v4()}";
           value.meetingRoomId =
-              "${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}";
+              "id-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}-${const Uuid().v4()}";
           var ms = {
             "title": value.title.toTitleCase().trim(),
             "projectId": widget.chatObject.project!.objectId!,

@@ -71,14 +71,14 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     }
     _routes = [
       {
-        '/0': KeepAlivePage(ProjectTab(
+        '/': KeepAlivePage(ProjectTab(
           key: const PageStorageKey(0),
           scrollController: sc[0],
         )),
         Routes.favoriteProject: getRoute(Routes.favoriteProject, context),
       },
       {
-        '/1': _userStore.user!.type == UserType.company
+        '/': _userStore.user!.type == UserType.company
             ? KeepAlivePage(DashBoardTab(
                 key: const PageStorageKey(11),
                 pageController: _pageController,
@@ -91,7 +91,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         // Routes.project_post: getRoute(Routes.project_post),
       },
       {
-        '/2': KeepAlivePage(MessageTab(
+        '/': KeepAlivePage(MessageTab(
           key: const PageStorageKey(2),
           scrollController: sc[2],
         )),
@@ -99,7 +99,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         // ProfileEdit.route: ProfileEdit(),
       },
       {
-        '/3': KeepAlivePage(AlertTab(
+        '/': KeepAlivePage(AlertTab(
           key: const PageStorageKey(3),
           scrollController: sc[3],
         )),
@@ -126,7 +126,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   List<Map<String, Widget>> _routes = [];
   DateTime oldTime = DateTime.now();
   final _pageController2 = IndexController();
-  final _pageController = PageController(initialPage: 1);
+  final _pageController = PageController(initialPage: 2);
   final LanguageStore _languageStore = getIt<LanguageStore>();
   // late int currentPage;
   // late TabController tabController;
@@ -186,7 +186,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       appBar: _buildAppBar(),
       body: NavbarRouter2(
         pageController: _pageController2,
-        initialIndex: 1,
+        initialIndex: 2,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
           return Center(
