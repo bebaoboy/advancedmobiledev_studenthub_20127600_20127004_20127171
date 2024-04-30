@@ -1,18 +1,49 @@
-### This branch is still under development
 
-## Thông tin nhóm:
+## Thông tin nhóm (link video bên dưới)
+
 Lưu Tuấn Quân - 20127600
 <br>
 Huỳnh Minh Bảo- 20127004
 <br>
 Vũ Huy Hoàng - 20127171
+<br><br>
+
+
+## ANNOUNCEMENT🎉 
+
+StudentHub 0.7 is OUT!!
+
+### [Link release](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/releases)
+
+<img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
 <br>
 
-## Link Youtube Demo:
-[Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
+## Link Youtube Demo (All Sprints + Extra):
 
-## Link File đánh giá:
-[GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
+### [Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
+
+## Link File làm việc và đánh giá:
+
+### [GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
+
+## Deploy web (release): 
+
+### [StudentHub Firebase](https://advmobiledev-studenthub-clc20.web.app)
+
+<br>
+
+<br>
+
+### Sprint 3: Update account for demo video call (in chat section)
+
+**Username:**
+- user1@gmail.com
+- user2@gmail.com
+- others: user3 
+
+**Account for company access:**
+- c@mpany.com
+- others: student
 
 
 ## How to Use 
@@ -37,8 +68,23 @@ In Visual Studio Code, navigate to Preferences -> Settings and search for Files:
 ```
 
 ### End of readme.
-###########################################################################################################################
-### .
+
+##################################################################################################
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 ## Boilerplate Features:
 
@@ -206,67 +252,9 @@ widgets/
 
 This file contains all the routes for your application.
 
-```dart
-import 'package:flutter/material.dart';
-
-import 'ui/post/post_list.dart';
-import 'ui/login/login.dart';
-import 'ui/splash/splash.dart';
-
-class Routes {
-  Routes._();
-
-  //static variables
-  static const String splash = '/splash';
-  static const String login = '/login';
-  static const String home = '/post';
-
-  static final routes = <String, WidgetBuilder>{
-    splash: (BuildContext context) => SplashScreen(),
-    login: (BuildContext context) => LoginScreen(),
-    home: (BuildContext context) => HomeScreen(),
-  };
-}
-```
-
 ### Main
 
 This is the starting point of the application. All the application level configurations are defined in this file i.e, theme, routes, title, orientation etc.
-
-```dart
-import 'package:boilerplate/routes.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'constants/app_theme.dart';
-import 'constants/strings.dart';
-import 'ui/splash/splash.dart';
-
-void main() {
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.landscapeRight,
-    DeviceOrientation.landscapeLeft,
-  ]).then((_) {
-    runApp(MyApp());
-  });
-}
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: Strings.appName,
-      theme: themeData,
-      routes: Routes.routes,
-      home: SplashScreen(),
-    );
-  }
-}
-```
 
 ## Wiki
 
