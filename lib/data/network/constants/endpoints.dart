@@ -14,6 +14,10 @@ class Endpoints {
   // unused
   static const String getPosts = "/api/posts";
 
+  //////////////////////////////////// noti /////////////////////////////////
+  static const String getNoti =
+      "$baseUrl/notification/getByReceiverId/{receiverId}";
+
   //////////////////////////////////// chat /////////////////////////////////
 
   /// để hiện lên tab message?
