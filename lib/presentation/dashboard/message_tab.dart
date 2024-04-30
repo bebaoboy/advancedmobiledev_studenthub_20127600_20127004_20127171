@@ -56,7 +56,9 @@ class Singapore extends State<MessageTab> {
   void initState() {
     super.initState();
     // Future.delayed(const Duration(milliseconds: 500), () async {
-    getAllChatFuture = chatStore.getAllChat();
+    getAllChatFuture = chatStore.getAllChat(setStateCallback: () {
+      setState(() {});
+    });
     // chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
     // chatStore.getMessageByProjectAndUsers(projectId: "150", userId: "94");
     // });
@@ -160,12 +162,19 @@ class Singapore extends State<MessageTab> {
                                         child: _buildTopRowList());
                                   }
                                   int index = i - 1;
+
+                                  if (messages[index].lastSeenTime != null) {
+                                    print(
+                                        "new message count after ${messages[index].lastSeenTime}: ${messages[index].newMessageCount}");
+                                  }
                                   return InkWell(
                                     onTap: () {
                                       //print('Tile clicked');
                                       String id = messages[index]
                                           .chatUser
                                           .id; // id này chỉ để test socket
+
+                                      // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
 
                                       chatStore.getMessageByProjectAndUsers(
                                           userId: messages[index].chatUser.id,
@@ -224,8 +233,15 @@ class Singapore extends State<MessageTab> {
                                           .message), // Replace with actual icons
                                       title: Text(
                                         "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName} (${messages[index].chatUser.id})",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: messages[index]
+                                                        .newMessageCount >
+                                                    0
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : null),
                                       ),
                                       subtitle: Column(
                                         crossAxisAlignment:
@@ -249,11 +265,8 @@ class Singapore extends State<MessageTab> {
                                           ),
                                           Text(
                                             messages[index]
-                                                    .messages
-                                                    ?.first
-                                                    .createdAt
-                                                    .toString() ??
-                                                DateTime.now().toString(),
+                                                .lastSeenTime!.toLocal()
+                                                .toString(),
                                             style:
                                                 const TextStyle(fontSize: 12),
                                             textAlign: TextAlign.end,

@@ -4,6 +4,7 @@ import 'package:boilerplate/core/data/network/dio/interceptors/auth_interceptor.
 import 'package:boilerplate/core/data/network/dio/interceptors/logging_interceptor.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:dio/dio.dart';
@@ -36,14 +37,15 @@ class WorkMangerHelper {
   }
 
   static DioClient _initializeDioClient() {
-    return DioClient(dioConfigs: WorkMangerHelper.dioConfig)
+    getIt.registerFactory( () => DioClient(dioConfigs: WorkMangerHelper.dioConfig)
       ..addInterceptors([
         AuthInterceptor(accessToken: () async {
           return WorkMangerHelper._sharedPreferences
               .getString(Preferences.auth_token);
         }),
         LoggingInterceptor(),
-      ]);
+      ]));
+    return getIt<DioClient>();
   }
 
   // static ProjectApi _initializeProjectApi() {
@@ -70,7 +72,7 @@ class WorkMangerHelper {
       existingWorkPolicy: ExistingWorkPolicy.replace,
       initialDelay: SHORT_DELAY,
       frequency: LOW_FREQUENCY,
-      backoffPolicy: BackoffPolicy.linear,
+      backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(networkType: NetworkType.connected),
     );
   }
@@ -197,8 +199,9 @@ class WorkMangerHelper {
       var response = await WorkMangerHelper._dioClient.dio
           .get(Endpoints.getProfile)
           .onError((exception, stackTrace) {
+        print("$exception \n$stackTrace");
         return Response(
-          requestOptions: RequestOptions(),
+          requestOptions: RequestOptions(data: "$exception \n$stackTrace"),
           statusCode: 400,
         );
       });
@@ -231,13 +234,16 @@ class WorkMangerHelper {
               Preferences.student_profile, studentProfile.toJson());
         }
 
+        print("fetch ${response.data}");
+
         return Future.value(true);
       } else {
+        print("fetch error ${response.data.toString()}");
         return Future.value(false);
       }
     } catch (e) {
-      print(e);
-      return Future.value(true);
+      print("fetch error $e");
+      return Future.value(false);
     }
   }
 }
