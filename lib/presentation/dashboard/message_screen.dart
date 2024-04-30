@@ -66,6 +66,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     super.initState();
+    print("init msg receive");
     // print(widget.chatObject.messages);
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
@@ -110,6 +111,7 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
     timer?.cancel();
     messageNotifier.removeListener(_messageNotifierListener);
+    messageNotifier.dispose();
   }
 
   void updateMessageReactions(MessageReaction reaction, String id,
@@ -631,7 +633,7 @@ class _MessageScreenState extends State<MessageScreen> {
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
               author: widget.chatObject.chatUser,
-              id: value.meetingRoomId,
+              id: const Uuid().v4(),
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: Status.delivered,

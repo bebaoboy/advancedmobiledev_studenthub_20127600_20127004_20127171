@@ -75,8 +75,18 @@ class MessageNotifierProvider with ChangeNotifier {
       print(data['senderId'].toString());
       if (data['senderId'].toString() != user.id) return;
       print("receive $data");
-      addInbox(data);
+      addInbox(data, false);
     });
+
+    textSocketHandler.on('RECEIVE_INTERVIEW', (data) {
+      if (data["senderId"].toString() == userStore.user!.objectId) return;
+
+      print(data['senderId'].toString());
+      if (data['senderId'].toString() != user.id) return;
+      print("receive interview $data");
+      addInbox(data, true);
+    });
+
     textSocketHandler.on('SEND_MESSAGE', (data) => print("send $data"));
 
     // noti student id/company id
@@ -105,26 +115,30 @@ class MessageNotifierProvider with ChangeNotifier {
   var userStore = getIt<UserStore>();
   var rand = Random();
 
-  void addInbox(Map<String, dynamic> message) async {
+  void addInbox(Map<String, dynamic> message, bool isInterview) async {
     String mess = message["messageId"].toString();
+    print("receive id: $mess");
 
     if (inbox.firstWhereOrNull(
           (element) => element.id == message["messageId"].toString(),
         ) ==
         null) {
       print("project ${project?.objectId},message sentttttttttttt: $message");
-      NotificationHelper.createMessageNotification(
-          id: rand.nextInt(100000),
-          projectId: project?.objectId ?? "-1",
-          msg: MessageObject(
-              project: project,
-              id: mess,
-              content: message["content"] ?? message["title"],
-              receiver: Profile(objectId: "-1", name: "Quan"),
-              sender:
-                  Profile(objectId: user.id, name: user.firstName ?? "null")));
 
-      if (message['interviewId'] == null) {
+      if (!isInterview) {
+        NotificationHelper.createMessageNotification(
+            id: mess.isNotEmpty
+                ? int.tryParse(mess) ?? rand.nextInt(100000)
+                : rand.nextInt(100000),
+            projectId: project?.objectId ?? "-1",
+            msg: MessageObject(
+                project: project,
+                id: mess,
+                content: message["content"] ?? message["title"],
+                receiver: Profile(objectId: "-1", name: "Quan"),
+                sender: Profile(
+                    objectId: user.id, name: user.firstName ?? "null")));
+
         // text msg
         var e = <String, dynamic>{
           ...message,
@@ -145,6 +159,14 @@ class MessageNotifierProvider with ChangeNotifier {
         // TODO: add vô chat store
         inbox.insert(0, AbstractChatMessage.fromJson(e));
       } else {
+        // TODO: làm bấm vô nó vào msg
+        NotificationHelper.createTextNotification(
+          id: mess.isNotEmpty
+              ? int.tryParse(mess) ?? rand.nextInt(100000)
+              : rand.nextInt(100000),
+          body: "New interview: ${message['title']}",
+        );
+
         // interview msg
         var id = message["interviewId"].toString();
         var projectStore = getIt<ChatStore>();
@@ -152,7 +174,7 @@ class MessageNotifierProvider with ChangeNotifier {
         var e = <String, dynamic>{
           ...message,
           "id": mess,
-          'type': 'interview',
+          'type': 'schedule',
           'text': message['title'],
           'status': 'seen',
           'interview': interview?.toJson(),
@@ -162,6 +184,16 @@ class MessageNotifierProvider with ChangeNotifier {
                 ? user.firstName
                 : userStore.user!.name,
             "id": message["senderId"].toString(),
+          },
+          "metadata": {
+            "title": message['title'],
+            "projectId": project?.objectId ?? "-1",
+            "senderId": user.id,
+            "receiverId": userStore.user!.objectId!, // notification
+            "startTime": interview?.startDate,
+            "endTime": interview?.endDate,
+            "meeting_room_code": interview?.meetingRoomCode,
+            "meeting_room_id": interview?.meetingRoomId,
           }
         };
 
@@ -171,5 +203,13 @@ class MessageNotifierProvider with ChangeNotifier {
     } else {
       print("trùng message id ${message["messageId"]}");
     }
+  }
+
+  @override
+  dispose() {
+    super.dispose();
+    textSocketHandler.disconnect();
+    textSocketHandler.dispose();
+    textSocketHandler.destroy();
   }
 }
