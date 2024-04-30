@@ -16,8 +16,7 @@ class NotiRepositoryImpl extends NotiRepository {
       return await _notiApi.getNoti(params).then(
         (value) {
           if (value.statusCode == HttpStatus.accepted ||
-              value.statusCode == HttpStatus.ok ||
-              value.statusCode == HttpStatus.created) {
+              value.statusCode == HttpStatus.ok) {
             List data = value.data["result"];
             List<NotificationObject> res = List.empty(growable: true);
             for (var element in data) {

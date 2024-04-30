@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -223,6 +224,7 @@ class _AlertTabState extends State<AlertTab> {
   @override
   void initState() {
     super.initState();
+
     alerts.then((notificationList) {
       joinInterviews = notificationList
           .where((e) => e.type == NotificationType.joinInterview)
@@ -237,7 +239,6 @@ class _AlertTabState extends State<AlertTab> {
           .where((e) => e.type == NotificationType.message)
           .toList();
     });
-
     hasOfferProposal = userStore.user != null &&
         userStore.user!.studentProfile != null &&
         userStore.user!.studentProfile!.proposalProjects != null &&

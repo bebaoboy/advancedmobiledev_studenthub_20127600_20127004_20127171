@@ -16,7 +16,7 @@ class Endpoints {
 
   //////////////////////////////////// noti /////////////////////////////////
   static const String getNoti =
-      "$baseUrl/notification/getByReceiverId/{receiverId}";
+      "$baseUrl/api/notification/getByReceiverId/{receiverId}";
 
   //////////////////////////////////// chat /////////////////////////////////
 
