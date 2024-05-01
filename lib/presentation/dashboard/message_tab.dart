@@ -261,7 +261,7 @@ class Singapore extends State<MessageTab> {
                                                       .messages[index].messages,
                                                   chatUser: chatStore
                                                       .messages[index]
-                                                      .chatUser)))
+                                                      .chatUser)]))
                                           .then(
                                         (value) {
                                           setState(() {
