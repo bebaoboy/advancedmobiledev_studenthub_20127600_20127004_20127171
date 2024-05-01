@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_card_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/swiper_button.dart';
@@ -33,6 +35,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
   final ProjectStore _projectStore = getIt<ProjectStore>();
+  final ChatStore chatStore = getIt<ChatStore>();
   final CardStateStore _cardStateStore = getIt<CardStateStore>();
   final AppinioSwiperController controller = AppinioSwiperController();
 
@@ -66,12 +69,16 @@ class _ProposalSwiperState extends State<ProposalSwiper>
     // ToDo
     Navigator.push(
         context,
-        MaterialPageRoute2(
-          routeName: Routes.message,
-          arguments: ChatUser(
-              id: current.student.objectId!,
-              firstName: current.student.fullName),
-        ));
+        MaterialPageRoute2(routeName: Routes.message, arguments: [
+          true,
+          WrapMessageList(
+            messages: [],
+            project: widget.project,
+            chatUser: ChatUser(
+                id: current.student.userId!,
+                firstName: current.student.fullName),
+          )
+        ]));
   }
 
   @override

@@ -587,6 +587,7 @@ abstract class _ChatStore with Store {
           response.statusCode == HttpStatus.ok) {
         return true;
       } else {
+        errorStore.errorMessage = response.data['errorDetails'];
         return false;
       }
     } catch (e) {

@@ -12,11 +12,13 @@ import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 class ProposalItem extends StatefulWidget {
   final Proposal proposal;
   // final bool pending;
+  final Project project;
   final Function? onHired;
   const ProposalItem(
       {super.key,
       required this.proposal,
       // required this.pending,
+      required this.project,
       required this.onHired});
 
   @override
@@ -118,14 +120,17 @@ class _ProposalItemState extends State<ProposalItem> {
                             context,
                             MaterialPageRoute2(
                                 routeName: Routes.message,
-                                arguments: WrapMessageList(
-                                  project: widget.proposal.project,
-                                  messages: [],
-                                  chatUser: ChatUser(
-                                      id: widget.proposal.student.objectId!,
-                                      firstName:
-                                          widget.proposal.student.fullName),
-                                )));
+                                arguments: [
+                                  false,
+                                  WrapMessageList(
+                                    project: widget.project,
+                                    messages: [],
+                                    chatUser: ChatUser(
+                                        id: widget.proposal.student.userId!,
+                                        firstName:
+                                            widget.proposal.student.fullName),
+                                  )
+                                ]));
                       } //print('send a message')
                       ,
                       child: Text(Lang.get('message')),

@@ -1,6 +1,5 @@
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
-import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
@@ -151,7 +150,12 @@ getRoute(String name, context, {arguments}) {
     if (name.startsWith(Routes.message)) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
-        return MessageScreen(chatObject: arguments as WrapMessageList);
+        var isFirstInitiate = arguments[0];
+        var messageList = arguments[1];
+        return MessageScreen(
+          chatObject: messageList,
+          isFirstInitiate: isFirstInitiate,
+        );
       }
     }
     if (name.startsWith(Routes.projectDetailsStudent)) {
