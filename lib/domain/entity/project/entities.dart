@@ -279,7 +279,7 @@ class NotificationObject extends MyObject {
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
         content = json['content'] ?? '',
-        _type = NotificationType.values[json['type'] ?? 0];
+        _type = NotificationType.values[int.tryParse(json['type']) ?? 0], super(createdAt: json["createdAt"]);
 }
 
 enum NotificationType {

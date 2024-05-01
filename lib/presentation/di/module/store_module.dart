@@ -9,6 +9,7 @@ import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
+import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
@@ -74,6 +75,7 @@ import 'package:boilerplate/presentation/profile/store/form/profile_form_store.d
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/signup/store/signup_store.dart';
+import 'package:boilerplate/utils/notification/store/notification_store.dart';
 
 import '../../../di/service_locator.dart';
 
@@ -121,6 +123,10 @@ mixin StoreModule {
     getIt.registerSingleton<SignupStore>(
       SignupStore(getIt<SignUpUseCase>(), getIt<SignUpFormErrorStore>(),
           getIt<ErrorStore>()),
+    );
+
+    getIt.registerSingleton<NotificationStore>(
+      NotificationStore(getIt<GetNotiUseCase>()),
     );
 
     getIt.registerSingleton<ForgetPasswordStore>(ForgetPasswordStore(

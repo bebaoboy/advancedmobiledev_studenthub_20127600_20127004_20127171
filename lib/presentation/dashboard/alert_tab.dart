@@ -10,7 +10,6 @@ import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -18,6 +17,7 @@ import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/notification/store/notification_store.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -49,94 +49,93 @@ List<Color> colors = [];
 class AlertTab extends StatefulWidget {
   const AlertTab({super.key, required this.scrollController});
   final ScrollController scrollController;
-
   @override
   State<AlertTab> createState() => _AlertTabState();
 }
 
-final List<NotificationObject> alerts = [
-  NotificationObject(
-      type: NotificationType.text,
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "company 1",
-      ),
-      content: 'You have submitted to join project "Javis - AI Copilot',
-      createdAt: DateTime.now()),
-  NotificationObject(
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "company 1",
-      ),
-      type: NotificationType.joinInterview,
-      content:
-          'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-      createdAt: DateTime.now().subtract(const Duration(days: 7))),
-  OfferNotification(
-      projectId: "",
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "company 1",
-      ),
-      content: 'You have submitted to join project "Javis - AI Copilot',
-      createdAt: DateTime.now()),
-  NotificationObject(
-      type: NotificationType.message,
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "Alex Jor",
-      ),
-      content: 'I have read your requirement but I dont seem to...?\n6/6/2024',
-      createdAt: DateTime.now()),
-  NotificationObject(
-      type: NotificationType.message,
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "Alex Jor",
-      ),
-      content: 'Finish your project?',
-      createdAt: DateTime.now()),
-  NotificationObject(
-      type: NotificationType.message,
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "Alex Jor",
-      ),
-      content: 'How are you doing?',
-      createdAt: DateTime.now()),
-  OfferNotification(
-      projectId: "",
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "company 1",
-      ),
-      content: 'You have an offer to join project "HCMUS - Administration"',
-      createdAt: DateTime.now()),
-  OfferNotification(
-      projectId: "",
-      id: "",
-      receiver: StudentProfile(objectId: "", fullName: "student 1"),
-      sender: CompanyProfile(
-        objectId: "",
-        companyName: "company 1",
-      ),
-      content: 'You have an offer to join project "Quantum Physics"',
-      createdAt: DateTime.now()),
-];
+// final List<NotificationObject> alerts = [
+//   NotificationObject(
+//       type: NotificationType.text,
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "company 1",
+//       ),
+//       content: 'You have submitted to join project "Javis - AI Copilot',
+//       createdAt: DateTime.now()),
+//   NotificationObject(
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "company 1",
+//       ),
+//       type: NotificationType.joinInterview,
+//       content:
+//           'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+//       createdAt: DateTime.now().subtract(const Duration(days: 7))),
+//   OfferNotification(
+//       projectId: "",
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "company 1",
+//       ),
+//       content: 'You have submitted to join project "Javis - AI Copilot',
+//       createdAt: DateTime.now()),
+//   NotificationObject(
+//       type: NotificationType.message,
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "Alex Jor",
+//       ),
+//       content: 'I have read your requirement but I dont seem to...?\n6/6/2024',
+//       createdAt: DateTime.now()),
+//   NotificationObject(
+//       type: NotificationType.message,
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "Alex Jor",
+//       ),
+//       content: 'Finish your project?',
+//       createdAt: DateTime.now()),
+//   NotificationObject(
+//       type: NotificationType.message,
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "Alex Jor",
+//       ),
+//       content: 'How are you doing?',
+//       createdAt: DateTime.now()),
+//   OfferNotification(
+//       projectId: "",
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "company 1",
+//       ),
+//       content: 'You have an offer to join project "HCMUS - Administration"',
+//       createdAt: DateTime.now()),
+//   OfferNotification(
+//       projectId: "",
+//       id: "",
+//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//       sender: CompanyProfile(
+//         objectId: "",
+//         companyName: "company 1",
+//       ),
+//       content: 'You have an offer to join project "Quantum Physics"',
+//       createdAt: DateTime.now()),
+// ];
 
 // final List<Map<String, dynamic>> alerts = [
 //   // OfferNotification(
@@ -201,7 +200,12 @@ final List<NotificationObject> alerts = [
 
 class _AlertTabState extends State<AlertTab> {
   var userStore = getIt<UserStore>();
+  var notiStore = getIt<NotificationStore>();
+
   bool hasOfferProposal = false;
+
+  late Future<List<NotificationObject>> future;
+  List<NotificationObject> alerts = [];
   List<NotificationObject> viewOffers = [],
       texts = [],
       messages = [],
@@ -223,12 +227,25 @@ class _AlertTabState extends State<AlertTab> {
   @override
   void initState() {
     super.initState();
-    joinInterviews =
-        alerts.where((e) => e.type == NotificationType.joinInterview).toList();
-    viewOffers =
-        alerts.where((e) => e.type == NotificationType.viewOffer).toList();
-    texts = alerts.where((e) => e.type == NotificationType.text).toList();
-    messages = alerts.where((e) => e.type == NotificationType.message).toList();
+    future = notiStore.getNoti(receiverId: userStore.user!.objectId ?? "");
+
+    future.then((notificationList) {
+      joinInterviews = notificationList
+          .where((e) => e.type == NotificationType.joinInterview)
+          .toList();
+      viewOffers = notificationList
+          .where((e) => e.type == NotificationType.viewOffer)
+          .toList();
+      texts = notificationList
+          .where((e) => e.type == NotificationType.text)
+          .toList();
+      messages = notificationList
+          .where((e) => e.type == NotificationType.message)
+          .toList();
+          if (mounted) {
+            setState(() {});
+          }
+    });
     hasOfferProposal = userStore.user != null &&
         userStore.user!.studentProfile != null &&
         userStore.user!.studentProfile!.proposalProjects != null &&
