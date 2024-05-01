@@ -28,7 +28,8 @@ import 'package:universal_html/js.dart' as js;
 /// Whether the CanvasKit renderer is being used on web.
 ///
 /// Always returns `false` on non-web.
-bool get isCanvasKit => !kIsWeb || (kIsWeb && js.context['flutterCanvasKit'] != null);
+bool get isCanvasKit =>
+    !kIsWeb || (kIsWeb && js.context['flutterCanvasKit'] != null);
 
 class AnimatedWave extends StatelessWidget {
   final double height;
@@ -47,14 +48,16 @@ class AnimatedWave extends StatelessWidget {
       return SizedBox(
         height: height,
         width: constraints.biggest.width,
-        child: isCanvasKit ? LoopAnimationBuilder(
-            duration: Duration(milliseconds: (5000 / speed).round()),
-            tween: Tween(begin: 0.0, end: 2 * pi),
-            builder: (context, value, child) {
-              return CustomPaint(
-                foregroundPainter: CurvePainter(value + offset),
-              );
-            }) : null,
+        child: isCanvasKit
+            ? LoopAnimationBuilder(
+                duration: Duration(milliseconds: (5000 / speed).round()),
+                tween: Tween(begin: 0.0, end: 2 * pi),
+                builder: (context, value, child) {
+                  return CustomPaint(
+                    foregroundPainter: CurvePainter(value + offset),
+                  );
+                })
+            : null,
       );
     });
   }
@@ -271,6 +274,9 @@ class _SplashScreenState extends State<SplashScreen>
             var cb = await getUserByLogin(user.login!);
             if (cb != null) user = cb;
             user.password ??= DEFAULT_PASS;
+            user.fullName =
+                userStore.user!.email.split("@").first.toUpperCase();
+
             print(user);
             utils.users.add(user);
             _loginCube(context, user);
@@ -356,21 +362,23 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(
-                      child: isCanvasKit ? Lottie.asset(
-                        'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
-                        fit: BoxFit.cover,
-                        width: MediaQuery.of(context).orientation ==
-                                Orientation.landscape
-                            ? 200
-                            : 400, // Adjust the width and height as needed
-                        height: MediaQuery.of(context).orientation ==
-                                Orientation.landscape
-                            ? 200
-                            : 400,
-                        repeat:
-                            true, // Set to true if you want the animation to loop
-                        controller: _controller,
-                      ) : null,
+                      child: isCanvasKit
+                          ? Lottie.asset(
+                              'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
+                              fit: BoxFit.cover,
+                              width: MediaQuery.of(context).orientation ==
+                                      Orientation.landscape
+                                  ? 200
+                                  : 400, // Adjust the width and height as needed
+                              height: MediaQuery.of(context).orientation ==
+                                      Orientation.landscape
+                                  ? 200
+                                  : 400,
+                              repeat:
+                                  true, // Set to true if you want the animation to loop
+                              controller: _controller,
+                            )
+                          : null,
                     ),
                     MediaQuery.of(context).orientation != Orientation.landscape
                         ? Center(

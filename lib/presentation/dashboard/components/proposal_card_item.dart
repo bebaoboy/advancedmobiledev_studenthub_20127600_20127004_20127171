@@ -15,6 +15,7 @@ class ProposalCardItem extends StatefulWidget {
 }
 
 class _ProposalCardItemState extends State<ProposalCardItem> {
+  // ignore: unused_element
   Widget _buildChip(List<Skill>? skills) {
     skills ??= <Skill>[
       Skill('Demo skill 1', 'something', '0'),
@@ -116,7 +117,7 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                 // _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty
                 //     ? null
                 //     : profile.skillSet),
-                Text(profile.techStack!.name),
+                Text(profile.techStack?.name ?? ""),
                 const SizedBox(
                   height: 24,
                 ),

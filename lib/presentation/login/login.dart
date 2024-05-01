@@ -540,6 +540,8 @@ initCube(context) async {
               var cb = await getUserByLogin(user.login!);
               if (cb != null) user = cb;
               user.password ??= DEFAULT_PASS;
+              user.fullName =
+                  userStore.user!.email.split("@").first.toUpperCase();
               print(user);
               utils.users.add(user);
               _loginCube(context, user);

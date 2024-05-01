@@ -118,13 +118,10 @@ class _AllScheduleBottomSheetState extends State<AllScheduleBottomSheet> {
                     var t = InterviewSchedule.fromJsonApi(p0.metadata!);
 
                     return ScheduleMessage(
-                        scheduleFilter: InterviewSchedule(
-                            isCancel: t.isCancel,
-                            endDate: t.endDate,
-                            startDate: t.startDate,
-                            title: t.title),
+                        scheduleFilter: t,
                         message: ScheduleMessageType(
                             author: p0.author,
+                            metadata: p0.metadata,
                             id: p0.id,
                             type: p0.type,
                             messageWidth:

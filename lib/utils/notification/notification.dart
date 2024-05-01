@@ -95,7 +95,7 @@ class NotificationHelper {
       required MessageObject msg,
       required String projectId,
       required int id}) async {
-    print("created: ${msg.toJson()}");
+    print("created: $id");
     var tittle = "${msg.sender.getName} (Project $projectId)";
     await _create(
         content: NotificationContent(
@@ -105,7 +105,7 @@ class NotificationHelper {
           groupKey: "$projectId-${msg.sender.objectId}",
           title: title ?? tittle,
           body: body ?? msg.content,
-          notificationLayout: NotificationLayout.Messaging,
+          notificationLayout: NotificationLayout.MessagingGroup,
           wakeUpScreen: true,
           // largeIcon: 'resource://drawable/image',
           payload: {
