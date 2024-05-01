@@ -47,7 +47,8 @@ abstract class _ChatStore with Store {
   final userStore = getIt<UserStore>();
 
   @observable
-  final Map<(String, String, String), MessageNotifierProvider> _messageNotifiers = {};
+  // ignore: prefer_final_fields
+  Map<(String, String, String), MessageNotifierProvider> _messageNotifiers = {};
   MessageNotifierProvider? getMessageNotifiers(WrapMessageList chatObject) {
     var p = _messageNotifiers[(
       chatObject.project!.objectId,
