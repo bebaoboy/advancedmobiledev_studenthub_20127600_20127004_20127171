@@ -278,14 +278,16 @@ class NotificationHelper {
       try {
         var msg = MessageObject.fromJson(
             json.decode(receivedAction.payload!["msg"]!));
-        NavigationService.navigatorKey.currentState?.push(MaterialPageRoute2(
-            routeName: Routes.message,
-            arguments: WrapMessageList(
-                project: msg.project,
-                chatUser: ChatUser(
-                    id: msg.sender.objectId ?? "-1",
-                    firstName: msg.sender.getName),
-                messages: [])));
+        NavigationService.navigatorKey.currentState
+            ?.push(MaterialPageRoute2(routeName: Routes.message, arguments: [
+          false,
+          WrapMessageList(
+              project: msg.project,
+              chatUser: ChatUser(
+                  id: msg.sender.objectId ?? "-1",
+                  firstName: msg.sender.getName),
+              messages: [])
+        ]));
       } catch (e) {
         print(e.toString());
       }

@@ -8,11 +8,13 @@ import 'package:flutter/material.dart';
 class HiredItem extends StatefulWidget {
   final Proposal hired;
   final bool pending;
+  final Project project;
   // final Function? onHired;
   const HiredItem({
     super.key,
     required this.hired,
     required this.pending,
+    required this.project,
     // required this.onHired
   });
 

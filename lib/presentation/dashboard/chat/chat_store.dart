@@ -217,7 +217,9 @@ abstract class _ChatStore with Store {
               id: mess,
               content: message["content"] ?? message["title"],
               receiver: Profile(objectId: "-1", name: "null"),
-              interviewSchedule: interview != null ? InterviewSchedule.fromJsonApi(interview) : null,
+              interviewSchedule: interview != null
+                  ? InterviewSchedule.fromJsonApi(interview)
+                  : null,
               sender:
                   Profile(objectId: user.id, name: user.firstName ?? "null"));
           // pp.lastSeenTime =
@@ -577,6 +579,7 @@ abstract class _ChatStore with Store {
           response.statusCode == HttpStatus.ok) {
         return true;
       } else {
+        errorStore.errorMessage = response.data['errorDetails'];
         return false;
       }
     } catch (e) {

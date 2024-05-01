@@ -4,6 +4,7 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard_tab.dart';
 import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
@@ -34,6 +35,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   final int _selectedIndex = 1;
 
   final UserStore _userStore = getIt<UserStore>();
+  final _chatStore = getIt<ChatStore>();
   late List<ScrollController> sc;
 
   @override
@@ -49,6 +51,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     //   },
     // );
     print("init state navbar");
+
+    _chatStore.getAllChat();
     _pageController.addListener(
       () {
         setState(() {
@@ -186,7 +190,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       appBar: _buildAppBar(),
       body: NavbarRouter2(
         pageController: _pageController2,
-        initialIndex: 2,
+        initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
           return Center(

@@ -10,6 +10,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 class MessageTab extends StatefulWidget {
   const MessageTab({super.key, required this.scrollController});
@@ -147,188 +148,189 @@ class Singapore extends State<MessageTab> {
                         child: PlaneIndicator(
                           onRefresh: () =>
                               Future.delayed(const Duration(seconds: 3)),
-                          child: Stack(children: [
-                            Positioned.fill(
-                              top: 30,
-                              child: ListView.separated(
-                                controller: widget.scrollController,
-                                itemCount: chatStore.messages.length + 1,
-                                separatorBuilder: (context, index) =>
-                                    const Divider(color: Colors.black),
-                                itemBuilder: (context, i) {
-                                  if (i == 0) {
-                                    return Container(
-                                        margin: const EdgeInsets.only(top: 15),
-                                        child: _buildTopRowList());
-                                  }
-                                  int index = i - 1;
-                                  if (chatStore.messages[index].lastSeenTime !=
-                                          null &&
-                                      chatStore.messages.fold(
-                                              0,
-                                              (sum, item) =>
-                                                  sum + item.newMessageCount) >
-                                          0) {
-                                    Future.delayed(const Duration(seconds: 1),
-                                        () {
-                                      if (NavbarNotifier2
-                                              .badges[
-                                                  NavbarNotifier2.currentIndex]
-                                              .showBadge ==
-                                          false) {
-                                        NavbarNotifier2.updateBadge(
-                                            2,
-                                            NavbarBadge(
-                                                showBadge: true,
-                                                badgeText:
-                                                    "${chatStore.messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
-                                      }
-                                      setState(() {});
-                                    });
-                                    // print(
-                                    //     "new message count after ${chatStore.messages[index].lastSeenTime}: ${chatStore.messages[index].newMessageCount}");
-                                  } else {
-                                    Future.delayed(const Duration(seconds: 1),
-                                        () {
-                                      if (NavbarNotifier2
-                                              .badges[
-                                                  NavbarNotifier2.currentIndex]
-                                              .showBadge ==
-                                          true) {
-                                        NavbarNotifier2.makeBadgeVisible(
-                                            2, false);
-                                      }
-                                    });
-                                  }
-                                  return InkWell(
-                                    onTap: () {
-                                      //print('Tile clicked');
-                                      String id = chatStore
-                                          .messages[index]
-                                          .chatUser
-                                          .id; // id này chỉ để test socket
+                          child: Observer(builder: (context) {
+                            return Stack(children: [
+                              Positioned.fill(
+                                top: 30,
+                                child: ListView.separated(
+                                  controller: widget.scrollController,
+                                  itemCount: chatStore.messages.length + 1,
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(color: Colors.black),
+                                  itemBuilder: (context, i) {
+                                    if (i == 0) {
+                                      return Container(
+                                          margin:
+                                              const EdgeInsets.only(top: 15),
+                                          child: _buildTopRowList());
+                                    }
+                                    int index = i - 1;
+                                    if (chatStore
+                                                .messages[index].lastSeenTime !=
+                                            null &&
+                                        chatStore.messages.fold(
+                                                0,
+                                                (sum, item) =>
+                                                    sum +
+                                                    item.newMessageCount) >
+                                            0) {
+                                      Future.delayed(const Duration(seconds: 1),
+                                          () {
+                                        if (NavbarNotifier2
+                                                .badges[NavbarNotifier2
+                                                    .currentIndex]
+                                                .showBadge ==
+                                            false) {
+                                          NavbarNotifier2.updateBadge(
+                                              2,
+                                              NavbarBadge(
+                                                  showBadge: true,
+                                                  badgeText:
+                                                      "${chatStore.messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
+                                        }
+                                        setState(() {});
+                                      });
+                                      // print(
+                                      //     "new message count after ${chatStore.messages[index].lastSeenTime}: ${chatStore.messages[index].newMessageCount}");
+                                    } else {
+                                      Future.delayed(const Duration(seconds: 1),
+                                          () {
+                                        if (NavbarNotifier2
+                                                .badges[NavbarNotifier2
+                                                    .currentIndex]
+                                                .showBadge ==
+                                            true) {
+                                          NavbarNotifier2.makeBadgeVisible(
+                                              2, false);
+                                        }
+                                      });
+                                    }
+                                    return InkWell(
+                                      onTap: () {
+                                        //print('Tile clicked');
+                                        String id = chatStore
+                                            .messages[index]
+                                            .chatUser
+                                            .id; // id này chỉ để test socket
 
-                                      // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
-
-                                      chatStore.getMessageByProjectAndUsers(
-                                          userId: chatStore
-                                              .messages[index].chatUser.id,
-                                          projectId: chatStore.messages[index]
-                                              .project!.objectId!);
-                                      /*
-                                                                        {
-                                          "result": [
-                                            {
-                                              "id": 249,
-                                              "createdAt": "2024-04-23T16:09:43.731Z",
-                                              "content": "Something",
-                                              "sender": {
-                                                "id": 34,
-                                                "fullname": "bao bao"
-                                              },
-                                              "receiver": {
-                                                "id": 94,
-                                                "fullname": "quan"
-                                              },
-                                              "interview": null
-                                            },
-                                            {
-                                              "id": 251,
-                                              "createdAt": "2024-04-23T16:27:26.848Z",
-                                              "content": "Hi",
-                                              "sender": {
-                                                "id": 34,
-                                                "fullname": "bao bao"
-                                              },
-                                              "receiver": {
-                                                "id": 94,
-                                                "fullname": "quan"
-                                              },
-                                              "interview": null
-                                            },
-                                                                         */
-                                      Navigator.of(NavigationService
-                                              .navigatorKey.currentContext!)
-                                          .push(MaterialPageRoute2(
-                                              routeName:
-                                                  "${Routes.message}/${chatStore.messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
-                                              arguments: WrapMessageList(
+                                        // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
+                                        /*
+                                                                            {
+                                              "result": [
+                                                {
+                                                  "id": 249,
+                                                  "createdAt": "2024-04-23T16:09:43.731Z",
+                                                  "content": "Something",
+                                                  "sender": {
+                                                    "id": 34,
+                                                    "fullname": "bao bao"
+                                                  },
+                                                  "receiver": {
+                                                    "id": 94,
+                                                    "fullname": "quan"
+                                                  },
+                                                  "interview": null
+                                                },
+                                                {
+                                                  "id": 251,
+                                                  "createdAt": "2024-04-23T16:27:26.848Z",
+                                                  "content": "Hi",
+                                                  "sender": {
+                                                    "id": 34,
+                                                    "fullname": "bao bao"
+                                                  },
+                                                  "receiver": {
+                                                    "id": 94,
+                                                    "fullname": "quan"
+                                                  },
+                                                  "interview": null
+                                                },
+                                                                             */
+                                        Navigator.of(NavigationService
+                                                .navigatorKey.currentContext!)
+                                            .push(MaterialPageRoute2(
+                                                routeName:
+                                                    "${Routes.message}/${chatStore.messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
+                                                arguments: [
+                                              false,
+                                              WrapMessageList(
                                                   project: chatStore
                                                       .messages[index].project,
                                                   messages: chatStore
                                                       .messages[index].messages,
                                                   chatUser: chatStore
-                                                      .messages[index]
-                                                      .chatUser)))
-                                          .then(
-                                        (value) {
-                                          setState(() {});
-                                        },
-                                      );
-                                      // You can replace the print statement with your function
-                                    },
-                                    child: ListTile(
-                                      tileColor: Colors.transparent,
-                                      leading: const Icon(Icons
-                                          .message), // Replace with actual icons
-                                      title: Text(
-                                        "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: chatStore.messages[index]
-                                                        .newMessageCount >
-                                                    0
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : null),
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          // Text(chatStore.messages[index]['role']),
+                                                      .messages[index].chatUser)
+                                            ]))
+                                            .then(
+                                          (value) {
+                                            setState(() {});
+                                          },
+                                        );
+                                        // You can replace the print statement with your function
+                                      },
+                                      child: ListTile(
+                                        tileColor: Colors.transparent,
+                                        leading: const Icon(Icons
+                                            .message), // Replace with actual icons
+                                        title: Text(
+                                          "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: chatStore.messages[index]
+                                                          .newMessageCount >
+                                                      0
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : null),
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            // Text(chatStore.messages[index]['role']),
 
-                                          Text(
-                                            chatStore
-                                                        .messages[index]
-                                                        .messages!
-                                                        .first
-                                                        .sender
-                                                        .objectId !=
-                                                    userStore.user!.objectId
-                                                ? chatStore.messages[index]
-                                                    .messages!.first.content
-                                                : "You: ${chatStore.messages[index].messages!.first.content}",
-                                            style: TextStyle(
-                                                fontWeight: chatStore
-                                                            .messages[index]
-                                                            .newMessageCount >
-                                                        0
-                                                    ? FontWeight.bold
-                                                    : null),
-                                          ),
-                                          const SizedBox(
-                                            height: 20,
-                                          ),
-                                          Text(
-                                            chatStore.messages[index].messages
-                                                    ?.firstOrNull?.updatedAt
-                                                    ?.toLocal()
-                                                    .toString() ??
-                                                "null",
-                                            style:
-                                                const TextStyle(fontSize: 12),
-                                            textAlign: TextAlign.end,
-                                          )
-                                        ],
+                                            Text(
+                                              chatStore
+                                                          .messages[index]
+                                                          .messages!
+                                                          .first
+                                                          .sender
+                                                          .objectId !=
+                                                      userStore.user!.objectId
+                                                  ? chatStore.messages[index]
+                                                      .messages!.first.content
+                                                  : "You: ${chatStore.messages[index].messages!.first.content}",
+                                              style: TextStyle(
+                                                  fontWeight: chatStore
+                                                              .messages[index]
+                                                              .newMessageCount >
+                                                          0
+                                                      ? FontWeight.bold
+                                                      : null),
+                                            ),
+                                            const SizedBox(
+                                              height: 20,
+                                            ),
+                                            Text(
+                                              chatStore.messages[index].messages
+                                                      ?.firstOrNull?.updatedAt
+                                                      ?.toLocal()
+                                                      .toString() ??
+                                                  "null",
+                                              style:
+                                                  const TextStyle(fontSize: 12),
+                                              textAlign: TextAlign.end,
+                                            )
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ]),
+                            ]);
+                          }),
                         ),
                       );
               } else if (snapshot.hasError) {

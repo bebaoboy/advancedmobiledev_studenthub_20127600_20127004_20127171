@@ -37,8 +37,10 @@ import 'package:file_picker/file_picker.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 
 class MessageScreen extends StatefulWidget {
-  const MessageScreen({super.key, required this.chatObject});
+  const MessageScreen(
+      {super.key, required this.chatObject, this.isFirstInitiate = false});
   final WrapMessageList chatObject;
+  final isFirstInitiate;
 
   @override
   State<MessageScreen> createState() => _MessageScreenState();
@@ -114,6 +116,34 @@ class _MessageScreenState extends State<MessageScreen> {
       // }
       setState(() {});
     });
+
+    chatStore.getMessageByProjectAndUsers(
+        userId: _user.id, projectId: widget.chatObject.project!.objectId!);
+
+    if (widget.isFirstInitiate) {
+      Future.delayed(const Duration(milliseconds: 300), () {
+        var text = "${userStore.user!.name} wants to chat with you";
+        final textMessage = AbstractTextMessage(
+          author: ChatUser(
+              id: userStore.user!.objectId!, firstName: userStore.user!.name),
+          createdAt: DateTime.now().millisecondsSinceEpoch,
+          id: const Uuid().v4(),
+          status: Status.delivered,
+          text: text,
+        );
+        _addMessage(textMessage);
+
+        messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+          "content": text,
+          "projectId": widget.chatObject.project!.objectId!,
+          "senderId": userStore.user!.objectId!,
+          "receiverId": _user.id, // notification
+          "messageFlag": 0
+        });
+
+        chatStore.getAllChat();
+      });
+    }
   }
 
   @override

@@ -190,16 +190,19 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                             }
                           });
                         },
+                        project: widget.project,
                       ),
                       HiredTabLayout(
-                          hired: widget.project.proposal == null
-                              ? []
-                              : widget.project.proposal!
-                                  .where(
-                                    (element) =>
-                                        element.hiredStatus == HireStatus.hired,
-                                  )
-                                  .toList()),
+                        hired: widget.project.proposal == null
+                            ? []
+                            : widget.project.proposal!
+                                .where(
+                                  (element) =>
+                                      element.hiredStatus == HireStatus.hired,
+                                )
+                                .toList(),
+                        project: widget.project,
+                      ),
                     ],
                   ),
                 ),
@@ -212,29 +215,31 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
   }
 }
 
-class ProposalTabLayout extends StatelessWidget {
-  final List<Proposal>? proposals;
+// class ProposalTabLayout extends StatelessWidget {
+//   final List<Proposal>? proposals;
+//   final Project project;
 
-  const ProposalTabLayout(
-      {super.key, required this.proposals, required this.onHired});
-  final Function? onHired;
+//   const ProposalTabLayout(
+//       {super.key, required this.proposals, required this.onHired});
+//   final Function? onHired;
 
-  @override
-  Widget build(BuildContext context) {
-    return (proposals?.length ?? 0) == 0
-        ? Center(child: Text(Lang.get("nothing_here")))
-        : ListView.builder(
-            controller: ScrollController(),
-            itemCount: proposals?.length ?? 0,
-            itemBuilder: (context, index) {
-              return ProposalItem(
-                  proposal: proposals![index],
-                  // pending: false,
-                  onHired: () => onHired!(index));
-            },
-          );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return (proposals?.length ?? 0) == 0
+//         ? Center(child: Text(Lang.get("nothing_here")))
+//         : ListView.builder(
+//             controller: ScrollController(),
+//             itemCount: proposals?.length ?? 0,
+//             itemBuilder: (context, index) {
+//               return ProposalItem(
+//                   project: project,
+//                   proposal: proposals![index],
+//                   // pending: false,
+//                   onHired: () => onHired!(index));
+//             },
+//           );
+//   }
+// }
 
 // ignore: must_be_immutable
 class DetailTabLayout extends StatefulWidget {
@@ -496,8 +501,8 @@ class _DetailTabLayoutState extends State<DetailTabLayout> {
 
 class HiredTabLayout extends StatelessWidget {
   final List<Proposal>? hired;
-
-  const HiredTabLayout({super.key, required this.hired});
+  final Project project;
+  const HiredTabLayout({super.key, required this.hired, required this.project});
 
   @override
   Widget build(BuildContext context) {
@@ -510,6 +515,7 @@ class HiredTabLayout extends StatelessWidget {
               return HiredItem(
                 hired: hired![index],
                 pending: false,
+                project: project,
               );
             },
           );
@@ -518,9 +524,13 @@ class HiredTabLayout extends StatelessWidget {
 
 class MessageTabLayout extends StatelessWidget {
   final List<Proposal>? messages;
+  final Project project;
 
   const MessageTabLayout(
-      {super.key, required this.messages, required this.onHired});
+      {super.key,
+      required this.messages,
+      required this.onHired,
+      required this.project});
   final Function(Proposal p)? onHired;
 
   @override
@@ -533,6 +543,7 @@ class MessageTabLayout extends StatelessWidget {
             itemBuilder: (context, index) {
               return ProposalItem(
                   proposal: messages![index],
+                  project: project,
                   // pending: false,
                   onHired: () => onHired!(messages![index]));
             },
