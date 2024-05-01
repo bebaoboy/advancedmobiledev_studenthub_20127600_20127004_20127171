@@ -13,6 +13,7 @@ import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:collection/collection.dart';
@@ -43,6 +44,32 @@ abstract class _ChatStore with Store {
   final CheckMeetingAvailabilityUseCase _checkAvailUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
+  final userStore = getIt<UserStore>();
+
+  @observable
+  final Map<(String, String, String), MessageNotifierProvider> _messageNotifiers = {};
+  MessageNotifierProvider? getMessageNotifiers(WrapMessageList chatObject) {
+    var p = _messageNotifiers[(
+      chatObject.project!.objectId,
+      chatObject.chatUser.id,
+      userStore.user!.objectId
+    )];
+    if (p != null) {
+      return p;
+    } else {
+      _messageNotifiers[(
+        chatObject.project!.objectId!,
+        chatObject.chatUser.id,
+        userStore.user!.objectId!
+      )] = MessageNotifierProvider(
+          user: chatObject.chatUser, project: chatObject.project);
+      return _messageNotifiers[(
+        chatObject.project!.objectId!,
+        chatObject.chatUser.id,
+        userStore.user!.objectId!
+      )];
+    }
+  }
 
   @observable
   List<WrapMessageList> _messages = [];

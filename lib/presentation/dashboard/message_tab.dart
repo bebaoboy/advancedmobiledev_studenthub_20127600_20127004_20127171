@@ -192,14 +192,11 @@ class Singapore extends State<MessageTab> {
 
                                       // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
 
-                                      chatStore.messages[index].lastSeenTime =
-                                          DateTime.now();
-
-                                      chatStore.getMessageByProjectAndUsers(
-                                          userId: messages[index].chatUser.id,
-                                          projectId: messages[index]
-                                              .project!
-                                              .objectId!);
+                                      // chatStore.getMessageByProjectAndUsers(
+                                      //     userId: messages[index].chatUser.id,
+                                      //     projectId: messages[index]
+                                      //         .project!
+                                      //         .objectId!);
                                       /*
                                 {
   "result": [
