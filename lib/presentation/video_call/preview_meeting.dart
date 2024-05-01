@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -78,15 +79,22 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
 
   Widget _buildInterviewInfo() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text('Meeting: ${widget.interviewSchedule.title}'),
-        Text('Meeting id: ${widget.interviewSchedule.meetingRoomId}'),
+        Text(
+          'Meeting: ${widget.interviewSchedule.title}',
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        // Text(
+        //   'Meeting id: ${widget.interviewSchedule.meetingRoomId}',
+        // ),
         userStore.getCurrentType() == UserType.company
-            ? Text('Meeting code: ${widget.interviewSchedule.meetingRoomCode}')
-            : SizedBox(
-                width: 300,
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
+            ? Container()
+            : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  width: 300,
                   child: BorderTextField(
                     icon: Icons.code,
                     errorText: '',
@@ -108,36 +116,38 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: Text(
-          'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
-        ),
+      appBar: MainAppBar(
+        name:
+            'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
       ),
       body: OrientationBuilder(
         builder: (context, orientation) {
           if (orientation == Orientation.portrait) {
-            return Column(children: [
-              Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8.0, vertical: 10),
-                  child: _buildInterviewInfo()),
-              Expanded(
-                  child: BodyLayout(widget.currentUser, _callSession,
-                      users: widget.users,
-                      interviewInfo: widget.interviewSchedule)),
-            ]);
+            return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildInterviewInfo(),
+                  Expanded(
+                      child: BodyLayout(widget.currentUser, _callSession,
+                          users: widget.users,
+                          interviewInfo: widget.interviewSchedule)),
+                ]);
           } else {
-            return Row(
-              children: [
-                Expanded(
-                    child: BodyLayout(widget.currentUser, _callSession,
-                        users: widget.users,
-                        interviewInfo: widget.interviewSchedule)),
-                Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: _buildInterviewInfo()),
-              ],
+            return Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+              child: Row(
+                children: [
+                  Expanded(
+                      child: BodyLayout(widget.currentUser, _callSession,
+                          users: widget.users,
+                          interviewInfo: widget.interviewSchedule)),
+                  Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                      child: _buildInterviewInfo()),
+                ],
+              ),
             );
           }
         },
@@ -243,7 +253,7 @@ class _BodyLayoutState extends State<BodyLayout> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(right: 4),
+                padding: const EdgeInsets.only(right: 4, top: 16),
                 child: FloatingActionButton(
                   elevation: 0,
                   heroTag: "Mute",
@@ -486,7 +496,6 @@ class _BodyLayoutState extends State<BodyLayout> {
                                                 widget.interviewInfo, "")) {
                                       // _selectedUsers.add(_currentUserId);
                                       _selectedUsers.add(cubeUser.id!);
-                                      Navigator.pop(context);
                                       CallManager.instance.startNewCall(
                                           NavigationService
                                               .navigatorKey.currentContext!,
@@ -501,9 +510,8 @@ class _BodyLayoutState extends State<BodyLayout> {
                                           () {});
                                     }
                                   } else {
-                                    // _selectedUsers.add(_currentUserId);
                                     _selectedUsers.add(cubeUser.id!);
-                                    Navigator.pop(context);
+                                    // Navigator.pop(context);
                                     CallManager.instance.startNewCall(
                                         NavigationService
                                             .navigatorKey.currentContext!,
