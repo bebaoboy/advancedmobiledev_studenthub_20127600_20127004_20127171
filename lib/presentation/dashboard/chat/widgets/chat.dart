@@ -109,7 +109,10 @@ class Chat extends StatefulWidget {
     this.isLeftStatus = false,
     this.messageWidthRatio = 0.72,
     this.scheduleMessageBuilder,
+    required this.doneLoadingCb,
   });
+
+  final Function doneLoadingCb;
 
   /// See [MessageWidget.audioMessageBuilder].
   final Widget Function(AbstractAudioMessage, {required int messageWidth})?
@@ -656,6 +659,7 @@ class ChatState extends State<Chat> {
                     ),
                   );
                 } else {
+                  widget.doneLoadingCb();
                   return Flexible(
                     child: widget.messages.isEmpty
                         ? SizedBox.expand(

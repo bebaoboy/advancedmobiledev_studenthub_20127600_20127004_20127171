@@ -138,8 +138,7 @@ class Singapore extends State<MessageTab> {
             future: getAllChatFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                List<WrapMessageList> messages = snapshot.data;
-                return messages.isEmpty
+                return chatStore.messages.isEmpty
                     ? const Center(
                         child: Text("No message"),
                       )
@@ -153,7 +152,7 @@ class Singapore extends State<MessageTab> {
                               top: 30,
                               child: ListView.separated(
                                 controller: widget.scrollController,
-                                itemCount: messages.length + 1,
+                                itemCount: chatStore.messages.length + 1,
                                 separatorBuilder: (context, index) =>
                                     const Divider(color: Colors.black),
                                 itemBuilder: (context, i) {
@@ -163,83 +162,103 @@ class Singapore extends State<MessageTab> {
                                         child: _buildTopRowList());
                                   }
                                   int index = i - 1;
-                                  if (messages[index].lastSeenTime != null &&
-                                      messages[index].newMessageCount > 0) {
+                                  if (chatStore.messages[index].lastSeenTime !=
+                                          null &&
+                                      chatStore.messages.fold(
+                                              0,
+                                              (sum, item) =>
+                                                  sum + item.newMessageCount) >
+                                          0) {
                                     Future.delayed(const Duration(seconds: 1),
                                         () {
-                                      NavbarNotifier2.updateBadge(
-                                          2,
-                                          NavbarBadge(
-                                              showBadge: true,
-                                              badgeText:
-                                                  "${messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
+                                      if (NavbarNotifier2
+                                              .badges[
+                                                  NavbarNotifier2.currentIndex]
+                                              .showBadge ==
+                                          false) {
+                                        NavbarNotifier2.updateBadge(
+                                            2,
+                                            NavbarBadge(
+                                                showBadge: true,
+                                                badgeText:
+                                                    "${chatStore.messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
+                                      }
+                                      setState(() {});
                                     });
-                                    print(
-                                        "new message count after ${messages[index].lastSeenTime}: ${messages[index].newMessageCount}");
+                                    // print(
+                                    //     "new message count after ${chatStore.messages[index].lastSeenTime}: ${chatStore.messages[index].newMessageCount}");
                                   } else {
                                     Future.delayed(const Duration(seconds: 1),
                                         () {
-                                      NavbarNotifier2.makeBadgeVisible(
-                                          2, false);
+                                      if (NavbarNotifier2
+                                              .badges[
+                                                  NavbarNotifier2.currentIndex]
+                                              .showBadge ==
+                                          true) {
+                                        NavbarNotifier2.makeBadgeVisible(
+                                            2, false);
+                                      }
                                     });
                                   }
                                   return InkWell(
                                     onTap: () {
                                       //print('Tile clicked');
-                                      String id = messages[index]
+                                      String id = chatStore
+                                          .messages[index]
                                           .chatUser
                                           .id; // id này chỉ để test socket
 
                                       // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
 
-                                      // chatStore.getMessageByProjectAndUsers(
-                                      //     userId: messages[index].chatUser.id,
-                                      //     projectId: messages[index]
-                                      //         .project!
-                                      //         .objectId!);
+                                      chatStore.getMessageByProjectAndUsers(
+                                          userId: chatStore
+                                              .messages[index].chatUser.id,
+                                          projectId: chatStore.messages[index]
+                                              .project!.objectId!);
                                       /*
-                                {
-  "result": [
-    {
-      "id": 249,
-      "createdAt": "2024-04-23T16:09:43.731Z",
-      "content": "Something",
-      "sender": {
-        "id": 34,
-        "fullname": "bao bao"
-      },
-      "receiver": {
-        "id": 94,
-        "fullname": "quan"
-      },
-      "interview": null
-    },
-    {
-      "id": 251,
-      "createdAt": "2024-04-23T16:27:26.848Z",
-      "content": "Hi",
-      "sender": {
-        "id": 34,
-        "fullname": "bao bao"
-      },
-      "receiver": {
-        "id": 94,
-        "fullname": "quan"
-      },
-      "interview": null
-    },
-                                 */
+                                                                        {
+                                          "result": [
+                                            {
+                                              "id": 249,
+                                              "createdAt": "2024-04-23T16:09:43.731Z",
+                                              "content": "Something",
+                                              "sender": {
+                                                "id": 34,
+                                                "fullname": "bao bao"
+                                              },
+                                              "receiver": {
+                                                "id": 94,
+                                                "fullname": "quan"
+                                              },
+                                              "interview": null
+                                            },
+                                            {
+                                              "id": 251,
+                                              "createdAt": "2024-04-23T16:27:26.848Z",
+                                              "content": "Hi",
+                                              "sender": {
+                                                "id": 34,
+                                                "fullname": "bao bao"
+                                              },
+                                              "receiver": {
+                                                "id": 94,
+                                                "fullname": "quan"
+                                              },
+                                              "interview": null
+                                            },
+                                                                         */
                                       Navigator.of(NavigationService
                                               .navigatorKey.currentContext!)
                                           .push(MaterialPageRoute2(
                                               routeName:
-                                                  "${Routes.message}/${messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
+                                                  "${Routes.message}/${chatStore.messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
                                               arguments: WrapMessageList(
-                                                  project:
-                                                      messages[index].project,
-                                                  messages:
-                                                      messages[index].messages,
-                                                  chatUser: messages[index]
+                                                  project: chatStore
+                                                      .messages[index].project,
+                                                  messages: chatStore
+                                                      .messages[index].messages,
+                                                  chatUser: chatStore
+                                                      .messages[index]
                                                       .chatUser)))
                                           .then(
                                         (value) {
@@ -253,10 +272,10 @@ class Singapore extends State<MessageTab> {
                                       leading: const Icon(Icons
                                           .message), // Replace with actual icons
                                       title: Text(
-                                        "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName} (${messages[index].chatUser.id})",
+                                        "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: messages[index]
+                                            color: chatStore.messages[index]
                                                         .newMessageCount >
                                                     0
                                                 ? Theme.of(context)
@@ -268,22 +287,22 @@ class Singapore extends State<MessageTab> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.stretch,
                                         children: [
-                                          // Text(messages[index]['role']),
+                                          // Text(chatStore.messages[index]['role']),
 
                                           Text(
-                                            messages[index]
+                                            chatStore
+                                                        .messages[index]
                                                         .messages!
                                                         .first
                                                         .sender
                                                         .objectId !=
                                                     userStore.user!.objectId
-                                                ? messages[index]
-                                                    .messages!
-                                                    .first
-                                                    .content
-                                                : "You: ${messages[index].messages!.first.content}",
+                                                ? chatStore.messages[index]
+                                                    .messages!.first.content
+                                                : "You: ${chatStore.messages[index].messages!.first.content}",
                                             style: TextStyle(
-                                                fontWeight: messages[index]
+                                                fontWeight: chatStore
+                                                            .messages[index]
                                                             .newMessageCount >
                                                         0
                                                     ? FontWeight.bold
@@ -293,10 +312,8 @@ class Singapore extends State<MessageTab> {
                                             height: 20,
                                           ),
                                           Text(
-                                            messages[index]
-                                                    .messages
-                                                    ?.firstOrNull
-                                                    ?.updatedAt
+                                            chatStore.messages[index].messages
+                                                    ?.firstOrNull?.updatedAt
                                                     ?.toLocal()
                                                     .toString() ??
                                                 "null",

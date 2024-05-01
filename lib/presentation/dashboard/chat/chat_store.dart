@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/chat/disable_interview.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
@@ -48,36 +51,199 @@ abstract class _ChatStore with Store {
 
   @observable
   // ignore: prefer_final_fields
-  Map<(String, String, String), MessageNotifierProvider> _messageNotifiers = {};
+  Map<String, MessageNotifierProvider> _messageNotifiers = {};
   MessageNotifierProvider? getMessageNotifiers(WrapMessageList chatObject) {
-    var p = _messageNotifiers[(
-      chatObject.project!.objectId,
-      chatObject.chatUser.id,
-      userStore.user!.objectId
-    )];
+    var p = _messageNotifiers[chatObject.project!.objectId];
     if (p != null) {
       return p;
     } else {
-      _messageNotifiers[(
-        chatObject.project!.objectId!,
-        chatObject.chatUser.id,
-        userStore.user!.objectId!
-      )] = MessageNotifierProvider(
-          user: chatObject.chatUser, project: chatObject.project);
-      return _messageNotifiers[(
-        chatObject.project!.objectId!,
-        chatObject.chatUser.id,
-        userStore.user!.objectId!
-      )];
+      _messageNotifiers[chatObject.project!.objectId!] =
+          MessageNotifierProvider(
+              project: chatObject.project,
+              addInboxCb: (Map<String, dynamic> data, inbox, bool isInterview) {
+                return addInbox(data, inbox, chatObject.project!,
+                    chatObject.chatUser, isInterview);
+              });
+      return _messageNotifiers[chatObject.project!.objectId!];
+    }
+  }
+
+  var rand = Random();
+
+  AbstractChatMessage? addInbox(
+      Map<String, dynamic> msg,
+      List<AbstractChatMessage> inbox,
+      Project project,
+      ChatUser user,
+      bool isInterview) {
+    Map<String, dynamic> message = msg["notification"]["message"];
+    String mess = message["id"].toString();
+    print("receive id: $mess");
+
+    if (inbox.firstWhereOrNull(
+          (element) => element.id == message["id"].toString(),
+        ) ==
+        null) {
+      print("project ${project.objectId},message sentttttttttttt: $message");
+
+      if (!isInterview) {
+        NotificationHelper.createMessageNotification(
+            id: mess.isNotEmpty
+                ? int.tryParse(mess) ?? rand.nextInt(100000)
+                : rand.nextInt(100000),
+            projectId: project.objectId ?? "-1",
+            msg: MessageObject(
+                project: project,
+                id: mess,
+                content: message["content"] ?? message["title"],
+                receiver: Profile(objectId: "-1", name: "Quan"),
+                sender: Profile(
+                    objectId: user.id, name: user.firstName ?? "null")));
+
+        // text msg
+        var e = <String, dynamic>{
+          ...message,
+          "createdAt":
+              (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          "updatedAt":
+              (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          "id": mess,
+          'type': message['messageFlag'] == 0 ? 'text' : 'interview',
+          'text': message['content'],
+          'status': 'seen',
+          'interview': message['interview'] ?? {},
+          'author': {
+            "firstName": message["senderId"].toString() == user.id
+                ? user.firstName
+                : userStore.user!.name,
+            "id": message["senderId"].toString(),
+          }
+        };
+
+        // TODO: add vô chat store
+        var m = AbstractChatMessage.fromJson(e);
+        var pp = _messages.firstWhereOrNull(
+          (element) =>
+              element.project?.objectId == project.objectId &&
+              element.chatUser.id == user.id,
+        );
+        if (pp != null) {
+          pp.messages?.first = MessageObject(
+              createdAt: DateTime.tryParse(message['createdAt'] ?? "") ??
+                  DateTime.now(),
+              updatedAt: DateTime.tryParse(message['updatedAt'] ?? "") ??
+                  DateTime.now(),
+              project: project,
+              id: mess,
+              content: message["content"] ?? message["title"],
+              receiver: Profile(objectId: "-1", name: "null"),
+              sender:
+                  Profile(objectId: user.id, name: user.firstName ?? "null"));
+          _messages.sort(
+            (a, b) => (b.messages == null || a.messages == null)
+                ? 0
+                : b.messages!.first.updatedAt!
+                    .compareTo(a.messages!.first.updatedAt!),
+          );
+          // pp.lastSeenTime =
+          //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
+        }
+        return m;
+      } else {
+        // TODO: làm bấm vô nó vào msg
+        NotificationHelper.createTextNotification(
+          id: mess.isNotEmpty
+              ? int.tryParse(mess) ?? rand.nextInt(100000)
+              : rand.nextInt(100000),
+          body: "New interview: ${msg["notification"]["interview"]['title']}",
+        );
+
+        // interview msg
+        // var id = message["interviewId"].toString();
+        // var projectStore = getIt<ChatStore>();
+        // var interview = await projectStore.getInterview(interviewId: id);
+        var interview = msg["notification"]["interview"];
+
+        var e = <String, dynamic>{
+          ...message,
+          "id": mess,
+          'type': 'schedule',
+          'text': message['title'],
+          'status': 'seen',
+          'interview': interview,
+          "createdAt":
+              (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          "updatedAt":
+              (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          'author': {
+            "firstName": message["senderId"].toString() == user.id
+                ? user.firstName
+                : userStore.user!.name,
+            "id": message["senderId"].toString(),
+          },
+          "metadata": {
+            "title": message['title'],
+            "projectId": project.objectId ?? "-1",
+            "senderId": user.id,
+            "receiverId": userStore.user!.objectId!, // notification
+            "createdAt": (DateTime.tryParse(interview?.createdAt ?? "") ??
+                    DateTime.now())
+                .millisecondsSinceEpoch,
+            "updatedAt": (DateTime.tryParse(interview?.updatedAt ?? "") ??
+                    DateTime.now())
+                .millisecondsSinceEpoch,
+            "meeting_room_code": interview?.meetingRoomCode,
+            "meeting_room_id": interview?.meetingRoomId,
+          }
+        };
+
+        var m = AbstractChatMessage.fromJson(e);
+        var pp = _messages.firstWhereOrNull(
+          (element) =>
+              element.project?.objectId == project.objectId &&
+              element.chatUser.id == user.id,
+        );
+        if (pp != null) {
+          pp.messages?.first = MessageObject(
+              createdAt: DateTime.tryParse(message['createdAt'] ?? "") ??
+                  DateTime.now(),
+              updatedAt: DateTime.tryParse(message['updatedAt'] ?? "") ??
+                  DateTime.now(),
+              project: project,
+              id: mess,
+              content: message["content"] ?? message["title"],
+              receiver: Profile(objectId: "-1", name: "null"),
+              sender:
+                  Profile(objectId: user.id, name: user.firstName ?? "null"));
+          // pp.lastSeenTime =
+          //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
+          _messages.sort(
+            (a, b) => (b.messages == null || a.messages == null)
+                ? 0
+                : b.messages!.first.updatedAt!
+                    .compareTo(a.messages!.first.updatedAt!),
+          );
+        }
+        return m;
+      }
+    } else {
+      print("trùng message id ${message["id"]}");
+      return null;
     }
   }
 
   @observable
   List<WrapMessageList> _messages = [];
-
+  @computed
   List<WrapMessageList> get messages => _messages;
 
+  @observable
   List<AbstractChatMessage> _currentProjectMessages = [];
+  @computed
   List<AbstractChatMessage> get currentProjectMessages =>
       _currentProjectMessages;
 
@@ -168,6 +334,7 @@ abstract class _ChatStore with Store {
                 //       element.chatUser.id == v.chatUser.id,
                 // );
               }
+              getMessageNotifiers(v);
             }
             _messages.sort(
               (a, b) => (b.lastSeenTime == null || a.lastSeenTime == null)

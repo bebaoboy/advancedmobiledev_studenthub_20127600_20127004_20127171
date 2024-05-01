@@ -1,11 +1,15 @@
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/type/user.dart';
+import 'package:mobx/mobx.dart';
 
 class WrapMessageList {
+  @observable
   List<MessageObject>? messages;
+  @observable
   Project? project;
   ChatUser chatUser;
+  @observable
   DateTime? lastSeenTime = DateTime.now();
   int get newMessageCount => lastSeenTime == null
       ? 0

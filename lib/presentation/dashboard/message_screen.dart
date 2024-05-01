@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
@@ -60,7 +59,9 @@ class _MessageScreenState extends State<MessageScreen> {
 
   void _messageNotifierListener() {
     final newMessage = messageNotifier.inbox.first;
-    _addMessage(newMessage);
+    if (newMessage.author.id == _user.id) {
+      _addMessage(newMessage);
+    }
   }
 
   @override
@@ -93,24 +94,24 @@ class _MessageScreenState extends State<MessageScreen> {
     messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
-      Random r = Random();
-      var num = r.nextInt(30);
+      // Random r = Random();
+      // var num = r.nextInt(30);
       // print(num);
-      if (num <= 7) {
-        typings = [
-          const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
-        ];
-      } else if (num > 7 && num < 15) {
-        typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
-      } else if (num > 15 && num <= 20) {
-        typings.add(
-            const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
-      } else if (num < 25) {
-        typings
-            .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
-      } else {
-        typings.clear();
-      }
+      // if (num <= 7) {
+      //   typings = [
+      //     const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
+      //   ];
+      // } else if (num > 7 && num < 15) {
+      //   typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
+      // } else if (num > 15 && num <= 20) {
+      //   typings.add(
+      //       const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
+      // } else if (num < 25) {
+      //   typings
+      //       .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+      // } else {
+      //   typings.clear();
+      // }
       setState(() {});
     });
   }
@@ -120,7 +121,7 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
     timer?.cancel();
     messageNotifier.removeListener(_messageNotifierListener);
-    messageNotifier.dispose();
+    // messageNotifier.dispose();
     chatStore.currentProjectMessages.clear();
   }
 
@@ -160,15 +161,26 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   late ChatUser me;
+  bool loading = true;
 
   @override
   Widget build(BuildContext context) {
     // print("build chat");
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: _buildAppBar(context),
-        body: Observer(
-          builder: (context) => Chat(
+      key: _scaffoldKey,
+      appBar: _buildAppBar(context),
+      body: Observer(
+        builder: (context) {
+          return Chat(
+            doneLoadingCb: () {
+              if (loading) {
+                loading = false;
+          
+                Future.delayed(Duration.zero, () {
+                  setState(() {});
+                });
+              }
+            },
             user: me,
             performEmoji: (Emoji emoji, AbstractChatMessage message) {
               if ((message.reactions?.own.isNotEmpty ?? false) &&
@@ -184,8 +196,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 //     removeReaction: emoji.emoji));
               } else {
                 updateMessageReactions(
-                    MessageReaction("9", "", message.id,
-                        addReaction: emoji.emoji),
+                    MessageReaction("9", "", message.id, addReaction: emoji.emoji),
                     message.id,
                     add: true);
                 // addMessageReaction(message.messageId!, emoji.emoji);
@@ -271,30 +282,28 @@ class _MessageScreenState extends State<MessageScreen> {
                               if (i != -1) {
                                 chatStore.disableInterview(
                                     interviewId: chatStore
-                                        .currentProjectMessages[i]
-                                        .metadata!["id"]
+                                        .currentProjectMessages[i].metadata!["id"]
                                         .toString());
                                 setState(() {
                                   chatStore.currentProjectMessages[i] =
                                       ScheduleMessageType(
-                                          messageWidth: (MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.9)
-                                              .round(),
+                                          messageWidth:
+                                              (MediaQuery.of(context).size.width *
+                                                      0.9)
+                                                  .round(),
                                           author: widget.chatObject.chatUser,
                                           id: chatStore
                                               .currentProjectMessages[i].id,
                                           type: AbstractMessageType.schedule,
                                           status: Status.delivered,
-                                          createdAt: DateTime.now()
-                                              .millisecondsSinceEpoch,
+                                          createdAt:
+                                              DateTime.now().millisecondsSinceEpoch,
                                           metadata: {
-                                        ...chatStore.currentProjectMessages[i]
-                                            .metadata!,
+                                        ...chatStore
+                                            .currentProjectMessages[i].metadata!,
                                         "isCancel": true,
                                       });
-
+          
                                   _sortMessages();
                                 });
                               }
@@ -334,8 +343,10 @@ class _MessageScreenState extends State<MessageScreen> {
             //   //   ),
             //   // ),
             // ),
-          ),
-        ));
+          );
+        }
+      ),
+    );
   }
 
   void _addMessage(AbstractChatMessage message) {
