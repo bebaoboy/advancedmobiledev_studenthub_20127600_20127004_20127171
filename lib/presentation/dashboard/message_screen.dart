@@ -76,12 +76,21 @@ class _MessageScreenState extends State<MessageScreen> {
     //     id: userStore.user!.objectId!, firstName: userStore.user!.name);
 
     _currentUserType = userStore.getCurrentType();
+    var p = chatStore.messages.firstWhereOrNull(
+      (element) =>
+          element.project?.objectId == widget.chatObject.project?.objectId &&
+          element.chatUser.id == widget.chatObject.chatUser.id,
+    );
+    if (p != null) {
+      p.lastSeenTime = DateTime.now();
+    }
 
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
     me = ChatUser(
         id: userStore.user!.objectId!, firstName: userStore.user!.name);
-    messageNotifier = MessageNotifierProvider(
-        user: widget.chatObject.chatUser, project: widget.chatObject.project);
+    var msgnf = chatStore.getMessageNotifiers(widget.chatObject);
+    assert(msgnf != null);
+    messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();

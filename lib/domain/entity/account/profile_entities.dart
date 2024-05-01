@@ -31,7 +31,7 @@ class StudentProfile extends Profile {
   @override
   String get getName => fullName;
   String fullName;
-  // String userId;
+  String? userId;
   String education;
   String introduction;
   int yearOfExperience;
@@ -63,6 +63,7 @@ class StudentProfile extends Profile {
     this.resume,
     this.proposalProjects,
     super.objectId = "",
+    this.userId,
   });
 
 //   StudentProfile.fromJson(Map<String, dynamic> json)
@@ -102,6 +103,7 @@ class StudentProfile extends Profile {
   @override
   Map<String, dynamic> toMap() {
     return {
+      "userId": userId,
       'title': title,
       'fullname': fullName,
       'education': education,
@@ -131,6 +133,7 @@ class StudentProfile extends Profile {
     }
 
     return StudentProfile(
+      userId: map["userId"]?.toString(),
       title: map['title'] ?? '',
       fullName: name,
       education: map['education'] ?? '',
