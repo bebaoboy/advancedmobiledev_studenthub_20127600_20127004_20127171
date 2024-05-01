@@ -26,6 +26,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:collection/collection.dart';
+import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
@@ -75,6 +76,8 @@ class _DashBoardTabState extends State<DashBoardTab>
       }
     });
 
+    filterItems = ["All", "Proposal"];
+
     scrollController.add(ScrollController());
     scrollController.add(ScrollController());
     scrollController.add(ScrollController());
@@ -107,6 +110,14 @@ class _DashBoardTabState extends State<DashBoardTab>
         }
       },
     );
+    valueListenable.value = filterItems[0];
+    valueListenable.addListener(
+      () {
+        setState(() {
+          hasProposalOnly = valueListenable.value == filterItems[1];
+        });
+      },
+    );
   }
 
   @override
@@ -129,6 +140,7 @@ class _DashBoardTabState extends State<DashBoardTab>
   var updateProjectStore = getIt<UpdateProjectFormStore>();
   late final TabController tabController;
   List<ScrollController> scrollController = [];
+  bool hasProposalOnly = false;
 
   testNotification() {
     Future.delayed(Duration.zero, () async {
@@ -172,6 +184,9 @@ class _DashBoardTabState extends State<DashBoardTab>
     });
   }
 
+  List<String> filterItems = [];
+  final valueListenable = ValueNotifier<String?>(null);
+
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
     return FutureBuilder<ProjectList>(
@@ -183,13 +198,48 @@ class _DashBoardTabState extends State<DashBoardTab>
             children: <Widget>[
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                    const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                 child: Row(
                   children: [
                     Align(
                       alignment: Alignment.topLeft,
                       child: GestureDetector(
-                        child: Text(Lang.get('dashboard_your_job')),
+                        child: SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: DropdownButtonHideUnderline(
+                            child: DropdownButton2<String>(
+                              isExpanded: true,
+                              hint: Text(
+                                'Select Item',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Theme.of(context).hintColor,
+                                ),
+                              ),
+                              items: filterItems
+                                  .map((String item) => DropdownItem<String>(
+                                        value: item,
+                                        height: 40,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ))
+                                  .toList(),
+                              valueListenable: valueListenable,
+                              onChanged: (String? value) {
+                                valueListenable.value = value;
+                              },
+                              buttonStyleData: const ButtonStyleData(
+                                padding: EdgeInsets.symmetric(horizontal: 16),
+                                height: 40,
+                                width: 140,
+                              ),
+                            ),
+                          ),
+                        ),
                         onTap: () {
                           testNotification();
                         },
@@ -248,6 +298,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                       child: ProjectTabs(
                         // tabController: tabController,
                         // pageController: widget.pageController,
+                        hasProposalOnly: hasProposalOnly,
                         tabController: tabController,
                         scrollController: scrollController,
                       ),
@@ -281,7 +332,9 @@ class ProjectTabs extends StatefulWidget {
     required this.tabController,
     // required this.pageController,
     required this.scrollController,
+    this.hasProposalOnly = false,
   });
+  final bool hasProposalOnly;
   TabController tabController;
   // PageController pageController;
   List<ScrollController> scrollController;
@@ -341,7 +394,15 @@ class _ProjectTabsState extends State<ProjectTabs> {
               children: [
                 Observer(builder: (context) {
                   return AllProjects(
-                    projects: [...projectStore.companyProjects, ...myProjects],
+                    projects: widget.hasProposalOnly
+                        ? [
+                            ...projectStore.companyProjects.where(
+                              (element) =>
+                                  element.proposal != null &&
+                                  element.proposal!.isNotEmpty,
+                            )
+                          ]
+                        : [...projectStore.companyProjects, ...myProjects],
                     // projectFuture: ,
                     scrollController: widget.scrollController[0],
                     showBottomSheet: showBottomSheet,

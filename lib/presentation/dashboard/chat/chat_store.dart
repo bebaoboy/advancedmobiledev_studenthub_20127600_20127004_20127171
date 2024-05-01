@@ -122,7 +122,6 @@ abstract class _ChatStore with Store {
           }
         };
 
-        // TODO: add vô chat store
         var m = AbstractChatMessage.fromJson(e);
         var pp = _messages.firstWhereOrNull(
           (element) =>
@@ -217,7 +216,9 @@ abstract class _ChatStore with Store {
               id: mess,
               content: message["content"] ?? message["title"],
               receiver: Profile(objectId: "-1", name: "null"),
-              interviewSchedule: interview != null ? InterviewSchedule.fromJsonApi(interview) : null,
+              interviewSchedule: interview != null
+                  ? InterviewSchedule.fromJsonApi(interview)
+                  : null,
               sender:
                   Profile(objectId: user.id, name: user.firstName ?? "null"));
           // pp.lastSeenTime =
@@ -272,6 +273,15 @@ abstract class _ChatStore with Store {
 
   void setCode(String value) {
     meetingCode = value.trim();
+  }
+
+  sort() {
+    _messages.sort(
+      (a, b) => (b.messages == null || a.messages == null)
+          ? 0
+          : b.messages!.first.updatedAt!
+              .compareTo(a.messages!.first.updatedAt!),
+    );
   }
 
   @computed

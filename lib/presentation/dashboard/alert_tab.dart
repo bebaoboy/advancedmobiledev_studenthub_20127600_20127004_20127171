@@ -280,76 +280,81 @@ class _AlertTabState extends State<AlertTab> {
 
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
-      return Stack(
-        children: [
-          for (int index = getOffer().length - 1; index >= 0; index--)
-            Center(
-              child: Container(
-                margin: EdgeInsets.only(
-                    left: index == 1 ? 10 : 15, right: index == 2 ? 7 : 15),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: HeroFlutterLogo(
-                    color: index == 2 ? Colors.white : colors[index],
-                    tag: index,
-                    size: 145,
-                    onTap: () {
-                      if (userStore.user != null &&
-                          userStore.user!.type != UserType.student) return;
-                      print(index);
-                      NavbarNotifier2.hideBottomNavBar = true;
+      return InkWell(
+        child: Stack(
+          children: [
+            for (int index = getOffer().length - 1; index >= 0; index--)
+              Center(
+                child: Container(
+                  margin: EdgeInsets.only(
+                      left: index == 1 ? 10 : 15, right: index == 2 ? 7 : 15),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: HeroFlutterLogo(
+                      color: index == 2 ? Colors.white : colors[index],
+                      tag: index,
+                      size: 145,
+                      onTap: () {
+                        if (userStore.user != null &&
+                            userStore.user!.type != UserType.student) {
+                          return;
+                        }
+                        print(index);
+                        NavbarNotifier2.hideBottomNavBar = true;
 
-                      Navigator.of(
-                              NavigationService.navigatorKey.currentContext ??
-                                  context)
-                          .push(
-                        ModalExprollableRouteBuilder(
-                            pageBuilder: (_, __, ___) => OfferDetailsDialog(
-                                  index: index,
-                                  proposal: getOffer(),
-                                  onAcceptCallback: (proposal) {
-                                    var userStore = getIt<UserStore>();
-                                    var id = userStore
-                                        .user?.studentProfile?.objectId;
-                                    if (id != null && proposal != null) {
-                                      projectStore
-                                          .updateProposal(proposal, id)
-                                          .then(
-                                        (value) {
-                                          setState(() {});
-                                          Toastify.show(
-                                              context,
-                                              "",
-                                              "Succeed!",
-                                              aboveNavbar: !NavbarNotifier2
-                                                  .isNavbarHidden,
-                                              ToastificationType.success,
-                                              () {});
-                                        },
-                                      );
-                                    }
-                                  },
-                                ),
-                            // Increase the transition durations and take a closer look at what's going on!
-                            transitionDuration:
-                                const Duration(milliseconds: 500),
-                            reverseTransitionDuration:
-                                const Duration(milliseconds: 300),
-                            // The next two lines are not required, but are recommended for better performance.
-                            dismissThresholdInset:
-                                const DismissThresholdInset(dragMargin: 10000)),
-                      )
-                          .then(
-                        (value) {
-                          NavbarNotifier2.hideBottomNavBar = false;
-                        },
-                      );
-                    },
+                        Navigator.of(
+                                NavigationService.navigatorKey.currentContext ??
+                                    context)
+                            .push(
+                          ModalExprollableRouteBuilder(
+                              pageBuilder: (_, __, ___) => OfferDetailsDialog(
+                                    index: index,
+                                    proposal: getOffer(),
+                                    onAcceptCallback: (proposal) {
+                                      var userStore = getIt<UserStore>();
+                                      var id = userStore
+                                          .user?.studentProfile?.objectId;
+                                      if (id != null && proposal != null) {
+                                        projectStore
+                                            .updateProposal(proposal, id)
+                                            .then(
+                                          (value) {
+                                            Toastify.show(
+                                                context,
+                                                "",
+                                                "Succeed!",
+                                                aboveNavbar: !NavbarNotifier2
+                                                    .isNavbarHidden,
+                                                ToastificationType.success,
+                                                () {});
+                                            setState(() {});
+                                          },
+                                        );
+                                      }
+                                    },
+                                  ),
+                              // Increase the transition durations and take a closer look at what's going on!
+                              transitionDuration:
+                                  const Duration(milliseconds: 500),
+                              reverseTransitionDuration:
+                                  const Duration(milliseconds: 300),
+                              // The next two lines are not required, but are recommended for better performance.
+                              dismissThresholdInset:
+                                  const DismissThresholdInset(
+                                      dragMargin: 10000)),
+                        )
+                            .then(
+                          (value) {
+                            NavbarNotifier2.hideBottomNavBar = false;
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
-              ),
-            )
-        ],
+              )
+          ],
+        ),
       );
 
       // Scrollbar(

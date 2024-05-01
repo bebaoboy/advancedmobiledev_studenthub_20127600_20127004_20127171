@@ -183,7 +183,7 @@ class Singapore extends State<MessageTab> {
                                                 badgeText:
                                                     "${chatStore.messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
                                       }
-                                      setState(() {});
+                                      if (mounted) setState(() {});
                                     });
                                     // print(
                                     //     "new message count after ${chatStore.messages[index].lastSeenTime}: ${chatStore.messages[index].newMessageCount}");
@@ -207,8 +207,6 @@ class Singapore extends State<MessageTab> {
                                           .messages[index]
                                           .chatUser
                                           .id; // id này chỉ để test socket
-
-                                      // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
 
                                       chatStore.getMessageByProjectAndUsers(
                                           userId: chatStore
@@ -262,7 +260,9 @@ class Singapore extends State<MessageTab> {
                                                       .chatUser)))
                                           .then(
                                         (value) {
-                                          setState(() {});
+                                          setState(() {
+                                            chatStore.sort();
+                                          });
                                         },
                                       );
                                       // You can replace the print statement with your function

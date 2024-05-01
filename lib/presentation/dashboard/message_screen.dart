@@ -4,6 +4,7 @@ import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -567,6 +568,7 @@ class _MessageScreenState extends State<MessageScreen> {
       author: ChatUser(
           id: userStore.user!.objectId!, firstName: userStore.user!.name),
       createdAt: DateTime.now().millisecondsSinceEpoch,
+      updatedAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),
       status: Status.delivered,
       text: message.text,
@@ -574,8 +576,24 @@ class _MessageScreenState extends State<MessageScreen> {
     _addMessage(textMessage);
 
     if (userStore.user != null && userStore.user!.objectId != null) {
+      var p = chatStore.messages.firstWhereOrNull(
+        (element) =>
+            element.chatUser.id == widget.chatObject.chatUser.id &&
+            element.project?.objectId == widget.chatObject.project?.objectId,
+      );
+      p?.messages?.first = MessageObject(
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+          project: widget.chatObject.project,
+          id: textMessage.id,
+          content: textMessage.text,
+          receiver: Profile(objectId: "-1", name: "null"),
+          interviewSchedule: null,
+          sender: Profile(
+              objectId: userStore.user!.objectId, name: userStore.user!.name));
+      p?.lastSeenTime = DateTime.now();
       if (chatStore.isFetching) {
-        // ToDo: handle sending message if any in store after fetching
+        // TODO: check again: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
         /// default for testing
@@ -775,17 +793,34 @@ Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
 Meeting: ${interviewSchedule.meetingRoomId}
 Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
           ''',
+      "createdAt": DateTime.now().millisecondsSinceEpoch,
+      "updatedAt": DateTime.now().millisecondsSinceEpoch,
       'status': 'seen',
       'interview': {},
-      'createdAt': DateTime.now().millisecondsSinceEpoch,
       'author': {
         "firstName": userStore.user!.name,
         "id": userStore.user!.objectId,
       }
     };
 
-    // TODO: add vô chat store
-    _addMessage(AbstractChatMessage.fromJson(e));
+    var m = AbstractChatMessage.fromJson(e);
+    var p = chatStore.messages.firstWhereOrNull(
+      (element) =>
+          element.chatUser.id == widget.chatObject.chatUser.id &&
+          element.project?.objectId == widget.chatObject.project?.objectId,
+    );
+    p?.messages?.first = MessageObject(
+        createdAt: DateTime.tryParse(e['createdAt'] ?? "") ?? DateTime.now(),
+        updatedAt: DateTime.tryParse(e['updatedAt'] ?? "") ?? DateTime.now(),
+        project: widget.chatObject.project,
+        id: e["id"],
+        content: e["text"],
+        receiver: Profile(objectId: "-1", name: "null"),
+        interviewSchedule: null,
+        sender: Profile(
+            objectId: userStore.user!.objectId, name: userStore.user!.name));
+    p?.lastSeenTime = DateTime.now();
+    _addMessage(m);
   }
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();

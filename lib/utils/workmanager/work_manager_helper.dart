@@ -70,7 +70,7 @@ class WorkMangerHelper {
       WorkerTask.fetchProfile.name,
       tag: WorkerTask.fetchProfile.identifier,
       existingWorkPolicy: ExistingWorkPolicy.replace,
-      initialDelay: SHORT_DELAY,
+      initialDelay: NORMAL_FREQUENCY,
       frequency: LOW_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(networkType: NetworkType.connected),
@@ -84,7 +84,7 @@ class WorkMangerHelper {
       WorkerTask.fetchNotification.name,
       tag: WorkerTask.fetchNotification.identifier,
       existingWorkPolicy: ExistingWorkPolicy.update,
-      initialDelay: NORMAL_FREQUENCY,
+      initialDelay: SHORT_DELAY,
       frequency: NORMAL_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(
