@@ -216,7 +216,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
 
   @override
   Widget build(BuildContext context) {
-    var user = widget.user;
+    var user = userStore.user!;
 
     if (_size.aspectRatio == 0) {
       return Container(
@@ -226,7 +226,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
       );
     } else if (_size.aspectRatio < 0.1 || _size.aspectRatio > 10) {
       return Container(
-        color: user.id == widget.message.author.id
+        color: user.objectId == widget.message.author.id
             ? Chat.theme.primaryColor
             : Chat.theme.secondaryColor,
         child: Row(
@@ -263,7 +263,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                     Text(
                       // widget.message.name,
                       "NAME",
-                      style: user.id == widget.message.author.id
+                      style: user.objectId == widget.message.author.id
                           ? Chat.theme.sentMessageBodyTextStyle
                           : Chat.theme.receivedMessageBodyTextStyle,
                       textWidthBasis: TextWidthBasis.longestLine,
@@ -275,7 +275,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       child: Text(
                         // formatBytes(widget.message.size.truncate())
                         "SIZE",
-                        style: user.id == widget.message.author.id
+                        style: user.objectId == widget.message.author.id
                             ? Chat.theme.sentMessageCaptionTextStyle
                             : Chat.theme.receivedMessageCaptionTextStyle,
                       ),
@@ -418,7 +418,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               CallManager.instance.startPreviewMeeting(
                                   context,
                                   CallType.VIDEO_CALL,
-                                  {-1},
+                                  {int.parse(widget.user.id)},
                                   widget.scheduleFilter);
                               // Navigator.of(context).push(MaterialPageRoute2(
                               //     routeName:

@@ -10,6 +10,8 @@ import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:floating/floating.dart';
@@ -460,10 +462,21 @@ class _BodyLayoutState extends State<BodyLayout> {
                               heroTag: "VideoCall",
                               backgroundColor: Colors.blue,
                               onPressed: () async {
-                                // TODO: truyền ng cần gọi vào
-                                await getUsers({"login": ""})
-                                    .then((cubeUser) async {
-                                  if (cubeUser != null) {}
+                                // TODO: truyền userid ng cần gọi vào
+                                await getUsers({
+                                  "login":
+                                      "user_${widget._callSession.opponentsIds.first}"
+                                }).then((cubeUsers) async {
+                                  CubeUser cubeUser;
+                                  if (cubeUsers != null &&
+                                      cubeUsers.items.isNotEmpty) {
+                                    cubeUser = cubeUsers.items.first;
+                                  } else {
+                                    cubeUser = await signUp(CubeUser(
+                                        login:
+                                            "user_${widget._callSession.opponentsIds.first}",
+                                        password: DEFAULT_PASS));
+                                  }
                                   // ignore: avoid_func
                                   if (userStore.getCurrentType() ==
                                       UserType.student) {
@@ -471,8 +484,14 @@ class _BodyLayoutState extends State<BodyLayout> {
                                         await chatStore
                                             .checkMeetingAvailability(
                                                 widget.interviewInfo, "")) {
-                                      CallManager.instance.startNewCall(context,
-                                          CallType.VIDEO_CALL, _selectedUsers);
+                                      // _selectedUsers.add(_currentUserId);
+                                      _selectedUsers.add(cubeUser.id!);
+                                      Navigator.pop(context);
+                                      CallManager.instance.startNewCall(
+                                          NavigationService
+                                              .navigatorKey.currentContext!,
+                                          CallType.VIDEO_CALL,
+                                          _selectedUsers);
                                     } else {
                                       Toastify.show(
                                           context,
@@ -482,9 +501,14 @@ class _BodyLayoutState extends State<BodyLayout> {
                                           () {});
                                     }
                                   } else {
-                                    _selectedUsers.add(_currentUserId);
-                                    CallManager.instance.startNewCall(context,
-                                        CallType.VIDEO_CALL, _selectedUsers);
+                                    // _selectedUsers.add(_currentUserId);
+                                    _selectedUsers.add(cubeUser.id!);
+                                    Navigator.pop(context);
+                                    CallManager.instance.startNewCall(
+                                        NavigationService
+                                            .navigatorKey.currentContext!,
+                                        CallType.VIDEO_CALL,
+                                        _selectedUsers);
                                   }
                                 });
                               },

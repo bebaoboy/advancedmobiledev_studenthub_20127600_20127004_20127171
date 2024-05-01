@@ -512,7 +512,7 @@ initCube(context) async {
         Future.delayed(const Duration(seconds: 0), () async {
           try {
             user = CubeUser(
-              login: userStore.user!.email,
+              login: "user_${userStore.user!.objectId}",
               email: userStore.user!.email,
               fullName: userStore.user!.email.split("@").first.toUpperCase(),
               password: DEFAULT_PASS,
@@ -530,7 +530,7 @@ initCube(context) async {
                 value = await createSession(user);
               } catch (e) {
                 log(e.toString(), "BEBAOBOY");
-                user.login = userStore.user!.email;
+                user.login = "user_${userStore.user!.objectId}";
 
                 user = await signUp(user);
                 user.password ??= DEFAULT_PASS;
