@@ -24,16 +24,16 @@ class NotiRepositoryImpl extends NotiRepository {
                 ...element,
                 'id': element['id'].toString(),
                 'content': element['content'].toString(),
-                'type': element['type'].toString(),
+                'type': element['typeNotifyFlag'],
                 'createdAt':
                     DateTime.parse(element['createdAt']).millisecondsSinceEpoch,
                 'receiver': {
-                  "objectId": element['receiver']['objectId'].toString(),
+                  "objectId": element['receiver']['id'].toString(),
                   "fullName": element['receiver']['fullName'].toString(),
                 },
                 'sender': {
-                  "objectId": element['sender']['objectId'].toString(),
-                  "companyName": element['sender']['companyName'].toString(),
+                  "objectId": element['sender']['id'].toString(),
+                  "fullName": element['sender']['fullname'].toString(),
                 }
               };
               var acm = NotificationObject.fromJson(e);
