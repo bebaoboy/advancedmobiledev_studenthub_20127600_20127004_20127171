@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/presentation/dashboard/components/project_experience_item.dart';
@@ -58,9 +59,11 @@ class _ViewStudentProfile2State extends State<ViewStudentProfile2> {
                             child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(widget.studentProfile.educations![index]
-                                  .schoolName),
+                              Text(widget
+                                  .studentProfile.educations![index].schoolName
+                                  .toTitleCase()),
                               Text(
                                   "${widget.studentProfile.educations![index].startYear} - ${widget.studentProfile.educations![index].endYear}")
                             ],

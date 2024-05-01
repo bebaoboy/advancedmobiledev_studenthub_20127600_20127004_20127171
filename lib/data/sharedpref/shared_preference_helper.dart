@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
@@ -140,7 +141,8 @@ class SharedPreferenceHelper {
     );
   }
 
-  Future<int> get currentUserId async =>  _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
+  Future<int> get currentUserId async =>
+      _sharedPreference.getInt(Preferences.current_user_id) ?? 0;
 
   Future<bool> saveStudentProfile(StudentProfile? studentProfile) async {
     if (studentProfile == null) {
@@ -306,4 +308,43 @@ class SharedPreferenceHelper {
       return ProposalList(proposals: List.empty(growable: true));
     }
   }
+
+  Future saveSkills(List<Skill>? skillset) async {
+    if (skillset == null || skillset.isEmpty) return;
+    _sharedPreference.setStringList(Preferences.all_skillset,
+        skillset.map((e) => json.encode(e.toJson())).toList());
+  }
+
+  Future<List<Skill>?> getSkill() async {
+    var stringList =
+        _sharedPreference.getStringList(Preferences.all_skillset) ??
+            List.empty();
+    if (stringList.isEmpty) {
+      return List.empty();
+    } else {
+      var skillList =
+          stringList.map((e) => Skill.fromJson(json.decode(e))).toList();
+      return skillList;
+    }
+  }
+
+  Future saveTechStack(List<TechStack>? teckstack) async {
+    if (teckstack == null || teckstack.isEmpty) return;
+    _sharedPreference.setStringList(Preferences.all_teckstack,
+        teckstack.map((e) => json.encode(e.toJson())).toList());
+  }
+
+  Future<List<TechStack>?> getTechStack() async {
+    var stringList =
+        _sharedPreference.getStringList(Preferences.all_teckstack) ??
+            List.empty();
+    if (stringList.isEmpty) {
+      return List.empty();
+    } else {
+      var techstack =
+          stringList.map((e) => TechStack.fromJson(json.decode(e))).toList();
+      return techstack;
+    }
+  }
+
 }
