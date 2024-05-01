@@ -4,8 +4,6 @@ import 'dart:async';
 
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
-import 'package:boilerplate/data/network/rest_client.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:interpolator/interpolator.dart';
 import 'package:dio/dio.dart';

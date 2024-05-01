@@ -10,7 +10,6 @@ import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -205,9 +204,8 @@ class _AlertTabState extends State<AlertTab> {
 
   bool hasOfferProposal = false;
 
-  late Future<List<NotificationObject>> alerts =
-      notiStore.getNoti(receiverId: userStore.user!.objectId ?? "");
-
+  late Future<List<NotificationObject>> future;
+  List<NotificationObject> alerts = [];
   List<NotificationObject> viewOffers = [],
       texts = [],
       messages = [],
@@ -229,8 +227,9 @@ class _AlertTabState extends State<AlertTab> {
   @override
   void initState() {
     super.initState();
+    future = notiStore.getNoti(receiverId: userStore.user!.objectId ?? "");
 
-    alerts.then((notificationList) {
+    future.then((notificationList) {
       joinInterviews = notificationList
           .where((e) => e.type == NotificationType.joinInterview)
           .toList();
@@ -243,6 +242,9 @@ class _AlertTabState extends State<AlertTab> {
       messages = notificationList
           .where((e) => e.type == NotificationType.message)
           .toList();
+          if (mounted) {
+            setState(() {});
+          }
     });
     hasOfferProposal = userStore.user != null &&
         userStore.user!.studentProfile != null &&

@@ -37,16 +37,15 @@ abstract class _NotificationStore with Store {
 
   @action
   Future<List<NotificationObject>> getNoti({required String receiverId}) async {
-    if (receiverId.trim().isEmpty) {
-      return Future.value([]);
-    }
+    // if (receiverId.trim().isEmpty) {
+    //   return Future.value([]);
+    // }
     try {
-      final future =
-          _GetNotiUseCase.call(params: GetNotiParams(receiverId: receiverId))
-              .then(
+      return await _GetNotiUseCase.call(params: GetNotiParams(receiverId: receiverId))
+          .then(
         (value) async {
           if (value.isNotEmpty) {
-            print(value);
+            // print(value);
             _NotificationObjects = value;
 
             return _NotificationObjects;
@@ -55,9 +54,7 @@ abstract class _NotificationStore with Store {
             return Future.value([]);
           }
         },
-      ).onError((error, stackTrace) async {
-        return Future.value([]);
-      });
+      );
     } catch (e) {
       print("Cannot get notification for this receiverId");
     }
