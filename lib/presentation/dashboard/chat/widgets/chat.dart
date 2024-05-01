@@ -704,15 +704,16 @@ class ChatState extends State<Chat> {
                   );
                 }
               }),
-              widget.customBottomWidget ??
-                  Input(
-                    isAttachmentUploading: widget.isAttachmentUploading,
-                    onAttachmentPressed: widget.onAttachmentPressed,
-                    onFirstIconPressed: widget.onFirstIconPressed,
-                    onSendPressed: widget.onSendPressed,
-                    options: widget.inputOptions,
-                    scrollController: _scrollController,
-                  ),
+              if (!chatStore.isFetching)
+                widget.customBottomWidget ??
+                    Input(
+                      isAttachmentUploading: widget.isAttachmentUploading,
+                      onAttachmentPressed: widget.onAttachmentPressed,
+                      onFirstIconPressed: widget.onFirstIconPressed,
+                      onSendPressed: widget.onSendPressed,
+                      options: widget.inputOptions,
+                      scrollController: _scrollController,
+                    ),
             ],
           ),
         ),

@@ -122,7 +122,6 @@ abstract class _ChatStore with Store {
           }
         };
 
-        // TODO: add vô chat store
         var m = AbstractChatMessage.fromJson(e);
         var pp = _messages.firstWhereOrNull(
           (element) =>
@@ -274,6 +273,15 @@ abstract class _ChatStore with Store {
 
   void setCode(String value) {
     meetingCode = value.trim();
+  }
+
+  sort() {
+    _messages.sort(
+      (a, b) => (b.messages == null || a.messages == null)
+          ? 0
+          : b.messages!.first.updatedAt!
+              .compareTo(a.messages!.first.updatedAt!),
+    );
   }
 
   @computed

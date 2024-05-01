@@ -544,7 +544,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
     // set badge list here
     NavbarNotifier2.setBadges(badges);
     NavbarNotifier2.hideBadgeOnPageChanged = widget.hideBadgeOnPageChanged;
-    widget.pageController.index = NavbarNotifier2.currentIndex;
+    // widget.pageController.index = NavbarNotifier2.currentIndex;
 
     if (!isUpdate) {
       initAnimation();

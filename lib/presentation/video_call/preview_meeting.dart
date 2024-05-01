@@ -472,7 +472,6 @@ class _BodyLayoutState extends State<BodyLayout> {
                               heroTag: "VideoCall",
                               backgroundColor: Colors.blue,
                               onPressed: () async {
-                                // TODO: truyền userid ng cần gọi vào
                                 await getUsers({
                                   "login":
                                       "user_${widget._callSession.opponentsIds.first}"

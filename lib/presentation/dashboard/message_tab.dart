@@ -148,6 +148,7 @@ class Singapore extends State<MessageTab> {
                         child: PlaneIndicator(
                           onRefresh: () =>
                               Future.delayed(const Duration(seconds: 3)),
+
                           child: Observer(builder: (context) {
                             return Stack(children: [
                               Positioned.fill(
@@ -259,36 +260,39 @@ class Singapore extends State<MessageTab> {
                                                   messages: chatStore
                                                       .messages[index].messages,
                                                   chatUser: chatStore
-                                                      .messages[index].chatUser)
-                                            ]))
-                                            .then(
-                                          (value) {
-                                            setState(() {});
-                                          },
-                                        );
-                                        // You can replace the print statement with your function
-                                      },
-                                      child: ListTile(
-                                        tileColor: Colors.transparent,
-                                        leading: const Icon(Icons
-                                            .message), // Replace with actual icons
-                                        title: Text(
-                                          "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: chatStore.messages[index]
-                                                          .newMessageCount >
-                                                      0
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : null),
-                                        ),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            // Text(chatStore.messages[index]['role']),
+                                                      .messages[index]
+                                                      .chatUser)]))
+                                          .then(
+                                        (value) {
+                                          setState(() {
+                                            chatStore.sort();
+                                          });
+                                        },
+                                      );
+                                      // You can replace the print statement with your function
+                                    },
+                                    child: ListTile(
+                                      tileColor: Colors.transparent,
+                                      leading: const Icon(Icons
+                                          .message), // Replace with actual icons
+                                      title: Text(
+                                        "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: chatStore.messages[index]
+                                                        .newMessageCount >
+                                                    0
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : null),
+                                      ),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.stretch,
+                                        children: [
+                                          // Text(chatStore.messages[index]['role']),
+
 
                                             Text(
                                               chatStore
