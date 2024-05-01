@@ -4,30 +4,18 @@ import 'dart:io';
 import 'package:boilerplate/core/domain/usecase/use_case.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/repository/interview/interview_repository.dart';
+import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 
-class InterviewParams {
-  String? projectId = "";
-  String? interviewId = "";
-  String title;
-  String startDate;
-  String endDate;
-  String meetingCode;
-  String meetingId;
-
-  InterviewParams(this.interviewId, this.projectId, this.meetingId, this.meetingCode,
-      {required this.title, required this.startDate, required this.endDate});
-}
-
-class ScheduleInterviewUseCase
+class GetInterviewUseCase
     extends UseCase<InterviewSchedule?, InterviewParams> {
   final InterviewRepository _interviewRepository;
 
-  ScheduleInterviewUseCase(this._interviewRepository);
+  GetInterviewUseCase(this._interviewRepository);
 
   @override
   Future<InterviewSchedule?> call({required InterviewParams params}) async {
     try {
-      var response = await _interviewRepository.postMeeting(params);
+      var response = await _interviewRepository.getMeeting(params);
       if (response.statusCode == HttpStatus.accepted ||
           response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.created) {

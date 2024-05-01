@@ -648,7 +648,19 @@ class _ProjectTabState extends State<ProjectTab> {
       try {
         Toastify.show(
             context, "", "Finish loading", ToastificationType.success, () {});
-        setState(() {});
+        setState(() {
+          var l = _projectStore.projects
+              .map(
+                (e) => e.companyId,
+              )
+              .toSet()
+              .toList();
+          l.insert(0, "");
+          l.sort(
+            (a, b) => a.compareTo(b),
+          );
+          _list = l;
+        });
       } catch (e) {
         ///
       }
@@ -983,13 +995,14 @@ class _ProjectTabState extends State<ProjectTab> {
             hintText: "Company id",
             items: _list,
             headerBuilder: (context, selectedItem) => Text(
+              
                 (_userStore.user != null &&
                             _userStore.user!.companyProfile != null &&
                             _userStore.user!.companyProfile!.objectId ==
                                 selectedItem
                         ? "(You) "
-                        : "") +
-                    selectedItem),
+                        : selectedItem.isEmpty ? "(You)" : "") +
+                    selectedItem, textAlign: TextAlign.right,),
             listItemBuilder: (context, item, isSelected, onItemSelect) {
               return SizedBox(
                 height: 30,
@@ -1001,7 +1014,7 @@ class _ProjectTabState extends State<ProjectTab> {
                     //   width: 20,
                     // ),
                     Text(
-                      (_userStore.companyId == item ? "(You) " : "") + item,
+                      (_userStore.companyId == item || item.isEmpty ? "(You) " : "") + item,
                       style: isSelected
                           ? const TextStyle(fontWeight: FontWeight.bold)
                           : null,
@@ -1064,7 +1077,19 @@ class _ProjectTabState extends State<ProjectTab> {
                               setStateCallback: () {
                             Toastify.show(context, "", "Finish loading",
                                 ToastificationType.success, () {});
-                            setState(() {});
+                            setState(() {
+                              var l = _projectStore.projects
+                                  .map(
+                                    (e) => e.companyId,
+                                  )
+                                  .toSet()
+                                  .toList();
+                              l.insert(0, "");
+                              l.sort(
+                                (a, b) => a.compareTo(b),
+                              );
+                              _list = l;
+                            });
                           });
                         }
                         var p = getProjectWithKeyword(_projectStore.projects);

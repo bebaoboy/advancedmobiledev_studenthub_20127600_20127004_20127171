@@ -1,14 +1,16 @@
 // ignore_for_file: unused_element
 
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
-import 'package:boilerplate/presentation/video_call/utils/configs.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
@@ -210,9 +212,11 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
     super.dispose();
   }
 
+  var userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
-    var user = widget.user;
+    var user = userStore.user!;
 
     if (_size.aspectRatio == 0) {
       return Container(
@@ -222,7 +226,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
       );
     } else if (_size.aspectRatio < 0.1 || _size.aspectRatio > 10) {
       return Container(
-        color: user.id == widget.message.author.id
+        color: user.objectId == widget.message.author.id
             ? Chat.theme.primaryColor
             : Chat.theme.secondaryColor,
         child: Row(
@@ -259,7 +263,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                     Text(
                       // widget.message.name,
                       "NAME",
-                      style: user.id == widget.message.author.id
+                      style: user.objectId == widget.message.author.id
                           ? Chat.theme.sentMessageBodyTextStyle
                           : Chat.theme.receivedMessageBodyTextStyle,
                       textWidthBasis: TextWidthBasis.longestLine,
@@ -271,7 +275,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       child: Text(
                         // formatBytes(widget.message.size.truncate())
                         "SIZE",
-                        style: user.id == widget.message.author.id
+                        style: user.objectId == widget.message.author.id
                             ? Chat.theme.sentMessageCaptionTextStyle
                             : Chat.theme.receivedMessageCaptionTextStyle,
                       ),
@@ -306,7 +310,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       LimitedBox(
                         maxWidth: MediaQuery.of(context).size.width * 0.5,
                         child: AutoSizeText(
-                          widget.scheduleFilter.title,
+                          widget.scheduleFilter.title.toTitleCase(),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           minFontSize: 7,
@@ -348,7 +352,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
               ),
 
               AutoSizeText(
-                "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.startDate)}",
+                "${Lang.get("profile_project_start")}: ${DateFormat("EEEE dd/MM/yyyy HH:mm").format(widget.scheduleFilter.startDate.toLocal())}",
                 // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
@@ -358,7 +362,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 height: 10,
               ),
               AutoSizeText(
-                "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:MM").format(widget.scheduleFilter.endDate)}",
+                "${Lang.get("profile_project_end")}: ${DateFormat("EEEE dd/MM/yyyy HH:mm").format(widget.scheduleFilter.endDate.toLocal())}",
                 // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
@@ -372,18 +376,27 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    IconButton(
-                      onPressed: () {
-                        widget.onMenuCallback(widget.scheduleFilter);
-                      },
-                      icon: Icon(
-                        Icons.expand_circle_down_outlined,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    !widget.scheduleFilter.isCancel
+                    if (userStore.getCurrentType() == UserType.company)
+                      if (!widget.scheduleFilter.endDate
+                          .isBefore(DateTime.now()))
+                        IconButton(
+                          onPressed: () {
+                            widget.onMenuCallback(widget.scheduleFilter);
+                          },
+                          icon: Icon(
+                            Icons.expand_circle_down_outlined,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                        ),
+                    !widget.scheduleFilter.isCancel &&
+                            !DateTime.now()
+                                .isAfter(widget.scheduleFilter.endDate)
                         ? RoundedButtonWidget(
-                            buttonText: Lang.get("Join"),
+                            buttonText: !widget.scheduleFilter.startDate
+                                    .isBefore(DateTime.now())
+
+                                ? "Join Early"
+                                : Lang.get("Join"),
                             buttonTextSize: 12,
                             textColor: Theme.of(context).colorScheme.primary,
                             borderColor: Theme.of(context).colorScheme.primary,
@@ -401,20 +414,34 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                               //                     .activeSession!.user!.id)
                               //             .toList())));
 
-                              Navigator.of(context).push(MaterialPageRoute2(
-                                  routeName:
-                                      "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
-                                  arguments: users));
+                              // ToDo: pass in right id for call
+                              CallManager.instance.startPreviewMeeting(
+                                  context,
+                                  CallType.VIDEO_CALL,
+                                  {int.parse(widget.user.id)},
+                                  widget.scheduleFilter);
+                              // Navigator.of(context).push(MaterialPageRoute2(
+                              //     routeName:
+                              //         "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
+                              //     arguments: users));
                             },
                           )
                         : Expanded(
                             flex: 2,
-                            child: Text(
-                              "Meeting Canceled!",
-                              style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.bold,
-                                  color: Theme.of(context).colorScheme.primary),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(widget.scheduleFilter.isCancel ? "Meeting Canceled" :
+                                widget.scheduleFilter.endDate
+                                        .isBefore(DateTime.now())
+
+                                    ? "Meeting ended"
+                                    : "Meeting Canceled!",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        Theme.of(context).colorScheme.primary),
+                              ),
                             ),
                           ),
                   ],

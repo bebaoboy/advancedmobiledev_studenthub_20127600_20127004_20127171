@@ -25,8 +25,10 @@ class Background extends StatelessWidget {
   }
 }
 
+// ignore: must_be_immutable
 class LoadingScreen extends StatefulWidget {
-  const LoadingScreen({super.key});
+  final String? text;
+  const LoadingScreen({super.key, this.text});
 
   @override
   State<LoadingScreen> createState() => _LoadingScreenState();
@@ -72,7 +74,7 @@ class _LoadingScreenState extends State<LoadingScreen> {
                 ),
                 Center(
                   child: Text(
-                    Lang.get("loading"),
+                    Lang.get(widget.text ?? "loading"),
                     style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
@@ -88,8 +90,10 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 }
 
+// ignore: must_be_immutable
 class LoadingScreenWidget extends StatelessWidget {
-  const LoadingScreenWidget({super.key, this.size = 60});
+  final String? text;
+  const LoadingScreenWidget({super.key, this.size = 60, this.text});
   final double size;
 
   @override
@@ -108,7 +112,7 @@ class LoadingScreenWidget extends StatelessWidget {
         ),
         Center(
           child: Text(
-            Lang.get("loading"),
+            Lang.get(text ?? "loading"),
             style: const TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,

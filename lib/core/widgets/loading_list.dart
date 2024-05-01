@@ -264,8 +264,10 @@ class RefazynistState extends State<Refazynist> {
     } else {
       _frontWidget = widget.emptyBuilder(context);
     }
-
-    setState(() {});
+    
+    if (isFinal) {
+      setState(() {});
+    }
 
     if ((widget.setStateCallback != null)) {
       widget.setStateCallback!();

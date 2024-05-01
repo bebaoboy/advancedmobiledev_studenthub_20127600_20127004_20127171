@@ -113,9 +113,10 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
                       fontWeight: FontWeight.w400,
                       fontSize: 16),
                 ),
-                _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty
-                    ? null
-                    : profile.skillSet),
+                // _buildChip(profile.skillSet != null && profile.skillSet!.isEmpty
+                //     ? null
+                //     : profile.skillSet),
+                Text(profile.techStack!.name),
                 const SizedBox(
                   height: 24,
                 ),

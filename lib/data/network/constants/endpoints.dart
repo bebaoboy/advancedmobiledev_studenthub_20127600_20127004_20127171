@@ -1,4 +1,5 @@
 class Endpoints {
+
   Endpoints._();
 
   // base url
@@ -245,5 +246,8 @@ class Endpoints {
 
   static const String deleteInterview = "$baseUrl/api/interview/{interviewId}";
   static const String updateInterview = "$baseUrl/api/interview/{interviewId}";
+  static const String disableInterview = "$baseUrl/api/interview/{interviewId}/disable";
   static const String postInterview = "$baseUrl/api/interview";
+
+  static const String checkAvail = "$baseUrl/api/meeting-room/check-availability";
 }

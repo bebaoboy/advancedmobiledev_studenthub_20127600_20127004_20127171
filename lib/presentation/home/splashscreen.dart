@@ -17,11 +17,18 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:simple_animations/simple_animations.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart'
     as utils;
+import 'package:universal_html/js.dart' as js;
+
+/// Whether the CanvasKit renderer is being used on web.
+///
+/// Always returns `false` on non-web.
+bool get isCanvasKit => !kIsWeb || (kIsWeb && js.context['flutterCanvasKit'] != null);
 
 class AnimatedWave extends StatelessWidget {
   final double height;
@@ -40,14 +47,14 @@ class AnimatedWave extends StatelessWidget {
       return SizedBox(
         height: height,
         width: constraints.biggest.width,
-        child: LoopAnimationBuilder(
+        child: isCanvasKit ? LoopAnimationBuilder(
             duration: Duration(milliseconds: (5000 / speed).round()),
             tween: Tween(begin: 0.0, end: 2 * pi),
             builder: (context, value, child) {
               return CustomPaint(
                 foregroundPainter: CurvePainter(value + offset),
               );
-            }),
+            }) : null,
       );
     });
   }
@@ -234,7 +241,7 @@ class _SplashScreenState extends State<SplashScreen>
       Future.delayed(const Duration(seconds: 0), () async {
         try {
           user = CubeUser(
-            login: userStore.user!.email,
+            login: "user_${userStore.user!.objectId}",
             email: userStore.user!.email,
             fullName: userStore.user!.email.split("@").first.toUpperCase(),
             password: DEFAULT_PASS,
@@ -243,7 +250,7 @@ class _SplashScreenState extends State<SplashScreen>
               "Loading Cube sesson \n(User ${userStore.user!.email})";
 
           if (CubeSessionManager.instance.isActiveSessionValid() &&
-              CubeSessionManager.instance.activeSession!.user != null) {
+              CubeSessionManager.instance.activeSession?.user != null) {
             if (CubeChatConnection.instance.isAuthenticated()) {
             } else {
               _loginCube(context, user);
@@ -255,7 +262,7 @@ class _SplashScreenState extends State<SplashScreen>
               value = await createSession(user);
             } catch (e) {
               log(e.toString(), "BEBAOBOY");
-              user.login = "${userStore.user!.objectId}";
+              user.login = "user_${userStore.user!.objectId}";
               user = await signUp(user);
               user.password ??= DEFAULT_PASS;
 
@@ -277,10 +284,14 @@ class _SplashScreenState extends State<SplashScreen>
           _controller.stop();
           // ignore: empty_catches
         } catch (e) {}
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+        var ctx = NavigationService.navigatorKey.currentContext ?? context;
+        if (!Navigator.canPop(ctx)) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute2(
+                  routeName: userStore.isLoggedIn ? Routes.home : Routes.login),
+              (_) => false);
+        }
       });
     }
     // user = utils.users[2];
@@ -290,10 +301,14 @@ class _SplashScreenState extends State<SplashScreen>
           _controller.stop();
           // ignore: empty_catches
         } catch (e) {}
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute2(
-                routeName: userStore.isLoggedIn ? Routes.home : Routes.login));
+        var ctx = NavigationService.navigatorKey.currentContext ?? context;
+        if (!Navigator.canPop(ctx)) {
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute2(
+                  routeName: userStore.isLoggedIn ? Routes.home : Routes.login),
+              (_) => false);
+        }
       });
     }
   }
@@ -310,7 +325,7 @@ class _SplashScreenState extends State<SplashScreen>
       _controller.stop();
     } finally {
       try {
-        // Navigator.pushReplacement(
+        // Navigator.pushAndRemoveUntil(
         //     context,
         //     MaterialPageRoute2(
         //         routeName: _userStore.isLoggedIn ? Routes.home : Routes.login));
@@ -341,7 +356,7 @@ class _SplashScreenState extends State<SplashScreen>
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Center(
-                      child: Lottie.asset(
+                      child: isCanvasKit ? Lottie.asset(
                         'assets/animations/splash_animation.json', // Replace with the path to your Lottie JSON file
                         fit: BoxFit.cover,
                         width: MediaQuery.of(context).orientation ==
@@ -355,7 +370,7 @@ class _SplashScreenState extends State<SplashScreen>
                         repeat:
                             true, // Set to true if you want the animation to loop
                         controller: _controller,
-                      ),
+                      ) : null,
                     ),
                     MediaQuery.of(context).orientation != Orientation.landscape
                         ? Center(

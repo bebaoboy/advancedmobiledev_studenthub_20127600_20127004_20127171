@@ -33,11 +33,11 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             startDate: DateTime.now(),
             endDate: DateTime.now(),
             title: "Null meeting");
-    title.text = (itv.title).toString();
+    title.text = widget.filter?.title ?? '';
     startDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.startDate)).toString();
+        (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.startDate.toLocal())).toString();
     endDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:MM").format(itv.endDate)).toString();
+        (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.endDate.toLocal())).toString();
   }
 
   Future<DateTime?> showDateTimePicker({
@@ -173,7 +173,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                     setState(() {
                                       itv.startDate = pickedDate;
                                       startDate.text =
-                                          (DateFormat("EEEE dd/MM/yyyy HH:MM")
+                                          (DateFormat("EEEE dd/MM/yyyy HH:mm")
                                                   .format(itv.startDate))
                                               .toString();
                                     });
@@ -280,7 +280,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                     setState(() {
                                       itv.endDate = pickedDate;
                                       endDate.text =
-                                          (DateFormat("EEEE dd/MM/yyyy HH:MM")
+                                          (DateFormat("EEEE dd/MM/yyyy HH:mm")
                                                   .format(itv.endDate))
                                               .toString();
                                     });

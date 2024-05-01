@@ -67,7 +67,9 @@ class _DashBoardTabState extends State<DashBoardTab>
     future = projectStore.getProjectByCompany(
         _userStore.user!.companyProfile!.objectId!, setStateCallback: () {
       try {
-        setState(() {});
+        setState(() {
+          loading = false;
+        });
       } catch (e) {
         ///
       }
@@ -113,10 +115,12 @@ class _DashBoardTabState extends State<DashBoardTab>
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: _buildDashBoardContent(),
+        child: loading ? const LoadingScreenWidget() : _buildDashBoardContent(),
       ),
     );
   }
+
+  bool loading = true;
 
   var projectStore = getIt<ProjectStore>();
 

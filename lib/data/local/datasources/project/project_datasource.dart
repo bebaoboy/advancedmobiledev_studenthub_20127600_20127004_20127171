@@ -55,7 +55,7 @@ class ProjectDataSource {
     //print('Loading from database');
 
     // project list
-    var projectList;
+    var projectList = ProjectList(projects: List.empty(growable: true));
 
     // fetching data
     final recordSnapshots = await _projectStore.find(

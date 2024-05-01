@@ -7,6 +7,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 
@@ -56,7 +57,9 @@ class Singapore extends State<MessageTab> {
   void initState() {
     super.initState();
     // Future.delayed(const Duration(milliseconds: 500), () async {
-    getAllChatFuture = chatStore.getAllChat();
+    getAllChatFuture = chatStore.getAllChat(setStateCallback: () {
+      setState(() {});
+    });
     // chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
     // chatStore.getMessageByProjectAndUsers(projectId: "150", userId: "94");
     // });
@@ -160,6 +163,26 @@ class Singapore extends State<MessageTab> {
                                         child: _buildTopRowList());
                                   }
                                   int index = i - 1;
+                                  if (messages[index].lastSeenTime != null &&
+                                      messages[index].newMessageCount > 0) {
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () {
+                                      NavbarNotifier2.updateBadge(
+                                          2,
+                                          NavbarBadge(
+                                              showBadge: true,
+                                              badgeText:
+                                                  "${messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
+                                    });
+                                    print(
+                                        "new message count after ${messages[index].lastSeenTime}: ${messages[index].newMessageCount}");
+                                  } else {
+                                    Future.delayed(const Duration(seconds: 1),
+                                        () {
+                                      NavbarNotifier2.makeBadgeVisible(
+                                          2, false);
+                                    });
+                                  }
                                   return InkWell(
                                     onTap: () {
                                       //print('Tile clicked');
@@ -167,11 +190,13 @@ class Singapore extends State<MessageTab> {
                                           .chatUser
                                           .id; // id này chỉ để test socket
 
-                                      chatStore.getMessageByProjectAndUsers(
-                                          userId: messages[index].chatUser.id,
-                                          projectId: messages[index]
-                                              .project!
-                                              .objectId!);
+                                      // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
+
+                                      // chatStore.getMessageByProjectAndUsers(
+                                      //     userId: messages[index].chatUser.id,
+                                      //     projectId: messages[index]
+                                      //         .project!
+                                      //         .objectId!);
                                       /*
                                 {
   "result": [
@@ -208,14 +233,19 @@ class Singapore extends State<MessageTab> {
                                               .navigatorKey.currentContext!)
                                           .push(MaterialPageRoute2(
                                               routeName:
-                                                  "${Routes.message}/$id",
+                                                  "${Routes.message}/${messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
                                               arguments: WrapMessageList(
                                                   project:
                                                       messages[index].project,
                                                   messages:
                                                       messages[index].messages,
                                                   chatUser: messages[index]
-                                                      .chatUser)));
+                                                      .chatUser)))
+                                          .then(
+                                        (value) {
+                                          setState(() {});
+                                        },
+                                      );
                                       // You can replace the print statement with your function
                                     },
                                     child: ListTile(
@@ -224,8 +254,15 @@ class Singapore extends State<MessageTab> {
                                           .message), // Replace with actual icons
                                       title: Text(
                                         "Project ${messages[index].project?.title} (${messages[index].project?.objectId}) - ${messages[index].chatUser.firstName} (${messages[index].chatUser.id})",
-                                        style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: messages[index]
+                                                        .newMessageCount >
+                                                    0
+                                                ? Theme.of(context)
+                                                    .colorScheme
+                                                    .primary
+                                                : null),
                                       ),
                                       subtitle: Column(
                                         crossAxisAlignment:
@@ -233,27 +270,36 @@ class Singapore extends State<MessageTab> {
                                         children: [
                                           // Text(messages[index]['role']),
 
-                                          Text(messages[index]
-                                                      .messages!
-                                                      .first
-                                                      .sender
-                                                      .objectId !=
-                                                  userStore.user!.objectId
-                                              ? messages[index]
-                                                  .messages!
-                                                  .first
-                                                  .content
-                                              : "You: ${messages[index].messages!.first.content}"),
+                                          Text(
+                                            messages[index]
+                                                        .messages!
+                                                        .first
+                                                        .sender
+                                                        .objectId !=
+                                                    userStore.user!.objectId
+                                                ? messages[index]
+                                                    .messages!
+                                                    .first
+                                                    .content
+                                                : "You: ${messages[index].messages!.first.content}",
+                                            style: TextStyle(
+                                                fontWeight: messages[index]
+                                                            .newMessageCount >
+                                                        0
+                                                    ? FontWeight.bold
+                                                    : null),
+                                          ),
                                           const SizedBox(
                                             height: 20,
                                           ),
                                           Text(
                                             messages[index]
                                                     .messages
-                                                    ?.first
-                                                    .createdAt
+                                                    ?.firstOrNull
+                                                    ?.updatedAt
+                                                    ?.toLocal()
                                                     .toString() ??
-                                                DateTime.now().toString(),
+                                                "null",
                                             style:
                                                 const TextStyle(fontSize: 12),
                                             textAlign: TextAlign.end,

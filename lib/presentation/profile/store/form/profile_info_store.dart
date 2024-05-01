@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/education_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
@@ -110,6 +111,14 @@ abstract class _ProfileStudentStore with Store {
       final loginParams = AddTechStackParams(name: "");
       final future = _getTechStackUseCase.call(params: loginParams);
       // addProfileCompanyFuture = ObservableFuture(future);
+
+      var sharePref = getIt<SharedPreferenceHelper>();
+      var techStack = await sharePref.getTechStack();
+      if (techStack!.isNotEmpty) {
+        _techStack = techStack;
+        return true;
+      }
+
       bool success = false;
       return await future.then((value) {
         if (value.statusCode == HttpStatus.accepted ||
@@ -124,6 +133,8 @@ abstract class _ProfileStudentStore with Store {
               for (var element in ssList) {
                 _techStack!.add(TechStack.fromJson(element));
               }
+
+              sharePref.saveTechStack(_techStack);
             }
           } catch (e) {
             print("cannot get all techstack");
@@ -145,8 +156,15 @@ abstract class _ProfileStudentStore with Store {
     try {
       final loginParams = AddSkillsetParams(name: "");
       final future = _getSkillsetUseCase.call(params: loginParams);
-      // addProfileCompanyFuture = ObservableFuture(future);
+
+      var sharePref = getIt<SharedPreferenceHelper>();
       bool success = false;
+      var skillset = await sharePref.getSkill();
+      if (skillset!.isNotEmpty) {
+        _skillset = skillset;
+        return true;
+      }
+
       return await future.then((value) {
         if (value.statusCode == HttpStatus.accepted ||
             value.statusCode == HttpStatus.ok ||
@@ -160,6 +178,7 @@ abstract class _ProfileStudentStore with Store {
               for (var element in ssList) {
                 _skillset!.add(Skill.fromMap(element));
               }
+              sharePref.saveSkills(_skillset);
             }
           } catch (e) {
             print("cannot get all skillset");

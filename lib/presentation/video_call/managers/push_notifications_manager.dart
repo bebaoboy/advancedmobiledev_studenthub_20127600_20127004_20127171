@@ -116,67 +116,71 @@ class PushNotificationsManager {
   }
 
   subscribe(String token) async {
-    log('[subscribe] token: $token', "BEBAOBOY");
+    try {
+      log('[subscribe] token: $token', "BEBAOBOY");
 
-    // var savedToken = await SharedPrefs.getSubscriptionToken();
-    // if (token == savedToken) {
-    //   log('[subscribe] skip subscription for same token', "BEBAOBOY");
-    //   return;
-    // }
-    if (token == "") {
-      log("no saved token", "BEBAOBOY");
-      token = await SharedPrefs.getSubscriptionToken();
-    }
-
-    CreateSubscriptionParameters parameters = CreateSubscriptionParameters();
-    parameters.pushToken = token;
-
-    parameters.environment = CubeEnvironment.DEVELOPMENT;
-
-    if (Platform.isAndroid) {
-      parameters.channel = NotificationsChannels.GCM;
-      parameters.platform = CubePlatform.ANDROID;
-    } else if (Platform.isIOS) {
-      parameters.channel = NotificationsChannels.APNS_VOIP;
-      parameters.platform = CubePlatform.IOS;
-    }
-
-    var deviceInfoPlugin = DeviceInfoPlugin();
-
-    String? deviceId;
-
-    if (kIsWeb) {
-      var webBrowserInfo = await deviceInfoPlugin.webBrowserInfo;
-      deviceId = base64Encode(utf8.encode(webBrowserInfo.userAgent ?? ''));
-    } else if (Platform.isAndroid) {
-      var androidInfo = await deviceInfoPlugin.androidInfo;
-      deviceId = androidInfo.id;
-    } else if (Platform.isIOS) {
-      var iosInfo = await deviceInfoPlugin.iosInfo;
-      deviceId = iosInfo.identifierForVendor;
-    } else if (Platform.isMacOS) {
-      var macOsInfo = await deviceInfoPlugin.macOsInfo;
-      deviceId = macOsInfo.computerName;
-    }
-
-    parameters.udid = deviceId;
-
-    var packageInfo = await PackageInfo.fromPlatform();
-    parameters.bundleIdentifier = packageInfo.packageName;
-
-    createSubscription(parameters.getRequestParameters())
-        .then((cubeSubscriptions) {
-      log('[subscribe] subscription SUCCESS', "BEBAOBOY");
-      SharedPrefs.saveSubscriptionToken(token);
-      for (var subscription in cubeSubscriptions) {
-        log('[subscribe] subscription ERROR: $subscription', "BEBAOBOY");
-        if (subscription.device!.clientIdentificationSequence == token) {
-          SharedPrefs.saveSubscriptionId(subscription.id!);
-        }
+      // var savedToken = await SharedPrefs.getSubscriptionToken();
+      // if (token == savedToken) {
+      //   log('[subscribe] skip subscription for same token', "BEBAOBOY");
+      //   return;
+      // }
+      if (token == "") {
+        log("no saved token", "BEBAOBOY");
+        token = await SharedPrefs.getSubscriptionToken();
       }
-    }).catchError((error) {
-      log('[subscribe] subscription ERROR: $error', "BEBAOBOY");
-    });
+
+      CreateSubscriptionParameters parameters = CreateSubscriptionParameters();
+      parameters.pushToken = token;
+
+      parameters.environment = CubeEnvironment.DEVELOPMENT;
+
+      if (Platform.isAndroid) {
+        parameters.channel = NotificationsChannels.GCM;
+        parameters.platform = CubePlatform.ANDROID;
+      } else if (Platform.isIOS) {
+        parameters.channel = NotificationsChannels.APNS_VOIP;
+        parameters.platform = CubePlatform.IOS;
+      }
+
+      var deviceInfoPlugin = DeviceInfoPlugin();
+
+      String? deviceId;
+
+      if (kIsWeb) {
+        var webBrowserInfo = await deviceInfoPlugin.webBrowserInfo;
+        deviceId = base64Encode(utf8.encode(webBrowserInfo.userAgent ?? ''));
+      } else if (Platform.isAndroid) {
+        var androidInfo = await deviceInfoPlugin.androidInfo;
+        deviceId = androidInfo.id;
+      } else if (Platform.isIOS) {
+        var iosInfo = await deviceInfoPlugin.iosInfo;
+        deviceId = iosInfo.identifierForVendor;
+      } else if (Platform.isMacOS) {
+        var macOsInfo = await deviceInfoPlugin.macOsInfo;
+        deviceId = macOsInfo.computerName;
+      }
+
+      parameters.udid = deviceId;
+
+      var packageInfo = await PackageInfo.fromPlatform();
+      parameters.bundleIdentifier = packageInfo.packageName;
+
+      createSubscription(parameters.getRequestParameters())
+          .then((cubeSubscriptions) {
+        log('[subscribe] subscription SUCCESS', "BEBAOBOY");
+        SharedPrefs.saveSubscriptionToken(token);
+        for (var subscription in cubeSubscriptions) {
+          log('[subscribe] subscription ERROR: $subscription', "BEBAOBOY");
+          if (subscription.device!.clientIdentificationSequence == token) {
+            SharedPrefs.saveSubscriptionId(subscription.id!);
+          }
+        }
+      }).catchError((error) {
+        log('[subscribe] subscription ERROR: $error', "BEBAOBOY");
+      });
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> unsubscribe() {

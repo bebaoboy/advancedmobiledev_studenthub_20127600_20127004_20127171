@@ -1,4 +1,5 @@
 class Preferences {
+
   Preferences._();
 
   static const String is_logged_in = "isLoggedIn";
@@ -23,4 +24,6 @@ class Preferences {
   static const String project_search_history = "project_search_history";
   static const String first_time = "first_time";
   static const String all_project = "all_projects";
+  static const String all_skillset = "all_skillsets";
+  static const String all_teckstack = "all_teckstacks";
 }

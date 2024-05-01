@@ -1,6 +1,7 @@
 import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/message_screen.dart';
@@ -33,13 +34,14 @@ import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/presentation/signup/signup.dart';
 import 'package:boilerplate/presentation/signup/signup_company.dart';
 import 'package:boilerplate/presentation/signup/signup_student.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
 class Routes {
   Routes._();
 
   //static variables
-  static const String splash = '/splash';
+  static const String splash = '/';
   static const String login = '/login';
   static const String signUp = '/signup';
   static const String signUpCompany = '/signup-company';
@@ -47,7 +49,7 @@ class Routes {
   static const String profileStudent = '/profile-student';
   static const String profileStudentStep2 = '/profile-student-step2';
   static const String profileStudentStep3 = '/profile-student-step3';
-  static const String home = '/post';
+  static const String home = '/home';
   static const String welcome = '/welcome';
   static const String dashboard = '/dashboard';
   static const String profile = '/profile';
@@ -125,6 +127,12 @@ class Routes {
 
 getRoute(String name, context, {arguments}) {
   try {
+    log("route = $name, BEBAOBOY");
+    name = name.split(RegExp('(?=[/])'))[0];
+    // print("route = $name, BEBAOBOY");
+    if (name == "/") {
+      name = Routes.splash;
+    }
     if (name.startsWith(Routes.projectDetails)) {
       // If route is projectDetails, return ProjectDetailsPage with arguments
       if (arguments != null) {
@@ -193,9 +201,12 @@ getRoute(String name, context, {arguments}) {
 
     if (name.startsWith(Routes.previewMeeting)) {
       if (arguments != null) {
-        var users = arguments as List<CubeUser>;
+        var users = arguments[0] as List<CubeUser>;
+        var interviewSchedule = arguments[1] as InterviewSchedule;
+        var callSession = arguments[2] as P2PSession;
         return PreviewMeetingScreen(
-            CubeSessionManager.instance.activeSession!.user!,
+            CubeSessionManager.instance.activeSession!.user!, callSession,
+            interviewSchedule: interviewSchedule,
             users: users
                 .where((user) =>
                     user.id !=
@@ -206,12 +217,16 @@ getRoute(String name, context, {arguments}) {
 
     return Routes._route[name] ??
         ErrorPage(
-          errorDetails: FlutterErrorDetails(
-              exception: {"summary": "Wrong route!", "stack": "name=$name"}),
+          errorDetails: FlutterErrorDetails(exception: {
+            "summary": Lang.get('404'),
+            "stack": "Page: name=$name"
+          }),
         );
   } catch (e) {
     return ErrorPage(
-        errorDetails: FlutterErrorDetails(
-            exception: {"summary": "Wrong route!", "stack": e.toString()}));
+        errorDetails: FlutterErrorDetails(exception: {
+      "summary": Lang.get('error_text'),
+      "stack": e.toString()
+    }));
   }
 }

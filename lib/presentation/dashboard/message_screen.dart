@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 
+import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -11,7 +12,6 @@ import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
-import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/dashboard/components/all_schedule_bottom_sheet.dart';
@@ -19,11 +19,13 @@ import 'package:boilerplate/presentation/dashboard/components/schedule_bottom_sh
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:collection/collection.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
@@ -64,6 +66,7 @@ class _MessageScreenState extends State<MessageScreen> {
   @override
   void initState() {
     super.initState();
+    print("init msg receive");
     // print(widget.chatObject.messages);
     // filter = InterviewSchedule(
     // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
@@ -73,12 +76,21 @@ class _MessageScreenState extends State<MessageScreen> {
     //     id: userStore.user!.objectId!, firstName: userStore.user!.name);
 
     _currentUserType = userStore.getCurrentType();
+    var p = chatStore.messages.firstWhereOrNull(
+      (element) =>
+          element.project?.objectId == widget.chatObject.project?.objectId &&
+          element.chatUser.id == widget.chatObject.chatUser.id,
+    );
+    if (p != null) {
+      p.lastSeenTime = DateTime.now();
+    }
 
     typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
     me = ChatUser(
         id: userStore.user!.objectId!, firstName: userStore.user!.name);
-    messageNotifier = MessageNotifierProvider(
-        user: widget.chatObject.chatUser, project: widget.chatObject.project);
+    var msgnf = chatStore.getMessageNotifiers(widget.chatObject);
+    assert(msgnf != null);
+    messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
@@ -108,6 +120,8 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
     timer?.cancel();
     messageNotifier.removeListener(_messageNotifierListener);
+    messageNotifier.dispose();
+    chatStore.currentProjectMessages.clear();
   }
 
   void updateMessageReactions(MessageReaction reaction, String id,
@@ -153,164 +167,174 @@ class _MessageScreenState extends State<MessageScreen> {
     return Scaffold(
         key: _scaffoldKey,
         appBar: _buildAppBar(context),
-        body: Chat(
-          user: me,
-          performEmoji: (Emoji emoji, AbstractChatMessage message) {
-            if ((message.reactions?.own.isNotEmpty ?? false) &&
-                (message.reactions?.own.contains(emoji.emoji) ?? false)) {
-              updateMessageReactions(
-                  MessageReaction("9", "", message.id,
-                      removeReaction: emoji.emoji),
-                  message.id,
-                  remove: true);
-              // removeMessageReaction(message.id!, emoji.emoji);
-              // updateMessageReactions(CubeMessageReactions(
-              //     id!, _cubeDialog.dialogId!, message.messageId!,
-              //     removeReaction: emoji.emoji));
-            } else {
-              updateMessageReactions(
-                  MessageReaction("9", "", message.id,
-                      addReaction: emoji.emoji),
-                  message.id,
-                  add: true);
-              // addMessageReaction(message.messageId!, emoji.emoji);
-              // updateMessageReactions(CubeMessageReactions(
-              //     id!, _cubeDialog.dialogId!, message.messageId!,
-              //     addReaction: emoji.emoji));
-            }
-          },
-          scrollPhysics: const ClampingScrollPhysics(),
-          typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
-          messages: chatStore.currentProjectMessages,
-          onAttachmentPressed: _handleAttachmentPressed,
-          // onFirstIconPressed: () => showScheduleBottomSheet(context),
-          onFirstIconPressed: () {
-            showAllScheduleBottomSheet(context);
-          },
-          onMessageTap: _handleMessageTap,
-          onPreviewDataFetched: _handlePreviewDataFetched,
-          onSendPressed: _handleSendPressed,
-          showUserAvatars: true,
-          showUserNames: true,
-          audioMessageBuilder: (p0, {required messageWidth}) {
-            return AudioMessageWidget(
-              message: p0,
-              name: p0.name,
-              senderColor: Theme.of(context).colorScheme.primary,
-              inActiveAudioSliderColor: Colors.amber,
-              activeAudioSliderColor: Colors.red,
-            );
-          },
-          scheduleMessageBuilder: (p0, {required messageWidth}) {
-            var t = InterviewSchedule.fromJson(p0.metadata!);
-            // print(t);
-            // print(messageWidth);
-            // print(t.objectId);
-            return ScheduleMessage(
-                user: me,
-                onMenuCallback: (scheduleFilter) async {
-                  if (_currentUserType == UserType.company) {
-                    showAdaptiveActionSheet(
-                      title: Text(
-                        "Interview ${Lang.get("option")}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
+        body: Observer(
+          builder: (context) => Chat(
+            user: me,
+            performEmoji: (Emoji emoji, AbstractChatMessage message) {
+              if ((message.reactions?.own.isNotEmpty ?? false) &&
+                  (message.reactions?.own.contains(emoji.emoji) ?? false)) {
+                updateMessageReactions(
+                    MessageReaction("9", "", message.id,
+                        removeReaction: emoji.emoji),
+                    message.id,
+                    remove: true);
+                // removeMessageReaction(message.id!, emoji.emoji);
+                // updateMessageReactions(CubeMessageReactions(
+                //     id!, _cubeDialog.dialogId!, message.messageId!,
+                //     removeReaction: emoji.emoji));
+              } else {
+                updateMessageReactions(
+                    MessageReaction("9", "", message.id,
+                        addReaction: emoji.emoji),
+                    message.id,
+                    add: true);
+                // addMessageReaction(message.messageId!, emoji.emoji);
+                // updateMessageReactions(CubeMessageReactions(
+                //     id!, _cubeDialog.dialogId!, message.messageId!,
+                //     addReaction: emoji.emoji));
+              }
+            },
+            scrollPhysics: const ClampingScrollPhysics(),
+            //typingIndicatorOptions:
+            // TypingIndicatorOptions(typingUsers: typings),
+            messages: chatStore.currentProjectMessages,
+            onAttachmentPressed: _handleAttachmentPressed,
+            // onFirstIconPressed: () => showScheduleBottomSheet(context),
+            onFirstIconPressed: () {
+              showAllScheduleBottomSheet(context);
+            },
+            onMessageTap: _handleMessageTap,
+            onPreviewDataFetched: _handlePreviewDataFetched,
+            onSendPressed: _handleSendPressed,
+            showUserAvatars: true,
+            showUserNames: true,
+            audioMessageBuilder: (p0, {required messageWidth}) {
+              return AudioMessageWidget(
+                message: p0,
+                name: p0.name,
+                senderColor: Theme.of(context).colorScheme.primary,
+                inActiveAudioSliderColor: Colors.amber,
+                activeAudioSliderColor: Colors.red,
+              );
+            },
+            scheduleMessageBuilder: (p0, {required messageWidth}) {
+              var t = InterviewSchedule.fromJsonApi(p0.metadata!);
+              // print(t);
+              // print(messageWidth);
+              // print(t.objectId);
+              return ScheduleMessage(
+                  user: widget.chatObject.chatUser,
+                  onMenuCallback: (scheduleFilter) async {
+                    if (_currentUserType == UserType.company) {
+                      showAdaptiveActionSheet(
+                        title: Text(
+                          "Interview ${Lang.get("option")}",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                      context: NavigationService.navigatorKey.currentContext!,
-                      isDismissible: true,
-                      barrierColor: Colors.black87,
-                      actions: <BottomSheetAction>[
-                        if (_currentUserType == UserType.company)
+                        context: NavigationService.navigatorKey.currentContext!,
+                        isDismissible: true,
+                        barrierColor: Colors.black87,
+                        actions: <BottomSheetAction>[
+                          if (_currentUserType == UserType.company)
+                            BottomSheetAction(
+                              title: Container(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    Lang.get('reschedule'),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.normal),
+                                  )),
+                              onPressed: (context) async {
+                                ////print(scheduleFilter);
+                                await Future.delayed(
+                                        const Duration(microseconds: 500))
+                                    .then((value) {
+                                  showScheduleBottomSheet(
+                                      _scaffoldKey.currentContext!,
+                                      flt: scheduleFilter,
+                                      id: p0.id);
+                                });
+                              },
+                            ),
                           BottomSheetAction(
+                            visibility: !t.isCancel,
                             title: Container(
                                 alignment: Alignment.topLeft,
-                                child: Text(
-                                  Lang.get('reschedule'),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.normal),
-                                )),
-                            onPressed: (context) async {
-                              ////print(scheduleFilter);
-                              await Future.delayed(
-                                      const Duration(microseconds: 500))
-                                  .then((value) {
-                                showScheduleBottomSheet(
-                                    _scaffoldKey.currentContext!,
-                                    flt: scheduleFilter,
-                                    id: p0.id);
-                              });
+                                child: Text(Lang.get('cancel'),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w100))),
+                            onPressed: (context) {
+                              int i = chatStore.currentProjectMessages
+                                  .indexWhere((element) => element.id == p0.id);
+                              if (i != -1) {
+                                chatStore.disableInterview(
+                                    interviewId: chatStore
+                                        .currentProjectMessages[i]
+                                        .metadata!["id"]
+                                        .toString());
+                                setState(() {
+                                  chatStore.currentProjectMessages[i] =
+                                      ScheduleMessageType(
+                                          messageWidth: (MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.9)
+                                              .round(),
+                                          author: widget.chatObject.chatUser,
+                                          id: chatStore
+                                              .currentProjectMessages[i].id,
+                                          type: AbstractMessageType.schedule,
+                                          status: Status.delivered,
+                                          createdAt: DateTime.now()
+                                              .millisecondsSinceEpoch,
+                                          metadata: {
+                                        ...chatStore.currentProjectMessages[i]
+                                            .metadata!,
+                                        "isCancel": true,
+                                      });
+
+                                  _sortMessages();
+                                });
+                              }
                             },
                           ),
-                        BottomSheetAction(
-                          visibility: !t.isCancel,
-                          title: Container(
-                              alignment: Alignment.topLeft,
-                              child: Text(Lang.get('cancel'),
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w100))),
-                          onPressed: (context) {
-                            int i = chatStore.currentProjectMessages
-                                .indexWhere((element) => element.id == p0.id);
-                            if (i != -1) {
-                              setState(() {
-                                chatStore.currentProjectMessages[i] =
-                                    ScheduleMessageType(
-                                        messageWidth:
-                                            (MediaQuery.of(context).size.width *
-                                                    0.9)
-                                                .round(),
-                                        author: widget.chatObject.chatUser,
-                                        id: const Uuid().v4(),
-                                        type: AbstractMessageType.schedule,
-                                        status: Status.delivered,
-                                        createdAt: DateTime.now()
-                                            .millisecondsSinceEpoch,
-                                        metadata: {
-                                      ...chatStore
-                                          .currentProjectMessages[i].metadata!,
-                                      "isCancel": true,
-                                    });
-                                _sortMessages();
-                              });
-                            }
-                          },
-                        ),
-                      ],
-                    );
-                  }
+                        ],
+                      );
+                    }
+                  },
+                  scheduleFilter: t,
+                  message: ScheduleMessageType(
+                      author: p0.author,
+                      metadata: p0.metadata,
+                      id: p0.id,
+                      type: p0.type,
+                      createdAt: p0.createdAt,
+                      updatedAt: p0.updatedAt,
+                      messageWidth:
+                          (MediaQuery.of(context).size.width * 0.9).round()),
+                  messageWidth: MediaQuery.of(context).size.width * 0.9);
+            },
+            customMessageBuilder: (p0, {required messageWidth}) {
+              return ListenableBuilder(
+                listenable: messageNotifier,
+                builder: (BuildContext context, Widget? child) {
+                  return Text(
+                      (messageNotifier.inbox.firstOrNull as AbstractTextMessage)
+                          .text);
                 },
-                scheduleFilter: InterviewSchedule(
-                    isCancel: t.isCancel,
-                    endDate: t.endDate,
-                    startDate: t.startDate,
-                    title: t.title),
-                message: ScheduleMessageType(
-                    author: p0.author,
-                    id: p0.id,
-                    type: p0.type,
-                    messageWidth:
-                        (MediaQuery.of(context).size.width * 0.9).round()),
-                messageWidth: MediaQuery.of(context).size.width * 0.9);
-          },
-          customMessageBuilder: (p0, {required messageWidth}) {
-            return ListenableBuilder(
-              listenable: messageNotifier,
-              builder: (BuildContext context, Widget? child) {
-                return Text(
-                    (messageNotifier.inbox.firstOrNull as AbstractTextMessage)
-                        .text);
-              },
-            );
-          },
-          // theme: const DefaultChatTheme(
-          //   // seenIcon: Text(
-          //   //   'read',
-          //   //   style: TextStyle(
-          //   //     fontSize: 10.0,
-          //   //   ),
-          //   // ),
-          // ),
+              );
+            },
+            // theme: const DefaultChatTheme(
+            //   // seenIcon: Text(
+            //   //   'read',
+            //   //   style: TextStyle(
+            //   //     fontSize: 10.0,
+            //   //   ),
+            //   // ),
+            // ),
+          ),
         ));
   }
 
@@ -327,9 +351,13 @@ class _MessageScreenState extends State<MessageScreen> {
       } else if (b.createdAt == null) {
         return 1;
       }
-      return a.createdAt!.compareTo(b.createdAt!) == -1
+      return (a.updatedAt ?? a.createdAt)!
+                  .compareTo((b.updatedAt ?? b.createdAt)!) ==
+              -1
           ? 1
-          : a.createdAt!.compareTo(b.createdAt!) == 1
+          : (a.updatedAt ?? a.createdAt)!
+                      .compareTo((b.updatedAt ?? b.createdAt)!) ==
+                  1
               ? -1
               : 0;
     });
@@ -540,7 +568,7 @@ class _MessageScreenState extends State<MessageScreen> {
         // ToDo: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
-        // default for testing
+        /// default for testing
         // messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
         //   "content": message.text.trim(),
         //   "projectId": 150,
@@ -549,7 +577,6 @@ class _MessageScreenState extends State<MessageScreen> {
         //   "messageFlag": 0 // default 0 for message, 1 for interview
         // });
 
-        // ToDo: uncomment to send real message;
         messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
           "content": message.text.trim(),
           "projectId": widget.chatObject.project!.objectId!,
@@ -601,16 +628,23 @@ class _MessageScreenState extends State<MessageScreen> {
           //         projectId: int.parse(widget.chatObject.project!.objectId!))
           //     .then((value1) {
           //   if (value1) {
-          messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", {
-            "title": value.title,
+          value.meetingRoomCode =
+              "code-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}-${const Uuid().v4()}";
+          value.meetingRoomId =
+              "id-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}-${const Uuid().v4()}";
+          var ms = {
+            "title": value.title.toTitleCase().trim(),
             "projectId": widget.chatObject.project!.objectId!,
             "senderId": userStore.user!.objectId!,
             "receiverId": _user.id, // notification
-            "startTime": value.startDate.toIso8601String(),
-            "endTime": value.endDate.toIso8601String(),
-            "meeting_room_code": const Uuid().v1(),
-            "meeting_room_id": const Uuid().v4()
-          });
+            "startTime": value.startDate.toUtc().toIso8601String(),
+            "endTime": value.endDate.toUtc().toIso8601String(),
+            "meeting_room_code": value.meetingRoomCode,
+            "meeting_room_id": value.meetingRoomId,
+          };
+          // print(ms);
+          messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", ms);
+
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
               author: widget.chatObject.chatUser,
@@ -618,18 +652,35 @@ class _MessageScreenState extends State<MessageScreen> {
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
               status: Status.delivered,
-              metadata: value.toJson()));
+              metadata: {
+                "title": value.title,
+                "projectId": widget.chatObject.project!.objectId!,
+                "senderId": userStore.user!.objectId!,
+                "receiverId": _user.id, // notification
+                "startTime": value.startDate,
+                "endTime": value.endDate,
+                "meeting_room_code": value.meetingRoomCode,
+                "meeting_room_id": value.meetingRoomId,
+              }));
+
+          _sendMeetingCode(value);
+
+          Duration diff = value.endDate.difference(value.startDate);
+          NotificationHelper.scheduleNewNotification(
+              diff.inMinutes, diff.inHours, diff.inDays);
         } else {
           Toastify.show(context, '', "Schedule interview fail",
               ToastificationType.error, () {});
         }
         // });
 
-        ////print(filter);
+        // print(filter);
         return value;
         // }
       } else {
         if (value != null) {
+//           value.meetingRoomCode = const Uuid().v1();
+//           value.meetingRoomId = const Uuid().v4();
           int i = chatStore.currentProjectMessages
               .indexWhere((element) => element.id == id);
           if (i != -1) {
@@ -638,18 +689,29 @@ class _MessageScreenState extends State<MessageScreen> {
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
                   author: widget.chatObject.chatUser,
-                  id: const Uuid().v4(),
+                  id: id!,
                   type: AbstractMessageType.schedule,
                   createdAt: DateTime.now().millisecondsSinceEpoch,
                   status: Status.delivered,
                   metadata: {
+                    "id": value.objectId,
                     "title": value.title,
-                    "endDate": value.endDate,
-                    "startDate": value.startDate,
+                    "projectId": widget.chatObject.project!.objectId!,
+                    "endTime": value.endDate,
+                    "startTime": value.startDate,
                     "isCancel": false,
+                    "meeting_room_code": value.meetingRoomCode,
+                    "meeting_room_id": value.meetingRoomId,
                   });
               _sortMessages();
             });
+
+            chatStore.updateInterview(
+              interview: value.objectId!,
+              title: value.title,
+              endTime: value.endDate,
+              startTime: value.startDate,
+            );
           }
         }
       }
@@ -677,11 +739,44 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
+  _sendMeetingCode(InterviewSchedule interviewSchedule) {
+    messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+      "content": '''Meeting: ${interviewSchedule.title}
+Meeting: ${interviewSchedule.meetingRoomId}
+Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
+          ''',
+      "projectId": widget.chatObject.project!.objectId!,
+      "senderId": userStore.user!.objectId!,
+      "receiverId": _user.id, // notification
+      "messageFlag": 0
+    });
+
+    var e = <String, dynamic>{
+      "id": const Uuid().v4(),
+      'type': 'text',
+      'text': '''Meeting: ${interviewSchedule.title}
+Meeting: ${interviewSchedule.meetingRoomId}
+Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
+          ''',
+      'status': 'seen',
+      'interview': {},
+      'createdAt': DateTime.now().millisecondsSinceEpoch,
+      'author': {
+        "firstName": userStore.user!.name,
+        "id": userStore.user!.objectId,
+      }
+    };
+
+    // TODO: add vô chat store
+    _addMessage(AbstractChatMessage.fromJson(e));
+  }
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   // app bar methods:-----------------------------------------------------------
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return ChatAppBar(
+      isStudent: userStore.user?.type == UserType.student,
       title:
           "Project ${widget.chatObject.project?.objectId} - ${widget.chatObject.chatUser.firstName ?? "No name"} ${widget.chatObject.chatUser.lastName ?? ""} (${widget.chatObject.chatUser.id})",
       openScheduleDialog: () async {

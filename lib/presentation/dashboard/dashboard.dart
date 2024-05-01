@@ -80,11 +80,11 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       {
         '/': _userStore.user!.type == UserType.company
             ? KeepAlivePage(DashBoardTab(
-                key: const PageStorageKey(1),
+                key: const PageStorageKey(11),
                 pageController: _pageController,
               ))
             : KeepAlivePage(StudentDashBoardTab(
-                key: const PageStorageKey(1), pageController: sc[1])),
+                key: const PageStorageKey(12), pageController: sc[1])),
         // Routes.projectDetails: ProjectDetailsPage(
         //   project: Project(title: 'som', description: 'smm'),
         // ),
@@ -126,7 +126,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   List<Map<String, Widget>> _routes = [];
   DateTime oldTime = DateTime.now();
   final _pageController2 = IndexController();
-  final _pageController = PageController(initialPage: 1);
+  final _pageController = PageController(initialPage: 2);
   final LanguageStore _languageStore = getIt<LanguageStore>();
   // late int currentPage;
   // late TabController tabController;
@@ -186,7 +186,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       appBar: _buildAppBar(),
       body: NavbarRouter2(
         pageController: _pageController2,
-        initialIndex: 1,
+        initialIndex: 2,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
           return Center(

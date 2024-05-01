@@ -105,6 +105,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
       minorRenderers.forEach((opponentId, renderer) {
         log("[dispose] dispose renderer for $opponentId", TAG);
         try {
+          renderer.srcObject?.getTracks().forEach((track) => track.stop());
           renderer.srcObject?.dispose();
           renderer.srcObject = null;
           renderer.dispose();

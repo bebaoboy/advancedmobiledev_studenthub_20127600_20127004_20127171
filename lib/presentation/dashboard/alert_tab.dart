@@ -6,7 +6,9 @@ import 'package:another_transformer_page_view/another_transformer_page_view.dart
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
+import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
@@ -20,10 +22,13 @@ import 'package:boilerplate/utils/notification/store/notification_store.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
 import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
+import 'package:toastification/toastification.dart';
 
 var colorss = [
   Colors.red,
@@ -327,6 +332,14 @@ class _AlertTabState extends State<AlertTab> {
                                           .then(
                                         (value) {
                                           setState(() {});
+                                          Toastify.show(
+                                              context,
+                                              "",
+                                              "Succeed!",
+                                              aboveNavbar: !NavbarNotifier2
+                                                  .isNavbarHidden,
+                                              ToastificationType.success,
+                                              () {});
                                         },
                                       );
                                     }
@@ -603,7 +616,7 @@ class _AlertTabState extends State<AlertTab> {
                     shrinkWrap: true,
                     itemCount: joinInterviews.length,
                     itemBuilder: (context, index) {
-                      return CustomFollowNotifcation(
+                      return CustomFollowNotification(
                         notificationObject: joinInterviews[index],
                         showTime: showTime[i],
                       );
@@ -624,7 +637,7 @@ class _AlertTabState extends State<AlertTab> {
                     shrinkWrap: true,
                     itemCount: viewOffers.length,
                     itemBuilder: (context, index) {
-                      return CustomFollowNotifcation(
+                      return CustomFollowNotification(
                         notificationObject: viewOffers[index],
                         showTime: showTime[i],
                       );
@@ -933,11 +946,42 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                   // Navigator.of(context).pushNamed(
                                                   //     Routes.submitProposal,
                                                   //     arguments: widget.project);
-                                                  widget.proposal[page]
-                                                          .hiredStatus =
-                                                      HireStatus.hired;
-                                                  widget.onAcceptCallback(
-                                                      widget.proposal[page]);
+                                                  AnimatedDialog
+                                                      .showAnimatedDialog(
+                                                    context,
+                                                    onClose: (p0) =>
+                                                        setState(() {}),
+                                                    contentTextAlign:
+                                                        TextAlign.center,
+                                                    contentText:
+                                                        'You can\'t undo this',
+                                                    title: "Accept this offer?",
+                                                    color: Colors.white,
+                                                    dialogWidth:
+                                                        kIsWeb ? 0.3 : null,
+                                                    lottieBuilder: Lottie.asset(
+                                                      'assets/animations/loading_animation.json',
+                                                      fit: BoxFit.contain,
+                                                    ),
+                                                    positiveText: "Delete",
+                                                    positiveIcon:
+                                                        Icons.delete_forever,
+                                                    onPositiveClick: (context) {
+                                                      widget.proposal[page]
+                                                              .hiredStatus =
+                                                          HireStatus.hired;
+                                                      widget.onAcceptCallback(
+                                                          widget
+                                                              .proposal[page]);
+                                                    },
+                                                    negativeText: "Cancel",
+                                                    negativeIcon:
+                                                        Icons.close_sharp,
+                                                    onNegativeClick: (context) {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                  );
                                                 },
                                                 child: Text(
                                                   Lang.get('accept_offer'),
@@ -1150,18 +1194,18 @@ class HeroFlutterLogo extends StatelessWidget {
   }
 }
 
-class CustomFollowNotifcation extends StatefulWidget {
-  const CustomFollowNotifcation(
+class CustomFollowNotification extends StatefulWidget {
+  const CustomFollowNotification(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomFollowNotifcation> createState() =>
-      _CustomFollowNotifcationState();
+  State<CustomFollowNotification> createState() =>
+      _CustomFollowNotificationState();
 }
 
-class _CustomFollowNotifcationState extends State<CustomFollowNotifcation> {
+class _CustomFollowNotificationState extends State<CustomFollowNotification> {
   bool follow = false;
   @override
   Widget build(BuildContext context) {

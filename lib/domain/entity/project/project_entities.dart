@@ -87,7 +87,10 @@ class Project extends ProjectBase {
   int? _countMessages;
   int? _countHired;
 
-  int get countNewProposals => countProposals - countMessages - countHired;
+  int get countNewProposals =>
+      (proposal == null || (proposal != null && proposal!.isEmpty))
+          ? 0
+          : countProposals - countMessages - countHired;
 
   int get countProposals => _countProposals ?? proposal?.length ?? 0;
   int get countMessages =>

@@ -18,6 +18,8 @@ import 'package:boilerplate/domain/usecase/user/is_logged_in_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_login_in_status_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/save_user_data_usecase.dart';
 import 'package:boilerplate/domain/usecase/user/set_user_profile_usecase.dart';
+import 'package:boilerplate/presentation/login/login.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
 
@@ -62,6 +64,8 @@ abstract class _UserStore with Store {
     _getMustChangePassUseCase.call(params: null).then((value) {
       shouldChangePass = value.res;
     });
+
+    indicatorText = null;
 
     // savedUsers.add(User(
     //     email: "user1@gmail.com",
@@ -122,8 +126,17 @@ abstract class _UserStore with Store {
   static ObservableFuture<Response?> emptyLoginResponse =
       ObservableFuture.value(null);
 
+  static ObservableFuture<FetchProfileResult> emptyResult =
+      ObservableFuture.value(FetchProfileResult(false, [], [], "", "", false));
+
   // store variables:-----------------------------------------------------------
   bool isLoggedIn = false;
+
+  @observable
+  bool isFetchingProfile = false;
+
+  @observable
+  String? indicatorText;
 
   @observable
   bool success = false;
@@ -135,8 +148,7 @@ abstract class _UserStore with Store {
   bool shouldChangePass = false;
 
   @observable
-  FetchProfileResult profileResult =
-      FetchProfileResult(false, [], [], "", "", false);
+  ObservableFuture<FetchProfileResult> fetchFuture = emptyResult;
 
   @observable
   User? _user;
@@ -150,22 +162,27 @@ abstract class _UserStore with Store {
               ? (_user!.studentProfile!.objectId ?? "-1")
               : "-1";
   @computed
-  String? get companyId => _user?.type == UserType.company ? _user?.companyProfile?.objectId : null;
+  String? get companyId =>
+      _user?.type == UserType.company ? _user?.companyProfile?.objectId : null;
 
   @computed
-  String? get studentId => _user?.type == UserType.student ? _user?.studentProfile?.objectId : null;
+  String? get studentId =>
+      _user?.type == UserType.student ? _user?.studentProfile?.objectId : null;
 
   @observable
   ObservableFuture<Response?> loginFuture = emptyLoginResponse;
 
-  @computed
-  bool get isLoading => loginFuture.status == FutureStatus.pending;
+  @observable
+  bool _isLoading = false;
+  bool get isLoading => _isLoading || isFetchingProfile;
 
   // actions:-------------------------------------------------------------------
   @action
   Future login(
       String email, String password, UserType type, List<UserType> roles,
       {fastSwitch = false}) async {
+    _isLoading = true;
+
     // //print(UserType.company.name);
     final LoginParams loginParams =
         LoginParams(username: email, password: password);
@@ -180,17 +197,17 @@ abstract class _UserStore with Store {
       await _saveLoginStatusUseCase.call(params: true);
       await _saveUserDataUseCase.call(params: value);
     }
-
+    _isLoading = true;
     await future.then((value) async {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.created ||
           value.statusCode == HttpStatus.ok) {
-        success = true;
-
         if (value.data['result'] is! String &&
             value.data['result']['token'] != null) {
           await _saveTokenUseCase.call(params: value.data['result']['token']);
           await _saveLoginStatusUseCase.call(params: true);
+          isFetchingProfile = true;
+          _isLoading = false;
 
           var userValue = User(
               // type: getUserType(type.name ?? UserType.naught.name),
@@ -199,22 +216,29 @@ abstract class _UserStore with Store {
               roles: [],
               isVerified: true);
 
+          indicatorText = "fetching_profile";
           isLoggedIn = true;
 
-          profileResult = await _getProfileUseCase(params: true);
+          final profileResult = _getProfileUseCase(params: true);
+          fetchFuture = ObservableFuture(profileResult);
 
-          if (profileResult.status) {
-            userValue.companyProfile = profileResult.result[1] != null
-                ? profileResult.result[1] as CompanyProfile
-                : null;
-            userValue.studentProfile = profileResult.result[0] != null
-                ? profileResult.result[0] as StudentProfile
-                : null;
-            userValue.roles = profileResult.roles;
-            userValue.isVerified = profileResult.isVerified;
-            userValue.name = profileResult.name;
-            userValue.objectId = profileResult.id;
-          }
+          await profileResult.then((value) {
+            if (value.status) {
+              userValue.companyProfile = value.result[1] != null
+                  ? value.result[1] as CompanyProfile
+                  : null;
+              userValue.studentProfile = value.result[0] != null
+                  ? value.result[0] as StudentProfile
+                  : null;
+              userValue.roles = value.roles;
+              userValue.isVerified = value.isVerified;
+              userValue.name = value.name;
+              userValue.objectId = value.id;
+              indicatorText = null;
+            }
+            isFetchingProfile = false;
+            success = true;
+          });
 
           // print(profileResult);
 
@@ -228,20 +252,34 @@ abstract class _UserStore with Store {
             shouldChangePass = value.res;
           });
 
+          if (NavigationService.navigatorKey.currentContext != null) {
+            initCube(NavigationService.navigatorKey.currentContext);
+          }
+
           // _getStudentFavoriteProjectUseCase.call(params: null);
         } else {
           notification = value.data['result'];
+          indicatorText = null;
+          isFetchingProfile = false;
+          _isLoading = false;
         }
       } else {
         success = false;
         errorStore.errorMessage = value.data['errorDetails'] is List
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
+        indicatorText = null;
+        isFetchingProfile = false;
+        _isLoading = false;
       }
     }).catchError((e) {
       print(e);
       isLoggedIn = false;
       success = false;
+      indicatorText = null;
+      isFetchingProfile = false;
+      _isLoading = false;
+
       //throw e;
     });
   }

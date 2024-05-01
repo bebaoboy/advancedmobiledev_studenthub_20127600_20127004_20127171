@@ -38,7 +38,7 @@ abstract class _ProjectStore with Store {
 
   Future init() async {
     try {
-      return getStudentFavoriteProject(false);
+      return await getStudentFavoriteProject(false);
     } catch (e) {
       // nothing changed
       print("error getting fav");
@@ -196,7 +196,7 @@ abstract class _ProjectStore with Store {
                 //   userStore.user!.studentProfile!.proposalProjects
                 //       !.firstWhere((element) => element.objectId == p.objectId)
                 //       .hiredStatus = HireStatus.notHired;
-                // } 
+                // }
               }
 
               // TODO: remove if reject (disableFlag)
@@ -285,6 +285,9 @@ abstract class _ProjectStore with Store {
         final ProjectDataSource datasource = getIt<ProjectDataSource>();
 
         bool doneInit = false;
+        var fav = await _getStudentFavoriteProjectUseCase.call(params: null);
+        _favoriteProjects = fav;
+
         if (value.data != null) {
           _projects.projects?.clear();
           for (int i = 0; i < value.data!.length; i++) {
@@ -307,62 +310,91 @@ abstract class _ProjectStore with Store {
             // datasource.insert(project);
           }
           print("favorite refess ${_favoriteProjects.projects!.length}");
-          init().then(
-            (value) {
-              _projects.projects?.forEach((element) {
-                element.isLoading = false;
-                var b = _favoriteProjects.projects?.firstWhereOrNull(
-                  (e) => element.objectId == e.objectId,
-                );
-                if (b != null) {
-                  element.isFavorite = true;
-                }
-              });
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+
+          _projects.projects?.forEach((element) {
+            element.isLoading = false;
+            var b = fav.projects?.firstWhereOrNull(
+              (e) => element.objectId == e.objectId,
+            );
+            if (b != null) {
+              element.isFavorite = true;
+            }
+          });
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          if (setStateCallback != null) setStateCallback();
+          Future.delayed(
+            Duration.zero,
+            () async {
+              // try {
+              //   getStudentFavoriteProject(false);
+              // } catch (e) {
+              //   // nothing changed
+              //   print("error getting fav");
+              // }
+              print("favorite refess ${_favoriteProjects.projects!.length}");
+              // _favoriteProjects.projects?.forEach(
+              //   (element) {
+              //     var p = _projects.projects?.firstWhereOrNull(
+              //       (e) => e.objectId == element.objectId,
+              //     );
+              //     if (p != null) {
+              //       p.isFavorite = true;
+              //     }
+              //   },
+              // );
               _projects.projects?.sort(
                 (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
               );
-              if (setStateCallback != null) setStateCallback();
+              if (_projects.projects != null) {
+                refazynistKey.currentState?.refresh(
+                    readyMade: _projects.projects!
+                        .sublist(0, count.clamp(0, _projects.projects!.length))
+                        .toList());
+              }
               Future.delayed(Duration.zero, () async {
-                // try {
-                //   getStudentFavoriteProject(false);
-                // } catch (e) {
-                //   // nothing changed
-                //   print("error getting fav");
-                // }
-                print("favorite refess ${_favoriteProjects.projects!.length}");
-                // _favoriteProjects.projects?.forEach(
-                //   (element) {
-                //     var p = _projects.projects?.firstWhereOrNull(
-                //       (e) => e.objectId == element.objectId,
-                //     );
-                //     if (p != null) {
-                //       p.isFavorite = true;
-                //     }
-                //   },
-                // );
-                if (_projects.projects != null) {
-                  refazynistKey.currentState?.refresh(
-                      readyMade: _projects.projects!
-                          .sublist(
-                              0, count.clamp(0, _projects.projects!.length))
-                          .toList());
-                }
-                Future.delayed(Duration.zero, () async {
-                  var list = await datasource.getProjectsFromDb();
-                  _projects.projects?.forEach((element) {
-                    datasource.insert(element);
-                  });
-                  list.projects?.forEach((element) {
-                    if (_projects.projects?.firstWhereOrNull(
-                          (e) => element.objectId == e.objectId,
-                        ) ==
-                        null) {
-                      print("delete ${element.objectId}");
-                      datasource.delete(element);
-                    }
-                  });
+                var list = await datasource.getProjectsFromDb();
+                _projects.projects?.forEach((element) {
+                  datasource.insert(element);
                 });
-              });
+                list.projects?.forEach((element) {
+                  if (_projects.projects?.firstWhereOrNull(
+                        (e) => element.objectId == e.objectId,
+                      ) ==
+                      null) {
+                    print("delete ${element.objectId}");
+                    datasource.delete(element);
+                  }
+                });
+              }).onError(
+                (error, stackTrace) {
+                  _favoriteProjects.projects?.forEach(
+                    (element) {
+                      var p = _projects.projects!.firstWhereOrNull(
+                        (e) => e.objectId == element.objectId,
+                      );
+                      if (p != null) {
+                        p.isFavorite = true;
+                      }
+                    },
+                  );
+                  _projects.projects?.sort(
+                    (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+                  );
+                  if (setStateCallback != null) setStateCallback();
+                  if (_projects.projects != null) {
+                    refazynistKey.currentState?.refresh(
+                        readyMade: _projects.projects!
+                            .sublist(
+                                0, count.clamp(0, _projects.projects!.length))
+                            .toList());
+                  }
+                },
+              );
             },
           );
         } else {
@@ -373,33 +405,32 @@ abstract class _ProjectStore with Store {
           //   print("error getting fav");
           // }
 
-          init().then((value) {
-            _projects = value;
-            _projects.projects?.forEach(
-              (element) => element.isLoading = false,
-            );
-            _favoriteProjects.projects?.forEach(
-              (element) {
-                var p = _projects.projects!.firstWhereOrNull(
-                  (e) => e.objectId == element.objectId,
-                );
-                if (p != null) {
-                  p.isFavorite = true;
-                }
-              },
-            );
-            _projects.projects?.sort(
-              (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-            );
-            if (setStateCallback != null) setStateCallback();
+          var list = await datasource.getProjectsFromDb();
+          _projects.projects = list.projects;
+          _projects.projects?.forEach(
+            (element) => element.isLoading = false,
+          );
+          fav.projects?.forEach(
+            (element) {
+              var p = _projects.projects!.firstWhereOrNull(
+                (e) => e.objectId == element.objectId,
+              );
+              if (p != null) {
+                p.isFavorite = true;
+              }
+            },
+          );
+          _projects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          if (setStateCallback != null) setStateCallback();
 
-            if (_projects.projects != null) {
-              refazynistKey.currentState?.refresh(
-                  readyMade: _projects.projects!
-                      .sublist(0, count.clamp(0, _projects.projects!.length))
-                      .toList());
-            }
-          });
+          if (_projects.projects != null) {
+            refazynistKey.currentState?.refresh(
+                readyMade: _projects.projects!
+                    .sublist(0, count.clamp(0, _projects.projects!.length))
+                    .toList());
+          }
         }
       });
 
@@ -418,12 +449,11 @@ abstract class _ProjectStore with Store {
     );
   }
 
-  Future<ProjectList> getStudentFavoriteProject(bool force) async {
+  Future<ProjectList> getStudentFavoriteProject(bool force,
+      {GlobalKey<RefazynistState>? refazynistKey}) async {
     try {
       if (force) {
-        return await _getStudentFavoriteProjectUseCase
-            .call(params: null)
-            .then((value) {
+        _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
           _favoriteProjects = value;
           _favoriteProjects.projects?.sort(
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
@@ -432,16 +462,28 @@ abstract class _ProjectStore with Store {
             element.isLoading = false;
             element.isFavorite = true;
           });
-          return _favoriteProjects;
+          refazynistKey?.currentState?.refresh(
+              readyMade: _favoriteProjects.projects!
+                  .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
+                  .toList());
+
+          return ProjectList(projects: []);
         });
       } else {
         if (_favoriteProjects.projects != null &&
             _favoriteProjects.projects!.isNotEmpty) {
-          return Future.value(_favoriteProjects);
+          _favoriteProjects.projects?.sort(
+            (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          );
+          if (_favoriteProjects.projects != null) {
+            refazynistKey?.currentState?.refresh(
+                readyMade: _favoriteProjects.projects!
+                    .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
+                    .toList());
+          }
+          return Future.value(ProjectList(projects: []));
         } else {
-          return await _getStudentFavoriteProjectUseCase
-              .call(params: null)
-              .then((value) {
+          _getStudentFavoriteProjectUseCase.call(params: null).then((value) {
             _favoriteProjects = value;
             _favoriteProjects.projects?.sort(
               (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
@@ -450,15 +492,33 @@ abstract class _ProjectStore with Store {
               element.isLoading = false;
               element.isFavorite = true;
             });
-            return _favoriteProjects;
+            if (_favoriteProjects.projects != null) {
+              refazynistKey?.currentState?.refresh(
+                  readyMade: _favoriteProjects.projects!
+                      .sublist(
+                          0, 5.clamp(0, _favoriteProjects.projects!.length))
+                      .toList());
+            }
+            return ProjectList(projects: []);
           });
         }
       }
     } catch (e) {
       print(e.toString());
       print("errror favorite");
-      return Future.value(_favoriteProjects);
+      if (_favoriteProjects.projects != null) {
+        refazynistKey?.currentState?.refresh(
+            readyMade: _favoriteProjects.projects!
+                .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
+                .toList());
+      }
+      return Future.value(ProjectList(projects: []));
     }
+
+    return Future.value(ProjectList(
+        projects: _favoriteProjects.projects!
+            .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
+            .toList()));
   }
 
   @action
@@ -470,7 +530,7 @@ abstract class _ProjectStore with Store {
     final GetProjectByCompanyParams loginParams =
         GetProjectByCompanyParams(companyId: id, typeFlag: typeFlag?.index);
     try {
-      _getProjectByCompanyUseCase.call(params: loginParams).then(
+      return _getProjectByCompanyUseCase.call(params: loginParams).then(
         (value) async {
           if (value.statusCode == HttpStatus.accepted ||
               value.statusCode == HttpStatus.ok ||
@@ -521,6 +581,7 @@ abstract class _ProjectStore with Store {
       });
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
+      print("cannot get profile company");
 
       var companies = await sharedPrefsHelper.getCompanyProjects();
       if (companies.projects != null && companies.projects!.isNotEmpty) {
@@ -530,14 +591,10 @@ abstract class _ProjectStore with Store {
             (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
           );
           if (setStateCallback != null) setStateCallback();
-
-          return _companyProjects;
         }
       }
-      print("cannot get profile company");
+      return _companyProjects;
     }
-    return Future.value(ProjectList(projects: []));
-
     // //print(value);
   }
 
@@ -581,7 +638,7 @@ abstract class _ProjectStore with Store {
     try {
       final future =
           _getStudentProposalProjectsUseCase.call(params: loginParams);
-      future.then((value) async {
+      return future.then<ProposalList>((value) async {
         if (value.statusCode == HttpStatus.accepted ||
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
@@ -623,7 +680,8 @@ abstract class _ProjectStore with Store {
               }
               if (setStateCallback != null) setStateCallback();
 
-              return userStore.user!.studentProfile!.proposalProjects;
+              return ProposalList(
+                  proposals: userStore.user!.studentProfile!.proposalProjects);
             }
           }
           return ProposalList(proposals: []);
@@ -669,7 +727,7 @@ abstract class _ProjectStore with Store {
           return companies;
         }
       }
+      return Future.value(ProposalList(proposals: []));
     }
-    return Future.value(ProposalList(proposals: []));
   }
 }

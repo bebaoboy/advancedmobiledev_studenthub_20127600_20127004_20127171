@@ -134,7 +134,6 @@ class _MainAppBarState extends State<MainAppBar> {
     return kIsWeb
         ? AppBar(
             // automaticallyImplyLeading: widget.showBackButton,
-            automaticallyImplyLeading: false,
             scrolledUnderElevation: 0,
             leadingWidth: 30,
             titleSpacing: 0,

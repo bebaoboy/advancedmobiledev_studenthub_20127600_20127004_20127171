@@ -20,8 +20,7 @@ class Destination {
     if (identical(this, other)) return true;
 
     return other is Destination &&
-        other.route == route &&
-        other.widget.runtimeType == widget.runtimeType;
+        other.route == route && widget.key == other.widget.key;
   }
 
   @override

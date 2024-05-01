@@ -269,6 +269,7 @@ class NotificationObject extends MyObject {
     required this.sender,
     required NotificationType type,
     super.createdAt,
+    super.updatedAt,
     this.content = "",
   }) : super(objectId: id) {
     _type = type;
@@ -323,6 +324,7 @@ class MessageObject extends NotificationObject {
     this.messageType = MessageType.message,
     this.interviewSchedule,
     super.createdAt,
+    super.updatedAt,
     this.project,
   });
 
@@ -339,6 +341,9 @@ class MessageObject extends NotificationObject {
         super(
             content: json2["content"] ?? "Null",
             createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
+            updatedAt: DateTime.tryParse(
+                    json2["updatedAt"] ?? json2["createdAt"] ?? "") ??
+                DateTime.now(),
             id: json2["id"].toString(),
             receiver: Profile.fromJson(
                 json2["receiver"] != null && json2["receiver"] is String
@@ -354,9 +359,11 @@ class MessageObject extends NotificationObject {
     return json.encode({
       "type": messageType.index,
       "id": id,
+      "content": content,
       "receiver": receiver.toJson(),
       "sender": sender.toJson(),
       "createdAt": (createdAt ?? DateTime.now()).toString(),
+      "updatedAt": (updatedAt ?? createdAt ?? DateTime.now()).toString(),
       "projectId": project?.toJson(),
     });
   }
@@ -370,6 +377,7 @@ class InterviewSchedule extends MyObject {
   DateTime endDate = DateTime.now();
   bool isCancel = false;
   String meetingRoomId;
+  String meetingRoomCode;
 
   InterviewSchedule({
     required this.title,
@@ -381,6 +389,7 @@ class InterviewSchedule extends MyObject {
     super.createdAt,
     super.updatedAt,
     this.meetingRoomId = "-1",
+    this.meetingRoomCode = "-1",
   }) : super(objectId: id);
 
   clear() {
@@ -409,8 +418,9 @@ class InterviewSchedule extends MyObject {
         startDate = json["startDate"] == null
             ? DateTime.now()
             : json["startDate"] as DateTime,
-        isCancel = json["isCancel"] ?? false,
+        isCancel = (json["disableFlag"] ?? 0) == 1,
         meetingRoomId = "-1",
+        meetingRoomCode = "-1",
         super(objectId: json["id"].toString());
 
   InterviewSchedule.fromJsonApi(Map<String, dynamic> json)
@@ -418,21 +428,31 @@ class InterviewSchedule extends MyObject {
         title = (json['title'] ?? "Missing Title") as String,
         endDate = json['endTime'] == null
             ? DateTime.now().add(const Duration(hours: 1, minutes: 1))
-            : DateTime.tryParse(json['endTime']) ?? DateTime.now(),
+            : json['endTime'] is DateTime
+                ? json['endTime']
+                : DateTime.tryParse(json['endTime']) ?? DateTime.now(),
         startDate = json["startTime"] == null
             ? DateTime.now()
-            : DateTime.tryParse(json['startTime']) ?? DateTime.now(),
+            : json['startTime'] is DateTime
+                ? json['startTime']
+                : DateTime.tryParse(json['startTime']) ?? DateTime.now(),
         isCancel = (json["disableFlag"] ?? 0) == 1,
-        meetingRoomId = (json["meetingRoomId"] ?? "-1").toString(),
+        meetingRoomId =
+            (json["meetingRoom"]?["meeting_room_id"] ?? "-1").toString(),
+        meetingRoomCode =
+            (json["meetingRoom"]?["meeting_room_code"] ?? '-1').toString(),
         super(
             objectId: json["id"].toString(),
-            createdAt: DateTime.tryParse(json["createdAt"]) ?? DateTime.now(),
-            updatedAt: DateTime.tryParse(json["updatedAt"]) ?? DateTime.now());
+            createdAt:
+                DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
+            updatedAt:
+                DateTime.tryParse(json["updatedAt"] ?? "") ?? DateTime.now());
 
   Map<String, dynamic> toJson() => {
         "title": title,
-        "startDate": startDate,
-        "endDate": endDate,
-        "isCancel": isCancel,
+        "startTime": startDate,
+        "endTime": endDate,
+        "disableFlag": isCancel ? 1 : 0,
+        "id": objectId,
       };
 }

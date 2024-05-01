@@ -24,7 +24,7 @@ class _ForgetPasswordDoneScreenState extends State<ForgetPasswordDoneScreen> {
     Future.delayed(const Duration(seconds: 2)).then((value) {
       loading = false;
       Navigator.of(context)
-          .pushReplacement(MaterialPageRoute2(routeName: Routes.home));
+          .pushAndRemoveUntil(MaterialPageRoute2(routeName: Routes.home), (_) => false);
     });
   }
 
