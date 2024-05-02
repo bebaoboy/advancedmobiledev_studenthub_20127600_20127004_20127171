@@ -28,28 +28,24 @@
          FlutterApplication and put your custom class here. -->
     <queries>
         <!-- If your app checks for SMS support -->
-        <intent>
+        <intent android:autoVerify="true">
             <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
             <category android:name="android.intent.category.BROWSABLE" />
-            <data android:scheme="https" />
+            <data android:scheme="https" android:host="advmobiledev-studenthub-clc20.web.app" />
+            <data android:scheme="https"/>
+            <data android:path="/"/>
+            <data android:pathPattern="/viewMessage/.*"/>
+            <data android:pathPattern="/viewProposals/.*"/>
+            <data android:pathPattern="/previewMeeting/*"/>
         </intent>
         <intent>
             <action android:name="android.intent.action.SEND" />
             <data android:mimeType="*/*" />
         </intent>
     </queries>
-    <application tools:replace="android:label" 
-    android:icon="@mipmap/ic_launcher" 
-    android:label="StudentHub" 
-    android:name="${applicationName}" 
-    android:usesCleartextTraffic="true">
-        <activity android:name=".MainActivity" 
-        android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" 
-        android:exported="true" 
-        android:hardwareAccelerated="true"              
-        android:supportsPictureInPicture="true"
-        android:launchMode="singleTop" 
-        android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
+    <application tools:replace="android:label" android:icon="@mipmap/ic_launcher" android:label="StudentHub" android:name="${applicationName}" android:usesCleartextTraffic="true">
+        <activity android:name=".MainActivity" android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode" android:exported="true" android:hardwareAccelerated="true" android:supportsPictureInPicture="true" android:launchMode="singleTop" android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing
                  until Flutter renders its first frame. It can be removed if
                  there is no splash screen (such as the default splash screen

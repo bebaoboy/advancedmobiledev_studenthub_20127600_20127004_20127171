@@ -1,0 +1,9 @@
+[{
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.iotecksolutions",
+      "sha256_cert_fingerprints":
+      ["AD:2A:70:62:23:75:EB:89:FC:E1:A1:55:2F:E5:5F:A3:FC:5D:2A:DF:CD:8D:75:2F:BA:88:95:CF:FE:E0:F5:2A"]
+    }
+  }]
