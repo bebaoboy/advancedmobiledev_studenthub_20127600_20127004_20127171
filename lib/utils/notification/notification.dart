@@ -3,15 +3,53 @@ import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_calls.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+
+@pragma('vm:entry-point')
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // If you're going to use other Firebase services in the background, such as Firestore,
+  // make sure you call `initializeApp` before using other Firebase services.
+  try {
+    log('[onMessage] background message: ${message.data}', "bebaoboy");
+    log('[onMessage] background message type: ${message.data["type"]}',
+        "bebaoboy");
+    log('[onMessage] background message meow: ${message.toMap().toString()}',
+        "bebaoboy");
+
+    String type = message.data["type"] ?? "";
+    String title = message.data["title"] ?? "";
+    // ignore: unused_local_variable
+    String body = message.data["message"] ?? "";
+    String sessionId = message.data["session_id"] ?? "";
+    int session = int.tryParse(sessionId) ?? 101;
+    print(
+        InterviewSchedule.fromJsonApi(json.decode(message.data["extra_body"])));
+    if (type == "interview") {
+      log("onMessage interview");
+      NotificationHelper.createInterviewPreflightNotification(
+          id: session, title: title, body: message.data.toString());
+    } else {
+      print("meow");
+      NotificationHelper.createTextNotification(
+          id: 44, body: message.data.toString());
+    }
+    ////print("Handling a background message: ${message.messageId}");
+  } catch (e) {
+    log('[onMessage] background message error: ${e.toString()}', "bebaoboy");
+  }
+}
 
 enum NotificationChannelEnum {
   messageChannel("message_channel_key", "Message channel",
@@ -67,6 +105,23 @@ class NotificationHelper {
         title: title,
         body: body,
         fullScreenIntent: false,
+        wakeUpScreen: true,
+      ),
+    );
+  }
+
+  static Future<void> createInterviewPreflightNotification(
+      {String? title = 'You have an interview',
+      required int id,
+      String? body = 'This is a simple text notification'}) async {
+    await _create(
+      content: NotificationContent(
+        id: id,
+        channelKey: NotificationChannelEnum.interviewChannel.key,
+        title: title,
+        body: body,
+        fullScreenIntent: false,
+        notificationLayout: NotificationLayout.BigText,
         wakeUpScreen: true,
       ),
     );
@@ -279,6 +334,8 @@ class NotificationHelper {
       try {
         var msg = MessageObject.fromJson(
             json.decode(receivedAction.payload!["msg"]!));
+        getIt<ChatStore>()
+            .changeMessageScreen(msg.sender.objectId!, msg.project!.objectId!);
         NavigationService.navigatorKey.currentState
             ?.push(MaterialPageRoute2(routeName: Routes.message, arguments: [
           false,

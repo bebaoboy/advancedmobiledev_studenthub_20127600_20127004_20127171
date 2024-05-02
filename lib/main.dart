@@ -28,14 +28,6 @@ import 'package:boilerplate/presentation/video_call/utils/configs.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  // If you're going to use other Firebase services in the background, such as Firestore,
-  // make sure you call `initializeApp` before using other Firebase services.
-  log('[onMessage] background message: ${message.data}', "bebaoboy");
-  ////print("Handling a background message: ${message.messageId}");
-}
-
 // @pragma('vm:entry-point')
 // void backgroundFetchHeadlessTask(HeadlessTask task) async {
 //   String taskId = task.taskId;
@@ -167,6 +159,7 @@ Future<void> main() async {
     // add listener for foreground push notifications
     FirebaseMessaging.onMessage.listen((remoteMessage) {
       log('[onMessage] message: ${remoteMessage.data.toString()}', "bebaoboy");
+      firebaseMessagingBackgroundHandler(remoteMessage);
     });
     if (!kIsWeb) {
       if (kDebugMode) {
@@ -178,7 +171,7 @@ Future<void> main() async {
       }
     }
 
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
 
     if (!kIsWeb) {
       FlutterError.onError = (FlutterErrorDetails errorDetails) {

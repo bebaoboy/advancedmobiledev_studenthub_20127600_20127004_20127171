@@ -3,6 +3,7 @@
 library dio_logging_interceptor;
 
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/di/service_locator.dart';
@@ -263,7 +264,8 @@ class LoggingInterceptor extends Interceptor {
     String prettyString = encoder.convert(input);
     logPrint!('<-- Response payload');
     if (prettyString.length > 1000) {
-      logPrint!(input.toString());
+      logPrint!(
+          input.toString().substring(0, min(1000, input.toString().length)));
       return;
     }
     // prettyString = prettyString.substring(0, min(prettyString.length, 500));

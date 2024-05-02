@@ -70,7 +70,10 @@ class MessageNotifierProvider with ChangeNotifier {
           userStore.user!.objectId) return;
 
       // print(data["notification"]['senderId'].toString());
-      inbox.insert(0, addInbox(data, inbox, false));
+      var i = addInbox(data, inbox, false);
+      if (i != null) {
+        inbox.insert(0, i);
+      }
       notifyListeners();
     });
 
@@ -80,7 +83,10 @@ class MessageNotifierProvider with ChangeNotifier {
           userStore.user!.objectId) return;
 
       // print(data["notification"]['senderId'].toString());
-      inbox.insert(0, addInbox(data, inbox, true));
+      var i = addInbox(data, inbox, true);
+      if (i != null) {
+        inbox.insert(0, i);
+      }
       notifyListeners();
     });
 
@@ -89,7 +95,6 @@ class MessageNotifierProvider with ChangeNotifier {
     // noti student id/company id
     textSocketHandler.on('NOTI_${userStore.user!.objectId}', (data) {
       print("notification socket ${project?.objectId} $data");
-      // TODO: hiện thông báo inapp
     });
     textSocketHandler.on('ERROR', (data) => print("error $data"));
     textSocketHandler.onDisconnect((_) {

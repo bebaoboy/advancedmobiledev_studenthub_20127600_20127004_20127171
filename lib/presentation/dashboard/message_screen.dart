@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
@@ -12,6 +13,7 @@ import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/input/typing_indicator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/audio_message_widget.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/dashboard/components/all_schedule_bottom_sheet.dart';
@@ -63,7 +65,7 @@ class _MessageScreenState extends State<MessageScreen> {
   void _messageNotifierListener() {
     final newMessage = messageNotifier.inbox.first;
     if (newMessage.author.id == _user.id) {
-      _addMessage(newMessage);
+      // _addMessage(newMessage);
     }
   }
 
@@ -96,25 +98,25 @@ class _MessageScreenState extends State<MessageScreen> {
     assert(msgnf != null);
     messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
-    timer = Timer.periodic(const Duration(seconds: 3), (t) {
-      // Random r = Random();
-      // var num = r.nextInt(30);
-      // print(num);
-      // if (num <= 7) {
-      //   typings = [
-      //     const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
-      //   ];
-      // } else if (num > 7 && num < 15) {
-      //   typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
-      // } else if (num > 15 && num <= 20) {
-      //   typings.add(
-      //       const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
-      // } else if (num < 25) {
-      //   typings
-      //       .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
-      // } else {
-      //   typings.clear();
-      // }
+    timer = Timer.periodic(const Duration(seconds: 10), (t) {
+      Random r = Random();
+      var num = r.nextInt(30);
+      print(num);
+      if (num <= 7) {
+        typings = [
+          const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
+        ];
+      } else if (num > 7 && num < 15) {
+        typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
+      } else if (num > 15 && num <= 20) {
+        typings.add(
+            const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
+      } else if (num < 25) {
+        typings
+            .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+      } else {
+        typings.clear();
+      }
       setState(() {});
     });
 
@@ -142,8 +144,9 @@ class _MessageScreenState extends State<MessageScreen> {
         "receiverId": _user.id, // notification
         "messageFlag": 0
       });
-      chatStore.insertMessage(
-        widget.chatObject.chatUser, widget.chatObject.project!, textMessage, true, incoming: true);
+      chatStore.insertMessage(widget.chatObject.chatUser,
+          widget.chatObject.project!, textMessage, true,
+          incoming: true);
 
       //chatStore.getAllChat();
     }
@@ -239,8 +242,8 @@ class _MessageScreenState extends State<MessageScreen> {
             }
           },
           scrollPhysics: const ClampingScrollPhysics(),
-          //typingIndicatorOptions:
-          // TypingIndicatorOptions(typingUsers: typings),
+          typingIndicatorOptions:
+          TypingIndicatorOptions(typingUsers: typings),
           messages: chatStore.currentProjectMessages,
           onAttachmentPressed: _handleAttachmentPressed,
           // onFirstIconPressed: () => showScheduleBottomSheet(context),
@@ -359,14 +362,15 @@ class _MessageScreenState extends State<MessageScreen> {
                 messageWidth: MediaQuery.of(context).size.width * 0.9);
           },
           customMessageBuilder: (p0, {required messageWidth}) {
-            return ListenableBuilder(
-              listenable: messageNotifier,
-              builder: (BuildContext context, Widget? child) {
-                return Text(
-                    (messageNotifier.inbox.firstOrNull as AbstractTextMessage)
-                        .text);
-              },
-            );
+            // return ListenableBuilder(
+            //   listenable: messageNotifier,
+            //   builder: (BuildContext context, Widget? child) {
+            //     return Text(
+            //         (messageNotifier.inbox.firstOrNull as AbstractTextMessage)
+            //             .text);
+            //   },
+            // );
+            return Container();
           },
           // theme: const DefaultChatTheme(
           //   // seenIcon: Text(
@@ -384,7 +388,8 @@ class _MessageScreenState extends State<MessageScreen> {
   void _addMessage(AbstractChatMessage message) {
     // chatStore.currentProjectMessages.insert(0, message);
     chatStore.insertMessage(
-        widget.chatObject.chatUser, widget.chatObject.project!, message, true, incoming: true);
+        widget.chatObject.chatUser, widget.chatObject.project!, message, true,
+        incoming: true);
     // chatStore.currentProjectMessages.insert(0, message);
     _sortMessages();
   }
@@ -696,6 +701,7 @@ class _MessageScreenState extends State<MessageScreen> {
               "id-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}-${const Uuid().v4()}";
           var ms = {
             "title": value.title.toTitleCase().trim(),
+            "content": "Interview created!",
             "projectId": widget.chatObject.project!.objectId!,
             "senderId": userStore.user!.objectId!,
             "receiverId": _user.id, // notification

@@ -84,20 +84,26 @@ abstract class _ChatStore with Store {
 
   var rand = Random();
 
+  Set<String> msgIdDict = {};
+
   AbstractChatMessage? addInbox(
       Map<String, dynamic> msg,
-      List<AbstractChatMessage> inbox,
+      List<AbstractChatMessage> _,
       Project project,
       ChatUser user,
       bool isInterview) {
     Map<String, dynamic> message = msg["notification"]["message"];
+    if (message["receiverId"].toString() != userStore.user!.objectId) {
+      return null;
+    }
+    if (message["projectId"].toString() != project.objectId) {
+      return null;
+    }
     String mess = message["id"].toString();
-    print("receive id: $mess");
+    print("receive id dict: $mess");
 
-    if (inbox.firstWhereOrNull(
-          (element) => element.id == message["id"].toString(),
-        ) ==
-        null) {
+    if (!msgIdDict.contains(message["id"].toString())) {
+      msgIdDict.add(message["id"].toString());
       print("project ${project.objectId},message sentttttttttttt: $message");
 
       if (!isInterview) {
@@ -191,12 +197,13 @@ abstract class _ChatStore with Store {
         // var projectStore = getIt<ChatStore>();
         // var interview = await projectStore.getInterview(interviewId: id);
         var interview = msg["notification"]["interview"];
+        var meeting = msg["notification"]["meeting"];
 
         var e = <String, dynamic>{
           ...message,
           "id": mess,
           'type': 'schedule',
-          'text': message['title'],
+          'text': message['content'],
           'status': 'seen',
           'interview': interview,
           "createdAt":
@@ -212,18 +219,14 @@ abstract class _ChatStore with Store {
             "id": message["senderId"].toString(),
           },
           "metadata": {
-            "title": message['title'],
+            "title": interview?['title'],
             "projectId": project.objectId ?? "-1",
             "senderId": user.id,
             "receiverId": userStore.user!.objectId!, // notification
-            "createdAt": (DateTime.tryParse(interview?.createdAt ?? "") ??
-                    DateTime.now())
-                .millisecondsSinceEpoch,
-            "updatedAt": (DateTime.tryParse(interview?.updatedAt ?? "") ??
-                    DateTime.now())
-                .millisecondsSinceEpoch,
-            "meeting_room_code": interview?.meetingRoomCode,
-            "meeting_room_id": interview?.meetingRoomId,
+            "createdAt": interview?["createdAt"],
+            "updatedAt": interview?["updatedAt"],
+            "meeting_room_code": meeting?["meeting_code_id"],
+            "meeting_room_id": meeting?["meeting_room_id"],
           }
         };
 
@@ -291,6 +294,11 @@ abstract class _ChatStore with Store {
 
   String _currentUser = "", _currentProject = "";
 
+  changeMessageScreen(String userId, String projectId) {
+    _currentProject = projectId;
+    _currentUser = userId;
+  }
+
   @observable
   Map<String, WrapMessageList> _projectMessages = {};
 
@@ -346,15 +354,19 @@ abstract class _ChatStore with Store {
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {
     try {
       var userStore = getIt<UserStore>();
+      msgIdDict.clear();
       if (!isFetchingAll) {
         final future = _getAllChatsUseCase
             .call(params: GetMessageByProjectAndUserParams())
             .then<List<WrapMessageList>>(
           (value) async {
             if (value.isNotEmpty) {
-              print(value);
+              // print(value);
 
               for (var v in value) {
+                if (v.messages?.firstOrNull != null) {
+                  msgIdDict.add(v.messages!.firstOrNull!.id);
+                }
                 if (v.project != null && v.project!.objectId != null) {
                   _currentProjectMessages[v.project!.objectId!] =
                       ObservableMap();
@@ -416,7 +428,7 @@ abstract class _ChatStore with Store {
 
               return _messages;
             } else {
-              print(value);
+              // print(value);
               // var companies = await sharedPrefsHelper.getCompanyMessages();
               // if (companies.messages != null && companies.messages!.isNotEmpty) {
               //   {
@@ -477,78 +489,84 @@ abstract class _ChatStore with Store {
   }
 
   @action
-  void insertMessage(
+  Future insertMessage(
       ChatUser user, Project project, AbstractChatMessage message, bool isMe,
       {bool incoming = false}) async {
-    if (message.type != AbstractMessageType.schedule &&
-        message.type != AbstractMessageType.text) return;
-    if (incoming) {
-      if (currentProjectMessageMap[project.objectId!]?[user.id] == null) {
-        // currentProjectMessageMap[project.objectId!]![user.id] = [];
-        await getMessageByProjectAndUsers(
-            chatObject: WrapMessageList(
-                chatUser: user, project: project, messages: []));
+    if (message.type == AbstractMessageType.schedule ||
+        message.type == AbstractMessageType.text) {
+      if (incoming) {
+        if (currentProjectMessageMap[project.objectId!]?[user.id] == null) {
+          // currentProjectMessageMap[project.objectId!]![user.id] = [];
+          await getMessageByProjectAndUsers(
+              chatObject: WrapMessageList(
+                  chatUser: user, project: project, messages: []),
+              quickUpdate: true);
+        }
+        currentProjectMessageMap[project.objectId!]?[user.id]
+            ?.insert(0, message);
       }
-      currentProjectMessageMap[project.objectId!]?[user.id]?.insert(0, message);
-    }
-    var pp = _messages.firstWhereOrNull(
-      (element) =>
-          element.project?.objectId == project.objectId &&
-          element.chatUser.id == user.id,
-    );
-
-    if (pp != null) {
-      pp.messages ??= [];
-      if (pp.messages!.isEmpty) {
-        print("add msg for ${project.objectId} user ${user.id}");
-        pp.messages!.add(MessageObject(
-            createdAt: DateTime.fromMillisecondsSinceEpoch(
-                message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
-            updatedAt: DateTime.fromMillisecondsSinceEpoch(
-                message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
-            project: project,
-            id: message.id,
-            content: message.type == AbstractMessageType.schedule
-                ? (message as ScheduleMessageType).id
-                : message.type == AbstractMessageType.text
-                    ? (message as AbstractTextMessage).text
-                    : "type not supported",
-            receiver: Profile(objectId: "-1", name: "null"),
-            interviewSchedule: message.type == AbstractMessageType.schedule
-                ? InterviewSchedule.fromJsonApi(message.metadata!)
-                : null,
-            sender:
-                Profile(objectId: user.id, name: user.firstName ?? "null")));
-      } else {
-        print("replace msg for ${project.objectId} user ${user.id}");
-
-        pp.messages?.first = MessageObject(
-            createdAt: DateTime.fromMillisecondsSinceEpoch(
-                message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
-            updatedAt: DateTime.fromMillisecondsSinceEpoch(
-                message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
-            project: project,
-            id: message.id,
-            content: message.type == AbstractMessageType.schedule
-                ? (message as ScheduleMessageType).id
-                : message.type == AbstractMessageType.text
-                    ? (message as AbstractTextMessage).text
-                    : "type not supported",
-            receiver: Profile(objectId: "-1", name: "null"),
-            interviewSchedule: message.type == AbstractMessageType.schedule
-                ? InterviewSchedule.fromJsonApi(message.metadata!)
-                : null,
-            sender: Profile(objectId: user.id, name: user.firstName ?? "null"));
-      }
-      if (isMe) {
-        pp.lastSeenTime = DateTime.now();
-      }
-      _messages.sort(
-        (a, b) => (b.messages == null || a.messages == null)
-            ? 0
-            : b.messages!.first.updatedAt!
-                .compareTo(a.messages!.first.updatedAt!),
+      var pp = _messages.firstWhereOrNull(
+        (element) =>
+            element.project?.objectId == project.objectId &&
+            element.chatUser.id == user.id,
       );
+
+      if (pp != null) {
+        pp.messages ??= [];
+        if (pp.messages!.isEmpty) {
+          print("add msg for ${project.objectId} user ${user.id}");
+          pp.messages!.add(MessageObject(
+              createdAt: DateTime.fromMillisecondsSinceEpoch(
+                  message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
+              updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                  message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+              project: project,
+              id: message.id,
+              content: message.type == AbstractMessageType.schedule
+                  ? ((message as ScheduleMessageType).metadata?["title"] ?? (message).id)
+                  : message.type == AbstractMessageType.text
+                      ? (message as AbstractTextMessage).text
+                      : "type not supported",
+              receiver: Profile(objectId: "-1", name: "null"),
+              interviewSchedule: message.type == AbstractMessageType.schedule
+                  ? InterviewSchedule.fromJsonApi(message.metadata!)
+                  : null,
+              sender:
+                  Profile(objectId: user.id, name: user.firstName ?? "null")));
+        } else {
+          print("replace msg for ${project.objectId} user ${user.id}");
+
+          pp.messages?.first = MessageObject(
+              createdAt: DateTime.fromMillisecondsSinceEpoch(
+                  message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
+              updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                  message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+              project: project,
+              id: message.id,
+              content: message.type == AbstractMessageType.schedule
+                  ? ((message as ScheduleMessageType).metadata?["title"] ?? (message).id)
+                  : message.type == AbstractMessageType.text
+                      ? (message as AbstractTextMessage).text
+                      : "type not supported",
+              receiver: Profile(objectId: "-1", name: "null"),
+              interviewSchedule: message.type == AbstractMessageType.schedule
+                  ? InterviewSchedule.fromJsonApi(message.metadata!)
+                  : null,
+              sender:
+                  Profile(objectId: user.id, name: user.firstName ?? "null"));
+        }
+        if (isMe) {
+          pp.lastSeenTime = DateTime.now();
+        }
+        _messages.sort(
+          (a, b) => (b.messages == null || a.messages == null)
+              ? 0
+              : b.messages!.first.updatedAt!
+                  .compareTo(a.messages!.first.updatedAt!),
+        );
+      }
+    } else {
+      currentProjectMessageMap[project.objectId!]?[user.id]?.insert(0, message);
     }
   }
 
@@ -558,18 +576,22 @@ abstract class _ChatStore with Store {
   /// whenever user switch account type
   @action
   Future<List<AbstractChatMessage>> getMessageByProjectAndUsers(
-      {required WrapMessageList chatObject, Function? setStateCallback}) async {
+      {required WrapMessageList chatObject,
+      Function? setStateCallback,
+      bool quickUpdate = false}) async {
     String userId = chatObject.chatUser.id,
         projectId = chatObject.project!.objectId!;
     if (projectId.trim().isEmpty || userId.trim().isEmpty) {
       return Future.value([]);
     }
-    _currentProject = projectId;
-    _currentUser = userId;
+    if (!quickUpdate) {
+      _currentProject = projectId;
+      _currentUser = userId;
+    }
     getMessageNotifiers(chatObject);
     // TODO: lưu vào sharedpref
-    if (_currentProjectMessages[_currentProject] == null ||
-        _currentProjectMessages[_currentProject]?[_currentUser] == null) {
+    if (_currentProjectMessages[projectId] == null ||
+        _currentProjectMessages[projectId]?[userId] == null) {
       try {
         final future = _getMessageByProjectAndUsersUseCase
             .call(
@@ -577,7 +599,7 @@ abstract class _ChatStore with Store {
                     userId: userId, projectId: projectId))
             .then(
           (value) async {
-            print(value);
+            // print(value);
             if (_currentProjectMessages[projectId] == null) {
               _currentProjectMessages[projectId] = ObservableMap();
             }
@@ -607,9 +629,12 @@ abstract class _ChatStore with Store {
         ).onError((error, stackTrace) async {
           return Future.value(_currentProjectMessages[projectId]![userId]);
         });
-
-        fetchChatHistoryFuture = ObservableFuture(future);
-        await fetchChatHistoryFuture;
+        if (!quickUpdate) {
+          fetchChatHistoryFuture = ObservableFuture(future);
+          await fetchChatHistoryFuture;
+        } else {
+          await future;
+        }
       } catch (e) {
         print("Cannot get chat history for this project");
       }

@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_typing_uninitialized_variables, deprecated_member_use
 
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -8,24 +7,29 @@ import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connect
 
 import 'managers/call_manager.dart';
 
-class IncomingCallScreen extends StatelessWidget {
+class IncomingCallScreen extends StatefulWidget {
   static const String TAG = "BEBAOBOY";
   final P2PSession _callSession;
 
   const IncomingCallScreen(this._callSession, {super.key});
 
   @override
+  State<IncomingCallScreen> createState() => IncomingCallScreenState();
+}
+
+class IncomingCallScreenState extends State<IncomingCallScreen> {
+  @override
   Widget build(BuildContext context) {
-    _callSession.onSessionClosed = (callSession) {
-      log("_onSessionClosed", TAG);
-      Navigator.pop(NavigationService.navigatorKey.currentContext ?? context);
+    widget._callSession.onSessionClosed = (callSession) {
+      log("_onSessionClosed", IncomingCallScreen.TAG);
+      if (mounted) Navigator.pop(context);
     };
 
     return WillPopScope(
         onWillPop: () => _onBackPressed(context),
         child: Scaffold(
             body: Container(
-          color: Colors.blueAccent,
+          color: Colors.redAccent.shade100,
           child: Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -42,7 +46,7 @@ class IncomingCallScreen extends StatelessWidget {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 86),
-                  child: Text(_callSession.opponentsIds.join(", "),
+                  child: Text(widget._callSession.opponentsIds.join(", "),
                       style: const TextStyle(fontSize: 18)),
                 ),
                 Row(
@@ -53,7 +57,8 @@ class IncomingCallScreen extends StatelessWidget {
                       child: FloatingActionButton(
                         heroTag: "RejectCall",
                         backgroundColor: Colors.red,
-                        onPressed: () => _rejectCall(context, _callSession),
+                        onPressed: () =>
+                            _rejectCall(context, widget._callSession),
                         child: const Icon(
                           Icons.call_end,
                           color: Colors.amber,
@@ -65,7 +70,8 @@ class IncomingCallScreen extends StatelessWidget {
                       child: FloatingActionButton(
                         heroTag: "AcceptCall",
                         backgroundColor: Colors.green,
-                        onPressed: () => _acceptCall(context, _callSession),
+                        onPressed: () =>
+                            _acceptCall(context, widget._callSession),
                         child: const Icon(
                           Icons.call,
                           color: Colors.white,
@@ -83,7 +89,7 @@ class IncomingCallScreen extends StatelessWidget {
   _getCallTitle() {
     var callType;
 
-    switch (_callSession.callType) {
+    switch (widget._callSession.callType) {
       case CallType.VIDEO_CALL:
         callType = "Video";
         break;
@@ -96,12 +102,13 @@ class IncomingCallScreen extends StatelessWidget {
   }
 
   void _acceptCall(BuildContext context, P2PSession callSession) {
+    if (mounted) Navigator.pop(context);
     CallManager.instance.acceptCall(callSession.sessionId, false);
   }
 
   void _rejectCall(BuildContext context, P2PSession callSession) {
     CallManager.instance.reject(callSession.sessionId, false);
-    Navigator.pop(context);
+    if (mounted) Navigator.pop(context);
   }
 
   Future<bool> _onBackPressed(BuildContext context) {

@@ -450,9 +450,13 @@ class InterviewSchedule extends MyObject {
 
   Map<String, dynamic> toJson() => {
         "title": title,
-        "startTime": startDate,
-        "endTime": endDate,
+        "startTime": startDate.toString(),
+        "endTime": endDate.toString(),
         "disableFlag": isCancel ? 1 : 0,
         "id": objectId,
+        "meeting_room_id": meetingRoomId,
+        "meeting_room_code": meetingRoomCode,
+        "createdAt": createdAt.toString(),
+        "updatedAt": updatedAt.toString(),
       };
 }

@@ -1,8 +1,11 @@
 // ignore_for_file: empty_catches
 
+import 'dart:convert';
+
 import 'package:boilerplate/core/widgets/pip/navigatable_pip_widget.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
@@ -141,6 +144,8 @@ class CallManager {
 
   void startPreviewMeeting(BuildContext context, int callType,
       Set<int> opponents, InterviewSchedule interviewSchedule) async {
+    if (CubeSessionManager.instance.activeSession == null ||
+        CubeSessionManager.instance.activeSession!.user == null) return;
     if (opponents.isEmpty) return;
 
     if (Platform.isIOS) {
@@ -151,14 +156,82 @@ class CallManager {
     _currentCall = callSession;
     log(CubeSessionManager.instance.activeSession.toString());
 
+    bool isProduction = const bool.fromEnvironment('dart.vm.product');
+
+    CreateEventParams params = CreateEventParams();
+    params.parameters = {
+      'message': "You have an interview 💌", // 'message' field is required
+      'title': "You have an interview 💌", // 'message' field is required
+      'session_id': callSession.sessionId,
+      'opponents': json.encode(
+          [...opponents, CubeSessionManager.instance.activeSession!.user!.id]),
+      'ios_voip': 1, // to send VoIP push notification to iOS
+      'type': "interview",
+      "android_fcm_notification": {
+        "title": "debug",
+        "body": json.encode(interviewSchedule.toJson()),
+        "sticky": true,
+        "channel_id": NotificationChannelEnum.basicChannel.key,
+        "color": "#FF0000"
+      },
+      "extra_body": {
+        "title": "debug",
+        "body": json.encode(interviewSchedule.toJson()),
+        "sticky": true,
+        "channel_id": NotificationChannelEnum.interviewChannel.key,
+        "color": "#FF0000"
+      },
+      // "expiration": "1714662049"
+      "expiration": DateTime.now()
+          .add(const Duration(seconds: 20))
+          .millisecondsSinceEpoch,
+      //more standard parameters you can found by link https://developers.connectycube.com/server/push_notifications?id=universal-push-notifications
+    };
+    print("background message ${params.parameters}");
+
+    params.notificationType = CubeNotificationType.PUSH;
+    params.environment =
+        isProduction ? CubeEnvironment.PRODUCTION : CubeEnvironment.DEVELOPMENT;
+    params.usersIds = [
+      CubeSessionManager.instance.activeSession!.user!.id,
+    ];
+
+    createEvent(params.getEventForRequest())
+        .then((cubeEvent) {})
+        .catchError((error) {});
+
     Navigator.of(context).push(MaterialPageRoute2(
         routeName:
             "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
         arguments: [users, interviewSchedule, callSession]));
   }
 
-  void startNewCall(
-      BuildContext context, int callType, Set<int> opponents, P2PSession callSession) async {
+  void startPreviewMeetingIncomingCall(BuildContext context, int callType,
+      Set<int> opponents, P2PSession? currentCall,
+      {required bool fromCallkit}) async {
+    if (opponents.isEmpty || currentCall == null) return;
+
+    if (Platform.isIOS) {
+      Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
+    }
+
+    if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
+      _currentCall?.acceptCall();
+    }
+
+    if (!fromCallkit) {
+      ConnectycubeFlutterCallKit.reportCallAccepted(
+          sessionId: currentCall.sessionId);
+    }
+
+    Navigator.of(context).push(MaterialPageRoute2(
+        routeName:
+            "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
+        arguments: [users, null /*TODO: add interview info*/, currentCall]));
+  }
+
+  void startNewCall(BuildContext context, int callType, Set<int> opponents,
+      P2PSession callSession) async {
     if (opponents.isEmpty) return;
 
     if (Platform.isIOS) {
@@ -231,14 +304,14 @@ class CallManager {
 
     if (_currentCall != null) {
       if (context != null) {
-        if (AppLifecycleState.resumed !=
-            WidgetsBinding.instance.lifecycleState) {
-          _currentCall?.acceptCall();
-        }
+        // if (AppLifecycleState.resumed !=
+        //     WidgetsBinding.instance.lifecycleState) {
+        //   _currentCall?.acceptCall();
+        // }
 
-        if (!fromCallkit) {
-          ConnectycubeFlutterCallKit.reportCallAccepted(sessionId: sessionId);
-        }
+        // if (!fromCallkit) {
+        //   ConnectycubeFlutterCallKit.reportCallAccepted(sessionId: sessionId);
+        // }
         if (NavigationService.navigatorKey.currentContext != null) {
           // Navigator.pushReplacement(
           //   NavigationService.navigatorKey.currentContext!,
@@ -247,35 +320,38 @@ class CallManager {
           //   ),
           // );
           var context = NavigationService.navigatorKey.currentContext!;
-          PictureInPicture.updatePiPParams(
-            pipParams: PiPParams(
-              pipWindowHeight: MediaQuery.of(context).size.height * 0.95,
-              pipWindowWidth: MediaQuery.of(context).size.width * 0.95,
-              bottomSpace: 64,
-              leftSpace: 64,
-              rightSpace: 64,
-              topSpace: 64,
-              minSize: Size((MediaQuery.of(context).size.width * 0.95) / 2,
-                  (MediaQuery.of(context).size.height * 0.95) / 2),
-              maxSize: MediaQuery.of(context).size,
-              movable: true,
-              resizable: true,
-              initialCorner: PIPViewCorner.topLeft,
-              openWidgetOnClose: false,
-            ),
-          );
-          PictureInPicture.startPiP(
-              pipWidget: NavigatablePiPWidget(
-                  onPiPClose: () {
-                    //Handle closing events e.g. dispose controllers.
-                    // _enableScreenSharing = false;
-                    // _toggleScreenSharing();
-                    hungUp();
-                  },
-                  elevation: 10, //Optional
-                  pipBorderRadius: 10,
-                  builder: (context) =>
-                      ConversationCallScreen(_currentCall!, true)));
+          startPreviewMeetingIncomingCall(context, CallType.VIDEO_CALL,
+              _currentCall?.opponentsIds ?? {}, _currentCall,
+              fromCallkit: fromCallkit);
+          // PictureInPicture.updatePiPParams(
+          //   pipParams: PiPParams(
+          //     pipWindowHeight: MediaQuery.of(context).size.height * 0.95,
+          //     pipWindowWidth: MediaQuery.of(context).size.width * 0.95,
+          //     bottomSpace: 64,
+          //     leftSpace: 64,
+          //     rightSpace: 64,
+          //     topSpace: 64,
+          //     minSize: Size((MediaQuery.of(context).size.width * 0.95) / 2,
+          //         (MediaQuery.of(context).size.height * 0.95) / 2),
+          //     maxSize: MediaQuery.of(context).size,
+          //     movable: true,
+          //     resizable: true,
+          //     initialCorner: PIPViewCorner.topLeft,
+          //     openWidgetOnClose: false,
+          //   ),
+          // );
+          // PictureInPicture.startPiP(
+          //     pipWidget: NavigatablePiPWidget(
+          //         onPiPClose: () {
+          //           //Handle closing events e.g. dispose controllers.
+          //           // _enableScreenSharing = false;
+          //           // _toggleScreenSharing();
+          //           hungUp();
+          //         },
+          //         elevation: 10, //Optional
+          //         pipBorderRadius: 10,
+          //         builder: (context) =>
+          //             ConversationCallScreen(_currentCall!, true)));
         }
       }
 
