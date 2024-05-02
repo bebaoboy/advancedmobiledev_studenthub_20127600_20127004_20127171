@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mobx/mobx.dart';
 
 //
 // ------------------- PROJECT ------------------------------
@@ -78,13 +79,17 @@ class Project extends ProjectBase {
   // var id = const Uuid().v4();
   int numberOfStudents;
   // List<Proposal>? hired;
+  @observable
   List<Proposal>? proposal;
   // List<Proposal>? messages;
   DateTime timeCreated = DateTime.now();
   String companyId;
 
+  @observable
   int? _countProposals;
+  @observable
   int? _countMessages;
+  @observable
   int? _countHired;
 
   int get countNewProposals =>

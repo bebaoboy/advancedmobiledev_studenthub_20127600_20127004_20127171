@@ -59,7 +59,7 @@ class WorkMangerHelper {
   static const Duration HIGH_FREQUENCY = Duration(minutes: 5);
 
   // delay
-  static const Duration SHORT_DELAY = Duration(seconds: 3);
+  static const Duration SHORT_DELAY = Duration(seconds: 10);
   static const Duration LONG_DELAY = Duration(minutes: 30);
   static const Duration NO_DELAY = Duration(seconds: 0);
 

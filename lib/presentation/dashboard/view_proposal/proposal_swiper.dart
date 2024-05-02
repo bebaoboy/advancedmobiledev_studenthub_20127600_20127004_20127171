@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:appinio_swiper/appinio_swiper.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
+import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
@@ -17,8 +18,10 @@ import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:toastification/toastification.dart';
 
 class ProposalSwiper extends StatefulWidget {
   final Project project;
@@ -63,8 +66,12 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   }
 
   onLeftButtonPress() {
-    if (current.hiredStatus != HireStatus.pending) {
+    if (current.hiredStatus == HireStatus.notHired) {
       changeStatus(HireStatus.pending);
+      var p = widget.project.proposal!.firstWhereOrNull((element) => element.objectId==current.objectId,);
+      p?.hiredStatus =
+          HireStatus.pending;
+      if (p != null) current = p;
     }
     // ToDo
     Navigator.push(
@@ -96,12 +103,21 @@ class _ProposalSwiperState extends State<ProposalSwiper>
       initialIndex = newIndex;
       controller.setCardIndex(newIndex);
     });
+    current = widget.project.proposal![_cardStateStore.index];
+    print(current.hiredStatus);
     print(initialIndex);
   }
 
   Future changeStatus(HireStatus status) async {
-    _projectStore.changeToStatus(status, current);
+    _projectStore.changeToStatus(
+        status, widget.project.proposal![_cardStateStore.index]);
+    widget.project.proposal![_cardStateStore.index].hiredStatus = status;
+    _projectStore.currentProps.proposals![_cardStateStore.index].hiredStatus =
+        status;
+    setState(() {});
   }
+
+  bool isUpdatingProposal = false;
 
   Widget _buildBody() {
     return SafeArea(
@@ -131,6 +147,10 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                   );
                 } else {
                   current = snapshot.data!.proposals![0];
+                  print(current.toJson());
+                  snapshot.data!.proposals?.forEach(
+                    (element) => print(element.hiredStatus),
+                  );
 
                   return Stack(children: [
                     Column(
@@ -274,14 +294,26 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                               const SizedBox(
                                 width: 20,
                               ),
-                              customSwipeLeftButton(controller,
-                                  onLeftButtonPress, current.hiredStatus),
+                              if (!isUpdatingProposal)
+                                customSwipeLeftButton(
+                                    controller,
+                                    onLeftButtonPress,
+                                    _projectStore
+                                        .currentProps
+                                        .proposals![_cardStateStore.index]
+                                        .hiredStatus),
                               const SizedBox(
                                 width: 10,
                               ),
-                              customSwipeRightButton(controller, () {
-                                changeStatus(HireStatus.offer);
-                              }),
+                              if (!isUpdatingProposal &&
+                                  _projectStore
+                                          .currentProps
+                                          .proposals![_cardStateStore.index]
+                                          .hiredStatus !=
+                                      HireStatus.offer)
+                                customSwipeRightButton(controller, () {
+                                  changeStatus(HireStatus.offer);
+                                }),
                               const SizedBox(
                                 width: 20,
                               ),
@@ -304,11 +336,8 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 enableFeedback: index != 0,
                                 onPressed: () {
                                   setState(() {
-                                    var newIndex = (_cardStateStore.index - 1)
-                                        .clamp(
-                                            0,
-                                            snapshot.data!.proposals!.length -
-                                                1);
+                                    var newIndex = (_cardStateStore.index - 1) %
+                                        snapshot.data!.proposals!.length;
                                     _cardStateStore.index = newIndex;
                                     setInitialIndex(newIndex);
                                   });
@@ -325,11 +354,8 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                     index != widget.project.proposal!.length,
                                 onPressed: () {
                                   setState(() {
-                                    var newIndex = (_cardStateStore.index + 1)
-                                        .clamp(
-                                            0,
-                                            snapshot.data!.proposals!.length -
-                                                1);
+                                    var newIndex = (_cardStateStore.index + 1) %
+                                        snapshot.data!.proposals!.length;
                                     _cardStateStore.index = newIndex;
                                     setInitialIndex(newIndex);
                                   });
@@ -359,33 +385,57 @@ class _ProposalSwiperState extends State<ProposalSwiper>
     );
   }
 
-  void _swipeEnd(int previousIndex, int targetIndex, SwiperActivity activity) {
+  void _swipeEnd(
+      int previousIndex, int targetIndex, SwiperActivity activity) async {
     switch (activity) {
       case Swipe():
+        if (_projectStore.currentProps.proposals![previousIndex].hiredStatus !=
+            HireStatus.notHired) {
+          _cardStateStore.reset();
+          _cardStateStore.index = previousIndex;
+          break;
+        }
+        setState(() {
+          isUpdatingProposal = true;
+        });
         log('The card was swiped to the : ${activity.direction}');
-        _cardStateStore.reset();
-        _cardStateStore.index = targetIndex;
-        current = _projectStore.currentProps.proposals![targetIndex];
+
         // print(_cardStateStore.index);
         if (_projectStore.currentProps.proposals == null ||
             _projectStore.currentProps.proposals!.isEmpty) return;
 
         if (activity.direction == AxisDirection.right) {
           // ToDo: update proposal status value = 2
-          _projectStore.currentProps.proposals![targetIndex].hiredStatus =
+          _projectStore.currentProps.proposals![previousIndex].hiredStatus =
               HireStatus.offer;
-          _projectStore.updateProposal(
-              _projectStore.currentProps.proposals![targetIndex],
+          widget.project.proposal![previousIndex].hiredStatus =
+              HireStatus.offer;
+          await _projectStore.updateProposal(
+              _projectStore.currentProps.proposals![previousIndex],
               _userStore.user!.studentProfile!.objectId!);
+          Toastify.show(context, "", "Sent hired successfully",
+              ToastificationType.success, () {});
         } else {
           // Reject proposal
-          _projectStore.currentProps.proposals![targetIndex].enabled = false;
-          _projectStore.currentProps.proposals![targetIndex].hiredStatus =
+          _projectStore.currentProps.proposals![previousIndex].enabled = false;
+          _projectStore.currentProps.proposals![previousIndex].hiredStatus =
               HireStatus.notHired;
-          _projectStore.updateProposal(
-              _projectStore.currentProps.proposals![targetIndex],
+          widget.project.proposal![previousIndex].hiredStatus =
+              HireStatus.notHired;
+          await _projectStore.updateProposal(
+              _projectStore.currentProps.proposals![previousIndex],
               _userStore.user!.studentProfile!.objectId!);
+
+          Toastify.show(context, "", "Reject successfully",
+              ToastificationType.success, () {});
+          _cardStateStore.reset();
+          _cardStateStore.index = targetIndex;
         }
+        // int newIndex = (targetIndex + 1) % widget.project.proposal!.length;
+        // _cardStateStore.index = newIndex;
+        // setInitialIndex(newIndex);
+        isUpdatingProposal = false;
+        setState(() {});
 
         log('previous index: $previousIndex, target index: $targetIndex');
         break;
@@ -408,7 +458,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   void _onEnd() {
     log('end reached!');
     _cardStateStore.reset();
-    Navigator.pop(context);
+    // Navigator.pop(context);
   }
 
   // Animates the card back and forth to teach the user that it is swipeable.

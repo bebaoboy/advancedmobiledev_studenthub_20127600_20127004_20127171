@@ -156,6 +156,7 @@ class NotificationHelper {
   ///  *********************************************
   ///
   static Future<void> initializeLocalNotifications() async {
+    // TODO: chia notification groups
     AwesomeNotifications().initialize(
       // set the default icon
       'resource://drawable/image',

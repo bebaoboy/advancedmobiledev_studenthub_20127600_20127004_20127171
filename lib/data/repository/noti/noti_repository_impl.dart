@@ -23,7 +23,7 @@ class NotiRepositoryImpl extends NotiRepository {
               var e = <String, dynamic>{
                 ...element,
                 'id': element['id'].toString(),
-                'content': element['content'].toString(),
+                'content': element["message"]['content'].toString(),
                 'type': element['typeNotifyFlag'],
                 'createdAt':
                     DateTime.parse(element['createdAt']).toLocal(),

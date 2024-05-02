@@ -158,15 +158,15 @@ class CallManager {
   }
 
   void startNewCall(
-      BuildContext context, int callType, Set<int> opponents) async {
+      BuildContext context, int callType, Set<int> opponents, P2PSession callSession) async {
     if (opponents.isEmpty) return;
 
     if (Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
 
-    P2PSession callSession =
-        _callClient!.createCallSession(callType, opponents);
+    // P2PSession callSession =
+    //     _callClient!.createCallSession(callType, opponents);
     _currentCall = callSession;
     PictureInPicture.updatePiPParams(
       pipParams: PiPParams(

@@ -121,54 +121,58 @@ class LoggingInterceptor extends Interceptor {
     if (level == Level.none) {
       return handler.next(options);
     }
-    String s = "";
 
-    logPrint!('--> ${options.method} ${options.uri}');
-    s += '--> ${options.method} ${options.uri}';
-
-    if (level == Level.basic) {
-      return handler.next(options);
-    }
-
-    logPrint!('[DIO][HEADERS]');
-    s += '[DIO][HEADERS]';
-    options.headers.forEach((key, value) {
-      logPrint!('$key:$value');
-      s += '$key:$value';
-    });
-
-    if (level == Level.headers) {
-      logPrint!('[DIO][HEADERS]--> END ${options.method}');
-      s += '[DIO][HEADERS]--> END ${options.method}';
-      return handler.next(options);
-    }
-    s += "\n";
-
-    final data = options.data;
-    if (data != null) {
-      // logPrint!('[DIO]dataType:${data.runtimeType}'); s += '[DIO]dataType:${data.runtimeType}';
-      if (data is Map) {
-        if (compact) {
-          logPrint!('$data');
-        } else {
-          _prettyPrintJson(data);
-        }
-        s += '<-- Response payload' '\n${toStringPretty(data)}';
-      } else if (data is FormData) {
-        // NOT IMPLEMENT
-      } else {
-        logPrint!(data.toString());
-        s += data.toString();
-      }
-    }
-
-    s += "\n";
-
-    logPrint!('[DIO]--> END ${options.method}');
-    s += '[DIO]--> END ${options.method}';
     Future.delayed(Duration.zero, () {
-      spPrint(s);
+      String s = "";
+
+      logPrint!('--> ${options.method} ${options.uri}');
+      s += '--> ${options.method} ${options.uri}';
+
+      if (level == Level.basic) {
+        return;
+      }
+
+      logPrint!('[DIO][HEADERS]');
+      s += '[DIO][HEADERS]';
+      options.headers.forEach((key, value) {
+        logPrint!('$key:$value');
+        s += '$key:$value';
+      });
+
+      if (level == Level.headers) {
+        logPrint!('[DIO][HEADERS]--> END ${options.method}');
+        s += '[DIO][HEADERS]--> END ${options.method}';
+        return;
+      }
+      s += "\n";
+
+      final data = options.data;
+      if (data != null) {
+        // logPrint!('[DIO]dataType:${data.runtimeType}'); s += '[DIO]dataType:${data.runtimeType}';
+        if (data is Map) {
+          if (compact) {
+            logPrint!('$data');
+          } else {
+            _prettyPrintJson(data);
+          }
+          s += '<-- Response payload' '\n${toStringPretty(data)}';
+        } else if (data is FormData) {
+          // NOT IMPLEMENT
+        } else {
+          logPrint!(data.toString());
+          s += data.toString();
+        }
+      }
+
+      s += "\n";
+
+      logPrint!('[DIO]--> END ${options.method}');
+      s += '[DIO]--> END ${options.method}';
+      Future.delayed(Duration.zero, () {
+        spPrint(s);
+      });
     });
+
     return handler.next(options);
   }
 
@@ -189,47 +193,48 @@ class LoggingInterceptor extends Interceptor {
       return handler.next(response);
     }
 
-    logPrint!('[DIO][HEADER]');
-    s += '[DIO][HEADER]';
-    response.headers.forEach((key, value) {
-      logPrint!('$key:$value');
-      s += '$key:$value';
-    });
-    logPrint!('[DIO][HEADERS]<-- END ${response.requestOptions.method}');
-    s += '[DIO][HEADERS]<-- END ${response.requestOptions.method}';
-    if (level == Level.headers) {
-      return handler.next(response);
-    }
-    s += "\n";
-
-    final data = response.data;
-    if (data != null) {
-      // logPrint!('[DIO]dataType:${data.runtimeType}'); s += '[DIO]dataType:${data.runtimeType}';
-      if (data is Map) {
-        if (compact) {
-          logPrint!('$data');
-        } else {
-          _prettyPrintJson(data);
-        }
-        s += '<-- Response payload' '\n${toStringPretty(data)}';
-      } else if (data is List) {
-        // NOT IMPLEMENT
-      } else {
-        logPrint!(data.toString());
-        s += data.toString();
-      }
-    }
-
-    s += "\n";
-
-    logPrint!('[DIO]<-- END HTTP');
-    s += '[DIO]<-- END HTTP';
     Future.delayed(Duration.zero, () {
-      spPrint(s);
+      logPrint!('[DIO][HEADER]');
+      s += '[DIO][HEADER]';
+      response.headers.forEach((key, value) {
+        logPrint!('$key:$value');
+        s += '$key:$value';
+      });
+      logPrint!('[DIO][HEADERS]<-- END ${response.requestOptions.method}');
+      s += '[DIO][HEADERS]<-- END ${response.requestOptions.method}';
+      if (level == Level.headers) {
+        return;
+      }
+      s += "\n";
+
+      final data = response.data;
+      if (data != null) {
+        // logPrint!('[DIO]dataType:${data.runtimeType}'); s += '[DIO]dataType:${data.runtimeType}';
+        if (data is Map) {
+          if (compact) {
+            logPrint!('$data');
+          } else {
+            _prettyPrintJson(data);
+          }
+          s += '<-- Response payload' '\n${toStringPretty(data)}';
+        } else if (data is List) {
+          // NOT IMPLEMENT
+        } else {
+          logPrint!(data.toString());
+          s += data.toString();
+        }
+      }
+
+      s += "\n";
+
+      logPrint!('[DIO]<-- END HTTP');
+      s += '[DIO]<-- END HTTP';
+      Future.delayed(Duration.zero, () {
+        spPrint(s);
+      });
     });
     var dioClient = getIt<DioClient>();
     dioClient.clearDio();
-
     return handler.next(response);
   }
 

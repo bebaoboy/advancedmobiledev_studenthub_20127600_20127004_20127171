@@ -8,7 +8,7 @@ class CardStateStore = _CardStateStore with _$CardStateStore;
 
 abstract class _CardStateStore with Store {
   @observable
-  String actionName = 'none';
+  String actionName = HireStatus.notHired.title;
 
   @observable
   Color? color;

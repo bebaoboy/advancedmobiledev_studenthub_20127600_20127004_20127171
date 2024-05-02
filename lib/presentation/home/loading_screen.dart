@@ -1,3 +1,4 @@
+import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -48,45 +49,53 @@ class _LoadingScreenState extends State<LoadingScreen> {
     });
   }
 
+  var dioClient = getIt<DioClient>();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _themeStore.darkMode
-          ? Colors.black.withOpacity(0)
-          : Colors.white.withOpacity(0),
-      body: AnimatedOpacity(
-        opacity: opacity,
-        duration: const Duration(milliseconds: 200),
-        child: Background(
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Center(
-                  child: Lottie.asset(
-                    'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-                    fit: BoxFit.cover,
-                    width: 200, // Adjust the width and height as needed
-                    height: 200,
-                    repeat:
-                        true, // Set to true if you want the animation to loop
+    return ValueListenableBuilder(
+        valueListenable: dioClient.dioText,
+        builder: (context, value, child) {
+          return Scaffold(
+            backgroundColor: _themeStore.darkMode
+                ? Colors.black.withOpacity(0)
+                : Colors.white.withOpacity(0),
+            body: AnimatedOpacity(
+              opacity: opacity,
+              duration: const Duration(milliseconds: 200),
+              child: Background(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Lottie.asset(
+                          'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                          fit: BoxFit.cover,
+                          width: 200, // Adjust the width and height as needed
+                          height: 200,
+                          repeat:
+                              true, // Set to true if you want the animation to loop
+                        ),
+                      ),
+                      Center(
+                        child: Text(
+                          widget.text != null
+                              ? Lang.get(widget.text ?? "loading")
+                              : dioClient.dioText.value ?? Lang.get("loading"),
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.blueAccent),
+                        ),
+                      )
+                    ],
                   ),
                 ),
-                Center(
-                  child: Text(
-                    Lang.get(widget.text ?? "loading"),
-                    style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.blueAccent),
-                  ),
-                )
-              ],
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 }
 
@@ -98,28 +107,36 @@ class LoadingScreenWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Lottie.asset(
-            'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
-            fit: BoxFit.cover,
-            width: size, // Adjust the width and height as needed
-            height: size,
-            repeat: true, // Set to true if you want the animation to loop
-          ),
-        ),
-        Center(
-          child: Text(
-            Lang.get(text ?? "loading"),
-            style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.blueAccent),
-          ),
-        )
-      ],
-    );
+    final dioClient = getIt<DioClient>();
+
+    return ValueListenableBuilder(
+        valueListenable: dioClient.dioText,
+        builder: (context, value, child) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Lottie.asset(
+                  'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                  fit: BoxFit.cover,
+                  width: size, // Adjust the width and height as needed
+                  height: size,
+                  repeat: true, // Set to true if you want the animation to loop
+                ),
+              ),
+              Center(
+                child: Text(
+                  text != null
+                      ? Lang.get(text ?? "loading")
+                      : dioClient.dioText.value ?? Lang.get("loading"),
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blueAccent),
+                ),
+              )
+            ],
+          );
+        });
   }
 }

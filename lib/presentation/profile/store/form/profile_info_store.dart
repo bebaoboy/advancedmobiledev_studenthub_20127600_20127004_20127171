@@ -81,24 +81,38 @@ abstract class _ProfileStudentStore with Store {
   Future getInfo() async {
     if (_studentId != null) {
       try {
-        await _getEducationUseCase
-            .call(params: _studentId.toString())
-            .then((value) => _educations = value);
-        await _getExperienceUseCase
-            .call(params: _studentId.toString())
-            .then((value) => _experiences = value);
-        await _getLanguageUseCase
-            .call(params: _studentId.toString())
-            .then((value) => _languages = value);
         var userStore = getIt<UserStore>();
-        if (userStore.user != null && userStore.user!.studentProfile != null) {
-          userStore.user!.studentProfile!.educations = currentEducation;
-          userStore.user!.studentProfile!.languages = currentLanguage;
-          userStore.user!.studentProfile!.projectExperience =
-              currentProjectExperience;
-        }
         await getTechStack();
         await getSkillset();
+
+        await _getEducationUseCase
+            .call(params: _studentId.toString())
+            .then((value) => _educations = value)
+            .onError(
+              (error, stackTrace) => _educations = EducationList(
+                  educations: userStore.user!.studentProfile!.educations),
+            );
+        await _getExperienceUseCase
+            .call(params: _studentId.toString())
+            .then((value) => _experiences = value)
+            .onError(
+              (error, stackTrace) => _experiences = ProjectExperienceList(
+                  experiences:
+                      userStore.user!.studentProfile!.projectExperience),
+            );
+        await _getLanguageUseCase
+            .call(params: _studentId.toString())
+            .then((value) => _languages = value)
+            .onError(
+              (error, stackTrace) => _languages = LanguageList(
+                  languages: userStore.user!.studentProfile!.languages),
+            );
+        // if (userStore.user != null && userStore.user!.studentProfile != null) {
+        //   userStore.user!.studentProfile!.educations = currentEducation;
+        //   userStore.user!.studentProfile!.languages = currentLanguage;
+        //   userStore.user!.studentProfile!.projectExperience =
+        //       currentProjectExperience;
+        // }
       } catch (e) {
         print(e.toString());
       }

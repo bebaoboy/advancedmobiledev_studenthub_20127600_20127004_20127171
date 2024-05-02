@@ -188,8 +188,9 @@ class _BodyLayoutState extends State<BodyLayout> {
                   child: FloatingActionButton(
                     heroTag: "VideoCall",
                     backgroundColor: Colors.blue,
-                    onPressed: () => CallManager.instance.startNewCall(
-                        context, CallType.VIDEO_CALL, _selectedUsers),
+                    onPressed: () {},
+                    // CallManager.instance.startNewCall(
+                    //     context, CallType.VIDEO_CALL, _selectedUsers),
                     child: const Icon(
                       Icons.videocam,
                       color: Colors.white,
@@ -201,8 +202,9 @@ class _BodyLayoutState extends State<BodyLayout> {
                   child: FloatingActionButton(
                     heroTag: "AudioCall",
                     backgroundColor: Colors.green,
-                    onPressed: () => CallManager.instance.startNewCall(
-                        context, CallType.AUDIO_CALL, _selectedUsers),
+                    onPressed: () {},
+                    // CallManager.instance.startNewCall(
+                    //     context, CallType.AUDIO_CALL, _selectedUsers, widget._),
                     child: const Icon(
                       Icons.call,
                       color: Colors.white,

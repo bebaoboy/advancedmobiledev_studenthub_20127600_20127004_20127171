@@ -8,6 +8,7 @@ import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/hired_item.dart';
 import 'package:boilerplate/presentation/dashboard/components/proposal_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
@@ -92,9 +93,9 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   visible: widget.project.countNewProposals > 0,
                   child: GestureDetector(
                     onTap: () {
-                      widget.project.proposal?.forEach(
-                        (element) => print(element.hiredStatus),
-                      );
+                      
+                      _projectStore.currentProps =
+                          ProposalList(proposals: widget.project.proposal);
                       Navigator.of(context).push(MaterialPageRoute2(
                           routeName: Routes.viewProjectProposalsCard,
                           arguments: widget.project));
@@ -157,7 +158,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
               Padding(
                 padding: const EdgeInsets.only(top: 60, bottom: 20),
                 child: SizedBox(
-                  height: MediaQuery.of(context).size.height,
+                  height: MediaQuery.of(context).size.height * 0.7,
                   child: TabBarView(
                     physics: const BouncingScrollPhysics(),
                     children: [

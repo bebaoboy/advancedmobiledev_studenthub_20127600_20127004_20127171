@@ -396,11 +396,17 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   return AllProjects(
                     projects: widget.hasProposalOnly
                         ? [
-                            ...projectStore.companyProjects.where(
-                              (element) =>
-                                  element.proposal != null &&
-                                  element.proposal!.isNotEmpty,
-                            )
+                            ...projectStore.companyProjects
+                                .where(
+                                  (element) =>
+                                      element.proposal != null &&
+                                      element.proposal!.isNotEmpty,
+                                )
+                                .toList()
+                              ..sort(
+                                (a, b) => b.countProposals
+                                    .compareTo(a.countProposals),
+                              )
                           ]
                         : [...projectStore.companyProjects, ...myProjects],
                     // projectFuture: ,

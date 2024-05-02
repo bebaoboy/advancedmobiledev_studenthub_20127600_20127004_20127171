@@ -170,6 +170,33 @@ class _ProposalCardItemState extends State<ProposalCardItem> {
           ),
         ),
       ),
+      if (widget.proposal.hiredStatus == HireStatus.offer)
+      const Positioned(
+        left: 10,
+        top: 30,
+        child: Text(
+          "✅ Hired",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.green),
+        ),
+      )
+      else if (widget.proposal.hiredStatus == HireStatus.pending)
+      const Positioned(
+        left: 10,
+        top: 30,
+        child: Text(
+          "💌 Message Send",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.red),
+        ),
+      )
+      else
+      const Positioned(
+        left: 10,
+        top: 30,
+        child: Text(
+          "🕐 Pending",
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+        ),
+      )
     ]);
   }
 }

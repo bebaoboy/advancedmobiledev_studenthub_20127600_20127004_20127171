@@ -1,3 +1,5 @@
+// ignore_for_file: unused_field, prefer_final_fields
+
 import 'dart:io';
 import 'dart:math';
 
@@ -17,8 +19,10 @@ import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:mobx/mobx.dart';
@@ -50,7 +54,6 @@ abstract class _ChatStore with Store {
   final userStore = getIt<UserStore>();
 
   @observable
-  // ignore: prefer_final_fields
   Map<String, MessageNotifierProvider> _messageNotifiers = {};
   MessageNotifierProvider? getMessageNotifiers(WrapMessageList chatObject) {
     var p = _messageNotifiers[chatObject.project!.objectId];
@@ -61,8 +64,19 @@ abstract class _ChatStore with Store {
           MessageNotifierProvider(
               project: chatObject.project,
               addInboxCb: (Map<String, dynamic> data, inbox, bool isInterview) {
-                return addInbox(data, inbox, chatObject.project!,
-                    chatObject.chatUser, isInterview);
+                return addInbox(
+                    data,
+                    inbox,
+                    chatObject.project!,
+                    ChatUser(
+                        id: data["notification"]["sender"] != null
+                            ? data["notification"]["sender"]["id"].toString()
+                            : "-1",
+                        firstName: data["notification"]["sender"] != null
+                            ? data["notification"]["sender"]["fullname"]
+                                .toString()
+                            : "null"),
+                    isInterview);
               });
       return _messageNotifiers[chatObject.project!.objectId!];
     }
@@ -123,32 +137,45 @@ abstract class _ChatStore with Store {
         };
 
         var m = AbstractChatMessage.fromJson(e);
-        var pp = _messages.firstWhereOrNull(
-          (element) =>
-              element.project?.objectId == project.objectId &&
-              element.chatUser.id == user.id,
-        );
-        if (pp != null) {
-          pp.messages?.first = MessageObject(
-              createdAt: DateTime.tryParse(message['createdAt'] ?? "") ??
-                  DateTime.now(),
-              updatedAt: DateTime.tryParse(message['updatedAt'] ?? "") ??
-                  DateTime.now(),
-              project: project,
-              id: mess,
-              content: message["content"] ?? message["title"],
-              receiver: Profile(objectId: "-1", name: "null"),
-              sender:
-                  Profile(objectId: user.id, name: user.firstName ?? "null"));
-          _messages.sort(
-            (a, b) => (b.messages == null || a.messages == null)
-                ? 0
-                : b.messages!.first.updatedAt!
-                    .compareTo(a.messages!.first.updatedAt!),
-          );
-          // pp.lastSeenTime =
-          //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
+        // var pp = _messages.firstWhereOrNull(
+        //   (element) =>
+        //       element.project?.objectId == project.objectId &&
+        //       element.chatUser.id == user.id,
+        // );
+        // if (pp != null) {
+        //   pp.messages?.first = MessageObject(
+        //       createdAt: DateTime.tryParse(message['createdAt'] ?? "") ??
+        //           DateTime.now(),
+        //       updatedAt: DateTime.tryParse(message['updatedAt'] ?? "") ??
+        //           DateTime.now(),
+        //       project: project,
+        //       id: mess,
+        //       content: message["content"] ?? message["title"],
+        //       receiver: Profile(objectId: "-1", name: "null"),
+        //       sender:
+        //           Profile(objectId: user.id, name: user.firstName ?? "null"));
+        //   _messages.sort(
+        //     (a, b) => (b.messages == null || a.messages == null)
+        //         ? 0
+        //         : b.messages!.first.updatedAt!
+        //             .compareTo(a.messages!.first.updatedAt!),
+        //   );
+        //   // pp.lastSeenTime =
+        //   //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
+        // }
+        insertMessage(user, project, m, false, incoming: true);
+        var c = messages.fold(0, (sum, item) => sum + item.newMessageCount);
+        if (c > 0) {
+          NavbarNotifier2.updateBadge(
+              2, NavbarBadge(showBadge: true, badgeText: "$c"));
         }
+        // ignore: invalid_use_of_protected_member
+        _messages.sort(
+          (a, b) => (b.messages == null || a.messages == null)
+              ? 0
+              : b.messages!.first.updatedAt!
+                  .compareTo(a.messages!.first.updatedAt!),
+        );
         return m;
       } else {
         // TODO: làm bấm vô nó vào msg
@@ -201,35 +228,43 @@ abstract class _ChatStore with Store {
         };
 
         var m = AbstractChatMessage.fromJson(e);
-        var pp = _messages.firstWhereOrNull(
-          (element) =>
-              element.project?.objectId == project.objectId &&
-              element.chatUser.id == user.id,
-        );
-        if (pp != null) {
-          pp.messages?.first = MessageObject(
-              createdAt: DateTime.tryParse(message['createdAt'] ?? "") ??
-                  DateTime.now(),
-              updatedAt: DateTime.tryParse(message['updatedAt'] ?? "") ??
-                  DateTime.now(),
-              project: project,
-              id: mess,
-              content: message["content"] ?? message["title"],
-              receiver: Profile(objectId: "-1", name: "null"),
-              interviewSchedule: interview != null
-                  ? InterviewSchedule.fromJsonApi(interview)
-                  : null,
-              sender:
-                  Profile(objectId: user.id, name: user.firstName ?? "null"));
-          // pp.lastSeenTime =
-          //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
-          _messages.sort(
-            (a, b) => (b.messages == null || a.messages == null)
-                ? 0
-                : b.messages!.first.updatedAt!
-                    .compareTo(a.messages!.first.updatedAt!),
-          );
+        // var pp = _messages.firstWhereOrNull(
+        //   (element) =>
+        //       element.project?.objectId == project.objectId &&
+        //       element.chatUser.id == user.id,
+        // );
+        // if (pp != null) {
+        //   pp.messages?.first = MessageObject(
+        //       createdAt: DateTime.tryParse(message['createdAt'] ?? "") ??
+        //           DateTime.now(),
+        //       updatedAt: DateTime.tryParse(message['updatedAt'] ?? "") ??
+        //           DateTime.now(),
+        //       project: project,
+        //       id: mess,
+        //       content: message["content"] ?? message["title"],
+        //       receiver: Profile(objectId: "-1", name: "null"),
+        //       interviewSchedule: interview != null
+        //           ? InterviewSchedule.fromJsonApi(interview)
+        //           : null,
+        //       sender:
+        //           Profile(objectId: user.id, name: user.firstName ?? "null"));
+        //   // pp.lastSeenTime =
+        //   //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
+        //   _messages.sort(
+        //     (a, b) => (b.messages == null || a.messages == null)
+        //         ? 0
+        //         : b.messages!.first.updatedAt!
+        //             .compareTo(a.messages!.first.updatedAt!),
+        //   );
+        // }
+        insertMessage(user, project, m, false, incoming: true);
+
+        var c = messages.fold(0, (sum, item) => sum + item.newMessageCount);
+        if (c > 0) {
+          NavbarNotifier2.updateBadge(
+              2, NavbarBadge(showBadge: true, badgeText: "$c"));
         }
+        // ignore: invalid_use_of_protected_member
         return m;
       }
     } else {
@@ -244,10 +279,17 @@ abstract class _ChatStore with Store {
   List<WrapMessageList> get messages => _messages;
 
   @observable
-  List<AbstractChatMessage> _currentProjectMessages = [];
+  ObservableMap<String, ObservableMap<String, List<AbstractChatMessage>>>
+      _currentProjectMessages = ObservableMap(name: "currentProjectMessages");
   @computed
-  List<AbstractChatMessage> get currentProjectMessages =>
-      _currentProjectMessages;
+  List<AbstractChatMessage> get currentProjectMessages {
+    return _currentProjectMessages[_currentProject]?[_currentUser] ?? [];
+  }
+
+  Map<String, Map<String, List<AbstractChatMessage>>>
+      get currentProjectMessageMap => _currentProjectMessages;
+
+  String _currentUser = "", _currentProject = "";
 
   @observable
   Map<String, WrapMessageList> _projectMessages = {};
@@ -262,7 +304,10 @@ abstract class _ChatStore with Store {
   ObservableFuture<List?> fetchChatHistoryFuture = emptyFetchResponse;
 
   bool get isFetching => fetchChatHistoryFuture.status == FutureStatus.pending;
+  @observable
+  ObservableFuture<List?> fetchAllChatFuture = emptyFetchResponse;
 
+  bool get isFetchingAll => fetchAllChatFuture.status == FutureStatus.pending;
   @observable
   ObservableFuture<Response?> checkFuture = emptyCheckResponse;
 
@@ -277,10 +322,8 @@ abstract class _ChatStore with Store {
 
   sort() {
     _messages.sort(
-      (a, b) => (b.messages == null || a.messages == null)
-          ? 0
-          : b.messages!.first.updatedAt!
-              .compareTo(a.messages!.first.updatedAt!),
+      (a, b) => b.messages!.firstOrNull!.updatedAt!
+          .compareTo(a.messages!.firstOrNull!.updatedAt!),
     );
   }
 
@@ -303,92 +346,111 @@ abstract class _ChatStore with Store {
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {
     try {
       var userStore = getIt<UserStore>();
-      return _getAllChatsUseCase
-          .call(params: GetMessageByProjectAndUserParams())
-          .then<List<WrapMessageList>>(
-        (value) async {
-          if (value.isNotEmpty) {
-            print(value);
+      if (!isFetchingAll) {
+        final future = _getAllChatsUseCase
+            .call(params: GetMessageByProjectAndUserParams())
+            .then<List<WrapMessageList>>(
+          (value) async {
+            if (value.isNotEmpty) {
+              print(value);
 
-            for (var v in value) {
-              var p = _messages.firstWhereOrNull(
-                (element) =>
-                    element.project?.objectId == v.project?.objectId &&
-                    element.chatUser.id == v.chatUser.id,
-              );
-              if (p != null) {
-                p.messages = v.messages;
-
-                p.messages?.sort(
-                  (a, b) {
-                    return b.updatedAt!.compareTo(a.updatedAt!);
-                  },
-                );
-                if (p.messages?.firstOrNull?.sender.objectId ==
-                    userStore.user?.objectId) {
-                  p.lastSeenTime = p.messages?.firstOrNull?.updatedAt;
+              for (var v in value) {
+                if (v.project != null && v.project!.objectId != null) {
+                  _currentProjectMessages[v.project!.objectId!] =
+                      ObservableMap();
                 }
-              } else {
-                print("not found $v");
-                _messages.add(v);
-                _messages.last.messages?.sort(
-                  (a, b) {
-                    return b.updatedAt!.compareTo(a.updatedAt!);
-                  },
+                var p = _messages.firstWhereOrNull(
+                  (element) =>
+                      element.project?.objectId == v.project?.objectId &&
+                      element.chatUser.id == v.chatUser.id,
                 );
-                _messages.last.lastSeenTime =
-                    v.messages?.firstOrNull?.updatedAt;
+                if (p != null) {
+                  p.messages = v.messages;
 
-                // _messages.removeWhere(
-                //   (element) =>
-                //       element.project?.objectId == v.project?.objectId &&
-                //       element.chatUser.id == v.chatUser.id,
-                // );
+                  p.messages?.sort(
+                    (a, b) {
+                      return b.updatedAt!.compareTo(a.updatedAt!);
+                    },
+                  );
+                  if (p.messages?.firstOrNull?.sender.objectId ==
+                      userStore.user?.objectId) {
+                    p.lastSeenTime = p.messages?.firstOrNull?.updatedAt;
+                  }
+                } else {
+                  print("not found $v");
+                  _messages.add(v);
+                  _messages.last.messages?.sort(
+                    (a, b) {
+                      return b.updatedAt!.compareTo(a.updatedAt!);
+                    },
+                  );
+                  _messages.last.lastSeenTime =
+                      v.messages?.firstOrNull?.updatedAt;
+
+                  // _messages.removeWhere(
+                  //   (element) =>
+                  //       element.project?.objectId == v.project?.objectId &&
+                  //       element.chatUser.id == v.chatUser.id,
+                  // );
+                }
+                getMessageNotifiers(v);
               }
-              getMessageNotifiers(v);
+              Future.delayed(Duration.zero, () {
+                _messages.removeWhere(
+                  (element) =>
+                      element.lastSeenTime == null || element.messages == null,
+                );
+                _messages.sort(
+                  (a, b) => b.messages!.firstOrNull!.updatedAt!
+                      .compareTo(a.messages!.firstOrNull!.updatedAt!),
+                );
+                // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
+                var c =
+                    messages.fold(0, (sum, item) => sum + item.newMessageCount);
+                if (c > 0) {
+                  NavbarNotifier2.updateBadge(
+                      2, NavbarBadge(showBadge: true, badgeText: "$c"));
+                }
+                if (setStateCallback != null) setStateCallback();
+              });
+
+              return _messages;
+            } else {
+              print(value);
+              // var companies = await sharedPrefsHelper.getCompanyMessages();
+              // if (companies.messages != null && companies.messages!.isNotEmpty) {
+              //   {
+              //     _companyMessages = companies;
+              //     _companyMessages.messages?.sort(
+              //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+              //     );
+              //     if (setStateCallback != null) setStateCallback();
+
+              //     return _companyMessages;
+              //   }
+              // }
+              return Future.value(_messages);
             }
-            _messages.sort(
-              (a, b) => (b.lastSeenTime == null || a.lastSeenTime == null)
-                  ? 0
-                  : b.lastSeenTime!.compareTo(a.lastSeenTime!),
-            );
-            // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
-            if (setStateCallback != null) setStateCallback();
-            return _messages;
-          } else {
-            print(value);
-            // var companies = await sharedPrefsHelper.getCompanyMessages();
-            // if (companies.messages != null && companies.messages!.isNotEmpty) {
-            //   {
-            //     _companyMessages = companies;
-            //     _companyMessages.messages?.sort(
-            //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-            //     );
-            //     if (setStateCallback != null) setStateCallback();
+          },
+        ).onError((error, stackTrace) async {
+          // var companies = await sharedPrefsHelper.getCompanyMessages();
+          // if (companies.messages != null && companies.messages!.isNotEmpty) {
+          //   {
+          //     _companyMessages = companies;
+          //     _companyMessages.messages?.sort(
+          //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+          //     );
+          //     if (setStateCallback != null) setStateCallback();
 
-            //     return _companyMessages;
-            //   }
-            // }
-            return Future.value(_messages);
-          }
-        },
-      ).onError((error, stackTrace) async {
-        // var companies = await sharedPrefsHelper.getCompanyMessages();
-        // if (companies.messages != null && companies.messages!.isNotEmpty) {
-        //   {
-        //     _companyMessages = companies;
-        //     _companyMessages.messages?.sort(
-        //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-        //     );
-        //     if (setStateCallback != null) setStateCallback();
-
-        //     return _companyMessages;
-        //   }
-        // }
-        print(error);
-        print(stackTrace);
-        return Future.value(_messages);
-      });
+          //     return _companyMessages;
+          //   }
+          // }
+          print(error);
+          print(stackTrace);
+          return Future.value(_messages);
+        });
+        fetchAllChatFuture = ObservableFuture(future);
+      }
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
 
@@ -409,7 +471,85 @@ abstract class _ChatStore with Store {
 
       return Future.value(_messages);
     }
+
+    return Future.value(_messages);
     // //print(value);
+  }
+
+  @action
+  void insertMessage(
+      ChatUser user, Project project, AbstractChatMessage message, bool isMe,
+      {bool incoming = false}) async {
+    if (message.type != AbstractMessageType.schedule &&
+        message.type != AbstractMessageType.text) return;
+    if (incoming) {
+      if (currentProjectMessageMap[project.objectId!]?[user.id] == null) {
+        // currentProjectMessageMap[project.objectId!]![user.id] = [];
+        await getMessageByProjectAndUsers(
+            chatObject: WrapMessageList(
+                chatUser: user, project: project, messages: []));
+      }
+      currentProjectMessageMap[project.objectId!]?[user.id]?.insert(0, message);
+    }
+    var pp = _messages.firstWhereOrNull(
+      (element) =>
+          element.project?.objectId == project.objectId &&
+          element.chatUser.id == user.id,
+    );
+
+    if (pp != null) {
+      pp.messages ??= [];
+      if (pp.messages!.isEmpty) {
+        print("add msg for ${project.objectId} user ${user.id}");
+        pp.messages!.add(MessageObject(
+            createdAt: DateTime.fromMillisecondsSinceEpoch(
+                message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
+            updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+            project: project,
+            id: message.id,
+            content: message.type == AbstractMessageType.schedule
+                ? (message as ScheduleMessageType).id
+                : message.type == AbstractMessageType.text
+                    ? (message as AbstractTextMessage).text
+                    : "type not supported",
+            receiver: Profile(objectId: "-1", name: "null"),
+            interviewSchedule: message.type == AbstractMessageType.schedule
+                ? InterviewSchedule.fromJsonApi(message.metadata!)
+                : null,
+            sender:
+                Profile(objectId: user.id, name: user.firstName ?? "null")));
+      } else {
+        print("replace msg for ${project.objectId} user ${user.id}");
+
+        pp.messages?.first = MessageObject(
+            createdAt: DateTime.fromMillisecondsSinceEpoch(
+                message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
+            updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+            project: project,
+            id: message.id,
+            content: message.type == AbstractMessageType.schedule
+                ? (message as ScheduleMessageType).id
+                : message.type == AbstractMessageType.text
+                    ? (message as AbstractTextMessage).text
+                    : "type not supported",
+            receiver: Profile(objectId: "-1", name: "null"),
+            interviewSchedule: message.type == AbstractMessageType.schedule
+                ? InterviewSchedule.fromJsonApi(message.metadata!)
+                : null,
+            sender: Profile(objectId: user.id, name: user.firstName ?? "null"));
+      }
+      if (isMe) {
+        pp.lastSeenTime = DateTime.now();
+      }
+      _messages.sort(
+        (a, b) => (b.messages == null || a.messages == null)
+            ? 0
+            : b.messages!.first.updatedAt!
+                .compareTo(a.messages!.first.updatedAt!),
+      );
+    }
   }
 
   /// userId của người NHẬN (sender)
@@ -418,46 +558,63 @@ abstract class _ChatStore with Store {
   /// whenever user switch account type
   @action
   Future<List<AbstractChatMessage>> getMessageByProjectAndUsers(
-      {required String userId,
-      required String projectId,
-      Function? setStateCallback}) async {
+      {required WrapMessageList chatObject, Function? setStateCallback}) async {
+    String userId = chatObject.chatUser.id,
+        projectId = chatObject.project!.objectId!;
     if (projectId.trim().isEmpty || userId.trim().isEmpty) {
       return Future.value([]);
     }
-    try {
-      final future = _getMessageByProjectAndUsersUseCase
-          .call(
-              params: GetMessageByProjectAndUserParams(
-                  userId: userId, projectId: projectId))
-          .then(
-        (value) async {
-          if (value.isNotEmpty) {
+    _currentProject = projectId;
+    _currentUser = userId;
+    getMessageNotifiers(chatObject);
+    // TODO: lưu vào sharedpref
+    if (_currentProjectMessages[_currentProject] == null ||
+        _currentProjectMessages[_currentProject]?[_currentUser] == null) {
+      try {
+        final future = _getMessageByProjectAndUsersUseCase
+            .call(
+                params: GetMessageByProjectAndUserParams(
+                    userId: userId, projectId: projectId))
+            .then(
+          (value) async {
             print(value);
-
-            _currentProjectMessages = value;
+            if (_currentProjectMessages[projectId] == null) {
+              _currentProjectMessages[projectId] = ObservableMap();
+            }
+            if (_currentProjectMessages[projectId]![userId] == null &&
+                _messages.firstWhereOrNull(
+                      (element) =>
+                          element.project?.objectId == projectId &&
+                          element.chatUser.id == userId,
+                    ) ==
+                    null) {
+              print("add msg because $userId not have");
+              _messages.insert(0, chatObject..messages = []);
+            }
+            _currentProjectMessages[projectId]![userId] = value;
 
             // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
-            _currentProjectMessages.sort(
+            _currentProjectMessages[projectId]![userId]?.sort(
               (a, b) {
                 return b.updatedAt!.compareTo(a.updatedAt!);
               },
             );
 
             if (setStateCallback != null) setStateCallback();
-            return _currentProjectMessages;
-          } else {
-            print(value);
-            return Future.value([]);
-          }
-        },
-      ).onError((error, stackTrace) async {
-        return Future.value([]);
-      });
+            return _currentProjectMessages[projectId]![userId];
+          },
+        ).onError((error, stackTrace) async {
+          return Future.value(_currentProjectMessages[projectId]![userId]);
+        });
 
-      fetchChatHistoryFuture = ObservableFuture(future);
-    } catch (e) {
-      print("Cannot get chat history for this project");
+        fetchChatHistoryFuture = ObservableFuture(future);
+        await fetchChatHistoryFuture;
+      } catch (e) {
+        print("Cannot get chat history for this project");
+      }
+    } else {
+      return Future.value(currentProjectMessages);
     }
     return Future.value([]);
 

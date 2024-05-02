@@ -45,7 +45,7 @@ mixin NetworkModule {
         receiveTimeout: Endpoints.receiveTimeout,
       ),
     );
-    getIt.registerSingleton<DioClient>(
+    getIt.registerFactory<DioClient>(() =>
       DioClient(dioConfigs: getIt())
         ..addInterceptors(
           [

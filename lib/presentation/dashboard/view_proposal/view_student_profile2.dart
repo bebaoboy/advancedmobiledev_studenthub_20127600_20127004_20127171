@@ -65,7 +65,7 @@ class _ViewStudentProfile2State extends State<ViewStudentProfile2> {
                                   .studentProfile.educations![index].schoolName
                                   .toTitleCase()),
                               Text(
-                                  "${widget.studentProfile.educations![index].startYear} - ${widget.studentProfile.educations![index].endYear}")
+                                  "${widget.studentProfile.educations![index].startYear.year} - ${widget.studentProfile.educations![index].endYear.year}")
                             ],
                           ),
                         )),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
@@ -7,8 +9,8 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -53,12 +55,20 @@ class Singapore extends State<MessageTab> {
   // ];
 
   late Future getAllChatFuture;
+  late Timer timer;
+
+  @override
+  void dispose() {
+    timer.cancel();
+    super.dispose();
+  }
 
   @override
   void initState() {
     super.initState();
     // Future.delayed(const Duration(milliseconds: 500), () async {
-    getAllChatFuture = chatStore.getAllChat(setStateCallback: () {
+    getAllChatFuture = Future.delayed(Duration.zero, () => chatStore.messages);
+    timer = Timer.periodic(const Duration(seconds: 3), (t) {
       setState(() {});
     });
     // chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
@@ -97,15 +107,23 @@ class Singapore extends State<MessageTab> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(20),
                       onTap: () => print("flutter"),
-                      child: CircleAvatar(
+                      child: const CircleAvatar(
                         backgroundColor: Colors.white,
                         radius: 60.0,
                         child: CircleAvatar(
                           backgroundColor: Colors.transparent,
-                          backgroundImage: Image.network(
+                          backgroundImage: CachedNetworkImageProvider(
+                            // errorBuilder: (context, error, stackTrace) => const Icon(
+                            //   Icons.error_outline,
+                            //   size: 45,
+                            // ),
+                            cacheKey: "flutter",
+
+                            maxWidth: 50,
+                            maxHeight: 50,
                             'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                            fit: BoxFit.cover,
-                          ).image,
+                            // fit: BoxFit.cover,
+                          ),
                           radius: 50.0,
                         ),
                       ),
@@ -147,8 +165,14 @@ class Singapore extends State<MessageTab> {
                         top: 60,
                         child: PlaneIndicator(
                           onRefresh: () =>
-                              Future.delayed(const Duration(seconds: 3)),
-
+                              Future.delayed(const Duration(seconds: 1), () {
+                            setState(() {
+                              getAllChatFuture =
+                                  chatStore.getAllChat(setStateCallback: () {
+                                setState(() {});
+                              });
+                            });
+                          }),
                           child: Observer(builder: (context) {
                             return Stack(children: [
                               Positioned.fill(
@@ -160,52 +184,15 @@ class Singapore extends State<MessageTab> {
                                       const Divider(color: Colors.black),
                                   itemBuilder: (context, i) {
                                     if (i == 0) {
-                                      return Container(
-                                          margin:
-                                              const EdgeInsets.only(top: 15),
-                                          child: _buildTopRowList());
+                                      return chatStore.isFetchingAll
+                                          ? const LoadingScreenWidget()
+                                          : Container(
+                                              margin: const EdgeInsets.only(
+                                                  top: 15),
+                                              child: _buildTopRowList());
                                     }
                                     int index = i - 1;
-                                    if (chatStore
-                                                .messages[index].lastSeenTime !=
-                                            null &&
-                                        chatStore.messages.fold(
-                                                0,
-                                                (sum, item) =>
-                                                    sum +
-                                                    item.newMessageCount) >
-                                            0) {
-                                      Future.delayed(const Duration(seconds: 1),
-                                          () {
-                                        if (NavbarNotifier2
-                                                .badges[NavbarNotifier2
-                                                    .currentIndex]
-                                                .showBadge ==
-                                            false) {
-                                          NavbarNotifier2.updateBadge(
-                                              2,
-                                              NavbarBadge(
-                                                  showBadge: true,
-                                                  badgeText:
-                                                      "${chatStore.messages.fold(0, (sum, item) => sum + item.newMessageCount)}"));
-                                        }
-                                        setState(() {});
-                                      });
-                                      // print(
-                                      //     "new message count after ${chatStore.messages[index].lastSeenTime}: ${chatStore.messages[index].newMessageCount}");
-                                    } else {
-                                      Future.delayed(const Duration(seconds: 1),
-                                          () {
-                                        if (NavbarNotifier2
-                                                .badges[NavbarNotifier2
-                                                    .currentIndex]
-                                                .showBadge ==
-                                            true) {
-                                          NavbarNotifier2.makeBadgeVisible(
-                                              2, false);
-                                        }
-                                      });
-                                    }
+
                                     return InkWell(
                                       onTap: () {
                                         //print('Tile clicked');
@@ -213,40 +200,6 @@ class Singapore extends State<MessageTab> {
                                             .messages[index]
                                             .chatUser
                                             .id; // id này chỉ để test socket
-
-                                        // TODO: replace lastSeenMessage để cập nhật đã đọc tin nhắn rồi
-                                        /*
-                                                                            {
-                                              "result": [
-                                                {
-                                                  "id": 249,
-                                                  "createdAt": "2024-04-23T16:09:43.731Z",
-                                                  "content": "Something",
-                                                  "sender": {
-                                                    "id": 34,
-                                                    "fullname": "bao bao"
-                                                  },
-                                                  "receiver": {
-                                                    "id": 94,
-                                                    "fullname": "quan"
-                                                  },
-                                                  "interview": null
-                                                },
-                                                {
-                                                  "id": 251,
-                                                  "createdAt": "2024-04-23T16:27:26.848Z",
-                                                  "content": "Hi",
-                                                  "sender": {
-                                                    "id": 34,
-                                                    "fullname": "bao bao"
-                                                  },
-                                                  "receiver": {
-                                                    "id": 94,
-                                                    "fullname": "quan"
-                                                  },
-                                                  "interview": null
-                                                },
-                                                                             */
                                         Navigator.of(NavigationService
                                                 .navigatorKey.currentContext!)
                                             .push(MaterialPageRoute2(
@@ -260,51 +213,56 @@ class Singapore extends State<MessageTab> {
                                                   messages: chatStore
                                                       .messages[index].messages,
                                                   chatUser: chatStore
-                                                      .messages[index]
-                                                      .chatUser)]))
-                                          .then(
-                                        (value) {
-                                          setState(() {
-                                            chatStore.sort();
-                                          });
-                                        },
-                                      );
-                                      // You can replace the print statement with your function
-                                    },
-                                    child: ListTile(
-                                      tileColor: Colors.transparent,
-                                      leading: const Icon(Icons
-                                          .message), // Replace with actual icons
-                                      title: Text(
-                                        "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: chatStore.messages[index]
-                                                        .newMessageCount >
-                                                    0
-                                                ? Theme.of(context)
-                                                    .colorScheme
-                                                    .primary
-                                                : null),
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.stretch,
-                                        children: [
-                                          // Text(chatStore.messages[index]['role']),
-
+                                                      .messages[index].chatUser)
+                                            ]))
+                                            .then(
+                                          (value) {
+                                            setState(() {});
+                                          },
+                                        );
+                                        // You can replace the print statement with your function
+                                      },
+                                      child: ListTile(
+                                        tileColor: Colors.transparent,
+                                        leading: const Icon(Icons
+                                            .message), // Replace with actual icons
+                                        title: Text(
+                                          "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: chatStore.messages[index]
+                                                          .newMessageCount >
+                                                      0
+                                                  ? Theme.of(context)
+                                                      .colorScheme
+                                                      .primary
+                                                  : null),
+                                        ),
+                                        subtitle: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            // Text(chatStore.messages[index]['role']),
 
                                             Text(
-                                              chatStore
-                                                          .messages[index]
-                                                          .messages!
-                                                          .first
-                                                          .sender
-                                                          .objectId !=
-                                                      userStore.user!.objectId
-                                                  ? chatStore.messages[index]
-                                                      .messages!.first.content
-                                                  : "You: ${chatStore.messages[index].messages!.first.content}",
+                                              chatStore.messages[index]
+                                                      .messages!.isEmpty
+                                                  ? ""
+                                                  : chatStore
+                                                              .messages[index]
+                                                              .messages!
+                                                              .first
+                                                              .sender
+                                                              .objectId !=
+                                                          userStore
+                                                              .user!.objectId
+                                                      ? chatStore
+                                                              .messages[index]
+                                                              .messages!
+                                                              .firstOrNull
+                                                              ?.content ??
+                                                          ""
+                                                      : "You: ${chatStore.messages[index].messages!.first.content}",
                                               style: TextStyle(
                                                   fontWeight: chatStore
                                                               .messages[index]
@@ -349,8 +307,10 @@ class Singapore extends State<MessageTab> {
           padding: const EdgeInsets.all(8.0),
           child: TextField(
             decoration: InputDecoration(
-              labelText: Lang.get("search"),
-              hintText: Lang.get("search"),
+              hintText:
+                  "${Lang.get("search")} ${chatStore.messages.length} people",
+              labelText:
+                  "${Lang.get("search")} ${chatStore.messages.length} people",
               prefixIcon: const Icon(Icons.search),
               border: const OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(25.0)),

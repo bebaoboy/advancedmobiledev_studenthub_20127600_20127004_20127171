@@ -118,32 +118,34 @@ class _MessageScreenState extends State<MessageScreen> {
       setState(() {});
     });
 
-    chatStore.getMessageByProjectAndUsers(
-        userId: _user.id, projectId: widget.chatObject.project!.objectId!);
+    initScreen();
+  }
+
+  initScreen() async {
+    await chatStore.getMessageByProjectAndUsers(chatObject: widget.chatObject);
 
     if (widget.isFirstInitiate) {
-      Future.delayed(const Duration(milliseconds: 300), () {
-        var text = "${userStore.user!.name} wants to chat with you";
-        final textMessage = AbstractTextMessage(
-          author: ChatUser(
-              id: userStore.user!.objectId!, firstName: userStore.user!.name),
-          createdAt: DateTime.now().millisecondsSinceEpoch,
-          id: const Uuid().v4(),
-          status: Status.delivered,
-          text: text,
-        );
-        _addMessage(textMessage);
+      var text = "${userStore.user!.name} wants to chat with you";
+      final textMessage = AbstractTextMessage(
+        author: ChatUser(
+            id: userStore.user!.objectId!, firstName: userStore.user!.name),
+        createdAt: DateTime.now().millisecondsSinceEpoch,
+        id: const Uuid().v4(),
+        status: Status.delivered,
+        text: text,
+      );
 
-        messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
-          "content": text,
-          "projectId": widget.chatObject.project!.objectId!,
-          "senderId": userStore.user!.objectId!,
-          "receiverId": _user.id, // notification
-          "messageFlag": 0
-        });
-
-        chatStore.getAllChat();
+      messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
+        "content": text,
+        "projectId": widget.chatObject.project!.objectId!,
+        "senderId": userStore.user!.objectId!,
+        "receiverId": _user.id, // notification
+        "messageFlag": 0
       });
+      chatStore.insertMessage(
+        widget.chatObject.chatUser, widget.chatObject.project!, textMessage, true, incoming: true);
+
+      //chatStore.getAllChat();
     }
   }
 
@@ -153,7 +155,7 @@ class _MessageScreenState extends State<MessageScreen> {
     timer?.cancel();
     messageNotifier.removeListener(_messageNotifierListener);
     // messageNotifier.dispose();
-    chatStore.currentProjectMessages.clear();
+    // chatStore.currentProjectMessages.clear();
   }
 
   void updateMessageReactions(MessageReaction reaction, String id,
@@ -380,7 +382,9 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   void _addMessage(AbstractChatMessage message) {
-    chatStore.currentProjectMessages.insert(0, message);
+    // chatStore.currentProjectMessages.insert(0, message);
+    chatStore.insertMessage(
+        widget.chatObject.chatUser, widget.chatObject.project!, message, true, incoming: true);
     // chatStore.currentProjectMessages.insert(0, message);
     _sortMessages();
   }
@@ -840,8 +844,8 @@ Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
           element.project?.objectId == widget.chatObject.project?.objectId,
     );
     p?.messages?.first = MessageObject(
-        createdAt: DateTime.tryParse(e['createdAt'] ?? "") ?? DateTime.now(),
-        updatedAt: DateTime.tryParse(e['updatedAt'] ?? "") ?? DateTime.now(),
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
         project: widget.chatObject.project,
         id: e["id"],
         content: e["text"],

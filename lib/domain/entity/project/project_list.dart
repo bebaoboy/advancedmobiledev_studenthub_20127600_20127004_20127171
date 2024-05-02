@@ -1,6 +1,8 @@
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:mobx/mobx.dart';
 
 class ProjectList {
+  @observable
   List<Project>? projects;
   List? data;
 

@@ -8,6 +8,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_by_company.dart';
 import 'package:boilerplate/domain/usecase/project/get_project_proposals.dart';
 import 'package:boilerplate/domain/usecase/project/get_projects.dart';
@@ -182,6 +183,7 @@ abstract class _ProjectStore with Store {
             value.statusCode == HttpStatus.created) {
           if (project.project != null) {
             if (userStore.user != null &&
+                userStore.user!.type == UserType.student &&
                 userStore.user!.studentProfile != null) {
               var p = userStore.user!.studentProfile!.proposalProjects!
                   .firstWhereOrNull(
@@ -207,6 +209,17 @@ abstract class _ProjectStore with Store {
               userStore.user!.studentProfile!.proposalProjects?.sort(
                 (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
               );
+            }
+            int index = _projects.projects!.indexWhere(
+                (Project element) => element.objectId == project.objectId);
+            if (index != -1) {
+              var m = _projects.projects![index].proposal
+                  ?.firstWhereOrNull((e) => project.objectId == e.objectId);
+              if (m != null) {
+                m.hiredStatus = project.hiredStatus;
+                m.enabled = project.enabled;
+                m.coverLetter = project.coverLetter;
+              }
             }
           }
           return true;
@@ -242,12 +255,12 @@ abstract class _ProjectStore with Store {
   }
 
   Future changeToStatus(HireStatus status, Proposal proposal) async {
-    UpdateProposalParams params = UpdateProposalParams(
-        status.index,
-        proposal.enabled ? 0 : 1,
-        proposal.coverLetter,
-        int.parse(proposal.objectId!));
-    await _updateProposalUseCase.call(params: params);
+    // UpdateProposalParams params = UpdateProposalParams(
+    //     status.index,
+    //     proposal.enabled ? 0 : 1,
+    //     proposal.coverLetter,
+    //     int.parse(proposal.objectId!));
+    await updateProposal(proposal..hiredStatus = status, "");
   }
 
   /// descending created date order
@@ -538,6 +551,14 @@ abstract class _ProjectStore with Store {
             print(value);
 
             var result = ProjectList.fromJson(value.data["result"]);
+            result.projects?.forEach(
+              (element) => element.proposal?.forEach((e) => e.project = StudentProject(
+                  title: element.title,
+                  description: element.description,
+                  timeCreated: element.timeCreated,
+                  id: element.objectId!,
+                  projectId:  element.objectId!),
+            ));
             _companyProjects = result;
 
             sharedPrefsHelper.saveCompanyProjects(_companyProjects);

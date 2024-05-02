@@ -70,7 +70,7 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
                     ),
                   ),
                   Text(
-                    "Fullname: ${widget.studentProfile.fullName}",
+                    "Fullname: ${widget.studentProfile.fullName} (${widget.studentProfile.objectId})",
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w300,
@@ -89,22 +89,27 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
                   const Divider(
                     color: Colors.black38,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
                   Text(
-                    widget.studentProfile.introduction,
-                    maxLines: 5,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    "${widget.studentProfile.techStack}",
+                    style: TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w300,
+                      color: Theme.of(context).colorScheme.onPrimary,
                     ),
-                    textAlign: TextAlign.left,
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
+                  // Text(
+                  //   widget.studentProfile.introduction,
+                  //   maxLines: 5,
+                  //   overflow: TextOverflow.ellipsis,
+                  //   style: const TextStyle(
+                  //     fontSize: 18,
+                  //     fontWeight: FontWeight.w500,
+                  //   ),
+                  //   textAlign: TextAlign.left,
+                  // ),
+                  // const SizedBox(
+                  //   height: 12,
+                  // ),
                   const Divider(
                     color: Colors.black38,
                   ),

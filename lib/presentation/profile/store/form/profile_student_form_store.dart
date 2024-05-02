@@ -443,6 +443,19 @@ abstract class _ProfileStudentFormStore with Store {
         //print(value);
       },
     );
+    if (userStore.user != null && userStore.user!.studentProfile != null) {
+      var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+      sharedPrefsHelper.saveStudentProfile(StudentProfile(
+          fullName: userStore.user!.name,
+          skillSet: userStore.user!.studentProfile!.skillSet,
+          techStack: userStore.user!.studentProfile!.techStack,
+          transcript: userStore.user!.studentProfile!.transcript,
+          resume: userStore.user!.studentProfile!.resume,
+          languages: userStore.user!.studentProfile!.languages,
+          educations: userStore.user!.studentProfile!.educations,
+          projectExperience: userStore.user!.studentProfile!.projectExperience,
+          objectId: userStore.user!.studentProfile!.objectId));
+    }
   }
 
   @action

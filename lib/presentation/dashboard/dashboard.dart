@@ -51,8 +51,9 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     //   },
     // );
     print("init state navbar");
-
-    _chatStore.getAllChat();
+    Future.delayed(const Duration(seconds: 3), () {
+      _chatStore.getAllChat();
+    });
     _pageController.addListener(
       () {
         setState(() {

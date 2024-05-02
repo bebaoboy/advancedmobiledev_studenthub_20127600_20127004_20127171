@@ -283,9 +283,9 @@ class NotificationObject extends MyObject {
 }
 
 enum NotificationType {
-  text,
-  joinInterview,
   viewOffer,
+  joinInterview,
+  text, /// submitted
   message,
 }
 

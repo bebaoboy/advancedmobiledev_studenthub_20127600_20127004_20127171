@@ -21,6 +21,7 @@ import 'package:boilerplate/utils/notification/store/notification_store.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
@@ -224,27 +225,81 @@ class _AlertTabState extends State<AlertTab> {
     }
   }
 
+  List<NotificationObject> notiList = [];
+  initNotiList() {
+    joinInterviews = notiList
+        .where(
+      (element) => element.type == NotificationType.joinInterview,
+    )
+        .where((element) {
+      var date = element.createdAt;
+      if (date == null) return false;
+      if (date.day == selectedDate.day &&
+          date.month == selectedDate.month &&
+          date.year == selectedDate.year) {
+        return true;
+      }
+      return false;
+    }).toList();
+
+    viewOffers = notiList
+        .where(
+      (element) => element.type == NotificationType.viewOffer,
+    )
+        .where((element) {
+      var date = element.createdAt;
+      if (date == null) return false;
+      if (date.day == selectedDate.day &&
+          date.month == selectedDate.month &&
+          date.year == selectedDate.year) {
+        return true;
+      }
+      return false;
+    }).toList();
+
+    joinInterviews = notiList
+        .where(
+      (element) => element.type == NotificationType.text,
+    )
+        .where((element) {
+      var date = element.createdAt;
+      if (date == null) return false;
+      if (date.day == selectedDate.day &&
+          date.month == selectedDate.month &&
+          date.year == selectedDate.year) {
+        return true;
+      }
+      return false;
+    }).toList();
+
+    joinInterviews = notiList
+        .where(
+      (element) => element.type == NotificationType.message,
+    )
+        .where((element) {
+      var date = element.createdAt;
+      if (date == null) return false;
+      if (date.day == selectedDate.day &&
+          date.month == selectedDate.month &&
+          date.year == selectedDate.year) {
+        return true;
+      }
+      return false;
+    }).toList();
+  }
+
   @override
   void initState() {
     super.initState();
     future = notiStore.getNoti(receiverId: userStore.user!.objectId ?? "");
 
     future.then((notificationList) {
-      joinInterviews = notificationList
-          .where((e) => e.type == NotificationType.joinInterview)
-          .toList();
-      viewOffers = notificationList
-          .where((e) => e.type == NotificationType.viewOffer)
-          .toList();
-      texts = notificationList
-          .where((e) => e.type == NotificationType.text)
-          .toList();
-      messages = notificationList
-          .where((e) => e.type == NotificationType.message)
-          .toList();
-          if (mounted) {
-            setState(() {});
-          }
+      // TODO: phân noti theo ngày
+      notiList = notificationList;
+      initNotiList();
+      if (mounted) {
+        setState(() {});
+      }
     });
     hasOfferProposal = userStore.user != null &&
         userStore.user!.studentProfile != null &&
@@ -600,6 +655,8 @@ class _AlertTabState extends State<AlertTab> {
             setState(() {
               selectedDate = activeDates[value ?? 0];
             });
+            initNotiList();
+
             print(selectedDate);
           },
           itemBuilder: (context, i) {
@@ -1222,18 +1279,20 @@ class _CustomFollowNotificationState extends State<CustomFollowNotification> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 20, backgroundColor: Colors.blue,
-              backgroundImage: Image.network(
-                errorBuilder: (context, error, stackTrace) => const Icon(
-                  Icons.error_outline,
-                  size: 45,
-                ),
-                width: 50,
-                height: 50,
+              backgroundImage: CachedNetworkImageProvider(
+                // errorBuilder: (context, error, stackTrace) => const Icon(
+                //   Icons.error_outline,
+                //   size: 45,
+                // ),
+                cacheKey: "flutter",
+
+                maxWidth: 50,
+                maxHeight: 50,
                 'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                fit: BoxFit.cover,
-              ).image,
+                // fit: BoxFit.cover,
+              ),
               // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
             ),
             const SizedBox(
@@ -1352,20 +1411,21 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                     size: 45,
                   ),
                 ),
-                Positioned(
+                const Positioned(
                   bottom: 10,
                   child: CircleAvatar(
                     radius: 20, backgroundColor: Colors.blue,
-                    backgroundImage: Image.network(
-                      errorBuilder: (context, error, stackTrace) => const Icon(
-                        Icons.error_outline,
-                        size: 45,
-                      ),
-                      width: 50,
-                      height: 50,
+                    backgroundImage: CachedNetworkImageProvider(
+                      // errorBuilder: (context, error, stackTrace) => const Icon(
+                      //   Icons.error_outline,
+                      //   size: 45,
+                      // ),
+                      cacheKey: "flutter",
+                      maxWidth: 50,
+                      maxHeight: 50,
                       'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                      fit: BoxFit.cover,
-                    ).image,
+                      // fit: BoxFit.cover,
+                    ),
                     // backgroundImage: AssetImage("assets/imges/Avatar2.png"),
                   ),
                 ),
@@ -1437,14 +1497,18 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                 ],
               ),
             ),
-            Image.network(
-              errorBuilder: (context, error, stackTrace) => const Icon(
+            CachedNetworkImage(
+              errorWidget: (context, error, stackTrace) => const Icon(
                 Icons.error_outline,
                 size: 45,
               ),
-              "https://docs.flutter.dev/assets/images/404/dash_nest.png",
-              height: 64,
-              width: 64,
+              cacheKey: "flutter",
+
+              width: 50,
+              height: 50,
+              imageUrl:
+                  'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+              fit: BoxFit.cover,
             ),
           ],
         ),

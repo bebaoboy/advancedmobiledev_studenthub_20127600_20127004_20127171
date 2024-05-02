@@ -71,6 +71,20 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     codeController.dispose();
     try {
       stopBackgroundExecution();
+      // primaryRenderer?.value.srcObject = null;
+      // primaryRenderer?.value.dispose();
+
+      // minorRenderers.forEach((opponentId, renderer) {
+      //   log("[dispose] dispose renderer for $opponentId", TAG);
+      //   try {
+      //     renderer.srcObject?.getTracks().forEach((track) => track.stop());
+      //     renderer.srcObject?.dispose();
+      //     renderer.srcObject = null;
+      //     renderer.dispose();
+      //   } catch (e) {
+      //     log('Error $e');
+      //   }
+      // });
     } catch (e) {
       ///
     }
@@ -186,8 +200,8 @@ class _BodyLayoutState extends State<BodyLayout> {
   Map<int, RTCVideoRenderer> minorRenderers = {};
   RTCVideoViewObjectFit primaryVideoFit =
       RTCVideoViewObjectFit.RTCVideoViewObjectFitCover;
-  final CubeStatsReportsManager _statsReportsManager =
-      CubeStatsReportsManager();
+  // final CubeStatsReportsManager _statsReportsManager =
+  //     CubeStatsReportsManager();
 
   late final Future<bool> future;
   final userStore = getIt<UserStore>();
@@ -203,16 +217,20 @@ class _BodyLayoutState extends State<BodyLayout> {
     future = _addLocalMediaStream();
 
     // _callSession.onLocalStreamReceived = _addLocalMediaStream;
-    _callSession.onRemoteStreamReceived = _addRemoteMediaStream;
-    _callSession.onSessionClosed = _onSessionClosed;
-    _statsReportsManager.init(_callSession);
+    // _callSession.onRemoteStreamReceived = _addRemoteMediaStream;
+    // _callSession.onSessionClosed = _onSessionClosed;
+    // _statsReportsManager.init(_callSession);
     print("init");
   }
 
   @override
   void dispose() {
     try {
-      CallManager.instance.hungUp();
+      stream?.getTracks().forEach(
+            (element) => element.stop(),
+          );
+      stream?.dispose();
+      // CallManager.instance.hungUp();
 
       primaryRenderer?.value.srcObject = null;
       primaryRenderer?.value.dispose();
@@ -387,30 +405,31 @@ class _BodyLayoutState extends State<BodyLayout> {
         'optional': [],
       }
     };
-    var stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
+    stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
     _callSession.localStream = stream;
-    _addMediaStream(_currentUserId, stream);
+    _addMediaStream(_currentUserId, stream!);
     return Future.value(true);
   }
 
-  void _addRemoteMediaStream(session, int userId, MediaStream stream) {
-    // log("_addRemoteMediaStream for user $userId", TAG);
+  MediaStream? stream;
+  // void _addRemoteMediaStream(session, int userId, MediaStream stream) {
+  //   // log("_addRemoteMediaStream for user $userId", TAG);
 
-    _addMediaStream(userId, stream);
-  }
+  //   _addMediaStream(userId, stream);
+  // }
 
-  void _onSessionClosed(session) {
-    // log("_onSessionClosed", TAG);
+  // void _onSessionClosed(session) {
+  //   // log("_onSessionClosed", TAG);
 
-    _statsReportsManager.dispose();
+  //   _statsReportsManager.dispose();
 
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => LoginScreen(),
-    //   ),
-    // );
-  }
+  //   // Navigator.pushReplacement(
+  //   //   context,
+  //   //   MaterialPageRoute(
+  //   //     builder: (context) => LoginScreen(),
+  //   //   ),
+  //   // );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -495,11 +514,16 @@ class _BodyLayoutState extends State<BodyLayout> {
                                                 widget.interviewInfo, "")) {
                                       // _selectedUsers.add(_currentUserId);
                                       _selectedUsers.add(cubeUser.id!);
+                                      _callSession.localStream = null;
+                                      _callSession.opponentsIds
+                                          .addAll(_selectedUsers);
+                                      Navigator.pop(context);
+
                                       CallManager.instance.startNewCall(
                                           NavigationService
                                               .navigatorKey.currentContext!,
                                           CallType.VIDEO_CALL,
-                                          _selectedUsers);
+                                          _selectedUsers, _callSession);
                                     } else {
                                       Toastify.show(
                                           context,
@@ -510,12 +534,15 @@ class _BodyLayoutState extends State<BodyLayout> {
                                     }
                                   } else {
                                     _selectedUsers.add(cubeUser.id!);
-                                    // Navigator.pop(context);
+                                    _callSession.localStream = null;
+                                    _callSession.opponentsIds
+                                        .addAll(_selectedUsers);
+                                    Navigator.pop(context);
                                     CallManager.instance.startNewCall(
                                         NavigationService
                                             .navigatorKey.currentContext!,
                                         CallType.VIDEO_CALL,
-                                        _selectedUsers);
+                                        _selectedUsers, _callSession);
                                   }
                                 });
                               },
