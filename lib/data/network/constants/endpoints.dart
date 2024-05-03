@@ -249,5 +249,5 @@ class Endpoints {
   static const String disableInterview = "$baseUrl/api/interview/{interviewId}/disable";
   static const String postInterview = "$baseUrl/api/interview";
 
-  static const String checkAvail = "$baseUrl/api/meeting-room/check-availability";
+  static const String checkAvail = "$baseUrl/meeting-room/check-availability";
 }

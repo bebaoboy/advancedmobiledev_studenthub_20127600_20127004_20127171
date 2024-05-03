@@ -262,7 +262,7 @@ class LoggingInterceptor extends Interceptor {
 
   void _prettyPrintJson(Object input) {
     String prettyString = encoder.convert(input);
-    logPrint!('<-- Response payload');
+    logPrint!('<-- Response result: ${prettyString.split('\n').length} item');
     if (prettyString.length > 1000) {
       logPrint!(
           input.toString().substring(0, min(1000, input.toString().length)));

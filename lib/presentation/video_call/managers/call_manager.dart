@@ -8,7 +8,9 @@ import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
 import 'package:universal_io/io.dart';
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/core/widgets/pip/pip_params.dart';
@@ -142,19 +144,24 @@ class CallManager {
     };
   }
 
+  @observable
+  static bool inAppPip = false;
+
   void startPreviewMeeting(BuildContext context, int callType,
-      Set<int> opponents, InterviewSchedule interviewSchedule) async {
+      Set<int> opponents, InterviewSchedule interviewSchedule,
+      {bool useInAppPip = true}) async {
     if (CubeSessionManager.instance.activeSession == null ||
         CubeSessionManager.instance.activeSession!.user == null) return;
     if (opponents.isEmpty) return;
 
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
     P2PSession callSession =
         _callClient!.createCallSession(callType, opponents);
     _currentCall = callSession;
     log(CubeSessionManager.instance.activeSession.toString());
+    inAppPip = useInAppPip;
 
     bool isProduction = const bool.fromEnvironment('dart.vm.product');
 
@@ -208,21 +215,14 @@ class CallManager {
 
   void startPreviewMeetingIncomingCall(BuildContext context, int callType,
       Set<int> opponents, P2PSession? currentCall,
-      {required bool fromCallkit}) async {
+      {required bool fromCallkit, bool useInAppPip = true}) async {
     if (opponents.isEmpty || currentCall == null) return;
 
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
 
-    if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
-      _currentCall?.acceptCall();
-    }
-
-    if (!fromCallkit) {
-      ConnectycubeFlutterCallKit.reportCallAccepted(
-          sessionId: currentCall.sessionId);
-    }
+    inAppPip = useInAppPip;
 
     Navigator.of(context).push(MaterialPageRoute2(
         routeName:
@@ -231,7 +231,8 @@ class CallManager {
   }
 
   void startNewCall(BuildContext context, int callType, Set<int> opponents,
-      P2PSession callSession) async {
+      P2PSession callSession,
+      {bool incoming = false, required bool fromCallkit}) async {
     if (opponents.isEmpty) return;
 
     if (Platform.isIOS) {
@@ -241,40 +242,56 @@ class CallManager {
     // P2PSession callSession =
     //     _callClient!.createCallSession(callType, opponents);
     _currentCall = callSession;
-    PictureInPicture.updatePiPParams(
-      pipParams: PiPParams(
-        pipWindowHeight: MediaQuery.of(context).size.height * 0.95,
-        pipWindowWidth: MediaQuery.of(context).size.width * 0.95,
-        bottomSpace: 64,
-        leftSpace: 64,
-        rightSpace: 64,
-        topSpace: 64,
-        minSize: Size((MediaQuery.of(context).size.width * 0.95) / 2,
-            (MediaQuery.of(context).size.height * 0.95) / 2),
-        maxSize: MediaQuery.of(context).size,
-        movable: true,
-        resizable: true,
-        initialCorner: PIPViewCorner.topLeft,
-        openWidgetOnClose: false,
-      ),
-    );
-    PictureInPicture.startPiP(
-        pipWidget: NavigatablePiPWidget(
-            onPiPClose: () {
-              //Handle closing events e.g. dispose controllers.
-              // _enableScreenSharing = false;
-              // _toggleScreenSharing();
-              hungUp();
-            },
-            elevation: 10, //Optional
-            pipBorderRadius: 10,
-            builder: (context) => ConversationCallScreen(callSession, false)));
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(
-    //     builder: (context) => ConversationCallScreen(callSession, false),
-    //   ),
-    // );
+
+    if (incoming) {
+      // TODO: put 2 of this somewhere else
+      if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
+        _currentCall?.acceptCall();
+      }
+      if (!fromCallkit) {
+        ConnectycubeFlutterCallKit.reportCallAccepted(
+            sessionId: _currentCall!.sessionId);
+      }
+    }
+
+    if (inAppPip) {
+      PictureInPicture.updatePiPParams(
+        pipParams: PiPParams(
+          pipWindowHeight: MediaQuery.of(context).size.height * 0.95,
+          pipWindowWidth: MediaQuery.of(context).size.width * 0.95,
+          bottomSpace: 64,
+          leftSpace: 64,
+          rightSpace: 64,
+          topSpace: 64,
+          minSize: Size((MediaQuery.of(context).size.width * 0.95) * 0.3,
+              (MediaQuery.of(context).size.height * 0.95) * 0.4),
+          maxSize: MediaQuery.of(context).size,
+          movable: true,
+          resizable: true,
+          initialCorner: PIPViewCorner.topLeft,
+          openWidgetOnClose: false,
+        ),
+      );
+      PictureInPicture.startPiP(
+          pipWidget: NavigatablePiPWidget(
+              onPiPClose: () {
+                //Handle closing events e.g. dispose controllers.
+                // _enableScreenSharing = false;
+                // _toggleScreenSharing();
+                hungUp();
+              },
+              elevation: 10, //Optional
+              pipBorderRadius: 10,
+              builder: (context) =>
+                  ConversationCallScreen(callSession, false)));
+    } else {
+      Navigator.push(
+        NavigationService.navigatorKey.currentContext ?? context,
+        MaterialPageRoute(
+          builder: (context) => ConversationCallScreen(callSession, false),
+        ),
+      );
+    }
 
     _sendStartCallSignalForOffliners(_currentCall!);
   }

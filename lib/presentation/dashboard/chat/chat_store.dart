@@ -170,11 +170,7 @@ abstract class _ChatStore with Store {
         //   //     pp.messages?.first.updatedAt ?? pp.messages?.first.createdAt;
         // }
         insertMessage(user, project, m, false, incoming: true);
-        var c = messages.fold(0, (sum, item) => sum + item.newMessageCount);
-        if (c > 0) {
-          NavbarNotifier2.updateBadge(
-              2, NavbarBadge(showBadge: true, badgeText: "$c"));
-        }
+
         // ignore: invalid_use_of_protected_member
         _messages.sort(
           (a, b) => (b.messages == null || a.messages == null)
@@ -262,11 +258,6 @@ abstract class _ChatStore with Store {
         // }
         insertMessage(user, project, m, false, incoming: true);
 
-        var c = messages.fold(0, (sum, item) => sum + item.newMessageCount);
-        if (c > 0) {
-          NavbarNotifier2.updateBadge(
-              2, NavbarBadge(showBadge: true, badgeText: "$c"));
-        }
         // ignore: invalid_use_of_protected_member
         return m;
       }
@@ -319,9 +310,10 @@ abstract class _ChatStore with Store {
   @observable
   ObservableFuture<Response?> checkFuture = emptyCheckResponse;
 
+  /// for check availability meeting
   bool get isChecking => checkFuture.status == FutureStatus.pending;
 
-  @observable
+  /// for checking code from student
   String meetingCode = '';
 
   void setCode(String value) {
@@ -523,7 +515,8 @@ abstract class _ChatStore with Store {
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
-                  ? ((message as ScheduleMessageType).metadata?["title"] ?? (message).id)
+                  ? ((message as ScheduleMessageType).metadata?["title"] ??
+                      (message).id)
                   : message.type == AbstractMessageType.text
                       ? (message as AbstractTextMessage).text
                       : "type not supported",
@@ -544,7 +537,8 @@ abstract class _ChatStore with Store {
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
-                  ? ((message as ScheduleMessageType).metadata?["title"] ?? (message).id)
+                  ? ((message as ScheduleMessageType).metadata?["title"] ??
+                      (message).id)
                   : message.type == AbstractMessageType.text
                       ? (message as AbstractTextMessage).text
                       : "type not supported",
@@ -564,9 +558,41 @@ abstract class _ChatStore with Store {
               : b.messages!.first.updatedAt!
                   .compareTo(a.messages!.first.updatedAt!),
         );
+      } else {
+        _messages.insert(
+            0,
+            WrapMessageList(chatUser: user, project: project, messages: [
+              MessageObject(
+                  createdAt: DateTime.fromMillisecondsSinceEpoch(
+                      message.createdAt ??
+                          DateTime.now().millisecondsSinceEpoch),
+                  updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                      message.updatedAt ??
+                          DateTime.now().millisecondsSinceEpoch),
+                  project: project,
+                  id: message.id,
+                  content: message.type == AbstractMessageType.schedule
+                      ? ((message as ScheduleMessageType).metadata?["title"] ??
+                          (message).id)
+                      : message.type == AbstractMessageType.text
+                          ? (message as AbstractTextMessage).text
+                          : "type not supported",
+                  receiver: Profile(objectId: "-1", name: "null"),
+                  interviewSchedule:
+                      message.type == AbstractMessageType.schedule
+                          ? InterviewSchedule.fromJsonApi(message.metadata!)
+                          : null,
+                  sender: Profile(
+                      objectId: user.id, name: user.firstName ?? "null"))
+            ]));
       }
     } else {
       currentProjectMessageMap[project.objectId!]?[user.id]?.insert(0, message);
+    }
+    var c = messages.fold(0, (sum, item) => sum + item.newMessageCount);
+    if (c > 0) {
+      NavbarNotifier2.updateBadge(
+          2, NavbarBadge(showBadge: true, badgeText: "$c"));
     }
   }
 
@@ -612,6 +638,7 @@ abstract class _ChatStore with Store {
                     null) {
               print("add msg because $userId not have");
               _messages.insert(0, chatObject..messages = []);
+              _messages.first.lastSeenTime = DateTime(0);
             }
             _currentProjectMessages[projectId]![userId] = value;
 
@@ -753,15 +780,20 @@ abstract class _ChatStore with Store {
 
   Future<bool> checkMeetingAvailability(
       InterviewSchedule info, String projectId) async {
+    if (!canCall) {
+      errorStore.errorMessage = "Empty code";
+      return Future.value(false);
+    }
     try {
       var params = InterviewParams(
-          info.objectId, "", info.meetingRoomId, info.meetingRoomCode,
+          info.objectId, "", info.meetingRoomId, meetingCode,
           title: info.title,
           startDate: info.startDate.toIso8601String(),
           endDate: info.endDate.toIso8601String());
 
       var future = _checkAvailUseCase.call(params: params);
       checkFuture = ObservableFuture(future);
+      await checkFuture;
 
       var response = await future;
       if (response.statusCode == HttpStatus.accepted ||
@@ -769,7 +801,8 @@ abstract class _ChatStore with Store {
           response.statusCode == HttpStatus.ok) {
         return true;
       } else {
-        errorStore.errorMessage = response.data['errorDetails'];
+        print(response.data['errorDetails']);
+        errorStore.errorMessage = "Wrong meeting code!";
         return false;
       }
     } catch (e) {

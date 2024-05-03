@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_downloader/flutter_file_downloader.dart';
@@ -50,7 +51,7 @@ class FilePreview {
               name: "file_${isCV ? "resume" : "transcript"}", //(optional)
               onProgress: (String? fileName, double progress) {
                 print('FILE fileName HAS PROGRESS $progress');
-                return "";
+                return;
               },
               onDownloadCompleted: (String path) {
                 print('FILE DOWNLOADED TO PATH: $path');
@@ -149,7 +150,7 @@ class FilePreview {
           try {} catch (e) {
             print("File type not supported");
           }
-          if (Platform.isIOS) {
+          if (!kIsWeb && Platform.isIOS) {
             final Uint8List byteList =
                 await _channel.invokeMethod('getThumbnail', filePath);
             return Image.memory(byteList);

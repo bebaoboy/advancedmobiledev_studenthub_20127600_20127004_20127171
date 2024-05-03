@@ -32,7 +32,6 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen>
     with SingleTickerProviderStateMixin {
-  final int _selectedIndex = 1;
 
   final UserStore _userStore = getIt<UserStore>();
   final _chatStore = getIt<ChatStore>();
@@ -54,13 +53,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     Future.delayed(const Duration(seconds: 3), () {
       _chatStore.getAllChat();
     });
-    _pageController.addListener(
-      () {
-        setState(() {
-          pageValue = _pageController.page ?? 0;
-        });
-      },
-    );
     sc = [for (int i = 0; i < 4; i++) ScrollController()];
     for (var element in sc) {
       element.addListener(
@@ -126,7 +118,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   //   });
   // }
 
-  List<Widget> children = [];
   List<NavbarItem> items = [];
   List<Map<String, Widget>> _routes = [];
   DateTime oldTime = DateTime.now();
@@ -135,20 +126,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   final LanguageStore _languageStore = getIt<LanguageStore>();
   // late int currentPage;
   // late TabController tabController;
-  final List<Color> colors = [
-    Colors.yellow,
-    Colors.green,
-    Colors.blue,
-    Colors.pink
-  ];
-  int selectedIndex = 0;
-  final bool _colorful = false;
-
-  double pageValue = 0;
-  //scale factor
-  final double _scaleFactor = .8;
-  //view page height
-  final double _height = 230.0;
 
   initItems() {
     items = [
@@ -191,7 +168,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       appBar: _buildAppBar(),
       body: NavbarRouter2(
         pageController: _pageController2,
-        initialIndex: 1,
+        initialIndex: 3,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
           return Center(

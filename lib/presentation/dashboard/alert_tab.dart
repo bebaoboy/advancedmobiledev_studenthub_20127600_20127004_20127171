@@ -2,33 +2,37 @@
 
 import 'dart:math';
 
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:animated_list_plus/transitions.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/easy_date_timeline.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/src/easy_infinite_date_time/widgets/easy_infinite_date_timeline_controller.dart';
-import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/dashboard/components/offer_detail_page.dart';
+import 'package:boilerplate/presentation/dashboard/dashboard.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
+import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/notification/store/notification_store.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
-import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:exprollable_page_view/exprollable_page_view.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
+import 'package:stacked_notification_cards/stacked_notification_cards.dart';
 import 'package:toastification/toastification.dart';
+import 'package:badges/badges.dart' as badges;
 
 var colorss = [
   Colors.red,
@@ -206,11 +210,6 @@ class _AlertTabState extends State<AlertTab> {
   bool hasOfferProposal = false;
 
   late Future<List<NotificationObject>> future;
-  List<NotificationObject> alerts = [];
-  List<NotificationObject> viewOffers = [],
-      texts = [],
-      messages = [],
-      joinInterviews = [];
 
   List<Proposal> getOffer() {
     if (hasOfferProposal) {
@@ -225,82 +224,14 @@ class _AlertTabState extends State<AlertTab> {
     }
   }
 
-  List<NotificationObject> notiList = [];
   initNotiList() {
-    joinInterviews = notiList
-        .where(
-      (element) => element.type == NotificationType.joinInterview,
-    )
-        .where((element) {
-      var date = element.createdAt;
-      if (date == null) return false;
-      if (date.day == selectedDate.day &&
-          date.month == selectedDate.month &&
-          date.year == selectedDate.year) {
-        return true;
-      }
-      return false;
-    }).toList();
-
-    viewOffers = notiList
-        .where(
-      (element) => element.type == NotificationType.viewOffer,
-    )
-        .where((element) {
-      var date = element.createdAt;
-      if (date == null) return false;
-      if (date.day == selectedDate.day &&
-          date.month == selectedDate.month &&
-          date.year == selectedDate.year) {
-        return true;
-      }
-      return false;
-    }).toList();
-
-    joinInterviews = notiList
-        .where(
-      (element) => element.type == NotificationType.text,
-    )
-        .where((element) {
-      var date = element.createdAt;
-      if (date == null) return false;
-      if (date.day == selectedDate.day &&
-          date.month == selectedDate.month &&
-          date.year == selectedDate.year) {
-        return true;
-      }
-      return false;
-    }).toList();
-
-    joinInterviews = notiList
-        .where(
-      (element) => element.type == NotificationType.message,
-    )
-        .where((element) {
-      var date = element.createdAt;
-      if (date == null) return false;
-      if (date.day == selectedDate.day &&
-          date.month == selectedDate.month &&
-          date.year == selectedDate.year) {
-        return true;
-      }
-      return false;
-    }).toList();
+    notiStore.categorize(activeDates);
   }
 
   @override
   void initState() {
     super.initState();
-    future = notiStore.getNoti(receiverId: userStore.user!.objectId ?? "");
 
-    future.then((notificationList) {
-      // TODO: phân noti theo ngày
-      notiList = notificationList;
-      initNotiList();
-      if (mounted) {
-        setState(() {});
-      }
-    });
     hasOfferProposal = userStore.user != null &&
         userStore.user!.studentProfile != null &&
         userStore.user!.studentProfile!.proposalProjects != null &&
@@ -315,6 +246,23 @@ class _AlertTabState extends State<AlertTab> {
     activeDates
         .addAll([for (int i = -7; i < 7; i++) today.add(Duration(days: i))]);
     print(activeDates);
+    pages = List.filled(activeDates.length, null);
+
+    future = notiStore
+        .getNoti(
+            receiverId: userStore.user!.objectId ?? "",
+            activeDates: activeDates)
+        .whenComplete(
+      () {
+        print("move");
+        Future.delayed(const Duration(seconds: 1), () {
+          setState(() {
+            alertPageController.move(7, animation: false);
+          });
+        });
+      },
+    );
+
     showTime = List.filled(activeDates.length, true);
 
     Future.delayed(const Duration(seconds: 1), () {
@@ -322,7 +270,9 @@ class _AlertTabState extends State<AlertTab> {
     });
     dateStyle = datePickerStyle;
     monthStyle = monthPickerStyle;
-    listController = List.filled(activeDates.length, ScrollController());
+    listController =
+        List.generate(activeDates.length, (_) => ScrollController());
+
     for (var element in listController) {
       element.addListener(
         () {
@@ -352,80 +302,97 @@ class _AlertTabState extends State<AlertTab> {
 
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
-      return InkWell(
-        child: Stack(
-          children: [
-            for (int index = getOffer().length - 1; index >= 0; index--)
-              Center(
-                child: Container(
-                  margin: EdgeInsets.only(
-                      left: index == 1 ? 10 : 15, right: index == 2 ? 7 : 15),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: HeroFlutterLogo(
-                      color: index == 2 ? Colors.white : colors[index],
-                      tag: index,
-                      size: 145,
-                      onTap: () {
-                        if (userStore.user != null &&
-                            userStore.user!.type != UserType.student) {
-                          return;
-                        }
-                        print(index);
-                        NavbarNotifier2.hideBottomNavBar = true;
+      return Tooltip(
+        message: "${getOffer().length} offers",
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        verticalOffset: 60,
+        child: InkWell(
+          child: badges.Badge(
+            badgeContent: Text(
+              getOffer().length.toString(),
+              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
+            ),
+            position: badges.BadgePosition.topStart(start: 10, top: -10),
+            badgeStyle: badges.BadgeStyle(
+                badgeColor: Theme.of(context).colorScheme.primary),
+            child: Stack(
+              children: [
+                for (int index = getOffer().length - 1; index >= 0; index--)
+                  Center(
+                    child: Container(
+                      margin: EdgeInsets.only(
+                          left: index == 1 ? 10 : 15,
+                          right: index == 2 ? 7 : 15),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: HeroFlutterLogo(
+                          color: index == 2 ? Colors.white : colors[index],
+                          tag: index,
+                          size: 145,
+                          onTap: () {
+                            if (userStore.user != null &&
+                                userStore.user!.type != UserType.student) {
+                              return;
+                            }
+                            print(index);
+                            NavbarNotifier2.hideBottomNavBar = true;
 
-                        Navigator.of(
-                                NavigationService.navigatorKey.currentContext ??
+                            Navigator.of(NavigationService
+                                        .navigatorKey.currentContext ??
                                     context)
-                            .push(
-                          ModalExprollableRouteBuilder(
-                              pageBuilder: (_, __, ___) => OfferDetailsDialog(
-                                    index: index,
-                                    proposal: getOffer(),
-                                    onAcceptCallback: (proposal) {
-                                      var userStore = getIt<UserStore>();
-                                      var id = userStore
-                                          .user?.studentProfile?.objectId;
-                                      if (id != null && proposal != null) {
-                                        projectStore
-                                            .updateProposal(proposal, id)
-                                            .then(
-                                          (value) {
-                                            Toastify.show(
-                                                context,
-                                                "",
-                                                "Succeed!",
-                                                aboveNavbar: !NavbarNotifier2
-                                                    .isNavbarHidden,
-                                                ToastificationType.success,
-                                                () {});
-                                            setState(() {});
-                                          },
-                                        );
-                                      }
-                                    },
-                                  ),
-                              // Increase the transition durations and take a closer look at what's going on!
-                              transitionDuration:
-                                  const Duration(milliseconds: 500),
-                              reverseTransitionDuration:
-                                  const Duration(milliseconds: 300),
-                              // The next two lines are not required, but are recommended for better performance.
-                              dismissThresholdInset:
-                                  const DismissThresholdInset(
-                                      dragMargin: 10000)),
-                        )
-                            .then(
-                          (value) {
-                            NavbarNotifier2.hideBottomNavBar = false;
+                                .push(
+                              ModalExprollableRouteBuilder(
+                                  pageBuilder: (_, __, ___) =>
+                                      OfferDetailsDialog(
+                                        index: index,
+                                        proposal: getOffer(),
+                                        onAcceptCallback: (proposal) {
+                                          var userStore = getIt<UserStore>();
+                                          var id = userStore
+                                              .user?.studentProfile?.objectId;
+                                          if (id != null && proposal != null) {
+                                            projectStore
+                                                .updateProposal(proposal, id)
+                                                .then(
+                                              (value) {
+                                                Toastify.show(
+                                                    context,
+                                                    "",
+                                                    "Succeed!",
+                                                    aboveNavbar:
+                                                        !NavbarNotifier2
+                                                            .isNavbarHidden,
+                                                    ToastificationType.success,
+                                                    () {});
+                                                setState(() {});
+                                              },
+                                            );
+                                          }
+                                        },
+                                      ),
+                                  // Increase the transition durations and take a closer look at what's going on!
+                                  transitionDuration:
+                                      const Duration(milliseconds: 500),
+                                  reverseTransitionDuration:
+                                      const Duration(milliseconds: 300),
+                                  // The next two lines are not required, but are recommended for better performance.
+                                  dismissThresholdInset:
+                                      const DismissThresholdInset(
+                                          dragMargin: 10000)),
+                            )
+                                .then(
+                              (value) {
+                                NavbarNotifier2.hideBottomNavBar = false;
+                              },
+                            );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
-                ),
-              )
-          ],
+              ],
+            ),
+          ),
         ),
       );
 
@@ -552,6 +519,7 @@ class _AlertTabState extends State<AlertTab> {
   List<bool> showTime = [];
 
   _datePickerSection() {
+    print("build date");
     return Container(
         // decoration: BoxDecoration(
         //     border: Border.all(
@@ -629,6 +597,8 @@ class _AlertTabState extends State<AlertTab> {
     // );
   }
 
+  late List<Widget?> pages;
+
   Widget _buildAlertsContent() {
     return Stack(children: [
       Container(
@@ -642,587 +612,88 @@ class _AlertTabState extends State<AlertTab> {
           margin: const EdgeInsets.only(top: 10, left: 120),
           height: 110,
           child: _datePickerSection()),
-      Container(
-        margin: const EdgeInsets.only(top: 120),
-        height: MediaQuery.of(context).size.height * 0.9,
-        child: TransformerPageView(
-          itemCount: activeDates.length,
-          index: 7, // middle page
-          controller: alertPageController,
-          transformer: DepthPageTransformer(),
-          onPageChanged: (value) {
-            dateController.animateToDate(activeDates[value ?? 0]);
-            setState(() {
-              selectedDate = activeDates[value ?? 0];
-            });
-            initNotiList();
+      FutureBuilder(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Container(
+              margin: const EdgeInsets.only(top: 120),
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: TransformerPageView(
+                itemCount: activeDates.length,
+                index: 7, // middle page
+                controller: alertPageController,
+                transformer: DepthPageTransformer(),
+                onPageChanged: (value) {
+                  dateController.animateToDate(activeDates[value ?? 0]);
+                  setState(() {
+                    selectedDate = activeDates[value ?? 0];
+                  });
 
-            print(selectedDate);
-          },
-          itemBuilder: (context, i) {
-            return SingleChildScrollView(
-              controller: listController[i],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "New",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline1!
-                        .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: joinInterviews.length,
-                    itemBuilder: (context, index) {
-                      return CustomFollowNotification(
-                        notificationObject: joinInterviews[index],
-                        showTime: showTime[i],
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Today",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline1!
-                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
+                  print(selectedDate);
+                },
+                itemBuilder: (context, i) {
+                  print("build explorable pv");
+                  return KeepAlivePage(
+                    key: PageStorageKey("alert_$i"),
+                    AlertPage(
+                      listController: listController[i],
+                      joinInterviews: notiStore.joinInterviews![i],
+                      viewOffers: notiStore.viewOffers![i],
+                      messages: notiStore.messages![i],
+                      texts: notiStore.texts![i],
                     ),
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: viewOffers.length,
-                    itemBuilder: (context, index) {
-                      return CustomFollowNotification(
-                        notificationObject: viewOffers[index],
-                        showTime: showTime[i],
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Older",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline1!
-                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: texts.length,
-                    itemBuilder: (context, index) {
-                      return CustomLikedNotifcation(
-                        notificationObject: texts[index],
-                        showTime: showTime[i],
-                      );
-                    },
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text(
-                      "Oldest",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline1!
-                          .copyWith(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      return CustomLikedNotifcation(
-                        notificationObject: messages[index],
-                        showTime: showTime[i],
-                      );
-                    },
-                  ),
-                ],
+                  );
+
+                  // ListView.separated(
+                  //     controller: listController[index],
+                  //     itemCount: alerts.length,
+                  //     separatorBuilder: (context, index) =>
+                  //         const Divider(color: Colors.black),
+                  //     itemBuilder: (context, index) {
+                  //       return GestureDetector(
+                  //         onTap: () {
+                  //           //print('Tile clicked');
+                  //           // You can replace the print statement with your function
+                  //         },
+                  //         child: ListTile(
+                  //           leading: Icon(alerts[index]['icon']),
+                  //           title: Text(alerts[index]['title']),
+                  //           subtitle: Text(alerts[index]['subtitle']),
+                  //           trailing: alerts[index]['action'] != null
+                  //               ? ElevatedButton(
+                  //                   onPressed: () {
+                  //                     //print('${alerts[index]['action']} button clicked');
+                  //                     if (alerts[index]['action'] != null) {
+                  //                       if (alerts[index]['action'] == "Join") {
+                  //                         Navigator.of(NavigationService
+                  //                                 .navigatorKey.currentContext!)
+                  //                             .push(MaterialPageRoute2(
+                  //                                 routeName: Routes.message,
+                  //                                 arguments: "Javis - AI Copilot"));
+                  //                       } else if (alerts[index]['action'] ==
+                  //                           "View offer") {
+                  //                         // showOfferDetailsDialog(context, 2);
+                  //                         // NavbarNotifier2.hideBottomNavBar = true;
+                  //                       }
+                  //                     }
+                  //                     // You can replace the print statement with your function
+                  //                   },
+                  //                   child: Text(Lang.get(alerts[index]['action'])),
+                  //                 )
+                  //               : null,
+                  //         ),
+                  //       );
+                  //     });
+                },
               ),
             );
-
-            // ListView.separated(
-            //     controller: listController[index],
-            //     itemCount: alerts.length,
-            //     separatorBuilder: (context, index) =>
-            //         const Divider(color: Colors.black),
-            //     itemBuilder: (context, index) {
-            //       return GestureDetector(
-            //         onTap: () {
-            //           //print('Tile clicked');
-            //           // You can replace the print statement with your function
-            //         },
-            //         child: ListTile(
-            //           leading: Icon(alerts[index]['icon']),
-            //           title: Text(alerts[index]['title']),
-            //           subtitle: Text(alerts[index]['subtitle']),
-            //           trailing: alerts[index]['action'] != null
-            //               ? ElevatedButton(
-            //                   onPressed: () {
-            //                     //print('${alerts[index]['action']} button clicked');
-            //                     if (alerts[index]['action'] != null) {
-            //                       if (alerts[index]['action'] == "Join") {
-            //                         Navigator.of(NavigationService
-            //                                 .navigatorKey.currentContext!)
-            //                             .push(MaterialPageRoute2(
-            //                                 routeName: Routes.message,
-            //                                 arguments: "Javis - AI Copilot"));
-            //                       } else if (alerts[index]['action'] ==
-            //                           "View offer") {
-            //                         // showOfferDetailsDialog(context, 2);
-            //                         // NavbarNotifier2.hideBottomNavBar = true;
-            //                       }
-            //                     }
-            //                     // You can replace the print statement with your function
-            //                   },
-            //                   child: Text(Lang.get(alerts[index]['action'])),
-            //                 )
-            //               : null,
-            //         ),
-            //       );
-            //     });
-          },
-        ),
-      ),
+          } else {
+            return const LoadingScreenWidget();
+          }
+        },
+      )
     ]);
-  }
-}
-
-class OfferDetailsDialog extends StatefulWidget {
-  const OfferDetailsDialog({
-    super.key,
-    required this.index,
-    required this.proposal,
-    required this.onAcceptCallback,
-  });
-
-  final int index;
-  final List<Proposal> proposal;
-  final Function(Proposal?) onAcceptCallback;
-
-  @override
-  State<StatefulWidget> createState() => _OfferDetailsDialogState();
-}
-
-class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
-  late final ExprollablePageController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = ExprollablePageController(
-        initialPage: widget.index,
-        viewportConfiguration: ViewportConfiguration(
-          extraSnapInsets: [
-            const ViewportInset.fractional(0.2),
-          ],
-          extendPage: true,
-          overshootEffect: true,
-        ));
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    controller.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ExprollablePageView(
-        controller: controller,
-        itemCount: widget.proposal.length,
-        itemBuilder: (context, page) {
-          return PageGutter(
-              gutterWidth: 8,
-              child: Stack(
-                children: [
-                  Card(
-                      margin: EdgeInsets.zero,
-                      clipBehavior: Clip.antiAlias,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
-                        ),
-                      ),
-                      child: Stack(children: [
-                        Container(
-                          margin: const EdgeInsets.only(top: 00),
-                          child: ListView.builder(
-                            controller: PageContentScrollController.of(context),
-                            itemCount: 4,
-                            itemBuilder: (_, index) {
-                              if (index == 0) {
-                                return Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(left: 35),
-                                      child: Text(
-                                          "${widget.proposal[page].isHired ? "Accepted" : Lang.get("new_offer")} #$page"),
-                                    ),
-                                    const Align(
-                                        alignment: Alignment.topRight,
-                                        child: CloseButton()),
-                                  ],
-                                );
-                              }
-                              if (index == 1) {
-                                return Container(
-                                  margin:
-                                      const EdgeInsets.fromLTRB(30, 10, 30, 30),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(25),
-                                    child: HeroFlutterLogo(
-                                      color: colors[page],
-                                      tag: page,
-                                      size: MediaQuery.of(context).size.height *
-                                          0.4,
-                                      onTap: () => Navigator.of(context).pop(),
-                                    ),
-                                  ),
-                                );
-                              } else if (index == 2) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 0.0, horizontal: 10),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: <Widget>[
-                                      Center(
-                                        child: Text(
-                                          "Project Name: \n${widget.proposal[page].project?.title}",
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyLarge
-                                              ?.copyWith(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 18),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Center(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20.0, vertical: 20),
-                                          child: Text(
-                                            "${widget.proposal[page].coverLetter} \n${Lang.get('profile_common_body')}\n",
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Align(
-                                        alignment: Alignment.bottomRight,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor:
-                                                    Theme.of(context)
-                                                        .colorScheme
-                                                        .primaryContainer,
-                                                surfaceTintColor:
-                                                    Colors.transparent,
-                                                minimumSize: Size(
-                                                    MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            2 -
-                                                        48,
-                                                    40), // NEW
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                // Navigator.of(context).pushNamed(
-                                                //     Routes.submitProposal,
-                                                //     arguments: widget.project);
-                                              },
-                                              child: Text(
-                                                Lang.get('save'),
-                                                style: Theme.of(context)
-                                                    .textTheme
-                                                    .bodyMedium!
-                                                    .merge(TextStyle(
-                                                        color: Theme.of(context)
-                                                            .colorScheme
-                                                            .secondary)),
-                                              ),
-                                            ),
-                                            if (widget.proposal[page]
-                                                    .hiredStatus ==
-                                                HireStatus.offer)
-                                              ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .primaryContainer,
-                                                  surfaceTintColor:
-                                                      Colors.transparent,
-                                                  minimumSize: Size(
-                                                      MediaQuery.of(context)
-                                                                  .size
-                                                                  .width /
-                                                              2 -
-                                                          48,
-                                                      40), // NEW
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            12),
-                                                  ),
-                                                ),
-                                                onPressed: () async {
-                                                  // Navigator.of(context).pushNamed(
-                                                  //     Routes.submitProposal,
-                                                  //     arguments: widget.project);
-                                                  AnimatedDialog
-                                                      .showAnimatedDialog(
-                                                    context,
-                                                    onClose: (p0) =>
-                                                        setState(() {}),
-                                                    contentTextAlign:
-                                                        TextAlign.center,
-                                                    contentText:
-                                                        'You can\'t undo this',
-                                                    title: "Accept this offer?",
-                                                    color: Colors.white,
-                                                    dialogWidth:
-                                                        kIsWeb ? 0.3 : null,
-                                                    lottieBuilder: Lottie.asset(
-                                                      'assets/animations/loading_animation.json',
-                                                      fit: BoxFit.contain,
-                                                    ),
-                                                    positiveText: "Delete",
-                                                    positiveIcon:
-                                                        Icons.delete_forever,
-                                                    onPositiveClick: (context) {
-                                                      widget.proposal[page]
-                                                              .hiredStatus =
-                                                          HireStatus.hired;
-                                                      widget.onAcceptCallback(
-                                                          widget
-                                                              .proposal[page]);
-                                                    },
-                                                    negativeText: "Cancel",
-                                                    negativeIcon:
-                                                        Icons.close_sharp,
-                                                    onNegativeClick: (context) {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                    },
-                                                  );
-                                                },
-                                                child: Text(
-                                                  Lang.get('accept_offer'),
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .merge(TextStyle(
-                                                          color:
-                                                              Theme.of(context)
-                                                                  .colorScheme
-                                                                  .secondary)),
-                                                ),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 10,
-                                      ),
-                                      Text(
-                                        Lang.get('profile_question_title_1'),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
-                                      ),
-                                      const SizedBox(
-                                        height: 50,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Center(
-                                            child: Text(
-                                              Lang.get(
-                                                  'profile_question_title_4'),
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            Lang.get('profile_common_body'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            Lang.get(
-                                                'profile_question_title_4'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            Lang.get('profile_common_body'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 25,
-                                      ),
-                                      // _buildEmailField(context),
-                                      // const SizedBox(
-                                      //   height: 25,
-                                      // ),
-                                      Text(
-                                        Lang.get('profile_common_body'),
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyLarge,
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            Lang.get(
-                                                'profile_question_title_4'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            Lang.get('profile_common_body'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 15,
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            Lang.get(
-                                                'profile_question_title_4'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodySmall,
-                                          ),
-                                          const SizedBox(
-                                            height: 8,
-                                          ),
-                                          Text(
-                                            Lang.get('profile_common_body'),
-                                            style: Theme.of(context)
-                                                .textTheme
-                                                .bodyLarge,
-                                          )
-                                        ],
-                                      ),
-                                      const SizedBox(
-                                        height: 25,
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                              return const ListTile(
-                                  // onTap: () =>
-                                  //     debugPrint("onTap(index=$index, page=$index)"),
-                                  // title: Text("Item#$index"),
-                                  // subtitle: Text("Page#$index"),
-                                  );
-                            },
-                          ),
-                        ),
-                      ])),
-                ],
-              ));
-        });
-  }
-}
-
-class CloseButton extends StatelessWidget {
-  const CloseButton({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return AdaptivePagePadding(
-      child: IconButton(
-        onPressed: () => Navigator.of(context).pop(),
-        icon: const Icon(
-          Icons.cancel,
-          color: Colors.black45,
-        ),
-      ),
-    );
   }
 }
 
@@ -1258,18 +729,18 @@ class HeroFlutterLogo extends StatelessWidget {
   }
 }
 
-class CustomFollowNotification extends StatefulWidget {
-  const CustomFollowNotification(
+class CustomOfferNotification extends StatefulWidget {
+  const CustomOfferNotification(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomFollowNotification> createState() =>
-      _CustomFollowNotificationState();
+  State<CustomOfferNotification> createState() =>
+      _CustomOfferNotificationState();
 }
 
-class _CustomFollowNotificationState extends State<CustomFollowNotification> {
+class _CustomOfferNotificationState extends State<CustomOfferNotification> {
   bool follow = false;
   @override
   Widget build(BuildContext context) {
@@ -1310,29 +781,22 @@ class _CustomFollowNotificationState extends State<CustomFollowNotification> {
                               .textTheme
                               .headline3!
                               .copyWith(fontSize: 13)),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: widget.showTime ? 1 : 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                              textAlign: TextAlign.center,
-                              DateFormat("HH:mm")
-                                  .format(widget.notificationObject.createdAt!)
-                                  .toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline3!
-                                  .copyWith(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w300)),
-                        ),
+                      const Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).colorScheme.primary),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Text(
+                            textAlign: TextAlign.center,
+                            DateFormat("HH:mm - dd/MM")
+                                .format(widget.notificationObject.createdAt!)
+                                .toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                    fontSize: 9, fontWeight: FontWeight.w300)),
                       )
                     ],
                   ),
@@ -1373,6 +837,288 @@ class _CustomFollowNotificationState extends State<CustomFollowNotification> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomInterviewNotification extends StatefulWidget {
+  const CustomInterviewNotification(
+      {super.key, required this.notificationObject, required this.showTime});
+  final NotificationObject notificationObject;
+  final bool showTime;
+
+  @override
+  State<CustomInterviewNotification> createState() =>
+      _CustomInterviewNotificationState();
+}
+
+class _CustomInterviewNotificationState
+    extends State<CustomInterviewNotification> {
+  bool follow = false;
+  InterviewSchedule? interview;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.notificationObject.metadata != null) {
+      interview =
+          InterviewSchedule.fromJsonApi(widget.notificationObject.metadata!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+            Column(
+              children: [
+                const CircleAvatar(
+                  radius: 20, backgroundColor: Colors.blue,
+                  backgroundImage: CachedNetworkImageProvider(
+                    // errorBuilder: (context, error, stackTrace) => const Icon(
+                    //   Icons.error_outline,
+                    //   size: 45,
+                    // ),
+                    cacheKey: "flutter_interview",
+
+                    maxWidth: 50,
+                    maxHeight: 50,
+                    'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
+                    // fit: BoxFit.cover,
+                  ),
+                  // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                ),
+                if (interview != null)
+                  interview!.endDate.isBefore(DateTime.now())
+                      ? Text(
+                          "Ended",
+                          style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary),
+                        )
+                      : Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 0),
+                            child: RoundedButtonWidget(
+                              height: 40,
+                              buttonColor:
+                                  Theme.of(context).colorScheme.primary,
+                              buttonTextSize: 10,
+                              // textColor: follow == false ? Colors.white : mainText,
+                              onPressed: () {
+                                setState(() {
+                                  follow = !follow;
+                                });
+                              },
+                              buttonText: widget.notificationObject.type ==
+                                      NotificationType.viewOffer
+                                  ? "View"
+                                  : "Join",
+                            ),
+                          ),
+                        ),
+              ],
+            ),
+            const SizedBox(
+              width: 15,
+            ),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(widget.notificationObject.sender.getName,
+                          style: Theme.of(context)
+                              .textTheme
+                              .headline3!
+                              .copyWith(fontSize: 13)),
+                      const Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).colorScheme.primary),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Text(
+                            textAlign: TextAlign.center,
+                            DateFormat("HH:mm - dd/MM")
+                                .format(widget.notificationObject.createdAt!)
+                                .toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                    fontSize: 9, fontWeight: FontWeight.w300)),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  LimitedBox(
+                    maxHeight: 200,
+                    child: AutoSizeText(widget.notificationObject.content,
+                        maxLines: 2,
+                        maxFontSize: 10,
+                        minFontSize: 9,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyText1!),
+                  ),
+                  if (interview != null) ...[
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    LimitedBox(
+                      maxHeight: 200,
+                      child: AutoSizeText(interview!.meetingRoomCode,
+                          maxLines: 2,
+                          maxFontSize: 10,
+                          minFontSize: 9,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyText1!),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    LimitedBox(
+                      maxHeight: 200,
+                      child: AutoSizeText(interview!.meetingRoomId,
+                          maxLines: 2,
+                          maxFontSize: 10,
+                          minFontSize: 9,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyText1!),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    LimitedBox(
+                      maxHeight: 200,
+                      child: AutoSizeText(
+                          DateFormat("HH-mm dd/MM/yyyy")
+                              .format(interview!.startDate),
+                          maxLines: 2,
+                          maxFontSize: 10,
+                          minFontSize: 9,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyText1!),
+                    ),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    LimitedBox(
+                      maxHeight: 200,
+                      child: AutoSizeText(
+                          DateFormat("HH-mm dd/MM/yyyy")
+                              .format(interview!.endDate),
+                          maxLines: 2,
+                          maxFontSize: 10,
+                          minFontSize: 9,
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context).textTheme.bodyText1!),
+                    ),
+                  ]
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CustomInterviewNotificationWidget extends StatefulWidget {
+  const CustomInterviewNotificationWidget(
+      {super.key, required this.notificationObject, required this.showTime});
+  final NotificationObject notificationObject;
+  final bool showTime;
+
+  @override
+  State<CustomInterviewNotificationWidget> createState() =>
+      _CustomInterviewNotificationWidgetState();
+}
+
+class _CustomInterviewNotificationWidgetState
+    extends State<CustomInterviewNotificationWidget> {
+  bool follow = false;
+  InterviewSchedule? interview;
+  @override
+  void initState() {
+    super.initState();
+    if (widget.notificationObject.metadata != null) {
+      interview =
+          InterviewSchedule.fromJsonApi(widget.notificationObject.metadata!);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {},
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
+          width: 80,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 20, backgroundColor: Colors.blue,
+                backgroundImage: CachedNetworkImageProvider(
+                  // errorBuilder: (context, error, stackTrace) => const Icon(
+                  //   Icons.error_outline,
+                  //   size: 45,
+                  // ),
+                  cacheKey: "flutter_interview",
+
+                  maxWidth: 20,
+                  maxHeight: 20,
+                  'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
+                  // fit: BoxFit.cover,
+                ),
+                // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+              ),
+              if (interview != null)
+                interview!.endDate.isBefore(DateTime.now())
+                    ? Text(
+                        "Ended",
+                        style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.primary),
+                      )
+                    : Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 0),
+                          child: RoundedButtonWidget(
+                            height: 40,
+                            buttonColor: Theme.of(context).colorScheme.primary,
+                            buttonTextSize: 10,
+                            // textColor: follow == false ? Colors.white : mainText,
+                            onPressed: () {
+                              setState(() {
+                                follow = !follow;
+                              });
+                            },
+                            buttonText: widget.notificationObject.type ==
+                                    NotificationType.viewOffer
+                                ? "View"
+                                : "Join",
+                          ),
+                        ),
+                      ),
+            ],
+          ),
         ),
       ),
     );
@@ -1439,7 +1185,7 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Wrap(
+                  Row(
                     children: [
                       RichText(
                         maxLines: 2,
@@ -1460,29 +1206,22 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                               const TextSpan(text: "you")
                             ]),
                       ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      AnimatedOpacity(
-                        duration: const Duration(milliseconds: 200),
-                        opacity: widget.showTime ? 1 : 0,
-                        child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: Theme.of(context).colorScheme.primary),
-                              borderRadius: BorderRadius.circular(12)),
-                          child: Text(
-                              textAlign: TextAlign.center,
-                              DateFormat("HH:mm")
-                                  .format(widget.notificationObject.createdAt!)
-                                  .toString(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .headline3!
-                                  .copyWith(
-                                      fontSize: 9,
-                                      fontWeight: FontWeight.w300)),
-                        ),
+                      const Spacer(),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(
+                                color: Theme.of(context).colorScheme.primary),
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Text(
+                            textAlign: TextAlign.center,
+                            DateFormat("HH:mm - dd/MM")
+                                .format(widget.notificationObject.createdAt!)
+                                .toString(),
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline3!
+                                .copyWith(
+                                    fontSize: 9, fontWeight: FontWeight.w300)),
                       ),
                     ],
                   ),
@@ -1497,22 +1236,233 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                 ],
               ),
             ),
-            CachedNetworkImage(
-              errorWidget: (context, error, stackTrace) => const Icon(
-                Icons.error_outline,
-                size: 45,
-              ),
-              cacheKey: "flutter",
-
-              width: 50,
-              height: 50,
-              imageUrl:
-                  'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-              fit: BoxFit.cover,
-            ),
+            // CachedNetworkImage(
+            //   errorWidget: (context, error, stackTrace) => const Icon(
+            //     Icons.error_outline,
+            //     size: 45,
+            //   ),
+            //   cacheKey: "flutter",
+            //   width: 50,
+            //   height: 50,
+            //   imageUrl:
+            //       'https://docs.flutter.dev/assets/images/404/dash_nest.png',
+            //   fit: BoxFit.cover,
+            // ),
           ],
         ),
       ),
     );
+  }
+}
+
+class AlertPage extends StatefulWidget {
+  final ScrollController listController;
+  final List<NotificationObject> viewOffers, texts, messages, joinInterviews;
+
+  const AlertPage(
+      {super.key,
+      required this.listController,
+      required this.viewOffers,
+      required this.joinInterviews,
+      required this.messages,
+      required this.texts});
+
+  @override
+  State<AlertPage> createState() => _AlertPageState();
+}
+
+class _AlertPageState extends State<AlertPage> {
+  @override
+  Widget build(BuildContext context) {
+    print("build Page");
+    return Observer(builder: (context) {
+      return SingleChildScrollView(
+        controller: widget.listController,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              child: Text(
+                "Interview",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+            widget.joinInterviews.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(left: 13),
+                    child: Text("Nothing here <3"),
+                  )
+                : ImplicitlyAnimatedList<NotificationObject>(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    areItemsTheSame: (oldItem, newItem) =>
+                        oldItem.id == newItem.id,
+                    items: widget.joinInterviews,
+                    itemBuilder: (context, animation, item, i) =>
+                        SizeFadeTransition(
+                            sizeFraction: 0.7,
+                            curve: Curves.easeInOut,
+                            animation: animation,
+                            child: CustomInterviewNotification(
+                              notificationObject: widget.joinInterviews[i],
+                              showTime: false,
+                            ))),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              child: Text(
+                "Offer",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+            widget.viewOffers.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(left: 13),
+                    child: Text("Nothing here <3"),
+                  )
+                : ImplicitlyAnimatedList<NotificationObject>(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    areItemsTheSame: (oldItem, newItem) =>
+                        oldItem.id == newItem.id,
+                    items: widget.viewOffers,
+                    itemBuilder: (context, animation, item, i) =>
+                        SizeFadeTransition(
+                            sizeFraction: 0.7,
+                            curve: Curves.easeInOut,
+                            animation: animation,
+                            child: CustomInterviewNotification(
+                              notificationObject: widget.viewOffers[i],
+                              showTime: false,
+                            ))),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              child: Text(
+                "Newest",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+            widget.texts.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(left: 13),
+                    child: Text("Nothing here <3"),
+                  )
+                : ImplicitlyAnimatedList<NotificationObject>(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    areItemsTheSame: (oldItem, newItem) =>
+                        oldItem.id == newItem.id,
+                    items: widget.texts,
+                    itemBuilder: (context, animation, item, i) =>
+                        SizeFadeTransition(
+                            sizeFraction: 0.7,
+                            curve: Curves.easeInOut,
+                            animation: animation,
+                            child: CustomInterviewNotification(
+                              notificationObject: widget.texts[i],
+                              showTime: false,
+                            ))),
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              child: Text(
+                "Message",
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+            widget.messages.isEmpty
+                ? const Padding(
+                    padding: EdgeInsets.only(left: 13),
+                    child: Text("Nothing here <3"),
+                  )
+                // : SingleChildScrollView(
+                //     child: StackedNotificationCards(
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color: Colors.black.withOpacity(0.25),
+                //           blurRadius: 2.0,
+                //         )
+                //       ],
+
+                //       notificationCards: widget.messages
+                //           .map((e) => NotificationCard(
+                //               date: e.createdAt!,
+                //               title: e.title,
+                //               subtitle: e.content,
+                //               leading: CustomInterviewNotificationWidget(
+                //                 notificationObject: e,
+                //                 showTime: false,
+                //               )))
+                //           .toList(),
+                //       cardColor: const Color(0xFFF1F1F1),
+                //       padding: 16,
+                //       actionTitle: Container(),
+                //       notificationCardTitle: 'Notification tile',
+                //       titleTextStyle: const TextStyle(
+                //         fontSize: 12,
+                //         fontWeight: FontWeight.bold,
+                //       ),
+                //       showLessAction: const Text(
+                //         'Show less',
+                //         style: TextStyle(
+                //           fontSize: 18,
+                //           fontWeight: FontWeight.bold,
+                //           color: Colors.deepPurple,
+                //         ),
+                //       ),
+                //       onTapClearAll: () {
+                //         // setState(() {
+                //         //   _listOfNotification.clear();
+                //         // });
+                //       },
+                //       subtitleTextStyle: TextStyle(fontSize: 8),
+                //       cardClearButton: const Text('Clear All'),
+                //       cardViewButton: const Text('View'),
+                //       clearAllNotificationsAction: const Icon(Icons.close),
+                //       clearAllStacked: const Text('Clear All'),
+                //       onTapClearCallback: (index) {
+                //         print(index);
+                //         // setState(() {
+                //         //   _listOfNotification.removeAt(index);
+                //         // });
+                //       },
+                //       onTapViewCallback: (index) {
+                //         print(index);
+                //       },
+                //     ),
+                //   ),
+
+                : ImplicitlyAnimatedList<NotificationObject>(
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    areItemsTheSame: (oldItem, newItem) =>
+                        oldItem.id == newItem.id,
+                    items: widget.messages,
+                    itemBuilder: (context, animation, item, i) =>
+                        SizeFadeTransition(
+                      sizeFraction: 0.7,
+                      curve: Curves.easeInOut,
+                      animation: animation,
+                      child: CustomInterviewNotification(
+                        notificationObject: widget.messages[i],
+                        showTime: false,
+                      ),
+                    ),
+                  ),
+          ],
+        ),
+      );
+    });
   }
 }

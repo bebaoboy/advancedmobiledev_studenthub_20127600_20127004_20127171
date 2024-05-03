@@ -23,10 +23,11 @@ class NotiRepositoryImpl extends NotiRepository {
               var e = <String, dynamic>{
                 ...element,
                 'id': element['id'].toString(),
-                'content': element["message"]['content'].toString(),
+                'title': element["title"].toString(),
+                "content": element["content"].toString(),
+                'messageContent': element["message"]['content'].toString(),
                 'type': element['typeNotifyFlag'],
-                'createdAt':
-                    DateTime.parse(element['createdAt']).toLocal(),
+                'createdAt': DateTime.parse(element['createdAt']).toLocal(),
                 'receiver': {
                   "id": element['receiver']['id'].toString(),
                   "fullname": element['receiver']['fullName'].toString(),
@@ -34,13 +35,18 @@ class NotiRepositoryImpl extends NotiRepository {
                 'sender': {
                   "id": element['sender']['id'].toString(),
                   "fullname": element['sender']['fullname'].toString(),
-                }
+                },
+                'metadata': element["interview"] != null
+                    ? <String, dynamic>{
+                      ...element["interview"],
+                      "meetingRoom": element["meetingRoom"]
+                    } : null
               };
               var acm = NotificationObject.fromJson(e);
 
-              if (!res.contains(acm)) {
-                res.add(acm);
-              }
+              // if (!res.contains(acm)) {
+              res.add(acm);
+              // }
             }
 
             return res;

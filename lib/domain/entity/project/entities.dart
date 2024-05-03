@@ -260,8 +260,10 @@ class NotificationObject extends MyObject {
   Profile receiver;
   Profile sender;
   String content;
+  String title;
   NotificationType get type => _type ?? NotificationType.text;
   NotificationType? _type;
+  Map<String, dynamic>? metadata;
 
   NotificationObject({
     required this.id,
@@ -271,6 +273,8 @@ class NotificationObject extends MyObject {
     super.createdAt,
     super.updatedAt,
     this.content = "",
+    this.title = "",
+    this.metadata,
   }) : super(objectId: id) {
     _type = type;
   }
@@ -278,14 +282,20 @@ class NotificationObject extends MyObject {
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
-        content = json['content'] ?? '',
-        _type = NotificationType.values[int.tryParse(json['type']) ?? 0], super(createdAt: json["createdAt"]);
+        content =
+            int.tryParse(json['type']) == NotificationType.joinInterview.index
+                ? "${json["content"]}\n${json["messageContent"]}"
+                : json['messageContent'] ?? '',
+        title = json['title'] ?? '',
+        _type = NotificationType.values[int.tryParse(json['type']) ?? 0],
+        metadata = json['metadata'],
+        super(createdAt: json["createdAt"]);
 }
 
 enum NotificationType {
   viewOffer,
   joinInterview,
-  text, /// submitted
+  text, // submitted
   message,
 }
 
@@ -300,6 +310,7 @@ class OfferNotification extends NotificationObject {
     required super.sender,
     super.createdAt,
     super.content = "",
+    super.title,
   }) : super(type: NotificationType.viewOffer);
 }
 

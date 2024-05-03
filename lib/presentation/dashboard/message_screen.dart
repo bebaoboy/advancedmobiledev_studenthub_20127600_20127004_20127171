@@ -63,7 +63,7 @@ class _MessageScreenState extends State<MessageScreen> {
   late UserType _currentUserType;
 
   void _messageNotifierListener() {
-    final newMessage = messageNotifier.inbox.first;
+    final newMessage = messageNotifier.inbox.last;
     if (newMessage.author.id == _user.id) {
       // _addMessage(newMessage);
     }
@@ -100,7 +100,7 @@ class _MessageScreenState extends State<MessageScreen> {
     messageNotifier.addListener(_messageNotifierListener);
     timer = Timer.periodic(const Duration(seconds: 10), (t) {
       Random r = Random();
-      var num = r.nextInt(30);
+      var num = r.nextInt(60);
       print(num);
       if (num <= 7) {
         typings = [

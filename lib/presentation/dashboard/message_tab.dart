@@ -157,144 +157,157 @@ class Singapore extends State<MessageTab> {
             future: getAllChatFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return chatStore.messages.isEmpty
-                    ? const Center(
-                        child: Text("No message"),
-                      )
-                    : Positioned.fill(
-                        top: 60,
-                        child: PlaneIndicator(
-                          onRefresh: () =>
-                              Future.delayed(const Duration(seconds: 1), () {
-                            setState(() {
-                              getAllChatFuture =
-                                  chatStore.getAllChat(setStateCallback: () {
-                                setState(() {});
-                              });
-                            });
-                          }),
-                          child: Observer(builder: (context) {
-                            return Stack(children: [
-                              Positioned.fill(
-                                top: 30,
-                                child: ListView.separated(
-                                  controller: widget.scrollController,
-                                  itemCount: chatStore.messages.length + 1,
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(color: Colors.black),
-                                  itemBuilder: (context, i) {
-                                    if (i == 0) {
-                                      return chatStore.isFetchingAll
-                                          ? const LoadingScreenWidget()
-                                          : Container(
-                                              margin: const EdgeInsets.only(
-                                                  top: 15),
-                                              child: _buildTopRowList());
-                                    }
-                                    int index = i - 1;
+                return (chatStore.isFetchingAll && chatStore.messages.isEmpty)
+                    ? const LoadingScreenWidget()
+                    : chatStore.messages.isEmpty
+                        ? const Center(
+                            child: Text("No message"),
+                          )
+                        : Positioned.fill(
+                            top: 60,
+                            child: PlaneIndicator(
+                              onRefresh: () => Future.delayed(
+                                  const Duration(seconds: 1), () {
+                                setState(() {
+                                  getAllChatFuture = chatStore.getAllChat(
+                                      setStateCallback: () {
+                                    setState(() {});
+                                  });
+                                });
+                              }),
+                              child: Observer(builder: (context) {
+                                return Stack(children: [
+                                  Positioned.fill(
+                                    top: 30,
+                                    child: ListView.separated(
+                                      controller: widget.scrollController,
+                                      itemCount: chatStore.messages.length + 1,
+                                      separatorBuilder: (context, index) =>
+                                          const Divider(color: Colors.black),
+                                      itemBuilder: (context, i) {
+                                        if (i == 0) {
+                                          return chatStore.isFetchingAll
+                                              ? const LoadingScreenWidget()
+                                              : Container(
+                                                  margin: const EdgeInsets.only(
+                                                      top: 15),
+                                                  child: _buildTopRowList());
+                                        }
+                                        int index = i - 1;
 
-                                    return InkWell(
-                                      onTap: () {
-                                        //print('Tile clicked');
-                                        String id = chatStore
-                                            .messages[index]
-                                            .chatUser
-                                            .id; // id này chỉ để test socket
-                                        Navigator.of(NavigationService
-                                                .navigatorKey.currentContext!)
-                                            .push(MaterialPageRoute2(
-                                                routeName:
-                                                    "${Routes.message}/${chatStore.messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
-                                                arguments: [
-                                              false,
-                                              WrapMessageList(
-                                                  project: chatStore
-                                                      .messages[index].project,
-                                                  messages: chatStore
-                                                      .messages[index].messages,
-                                                  chatUser: chatStore
-                                                      .messages[index].chatUser)
-                                            ]))
-                                            .then(
-                                          (value) {
-                                            setState(() {});
+                                        return InkWell(
+                                          onTap: () {
+                                            //print('Tile clicked');
+                                            String id = chatStore
+                                                .messages[index]
+                                                .chatUser
+                                                .id; // id này chỉ để test socket
+                                            Navigator.of(NavigationService
+                                                    .navigatorKey
+                                                    .currentContext!)
+                                                .push(MaterialPageRoute2(
+                                                    routeName:
+                                                        "${Routes.message}/${chatStore.messages[index].project?.objectId}-${userStore.user?.objectId}-$id",
+                                                    arguments: [
+                                                  false,
+                                                  WrapMessageList(
+                                                      project: chatStore
+                                                          .messages[index]
+                                                          .project,
+                                                      messages: chatStore
+                                                          .messages[index]
+                                                          .messages,
+                                                      chatUser: chatStore
+                                                          .messages[index]
+                                                          .chatUser)
+                                                ]))
+                                                .then(
+                                              (value) {
+                                                setState(() {});
+                                              },
+                                            );
+                                            // You can replace the print statement with your function
                                           },
-                                        );
-                                        // You can replace the print statement with your function
-                                      },
-                                      child: ListTile(
-                                        tileColor: Colors.transparent,
-                                        leading: const Icon(Icons
-                                            .message), // Replace with actual icons
-                                        title: Text(
-                                          "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: chatStore.messages[index]
-                                                          .newMessageCount >
-                                                      0
-                                                  ? Theme.of(context)
-                                                      .colorScheme
-                                                      .primary
-                                                  : null),
-                                        ),
-                                        subtitle: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.stretch,
-                                          children: [
-                                            // Text(chatStore.messages[index]['role']),
-
-                                            Text(
-                                              chatStore.messages[index]
-                                                      .messages!.isEmpty
-                                                  ? ""
-                                                  : chatStore
-                                                              .messages[index]
-                                                              .messages!
-                                                              .first
-                                                              .sender
-                                                              .objectId !=
-                                                          userStore
-                                                              .user!.objectId
-                                                      ? chatStore
-                                                              .messages[index]
-                                                              .messages!
-                                                              .firstOrNull
-                                                              ?.content ??
-                                                          ""
-                                                      : "You: ${chatStore.messages[index].messages!.first.content}",
+                                          child: ListTile(
+                                            tileColor: Colors.transparent,
+                                            leading: const Icon(Icons
+                                                .message), // Replace with actual icons
+                                            title: Text(
+                                              "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
                                               style: TextStyle(
-                                                  fontWeight: chatStore
+                                                  fontWeight: FontWeight.bold,
+                                                  color: chatStore
                                                               .messages[index]
                                                               .newMessageCount >
                                                           0
-                                                      ? FontWeight.bold
+                                                      ? Theme.of(context)
+                                                          .colorScheme
+                                                          .primary
                                                       : null),
                                             ),
-                                            const SizedBox(
-                                              height: 20,
+                                            subtitle: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.stretch,
+                                              children: [
+                                                // Text(chatStore.messages[index]['role']),
+
+                                                Text(
+                                                  chatStore.messages[index]
+                                                          .messages!.isEmpty
+                                                      ? ""
+                                                      : chatStore
+                                                                  .messages[
+                                                                      index]
+                                                                  .messages!
+                                                                  .first
+                                                                  .sender
+                                                                  .objectId !=
+                                                              userStore.user!
+                                                                  .objectId
+                                                          ? chatStore
+                                                                  .messages[
+                                                                      index]
+                                                                  .messages!
+                                                                  .firstOrNull
+                                                                  ?.content ??
+                                                              ""
+                                                          : "You: ${chatStore.messages[index].messages!.first.content}",
+                                                  style: TextStyle(
+                                                      fontWeight: chatStore
+                                                                  .messages[
+                                                                      index]
+                                                                  .newMessageCount >
+                                                              0
+                                                          ? FontWeight.bold
+                                                          : null),
+                                                ),
+                                                const SizedBox(
+                                                  height: 20,
+                                                ),
+                                                Text(
+                                                  chatStore
+                                                          .messages[index]
+                                                          .messages
+                                                          ?.firstOrNull
+                                                          ?.updatedAt
+                                                          ?.toLocal()
+                                                          .toString() ??
+                                                      "null",
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                  textAlign: TextAlign.end,
+                                                )
+                                              ],
                                             ),
-                                            Text(
-                                              chatStore.messages[index].messages
-                                                      ?.firstOrNull?.updatedAt
-                                                      ?.toLocal()
-                                                      .toString() ??
-                                                  "null",
-                                              style:
-                                                  const TextStyle(fontSize: 12),
-                                              textAlign: TextAlign.end,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ]);
-                          }),
-                        ),
-                      );
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ]);
+                              }),
+                            ),
+                          );
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text("No message"),

@@ -4,7 +4,7 @@ import 'dart:math';
 
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/presentation/my_app.dart';
-import 'package:floating/floating.dart';
+import 'package:boilerplate/core/widgets/floating/floating.dart';
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
@@ -330,25 +330,29 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   void didChangeAppLifecycleState(AppLifecycleState lifecycleState) async {
     if (lifecycleState == AppLifecycleState.inactive &&
         !PictureInPicture.isActive) {
-      final canUsePiP = await floating.isPipAvailable;
-      if (!canUsePiP || enablePipStatus == PiPStatus.enabled) return;
-      final rational = !_enableScreenSharing
-          ? const Rational.landscape()
-          : const Rational.vertical();
-      final screenSize =
-          MediaQuery.of(context).size * MediaQuery.of(context).devicePixelRatio;
-      final height = !_enableScreenSharing
-          ? screenSize.width ~/ rational.aspectRatio
-          : screenSize.height ~/ rational.aspectRatio;
+      try {
+        final canUsePiP = await floating.isPipAvailable;
+        if (!canUsePiP || enablePipStatus == PiPStatus.enabled) return;
+        final rational = !_enableScreenSharing
+            ? const Rational.landscape()
+            : const Rational.vertical();
+        final screenSize = MediaQuery.of(context).size *
+            MediaQuery.of(context).devicePixelRatio;
+        final height = !_enableScreenSharing
+            ? screenSize.width ~/ rational.aspectRatio
+            : screenSize.height ~/ rational.aspectRatio;
 
-      enablePipStatus = await floating.enable(
-          aspectRatio: rational,
-          sourceRectHint: Rectangle<int>(
-            0,
-            (screenSize.height ~/ 2) - (height ~/ 2),
-            screenSize.width.toInt(),
-            height,
-          ));
+        enablePipStatus = await floating.enable(
+            aspectRatio: rational,
+            sourceRectHint: Rectangle<int>(
+              0,
+              (screenSize.height ~/ 2) - (height ~/ 2),
+              screenSize.width.toInt(),
+              height,
+            ));
+      } catch (e) {
+        print(e.toString());
+      }
     }
   }
 
@@ -943,8 +947,10 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   _endCall() {
+    floating.dispose();
     PictureInPicture.stopPiP(false);
     CallManager.instance.hungUp();
+    Navigator.of(context).pop();
   }
 
   PiPStatus enablePipStatus = PiPStatus.disabled;

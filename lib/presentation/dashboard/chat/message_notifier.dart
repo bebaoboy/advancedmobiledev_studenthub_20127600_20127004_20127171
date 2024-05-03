@@ -6,6 +6,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:boilerplate/utils/notification/store/notification_store.dart';
 
 import 'package:flutter/foundation.dart' show ChangeNotifier, kIsWeb;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -24,6 +25,9 @@ class MessageNotifierProvider with ChangeNotifier {
       : super() {
     initSocket(addInboxCb);
   }
+
+  static bool initNotificationSocket = false;
+  var notiStore = getIt<NotificationStore>();
 
   initSocket(Function addInbox) async {
     // print(user);
@@ -93,9 +97,15 @@ class MessageNotifierProvider with ChangeNotifier {
     textSocketHandler.on('SEND_MESSAGE', (data) => print("send $data"));
 
     // noti student id/company id
-    textSocketHandler.on('NOTI_${userStore.user!.objectId}', (data) {
-      print("notification socket ${project?.objectId} $data");
-    });
+    if (!initNotificationSocket) {
+      initNotificationSocket = true;
+      textSocketHandler.on('NOTI_${userStore.user!.objectId}', (data) {
+        print("notification socket ${userStore.user!.objectId} $data");
+        if (data["notification"]["receiverId"].toString() != userStore.user!.objectId) return;
+        notiStore.addNofitication(data);
+      });
+    }
+
     textSocketHandler.on('ERROR', (data) => print("error $data"));
     textSocketHandler.onDisconnect((_) {
       print('disconnect socket  ${project?.objectId}');
@@ -118,8 +128,6 @@ class MessageNotifierProvider with ChangeNotifier {
   dispose() {
     textSocketHandler.disconnect();
     super.dispose();
-    // TODO: find a way to close a socket and can reconnect again
-    // textSocketHandler.close();
   }
 }
 

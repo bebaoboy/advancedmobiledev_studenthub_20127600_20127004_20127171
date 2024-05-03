@@ -15,11 +15,12 @@ import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/utils/configs.dart';
 import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:floating/floating.dart';
+import 'package:boilerplate/core/widgets/floating/floating.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:toastification/toastification.dart';
 import 'package:web_browser_detect/web_browser_detect.dart';
@@ -63,6 +64,7 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     } catch (e) {
       print("error");
     }
+    chatStore.meetingCode = "";
   }
 
   @override
@@ -126,6 +128,8 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     );
   }
 
+  bool startCall = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -134,38 +138,53 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
         name:
             'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
       ),
-      body: OrientationBuilder(
-        builder: (context, orientation) {
-          if (orientation == Orientation.portrait) {
-            return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildInterviewInfo(),
-                  Expanded(
-                      child: BodyLayout(widget.currentUser, _callSession,
-                          users: widget.users,
-                          interviewInfo: widget.interviewSchedule)),
-                ]);
-          } else {
-            return Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                      child: BodyLayout(widget.currentUser, _callSession,
-                          users: widget.users,
-                          interviewInfo: widget.interviewSchedule)),
-                  Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                      child: _buildInterviewInfo()),
-                ],
-              ),
-            );
-          }
-        },
-      ),
+      body: startCall
+          ? const Center(
+              child: Text("The meeting has started!"),
+            )
+          : OrientationBuilder(
+              builder: (context, orientation) {
+                if (orientation == Orientation.portrait) {
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildInterviewInfo(),
+                        Expanded(
+                            child: BodyLayout(widget.currentUser, _callSession,
+                                users: widget.users,
+                                interviewInfo: widget.interviewSchedule,
+                                startCallCb: () {
+                          setState(() {
+                            startCall = true;
+                          });
+                        })),
+                      ]);
+                } else {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10.0, vertical: 10),
+                    child: Row(
+                      children: [
+                        Expanded(
+                            child: BodyLayout(widget.currentUser, _callSession,
+                                users: widget.users,
+                                interviewInfo: widget.interviewSchedule,
+                                startCallCb: () {
+                          setState(() {
+                            startCall = true;
+                          });
+                        })),
+                        Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 10.0),
+                            child: _buildInterviewInfo()),
+                      ],
+                    ),
+                  );
+                }
+              },
+            ),
     );
   }
 }
@@ -175,12 +194,16 @@ class BodyLayout extends StatefulWidget {
   final List<CubeUser> users;
   final InterviewSchedule interviewInfo;
   final P2PSession _callSession;
+  final Function startCallCb;
 
   @override
   State<StatefulWidget> createState() => _BodyLayoutState(_callSession);
 
   const BodyLayout(this.currentUser, this._callSession,
-      {super.key, required this.users, required this.interviewInfo});
+      {super.key,
+      required this.users,
+      required this.interviewInfo,
+      required this.startCallCb});
 }
 
 class _BodyLayoutState extends State<BodyLayout> {
@@ -271,8 +294,9 @@ class _BodyLayoutState extends State<BodyLayout> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(right: 4, top: 16),
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 3),
                 child: FloatingActionButton(
+                  shape: const CircleBorder(),
                   elevation: 0,
                   heroTag: "Mute",
                   onPressed: () => _muteMic(),
@@ -283,61 +307,85 @@ class _BodyLayoutState extends State<BodyLayout> {
                   ),
                 ),
               ),
-              SpeedDial(
-                heroTag: "Options",
-                icon: Icons.more_vert,
-                activeIcon: Icons.close,
-                backgroundColor: Colors.black38,
-                switchLabelPosition: true,
-                overlayColor: Colors.black,
-                elevation: 0,
-                overlayOpacity: 0.5,
-                children: [
-                  SpeedDialChild(
-                    elevation: 0,
-                    visible: !(kIsWeb &&
-                        (Browser().browserAgent == BrowserAgent.Safari ||
-                            Browser().browserAgent == BrowserAgent.Firefox)),
-                    child: Icon(
-                      kIsWeb || WebRTC.platformIsDesktop
-                          ? Icons.surround_sound
-                          : _isSpeakerEnabled
-                              ? Icons.volume_up
-                              : Icons.volume_off,
-                      color: _isSpeakerEnabled ? Colors.white : Colors.grey,
-                    ),
-                    backgroundColor: Colors.black38,
-                    foregroundColor: Colors.white,
-                    label:
-                        'Switch ${kIsWeb || WebRTC.platformIsDesktop ? 'Audio output' : 'Speakerphone'}',
-                    onTap: () => _switchSpeaker(),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                child: FloatingActionButton(
+                  shape: const CircleBorder(),
+                  elevation: 0,
+                  tooltip: "Enable In-app Pip",
+                  heroTag: "Pip",
+                  onPressed: () => setState(() {
+                    CallManager.inAppPip = !CallManager.inAppPip;
+                  }),
+                  backgroundColor: Colors.black38,
+                  child: Icon(
+                    CallManager.inAppPip
+                        ? Icons.picture_in_picture_alt
+                        : Icons.tv_off,
+                    color: _isMicMute ? Colors.grey : Colors.white,
                   ),
-                  SpeedDialChild(
-                    elevation: 0,
-                    visible: kIsWeb || WebRTC.platformIsDesktop,
-                    child: const Icon(
-                      Icons.record_voice_over,
-                      color: Colors.white,
-                    ),
-                    backgroundColor: Colors.black38,
-                    foregroundColor: Colors.white,
-                    label: 'Switch Audio Input device',
-                    onTap: () => _switchAudioInput(),
-                  ),
-                  SpeedDialChild(
-                    elevation: 0,
-                    visible: true,
-                    child: Icon(
-                      Icons.cameraswitch,
-                      color: _isVideoEnabled() ? Colors.white : Colors.grey,
-                    ),
-                    backgroundColor: Colors.black38,
-                    foregroundColor: Colors.white,
-                    label: 'Switch Camera',
-                    onTap: () => _switchCamera(),
-                  ),
-                ],
+                ),
               ),
+              Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                  child: SpeedDial(
+                    heroTag: "Options",
+                    icon: Icons.more_vert,
+                    activeIcon: Icons.close,
+                    backgroundColor: Colors.black38,
+                    switchLabelPosition: true,
+                    overlayColor: Colors.white,
+                    elevation: 0,
+                    foregroundColor: Colors.white,
+                    overlayOpacity: 0.5,
+                    children: [
+                      SpeedDialChild(
+                        elevation: 0,
+                        visible: !(kIsWeb &&
+                            (Browser().browserAgent == BrowserAgent.Safari ||
+                                Browser().browserAgent ==
+                                    BrowserAgent.Firefox)),
+                        child: Icon(
+                          kIsWeb || WebRTC.platformIsDesktop
+                              ? Icons.surround_sound
+                              : _isSpeakerEnabled
+                                  ? Icons.volume_up
+                                  : Icons.volume_off,
+                          color: _isSpeakerEnabled ? Colors.white : Colors.grey,
+                        ),
+                        backgroundColor: Colors.black38,
+                        foregroundColor: Colors.white,
+                        label:
+                            'Switch ${kIsWeb || WebRTC.platformIsDesktop ? 'Audio output' : 'Speakerphone'}',
+                        onTap: () => _switchSpeaker(),
+                      ),
+                      SpeedDialChild(
+                        elevation: 0,
+                        visible: kIsWeb || WebRTC.platformIsDesktop,
+                        child: const Icon(
+                          Icons.record_voice_over,
+                          color: Colors.white,
+                        ),
+                        backgroundColor: Colors.black38,
+                        foregroundColor: Colors.white,
+                        label: 'Switch Audio Input device',
+                        onTap: () => _switchAudioInput(),
+                      ),
+                      SpeedDialChild(
+                        elevation: 0,
+                        visible: true,
+                        child: Icon(
+                          Icons.cameraswitch,
+                          color: _isVideoEnabled() ? Colors.white : Colors.grey,
+                        ),
+                        backgroundColor: Colors.black38,
+                        foregroundColor: Colors.white,
+                        label: 'Switch Camera',
+                        onTap: () => _switchCamera(),
+                      ),
+                    ],
+                  )),
               const Expanded(
                 flex: 1,
                 child: SizedBox(),
@@ -508,22 +556,24 @@ class _BodyLayoutState extends State<BodyLayout> {
                                   // ignore: avoid_func
                                   if (userStore.getCurrentType() ==
                                       UserType.student) {
-                                    if (chatStore.canCall &&
-                                        await chatStore
-                                            .checkMeetingAvailability(
-                                                widget.interviewInfo, "")) {
+                                    if (await chatStore
+                                        .checkMeetingAvailability(
+                                            widget.interviewInfo, "")) {
                                       // _selectedUsers.add(_currentUserId);
                                       _selectedUsers.add(cubeUser.id!);
                                       _callSession.localStream = null;
                                       _callSession.opponentsIds
                                           .addAll(_selectedUsers);
-                                      Navigator.pop(context);
+                                      // Navigator.pop(context);
+                                      widget.startCallCb();
 
                                       CallManager.instance.startNewCall(
+                                          fromCallkit: false,
                                           NavigationService
                                               .navigatorKey.currentContext!,
                                           CallType.VIDEO_CALL,
-                                          _selectedUsers, _callSession);
+                                          _selectedUsers,
+                                          _callSession);
                                     } else {
                                       Toastify.show(
                                           context,
@@ -537,12 +587,14 @@ class _BodyLayoutState extends State<BodyLayout> {
                                     _callSession.localStream = null;
                                     _callSession.opponentsIds
                                         .addAll(_selectedUsers);
-                                    Navigator.pop(context);
+                                    widget.startCallCb();
                                     CallManager.instance.startNewCall(
+                                        fromCallkit: false,
                                         NavigationService
                                             .navigatorKey.currentContext!,
                                         CallType.VIDEO_CALL,
-                                        _selectedUsers, _callSession);
+                                        _selectedUsers,
+                                        _callSession);
                                   }
                                 });
                               },
@@ -557,13 +609,15 @@ class _BodyLayoutState extends State<BodyLayout> {
                     ],
                   ),
                 ),
-                Visibility(
-                    visible: chatStore.isChecking,
-                    child: const Center(
-                      child: LoadingScreenWidget(
-                        size: 80,
-                      ),
-                    )),
+                Observer(builder: (context) {
+                  return Visibility(
+                      visible: chatStore.isChecking,
+                      child: const Center(
+                        child: LoadingScreenWidget(
+                          size: 80,
+                        ),
+                      ));
+                }),
               ]);
             } else {
               return const LoadingScreenWidget();
