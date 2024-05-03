@@ -299,6 +299,23 @@ enum NotificationType {
   message,
 }
 
+extension NotificationTypeTitle on NotificationType {
+  String get title {
+    switch (this) {
+      case NotificationType.joinInterview:
+        return "Interview";
+      case NotificationType.viewOffer:
+        return 'Offers';
+      case NotificationType.text:
+        return 'Texts';
+      case NotificationType.message:
+        return 'Messages';
+      default:
+        return 'More than 1000 employees';
+    }
+  }
+}
+
 @JsonSerializable()
 class OfferNotification extends NotificationObject {
   String projectId;

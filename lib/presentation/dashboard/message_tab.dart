@@ -202,6 +202,8 @@ class Singapore extends State<MessageTab> {
                                                 .messages[index]
                                                 .chatUser
                                                 .id; // id này chỉ để test socket
+                                            chatStore.messages[index]
+                                                .lastSeenTime = DateTime.now();
                                             Navigator.of(NavigationService
                                                     .navigatorKey
                                                     .currentContext!)

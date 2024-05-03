@@ -88,6 +88,7 @@ dependencies:
   # G
   get_it: ^7.2.0
   google_fonts: ^6.2.1
+  grouped_scroll_view:
   # H
   http:
   http_parser:
@@ -139,7 +140,7 @@ dependencies:
   super_sliver_list:
   synchronized: 
   skeletonizer:
-  stacked_notification_cards:
+  scrollview_observer:
   # smooth_page_indicator:
   swipeable_page_route:
   size_helper:

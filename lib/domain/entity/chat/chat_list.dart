@@ -12,7 +12,7 @@ class WrapMessageList {
   ChatUser chatUser;
   @observable
   DateTime? lastSeenTime = DateTime.now();
-  @observable
+
   int get newMessageCount => lastSeenTime == null
       ? 0
       : messages
