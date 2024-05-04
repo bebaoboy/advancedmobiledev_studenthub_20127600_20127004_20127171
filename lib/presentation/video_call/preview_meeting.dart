@@ -209,16 +209,14 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
                                 child: (startCall ||
                                         CallManager.instance.hasEnded)
                                     ? const Center(
-                                        child:
-                                            Text("The meeting has started!"),
+                                        child: Text("The meeting has started!"),
                                       )
                                     : BodyLayout(
                                         widget.currentUser,
                                         widget._callSession,
                                         users: widget.users,
                                         interviewInfo: interviewSchedule,
-                                        waitingCall,
-                                        startCallCb: (isStudent) {
+                                        waitingCall, startCallCb: (isStudent) {
                                         if (!isStudent) {
                                           setState(() {
                                             startCall = true;
@@ -240,16 +238,14 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
                                 child: (startCall ||
                                         CallManager.instance.hasEnded)
                                     ? const Center(
-                                        child:
-                                            Text("The meeting has started!"),
+                                        child: Text("The meeting has started!"),
                                       )
                                     : BodyLayout(
                                         widget.currentUser,
                                         widget._callSession,
                                         users: widget.users,
                                         interviewInfo: interviewSchedule,
-                                        waitingCall,
-                                        startCallCb: (isStudent) {
+                                        waitingCall, startCallCb: (isStudent) {
                                         if (!isStudent) {
                                           setState(() {
                                             startCall = true;
@@ -561,15 +557,8 @@ class _BodyLayoutState extends State<BodyLayout> {
       }
     };
 // You can request multiple permissions at once.
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.camera,
-      Permission.microphone,
-    ].request();
-    statuses.forEach((key, value) async {
-      if (value != PermissionStatus.granted) {
-        await key.request();
-      }
-    });
+    await Permission.camera.request().isGranted;
+    await Permission.microphone.request().isGranted;
 
     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
     CallManager.instance.currentCall!.localStream = stream;
