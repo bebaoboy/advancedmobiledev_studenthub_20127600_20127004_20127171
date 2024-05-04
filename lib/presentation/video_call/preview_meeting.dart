@@ -100,6 +100,9 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
                   CallManager.instance.currentCall!,
                   value);
             });
+            // codeController.text =
+            //     CallManager.instance.savedMeetingInfo[value.meetingRoomId]!;
+            // chatStore.setCode(codeController.text);
             return value;
           }
           return value;
@@ -203,16 +206,19 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
                           children: [
                             _buildInterviewInfo(interviewSchedule),
                             Expanded(
-                                child: startCall
+                                child: (startCall ||
+                                        CallManager.instance.hasEnded)
                                     ? const Center(
-                                        child: Text("The meeting has started!"),
+                                        child:
+                                            Text("The meeting has started!"),
                                       )
                                     : BodyLayout(
                                         widget.currentUser,
                                         widget._callSession,
                                         users: widget.users,
                                         interviewInfo: interviewSchedule,
-                                        waitingCall, startCallCb: (isStudent) {
+                                        waitingCall,
+                                        startCallCb: (isStudent) {
                                         if (!isStudent) {
                                           setState(() {
                                             startCall = true;
@@ -231,16 +237,19 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
                         child: Row(
                           children: [
                             Expanded(
-                                child: startCall
+                                child: (startCall ||
+                                        CallManager.instance.hasEnded)
                                     ? const Center(
-                                        child: Text("The meeting has started!"),
+                                        child:
+                                            Text("The meeting has started!"),
                                       )
                                     : BodyLayout(
                                         widget.currentUser,
                                         widget._callSession,
                                         users: widget.users,
                                         interviewInfo: interviewSchedule,
-                                        waitingCall, startCallCb: (isStudent) {
+                                        waitingCall,
+                                        startCallCb: (isStudent) {
                                         if (!isStudent) {
                                           setState(() {
                                             startCall = true;

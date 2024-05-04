@@ -18,10 +18,36 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 const channel = new BroadcastChannel("sw-messages");
 
+messaging.onMessage((payload) => {
+  console.log("Web Received  onMessage ", payload);
+  const promiseChain = clients
+    .matchAll({
+      type: "window",
+      includeUncontrolled: true,
+    })
+    .then((windowClients) => {
+      for (let i = 0; i < windowClients.length; i++) {
+        const windowClient = windowClients[i];
+        windowClient.postMessage(payload);
+      }
+    })
+    .then(() => {
+      const title = payload.notification.title;
+      var click_action = payload.data.ui_route; //ui route is ur route
+
+      const options = {
+        body: payload.notification.body,
+        data: {
+          click_action,
+        },
+      };
+      return registration.showNotification(title, options);
+    });
+  return promiseChain;
+});
 // Optional:
-messaging.onBackgroundMessage((m) => {
-  console.log("onBackgroundMessageWEBB", m);
-  console.log("Received background message ", payload);
+messaging.onBackgroundMessage((payload) => {
+  console.log("web Received background onMessage ", payload);
 
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
@@ -30,10 +56,7 @@ messaging.onBackgroundMessage((m) => {
 
   self.registration.showNotification(notificationTitle, notificationOptions);
   channel.postMessage(m);
-});
 
-messaging.setBackgroundMessageHandler(function (payload) {
-  console.log(payload);
   const promiseChain = clients
     .matchAll({
       type: "window",

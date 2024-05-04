@@ -59,6 +59,8 @@ class CallManager {
   bool isFrontCameraUsed = true;
   String? cameraId;
   bool waitingCall = false;
+  @observable
+  bool hasEnded = false;
   Map<String, String> savedMeetingInfo = {};
 
   init(BuildContext context) {
@@ -99,12 +101,12 @@ class CallManager {
     log("init call manager");
 
     _callClient!.onReceiveNewSession = (callSession) async {
-      if (currentCall != null &&
-          currentCall!.sessionId != callSession.sessionId) {
-        log("reject call, sessionId mismatch", "BEBAOBOY");
-        callSession.reject();
-        return;
-      }
+      // if (currentCall != null &&
+      //     currentCall!.sessionId != callSession.sessionId) {
+      //   log("reject call, sessionId mismatch", "BEBAOBOY");
+      //   callSession.reject();
+      //   return;
+      // }
       currentCall = callSession;
       log("incoming call ${currentCall?.sessionId}");
 
@@ -144,6 +146,7 @@ class CallManager {
       if (currentCall != null &&
           currentCall!.sessionId == callSession.sessionId) {
         currentCall = null;
+        CallManager.instance.hasEnded = true;
         localMediaStream?.getTracks().forEach((track) async {
           await track.stop();
         });
@@ -180,6 +183,7 @@ class CallManager {
     isMicMute = false;
     isFrontCameraUsed = false;
     cameraId = null;
+    hasEnded = false;
   }
 
   void startPreviewMeeting(BuildContext context, int callType,
@@ -198,7 +202,6 @@ class CallManager {
         _callClient!.createCallSession(callType, opponents);
     currentCall = callSession;
     log(CubeSessionManager.instance.activeSession.toString());
-    inAppPip = useInAppPip;
     currentInterview = null;
     if (getIt<UserStore>().user!.type == UserType.student) {
       waitingCall = true;
@@ -214,13 +217,11 @@ class CallManager {
       Set<int> opponents, P2PSession? currentCall,
       {required bool fromCallkit, bool useInAppPip = true}) async {
     if (opponents.isEmpty || currentCall == null) return;
-    resetPreview();
+    if (!waitingCall) resetPreview();
 
     if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
-
-    inAppPip = useInAppPip;
 
     if (currentInterview == null) {
       log("interview is null");
@@ -275,16 +276,6 @@ class CallManager {
       //
       ////////////////////////////////////
       ///
-      if (kIsWeb && cameraId != null) {
-        await currentCall!.switchCamera(deviceId: cameraId);
-      }
-      if (!kIsWeb && !isFrontCameraUsed) {
-        await currentCall!.switchCamera();
-      }
-      currentCall!.setMicrophoneMute(isMicMute);
-      currentCall!.setVideoEnabled(isCameraEnabled);
-      currentCall!.enableSpeakerphone(isSpeakerEnabled);
-
       ///
       bool isProduction = const bool.fromEnvironment('dart.vm.product');
 
@@ -327,6 +318,7 @@ class CallManager {
           : CubeEnvironment.DEVELOPMENT;
       params.usersIds = [
         ...opponents,
+        CubeSessionManager.instance.activeSession!.user!.id
       ];
       log("done incoming call event $opponents");
 
@@ -382,6 +374,7 @@ class CallManager {
 
   void _showIncomingCallScreen(P2PSession callSession) async {
     if (waitingCall) {
+      log("accept incoming call fast");
       acceptCall(callSession.sessionId, false);
       return;
     }
@@ -483,6 +476,7 @@ class CallManager {
   }
 
   void hungUp() {
+    hasEnded = true;
     if (currentCall != null) {
       CallKitManager.instance.processCallFinished(currentCall!.sessionId);
       currentCall!.hungUp();
