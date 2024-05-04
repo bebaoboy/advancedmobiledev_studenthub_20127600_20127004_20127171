@@ -3,7 +3,10 @@
 import 'dart:convert';
 
 import 'package:boilerplate/core/widgets/pip/navigatable_pip_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -53,9 +56,10 @@ class CallManager {
           : true
       : true;
   bool isMicMute = false;
-  bool isFrontCameraUsed = false;
-
-  // TODO: lưu camera nào, speaker hay k bật, bật mic hay k
+  bool isFrontCameraUsed = true;
+  String? cameraId;
+  bool waitingCall = false;
+  Map<String, String> savedMeetingInfo = {};
 
   init(BuildContext context) {
     this.context = context;
@@ -175,6 +179,7 @@ class CallManager {
         : true;
     isMicMute = false;
     isFrontCameraUsed = false;
+    cameraId = null;
   }
 
   void startPreviewMeeting(BuildContext context, int callType,
@@ -184,6 +189,7 @@ class CallManager {
         CubeSessionManager.instance.activeSession!.user == null) return;
     if (opponents.isEmpty) return;
     resetPreview();
+    waitingCall = false;
 
     if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
@@ -194,6 +200,9 @@ class CallManager {
     log(CubeSessionManager.instance.activeSession.toString());
     inAppPip = useInAppPip;
     currentInterview = null;
+    if (getIt<UserStore>().user!.type == UserType.student) {
+      waitingCall = true;
+    }
 
     Navigator.of(context).push(MaterialPageRoute2(
         routeName:
@@ -241,6 +250,8 @@ class CallManager {
       incoming = true;
     }
 
+    log("device info enableCam=$isCameraEnabled, muteMic=$isMicMute, frontCam=$isFrontCameraUsed, speaker=$isSpeakerEnabled");
+
     if (incoming) {
       // TODO: put 2 of this somewhere else
       if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
@@ -256,11 +267,24 @@ class CallManager {
     } else {
       // this is CRUCIAL dont delete it //
       //
+      // TODO: lưu camera nào, speaker hay k bật, bật mic hay k
+
       P2PSession callSession =
           _callClient!.createCallSession(callType, opponents);
       currentCall = callSession;
       //
       ////////////////////////////////////
+      ///
+      if (kIsWeb && cameraId != null) {
+        await currentCall!.switchCamera(deviceId: cameraId);
+      }
+      if (!kIsWeb && !isFrontCameraUsed) {
+        await currentCall!.switchCamera();
+      }
+      currentCall!.setMicrophoneMute(isMicMute);
+      currentCall!.setVideoEnabled(isCameraEnabled);
+      currentCall!.enableSpeakerphone(isSpeakerEnabled);
+
       ///
       bool isProduction = const bool.fromEnvironment('dart.vm.product');
 
@@ -351,10 +375,16 @@ class CallManager {
       );
     }
 
+    waitingCall = false;
+
     _sendStartCallSignalForOffliners(currentCall!);
   }
 
   void _showIncomingCallScreen(P2PSession callSession) async {
+    if (waitingCall) {
+      acceptCall(callSession.sessionId, false);
+      return;
+    }
     CallEvent callEvent = CallEvent(
         sessionId: callSession.sessionId,
         callType: callSession.callType,

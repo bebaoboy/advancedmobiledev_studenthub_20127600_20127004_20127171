@@ -359,7 +359,9 @@ class MessageObject extends NotificationObject {
   Project? project;
 
   MessageObject.fromJson(Map<String, dynamic> json2)
-      : messageType = MessageType.values[json2["type"] ?? 0],
+      : messageType = json2["interview"] != null
+            ? MessageType.joinInterview
+            : MessageType.message,
         interviewSchedule = json2["interview"] != null
             ? InterviewSchedule.fromJsonApi(json2["interview"])
             : null,

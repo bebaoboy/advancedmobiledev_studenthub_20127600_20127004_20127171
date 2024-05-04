@@ -236,11 +236,17 @@ class _BottomBarState extends State<BottomBar>
         }
       });
     _controller.forward();
-    NavbarNotifier2.bottomNavbarVisibilityListener.addListener(
-      () {
-        setState(() {});
-      },
-    );
+    NavbarNotifier2.bottomNavbarVisibilityListener.addListener(hide);
+  }
+
+  hide() {
+    try {
+    if (mounted) {
+      setState(() {});
+    }
+    } catch(e) {
+      ///
+    }
   }
 
   void showBottomBar() {
@@ -283,6 +289,7 @@ class _BottomBarState extends State<BottomBar>
   @override
   void dispose() {
     scrollBottomBarController.removeListener(() {});
+    NavbarNotifier2.bottomNavbarVisibilityListener.removeListener(hide);
     _controller.dispose();
     super.dispose();
   }
@@ -690,7 +697,9 @@ class _AlertTabState extends State<AlertTab> {
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
       return Tooltip(
-        message: userStore.user!.type == UserType.student ? "${getOffer().length} offers" : "",
+        message: userStore.user!.type == UserType.student
+            ? "${getOffer().length} offers"
+            : "",
         padding: const EdgeInsets.symmetric(horizontal: 10),
         verticalOffset: 60,
         child: InkWell(
@@ -699,7 +708,8 @@ class _AlertTabState extends State<AlertTab> {
               getOffer().length.toString(),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
-            showBadge: getOffer().isNotEmpty && userStore.user!.type == UserType.student,
+            showBadge: getOffer().isNotEmpty &&
+                userStore.user!.type == UserType.student,
             position: badges.BadgePosition.topStart(start: 10, top: -10),
             badgeStyle: badges.BadgeStyle(
                 badgeColor: Theme.of(context).colorScheme.primary),

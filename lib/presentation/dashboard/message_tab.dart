@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
@@ -232,8 +233,15 @@ class Singapore extends State<MessageTab> {
                                           },
                                           child: ListTile(
                                             tileColor: Colors.transparent,
-                                            leading: const Icon(Icons
-                                                .message), // Replace with actual icons
+                                            leading: Icon(chatStore
+                                                        .messages[index]
+                                                        .messages!
+                                                        .firstOrNull
+                                                        ?.messageType ==
+                                                    MessageType.joinInterview
+                                                ? Icons.lock_clock
+                                                : Icons
+                                                    .message), // Replace with actual icons
                                             title: Text(
                                               "Project ${chatStore.messages[index].project?.title} (${chatStore.messages[index].project?.objectId}) - ${chatStore.messages[index].chatUser.firstName} (${chatStore.messages[index].chatUser.id})",
                                               style: TextStyle(

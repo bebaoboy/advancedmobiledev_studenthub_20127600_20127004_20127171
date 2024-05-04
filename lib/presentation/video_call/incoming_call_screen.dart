@@ -22,7 +22,6 @@ class IncomingCallScreenState extends State<IncomingCallScreen> {
   Widget build(BuildContext context) {
     widget._callSession.onSessionClosed = (callSession) {
       log("_onSessionClosed", IncomingCallScreen.TAG);
-      if (mounted) Navigator.pop(context);
     };
 
     log("incoming call screen");
