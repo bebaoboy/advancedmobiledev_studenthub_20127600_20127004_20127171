@@ -38,10 +38,10 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   final bool _isIncoming;
   final CubeStatsReportsManager _statsReportsManager =
       CubeStatsReportsManager();
-  bool _isCameraEnabled = true;
-  bool _isSpeakerEnabled = Platform.isIOS ? false : true;
-  bool _isMicMute = false;
-  bool _isFrontCameraUsed = true;
+  late bool _isCameraEnabled;
+  late bool _isSpeakerEnabled;
+  late bool _isMicMute;
+  late bool _isFrontCameraUsed;
   final int _currentUserId = CubeChatConnection.instance.currentUser!.id!;
 
   MapEntry<int, RTCVideoRenderer>? primaryRenderer;
@@ -62,6 +62,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     WidgetsBinding.instance.addObserver(this);
 
     _initAlreadyReceivedStreams();
+
+    _isCameraEnabled = CallManager.instance.isCameraEnabled;
+    _isSpeakerEnabled = CallManager.instance.isSpeakerEnabled;
+    _isMicMute = CallManager.instance.isMicMute;
+    _isFrontCameraUsed = CallManager.instance.isFrontCameraUsed;
+    //  = !kIsWeb ? Platform.isIOS ? false : true : true;
 
     _callSession.onLocalStreamReceived = _addLocalMediaStream;
     _callSession.onRemoteStreamReceived = _addRemoteMediaStream;

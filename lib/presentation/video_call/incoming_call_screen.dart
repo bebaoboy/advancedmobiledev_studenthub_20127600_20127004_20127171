@@ -25,6 +25,8 @@ class IncomingCallScreenState extends State<IncomingCallScreen> {
       if (mounted) Navigator.pop(context);
     };
 
+    log("incoming call screen");
+
     return WillPopScope(
         onWillPop: () => _onBackPressed(context),
         child: Scaffold(

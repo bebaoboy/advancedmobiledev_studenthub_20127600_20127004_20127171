@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -31,12 +32,11 @@ import 'managers/call_manager.dart';
 class PreviewMeetingScreen extends StatefulWidget {
   final CubeUser currentUser;
   final List<CubeUser> users;
-  final InterviewSchedule interviewSchedule;
+  final InterviewSchedule? interviewSchedule;
   final P2PSession _callSession;
 
   @override
-  State<PreviewMeetingScreen> createState() =>
-      _PreviewMeetingScreenState(_callSession);
+  State<PreviewMeetingScreen> createState() => _PreviewMeetingScreenState();
 
   const PreviewMeetingScreen(this.currentUser, this._callSession,
       {super.key, required this.users, required this.interviewSchedule});
@@ -44,7 +44,7 @@ class PreviewMeetingScreen extends StatefulWidget {
 
 class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     with WidgetsBindingObserver {
-  final P2PSession _callSession;
+  // final P2PSession CallManager.instance.currentCall!;
   final codeController = TextEditingController();
   // ignore: unused_field
   static const String TAG = "PREVIEW_SCREEN";
@@ -53,7 +53,7 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
   final userStore = getIt<UserStore>();
   final chatStore = getIt<ChatStore>();
 
-  _PreviewMeetingScreenState(this._callSession);
+  _PreviewMeetingScreenState();
 
   @override
   void initState() {
@@ -65,6 +65,16 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
       print("error");
     }
     chatStore.meetingCode = "";
+    if (widget.interviewSchedule == null) {
+      future = Future.value(getIt<SharedPreferenceHelper>().interview).then(
+        (value) {
+          CallManager.instance.currentInterview = value;
+          return value;
+        },
+      );
+    } else {
+      future = Future.value(widget.interviewSchedule);
+    }
   }
 
   @override
@@ -93,13 +103,15 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
     super.dispose();
   }
 
-  Widget _buildInterviewInfo() {
+  late Future<InterviewSchedule?> future;
+
+  Widget _buildInterviewInfo(interviewSchedule) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text(
-          'Meeting: ${widget.interviewSchedule.title}',
+          'Meeting: ${interviewSchedule!.title}',
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         // Text(
@@ -133,59 +145,71 @@ class _PreviewMeetingScreenState extends State<PreviewMeetingScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: MainAppBar(
-        name:
-            'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
-      ),
-      body: startCall
-          ? const Center(
-              child: Text("The meeting has started!"),
-            )
-          : OrientationBuilder(
-              builder: (context, orientation) {
-                if (orientation == Orientation.portrait) {
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        _buildInterviewInfo(),
-                        Expanded(
-                            child: BodyLayout(widget.currentUser, _callSession,
-                                users: widget.users,
-                                interviewInfo: widget.interviewSchedule,
-                                startCallCb: () {
-                          setState(() {
-                            startCall = true;
-                          });
-                        })),
-                      ]);
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10.0, vertical: 10),
-                    child: Row(
-                      children: [
-                        Expanded(
-                            child: BodyLayout(widget.currentUser, _callSession,
-                                users: widget.users,
-                                interviewInfo: widget.interviewSchedule,
-                                startCallCb: () {
-                          setState(() {
-                            startCall = true;
-                          });
-                        })),
-                        Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: _buildInterviewInfo()),
-                      ],
-                    ),
-                  );
-                }
-              },
-            ),
-    );
+        resizeToAvoidBottomInset: false,
+        appBar: MainAppBar(
+          name:
+              'Logged in as ${CubeChatConnection.instance.currentUser!.fullName}',
+        ),
+        body: FutureBuilder<InterviewSchedule?>(
+            future: future,
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const LoadingScreenWidget();
+              } else {
+                var interviewSchedule = snapshot.data!;
+                return startCall
+                    ? const Center(
+                        child: Text("The meeting has started!"),
+                      )
+                    : OrientationBuilder(
+                        builder: (context, orientation) {
+                          if (orientation == Orientation.portrait) {
+                            return Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _buildInterviewInfo(interviewSchedule),
+                                  Expanded(
+                                      child: BodyLayout(widget.currentUser,
+                                          widget._callSession,
+                                          users: widget.users,
+                                          interviewInfo: interviewSchedule,
+                                          startCallCb: () {
+                                    setState(() {
+                                      startCall = true;
+                                    });
+                                  })),
+                                ]);
+                          } else {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 10.0, vertical: 10),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                      child: BodyLayout(widget.currentUser,
+                                          widget._callSession,
+                                          users: widget.users,
+                                          interviewInfo: interviewSchedule,
+                                          startCallCb: () {
+                                    setState(() {
+                                      startCall = true;
+                                    });
+                                  })),
+                                  Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10.0),
+                                      child: _buildInterviewInfo(
+                                          interviewSchedule)),
+                                ],
+                              ),
+                            );
+                          }
+                        },
+                      );
+              }
+            }));
   }
 }
 
@@ -211,11 +235,16 @@ class _BodyLayoutState extends State<BodyLayout> {
 
   // ignore: prefer_final_fields
   bool _isCameraEnabled = true;
-  bool _isSpeakerEnabled = Platform.isIOS ? false : true;
+  bool _isSpeakerEnabled = !kIsWeb
+      ? Platform.isIOS
+          ? false
+          : true
+      : true;
   bool _isMicMute = false;
   bool _isFrontCameraUsed = true;
   late int _currentUserId;
 
+  // ignore: unused_field
   final P2PSession _callSession;
 
   // ToDo: check why this is null
@@ -239,10 +268,10 @@ class _BodyLayoutState extends State<BodyLayout> {
     _currentUserId = widget.currentUser.id!;
     future = _addLocalMediaStream();
 
-    // _callSession.onLocalStreamReceived = _addLocalMediaStream;
-    // _callSession.onRemoteStreamReceived = _addRemoteMediaStream;
-    // _callSession.onSessionClosed = _onSessionClosed;
-    // _statsReportsManager.init(_callSession);
+    // CallManager.instance.currentCall!.onLocalStreamReceived = _addLocalMediaStream;
+    // CallManager.instance.currentCall!.onRemoteStreamReceived = _addRemoteMediaStream;
+    // CallManager.instance.currentCall!.onSessionClosed = _onSessionClosed;
+    // _statsReportsManager.init(CallManager.instance.currentCall!);
     print("init");
   }
 
@@ -323,6 +352,21 @@ class _BodyLayoutState extends State<BodyLayout> {
                         ? Icons.picture_in_picture_alt
                         : Icons.tv_off,
                     color: _isMicMute ? Colors.grey : Colors.white,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 3),
+                child: FloatingActionButton(
+                  shape: const CircleBorder(),
+                  elevation: 0,
+                  tooltip: "Camera",
+                  heroTag: "Camerais",
+                  onPressed: () => _toggleCamera,
+                  backgroundColor: Colors.black38,
+                  child: Icon(
+                    _isVideoEnabled() ? Icons.videocam : Icons.videocam_off,
+                    color: _isVideoEnabled() ? Colors.white : Colors.grey,
                   ),
                 ),
               ),
@@ -454,7 +498,7 @@ class _BodyLayoutState extends State<BodyLayout> {
       }
     };
     stream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
-    _callSession.localStream = stream;
+    CallManager.instance.currentCall!.localStream = stream;
     _addMediaStream(_currentUserId, stream!);
     return Future.value(true);
   }
@@ -561,9 +605,12 @@ class _BodyLayoutState extends State<BodyLayout> {
                                             widget.interviewInfo, "")) {
                                       // _selectedUsers.add(_currentUserId);
                                       _selectedUsers.add(cubeUser.id!);
-                                      _callSession.localStream = null;
-                                      _callSession.opponentsIds
-                                          .addAll(_selectedUsers);
+                                      CallManager.instance.currentCall!
+                                          .localStream = null;
+                                      CallManager
+                                          .instance.currentCall!.opponentsIds
+                                        ..clear()
+                                        ..addAll(_selectedUsers);
                                       // Navigator.pop(context);
                                       widget.startCallCb();
 
@@ -573,7 +620,8 @@ class _BodyLayoutState extends State<BodyLayout> {
                                               .navigatorKey.currentContext!,
                                           CallType.VIDEO_CALL,
                                           _selectedUsers,
-                                          _callSession);
+                                          CallManager.instance.currentCall!,
+                                          widget.interviewInfo);
                                     } else {
                                       Toastify.show(
                                           context,
@@ -584,9 +632,12 @@ class _BodyLayoutState extends State<BodyLayout> {
                                     }
                                   } else {
                                     _selectedUsers.add(cubeUser.id!);
-                                    _callSession.localStream = null;
-                                    _callSession.opponentsIds
-                                        .addAll(_selectedUsers);
+                                    CallManager.instance.currentCall!
+                                        .localStream = null;
+                                    CallManager
+                                        .instance.currentCall!.opponentsIds
+                                      ..clear()
+                                      ..addAll(_selectedUsers);
                                     widget.startCallCb();
                                     CallManager.instance.startNewCall(
                                         fromCallkit: false,
@@ -594,7 +645,8 @@ class _BodyLayoutState extends State<BodyLayout> {
                                             .navigatorKey.currentContext!,
                                         CallType.VIDEO_CALL,
                                         _selectedUsers,
-                                        _callSession);
+                                        CallManager.instance.currentCall!,
+                                        widget.interviewInfo);
                                   }
                                 });
                               },
@@ -632,7 +684,7 @@ class _BodyLayoutState extends State<BodyLayout> {
         context: context,
         builder: (BuildContext context) {
           return FutureBuilder<List<MediaDeviceInfo>>(
-            future: _callSession.getAudioOutputs(),
+            future: CallManager.instance.currentCall!.getAudioOutputs(),
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return AlertDialog(
@@ -677,7 +729,7 @@ class _BodyLayoutState extends State<BodyLayout> {
                 renderer.audioOutput(deviceId);
               });
             } else {
-              _callSession.selectAudioOutput(deviceId);
+              CallManager.instance.currentCall!.selectAudioOutput(deviceId);
             }
           });
         }
@@ -685,26 +737,40 @@ class _BodyLayoutState extends State<BodyLayout> {
     } else {
       setState(() {
         _isSpeakerEnabled = !_isSpeakerEnabled;
-        _callSession.enableSpeakerphone(_isSpeakerEnabled);
+        CallManager.instance.currentCall!.enableSpeakerphone(_isSpeakerEnabled);
       });
     }
   }
 
   bool _isVideoCall() {
-    return CallType.VIDEO_CALL == _callSession.callType;
+    return CallType.VIDEO_CALL == CallManager.instance.currentCall!.callType;
   }
 
   bool _isVideoEnabled() {
     return _isVideoCall() && _isCameraEnabled;
   }
 
+  _toggleCamera() {
+    if (!_isVideoCall()) return;
+
+    setState(() {
+      _isCameraEnabled = !_isCameraEnabled;
+      CallManager.instance.isCameraEnabled =
+          !CallManager.instance.isCameraEnabled;
+      CallManager.instance.currentCall!.setVideoEnabled(_isCameraEnabled);
+    });
+  }
+
   _switchCamera() {
     if (!_isVideoEnabled()) return;
 
     if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-      _callSession.switchCamera().then((isFrontCameraUsed) {
+      CallManager.instance.currentCall!
+          .switchCamera()
+          .then((isFrontCameraUsed) {
         setState(() {
           _isFrontCameraUsed = isFrontCameraUsed;
+          CallManager.instance.isFrontCameraUsed = _isFrontCameraUsed;
         });
       });
     } else {
@@ -712,7 +778,7 @@ class _BodyLayoutState extends State<BodyLayout> {
         context: context,
         builder: (BuildContext context) {
           return FutureBuilder<List<MediaDeviceInfo>>(
-            future: _callSession.getCameras(),
+            future: CallManager.instance.currentCall!.getCameras(),
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return AlertDialog(
@@ -749,7 +815,9 @@ class _BodyLayoutState extends State<BodyLayout> {
         },
       ).then((deviceId) {
         // log("onCameraSelected deviceId: $deviceId", TAG);
-        if (deviceId != null) _callSession.switchCamera(deviceId: deviceId);
+        if (deviceId != null) {
+          CallManager.instance.currentCall!.switchCamera(deviceId: deviceId);
+        }
       });
     }
   }
@@ -757,8 +825,10 @@ class _BodyLayoutState extends State<BodyLayout> {
   _muteMic() {
     setState(() {
       _isMicMute = !_isMicMute;
-      _callSession.setMicrophoneMute(_isMicMute);
-      CallManager.instance.muteCall(_callSession.sessionId, _isMicMute);
+      CallManager.instance.isMicMute = _isMicMute;
+      CallManager.instance.currentCall!.setMicrophoneMute(_isMicMute);
+      CallManager.instance
+          .muteCall(CallManager.instance.currentCall!.sessionId, _isMicMute);
     });
   }
 
@@ -768,7 +838,7 @@ class _BodyLayoutState extends State<BodyLayout> {
         context: context,
         builder: (BuildContext context) {
           return FutureBuilder<List<MediaDeviceInfo>>(
-            future: _callSession.getAudioInputs(),
+            future: CallManager.instance.currentCall!.getAudioInputs(),
             builder: (context, snapshot) {
               if (!snapshot.hasData || snapshot.data!.isEmpty) {
                 return AlertDialog(
@@ -807,7 +877,8 @@ class _BodyLayoutState extends State<BodyLayout> {
         // log("onAudioOutputSelected deviceId: $deviceId", TAG);
         if (deviceId != null) {
           setState(() {
-            _callSession.selectAudioInput(deviceId);
+            // TODO:
+            CallManager.instance.currentCall!.selectAudioInput(deviceId);
           });
         }
       });

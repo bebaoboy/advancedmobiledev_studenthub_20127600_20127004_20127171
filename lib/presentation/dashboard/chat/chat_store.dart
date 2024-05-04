@@ -199,7 +199,7 @@ abstract class _ChatStore with Store {
           ...message,
           "id": mess,
           'type': 'schedule',
-          'text': message['content'],
+          'text': "${interview?['title']}: ${interview?['content']}",
           'status': 'seen',
           'interview': interview,
           "createdAt":
@@ -215,7 +215,8 @@ abstract class _ChatStore with Store {
             "id": message["senderId"].toString(),
           },
           "metadata": {
-            "title": interview?['title'],
+            "title": "${interview?['title']}: ${interview?['content']}",
+            "content": interview?['content'],
             "projectId": project.objectId ?? "-1",
             "senderId": user.id,
             "receiverId": userStore.user!.objectId!, // notification
@@ -515,8 +516,7 @@ abstract class _ChatStore with Store {
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
-                  ? ((message as ScheduleMessageType).metadata?["title"] ??
-                      (message).id)
+                  ? ("${(message as ScheduleMessageType).metadata?["title"] ?? (message).id}: ${message.metadata?["content"] ?? (message).id}")
                   : message.type == AbstractMessageType.text
                       ? (message as AbstractTextMessage).text
                       : "type not supported",
@@ -537,8 +537,7 @@ abstract class _ChatStore with Store {
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
-                  ? ((message as ScheduleMessageType).metadata?["title"] ??
-                      (message).id)
+                  ? ("${(message as ScheduleMessageType).metadata?["title"] ?? (message).id}: ${message.metadata?["content"] ?? (message).id}")
                   : message.type == AbstractMessageType.text
                       ? (message as AbstractTextMessage).text
                       : "type not supported",
@@ -799,7 +798,12 @@ abstract class _ChatStore with Store {
       if (response.statusCode == HttpStatus.accepted ||
           response.statusCode == HttpStatus.created ||
           response.statusCode == HttpStatus.ok) {
-        return true;
+        if (response.data["result"] == true) {
+          return true;
+        } else {
+          errorStore.errorMessage = "Wrong meeting code!";
+          return false;
+        }
       } else {
         print(response.data['errorDetails']);
         errorStore.errorMessage = "Wrong meeting code!";

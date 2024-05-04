@@ -690,7 +690,7 @@ class _AlertTabState extends State<AlertTab> {
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
       return Tooltip(
-        message: "${getOffer().length} offers",
+        message: userStore.user!.type == UserType.student ? "${getOffer().length} offers" : "",
         padding: const EdgeInsets.symmetric(horizontal: 10),
         verticalOffset: 60,
         child: InkWell(
@@ -699,6 +699,7 @@ class _AlertTabState extends State<AlertTab> {
               getOffer().length.toString(),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
+            showBadge: getOffer().isNotEmpty && userStore.user!.type == UserType.student,
             position: badges.BadgePosition.topStart(start: 10, top: -10),
             badgeStyle: badges.BadgeStyle(
                 badgeColor: Theme.of(context).colorScheme.primary),
@@ -1032,7 +1033,7 @@ class _AlertTabState extends State<AlertTab> {
                   },
                   itemBuilder: (context, i) {
                     cc = context;
-                    print("build explorable pv");
+                    // print("build explorable pv");
                     return KeepAlivePage(
                       key: PageStorageKey("alert_$i"),
                       AlertPage(
@@ -1673,9 +1674,10 @@ class AlertPage extends StatefulWidget {
 
 class _AlertPageState extends State<AlertPage> {
   var notiStore = getIt<NotificationStore>();
+  var currentNotiType = NotificationType.viewOffer;
   @override
   Widget build(BuildContext context) {
-    print("build Page");
+    // print("build Page");
     return widget.joinInterviews.isEmpty &&
             widget.viewOffers.isEmpty &&
             widget.texts.isEmpty &&
@@ -1691,6 +1693,12 @@ class _AlertPageState extends State<AlertPage> {
           )
         : Observer(builder: (context) {
             return GroupedScrollView<NotificationObject, NotificationType>.list(
+              onChipChanged: (p0) {
+                setState(() {
+                  currentNotiType = p0;
+                });
+              },
+              chipsValue: ChoiceSingle.value(currentNotiType),
               observerController:
                   SliverObserverController(controller: widget.listController),
               scrollController: widget.listController,
@@ -2122,6 +2130,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     required this.observerController,
+    required this.chipsValue,
+    required this.onChipChanged,
   });
 
   GroupedScrollView.grid({
@@ -2162,6 +2172,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     required this.observerController,
+    required this.chipsValue,
+    required this.onChipChanged,
   }) : separatorBuilder = null;
 
   GroupedScrollView.list({
@@ -2202,6 +2214,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     required this.observerController,
+    required this.chipsValue,
+    required this.onChipChanged,
   }) : gridDelegate = null;
   final SliverObserverController observerController;
 
@@ -2236,6 +2250,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     );
   }
 
+  final Function(H) onChipChanged;
+
   List<Widget> _buildNormalMode(BuildContext context) {
     if (itemsSorter != null) {
       data.sort(itemsSorter);
@@ -2258,6 +2274,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
   }
 
   List<BuildContext?>? realKeys = [];
+  final List<NotificationType> chipsValue;
 
   List<Widget> _buildGroupMode(BuildContext context) {
     final options = groupedOptions!;
@@ -2281,7 +2298,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
         color: Theme.of(context).colorScheme.background,
         child: Choice<NotificationType>.inline(
           clearable: false,
-          value: ChoiceSingle.value(NotificationType.viewOffer),
+          value: chipsValue,
           onChanged: ChoiceSingle.onChanged((t) {
             if (t != null) {
               print(t);
@@ -2289,6 +2306,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               //   realKeys![t.index].currentContext!,
               //   duration: const Duration(seconds: 1),
               // );
+              onChipChanged(t as H);
+              // chipsValue = ChoiceSingle.value(t);
               if (realKeys![t.index] == null) {
                 scrollController?.animateTo(
                   0,
@@ -2331,6 +2350,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
         ),
       ),
     ));
+
     for (var i = 0; i < groups; i++) {
       H header = keys[i];
       List<T> items = groupItems[header]!;
@@ -2348,6 +2368,14 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               delegate: _buildSliverChildDelegate(items, i),
               gridDelegate: gridDelegate!)
           : SliverList(delegate: _buildSliverChildDelegate(items, i)));
+      if (items.isEmpty) {
+        section.add(const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(13),
+            child: Text("Nothing here <3"),
+          ),
+        ));
+      }
       if (options.sectionFooterBuilder != null) {
         section.add(options.sectionFooterBuilder!(context, header, i));
       }

@@ -482,8 +482,10 @@ class InterviewSchedule extends MyObject {
         "endTime": endDate.toString(),
         "disableFlag": isCancel ? 1 : 0,
         "id": objectId,
-        "meeting_room_id": meetingRoomId,
-        "meeting_room_code": meetingRoomCode,
+        "meetingRoom": {
+          "meeting_room_id": meetingRoomId,
+          "meeting_room_code": meetingRoomCode,
+        },
         "createdAt": createdAt.toString(),
         "updatedAt": updatedAt.toString(),
       };

@@ -26,7 +26,7 @@ class RTCSignalingProcessor {
   void init() {
     _rtcSignalingManager = CubeChatConnection.instance.rtcSignalingManager;
 
-    _subscription = _rtcSignalingManager?.signalingMessagesStream
+    _subscription = _rtcSignalingManager!.signalingMessagesStream
         .listen(_processSignalingMessage);
     //print("");
   }
@@ -42,6 +42,7 @@ class RTCSignalingProcessor {
   }
 
   void _processSignalingMessage(MessageStanza signalingMessage) {
+    print("new stanza");
     XmppElement? stanzaExtraParams =
         signalingMessage.getChild(ExtraParamsElement.ELEMENT_NAME);
 

@@ -206,7 +206,7 @@ getRoute(String name, context, {arguments}) {
     if (name.startsWith(Routes.previewMeeting)) {
       if (arguments != null) {
         var users = arguments[0] as List<CubeUser>;
-        var interviewSchedule = arguments[1] as InterviewSchedule;
+        var interviewSchedule = arguments[1] != null ? arguments[1] as InterviewSchedule : null;
         var callSession = arguments[2] as P2PSession;
         return PreviewMeetingScreen(
             CubeSessionManager.instance.activeSession!.user!, callSession,

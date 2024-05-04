@@ -37,6 +37,20 @@ class SharedPreferenceHelper {
     return _sharedPreference.setString(Preferences.auth_token, authToken);
   }
 
+  Future<InterviewSchedule?> get interview async {
+    // return Future.value(baominkhuynh);
+    var i = _sharedPreference.getString("interview");
+    if (i != null) {
+      return InterviewSchedule.fromJsonApi(json.decode(i));
+    }
+    return null;
+  }
+
+  Future<bool> saveInterview(InterviewSchedule authToken) async {
+    return _sharedPreference.setString(
+        "interview", json.encode(authToken.toJson()));
+  }
+
   Future<bool> removeAuthToken() async {
     return _sharedPreference.remove(Preferences.auth_token);
   }
@@ -346,5 +360,4 @@ class SharedPreferenceHelper {
       return techstack;
     }
   }
-
 }

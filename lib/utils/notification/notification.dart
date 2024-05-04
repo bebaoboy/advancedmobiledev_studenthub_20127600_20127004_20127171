@@ -16,6 +16,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -23,10 +24,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   try {
     log('[onMessage] background message: ${message.data}', "bebaoboy");
-    log('[onMessage] background message type: ${message.data["type"]}',
-        "bebaoboy");
-    log('[onMessage] background message meow: ${message.toMap().toString()}',
-        "bebaoboy");
+    // log('[onMessage] background message type: ${message.data["type"]}',
+    //     "bebaoboy");
+    // log('[onMessage] background message meow: ${message.toMap().toString()}',
+    //     "bebaoboy");
 
     String type = message.data["type"] ?? "";
     String title = message.data["title"] ?? "";
@@ -34,12 +35,15 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     String body = message.data["message"] ?? "";
     String sessionId = message.data["session_id"] ?? "";
     int session = int.tryParse(sessionId) ?? 101;
-    print(
-        InterviewSchedule.fromJsonApi(json.decode(message.data["extra_body"])));
     if (type == "interview") {
-      log("onMessage interview");
+      log("onMessage interview ${json.decode(json.decode(message.data["extra_body"])["body"])}");
       NotificationHelper.createInterviewPreflightNotification(
           id: session, title: title, body: message.data.toString());
+      await SharedPreferences.getInstance().then((value) {
+        value.setString("interview",
+            json.decode(message.data["extra_body"])["body"]);
+      });
+      log("onMessage interview created: ${InterviewSchedule.fromJsonApi(json.decode(json.decode(message.data["extra_body"])["body"]))}");
     } else {
       print("meow");
       NotificationHelper.createTextNotification(
