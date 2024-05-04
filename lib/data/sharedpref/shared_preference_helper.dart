@@ -347,4 +347,12 @@ class SharedPreferenceHelper {
     }
   }
 
+  Future saveLastRead(DateTime dateTime) async {
+    await _sharedPreference.setInt(
+        Preferences.lastRead, dateTime.millisecondsSinceEpoch);
+  }
+
+  Future<int> get lastRead async =>
+      _sharedPreference.getInt(Preferences.lastRead) ??
+      DateTime.now().millisecondsSinceEpoch;
 }

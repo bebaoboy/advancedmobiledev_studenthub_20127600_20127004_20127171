@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:boilerplate/data/local/datasources/chat/chat_datasource.dart';
 import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/network/apis/chat/chat_api.dart';
@@ -54,7 +55,7 @@ mixin RepositoryModule {
         getIt<SharedPreferenceHelper>()));
 
     getIt.registerSingleton<ChatRepository>(ChatRepositoryImpl(getIt<ChatApi>(),
-        getIt<ProjectDataSource>(), getIt<SharedPreferenceHelper>()));
+        getIt<ChatDataSource>(), getIt<SharedPreferenceHelper>()));
 
     getIt.registerSingleton<InterviewRepository>(
         InterviewRepositoryImpl(getIt<InterviewApi>()));

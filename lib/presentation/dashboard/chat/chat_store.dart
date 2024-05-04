@@ -4,6 +4,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
+import 'package:boilerplate/data/local/datasources/chat/chat_datasource.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
@@ -21,6 +22,7 @@ import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart'
 import 'package:boilerplate/presentation/dashboard/chat/message_notifier.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:collection/collection.dart';
@@ -344,136 +346,102 @@ abstract class _ChatStore with Store {
 
   @action
   Future<List<WrapMessageList>> getAllChat({Function? setStateCallback}) async {
-    try {
-      var userStore = getIt<UserStore>();
-      msgIdDict.clear();
-      if (!isFetchingAll) {
-        final future = _getAllChatsUseCase
-            .call(params: GetMessageByProjectAndUserParams())
-            .then<List<WrapMessageList>>(
-          (value) async {
-            if (value.isNotEmpty) {
-              // print(value);
+    var chatDataStore = getIt<ChatDataSource>();
+    if (!(await DeviceUtils.hasConnection())) {
+      _messages = await chatDataStore.getListChatObjectFromDb();
+      return _messages;
+    } else {
+      try {
+        var userStore = getIt<UserStore>();
+        msgIdDict.clear();
+        if (!isFetchingAll) {
+          final future = _getAllChatsUseCase
+              .call(params: GetMessageByProjectAndUserParams())
+              .then<List<WrapMessageList>>(
+            (value) async {
+              if (value.isNotEmpty) {
+                // print(value);
 
-              for (var v in value) {
-                if (v.messages?.firstOrNull != null) {
-                  msgIdDict.add(v.messages!.firstOrNull!.id);
-                }
-                if (v.project != null && v.project!.objectId != null) {
-                  _currentProjectMessages[v.project!.objectId!] =
-                      ObservableMap();
-                }
-                var p = _messages.firstWhereOrNull(
-                  (element) =>
-                      element.project?.objectId == v.project?.objectId &&
-                      element.chatUser.id == v.chatUser.id,
-                );
-                if (p != null) {
-                  p.messages = v.messages;
-
-                  p.messages?.sort(
-                    (a, b) {
-                      return b.updatedAt!.compareTo(a.updatedAt!);
-                    },
-                  );
-                  if (p.messages?.firstOrNull?.sender.objectId ==
-                      userStore.user?.objectId) {
-                    p.lastSeenTime = p.messages?.firstOrNull?.updatedAt;
+                for (var v in value) {
+                  if (v.messages?.firstOrNull != null) {
+                    msgIdDict.add(v.messages!.firstOrNull!.id);
                   }
-                } else {
-                  print("not found $v");
-                  _messages.add(v);
-                  _messages.last.messages?.sort(
-                    (a, b) {
-                      return b.updatedAt!.compareTo(a.updatedAt!);
-                    },
+                  if (v.project != null && v.project!.objectId != null) {
+                    _currentProjectMessages[v.project!.objectId!] =
+                        ObservableMap();
+                  }
+                  var p = _messages.firstWhereOrNull(
+                    (element) =>
+                        element.project?.objectId == v.project?.objectId &&
+                        element.chatUser.id == v.chatUser.id,
                   );
-                  _messages.last.lastSeenTime =
-                      v.messages?.firstOrNull?.updatedAt;
+                  if (p != null) {
+                    p.messages = v.messages;
 
-                  // _messages.removeWhere(
-                  //   (element) =>
-                  //       element.project?.objectId == v.project?.objectId &&
-                  //       element.chatUser.id == v.chatUser.id,
-                  // );
+                    p.messages?.sort(
+                      (a, b) {
+                        return b.updatedAt!.compareTo(a.updatedAt!);
+                      },
+                    );
+                    if (p.messages?.firstOrNull?.sender.objectId ==
+                        userStore.user?.objectId) {
+                      p.lastSeenTime = p.messages?.firstOrNull?.updatedAt;
+                    }
+                  } else {
+                    print("not found $v");
+                    _messages.add(v);
+                    _messages.last.messages?.sort(
+                      (a, b) {
+                        return b.updatedAt!.compareTo(a.updatedAt!);
+                      },
+                    );
+                    _messages.last.lastSeenTime =
+                        v.messages?.firstOrNull?.updatedAt;
+
+                    // _messages.removeWhere(
+                    //   (element) =>
+                    //       element.project?.objectId == v.project?.objectId &&
+                    //       element.chatUser.id == v.chatUser.id,
+                    // );
+                  }
+                  getMessageNotifiers(v);
                 }
-                getMessageNotifiers(v);
+                Future.delayed(Duration.zero, () {
+                  _messages.removeWhere(
+                    (element) =>
+                        element.lastSeenTime == null ||
+                        element.messages == null,
+                  );
+                  _messages.sort(
+                    (a, b) => b.messages!.firstOrNull!.updatedAt!
+                        .compareTo(a.messages!.firstOrNull!.updatedAt!),
+                  );
+                  
+                  var c = messages.fold(
+                      0, (sum, item) => sum + item.newMessageCount);
+                  if (c > 0) {
+                    NavbarNotifier2.updateBadge(
+                        2, NavbarBadge(showBadge: true, badgeText: "$c"));
+                  }
+                  if (setStateCallback != null) setStateCallback();
+                });
+
+                return _messages;
+              } else {
+                return Future.value(_messages);
               }
-              Future.delayed(Duration.zero, () {
-                _messages.removeWhere(
-                  (element) =>
-                      element.lastSeenTime == null || element.messages == null,
-                );
-                _messages.sort(
-                  (a, b) => b.messages!.firstOrNull!.updatedAt!
-                      .compareTo(a.messages!.firstOrNull!.updatedAt!),
-                );
-                // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
-                var c =
-                    messages.fold(0, (sum, item) => sum + item.newMessageCount);
-                if (c > 0) {
-                  NavbarNotifier2.updateBadge(
-                      2, NavbarBadge(showBadge: true, badgeText: "$c"));
-                }
-                if (setStateCallback != null) setStateCallback();
-              });
-
-              return _messages;
-            } else {
-              // print(value);
-              // var companies = await sharedPrefsHelper.getCompanyMessages();
-              // if (companies.messages != null && companies.messages!.isNotEmpty) {
-              //   {
-              //     _companyMessages = companies;
-              //     _companyMessages.messages?.sort(
-              //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-              //     );
-              //     if (setStateCallback != null) setStateCallback();
-
-              //     return _companyMessages;
-              //   }
-              // }
-              return Future.value(_messages);
-            }
-          },
-        ).onError((error, stackTrace) async {
-          // var companies = await sharedPrefsHelper.getCompanyMessages();
-          // if (companies.messages != null && companies.messages!.isNotEmpty) {
-          //   {
-          //     _companyMessages = companies;
-          //     _companyMessages.messages?.sort(
-          //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-          //     );
-          //     if (setStateCallback != null) setStateCallback();
-
-          //     return _companyMessages;
-          //   }
-          // }
-          print(error);
-          print(stackTrace);
-          return Future.value(_messages);
-        });
-        fetchAllChatFuture = ObservableFuture(future);
+            },
+          ).onError((error, stackTrace) async {
+            print(error);
+            print(stackTrace);
+            return Future.value(_messages);
+          });
+          fetchAllChatFuture = ObservableFuture(future);
+        }
+      } catch (e) {
+        if (setStateCallback != null) setStateCallback();
+        return Future.value(_messages);
       }
-    } catch (e) {
-      // errorStore.errorMessage = "cannot save student profile";
-
-      // var companies = await sharedPrefsHelper.getCompanyMessages();
-      // if (companies.messages != null && companies.messages!.isNotEmpty) {
-      //   {
-      //     _companyMessages = companies;
-      //     _companyMessages.messages?.sort(
-      //       (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-      //     );
-      //     if (setStateCallback != null) setStateCallback();
-
-      //     return _companyMessages;
-      //   }
-      // }
-      print("cannot get profile company");
-      if (setStateCallback != null) setStateCallback();
-
-      return Future.value(_messages);
     }
 
     return Future.value(_messages);
@@ -610,64 +578,75 @@ abstract class _ChatStore with Store {
     if (projectId.trim().isEmpty || userId.trim().isEmpty) {
       return Future.value([]);
     }
+
     if (!quickUpdate) {
       _currentProject = projectId;
       _currentUser = userId;
     }
+    var chatDataSource = getIt<ChatDataSource>();
     getMessageNotifiers(chatObject);
-    // TODO: lưu vào sharedpref
-    if (_currentProjectMessages[projectId] == null ||
-        _currentProjectMessages[projectId]?[userId] == null) {
-      try {
-        final future = _getMessageByProjectAndUsersUseCase
-            .call(
-                params: GetMessageByProjectAndUserParams(
-                    userId: userId, projectId: projectId))
-            .then(
-          (value) async {
-            // print(value);
-            if (_currentProjectMessages[projectId] == null) {
-              _currentProjectMessages[projectId] = ObservableMap();
-            }
-            if (_currentProjectMessages[projectId]![userId] == null &&
-                _messages.firstWhereOrNull(
-                      (element) =>
-                          element.project?.objectId == projectId &&
-                          element.chatUser.id == userId,
-                    ) ==
-                    null) {
-              print("add msg because $userId not have");
-              _messages.insert(0, chatObject..messages = []);
-              _messages.first.lastSeenTime = DateTime(0);
-            }
-            _currentProjectMessages[projectId]![userId] = value;
 
-            // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
+    if (await DeviceUtils.hasConnection()) {
+      if (_currentProjectMessages[projectId] == null ||
+          _currentProjectMessages[projectId]?[userId] == null) {
+        try {
+          final future = _getMessageByProjectAndUsersUseCase
+              .call(
+                  params: GetMessageByProjectAndUserParams(
+                      userId: userId, projectId: projectId))
+              .then(
+            (value) async {
+              // print(value);
+              if (_currentProjectMessages[projectId] == null) {
+                _currentProjectMessages[projectId] = ObservableMap();
+              }
+              if (_currentProjectMessages[projectId]![userId] == null &&
+                  _messages.firstWhereOrNull(
+                        (element) =>
+                            element.project?.objectId == projectId &&
+                            element.chatUser.id == userId,
+                      ) ==
+                      null) {
+                print("add msg because $userId not have");
+                _messages.insert(0, chatObject..messages = []);
+                _messages.first.lastSeenTime = DateTime(0);
+              }
+              _currentProjectMessages[projectId]![userId] = value;
 
-            _currentProjectMessages[projectId]![userId]?.sort(
-              (a, b) {
-                return b.updatedAt!.compareTo(a.updatedAt!);
-              },
-            );
+              // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
-            if (setStateCallback != null) setStateCallback();
-            return _currentProjectMessages[projectId]![userId];
-          },
-        ).onError((error, stackTrace) async {
-          return Future.value(_currentProjectMessages[projectId]![userId]);
-        });
-        if (!quickUpdate) {
-          fetchChatHistoryFuture = ObservableFuture(future);
-          await fetchChatHistoryFuture;
-        } else {
-          await future;
+              _currentProjectMessages[projectId]![userId]?.sort(
+                (a, b) {
+                  return b.updatedAt!.compareTo(a.updatedAt!);
+                },
+              );
+
+              if (setStateCallback != null) setStateCallback();
+              return _currentProjectMessages[projectId]![userId];
+            },
+          ).onError((error, stackTrace) async {
+            return chatDataSource.getCurrentChatContent(
+                int.parse(projectId), int.parse(userId));
+            // return Future.value(_currentProjectMessages[projectId]![userId]);
+          });
+          if (!quickUpdate) {
+            fetchChatHistoryFuture = ObservableFuture(future);
+            await fetchChatHistoryFuture;
+          } else {
+            await future;
+          }
+        } catch (e) {
+          print("Cannot get chat history for this project");
         }
-      } catch (e) {
-        print("Cannot get chat history for this project");
+      } else {
+        return Future.value(currentProjectMessages);
       }
     } else {
-      return Future.value(currentProjectMessages);
+      return chatDataSource.getCurrentChatContent(
+          int.parse(projectId), int.parse(userId));
     }
+    // TODO: lưu vào sharedpref
+
     return Future.value([]);
 
     // //print(value);

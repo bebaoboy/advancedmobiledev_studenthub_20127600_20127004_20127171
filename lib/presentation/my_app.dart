@@ -87,50 +87,8 @@ class _MyAppState extends State<MyApp> {
     super.dispose();
   }
 
-  // Future<void> initPlatformState() async {
-  //   // Configure BackgroundFetch
-  //   BackgroundFetch.configure(
-  //       BackgroundFetchConfig(
-  //           minimumFetchInterval: 45,
-  //           stopOnTerminate: false,
-  //           enableHeadless: true,
-  //           requiredNetworkType: NetworkType.ANY), (String taskId) async {
-  //     // <-- Event handler
-  //     // This is the fetch-event callback.
-  //     print("[BackgroundFetch] Event received $taskId");
-
-  //     await _userStore.fetchUserProfileIfLoggedIn();
-
-  //     // IMPORTANT:  You must signal completion of your task or the OS can punish your app
-  //     // for taking too long in the background.
-  //     BackgroundFetch.finish(taskId);
-  //   }, (String taskId) async {
-  //     // <-- Task timeout handler.
-  //     // This task has exceeded its allowed running-time.  You must stop what you're doing and immediately .finish(taskId)
-  //     print("[BackgroundFetch] TASK TIMEOUT taskId: $taskId");
-  //     BackgroundFetch.finish(taskId);
-  //   });
-  //   print('[BackgroundFetch] configure success');
-
-  //   if (!mounted) return;
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // _themeStore.changeBrightnessToDark(_themeStore.isPlatformDark(context));
-
-    // if (enabled) {
-    //   BackgroundFetch.start().then((int status) {
-    //     print('[BackgroundFetch] start success: $status');
-    //   }).catchError((e) {
-    //     print('[BackgroundFetch] start FAILURE: $e');
-    //   });
-    // } else {
-    //   BackgroundFetch.stop().then((int status) {
-    //     print('[BackgroundFetch] stop success: $status');
-    //   });
-    // }
-
     return Observer(
       builder: (context) {
         return PiPMaterialApp(

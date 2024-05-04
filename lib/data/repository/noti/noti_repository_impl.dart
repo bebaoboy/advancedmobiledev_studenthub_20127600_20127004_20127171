@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:boilerplate/data/network/apis/noti/noti_api.dart';
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/repository/noti/noti_repository.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
@@ -13,10 +15,12 @@ class NotiRepositoryImpl extends NotiRepository {
   @override
   Future<List<NotificationObject>> getNoti(GetNotiParams params) async {
     try {
+      SharedPreferenceHelper helper = getIt<SharedPreferenceHelper>();
       return await _notiApi.getNoti(params).then(
-        (value) {
+        (value) async {
           if (value.statusCode == HttpStatus.accepted ||
               value.statusCode == HttpStatus.ok) {
+            int lastRead = await helper.lastRead;
             List data = value.data["result"];
             List<NotificationObject> res = List.empty(growable: true);
             for (var element in data) {
@@ -38,16 +42,19 @@ class NotiRepositoryImpl extends NotiRepository {
                 },
                 'metadata': element["interview"] != null
                     ? <String, dynamic>{
-                      ...element["interview"],
-                      "meetingRoom": element["meetingRoom"]
-                    } : null
+                        ...element["interview"],
+                        "meetingRoom": element["meetingRoom"]
+                      }
+                    : null
               };
               var acm = NotificationObject.fromJson(e);
 
-              // if (!res.contains(acm)) {
-              res.add(acm);
-              // }
+              if (acm.createdAt!.millisecondsSinceEpoch >= lastRead) {
+                res.add(acm);
+              }
             }
+
+            helper.saveLastRead(DateTime.now());
 
             return res;
           } else {

@@ -63,6 +63,7 @@ class _MessageScreenState extends State<MessageScreen> {
   late UserType _currentUserType;
 
   void _messageNotifierListener() {
+    if (messageNotifier.inbox.isEmpty) return;
     final newMessage = messageNotifier.inbox.last;
     if (newMessage.author.id == _user.id) {
       // _addMessage(newMessage);
@@ -117,7 +118,7 @@ class _MessageScreenState extends State<MessageScreen> {
       } else {
         typings.clear();
       }
-      setState(() {});
+      // setState(() {});
     });
 
     initScreen();
@@ -193,7 +194,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
       msg.reactions!.total.removeWhere((key, value) => value == 0);
     }
-    setState(() {});
+    // setState(() {});
   }
 
   late ChatUser me;
@@ -242,8 +243,7 @@ class _MessageScreenState extends State<MessageScreen> {
             }
           },
           scrollPhysics: const ClampingScrollPhysics(),
-          typingIndicatorOptions:
-          TypingIndicatorOptions(typingUsers: typings),
+          typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
           messages: chatStore.currentProjectMessages,
           onAttachmentPressed: _handleAttachmentPressed,
           // onFirstIconPressed: () => showScheduleBottomSheet(context),
@@ -595,10 +595,12 @@ class _MessageScreenState extends State<MessageScreen> {
       previewData: previewData,
     );
     print("update");
-    setState(() {
-      logg("loaded preview");
-      chatStore.currentProjectMessages[index] = updatedMessage;
-    });
+    if (mounted) {
+      setState(() {
+        logg("loaded preview");
+        chatStore.currentProjectMessages[index] = updatedMessage;
+      });
+    }
   }
 
   void _handleSendPressed(PartialText message) {
