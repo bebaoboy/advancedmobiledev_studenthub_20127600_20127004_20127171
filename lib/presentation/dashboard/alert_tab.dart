@@ -41,6 +41,366 @@ import 'package:grouped_scroll_view/grouped_scroll_view.dart';
 import 'package:intl/intl.dart';
 import 'package:toastification/toastification.dart';
 import 'package:badges/badges.dart' as badges;
+// ignore: implementation_imports
+import 'package:flutter_floating_bottom_bar/src/bottom_bar_scroll_controller_provider.dart';
+
+/// [width] & [height] can be used to animate the size of the back to top icon.
+/// You can also not use them to keep your icon a constant size.
+typedef BackToTopIconBuilder = Widget Function(double width, double height);
+
+/// A floating bottom navigation bar that hides on scroll
+/// up and down on the page, with powerful options
+/// for controlling the look and feel.
+class BottomBar extends StatefulWidget {
+  /// The widget displayed below the `BottomBar`.
+  ///
+  /// This is useful, if the `BottomBar` should react
+  /// to scroll events (i.e. hide from view when a [Scrollable]
+  /// is being scrolled down and show it again when scrolled up).
+  ///
+  /// For that, use this exposed `ScrollController` and
+  /// you can also add listeners on this `ScrollController`.
+  final Widget Function(BuildContext context, ScrollController controller) body;
+
+  ///
+  /// This is the child inside the `BottomBar`.
+  /// Add a TabBar or any other thing that you want to be floating here.
+  final Widget child;
+
+  ///
+  /// This is the scroll to top button. It will be hidden when the
+  /// `BottomBar` is scrolled up. It will be shown when the `BottomBar`
+  /// is scrolled down. Clicking it will scroll the bar on top.
+  ///
+  /// You can hide this by using the `showIcon` property.
+  ///
+  /// `width` & `height` can be used to animate the size of the back to top icon.
+  /// You can also not use them to keep your icon a constant size.
+  final BackToTopIconBuilder? icon;
+
+  ///
+  /// The width of the scroll to top button.
+  final double iconWidth;
+
+  ///
+  /// The height of the scroll to top button.
+  final double iconHeight;
+
+  ///
+  /// The color of the `BottomBar`.
+  final Color barColor;
+
+  ///
+  /// The BoxDecoration for the `BottomBar`.
+  final BoxDecoration? barDecoration;
+
+  ///
+  /// The BoxDecoration for the scroll to top icon shown when `BottomBar` is hidden.
+  final BoxDecoration? iconDecoration;
+
+  ///
+  /// The end position in `y-axis` of the SlideTransition of the `BottomBar`.
+  final double end;
+
+  ///
+  /// The start position in `y-axis` of the SlideTransition of the `BottomBar`.
+  final double start;
+
+  ///
+  /// The padding/offset from all sides of the bar in double.
+  final double offset;
+
+  ///
+  /// The duration of the `SlideTransition` of the `BottomBar`.
+  final Duration duration;
+
+  ///
+  /// The curve of the `SlideTransition` of the `BottomBar`.
+  final Curve curve;
+
+  ///
+  /// The width of the `BottomBar`.
+  final double width;
+
+  ///
+  /// The border radius of the `BottomBar`.
+  final BorderRadius borderRadius;
+
+  ///
+  /// If you don't want the scroll to top button to be visible,
+  /// set this to `false`.
+  final bool showIcon;
+
+  ///
+  /// The alignment of the Stack in which the `BottomBar` is placed.
+  final Alignment alignment;
+
+  ///
+  /// The alignment of the Bar and the icon in the Stack in which the `BottomBar` is placed.
+  final Alignment barAlignment;
+
+  ///
+  /// The callback when the `BottomBar` is shown i.e. on response to scroll events.
+  final Function()? onBottomBarShown;
+
+  ///
+  /// The callback when the `BottomBar` is hidden i.e. on response to scroll events.
+  final Function()? onBottomBarHidden;
+
+  ///
+  /// To reverse the direction in which the scroll reacts, i.e. if you want to make
+  /// the bar visible when you scroll down and hide it when you scroll up, set this
+  /// to `true`.
+  final bool reverse;
+
+  ///
+  /// To reverse the direction in which the scroll to top button scrolls, i.e. if
+  /// you want to scroll to bottom, set this to `true`.
+  final bool scrollOpposite;
+
+  ///
+  /// If you don't want the bar to be hidden ever, set this to `false`.
+  final bool hideOnScroll;
+
+  ///
+  /// The fit property of the `Stack` in which the `BottomBar` is placed.
+  final StackFit fit;
+
+  ///
+  /// The clipBehaviour property of the `Stack` in which the `BottomBar` is placed.
+  final Clip clip;
+
+  const BottomBar({
+    required this.body,
+    required this.child,
+    this.icon,
+    this.iconWidth = 30,
+    this.iconHeight = 30,
+    this.barColor = Colors.black,
+    this.barDecoration,
+    this.iconDecoration,
+    this.end = 0,
+    this.start = 2,
+    this.offset = 10,
+    this.duration = const Duration(milliseconds: 120),
+    this.curve = Curves.linear,
+    this.width = 300,
+    this.borderRadius = BorderRadius.zero,
+    this.showIcon = true,
+    @Deprecated(
+        'Use barAlignment instead, this will be removed in a future release')
+    this.alignment = Alignment.bottomCenter,
+    this.barAlignment = Alignment.bottomCenter,
+    this.onBottomBarShown,
+    this.onBottomBarHidden,
+    this.reverse = false,
+    this.scrollOpposite = false,
+    this.hideOnScroll = true,
+    this.fit = StackFit.loose,
+    this.clip = Clip.hardEdge,
+    super.key,
+  });
+
+  @override
+  _BottomBarState createState() => _BottomBarState();
+}
+
+class _BottomBarState extends State<BottomBar>
+    with SingleTickerProviderStateMixin {
+  ScrollController scrollBottomBarController = ScrollController();
+  late AnimationController _controller;
+  late Animation<Offset> _offsetAnimation;
+  late bool isScrollingDown;
+  late bool isOnTop;
+
+  @override
+  void initState() {
+    isScrollingDown = widget.reverse;
+    isOnTop = !widget.reverse;
+    myScroll();
+    super.initState();
+    _controller = AnimationController(
+      duration: widget.duration,
+      vsync: this,
+    );
+    _offsetAnimation = Tween<Offset>(
+      begin: Offset(0, widget.start),
+      end: Offset(0, widget.end),
+    ).animate(CurvedAnimation(
+      parent: _controller,
+      curve: widget.curve,
+    ))
+      ..addListener(() {
+        if (mounted) {
+          setState(() {});
+        }
+      });
+    _controller.forward();
+    NavbarNotifier2.bottomNavbarVisibilityListener.addListener(
+      () {
+        setState(() {});
+      },
+    );
+  }
+
+  void showBottomBar() {
+    if (mounted) {
+      setState(() {
+        _controller.forward();
+      });
+    }
+    NavbarNotifier2.hideBottomNavBar = false;
+    if (widget.onBottomBarShown != null) widget.onBottomBarShown!();
+  }
+
+  void hideBottomBar() {
+    if (mounted && widget.hideOnScroll) {
+      setState(() {
+        _controller.reverse();
+      });
+    }
+    NavbarNotifier2.hideBottomNavBar = true;
+
+    if (widget.onBottomBarHidden != null) widget.onBottomBarHidden!();
+  }
+
+  Future<void> myScroll() async {
+    scrollBottomBarController.addListener(() {
+      if (scrollBottomBarController.position.userScrollDirection ==
+          ScrollDirection.reverse) {
+        isScrollingDown = true;
+        isOnTop = false;
+        showBottomBar();
+      } else if (scrollBottomBarController.position.userScrollDirection ==
+          ScrollDirection.forward) {
+        isScrollingDown = true;
+        isOnTop = false;
+        showBottomBar();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollBottomBarController.removeListener(() {});
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      fit: widget.fit,
+      alignment: widget.alignment,
+      clipBehavior: widget.clip,
+      children: [
+        BottomBarScrollControllerProvider(
+          scrollController: scrollBottomBarController,
+          child: widget.body(context, scrollBottomBarController),
+        ),
+        if (widget.showIcon)
+          Align(
+            alignment: widget.barAlignment,
+            child: Container(
+              padding: EdgeInsets.all(widget.offset),
+              child: AnimatedOpacity(
+                duration: widget.duration,
+                curve: widget.curve,
+                opacity: isOnTop == true ? 0 : 1,
+                child: AnimatedContainer(
+                  margin: EdgeInsets.only(
+                      bottom: NavbarNotifier2.isNavbarHidden ? 0 : 60),
+                  duration: widget.duration,
+                  curve: widget.curve,
+                  width: isOnTop == true ? 0 : widget.iconWidth,
+                  height: isOnTop == true ? 0 : widget.iconHeight,
+                  decoration: widget.iconDecoration ??
+                      BoxDecoration(
+                        color: widget.barColor,
+                        shape: BoxShape.circle,
+                      ),
+                  padding: EdgeInsets.zero,
+                  child: ClipOval(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          NavbarNotifier2.hideBottomNavBar = false;
+
+                          scrollBottomBarController
+                              .animateTo(
+                            (!widget.scrollOpposite)
+                                ? scrollBottomBarController
+                                    .position.minScrollExtent
+                                : scrollBottomBarController
+                                    .position.maxScrollExtent,
+                            duration: widget.duration,
+                            curve: widget.curve,
+                          )
+                              .then((value) {
+                            if (mounted) {
+                              setState(() {
+                                isOnTop = true;
+                                isScrollingDown = false;
+                              });
+                            }
+                            showBottomBar();
+                          });
+                        },
+                        child: () {
+                          if (widget.icon != null) {
+                            return widget.icon!(
+                                isOnTop == true ? 0 : widget.iconWidth / 2,
+                                isOnTop == true ? 0 : widget.iconHeight / 2);
+                          } else {
+                            return Center(
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: null,
+                                icon: Icon(
+                                  Icons.arrow_upward_rounded,
+                                  color: Colors.white,
+                                  size: isOnTop == true
+                                      ? 0
+                                      : widget.iconWidth / 2,
+                                ),
+                              ),
+                            );
+                          }
+                        }(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        Align(
+          alignment: widget.barAlignment,
+          child: Padding(
+            padding: EdgeInsets.all(widget.offset),
+            child: SlideTransition(
+              position: _offsetAnimation,
+              child: Container(
+                width: widget.width,
+                decoration: widget.barDecoration ??
+                    BoxDecoration(
+                      color: widget.barColor,
+                      borderRadius: widget.borderRadius,
+                    ),
+                child: Material(
+                  color: widget.barColor,
+                  borderRadius: widget.borderRadius,
+                  child: widget.child,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
 
 var colorss = [
   Colors.red,
@@ -298,34 +658,29 @@ class _AlertTabState extends State<AlertTab> {
     NavbarNotifier2.hideBottomNavBar = b;
   }
 
+  ScrollController myController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        margin: EdgeInsets.only(
-            bottom: NavbarNotifier2.isNavbarHidden == true ? 10 : 60),
-        child: FloatingActionButton(
-          child: const Icon(
-            Icons.arrow_upward,
-            color: Colors.white,
-          ),
-          onPressed: () {
-            widget.scrollController.animateTo(
-              0,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-            setState(() {
-              
-            });
-          },
-        ),
-      ),
-      body: Padding(
+    return BottomBar(
+      icon: (width, height) {
+        return const Icon(
+          Icons.arrow_upward,
+          color: Colors.white,
+        );
+      },
+      onBottomBarHidden: () => print("hidden"),
+      onBottomBarShown: () => print("show"),
+      hideOnScroll: false,
+      scrollOpposite: false,
+      showIcon: true,
+      body: (context, controller) => Padding(
           padding: const EdgeInsets.only(bottom: 20.0),
-          child: _buildAlertsContent()),
+          child: _buildAlertsContent(controller)),
+      child: const SizedBox(
+        height: 0,
+        width: 0,
+      ),
     );
   }
 
@@ -632,8 +987,8 @@ class _AlertTabState extends State<AlertTab> {
   late List<Widget?> pages;
   BuildContext? cc;
 
-  Widget _buildAlertsContent() {
-    return CustomScrollView(controller: widget.scrollController, slivers: [
+  Widget _buildAlertsContent(myController) {
+    return CustomScrollView(controller: myController, slivers: [
       SliverToBoxAdapter(
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1916,10 +2271,11 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     if (options.stickyHeaderSorter != null) {
       keys.sort(options.stickyHeaderSorter);
     }
-    print(groupItems);
-    print(keys);
+    // print(groupItems);
+    // print(keys);
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
+    print("build chips");
     slivers.add(SliverPinnedHeader(
       child: Container(
         color: Theme.of(context).colorScheme.background,
@@ -2047,8 +2403,3 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     return itemBuilder(context, items[index]);
   }
 }
-
-
-
-
-// 2024 yay ^^

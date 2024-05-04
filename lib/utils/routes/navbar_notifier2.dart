@@ -301,7 +301,7 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static int get length => _length!;
 
-  static bool _hideBottomNavBar = false;
+  static ValueNotifier<bool> bottomNavbarVisibilityListener = ValueNotifier(false);
 
   static List<int> _navbarStackHistory = [];
 
@@ -365,10 +365,10 @@ class NavbarNotifier2 extends ChangeNotifier {
 
   static List<int> get stackHistory => _navbarStackHistory;
 
-  static bool get isNavbarHidden => _hideBottomNavBar;
+  static bool get isNavbarHidden => bottomNavbarVisibilityListener.value;
 
   static set hideBottomNavBar(bool x) {
-    _hideBottomNavBar = x;
+    bottomNavbarVisibilityListener.value = x;
     if (!x) {
       toastification.dismissAll();
     }
