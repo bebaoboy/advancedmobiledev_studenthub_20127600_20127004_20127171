@@ -154,6 +154,7 @@ Future<void> main() async {
         vapidKey:
             "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
       );
+      log("firebase token: $token");
     }
 
     // add listener for foreground push notifications

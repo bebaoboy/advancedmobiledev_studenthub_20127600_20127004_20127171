@@ -235,7 +235,7 @@ class CallManager {
   }
 
   void startNewCall(BuildContext context, int callType, Set<int> opponents,
-      P2PSession callSession2, InterviewSchedule interviewSchedule,
+      P2PSession callSession2, InterviewSchedule? interviewSchedule,
       {bool incoming = false, required bool fromCallkit}) async {
     if (opponents.isEmpty) return;
 
@@ -292,14 +292,14 @@ class CallManager {
         'type': "interview",
         "android_fcm_notification": {
           "title": "debug",
-          "body": json.encode(interviewSchedule.toJson()),
+          "body": json.encode(interviewSchedule?.toJson()),
           "sticky": true,
           "channel_id": NotificationChannelEnum.basicChannel.key,
           "color": "#FF0000"
         },
         "extra_body": {
           "title": "debug",
-          "body": json.encode(interviewSchedule.toJson()),
+          "body": json.encode(interviewSchedule?.toJson()),
           "sticky": true,
           "channel_id": NotificationChannelEnum.interviewChannel.key,
           "color": "#FF0000"
@@ -419,6 +419,20 @@ class CallManager {
           //   ),
           // );
           var context = NavigationService.navigatorKey.currentContext!;
+          if (kIsWeb) {
+            inAppPip = true;
+            startNewCall(
+                NavigationService.navigatorKey.currentContext!,
+                CallType.VIDEO_CALL,
+                {
+                  ...currentCall!.opponentsIds,
+                },
+                currentCall!,
+                null,
+                incoming: true,
+                fromCallkit: false);
+            return;
+          }
           startPreviewMeetingIncomingCall(context, CallType.VIDEO_CALL,
               currentCall?.opponentsIds ?? {}, currentCall,
               fromCallkit: fromCallkit);
