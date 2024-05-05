@@ -4,6 +4,7 @@ import 'package:boilerplate/data/network/apis/noti/noti_api.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/repository/noti/noti_repository.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotiRepositoryImpl extends NotiRepository {
   final NotiApi _notiApi;
@@ -11,8 +12,9 @@ class NotiRepositoryImpl extends NotiRepository {
   NotiRepositoryImpl(this._notiApi);
 
   @override
-  Future<List<NotificationObject>> getNoti(GetNotiParams params) async {
+  Future<List<NotificationObject>> getNoti(GetNotiParams params,) async {
     try {
+      var s = await SharedPreferences.getInstance();
       return await _notiApi.getNoti(params).then(
         (value) {
           if (value.statusCode == HttpStatus.accepted ||
@@ -38,9 +40,10 @@ class NotiRepositoryImpl extends NotiRepository {
                 },
                 'metadata': element["interview"] != null
                     ? <String, dynamic>{
-                      ...element["interview"],
-                      "meetingRoom": element["meetingRoom"]
-                    } : null
+                        ...element["interview"],
+                        "meetingRoom": element["meetingRoom"]
+                      }
+                    : null
               };
               var acm = NotificationObject.fromJson(e);
 
@@ -48,6 +51,14 @@ class NotiRepositoryImpl extends NotiRepository {
               res.add(acm);
               // }
             }
+
+            s.setStringList(
+                "noti",
+                res
+                    .map(
+                      (e) => e.toJson(),
+                    )
+                    .toList());
 
             return res;
           } else {

@@ -2,6 +2,8 @@
 
 import 'dart:math';
 
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:choice/choice.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
@@ -241,10 +243,10 @@ class _BottomBarState extends State<BottomBar>
 
   hide() {
     try {
-    if (mounted) {
-      setState(() {});
-    }
-    } catch(e) {
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (e) {
       ///
     }
   }
@@ -1256,9 +1258,13 @@ class _CustomOfferNotificationState extends State<CustomOfferNotification> {
 
 class CustomInterviewNotification extends StatefulWidget {
   const CustomInterviewNotification(
-      {super.key, required this.notificationObject, required this.showTime});
+      {super.key,
+      required this.notificationObject,
+      required this.showTime,
+      required this.enterInterview});
   final NotificationObject notificationObject;
   final bool showTime;
+  final Function enterInterview;
 
   @override
   State<CustomInterviewNotification> createState() =>
@@ -1325,7 +1331,8 @@ class _CustomInterviewNotificationState
                               // textColor: follow == false ? Colors.white : mainText,
                               onPressed: () {
                                 setState(() {
-                                  follow = !follow;
+                                  // follow = !follow;
+                                  widget.enterInterview();
                                 });
                               },
                               buttonText: widget.notificationObject.type ==
@@ -1741,6 +1748,17 @@ class _AlertPageState extends State<AlertPage> {
                       showTime: false,
                     ),
                   NotificationType.joinInterview => CustomInterviewNotification(
+                      enterInterview: () async {
+                        
+                        if (item.metadata != null) {
+                          CallManager.instance.startPreviewMeeting(
+                              NavigationService.navigatorKey.currentContext ??
+                                  context,
+                              CallType.VIDEO_CALL,
+                              {int.parse(item.sender.objectId!)},
+                              InterviewSchedule.fromJsonApi(item.metadata!));
+                        }
+                      },
                       notificationObject: item,
                       showTime: false,
                     ),

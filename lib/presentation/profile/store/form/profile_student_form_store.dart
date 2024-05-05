@@ -22,6 +22,7 @@ import 'package:boilerplate/domain/usecase/profile/update_project_experience.dar
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'profile_student_form_store.g.dart';
@@ -443,6 +444,9 @@ abstract class _ProfileStudentFormStore with Store {
         //print(value);
       },
     );
+    var profileInfoStore = getIt<ProfileStudentStore>();
+    profileInfoStore.setStudentId(userStore.user!.studentProfile!.objectId!);
+    await profileInfoStore.getInfo();
     if (userStore.user != null && userStore.user!.studentProfile != null) {
       var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       sharedPrefsHelper.saveStudentProfile(StudentProfile(

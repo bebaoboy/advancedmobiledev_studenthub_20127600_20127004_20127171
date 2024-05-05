@@ -231,25 +231,44 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           BoxShadow(color: Colors.yellowAccent, blurRadius: 8),
                         ],
                       )))
-              : widget.project.isWorking
+              : widget.project.countProposals > 10
                   ? const RotatedCornerDecoration.withColor(
-                      color: Colors.green,
+                      color: Colors.orangeAccent,
                       spanBaselineShift: 4,
                       badgeSize: Size(84, 84),
                       badgeCornerRadius: Radius.circular(8),
                       badgePosition: BadgePosition.topEnd,
                       textSpan: TextSpan(
-                          text: "Working",
+                          text: "HOT!",
                           style: TextStyle(
                             fontSize: 14,
                             letterSpacing: 1,
                             fontWeight: FontWeight.bold,
                             shadows: [
                               BoxShadow(
-                                  color: Colors.yellowAccent, blurRadius: 8),
+                                  color: Colors.orangeAccent, blurRadius: 8),
                             ],
                           )))
-                  : null,
+                  : widget.project.isWorking
+                      ? const RotatedCornerDecoration.withColor(
+                          color: Colors.green,
+                          spanBaselineShift: 4,
+                          badgeSize: Size(84, 84),
+                          badgeCornerRadius: Radius.circular(8),
+                          badgePosition: BadgePosition.topEnd,
+                          textSpan: TextSpan(
+                              text: "Working",
+                              style: TextStyle(
+                                fontSize: 14,
+                                letterSpacing: 1,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  BoxShadow(
+                                      color: Colors.yellowAccent,
+                                      blurRadius: 8),
+                                ],
+                              )))
+                      : null,
           child: Container(
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),

@@ -24,10 +24,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // make sure you call `initializeApp` before using other Firebase services.
   try {
     log('[onMessage] background message: ${message.data}', "bebaoboy");
-    // log('[onMessage] background message type: ${message.data["type"]}',
-    //     "bebaoboy");
-    // log('[onMessage] background message meow: ${message.toMap().toString()}',
-    //     "bebaoboy");
+    log('[onMessage] background message type: ${message.data["type"]}',
+        "bebaoboy");
+    log('[onMessage] background message meow: ${message.toMap().toString()}',
+        "bebaoboy");
 
     String type = message.data["type"] ?? "";
     String title = message.data["title"] ?? "";

@@ -242,8 +242,7 @@ class _MessageScreenState extends State<MessageScreen> {
             }
           },
           scrollPhysics: const ClampingScrollPhysics(),
-          typingIndicatorOptions:
-          TypingIndicatorOptions(typingUsers: typings),
+          typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
           messages: chatStore.currentProjectMessages,
           onAttachmentPressed: _handleAttachmentPressed,
           // onFirstIconPressed: () => showScheduleBottomSheet(context),
@@ -755,6 +754,21 @@ class _MessageScreenState extends State<MessageScreen> {
               .indexWhere((element) => element.id == id);
           if (i != -1) {
             setState(() {
+              var ms = {
+                "title": value.title.toTitleCase().trim(),
+                "content": "Interview created!",
+                "projectId": widget.chatObject.project!.objectId!,
+                "senderId": userStore.user!.objectId!,
+                "receiverId": _user.id, // notification
+                "startTime": value.startDate.toUtc().toIso8601String(),
+                "endTime": value.endDate.toUtc().toIso8601String(),
+                "meeting_room_code": value.meetingRoomCode,
+                "meeting_room_id": value.meetingRoomId,
+                "interviewId": value.objectId,
+                "updateAction": true,
+              };
+              print(ms);
+              messageNotifier.textSocketHandler.emit("UPDATE_INTERVIEW", ms);
               chatStore.currentProjectMessages[i] = ScheduleMessageType(
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),

@@ -66,6 +66,9 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 MaterialButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -77,6 +80,9 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                   width: 12,
                 ),
                 MaterialButton(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   onPressed: () {
                     if (coverLetterController.text.isEmpty) {
                       Toastify.show(context, '', "Description can't be empty",

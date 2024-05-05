@@ -260,6 +260,7 @@ class NotificationObject extends MyObject {
   Profile receiver;
   Profile sender;
   String content;
+  String messageContent;
   String title;
   NotificationType get type => _type ?? NotificationType.text;
   NotificationType? _type;
@@ -269,6 +270,7 @@ class NotificationObject extends MyObject {
     required this.id,
     required this.receiver,
     required this.sender,
+    this.messageContent = "",
     required NotificationType type,
     super.createdAt,
     super.updatedAt,
@@ -282,6 +284,7 @@ class NotificationObject extends MyObject {
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
+        messageContent = json["messageContent"] ?? "",
         content =
             int.tryParse(json['type']) == NotificationType.joinInterview.index
                 ? "${json["content"]}\n${json["messageContent"]}"
@@ -290,6 +293,26 @@ class NotificationObject extends MyObject {
         _type = NotificationType.values[int.tryParse(json['type']) ?? 0],
         metadata = json['metadata'],
         super(createdAt: json["createdAt"]);
+
+  String toJson() {
+    return json.encode({
+      'id': id,
+      'title': title,
+      "content": content,
+      'messageContent': messageContent,
+      'type': type.index,
+      'createdAt': createdAt.toString(),
+      'receiver': {
+        "id": receiver.objectId,
+        "fullname": receiver.name
+      },
+      'sender': {
+        "id": sender.objectId,
+        "fullname": sender.name
+      },
+      'metadata': metadata
+    });
+  }
 }
 
 enum NotificationType {
@@ -385,6 +408,7 @@ class MessageObject extends NotificationObject {
                     : json2["sender"]),
             type: NotificationType.message);
 
+  @override
   String toJson() {
     return json.encode({
       "type": messageType.index,

@@ -63,8 +63,9 @@ abstract class _ChatStore with Store {
       _messageNotifiers[chatObject.project!.objectId!] =
           MessageNotifierProvider(
               project: chatObject.project,
-              addInboxCb: (Map<String, dynamic> data, inbox, bool isInterview) {
-                return addInbox(
+              addInboxCb:
+                  (Map<String, dynamic> data, inbox, bool isInterview) async {
+                return await addInbox(
                     data,
                     inbox,
                     chatObject.project!,
@@ -86,12 +87,12 @@ abstract class _ChatStore with Store {
 
   Set<String> msgIdDict = {};
 
-  AbstractChatMessage? addInbox(
+  Future<AbstractChatMessage?> addInbox(
       Map<String, dynamic> msg,
       List<AbstractChatMessage> _,
       Project project,
       ChatUser user,
-      bool isInterview) {
+      bool isInterview) async {
     Map<String, dynamic> message = msg["notification"]["message"];
     if (message["receiverId"].toString() != userStore.user!.objectId) {
       return null;
@@ -193,13 +194,15 @@ abstract class _ChatStore with Store {
         // var projectStore = getIt<ChatStore>();
         // var interview = await projectStore.getInterview(interviewId: id);
         var interview = msg["notification"]["interview"];
-        var meeting = msg["notification"]["meeting"];
+        var meeting = msg["notification"]["meetingRoom"];
+        if (interview == null || meeting == null) return null;
 
         var e = <String, dynamic>{
           ...message,
           "id": mess,
           'type': 'schedule',
-          'text': "${interview?['title']}: ${interview?['content']}",
+          'text':
+              "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
           'status': 'seen',
           'interview': interview,
           "createdAt":
@@ -215,8 +218,8 @@ abstract class _ChatStore with Store {
             "id": message["senderId"].toString(),
           },
           "metadata": {
-            "title": "${interview?['title']}: ${interview?['content']}",
-            "content": interview?['content'],
+            "title": "${interview?['title'] ?? "No title"}",
+            "content": message['content'] ?? "",
             "projectId": project.objectId ?? "-1",
             "senderId": user.id,
             "receiverId": userStore.user!.objectId!, // notification
@@ -264,6 +267,89 @@ abstract class _ChatStore with Store {
       }
     } else {
       print("trùng message id ${message["id"]}");
+      if (isInterview) {
+        var interview = msg["notification"]["interview"];
+        var meeting = msg["notification"]["meetingRoom"];
+        if (interview == null || meeting == null) return null;
+
+        var e = <String, dynamic>{
+          ...message,
+          "id": mess,
+          'type': 'schedule',
+          'text':
+              "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
+          'status': 'seen',
+          'interview': interview,
+          "createdAt":
+              (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          "updatedAt":
+              (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
+                  .millisecondsSinceEpoch,
+          'author': {
+            "firstName": message["senderId"].toString() == user.id
+                ? user.firstName
+                : userStore.user!.name,
+            "id": message["senderId"].toString(),
+          },
+          "metadata": {
+            "title": "${interview?['title'] ?? "No title"}",
+            "content": message['content'] ?? "",
+            "projectId": project.objectId ?? "-1",
+            "senderId": user.id,
+            "receiverId": userStore.user!.objectId!, // notification
+            "createdAt": interview?["createdAt"],
+            "updatedAt": interview?["updatedAt"],
+            "meeting_room_code": meeting?["meeting_code_id"],
+            "meeting_room_id": meeting?["meeting_room_id"],
+          }
+        };
+
+        var m = AbstractChatMessage.fromJson(e);
+        if (currentProjectMessageMap[project.objectId!]?[user.id] == null) {
+          // currentProjectMessageMap[project.objectId!]![user.id] = [];
+          await getMessageByProjectAndUsers(
+              chatObject: WrapMessageList(
+                  chatUser: user, project: project, messages: []),
+              quickUpdate: true);
+        }
+        var oml = currentProjectMessageMap[project.objectId!]?[user.id];
+
+        var o = oml?.firstWhereOrNull(
+          (element) => element.id == m.id,
+        );
+        if (o != null) o = m;
+        var pp = _messages.firstWhereOrNull(
+          (element) =>
+              element.project?.objectId == project.objectId &&
+              element.chatUser.id == user.id,
+        );
+
+        if (pp != null) {
+          // pp.messages ??= [];
+          print("add msg for ${project.objectId} user ${user.id}");
+          if (pp.messages?.firstOrNull != null) {
+            pp.messages?.first = MessageObject(
+                createdAt: DateTime.fromMillisecondsSinceEpoch(
+                    m.createdAt ?? DateTime.now().millisecondsSinceEpoch),
+                updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                    m.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+                project: project,
+                id: m.id,
+                content: m.type == AbstractMessageType.schedule
+                    ? ("${m.metadata?["content"] ?? (m).id}: ${(m as ScheduleMessageType).metadata?["title"] ?? (m).id}")
+                    : m.type == AbstractMessageType.text
+                        ? (message as AbstractTextMessage).text
+                        : "type not supported",
+                receiver: Profile(objectId: "-1", name: "null"),
+                interviewSchedule: m.type == AbstractMessageType.schedule
+                    ? InterviewSchedule.fromJsonApi(m.metadata!)
+                    : null,
+                sender:
+                    Profile(objectId: user.id, name: user.firstName ?? "null"));
+          }
+        }
+      }
       return null;
     }
   }
@@ -516,7 +602,7 @@ abstract class _ChatStore with Store {
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
-                  ? ("${(message as ScheduleMessageType).metadata?["title"] ?? (message).id}: ${message.metadata?["content"] ?? (message).id}")
+                  ? ("${(message as ScheduleMessageType).metadata?["content"] ?? (message).id}: ${message.metadata?["title"] ?? (message).id}")
                   : message.type == AbstractMessageType.text
                       ? (message as AbstractTextMessage).text
                       : "type not supported",
@@ -537,7 +623,7 @@ abstract class _ChatStore with Store {
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
-                  ? ("${(message as ScheduleMessageType).metadata?["title"] ?? (message).id}: ${message.metadata?["content"] ?? (message).id}")
+                  ? ("${(message as ScheduleMessageType).metadata?["content"] ?? (message).id}: ${message.metadata?["title"] ?? (message).id}")
                   : message.type == AbstractMessageType.text
                       ? (message as AbstractTextMessage).text
                       : "type not supported",

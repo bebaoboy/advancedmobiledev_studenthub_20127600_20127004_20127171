@@ -1,9 +1,12 @@
 // ignore_for_file: prefer_final_fields
 
+import 'dart:convert';
+
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'notification_store.g.dart';
 
@@ -37,7 +40,9 @@ abstract class _NotificationStore with Store {
 
   @action
   Future<List<NotificationObject>> getNoti(
-      {required String receiverId, required List activeDates}) async {
+      {required String receiverId,
+      required List activeDates,
+      bool force = false}) async {
     // if (receiverId.trim().isEmpty) {
     //   return Future.value([]);
     // }
@@ -62,7 +67,22 @@ abstract class _NotificationStore with Store {
             return Future.value([]);
           }
         },
-      );
+      ).onError(
+        (error, stackTrace) async {
+          var s = await SharedPreferences.getInstance();
+
+          var l = s.getStringList("noti");
+          if (l != null) {
+            List<NotificationObject> res = l
+                .map(
+                  (e) => NotificationObject.fromJson(json.decode(e)),
+                )
+                .toList();
+            return res;
+          }
+          return Future.value([]);
+        },
+      ) as List<NotificationObject>;
     } catch (e) {
       print("Cannot get notification for this receiverId");
     }
@@ -161,7 +181,17 @@ abstract class _NotificationStore with Store {
 
         break;
     }
-    NavbarNotifier2.updateBadge(3, const NavbarBadge(showBadge: true, badgeText: "1"));
+    NavbarNotifier2.updateBadge(
+        3, const NavbarBadge(showBadge: true, badgeText: "1"));
+
+    Future.delayed(Duration.zero, () async {
+      if (_notiList.isEmpty) return;
+      var s = await SharedPreferences.getInstance();
+      var l = s.getStringList("noti");
+      if (l != null) {
+        s.setStringList("noti", [_notiList.first.toJson(), ...l]);
+      }
+    });
   }
 
   NotificationObject toNotificationObject(element) {

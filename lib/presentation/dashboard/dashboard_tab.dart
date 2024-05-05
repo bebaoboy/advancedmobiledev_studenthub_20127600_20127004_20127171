@@ -45,6 +45,23 @@ class DashBoardTab extends StatefulWidget {
   State<DashBoardTab> createState() => _DashBoardTabState();
 }
 
+enum ProjectStatusUI { hot, all, proposal }
+
+extension ProjectStatusTitle on ProjectStatusUI {
+  String get title {
+    switch (this) {
+      case ProjectStatusUI.hot:
+        return 'HOT';
+      case ProjectStatusUI.all:
+        return 'All';
+      case ProjectStatusUI.proposal:
+        return 'Proposal';
+      default:
+        return '';
+    }
+  }
+}
+
 class _DashBoardTabState extends State<DashBoardTab>
     with SingleTickerProviderStateMixin {
   // late TabController tabController;
@@ -76,7 +93,7 @@ class _DashBoardTabState extends State<DashBoardTab>
       }
     });
 
-    filterItems = ["All", "Proposal"];
+    filterItems = ProjectStatusUI.values;
 
     scrollController.add(ScrollController());
     scrollController.add(ScrollController());
@@ -110,14 +127,14 @@ class _DashBoardTabState extends State<DashBoardTab>
         }
       },
     );
-    valueListenable.value = filterItems[0];
-    valueListenable.addListener(
-      () {
-        setState(() {
-          hasProposalOnly = valueListenable.value == filterItems[1];
-        });
-      },
-    );
+    valueListenable.value = filterItems[1];
+    // valueListenable.addListener(
+    //   () {
+    //     setState(() {
+    //       hasProposalOnly = valueListenable.value == filterItems[2];
+    //     });
+    //   },
+    // );
   }
 
   @override
@@ -140,7 +157,6 @@ class _DashBoardTabState extends State<DashBoardTab>
   var updateProjectStore = getIt<UpdateProjectFormStore>();
   late final TabController tabController;
   List<ScrollController> scrollController = [];
-  bool hasProposalOnly = false;
 
   testNotification() {
     Future.delayed(Duration.zero, () async {
@@ -184,8 +200,8 @@ class _DashBoardTabState extends State<DashBoardTab>
     });
   }
 
-  List<String> filterItems = [];
-  final valueListenable = ValueNotifier<String?>(null);
+  List<ProjectStatusUI> filterItems = [];
+  final valueListenable = ValueNotifier<ProjectStatusUI?>(null);
 
   Widget _buildDashBoardContent() {
     //print("rebuild db tab");
@@ -207,7 +223,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                         child: SizedBox(
                           width: MediaQuery.of(context).size.width * 0.4,
                           child: DropdownButtonHideUnderline(
-                            child: DropdownButton2<String>(
+                            child: DropdownButton2<ProjectStatusUI>(
                               isExpanded: true,
                               hint: Text(
                                 'Select Item',
@@ -217,11 +233,12 @@ class _DashBoardTabState extends State<DashBoardTab>
                                 ),
                               ),
                               items: filterItems
-                                  .map((String item) => DropdownItem<String>(
+                                  .map((ProjectStatusUI item) =>
+                                      DropdownItem<ProjectStatusUI>(
                                         value: item,
                                         height: 40,
                                         child: Text(
-                                          item,
+                                          item.title,
                                           style: const TextStyle(
                                             fontSize: 14,
                                           ),
@@ -229,7 +246,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                                       ))
                                   .toList(),
                               valueListenable: valueListenable,
-                              onChanged: (String? value) {
+                              onChanged: (ProjectStatusUI? value) {
                                 valueListenable.value = value;
                               },
                               buttonStyleData: const ButtonStyleData(
@@ -298,7 +315,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                       child: ProjectTabs(
                         // tabController: tabController,
                         // pageController: widget.pageController,
-                        hasProposalOnly: hasProposalOnly,
+                        filter: valueListenable.value ?? ProjectStatusUI.hot,
                         tabController: tabController,
                         scrollController: scrollController,
                       ),
@@ -332,9 +349,9 @@ class ProjectTabs extends StatefulWidget {
     required this.tabController,
     // required this.pageController,
     required this.scrollController,
-    this.hasProposalOnly = false,
+    this.filter = ProjectStatusUI.hot,
   });
-  final bool hasProposalOnly;
+  final ProjectStatusUI filter;
   TabController tabController;
   // PageController pageController;
   List<ScrollController> scrollController;
@@ -394,13 +411,12 @@ class _ProjectTabsState extends State<ProjectTabs> {
               children: [
                 Observer(builder: (context) {
                   return AllProjects(
-                    projects: widget.hasProposalOnly
+                    projects: widget.filter == ProjectStatusUI.hot
                         ? [
                             ...projectStore.companyProjects
                                 .where(
                                   (element) =>
-                                      element.proposal != null &&
-                                      element.proposal!.isNotEmpty,
+                                      element.countProposals > 10,
                                 )
                                 .toList()
                               ..sort(
@@ -408,7 +424,21 @@ class _ProjectTabsState extends State<ProjectTabs> {
                                     .compareTo(a.countProposals),
                               )
                           ]
-                        : [...projectStore.companyProjects, ...myProjects],
+                        : widget.filter == ProjectStatusUI.proposal
+                            ? [
+                                ...projectStore.companyProjects
+                                    .where(
+                                      (element) =>
+                                          element.proposal != null &&
+                                          element.proposal!.isNotEmpty,
+                                    )
+                                    .toList()
+                                  ..sort(
+                                    (a, b) => b.countProposals
+                                        .compareTo(a.countProposals),
+                                  )
+                              ]
+                            : [...projectStore.companyProjects, ...myProjects],
                     // projectFuture: ,
                     scrollController: widget.scrollController[0],
                     showBottomSheet: showBottomSheet,
