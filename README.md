@@ -1,7 +1,7 @@
 ## ANNOUNCEMENT🎉 
 <br>
 StudentHub 0.6 is OUT!!
-<br>
+<br> 
 
 <img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
 <br>
