@@ -625,9 +625,9 @@ abstract class _ChatStore with Store {
               return _currentProjectMessages[projectId]![userId];
             },
           ).onError((error, stackTrace) async {
-            return chatDataSource.getCurrentChatContent(
-                int.parse(projectId), int.parse(userId));
-            // return Future.value(_currentProjectMessages[projectId]![userId]);
+            // return chatDataSource.getCurrentChatContent(
+            //     int.parse(projectId), int.parse(userId));
+            return Future.value(_currentProjectMessages[projectId]![userId]);
           });
           if (!quickUpdate) {
             fetchChatHistoryFuture = ObservableFuture(future);

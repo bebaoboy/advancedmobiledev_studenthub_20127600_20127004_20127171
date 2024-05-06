@@ -212,9 +212,11 @@ class _MessageScreenState extends State<MessageScreen> {
             if (loading) {
               loading = false;
 
-              Future.delayed(Duration.zero, () {
-                setState(() {});
-              });
+              if (mounted) {
+                Future.delayed(Duration.zero, () {
+                  setState(() {});
+                });
+              }
             }
           },
           user: me,
