@@ -1,7 +1,7 @@
+
 import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
 import 'package:boilerplate/data/local/constants/db_constants.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
-import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/chat/type/message.dart';
 import 'package:sembast/sembast.dart';
@@ -11,7 +11,7 @@ class ChatDataSource {
       intMapStoreFactory.store(DBConstants.CHAT_STORE_NAME);
 
   final _chatDataStore =
-      intMapStoreFactory.store(DBConstants.CHAT_DATA_STORE_NAME);
+      stringMapStoreFactory.store(DBConstants.CHAT_DATA_STORE_NAME);
 
   // database instance
   final SembastClient _sembastClient;
@@ -25,7 +25,7 @@ class ChatDataSource {
     if (int.tryParse(messageList.chatUser.id) != null) {
       return await _chatObjectStore
           .record(int.parse(messageList.chatUser.id))
-          .put(_sembastClient.database, messageList.toJson());
+          .put(_sembastClient.database, messageList.toJson(), merge: true);
     } else {
       return await _chatObjectStore.add(
           _sembastClient.database, messageList.toJson());
@@ -33,16 +33,22 @@ class ChatDataSource {
   }
 
   Future insertOrReplaceChatContent(int projectId, int userId,
-      List<AbstractChatMessage> messageContents) async {
-    for (var element in messageContents) {
-      try {
-        _chatDataStore
-            .record(projectId + userId)
-            .put(_sembastClient.database, element.toJson());
-      } catch (e) {
-        // Handle errors here
-        print('Error while putting chat content: $e');
+      List<Map<String, dynamic>> messageContents) async {
+    try {
+      final store = _chatDataStore;
+      final key = "$projectId-$userId";
+
+      final record = await store.record(key).get(_sembastClient.database);
+
+      final allMessages = <String, List<Map<String, dynamic>>>{};
+      if (record != null) {
+        allMessages.addAll(record as Map<String, List<Map<String, dynamic>>>);
       }
+      allMessages[key] = messageContents;
+
+      await store.record(key).put(_sembastClient.database, allMessages);
+    } catch (e) {
+      print('Error while putting chat content: $e');
     }
   }
 
@@ -51,6 +57,26 @@ class ChatDataSource {
 
   Future<int> count() async {
     return await _chatObjectStore.count(_sembastClient.database);
+  }
+
+  Future<int> countCurrentChatContent(int projectId, int userId) async {
+    final store = _chatDataStore;
+    final key = "$projectId-$userId";
+
+    try {
+      final record = await store.record(key).get(_sembastClient.database);
+
+      if (record != null) {
+        final messages =
+            List<Map<String, dynamic>>.from(record[key] as Iterable);
+        return messages.length;
+      } else {
+        return 0;
+      }
+    } catch (e) {
+      print('Error while counting messages: $e');
+      return -1;
+    }
   }
 
   Future<List<WrapMessageList>> getListChatObjectFromDb() async {
@@ -102,20 +128,28 @@ class ChatDataSource {
 
   Future<List<AbstractChatMessage>> getCurrentChatContent(
       int projectId, int userId) async {
-    var filter =
-        Filter.equals(DBConstants.CHAT_CONTENT_FIELD_ID, projectId + userId);
+    final store = _chatDataStore;
+    final key = "$projectId-$userId";
+
     var list = List<AbstractChatMessage>.empty(growable: true);
 
-    final recordSnapshots = await _chatDataStore.find(_sembastClient.database,
-        finder: Finder(filter: filter));
+    try {
+      final recordSnapshot =
+          await store.record(key).get(_sembastClient.database);
 
-    if (recordSnapshots.isNotEmpty) {
-      list = recordSnapshots.map((snapshot) {
-        final message = AbstractChatMessage.fromJson(snapshot.value);
-        return message;
-      }).toList();
+      if (recordSnapshot != null) {
+        for (var r in recordSnapshot as Iterable) {
+          final message = AbstractChatMessage.fromJson(r.value);
+          list.add(message);
+        }
+      } else {
+        return [];
+      }
+    } catch (e) {
+      print('Error while getting chat content: $e');
+      return [];
     }
 
-    return Future.value(list);
+    return list;
   }
 }

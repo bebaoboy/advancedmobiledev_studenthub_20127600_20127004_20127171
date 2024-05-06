@@ -416,7 +416,7 @@ abstract class _ChatStore with Store {
                     (a, b) => b.messages!.firstOrNull!.updatedAt!
                         .compareTo(a.messages!.firstOrNull!.updatedAt!),
                   );
-                  
+
                   var c = messages.fold(
                       0, (sum, item) => sum + item.newMessageCount);
                   if (c > 0) {
@@ -642,8 +642,11 @@ abstract class _ChatStore with Store {
         return Future.value(currentProjectMessages);
       }
     } else {
-      return chatDataSource.getCurrentChatContent(
-          int.parse(projectId), int.parse(userId));
+      // print(
+      //     "count: ${await chatDataSource.countCurrentChatContent(int.parse(projectId), int.parse(userId))}");
+      // return chatDataSource.getCurrentChatContent(
+      //     int.parse(projectId), int.parse(userId));
+      return [];
     }
     // TODO: lưu vào sharedpref
 

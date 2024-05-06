@@ -59,13 +59,8 @@ class ChatRepositoryImpl extends ChatRepository {
                   : 0,
             );
 
-            int countFromDb = await _datasource.count();
-            if (list.length != countFromDb) {
-              _datasource.deleteAll();
-            } else {
-              for (var element in list) {
-                _datasource.insert(element, userStore.user!.objectId!);
-              }
+            for (var element in list) {
+              _datasource.insert(element, userStore.user!.objectId!);
             }
 
             return list;
@@ -77,7 +72,7 @@ class ChatRepositoryImpl extends ChatRepository {
         },
       );
     } else {
-      return _datasource.getListChatObjectFromDb() as List<WrapMessageList>;
+      return _datasource.getListChatObjectFromDb();
     }
 
     // ignore: invalid_return_type_for_catch_error
@@ -87,60 +82,67 @@ class ChatRepositoryImpl extends ChatRepository {
   Future<List<AbstractChatMessage>> getMessageByProjectAndUser(
       GetMessageByProjectAndUserParams params) async {
     // var userStore = getIt<UserStore>();
-    try {
-      return await _chatApi.getMessageByProjectAndUser(params).then(
-        (value) {
-          if (value.statusCode == HttpStatus.accepted ||
-              value.statusCode == HttpStatus.ok ||
-              value.statusCode == HttpStatus.created) {
-            List data = value.data["result"];
-            List<AbstractChatMessage> res = List.empty(growable: true);
-            for (var element in data) {
-              var e = <String, dynamic>{
-                ...element,
-                'id': element['id'].toString(),
-                'type': element['interview'] != null ? "schedule" : 'text',
-                'text': element['content'],
-                'status': 'seen',
-                'interview': element['interview'] ?? {},
-                'createdAt': DateTime.parse(
-                        (element['interview'] ?? element)['createdAt'])
-                    .millisecondsSinceEpoch,
-                'updatedAt': DateTime.parse(
-                        (element['interview'] ?? element)['updatedAt'] ??
-                            element['createdAt'])
-                    .millisecondsSinceEpoch,
-                'author': {
-                  "firstName": element['sender']['fullname'],
-                  "id": element['sender']['id'].toString(),
+    if (await DeviceUtils.hasConnection()) {
+      try {
+        List<Map<String, dynamic>> resRaw = [];
+        return await _chatApi.getMessageByProjectAndUser(params).then(
+          (value) {
+            if (value.statusCode == HttpStatus.accepted ||
+                value.statusCode == HttpStatus.ok ||
+                value.statusCode == HttpStatus.created) {
+              List data = value.data["result"];
+              List<AbstractChatMessage> res = List.empty(growable: true);
+              for (var element in data) {
+                var e = <String, dynamic>{
+                  ...element,
+                  'id': element['id'].toString(),
+                  'type': element['interview'] != null ? "schedule" : 'text',
+                  'text': element['content'],
+                  'status': 'seen',
+                  'interview': element['interview'] ?? {},
+                  'createdAt': DateTime.parse(
+                          (element['interview'] ?? element)['createdAt'])
+                      .millisecondsSinceEpoch,
+                  'updatedAt': DateTime.parse(
+                          (element['interview'] ?? element)['updatedAt'] ??
+                              element['createdAt'])
+                      .millisecondsSinceEpoch,
+                  'author': {
+                    "firstName": element['sender']['fullname'],
+                    "id": element['sender']['id'].toString(),
+                  }
+                };
+                if (element['interview'] != null) {
+                  e.putIfAbsent("metadata", () => element['interview']);
                 }
-              };
-              if (element['interview'] != null) {
-                e.putIfAbsent("metadata", () => element['interview']);
+                var acm = AbstractChatMessage.fromJson(e);
+                resRaw.add(e);
+                if (!res.contains(acm)) {
+                  res.add(acm);
+                }
               }
-              var acm = AbstractChatMessage.fromJson(e);
 
-              if (!res.contains(acm)) {
-                res.add(acm);
-              }
+              // _datasource.insertOrReplaceChatContent(
+              //     int.parse(params.projectId),
+              //     int.parse(params.userId),
+              //     resRaw);
+
+              return res;
+            } else {
+              // return ProjectList(projects: List.empty(growable: true));
+              // return _datasource.getProjectsFromDb() as ProjectList;
+              return [];
             }
+          },
+        );
 
-            _datasource.insertOrReplaceChatContent(
-                int.parse(params.projectId), int.parse(params.userId), res);
-
-            return res;
-          } else {
-            // return ProjectList(projects: List.empty(growable: true));
-            // return _datasource.getProjectsFromDb() as ProjectList;
-            return [];
-          }
-        },
-      );
-
-      // ignore: invalid_return_type_for_catch_error
-    } catch (e) {
-      print(e.toString());
-      // return _datasource.getProjectsFromDb();
+        // ignore: invalid_return_type_for_catch_error
+      } catch (e) {
+        print(e.toString());
+        // return _datasource.getProjectsFromDb();
+        return [];
+      }
+    } else {
       return [];
     }
   }
