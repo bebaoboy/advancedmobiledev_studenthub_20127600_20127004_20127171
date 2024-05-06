@@ -178,7 +178,7 @@ abstract class _UserStore with Store {
 
   // actions:-------------------------------------------------------------------
   @action
-  Future login(
+  Future<bool> login(
       String email, String password, UserType type, List<UserType> roles,
       {fastSwitch = false}) async {
     _isLoading = true;
@@ -198,7 +198,7 @@ abstract class _UserStore with Store {
       await _saveUserDataUseCase.call(params: value);
     }
     _isLoading = true;
-    await future.then((value) async {
+    return await future.then((value) async {
       if (value.statusCode == HttpStatus.accepted ||
           value.statusCode == HttpStatus.created ||
           value.statusCode == HttpStatus.ok) {
@@ -255,6 +255,7 @@ abstract class _UserStore with Store {
           if (NavigationService.navigatorKey.currentContext != null) {
             initCube(NavigationService.navigatorKey.currentContext);
           }
+          return Future.value(true);
 
           // _getStudentFavoriteProjectUseCase.call(params: null);
         } else {
@@ -262,6 +263,7 @@ abstract class _UserStore with Store {
           indicatorText = null;
           isFetchingProfile = false;
           _isLoading = false;
+          return Future.value(false);
         }
       } else {
         success = false;
@@ -271,6 +273,7 @@ abstract class _UserStore with Store {
         indicatorText = null;
         isFetchingProfile = false;
         _isLoading = false;
+        return Future.value(false);
       }
     }).catchError((e) {
       print(e);
@@ -279,8 +282,7 @@ abstract class _UserStore with Store {
       indicatorText = null;
       isFetchingProfile = false;
       _isLoading = false;
-
-      //throw e;
+      return Future.value(false);
     });
   }
 

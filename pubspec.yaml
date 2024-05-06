@@ -114,6 +114,7 @@ dependencies:
   mobx_codegen:
   mime: ^1.0.5
   meta:  
+  mockito: 
   # N
   # navbar_router:
   # O
