@@ -3,7 +3,6 @@
 import 'dart:math';
 
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/core/widgets/floating/floating.dart';
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -23,14 +22,14 @@ class ConversationCallScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ConversationCallScreenState(_callSession, _isIncoming);
+    return ConversationCallScreenState(_callSession, _isIncoming);
   }
 
   const ConversationCallScreen(this._callSession, this._isIncoming,
       {super.key});
 }
 
-class _ConversationCallScreenState extends State<ConversationCallScreen>
+class ConversationCallScreenState extends State<ConversationCallScreen>
     with WidgetsBindingObserver
     implements RTCSessionStateCallback<P2PSession> {
   static String TAG = "BEBAOBOY";
@@ -51,7 +50,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
 
   bool _enableScreenSharing;
 
-  _ConversationCallScreenState(this._callSession, this._isIncoming)
+  ConversationCallScreenState(this._callSession, this._isIncoming)
       : _enableScreenSharing = !_callSession.startScreenSharing;
 
   late Floating? floating;
@@ -218,8 +217,9 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     //     builder: (context) => LoginScreen(),
     //   ),
     // );
-    if (NavigationService.navigatorKey.currentContext != null) {
-      // Navigator.pop(NavigationService.navigatorKey.currentContext!);
+    if (CallManager.instance.currentCallingKey.currentState != null) {
+      Navigator.pop(
+          CallManager.instance.currentCallingKey.currentState!.context);
     }
   }
 
@@ -359,7 +359,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
         !PictureInPicture.isActive) {
       try {
         final canUsePiP = await floating!.isPipAvailable;
-        if (!canUsePiP || enablePipStatus == PiPStatus.enabled) return;
+        if (!canUsePiP) return;
         final rational = !_enableScreenSharing
             ? const Rational.landscape()
             : const Rational.vertical();
@@ -1006,8 +1006,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   _endCall() {
-    floating?.dispose();
-    PictureInPicture.stopPiP(false);
+    try {
+      floating?.dispose();
+      PictureInPicture.stopPiP(false);
+    } catch (e) {
+      log("error end call ${e.toString()}");
+    }
     CallManager.instance.hungUp();
     Navigator.of(context).pop();
   }

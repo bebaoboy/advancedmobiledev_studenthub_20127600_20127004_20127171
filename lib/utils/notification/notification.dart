@@ -17,6 +17,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:googleapis_auth/auth_io.dart' as auth;
+import 'package:flutter/services.dart';
+import 'package:http/http.dart' show post;
 
 @pragma('vm:entry-point')
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -40,10 +43,10 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       NotificationHelper.createInterviewPreflightNotification(
           id: session, title: title, body: message.data.toString());
       await SharedPreferences.getInstance().then((value) {
-        value.setString("interview",
-            json.decode(message.data["extra_body"])["body"]);
+        value.setString(
+            "interview", json.decode(message.data["extra_body"])["body"]);
       });
-      log("onMessage interview created: ${InterviewSchedule.fromJsonApi(json.decode(json.decode(message.data["extra_body"])["body"]))}");
+      log("onMessage interview created: ${InterviewSchedule.fromJsonApi(json.decode(message.data["extra_body"])["body"])}");
     } else {
       print("meow");
       NotificationHelper.createTextNotification(
@@ -90,10 +93,73 @@ NotificationChannelEnum getChannelByMessageType(NotificationType type) {
 }
 
 class NotificationHelper {
+  static Future<bool> sendPushMessageFirebase({
+    required String recipientToken,
+    required String title,
+    required String body,
+  }) async {
+    final jsonCredentials = await rootBundle.loadString('assets/key.json');
+    final creds = auth.ServiceAccountCredentials.fromJson(jsonCredentials);
+
+    final client = await auth.clientViaServiceAccount(
+      creds,
+      [
+        'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/firebase.database',
+        'https://www.googleapis.com/auth/firebase.messaging'
+      ],
+    );
+
+    auth.AccessCredentials credentials =
+        await auth.obtainAccessCredentialsViaServiceAccount(
+            creds,
+            [
+              'https://www.googleapis.com/auth/userinfo.email',
+              'https://www.googleapis.com/auth/firebase.database',
+              'https://www.googleapis.com/auth/firebase.messaging'
+            ],
+            client);
+
+    final notificationData = {
+      'message': {
+        'token': recipientToken,
+        'notification': {'title': title, 'body': body}
+      },
+    };
+    final response = await post(
+      Uri.parse(
+          'https://fcm.googleapis.com/v1/projects/advmobiledev-studenthub-clc20/messages:send'),
+      headers: {
+        'content-type': 'application/json',
+        "Authorization": "Bearer ${credentials.accessToken.data}"
+      },
+      body: jsonEncode(notificationData),
+    );
+
+    client.close();
+    if (response.statusCode == 200) {
+      return true; // Success!
+    }
+
+    log('Notification Sending Error Response status: ${response.statusCode}');
+    log('Notification Response body: ${response.body}');
+    return false;
+  }
+
   static Future<void> _create(
       {required NotificationContent content,
       List<NotificationActionButton>? actionButtons}) async {
-    if (kIsWeb) return;
+    if (kIsWeb) {
+      try {
+        await sendPushMessageFirebase(
+            recipientToken: NavigationService.firebaseToken!,
+            body: content.body ?? "Body",
+            title: content.title ?? "Msg redirect from web");
+      } catch (e) {
+        log(e.toString());
+      }
+      return;
+    }
     await AwesomeNotifications()
         .createNotification(content: content, actionButtons: actionButtons);
   }

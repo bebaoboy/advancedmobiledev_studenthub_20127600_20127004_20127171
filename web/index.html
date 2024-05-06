@@ -91,9 +91,12 @@
        https://developers.google.com/web/fundamentals/primers/service-workers -->
     <script>
       if ("serviceWorker" in navigator) {
+        console.log("service worker init done");
         window.addEventListener("load", function () {
           navigator.serviceWorker.register("flutter_service_worker.js");
-          navigator.serviceWorker.register("/firebase-messaging-sw.js");
+          navigator.serviceWorker.register("firebase-messaging-sw.js", {
+            scope: "/firebase-cloud-messaging-push-scope",
+          });
         });
       }
     </script>

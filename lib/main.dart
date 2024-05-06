@@ -146,16 +146,15 @@ Future<void> main() async {
 
     // request permissions for showing notification in iOS
     var messaging = FirebaseMessaging.instance;
+    NavigationService.firebaseInstance = messaging;
     messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    if (kIsWeb) {
-      // use the returned token to send messages to users from your custom server
-      var token = await messaging.getToken(
-        vapidKey:
-            "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
-      );
-      log("firebase token: $token");
-    }
+    // use the returned token to send messages to users from your custom server
+    NavigationService.firebaseToken = await messaging.getToken(
+      vapidKey:
+          "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
+    );
+    log("firebase token: ${NavigationService.firebaseToken}");
 
     // add listener for foreground push notifications
     FirebaseMessaging.onMessage.listen((remoteMessage) {

@@ -37,14 +37,15 @@ class WorkMangerHelper {
   }
 
   static DioClient _initializeDioClient() {
-    getIt.registerFactory( () => DioClient(dioConfigs: WorkMangerHelper.dioConfig)
-      ..addInterceptors([
-        AuthInterceptor(accessToken: () async {
-          return WorkMangerHelper._sharedPreferences
-              .getString(Preferences.auth_token);
-        }),
-        LoggingInterceptor(),
-      ]));
+    getIt
+        .registerFactory(() => DioClient(dioConfigs: WorkMangerHelper.dioConfig)
+          ..addInterceptors([
+            AuthInterceptor(accessToken: () async {
+              return WorkMangerHelper._sharedPreferences
+                  .getString(Preferences.auth_token);
+            }),
+            LoggingInterceptor(),
+          ]));
     return getIt<DioClient>();
   }
 
@@ -110,7 +111,7 @@ class WorkMangerHelper {
   Future<List<NotificationObject>> fetchRecentNotification() async {
     return [
       NotificationObject(
-          type: NotificationType.text,
+          type: NotificationType.proposal,
           id: "",
           receiver: StudentProfile(objectId: "", fullName: "student 1"),
           sender: CompanyProfile(

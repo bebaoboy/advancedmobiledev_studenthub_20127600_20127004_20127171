@@ -262,7 +262,7 @@ class NotificationObject extends MyObject {
   String content;
   String messageContent;
   String title;
-  NotificationType get type => _type ?? NotificationType.text;
+  NotificationType get type => _type ?? NotificationType.proposal;
   NotificationType? _type;
   Map<String, dynamic>? metadata;
 
@@ -302,14 +302,8 @@ class NotificationObject extends MyObject {
       'messageContent': messageContent,
       'type': type.index,
       'createdAt': createdAt.toString(),
-      'receiver': {
-        "id": receiver.objectId,
-        "fullname": receiver.name
-      },
-      'sender': {
-        "id": sender.objectId,
-        "fullname": sender.name
-      },
+      'receiver': {"id": receiver.objectId, "fullname": receiver.name},
+      'sender': {"id": sender.objectId, "fullname": sender.name},
       'metadata': metadata
     });
   }
@@ -318,7 +312,7 @@ class NotificationObject extends MyObject {
 enum NotificationType {
   viewOffer,
   joinInterview,
-  text, // submitted
+  proposal, // submitted
   message,
 }
 
@@ -329,8 +323,8 @@ extension NotificationTypeTitle on NotificationType {
         return "Interview";
       case NotificationType.viewOffer:
         return 'Offers';
-      case NotificationType.text:
-        return 'Texts';
+      case NotificationType.proposal:
+        return 'Proposals';
       case NotificationType.message:
         return 'Messages';
       default:

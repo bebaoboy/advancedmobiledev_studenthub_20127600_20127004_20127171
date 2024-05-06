@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:connectycube_flutter_call_kit/connectycube_flutter_call_kit.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -81,9 +82,14 @@ class PushNotificationsManager {
 
   init() async {
     ConnectycubeFlutterCallKit.initEventsHandler();
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+    FirebaseMessaging firebaseMessaging = NavigationService.firebaseInstance!;
     String token;
-    if (Platform.isAndroid || kIsWeb) {
+    if (kIsWeb) {
+      token = await firebaseMessaging.getToken(
+              vapidKey:
+                  "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo") ??
+          "";
+    } else if (Platform.isAndroid) {
       token = await firebaseMessaging.getToken() ?? "";
     } else {
       token = await firebaseMessaging.getAPNSToken() ?? "";
@@ -94,6 +100,7 @@ class PushNotificationsManager {
     }
 
     firebaseMessaging.onTokenRefresh.listen((newToken) {
+      // this will NEVER happen T-T
       log('[onTokenRefresh] FCM token: $newToken', TAG);
 
       subscribe(newToken);
@@ -131,16 +138,18 @@ class PushNotificationsManager {
 
       CreateSubscriptionParameters parameters = CreateSubscriptionParameters();
       parameters.pushToken = token;
+      log("subscribe ${parameters.toString()}");
 
       parameters.environment = CubeEnvironment.DEVELOPMENT;
 
-      if (Platform.isAndroid) {
+      if (Platform.isAndroid || kIsWeb) {
         parameters.channel = NotificationsChannels.GCM;
         parameters.platform = CubePlatform.ANDROID;
       } else if (Platform.isIOS) {
         parameters.channel = NotificationsChannels.APNS_VOIP;
         parameters.platform = CubePlatform.IOS;
       }
+      log("subscribe ${parameters.toString()}");
 
       var deviceInfoPlugin = DeviceInfoPlugin();
 
@@ -161,16 +170,18 @@ class PushNotificationsManager {
       }
 
       parameters.udid = deviceId;
+      log("subscribe ${parameters.toString()}");
 
       var packageInfo = await PackageInfo.fromPlatform();
       parameters.bundleIdentifier = packageInfo.packageName;
+      log("subscribe ${parameters.toString()}");
 
       createSubscription(parameters.getRequestParameters())
           .then((cubeSubscriptions) {
         log('[subscribe] subscription SUCCESS', "BEBAOBOY");
         SharedPrefs.saveSubscriptionToken(token);
         for (var subscription in cubeSubscriptions) {
-          log('[subscribe] subscription ERROR: $subscription', "BEBAOBOY");
+          log('[subscribe] subscription: $subscription', "BEBAOBOY");
           if (subscription.device!.clientIdentificationSequence == token) {
             SharedPrefs.saveSubscriptionId(subscription.id!);
           }
@@ -179,7 +190,7 @@ class PushNotificationsManager {
         log('[subscribe] subscription ERROR: $error', "BEBAOBOY");
       });
     } catch (e) {
-      print(e);
+      print("[subscribe] subscription ERROR: ${e.toString()}");
     }
   }
 

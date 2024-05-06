@@ -4,6 +4,8 @@ import 'dart:math';
 
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:choice/choice.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
@@ -1142,18 +1144,19 @@ class HeroFlutterLogo extends StatelessWidget {
   }
 }
 
-class CustomOfferNotification extends StatefulWidget {
-  const CustomOfferNotification(
+class CustomProposalNotification extends StatefulWidget {
+  const CustomProposalNotification(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomOfferNotification> createState() =>
-      _CustomOfferNotificationState();
+  State<CustomProposalNotification> createState() =>
+      _CustomProposalNotificationState();
 }
 
-class _CustomOfferNotificationState extends State<CustomOfferNotification> {
+class _CustomProposalNotificationState
+    extends State<CustomProposalNotification> {
   bool follow = false;
   @override
   Widget build(BuildContext context) {
@@ -1237,10 +1240,29 @@ class _CustomOfferNotificationState extends State<CustomOfferNotification> {
                   buttonColor: Theme.of(context).colorScheme.primary,
                   buttonTextSize: 10,
                   // textColor: follow == false ? Colors.white : mainText,
-                  onPressed: () {
-                    setState(() {
-                      follow = !follow;
-                    });
+                  onPressed: () async {
+                    var proposal = widget.notificationObject.metadata!;
+                    var userStore = getIt<UserStore>();
+                    var projectStore = getIt<ProjectStore>();
+                    if (userStore.user!.type == UserType.company &&
+                        projectStore.companyProjects.isEmpty) {
+                      await projectStore
+                          .getProjectByCompany(proposal["projectId"]);
+                    }
+                    if (projectStore.companyProjects.isNotEmpty) {
+                      var project =
+                          projectStore.companyProjects.firstWhereOrNull(
+                        (element) => element.objectId == proposal["projectId"],
+                      );
+                      if (project != null) {
+                        Navigator.of(
+                                NavigationService.navigatorKey.currentContext!)
+                            .push(MaterialPageRoute2(
+                                routeName:
+                                    "${Routes.projectDetails}/${proposal["projectId"]}",
+                                arguments: {"project": project, "index": -1}));
+                      }
+                    }
                   },
                   buttonText: widget.notificationObject.type ==
                           NotificationType.viewOffer
@@ -1543,17 +1565,18 @@ class _CustomInterviewNotificationWidgetState
   }
 }
 
-class CustomLikedNotifcation extends StatefulWidget {
-  const CustomLikedNotifcation(
+class CustomMessageNotifcation extends StatefulWidget {
+  const CustomMessageNotifcation(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomLikedNotifcation> createState() => _CustomLikedNotifcationState();
+  State<CustomMessageNotifcation> createState() =>
+      _CustomMessageNotifcationState();
 }
 
-class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
+class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -1569,7 +1592,7 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Icon(
-                    widget.notificationObject.type == NotificationType.text
+                    widget.notificationObject.type == NotificationType.proposal
                         ? Icons.text_snippet
                         : Icons.chat,
                     size: 45,
@@ -1692,6 +1715,8 @@ class AlertPage extends StatefulWidget {
 class _AlertPageState extends State<AlertPage> {
   var notiStore = getIt<NotificationStore>();
   var currentNotiType = NotificationType.viewOffer;
+  var userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
     // print("build Page");
@@ -1743,13 +1768,12 @@ class _AlertPageState extends State<AlertPage> {
                       )),
               itemBuilder: (BuildContext context, NotificationObject item) {
                 return switch (item.type) {
-                  NotificationType.viewOffer => CustomOfferNotification(
+                  NotificationType.viewOffer => CustomMessageNotifcation(
                       notificationObject: item,
                       showTime: false,
                     ),
                   NotificationType.joinInterview => CustomInterviewNotification(
                       enterInterview: () async {
-                        
                         if (item.metadata != null) {
                           CallManager.instance.startPreviewMeeting(
                               NavigationService.navigatorKey.currentContext ??
@@ -1762,11 +1786,11 @@ class _AlertPageState extends State<AlertPage> {
                       notificationObject: item,
                       showTime: false,
                     ),
-                  NotificationType.text => CustomLikedNotifcation(
+                  NotificationType.proposal => CustomProposalNotification(
                       notificationObject: item,
                       showTime: false,
                     ),
-                  NotificationType.message => CustomLikedNotifcation(
+                  NotificationType.message => CustomMessageNotifcation(
                       notificationObject: item,
                       showTime: false,
                     ),
@@ -2310,7 +2334,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     Map<H, List<T>> groupItems = groupBy(data, options.itemGrouper);
     groupItems.putIfAbsent(NotificationType.joinInterview as H, () => []);
     groupItems.putIfAbsent(NotificationType.viewOffer as H, () => []);
-    groupItems.putIfAbsent(NotificationType.text as H, () => []);
+    groupItems.putIfAbsent(NotificationType.proposal as H, () => []);
     groupItems.putIfAbsent(NotificationType.message as H, () => []);
     List<H> keys = groupItems.keys.toList();
     if (options.stickyHeaderSorter != null) {

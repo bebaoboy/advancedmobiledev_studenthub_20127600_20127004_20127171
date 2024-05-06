@@ -32,11 +32,11 @@ messaging.onMessage((payload) => {
       }
     })
     .then(() => {
-      const title = payload.notification.title;
+      const title = "New notification";
       var click_action = payload.data.ui_route; //ui route is ur route
 
       const options = {
-        body: payload.notification.body,
+        body: payload.data,
         data: {
           click_action,
         },
@@ -49,41 +49,41 @@ messaging.onMessage((payload) => {
 messaging.onBackgroundMessage((payload) => {
   console.log("web Received background onMessage ", payload);
 
-  const notificationTitle = payload.notification.title;
+  const notificationTitle = "New notification";
   const notificationOptions = {
-    body: payload.notification.body,
+    body: payload.data != null ? payload.data.message : payload.data,
   };
 
   self.registration.showNotification(notificationTitle, notificationOptions);
-  channel.postMessage(m);
+  // channel.postMessage(payload);
 
-  const promiseChain = clients
-    .matchAll({
-      type: "window",
-      includeUncontrolled: true,
-    })
-    .then((windowClients) => {
-      for (let i = 0; i < windowClients.length; i++) {
-        const windowClient = windowClients[i];
-        windowClient.postMessage(payload);
-      }
-    })
-    .then(() => {
-      const title = payload.notification.title;
-      var click_action = payload.data.ui_route; //ui route is ur route
+  // const promiseChain = clients
+  //   .matchAll({
+  //     type: "window",
+  //     includeUncontrolled: true,
+  //   })
+  //   .then((windowClients) => {
+  //     for (let i = 0; i < windowClients.length; i++) {
+  //       const windowClient = windowClients[i];
+  //       windowClient.postMessage(payload);
+  //     }
+  //   })
+  //   .then(() => {
+  //     const title = payload.notification.title;
+  //     var click_action = payload.data.ui_route; //ui route is ur route
 
-      const options = {
-        body: payload.notification.body,
-        data: {
-          click_action,
-        },
-      };
-      return registration.showNotification(title, options);
-    });
-  return promiseChain;
+  //     const options = {
+  //       body: payload.notification.body,
+  //       data: {
+  //         click_action,
+  //       },
+  //     };
+  //     return registration.showNotification(title, options);
+  //   });
+  // return promiseChain;
 });
 
-self.addEventListener("notificationclick", (e) => {
+self.addEventListener("notificationclick", (event) => {
   console.log("notification clicked: ", event);
   if ("FCM_MSG" in event.notification.data) {
     console.log("onNotificationClickevent", {

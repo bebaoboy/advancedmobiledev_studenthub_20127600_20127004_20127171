@@ -12,7 +12,9 @@ class NotiRepositoryImpl extends NotiRepository {
   NotiRepositoryImpl(this._notiApi);
 
   @override
-  Future<List<NotificationObject>> getNoti(GetNotiParams params,) async {
+  Future<List<NotificationObject>> getNoti(
+    GetNotiParams params,
+  ) async {
     try {
       var s = await SharedPreferences.getInstance();
       return await _notiApi.getNoti(params).then(
@@ -43,8 +45,22 @@ class NotiRepositoryImpl extends NotiRepository {
                         ...element["interview"],
                         "meetingRoom": element["meetingRoom"]
                       }
-                    : null
+                    : element["proposal"] != null
+                        ? <String, dynamic>{...element["proposal"]}
+                        : null,
               };
+              /*
+               "proposal": {
+            "id": 414,
+            "createdAt": "2024-05-06T05:01:15.391Z",
+            "updatedAt": "2024-05-06T05:01:15.391Z",
+            "deletedAt": null,
+            "projectId": 238,
+            "studentId": 90,
+            "coverLetter": "string",
+            "statusFlag": 0,
+            "disableFlag": 0
+        } */
               var acm = NotificationObject.fromJson(e);
 
               // if (!res.contains(acm)) {

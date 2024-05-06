@@ -81,7 +81,7 @@ dependencies:
   flutter_background: ^1.2.0
   flutter_speed_dial: ^7.0.0
   flutter_webrtc: ^0.10.3
-  flutter_file_downloader: 
+  flutter_file_downloader: ^2.0.0-dev.1
   flutter_onboarding_slider:
   flutter_corner_banner:
   floating:
@@ -90,6 +90,7 @@ dependencies:
   get_it: ^7.2.0
   google_fonts: ^6.2.1
   grouped_scroll_view:
+  googleapis_auth:
   # H
   http:
   http_parser:
@@ -215,6 +216,7 @@ flutter:
     - assets/plane_indicator/
     - assets/ice_cream_indicator/
     - assets/messages.json
+    - assets/key.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.

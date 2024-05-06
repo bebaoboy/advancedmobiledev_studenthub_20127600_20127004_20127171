@@ -78,6 +78,7 @@ class RTCSignalingProcessor {
       case SignalCMD.CALL:
         String rawSdp = params[SignalField.SDP]!;
         RTCSessionDescription sdp = RTCSessionDescription(rawSdp, "offer");
+        log("incoming call stanza for user ${userFrom.id}");
 
         _notifyNewCallReceive(cubeSdp, userFrom, sdp);
 

@@ -171,7 +171,7 @@ class CallManager {
   }
 
   @observable
-  static bool inAppPip = false;
+  static bool inAppPip = true;
 
   resetPreview() {
     isCameraEnabled = true;
@@ -252,7 +252,7 @@ class CallManager {
     }
 
     log("device info enableCam=$isCameraEnabled, muteMic=$isMicMute, frontCam=$isFrontCameraUsed, speaker=$isSpeakerEnabled");
-
+    currentCallingKey = GlobalKey<ConversationCallScreenState>();
     if (incoming) {
       // TODO: put 2 of this somewhere else
       if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
@@ -305,9 +305,6 @@ class CallManager {
           "color": "#FF0000"
         },
         // "expiration": "1714662049"
-        "expiration": DateTime.now()
-            .add(const Duration(seconds: 20))
-            .millisecondsSinceEpoch,
         //more standard parameters you can found by link https://developers.connectycube.com/server/push_notifications?id=universal-push-notifications
       };
       log("background message ${params.parameters}");
@@ -322,9 +319,11 @@ class CallManager {
       ];
       log("done incoming call event $opponents");
 
-      createEvent(params.getEventForRequest())
-          .then((cubeEvent) {})
-          .catchError((error) {});
+      createEvent(params.getEventForRequest()).then((cubeEvent) {
+        log("cube event: $cubeEvent");
+      }).catchError((error) {
+        print(error.toString());
+      });
       log("done event for call $params");
     }
 
@@ -356,13 +355,20 @@ class CallManager {
               },
               elevation: 10, //Optional
               pipBorderRadius: 10,
-              builder: (context) =>
-                  ConversationCallScreen(currentCall!, incoming)));
+              builder: (context) => ConversationCallScreen(
+                    currentCall!,
+                    incoming,
+                    key: currentCallingKey,
+                  )));
     } else {
       Navigator.push(
         NavigationService.navigatorKey.currentContext ?? context,
         MaterialPageRoute(
-          builder: (context) => ConversationCallScreen(currentCall!, incoming),
+          builder: (context) => ConversationCallScreen(
+            currentCall!,
+            incoming,
+            key: currentCallingKey,
+          ),
         ),
       );
     }
@@ -387,15 +393,30 @@ class CallManager {
         userInfo: const {'customParameter1': 'value1'});
     log("show incomin call screen $callSession");
     await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
+    String callerName = "Caller name";
+    await getUserById(callSession.callerId).then((cubeUser) async {
+      if (cubeUser != null) {
+        callerName = cubeUser.fullName ?? "Caller name ${cubeUser.id}";
+      }
+    });
+    currentIncomingKey = GlobalKey<ConversationCallScreenState>();
+
     if (NavigationService.navigatorKey.currentContext != null) {
       Navigator.push(
         NavigationService.navigatorKey.currentContext!,
         MaterialPageRoute2(
-          child: IncomingCallScreen(callSession),
+          child: IncomingCallScreen(
+            callSession,
+            callerName,
+            key: currentIncomingKey,
+          ),
         ),
       );
     }
   }
+
+  GlobalKey currentIncomingKey = GlobalKey<IncomingCallScreenState>();
+  GlobalKey currentCallingKey = GlobalKey<ConversationCallScreenState>();
 
   void acceptCall(String sessionId, bool fromCallkit) {
     log('acceptCall, from callKit: $fromCallkit', TAG);
@@ -491,6 +512,12 @@ class CallManager {
 
   void hungUp() {
     hasEnded = true;
+    if (currentIncomingKey.currentState != null) {
+      Navigator.pop(currentIncomingKey.currentState!.context);
+    }
+    if (currentCallingKey.currentState != null) {
+      Navigator.pop(currentCallingKey.currentState!.context);
+    }
     if (currentCall != null) {
       CallKitManager.instance.processCallFinished(currentCall!.sessionId);
       currentCall!.hungUp();
@@ -509,7 +536,7 @@ class CallManager {
     CreateEventParams params = CreateEventParams();
     params.parameters = {
       'message':
-          "Hello my cutie pie, this is an incoming ${currentCall.callType == CallType.VIDEO_CALL ? "Video" : "Audio"} call",
+          "You have an interview call ${currentCall.callType == CallType.VIDEO_CALL ? "Video" : "Audio"} call",
       PARAM_CALL_TYPE: currentCall.callType,
       PARAM_SESSION_ID: currentCall.sessionId,
       PARAM_CALLER_ID: currentCall.callerId,

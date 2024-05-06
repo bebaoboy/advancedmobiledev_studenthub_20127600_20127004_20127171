@@ -2,8 +2,11 @@
 
 import 'dart:convert';
 
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -107,6 +110,8 @@ abstract class _NotificationStore with Store {
   int activeDates = 0;
 
   categorize(List activeDates) {
+    var userStore = getIt<UserStore>();
+
     this.activeDates = activeDates.length;
     viewOffers = List.generate(activeDates.length, (_) => ObservableList());
     joinInterviews = List.generate(activeDates.length, (_) => ObservableList());
@@ -128,11 +133,15 @@ abstract class _NotificationStore with Store {
 
           break;
         case NotificationType.viewOffer:
-          viewOffers![diff + (activeDates.length ~/ 2)].add(element);
+          if (userStore.user!.type == UserType.student) {
+            viewOffers![diff + (activeDates.length ~/ 2)].add(element);
+          }
 
           break;
-        case NotificationType.text:
-          texts![diff + (activeDates.length ~/ 2)].add(element);
+        case NotificationType.proposal:
+          if (userStore.user!.type == UserType.company) {
+            texts![diff + (activeDates.length ~/ 2)].add(element);
+          }
 
           break;
         case NotificationType.message:
@@ -172,7 +181,7 @@ abstract class _NotificationStore with Store {
         viewOffers![diff + (activeDates ~/ 2)].insert(0, not);
 
         break;
-      case NotificationType.text:
+      case NotificationType.proposal:
         texts![diff + (activeDates ~/ 2)].insert(0, not);
 
         break;
