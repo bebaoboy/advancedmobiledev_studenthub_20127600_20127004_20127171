@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:isolate';
 import 'dart:math';
+import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
@@ -201,6 +202,9 @@ Future<void> main() async {
     if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
 
     await initConnectycube();
+    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+      return ErrorPage(errorDetails: errorDetails);
+    };
 
     runApp(const MyApp());
   }, (error, stackTrace) {
