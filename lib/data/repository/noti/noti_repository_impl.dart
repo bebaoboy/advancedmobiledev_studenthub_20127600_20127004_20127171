@@ -29,7 +29,7 @@ class NotiRepositoryImpl extends NotiRepository {
                 'id': element['id'].toString(),
                 'title': element["title"].toString(),
                 "content": element["content"].toString(),
-                'messageContent': element["message"]['content'].toString(),
+                'messageContent': element["message"] != null ? element["message"]['content'].toString() : element["content"].toString(),
                 'type': element['typeNotifyFlag'],
                 'createdAt': DateTime.parse(element['createdAt']).toLocal(),
                 'receiver': {
@@ -40,10 +40,10 @@ class NotiRepositoryImpl extends NotiRepository {
                   "id": element['sender']['id'].toString(),
                   "fullname": element['sender']['fullname'].toString(),
                 },
-                'metadata': element["interview"] != null
+                'metadata': (element["message"] != null && element["message"]["interview"] != null)
                     ? <String, dynamic>{
-                        ...element["interview"],
-                        "meetingRoom": element["meetingRoom"]
+                        ...element["message"]["interview"],
+                        "meetingRoom": element["message"]["interview"]["meetingRoom"]
                       }
                     : element["proposal"] != null
                         ? <String, dynamic>{...element["proposal"]}

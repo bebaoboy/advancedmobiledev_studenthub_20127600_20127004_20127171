@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:mobx/mobx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -171,6 +172,13 @@ abstract class _NotificationStore with Store {
   addNofitication(Map<String, dynamic> element) {
     var not = toNotificationObject(element["notification"]);
     _notiList.insert(0, not);
+    if (not.type == NotificationType.proposal) {
+      NotificationHelper.createTextNotification(
+          id: int.parse(not.id),
+          title: "You have new proposal!",
+          body:
+              "From ${not.sender.name} (Project ${not.metadata!["projectId"]})");
+    }
     int diff = daysBetween(DateTime.now(), not.createdAt!);
     switch (not.type) {
       case NotificationType.joinInterview:
@@ -209,7 +217,9 @@ abstract class _NotificationStore with Store {
       'id': element['id'].toString(),
       'title': element["title"].toString(),
       "content": element["content"].toString(),
-      'messageContent': element["message"]['content'].toString(),
+      'messageContent': element["message"] != null
+          ? element["message"]['content'].toString()
+          : element["content"].toString(),
       'type': element['typeNotifyFlag'],
       'createdAt': DateTime.parse(element['createdAt']).toLocal(),
       'receiver': {
@@ -220,12 +230,15 @@ abstract class _NotificationStore with Store {
         "id": element['sender']['id'].toString(),
         "fullname": element['sender']['fullname'].toString(),
       },
-      'metadata': element["interview"] != null
+      'metadata': (element["message"] != null &&
+              element["message"]["interview"] != null)
           ? <String, dynamic>{
-              ...element["interview"],
-              "meetingRoom": element["meetingRoom"]
+              ...element["message"]["interview"],
+              "meetingRoom": element["message"]["interview"]["meetingRoom"]
             }
-          : null
+          : element["proposal"] != null
+              ? <String, dynamic>{...element["proposal"]}
+              : null,
     };
     return NotificationObject.fromJson(e);
   }

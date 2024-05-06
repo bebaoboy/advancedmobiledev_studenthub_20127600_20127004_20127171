@@ -962,7 +962,6 @@ class _BodyLayoutState extends State<BodyLayout> {
         // log("onAudioOutputSelected deviceId: $deviceId", TAG);
         if (deviceId != null) {
           setState(() {
-            // TODO:
             CallManager.instance.currentCall!.selectAudioInput(deviceId);
           });
         }

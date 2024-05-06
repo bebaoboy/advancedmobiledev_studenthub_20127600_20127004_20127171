@@ -94,6 +94,7 @@ abstract class _ChatStore with Store {
       ChatUser user,
       bool isInterview) async {
     Map<String, dynamic> message = msg["notification"]["message"];
+    if (msg["notification"]["message"] == null) return null;
     if (message["receiverId"].toString() != userStore.user!.objectId) {
       return null;
     }

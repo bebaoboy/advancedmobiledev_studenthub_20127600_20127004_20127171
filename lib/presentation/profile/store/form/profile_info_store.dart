@@ -84,29 +84,53 @@ abstract class _ProfileStudentStore with Store {
         var userStore = getIt<UserStore>();
         await getTechStack();
         await getSkillset();
+        var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+        var sp = await sharedPrefsHelper.studentProfile;
 
         await _getEducationUseCase
             .call(params: _studentId.toString())
-            .then((value) => _educations = value)
-            .onError(
-              (error, stackTrace) => _educations = EducationList(
-                  educations: userStore.user!.studentProfile!.educations),
-            );
+            .then((value) {
+          if (value == null) {
+            _educations = EducationList(educations: sp?.educations);
+            return value;
+          }
+          _educations = value;
+          userStore.user!.studentProfile!.educations = _educations.educations;
+          return value;
+        }).onError(
+          (error, stackTrace) =>
+              _educations = EducationList(educations: sp?.educations),
+        );
         await _getExperienceUseCase
             .call(params: _studentId.toString())
-            .then((value) => _experiences = value)
-            .onError(
-              (error, stackTrace) => _experiences = ProjectExperienceList(
-                  experiences:
-                      userStore.user!.studentProfile!.projectExperience),
-            );
+            .then((value) {
+          if (value == null) {
+            _experiences =
+                ProjectExperienceList(experiences: sp?.projectExperience);
+            return value;
+          }
+          _experiences = value;
+          userStore.user!.studentProfile!.projectExperience =
+              _experiences.experiences;
+          return value;
+        }).onError(
+          (error, stackTrace) => _experiences =
+              ProjectExperienceList(experiences: sp?.projectExperience),
+        );
         await _getLanguageUseCase
             .call(params: _studentId.toString())
-            .then((value) => _languages = value)
-            .onError(
-              (error, stackTrace) => _languages = LanguageList(
-                  languages: userStore.user!.studentProfile!.languages),
-            );
+            .then((value) {
+          if (value == null) {
+            _languages = LanguageList(languages: sp?.languages);
+            return value;
+          }
+          _languages = value;
+          userStore.user!.studentProfile!.languages = _languages.languages;
+          return value;
+        }).onError(
+          (error, stackTrace) =>
+              _languages = LanguageList(languages: sp?.languages),
+        );
         // if (userStore.user != null && userStore.user!.studentProfile != null) {
         //   userStore.user!.studentProfile!.educations = currentEducation;
         //   userStore.user!.studentProfile!.languages = currentLanguage;

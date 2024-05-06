@@ -254,7 +254,6 @@ class CallManager {
     log("device info enableCam=$isCameraEnabled, muteMic=$isMicMute, frontCam=$isFrontCameraUsed, speaker=$isSpeakerEnabled");
     currentCallingKey = GlobalKey<ConversationCallScreenState>();
     if (incoming) {
-      // TODO: put 2 of this somewhere else
       if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
         currentCall?.acceptCall();
       }

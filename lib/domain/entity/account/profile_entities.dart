@@ -147,8 +147,8 @@ class StudentProfile extends Profile {
       techStack: map['techStack'] != null
           ? TechStack.fromJson(map['techStack'])
           : null,
-      skillSet: (map['skillSet'] != null)
-          ? List<Skill>.from((map['skillSet'] as List<dynamic>)
+      skillSet: (map['skillSets'] != null)
+          ? List<Skill>.from((map['skillSets'] as List<dynamic>)
               .map((e) => Skill.fromMap(e as Map<String, dynamic>)))
           : [],
       languages: (map['languages'] != null)

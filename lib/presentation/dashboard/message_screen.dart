@@ -144,6 +144,7 @@ class _MessageScreenState extends State<MessageScreen> {
         "receiverId": _user.id, // notification
         "messageFlag": 0
       });
+
       chatStore.insertMessage(widget.chatObject.chatUser,
           widget.chatObject.project!, textMessage, true,
           incoming: true);
@@ -634,15 +635,6 @@ class _MessageScreenState extends State<MessageScreen> {
         // TODO: check again: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
-        /// default for testing
-        // messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
-        //   "content": message.text.trim(),
-        //   "projectId": 150,
-        //   "senderId": userStore.user!.objectId,
-        //   "receiverId": 94, // notification
-        //   "messageFlag": 0 // default 0 for message, 1 for interview
-        // });
-
         messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
           "content": message.text.trim(),
           "projectId": widget.chatObject.project!.objectId!,

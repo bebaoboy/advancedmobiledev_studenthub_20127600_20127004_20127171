@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -1166,21 +1167,73 @@ class _CustomProposalNotificationState
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 20, backgroundColor: Colors.blue,
-              backgroundImage: CachedNetworkImageProvider(
-                // errorBuilder: (context, error, stackTrace) => const Icon(
-                //   Icons.error_outline,
-                //   size: 45,
-                // ),
-                cacheKey: "flutter",
+            Column(
+              children: [
+                const CircleAvatar(
+                  radius: 20, backgroundColor: Colors.blue,
+                  backgroundImage: CachedNetworkImageProvider(
+                    // errorBuilder: (context, error, stackTrace) => const Icon(
+                    //   Icons.error_outline,
+                    //   size: 45,
+                    // ),
+                    cacheKey: "flutter_interview",
 
-                maxWidth: 50,
-                maxHeight: 50,
-                'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                // fit: BoxFit.cover,
-              ),
-              // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                    maxWidth: 50,
+                    maxHeight: 50,
+                    'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
+                    // fit: BoxFit.cover,
+                  ),
+                  // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 0),
+                    child: RoundedButtonWidget(
+                      height: 40,
+                      buttonColor: Theme.of(context).colorScheme.primary,
+                      buttonTextSize: 10,
+                      // textColor: follow == false ? Colors.white : mainText,
+                      onPressed: () async {
+                        var proposal = widget.notificationObject.metadata!;
+                        var userStore = getIt<UserStore>();
+                        var projectStore = getIt<ProjectStore>();
+                        if (userStore.user!.type == UserType.company &&
+                            projectStore.companyProjects.isEmpty) {
+                          await projectStore.getProjectByCompany(
+                              userStore.user!.companyProfile!.objectId!);
+                        }
+                        if (projectStore.companyProjects.isNotEmpty) {
+                          print("");
+                          var project =
+                              projectStore.companyProjects.firstWhereOrNull(
+                            (element) =>
+                                element.objectId ==
+                                proposal["projectId"].toString(),
+                          );
+                          if (project != null) {
+                            projectStore.currentProps = ProposalList(
+                                proposals: project.proposal);
+                            Navigator.of(NavigationService
+                                    .navigatorKey.currentContext!)
+                                .push(MaterialPageRoute2(
+                                    routeName:
+                                        "${Routes.projectDetails}/${proposal["projectId"]}",
+                                    arguments: {
+                                  "project": project,
+                                  "index": -1
+                                }));
+                          }
+                        }
+                      },
+                      buttonText: widget.notificationObject.type ==
+                              NotificationType.proposal
+                          ? "View"
+                          : "Join",
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               width: 15,
@@ -1228,47 +1281,20 @@ class _CustomProposalNotificationState
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyText1!),
                   ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  LimitedBox(
+                    maxHeight: 200,
+                    child: AutoSizeText(
+                        "Project id${widget.notificationObject.metadata!["projectId"]}",
+                        maxLines: 2,
+                        maxFontSize: 10,
+                        minFontSize: 9,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyText1!),
+                  ),
                 ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: RoundedButtonWidget(
-                  height: 40,
-                  buttonColor: Theme.of(context).colorScheme.primary,
-                  buttonTextSize: 10,
-                  // textColor: follow == false ? Colors.white : mainText,
-                  onPressed: () async {
-                    var proposal = widget.notificationObject.metadata!;
-                    var userStore = getIt<UserStore>();
-                    var projectStore = getIt<ProjectStore>();
-                    if (userStore.user!.type == UserType.company &&
-                        projectStore.companyProjects.isEmpty) {
-                      await projectStore
-                          .getProjectByCompany(proposal["projectId"]);
-                    }
-                    if (projectStore.companyProjects.isNotEmpty) {
-                      var project =
-                          projectStore.companyProjects.firstWhereOrNull(
-                        (element) => element.objectId == proposal["projectId"],
-                      );
-                      if (project != null) {
-                        Navigator.of(
-                                NavigationService.navigatorKey.currentContext!)
-                            .push(MaterialPageRoute2(
-                                routeName:
-                                    "${Routes.projectDetails}/${proposal["projectId"]}",
-                                arguments: {"project": project, "index": -1}));
-                      }
-                    }
-                  },
-                  buttonText: widget.notificationObject.type ==
-                          NotificationType.viewOffer
-                      ? "View"
-                      : "Join",
-                ),
               ),
             ),
           ],
@@ -2327,15 +2353,23 @@ class GroupedScrollView<T, H> extends StatelessWidget {
 
   List<BuildContext?>? realKeys = [];
   final List<NotificationType> chipsValue;
+  var userStore = getIt<UserStore>();
 
   List<Widget> _buildGroupMode(BuildContext context) {
     final options = groupedOptions!;
     List<Widget> slivers = [];
     Map<H, List<T>> groupItems = groupBy(data, options.itemGrouper);
     groupItems.putIfAbsent(NotificationType.joinInterview as H, () => []);
-    groupItems.putIfAbsent(NotificationType.viewOffer as H, () => []);
-    groupItems.putIfAbsent(NotificationType.proposal as H, () => []);
+    if (userStore.user!.type == UserType.student) {
+      groupItems.putIfAbsent(NotificationType.viewOffer as H, () => []);
+    }
+    if (userStore.user!.type == UserType.company) {
+      groupItems.putIfAbsent(NotificationType.proposal as H, () => []);
+    }
     groupItems.putIfAbsent(NotificationType.message as H, () => []);
+    groupItems.removeWhere(
+      (key, value) => groupItems[key]!.isEmpty,
+    );
     List<H> keys = groupItems.keys.toList();
     if (options.stickyHeaderSorter != null) {
       keys.sort(options.stickyHeaderSorter);
@@ -2345,6 +2379,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
     print("build chips");
+    // TODO: chips are always built = not good
     slivers.add(SliverPinnedHeader(
       child: Container(
         color: Theme.of(context).colorScheme.background,
@@ -2360,7 +2395,10 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               // );
               onChipChanged(t as H);
               // chipsValue = ChoiceSingle.value(t);
-              if (realKeys![t.index] == null) {
+              print(realKeys);
+              var k = keys
+                  .indexWhere((e) => (e as NotificationType).title == t.title);
+              if (k == -1) {
                 scrollController?.animateTo(
                   0,
                   duration: const Duration(milliseconds: 300),
@@ -2368,7 +2406,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
                 );
               } else {
                 observerController.animateTo(
-                  sliverContext: realKeys![t.index],
+                  sliverContext: realKeys![k],
                   index: 0,
                   offset: (t) => 140,
                   duration: const Duration(milliseconds: 300),

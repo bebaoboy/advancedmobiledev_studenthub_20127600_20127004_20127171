@@ -1,38 +1,35 @@
 {
-  "notification": {
-    "id": 2423,
-    "createdAt": "2024-05-06T05:01:15.400Z",
-    "updatedAt": "2024-05-06T05:01:15.400Z",
-    "deletedAt": null,
-    "receiverId": 34,
-    "senderId": 297,
-    "messageId": null,
-    "title": "New proposal from student Tien Tran for project bebaoboyFlutterFlire",
-    "notifyFlag": "0",
-    "typeNotifyFlag": "2",
-    "proposalId": 414,
-    "content": "New proposal from student Tien Tran for project bebaoboyFlutterFlire",
-    "message": null,
-    "sender": {
-      "id": 297,
-      "email": "20127355@student.hcmus.edu.vn",
-      "fullname": "Tien Tran"
-    },
-    "receiver": {
-      "id": 34,
-      "email": "baominkhuynh@gmail.com",
-      "fullname": "bao bao"
-    },
-    "proposal": {
-      "id": 414,
-      "createdAt": "2024-05-06T05:01:15.391Z",
-      "updatedAt": "2024-05-06T05:01:15.391Z",
-      "deletedAt": null,
-      "projectId": 238,
-      "studentId": 90,
-      "coverLetter": "string",
-      "statusFlag": 0,
-      "disableFlag": 0
-    }
-  }
+  "name": "flutter_boilerplate_project",
+  "short_name": "flutter_boilerplate_project",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0175C2",
+  "theme_color": "#0175C2",
+  "description": "A new Flutter project.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+      {
+          "src": "icons/Icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+      },
+      {
+          "src": "icons/Icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+      },
+      {
+          "src": "icons/Icon-maskable-192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "maskable"
+      },
+      {
+          "src": "icons/Icon-maskable-512.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "maskable"
+      }
+  ]
 }
