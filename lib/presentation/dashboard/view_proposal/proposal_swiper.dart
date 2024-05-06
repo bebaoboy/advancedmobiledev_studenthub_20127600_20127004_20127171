@@ -68,9 +68,10 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   onLeftButtonPress() {
     if (current.hiredStatus == HireStatus.notHired) {
       changeStatus(HireStatus.pending);
-      var p = widget.project.proposal!.firstWhereOrNull((element) => element.objectId==current.objectId,);
-      p?.hiredStatus =
-          HireStatus.pending;
+      var p = widget.project.proposal!.firstWhereOrNull(
+        (element) => element.objectId == current.objectId,
+      );
+      p?.hiredStatus = HireStatus.pending;
       if (p != null) current = p;
     }
     // ToDo
@@ -295,22 +296,13 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 width: 20,
                               ),
                               if (!isUpdatingProposal)
-                                customSwipeLeftButton(
-                                    controller,
-                                    onLeftButtonPress,
-                                    _projectStore
-                                        .currentProps
-                                        .proposals![_cardStateStore.index]
-                                        .hiredStatus),
+                                customSwipeLeftButton(controller,
+                                    onLeftButtonPress, current.hiredStatus),
                               const SizedBox(
                                 width: 10,
                               ),
                               if (!isUpdatingProposal &&
-                                  _projectStore
-                                          .currentProps
-                                          .proposals![_cardStateStore.index]
-                                          .hiredStatus !=
-                                      HireStatus.offer)
+                                  current.hiredStatus != HireStatus.offer)
                                 customSwipeRightButton(controller, () {
                                   changeStatus(HireStatus.offer);
                                 }),

@@ -76,7 +76,7 @@ class MessageNotifierProvider with ChangeNotifier {
       // print(data["notification"]['senderId'].toString());
       var i = addInbox(data, inbox, false);
       if (i != null) {
-        inbox.insert(0, i);
+        // inbox.insert(0, i);
       }
       notifyListeners();
     });
@@ -89,7 +89,7 @@ class MessageNotifierProvider with ChangeNotifier {
       // print(data["notification"]['senderId'].toString());
       var i = addInbox(data, inbox, true);
       if (i != null) {
-        inbox.insert(0, i);
+        // inbox.insert(0, i);
       }
       notifyListeners();
     });

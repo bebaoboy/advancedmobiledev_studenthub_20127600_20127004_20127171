@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:universal_io/io.dart';
 
 bool get isMobile {
-  return Platform.isAndroid || Platform.isIOS;
+  return !isWeb && (Platform.isAndroid || Platform.isIOS);
 }
 
 bool get isWeb {

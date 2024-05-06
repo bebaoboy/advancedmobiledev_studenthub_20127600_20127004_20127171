@@ -1,10 +1,10 @@
 // ignore_for_file: prefer_typing_uninitialized_variables
 
+
 import 'package:boilerplate/constants/app_theme.dart';
 import 'package:boilerplate/constants/strings.dart';
 import 'package:boilerplate/core/widgets/animated_theme_app.dart';
 import 'package:boilerplate/core/widgets/animation_type.dart';
-import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -13,6 +13,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -25,6 +26,8 @@ import '../di/service_locator.dart';
 
 class NavigationService {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  static FirebaseMessaging? firebaseInstance;
+  static String? firebaseToken = "";
 }
 
 class MyApp extends StatefulWidget {
@@ -57,9 +60,6 @@ class _MyAppState extends State<MyApp> {
               settings.name == Routes.splash ? null : settings.arguments);
     };
     builder = (context, child) {
-      ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-        return ErrorPage(errorDetails: errorDetails);
-      };
       return ToastificationConfigProvider(
           config: ToastificationConfig(
             marginBuilder: (e) => const EdgeInsets.fromLTRB(0, 0, 0, 10),

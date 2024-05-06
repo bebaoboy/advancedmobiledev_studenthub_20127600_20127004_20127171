@@ -209,17 +209,18 @@ class _SplashScreenState extends State<SplashScreen>
     await CubeChatConnection.instance.login(user).then((cubeUser) async {
       SharedPrefs.saveNewUser(cubeUser);
       log(cubeUser.toString(), "BEBAOBOY");
+      log("authen: ${CubeChatConnection.instance.isAuthenticated().toString()}");
       if (CubeChatConnection.instance.isAuthenticated() &&
           CubeChatConnection.instance.currentUser != null) {
         // log(
         //     (CubeSessionManager.instance.activeSession!.user == null)
         //         .toString(),
         //     "BEBAOBOY");
+        CallManager.instance.init(context);
+
+        await PushNotificationsManager.instance.init();
       }
       // initForegroundService();
-      CallManager.instance.init(context);
-
-      await PushNotificationsManager.instance.init();
 
       WorkMangerHelper.registerProfileFetch();
     }).catchError((exception) {

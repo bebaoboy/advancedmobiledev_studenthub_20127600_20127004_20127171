@@ -33,6 +33,17 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
           Skill('hello2', 'something', '0'),
           Skill('hello2', 'something', '0'),
         ];
+    if (skills.isEmpty) {
+      skills = <Skill>[
+        Skill('superlongtbjbjbjbhjbhbhjbhjbjbjbj', 'something', '0'),
+        Skill('hello2fffffff', 'something', '0'),
+        Skill('hello2', 'something', '0'),
+        Skill('hello2', 'something', '0'),
+        Skill('hello2', 'something', '0'),
+        Skill('hello2', 'something', '0'),
+        Skill('hello2', 'something', '0'),
+      ];
+    }
     return Scaffold(
       appBar: const EmptyAppBar(),
       body: SingleChildScrollView(

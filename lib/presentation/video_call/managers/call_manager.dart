@@ -3,7 +3,10 @@
 import 'dart:convert';
 
 import 'package:boilerplate/core/widgets/pip/navigatable_pip_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -40,11 +43,25 @@ class CallManager {
   CallManager._internal();
 
   P2PClient? _callClient;
-  P2PSession? _currentCall;
+  P2PSession? currentCall;
   BuildContext? context;
   MediaStream? localMediaStream;
+  InterviewSchedule? currentInterview;
   Map<int, MediaStream> remoteStreams = {};
   Function(bool, String)? onMicMuted;
+  bool isCameraEnabled = true;
+  bool isSpeakerEnabled = !kIsWeb
+      ? Platform.isIOS
+          ? false
+          : true
+      : true;
+  bool isMicMute = false;
+  bool isFrontCameraUsed = true;
+  String? cameraId;
+  bool waitingCall = false;
+  @observable
+  bool hasEnded = false;
+  Map<String, String> savedMeetingInfo = {};
 
   init(BuildContext context) {
     this.context = context;
@@ -81,49 +98,55 @@ class CallManager {
       _callClient!.init();
     }
 
-    _callClient!.onReceiveNewSession = (callSession) async {
-      if (_currentCall != null &&
-          _currentCall!.sessionId != callSession.sessionId) {
-        log("reject call, sessionId mismatch", "BEBAOBOY");
-        callSession.reject();
-        return;
-      }
-      _currentCall = callSession;
+    log("init call manager");
 
-      var callState = await _getCallState(_currentCall!.sessionId);
+    _callClient!.onReceiveNewSession = (callSession) async {
+      // if (currentCall != null &&
+      //     currentCall!.sessionId != callSession.sessionId) {
+      //   log("reject call, sessionId mismatch", "BEBAOBOY");
+      //   callSession.reject();
+      //   return;
+      // }
+      currentCall = callSession;
+      log("incoming call ${currentCall?.sessionId}");
+
+      var callState = await _getCallState(currentCall!.sessionId);
+      log("incoming call $callState");
 
       if (callState == CallState.REJECTED) {
-        reject(_currentCall!.sessionId, false);
+        reject(currentCall!.sessionId, false);
       } else if (callState == CallState.ACCEPTED) {
-        acceptCall(_currentCall!.sessionId, false);
+        acceptCall(currentCall!.sessionId, false);
       } else if (callState == CallState.UNKNOWN ||
           callState == CallState.PENDING) {
         if (callState == CallState.UNKNOWN &&
+            !kIsWeb &&
             (Platform.isIOS || Platform.isAndroid)) {
           ConnectycubeFlutterCallKit.setCallState(
-              sessionId: _currentCall!.sessionId, callState: CallState.PENDING);
+              sessionId: currentCall!.sessionId, callState: CallState.PENDING);
         }
 
-        _showIncomingCallScreen(_currentCall!);
+        _showIncomingCallScreen(currentCall!);
       }
 
-      _currentCall?.onLocalStreamReceived = (localStream) {
+      currentCall?.onLocalStreamReceived = (localStream) {
         localMediaStream = localStream;
       };
 
-      _currentCall?.onRemoteStreamReceived = (session, userId, stream) {
+      currentCall?.onRemoteStreamReceived = (session, userId, stream) {
         remoteStreams[userId] = stream;
       };
 
-      _currentCall?.onRemoteStreamRemoved = (session, userId, stream) {
+      currentCall?.onRemoteStreamRemoved = (session, userId, stream) {
         remoteStreams.remove(userId);
       };
     };
 
     _callClient!.onSessionClosed = (callSession) async {
-      if (_currentCall != null &&
-          _currentCall!.sessionId == callSession.sessionId) {
-        _currentCall = null;
+      if (currentCall != null &&
+          currentCall!.sessionId == callSession.sessionId) {
+        currentCall = null;
+        CallManager.instance.hasEnded = true;
         localMediaStream?.getTracks().forEach((track) async {
           await track.stop();
         });
@@ -140,12 +163,28 @@ class CallManager {
 
         remoteStreams.clear();
         CallKitManager.instance.processCallFinished(callSession.sessionId);
+        if (PictureInPicture.isActive) {
+          PictureInPicture.stopPiP(false);
+        }
       }
     };
   }
 
   @observable
-  static bool inAppPip = false;
+  static bool inAppPip = true;
+
+  resetPreview() {
+    isCameraEnabled = true;
+    isSpeakerEnabled = !kIsWeb
+        ? Platform.isIOS
+            ? false
+            : true
+        : true;
+    isMicMute = false;
+    isFrontCameraUsed = false;
+    cameraId = null;
+    hasEnded = false;
+  }
 
   void startPreviewMeeting(BuildContext context, int callType,
       Set<int> opponents, InterviewSchedule interviewSchedule,
@@ -153,105 +192,138 @@ class CallManager {
     if (CubeSessionManager.instance.activeSession == null ||
         CubeSessionManager.instance.activeSession!.user == null) return;
     if (opponents.isEmpty) return;
+    resetPreview();
+    waitingCall = false;
 
     if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
     P2PSession callSession =
         _callClient!.createCallSession(callType, opponents);
-    _currentCall = callSession;
+    currentCall = callSession;
     log(CubeSessionManager.instance.activeSession.toString());
-    inAppPip = useInAppPip;
-
-    bool isProduction = const bool.fromEnvironment('dart.vm.product');
-
-    CreateEventParams params = CreateEventParams();
-    params.parameters = {
-      'message': "You have an interview 💌", // 'message' field is required
-      'title': "You have an interview 💌", // 'message' field is required
-      'session_id': callSession.sessionId,
-      'opponents': json.encode(
-          [...opponents, CubeSessionManager.instance.activeSession!.user!.id]),
-      'ios_voip': 1, // to send VoIP push notification to iOS
-      'type': "interview",
-      "android_fcm_notification": {
-        "title": "debug",
-        "body": json.encode(interviewSchedule.toJson()),
-        "sticky": true,
-        "channel_id": NotificationChannelEnum.basicChannel.key,
-        "color": "#FF0000"
-      },
-      "extra_body": {
-        "title": "debug",
-        "body": json.encode(interviewSchedule.toJson()),
-        "sticky": true,
-        "channel_id": NotificationChannelEnum.interviewChannel.key,
-        "color": "#FF0000"
-      },
-      // "expiration": "1714662049"
-      "expiration": DateTime.now()
-          .add(const Duration(seconds: 20))
-          .millisecondsSinceEpoch,
-      //more standard parameters you can found by link https://developers.connectycube.com/server/push_notifications?id=universal-push-notifications
-    };
-    print("background message ${params.parameters}");
-
-    params.notificationType = CubeNotificationType.PUSH;
-    params.environment =
-        isProduction ? CubeEnvironment.PRODUCTION : CubeEnvironment.DEVELOPMENT;
-    params.usersIds = [
-      CubeSessionManager.instance.activeSession!.user!.id,
-    ];
-
-    createEvent(params.getEventForRequest())
-        .then((cubeEvent) {})
-        .catchError((error) {});
+    currentInterview = null;
+    if (getIt<UserStore>().user!.type == UserType.student) {
+      waitingCall = true;
+    }
 
     Navigator.of(context).push(MaterialPageRoute2(
         routeName:
             "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
-        arguments: [users, interviewSchedule, callSession]));
+        arguments: [users, interviewSchedule, currentCall]));
   }
 
   void startPreviewMeetingIncomingCall(BuildContext context, int callType,
       Set<int> opponents, P2PSession? currentCall,
       {required bool fromCallkit, bool useInAppPip = true}) async {
     if (opponents.isEmpty || currentCall == null) return;
+    if (!waitingCall) resetPreview();
 
     if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
 
-    inAppPip = useInAppPip;
-
+    if (currentInterview == null) {
+      log("interview is null");
+    } else {
+      log("interview: ${currentInterview!.toJson()}");
+    }
     Navigator.of(context).push(MaterialPageRoute2(
         routeName:
             "${Routes.previewMeeting}/${CubeSessionManager.instance.activeSession!.user!.id}",
-        arguments: [users, null /*TODO: add interview info*/, currentCall]));
+        arguments: [users, null, currentCall]));
   }
 
   void startNewCall(BuildContext context, int callType, Set<int> opponents,
-      P2PSession callSession,
+      P2PSession callSession2, InterviewSchedule? interviewSchedule,
       {bool incoming = false, required bool fromCallkit}) async {
     if (opponents.isEmpty) return;
 
-    if (Platform.isIOS) {
+    if (!kIsWeb && Platform.isIOS) {
       Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
     }
 
     // P2PSession callSession =
     //     _callClient!.createCallSession(callType, opponents);
-    _currentCall = callSession;
 
+    if (currentInterview != null) {
+      currentInterview = null;
+      incoming = true;
+    }
+
+    log("device info enableCam=$isCameraEnabled, muteMic=$isMicMute, frontCam=$isFrontCameraUsed, speaker=$isSpeakerEnabled");
+    currentCallingKey = GlobalKey<ConversationCallScreenState>();
     if (incoming) {
-      // TODO: put 2 of this somewhere else
       if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
-        _currentCall?.acceptCall();
+        currentCall?.acceptCall();
       }
       if (!fromCallkit) {
         ConnectycubeFlutterCallKit.reportCallAccepted(
-            sessionId: _currentCall!.sessionId);
+            sessionId: currentCall!.sessionId);
       }
+      users.add(CubeUser(
+          id: currentCall!.callerId,
+          fullName: "Caller name ${currentCall!.callerId}"));
+    } else {
+      // this is CRUCIAL dont delete it //
+      //
+      // TODO: lưu camera nào, speaker hay k bật, bật mic hay k
+
+      P2PSession callSession =
+          _callClient!.createCallSession(callType, opponents);
+      currentCall = callSession;
+      //
+      ////////////////////////////////////
+      ///
+      ///
+      bool isProduction = const bool.fromEnvironment('dart.vm.product');
+
+      CreateEventParams params = CreateEventParams();
+      params.parameters = {
+        'message': "You have an interview 💌", // 'message' field is required
+        'title': "You have an interview 💌", // 'message' field is required
+        'session_id': currentCall!.sessionId,
+        'opponents': json.encode([
+          ...opponents,
+          CubeSessionManager.instance.activeSession!.user!.id
+        ]),
+        'ios_voip': 1, // to send VoIP push notification to iOS
+        'type': "interview",
+        "android_fcm_notification": {
+          "title": "debug",
+          "body": json.encode(interviewSchedule?.toJson()),
+          "sticky": true,
+          "channel_id": NotificationChannelEnum.basicChannel.key,
+          "color": "#FF0000"
+        },
+        "extra_body": {
+          "title": "debug",
+          "body": json.encode(interviewSchedule?.toJson()),
+          "sticky": true,
+          "channel_id": NotificationChannelEnum.interviewChannel.key,
+          "color": "#FF0000"
+        },
+        // "expiration": "1714662049"
+        //more standard parameters you can found by link https://developers.connectycube.com/server/push_notifications?id=universal-push-notifications
+      };
+      log("background message ${params.parameters}");
+
+      params.notificationType = CubeNotificationType.PUSH;
+      params.environment = isProduction
+          ? CubeEnvironment.PRODUCTION
+          : CubeEnvironment.DEVELOPMENT;
+      params.usersIds = [
+        ...opponents,
+        CubeSessionManager.instance.activeSession!.user!.id
+      ];
+      log("done incoming call event $opponents");
+
+      createEvent(params.getEventForRequest()).then((cubeEvent) {
+        log("cube event: $cubeEvent");
+      }).catchError((error) {
+        print(error.toString());
+      });
+      log("done event for call $params");
     }
 
     if (inAppPip) {
@@ -282,21 +354,35 @@ class CallManager {
               },
               elevation: 10, //Optional
               pipBorderRadius: 10,
-              builder: (context) =>
-                  ConversationCallScreen(callSession, false)));
+              builder: (context) => ConversationCallScreen(
+                    currentCall!,
+                    incoming,
+                    key: currentCallingKey,
+                  )));
     } else {
       Navigator.push(
         NavigationService.navigatorKey.currentContext ?? context,
         MaterialPageRoute(
-          builder: (context) => ConversationCallScreen(callSession, false),
+          builder: (context) => ConversationCallScreen(
+            currentCall!,
+            incoming,
+            key: currentCallingKey,
+          ),
         ),
       );
     }
 
-    _sendStartCallSignalForOffliners(_currentCall!);
+    waitingCall = false;
+
+    _sendStartCallSignalForOffliners(currentCall!);
   }
 
   void _showIncomingCallScreen(P2PSession callSession) async {
+    if (waitingCall) {
+      log("accept incoming call fast");
+      acceptCall(callSession.sessionId, false);
+      return;
+    }
     CallEvent callEvent = CallEvent(
         sessionId: callSession.sessionId,
         callType: callSession.callType,
@@ -304,22 +390,38 @@ class CallManager {
         callerName: 'Caller Name',
         opponentsIds: callSession.opponentsIds,
         userInfo: const {'customParameter1': 'value1'});
+    log("show incomin call screen $callSession");
     await ConnectycubeFlutterCallKit.showCallNotification(callEvent);
+    String callerName = "Caller name";
+    await getUserById(callSession.callerId).then((cubeUser) async {
+      if (cubeUser != null) {
+        callerName = cubeUser.fullName ?? "Caller name ${cubeUser.id}";
+      }
+    });
+    currentIncomingKey = GlobalKey<ConversationCallScreenState>();
+
     if (NavigationService.navigatorKey.currentContext != null) {
       Navigator.push(
         NavigationService.navigatorKey.currentContext!,
         MaterialPageRoute2(
-          child: IncomingCallScreen(callSession),
+          child: IncomingCallScreen(
+            callSession,
+            callerName,
+            key: currentIncomingKey,
+          ),
         ),
       );
     }
   }
 
+  GlobalKey currentIncomingKey = GlobalKey<IncomingCallScreenState>();
+  GlobalKey currentCallingKey = GlobalKey<ConversationCallScreenState>();
+
   void acceptCall(String sessionId, bool fromCallkit) {
     log('acceptCall, from callKit: $fromCallkit', TAG);
     ConnectycubeFlutterCallKit.setOnLockScreenVisibility(isVisible: true);
 
-    if (_currentCall != null) {
+    if (currentCall != null) {
       if (context != null) {
         // if (AppLifecycleState.resumed !=
         //     WidgetsBinding.instance.lifecycleState) {
@@ -337,8 +439,22 @@ class CallManager {
           //   ),
           // );
           var context = NavigationService.navigatorKey.currentContext!;
+          if (kIsWeb) {
+            inAppPip = true;
+            startNewCall(
+                NavigationService.navigatorKey.currentContext!,
+                CallType.VIDEO_CALL,
+                {
+                  ...currentCall!.opponentsIds,
+                },
+                currentCall!,
+                null,
+                incoming: true,
+                fromCallkit: false);
+            return;
+          }
           startPreviewMeetingIncomingCall(context, CallType.VIDEO_CALL,
-              _currentCall?.opponentsIds ?? {}, _currentCall,
+              currentCall?.opponentsIds ?? {}, currentCall,
               fromCallkit: fromCallkit);
           // PictureInPicture.updatePiPParams(
           //   pipParams: PiPParams(
@@ -372,32 +488,39 @@ class CallManager {
         }
       }
 
-      if (Platform.isIOS) {
+      if (!kIsWeb && Platform.isIOS) {
         Helper.setAppleAudioIOMode(AppleAudioIOMode.localAndRemote);
       }
     }
   }
 
   void reject(String sessionId, bool fromCallkit) {
-    if (_currentCall != null) {
+    if (currentCall != null) {
       if (fromCallkit) {
         ConnectycubeFlutterCallKit.setOnLockScreenVisibility(isVisible: false);
       } else {
-        CallKitManager.instance.processCallFinished(_currentCall!.sessionId);
+        CallKitManager.instance.processCallFinished(currentCall!.sessionId);
       }
 
-      _currentCall!.reject();
-      _sendEndCallSignalForOffliners(_currentCall);
+      currentCall!.reject();
+      _sendEndCallSignalForOffliners(currentCall);
     } else {
       // Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }
 
   void hungUp() {
-    if (_currentCall != null) {
-      CallKitManager.instance.processCallFinished(_currentCall!.sessionId);
-      _currentCall!.hungUp();
-      _sendEndCallSignalForOffliners(_currentCall);
+    hasEnded = true;
+    if (currentIncomingKey.currentState != null) {
+      Navigator.pop(currentIncomingKey.currentState!.context);
+    }
+    if (currentCallingKey.currentState != null) {
+      Navigator.pop(currentCallingKey.currentState!.context);
+    }
+    if (currentCall != null) {
+      CallKitManager.instance.processCallFinished(currentCall!.sessionId);
+      currentCall!.hungUp();
+      _sendEndCallSignalForOffliners(currentCall);
     } else {
       // Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
@@ -412,7 +535,7 @@ class CallManager {
     CreateEventParams params = CreateEventParams();
     params.parameters = {
       'message':
-          "Hello my cutie pie, this is an incoming ${currentCall.callType == CallType.VIDEO_CALL ? "Video" : "Audio"} call",
+          "You have an interview call ${currentCall.callType == CallType.VIDEO_CALL ? "Video" : "Audio"} call",
       PARAM_CALL_TYPE: currentCall.callType,
       PARAM_SESSION_ID: currentCall.sessionId,
       PARAM_CALLER_ID: currentCall.callerId,
@@ -480,7 +603,7 @@ class CallManager {
   }
 
   Future<String> _getCallState(String sessionId) async {
-    if (Platform.isAndroid || Platform.isIOS) {
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       var callState =
           ConnectycubeFlutterCallKit.getCallState(sessionId: sessionId);
       return callState;

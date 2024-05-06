@@ -6,12 +6,12 @@ import 'package:boilerplate/domain/entity/project/experience_list.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/profile/update_project_experience.dart';
 
-class GetExperienceUseCase extends UseCase<ProjectExperienceList, String> {
+class GetExperienceUseCase extends UseCase<ProjectExperienceList?, String> {
   final UserRepository _userRepository;
   GetExperienceUseCase(this._userRepository);
 
   @override
-  Future<ProjectExperienceList> call({required String params}) async {
+  Future<ProjectExperienceList?> call({required String params}) async {
     if (params.isEmpty) return ProjectExperienceList();
     if (await _userRepository.isLoggedIn) {
       UpdateProjectExperienceParams p = UpdateProjectExperienceParams(
@@ -22,7 +22,7 @@ class GetExperienceUseCase extends UseCase<ProjectExperienceList, String> {
           response.statusCode == HttpStatus.ok) {
         return ProjectExperienceList.fromJson(response.data["result"]);
       } else {
-        return ProjectExperienceList();
+        return null;
       }
     }
     return ProjectExperienceList();

@@ -123,8 +123,10 @@ class P2PClient implements CallClient<P2PSession>, CallsSignalingCallback {
     CubeUser cubeUser,
     RTCSessionDescription sdp,
   ) {
-    P2PSession? session = _sessions[cubeRtcSdp.sessionId];
+    log("new incoming calll sessionnnnnnnnnnnnnnn");
 
+    P2PSession? session = _sessions[cubeRtcSdp.sessionId];
+    log(session.toString());
     if (session == null) {
       session = P2PSession(this, cubeRtcSdp);
 

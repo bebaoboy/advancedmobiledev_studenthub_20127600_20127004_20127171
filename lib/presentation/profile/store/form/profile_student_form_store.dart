@@ -22,6 +22,7 @@ import 'package:boilerplate/domain/usecase/profile/update_project_experience.dar
 import 'package:boilerplate/domain/usecase/profile/update_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/update_transcript.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:mobx/mobx.dart';
 
 part 'profile_student_form_store.g.dart';
@@ -357,7 +358,7 @@ abstract class _ProfileStudentFormStore with Store {
     var userStore = getIt<UserStore>();
     if (userStore.user != null) {
       userStore.user!.studentProfile = StudentProfile(
-          objectId: studentId,
+          objectId: userStore.user!.studentProfile!.objectId,
           fullName: userStore.user!.name,
           skillSet: skillset,
           techStack: techStack,
@@ -365,7 +366,8 @@ abstract class _ProfileStudentFormStore with Store {
           resume: resumes,
           languages: languages,
           educations: educations,
-          projectExperience: projectExperiences);
+          projectExperience: projectExperiences,
+          proposalProjects: userStore.user!.studentProfile!.proposalProjects);
       // ToDO: save to shared pref
       var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       sharedPrefsHelper.saveStudentProfile(StudentProfile(
@@ -377,7 +379,8 @@ abstract class _ProfileStudentFormStore with Store {
           languages: languages,
           educations: educations,
           projectExperience: projectExperiences,
-          objectId: studentId));
+          objectId: userStore.user!.studentProfile!.objectId,
+          proposalProjects: userStore.user!.studentProfile!.proposalProjects));
     }
   }
 
@@ -392,57 +395,71 @@ abstract class _ProfileStudentFormStore with Store {
     final future = _getProfileStudentUseCase.call(params: loginParams);
     addProfileStudentFuture = ObservableFuture(future);
     var userStore = getIt<UserStore>();
+    try {
+      await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          // ToDO: API này trả về full student profile
 
-    await future.then((value) {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.ok ||
-          value.statusCode == HttpStatus.created) {
-        // ToDO: API này trả về full student profile
-
-        //print(value);
-        try {
-          if (userStore.user != null &&
-              userStore.user!.studentProfile != null) {
-            userStore.user!.studentProfile!.fullName =
-                value.data["result"]["fullname"];
-            setFullName(userStore.user!.studentProfile!.fullName);
-            userStore.user!.studentProfile!.techStack =
-                TechStack.fromJson(value.data["result"]["techStack"]);
-            techStack = userStore.user!.studentProfile!.techStack;
-            if (value.data["result"]["skillSets"] != null) {
-              var ssList = value.data["result"]["skillSets"] as List;
-              userStore.user!.studentProfile!.skillSet = [];
-              for (var element in ssList) {
-                userStore.user!.studentProfile!.skillSet!
-                    .add(Skill.fromMap(element));
+          //print(value);
+          try {
+            if (userStore.user != null &&
+                userStore.user!.studentProfile != null) {
+              userStore.user!.studentProfile!.fullName =
+                  value.data["result"]["fullname"];
+              setFullName(userStore.user!.studentProfile!.fullName);
+              userStore.user!.studentProfile!.techStack =
+                  TechStack.fromJson(value.data["result"]["techStack"]);
+              techStack = userStore.user!.studentProfile!.techStack;
+              if (value.data["result"]["skillSets"] != null) {
+                var ssList = value.data["result"]["skillSets"] as List;
+                userStore.user!.studentProfile!.skillSet = [];
+                for (var element in ssList) {
+                  userStore.user!.studentProfile!.skillSet!
+                      .add(Skill.fromMap(element));
+                }
+                skillSet = userStore.user!.studentProfile!.skillSet!;
               }
-              skillSet = userStore.user!.studentProfile!.skillSet!;
+              // ToDO: lưu thong tin student profile
             }
-            // ToDO: lưu thong tin student profile
+          } catch (e) {
+            errorStore.errorMessage = "cannot save student profile";
           }
-        } catch (e) {
-          errorStore.errorMessage = "cannot save student profile";
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          //print(value.data);
         }
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        //print(value.data);
-      }
-      // //print(value);
-    });
-    await _getResume("", id).then(
-      (value) {
-        //print(value);
-      },
-    );
+        // //print(value);
+      });
+      await _getResume("", id).then(
+        (value) {
+          //print(value);
+        },
+      );
 
-    await _getTranscript("", id).then(
-      (value) {
-        //print(value);
-      },
-    );
+      await _getTranscript("", id).then(
+        (value) {
+          //print(value);
+        },
+      );
+    } catch (e) {
+      var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+      var sp = await sharedPrefsHelper.studentProfile;
+      if (sp != null) {
+        userStore.user!.studentProfile = sp;
+      }
+      var profileInfoStore = getIt<ProfileStudentStore>();
+      profileInfoStore.setStudentId(userStore.user!.studentProfile!.objectId!);
+      await profileInfoStore.getInfo();
+      return;
+    }
+    var profileInfoStore = getIt<ProfileStudentStore>();
+    profileInfoStore.setStudentId(userStore.user!.studentProfile!.objectId!);
+    await profileInfoStore.getInfo();
     if (userStore.user != null && userStore.user!.studentProfile != null) {
       var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       sharedPrefsHelper.saveStudentProfile(StudentProfile(
@@ -454,7 +471,8 @@ abstract class _ProfileStudentFormStore with Store {
           languages: userStore.user!.studentProfile!.languages,
           educations: userStore.user!.studentProfile!.educations,
           projectExperience: userStore.user!.studentProfile!.projectExperience,
-          objectId: userStore.user!.studentProfile!.objectId));
+          objectId: userStore.user!.studentProfile!.objectId,
+          proposalProjects: userStore.user!.studentProfile!.proposalProjects));
     }
   }
 

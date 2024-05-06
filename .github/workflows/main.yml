@@ -16,6 +16,8 @@ on:
     branches:
       - test
       - sprintdev
+      - sprint8-chat
+      - sprint9*
 
 jobs:
   build:
@@ -38,7 +40,7 @@ jobs:
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.3'
+          flutter-version: '3.19.6'
           channel: 'stable'
 
         #4 install dependencies

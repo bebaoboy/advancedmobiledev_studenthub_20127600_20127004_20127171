@@ -29,7 +29,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
     dioList = prefs.getStringList("dio") ?? [];
     return prefs
         .getKeys()
-        .map<Widget>((key) => ListTile(
+        .map<Widget>((key) => key == "dio" ? const SizedBox() : ListTile(
               title: Text(
                 key,
                 style: const TextStyle(

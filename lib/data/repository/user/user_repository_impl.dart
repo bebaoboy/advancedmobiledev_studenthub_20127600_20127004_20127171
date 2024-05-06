@@ -122,6 +122,11 @@ class UserRepositoryImpl extends UserRepository {
       _sharedPrefsHelper.saveName(name);
       _sharedPrefsHelper.saveRolesList(userRoles);
       _sharedPrefsHelper.saveCompanyProfile(companyProfile);
+      var sp = await _sharedPrefsHelper.studentProfile;
+      if (sp != null) {
+        studentProfile?.projectExperience ??= sp.projectExperience;
+        studentProfile?.proposalProjects ??= sp.proposalProjects;
+      }
       _sharedPrefsHelper.saveStudentProfile(studentProfile);
 
       try {
@@ -179,7 +184,7 @@ class UserRepositoryImpl extends UserRepository {
     return response;
   }
 
-    @override
+  @override
   Future<Response> getCompanyProfile(AddProfileCompanyParams params) async {
     var response = await _profileApi.getCompanyProfile(params);
     return response;

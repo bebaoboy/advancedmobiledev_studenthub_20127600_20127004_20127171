@@ -491,14 +491,14 @@ class _SettingScreenState extends State<SettingScreen> {
                         }
                         try {
                           if (_userStore.studentId != null) {
-                            final ProfileStudentStore infoStore =
-                                getIt<ProfileStudentStore>();
+                            // final ProfileStudentStore infoStore =
+                            //     getIt<ProfileStudentStore>();
 
-                            infoStore.setStudentId(
-                                _userStore.user!.studentProfile!.objectId!);
-                            await infoStore.getInfo().then(
-                                  (value) {},
-                                );
+                            // infoStore.setStudentId(
+                            //     _userStore.user!.studentProfile!.objectId!);
+                            // await infoStore.getInfo().then(
+                            //       (value) {},
+                            //     );
                             final ProfileStudentFormStore formStore =
                                 getIt<ProfileStudentFormStore>();
                             await formStore.getProfileStudent(

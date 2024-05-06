@@ -8,7 +8,6 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 // import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/profile/profile_student.dart';
-import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:boilerplate/presentation/setting/widgets/company_account_widget.dart';
@@ -235,14 +234,14 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                                     });
 
                                     if (_userStore.studentId != null) {
-                                      final ProfileStudentStore infoStore =
-                                          getIt<ProfileStudentStore>();
+                                      // final ProfileStudentStore infoStore =
+                                      //     getIt<ProfileStudentStore>();
 
-                                      infoStore.setStudentId(_userStore
-                                          .user!.studentProfile!.objectId!);
-                                      await infoStore.getInfo().then(
-                                            (value) {},
-                                          );
+                                      // infoStore.setStudentId(_userStore
+                                      //     .user!.studentProfile!.objectId!);
+                                      // await infoStore.getInfo().then(
+                                      //       (value) {},
+                                      //     );
                                       final ProfileStudentFormStore formStore =
                                           getIt<ProfileStudentFormStore>();
                                       await formStore.getProfileStudent(

@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -416,7 +417,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
 
                               // ToDo: pass in right id for call
                               CallManager.instance.startPreviewMeeting(
-                                  context,
+                                  NavigationService.navigatorKey.currentContext!,
                                   CallType.VIDEO_CALL,
                                   {int.parse(widget.user.id)},
                                   widget.scheduleFilter);

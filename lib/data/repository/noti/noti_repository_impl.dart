@@ -6,6 +6,7 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/repository/noti/noti_repository.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NotiRepositoryImpl extends NotiRepository {
   final NotiApi _notiApi;
@@ -13,9 +14,12 @@ class NotiRepositoryImpl extends NotiRepository {
   NotiRepositoryImpl(this._notiApi);
 
   @override
-  Future<List<NotificationObject>> getNoti(GetNotiParams params) async {
+  Future<List<NotificationObject>> getNoti(
+    GetNotiParams params,
+  ) async {
     try {
       SharedPreferenceHelper helper = getIt<SharedPreferenceHelper>();
+      var s = await SharedPreferences.getInstance();
       return await _notiApi.getNoti(params).then(
         (value) async {
           if (value.statusCode == HttpStatus.accepted ||
@@ -29,7 +33,7 @@ class NotiRepositoryImpl extends NotiRepository {
                 'id': element['id'].toString(),
                 'title': element["title"].toString(),
                 "content": element["content"].toString(),
-                'messageContent': element["message"]['content'].toString(),
+                'messageContent': element["message"] != null ? element["message"]['content'].toString() : element["content"].toString(),
                 'type': element['typeNotifyFlag'],
                 'createdAt': DateTime.parse(element['createdAt']).toLocal(),
                 'receiver': {
@@ -40,13 +44,28 @@ class NotiRepositoryImpl extends NotiRepository {
                   "id": element['sender']['id'].toString(),
                   "fullname": element['sender']['fullname'].toString(),
                 },
-                'metadata': element["interview"] != null
+                'metadata': (element["message"] != null && element["message"]["interview"] != null)
                     ? <String, dynamic>{
-                        ...element["interview"],
-                        "meetingRoom": element["meetingRoom"]
+
+                        ...element["message"]["interview"],
+                        "meetingRoom": element["message"]["interview"]["meetingRoom"]
                       }
-                    : null
+                    : element["proposal"] != null
+                        ? <String, dynamic>{...element["proposal"]}
+                        : null,
               };
+              /*
+               "proposal": {
+            "id": 414,
+            "createdAt": "2024-05-06T05:01:15.391Z",
+            "updatedAt": "2024-05-06T05:01:15.391Z",
+            "deletedAt": null,
+            "projectId": 238,
+            "studentId": 90,
+            "coverLetter": "string",
+            "statusFlag": 0,
+            "disableFlag": 0
+        } */
               var acm = NotificationObject.fromJson(e);
 
               if (acm.createdAt!.millisecondsSinceEpoch >= lastRead) {
@@ -55,6 +74,13 @@ class NotiRepositoryImpl extends NotiRepository {
             }
 
             helper.saveLastRead(DateTime.now());
+            s.setStringList(
+                "noti",
+                res
+                    .map(
+                      (e) => e.toJson(),
+                    )
+                    .toList());
 
             return res;
           } else {

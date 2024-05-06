@@ -23,8 +23,14 @@ class Floating {
   /// by admin or device manufacturer. Also, the device may
   /// have Android version that was released without this feature.
   Future<bool> get isPipAvailable async {
-    final bool? supportsPip = await _channel.invokeMethod('pipAvailable');
-    return supportsPip ?? false;
+    try {
+      final bool? supportsPip = await _channel.invokeMethod('pipAvailable');
+      return supportsPip ?? false;
+    } catch (e) {
+      logg(e.toString());
+      dispose();
+      return true;
+    }
   }
 
   /// Checks current app PiP status.

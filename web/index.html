@@ -47,7 +47,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
-    
 
     <script type="module">
       // Import the functions you need from the SDKs you need
@@ -92,9 +91,12 @@
        https://developers.google.com/web/fundamentals/primers/service-workers -->
     <script>
       if ("serviceWorker" in navigator) {
+        console.log("service worker init done");
         window.addEventListener("load", function () {
           navigator.serviceWorker.register("flutter_service_worker.js");
-          navigator.serviceWorker.register('/firebase-messaging-sw.js');
+          navigator.serviceWorker.register("firebase-messaging-sw.js", {
+            scope: "/firebase-cloud-messaging-push-scope",
+          });
         });
       }
     </script>
@@ -113,12 +115,11 @@
         });
       });
 
-      // const channel = new BroadcastChannel('sw-messages');
-      // channel.addEventListener("message", function (event) {
-      // localStorage.setItem('flutter.notificationExist', true)
-      // window.postMessage(JSON.stringify(event.data));
-
-      // });
+      const channel = new BroadcastChannel("sw-messages");
+      channel.addEventListener("message", function (event) {
+        localStorage.setItem("flutter.notificationExist", true);
+        window.postMessage(JSON.stringify(event.data));
+      });
     </script>
   </body>
 </html>
