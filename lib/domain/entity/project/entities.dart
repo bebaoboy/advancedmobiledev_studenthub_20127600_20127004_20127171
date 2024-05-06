@@ -260,8 +260,9 @@ class NotificationObject extends MyObject {
   Profile receiver;
   Profile sender;
   String content;
+  String messageContent;
   String title;
-  NotificationType get type => _type ?? NotificationType.text;
+  NotificationType get type => _type ?? NotificationType.proposal;
   NotificationType? _type;
   Map<String, dynamic>? metadata;
 
@@ -269,6 +270,7 @@ class NotificationObject extends MyObject {
     required this.id,
     required this.receiver,
     required this.sender,
+    this.messageContent = "",
     required NotificationType type,
     super.createdAt,
     super.updatedAt,
@@ -282,6 +284,7 @@ class NotificationObject extends MyObject {
       : id = json["id"] ?? "",
         receiver = Profile.fromJson(json['receiver'] ?? ''),
         sender = Profile.fromJson(json["sender"] ?? ''),
+        messageContent = json["messageContent"] ?? "",
         content =
             int.tryParse(json['type']) == NotificationType.joinInterview.index
                 ? "${json["content"]}\n${json["messageContent"]}"
@@ -290,12 +293,26 @@ class NotificationObject extends MyObject {
         _type = NotificationType.values[int.tryParse(json['type']) ?? 0],
         metadata = json['metadata'],
         super(createdAt: json["createdAt"]);
+
+  String toJson() {
+    return json.encode({
+      'id': id,
+      'title': title,
+      "content": content,
+      'messageContent': messageContent,
+      'type': type.index,
+      'createdAt': createdAt.toString(),
+      'receiver': {"id": receiver.objectId, "fullname": receiver.name},
+      'sender': {"id": sender.objectId, "fullname": sender.name},
+      'metadata': metadata
+    });
+  }
 }
 
 enum NotificationType {
   viewOffer,
   joinInterview,
-  text, // submitted
+  proposal, // submitted
   message,
 }
 
@@ -306,8 +323,8 @@ extension NotificationTypeTitle on NotificationType {
         return "Interview";
       case NotificationType.viewOffer:
         return 'Offers';
-      case NotificationType.text:
-        return 'Texts';
+      case NotificationType.proposal:
+        return 'Proposals';
       case NotificationType.message:
         return 'Messages';
       default:
@@ -359,7 +376,9 @@ class MessageObject extends NotificationObject {
   Project? project;
 
   MessageObject.fromJson(Map<String, dynamic> json2)
-      : messageType = MessageType.values[json2["type"] ?? 0],
+      : messageType = json2["interview"] != null
+            ? MessageType.joinInterview
+            : MessageType.message,
         interviewSchedule = json2["interview"] != null
             ? InterviewSchedule.fromJsonApi(json2["interview"])
             : null,
@@ -383,6 +402,7 @@ class MessageObject extends NotificationObject {
                     : json2["sender"]),
             type: NotificationType.message);
 
+  @override
   String toJson() {
     return json.encode({
       "type": messageType.index,
@@ -482,8 +502,10 @@ class InterviewSchedule extends MyObject {
         "endTime": endDate.toString(),
         "disableFlag": isCancel ? 1 : 0,
         "id": objectId,
-        "meeting_room_id": meetingRoomId,
-        "meeting_room_code": meetingRoomCode,
+        "meetingRoom": {
+          "meeting_room_id": meetingRoomId,
+          "meeting_room_code": meetingRoomCode,
+        },
         "createdAt": createdAt.toString(),
         "updatedAt": updatedAt.toString(),
       };

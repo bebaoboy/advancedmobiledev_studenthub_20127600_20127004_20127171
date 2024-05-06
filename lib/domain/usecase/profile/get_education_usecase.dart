@@ -6,11 +6,11 @@ import 'package:boilerplate/domain/entity/project/education_list.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/profile/update_education.dart';
 
-class GetEducationUseCase extends UseCase<EducationList, String> {
+class GetEducationUseCase extends UseCase<EducationList?, String> {
   final UserRepository _userRepository;
   GetEducationUseCase(this._userRepository);
   @override
-  Future<EducationList> call({required String params}) async {
+  Future<EducationList?> call({required String params}) async {
     if (params.isEmpty) return EducationList();
     if (await _userRepository.isLoggedIn) {
       UpdateEducationParams p =
@@ -21,7 +21,7 @@ class GetEducationUseCase extends UseCase<EducationList, String> {
           response.statusCode == HttpStatus.ok) {
         return EducationList.fromJson(response.data["result"]);
       } else {
-        return EducationList();
+        return null;
       }
     }
     return EducationList();

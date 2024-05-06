@@ -147,6 +147,104 @@ class WorkMangerHelper {
       print("fetch error $e");
       return [];
     }
+  // static registerProjectFetch() async {
+  //   Workmanager().registerPeriodicTask(
+  //     WorkerTask.fetchProject.identifier,
+  //     WorkerTask.fetchProject.name + const Uuid().v4(),
+  //     existingWorkPolicy: ExistingWorkPolicy.replace,
+  //     initialDelay: SHORT_DELAY,
+  //     // frequency: NORMAL_FREQUENCY,
+  //     backoffPolicy: BackoffPolicy.exponential,
+  //     constraints: Constraints(
+  //         requiresDeviceIdle: true, networkType: NetworkType.connected),
+  //   );
+  // }
+
+//   Future<List<NotificationObject>> fetchRecentNotification() async {
+//     return [
+//       NotificationObject(
+//           type: NotificationType.proposal,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have submitted to join project "Javis - AI Copilot',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           type: NotificationType.joinInterview,
+//           content:
+//               'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+//           createdAt: DateTime.now().subtract(const Duration(days: 7))),
+//       OfferNotification(
+//           projectId: "",
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have submitted to join project "Javis - AI Copilot',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           type: NotificationType.message,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "Alex Jor",
+//           ),
+//           content:
+//               'I have read your requirement but I dont seem to...?\n6/6/2024',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           type: NotificationType.message,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "Alex Jor",
+//           ),
+//           content: 'Finish your project?',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           type: NotificationType.message,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "Alex Jor",
+//           ),
+//           content: 'How are you doing?',
+//           createdAt: DateTime.now()),
+//       OfferNotification(
+//           projectId: "",
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have an offer to join project "HCMUS - Administration"',
+//           createdAt: DateTime.now()),
+//       OfferNotification(
+//           projectId: "",
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have an offer to join project "Quantum Physics"',
+//           createdAt: DateTime.now()),
+//     ];
   }
 
   static Future<bool> fetchProfile() async {

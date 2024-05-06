@@ -2,6 +2,11 @@
 
 import 'dart:math';
 
+import 'package:boilerplate/domain/entity/project/proposal_list.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
+import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
+import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:choice/choice.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/gestures.dart';
@@ -236,11 +241,17 @@ class _BottomBarState extends State<BottomBar>
         }
       });
     _controller.forward();
-    NavbarNotifier2.bottomNavbarVisibilityListener.addListener(
-      () {
+    NavbarNotifier2.bottomNavbarVisibilityListener.addListener(hide);
+  }
+
+  hide() {
+    try {
+      if (mounted) {
         setState(() {});
-      },
-    );
+      }
+    } catch (e) {
+      ///
+    }
   }
 
   void showBottomBar() {
@@ -283,6 +294,7 @@ class _BottomBarState extends State<BottomBar>
   @override
   void dispose() {
     scrollBottomBarController.removeListener(() {});
+    NavbarNotifier2.bottomNavbarVisibilityListener.removeListener(hide);
     _controller.dispose();
     super.dispose();
   }
@@ -690,7 +702,9 @@ class _AlertTabState extends State<AlertTab> {
   Widget _buildTopRowList() {
     if (hasOfferProposal) {
       return Tooltip(
-        message: "${getOffer().length} offers",
+        message: userStore.user!.type == UserType.student
+            ? "${getOffer().length} offers"
+            : "",
         padding: const EdgeInsets.symmetric(horizontal: 10),
         verticalOffset: 60,
         child: InkWell(
@@ -699,6 +713,8 @@ class _AlertTabState extends State<AlertTab> {
               getOffer().length.toString(),
               style: TextStyle(color: Theme.of(context).colorScheme.secondary),
             ),
+            showBadge: getOffer().isNotEmpty &&
+                userStore.user!.type == UserType.student,
             position: badges.BadgePosition.topStart(start: 10, top: -10),
             badgeStyle: badges.BadgeStyle(
                 badgeColor: Theme.of(context).colorScheme.primary),
@@ -1032,7 +1048,7 @@ class _AlertTabState extends State<AlertTab> {
                   },
                   itemBuilder: (context, i) {
                     cc = context;
-                    print("build explorable pv");
+                    // print("build explorable pv");
                     return KeepAlivePage(
                       key: PageStorageKey("alert_$i"),
                       AlertPage(
@@ -1129,18 +1145,19 @@ class HeroFlutterLogo extends StatelessWidget {
   }
 }
 
-class CustomOfferNotification extends StatefulWidget {
-  const CustomOfferNotification(
+class CustomProposalNotification extends StatefulWidget {
+  const CustomProposalNotification(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomOfferNotification> createState() =>
-      _CustomOfferNotificationState();
+  State<CustomProposalNotification> createState() =>
+      _CustomProposalNotificationState();
 }
 
-class _CustomOfferNotificationState extends State<CustomOfferNotification> {
+class _CustomProposalNotificationState
+    extends State<CustomProposalNotification> {
   bool follow = false;
   @override
   Widget build(BuildContext context) {
@@ -1150,21 +1167,73 @@ class _CustomOfferNotificationState extends State<CustomOfferNotification> {
         padding: const EdgeInsets.all(8.0),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 20, backgroundColor: Colors.blue,
-              backgroundImage: CachedNetworkImageProvider(
-                // errorBuilder: (context, error, stackTrace) => const Icon(
-                //   Icons.error_outline,
-                //   size: 45,
-                // ),
-                cacheKey: "flutter",
+            Column(
+              children: [
+                const CircleAvatar(
+                  radius: 20, backgroundColor: Colors.blue,
+                  backgroundImage: CachedNetworkImageProvider(
+                    // errorBuilder: (context, error, stackTrace) => const Icon(
+                    //   Icons.error_outline,
+                    //   size: 45,
+                    // ),
+                    cacheKey: "flutter_interview",
 
-                maxWidth: 50,
-                maxHeight: 50,
-                'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-                // fit: BoxFit.cover,
-              ),
-              // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                    maxWidth: 50,
+                    maxHeight: 50,
+                    'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
+                    // fit: BoxFit.cover,
+                  ),
+                  // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 0),
+                    child: RoundedButtonWidget(
+                      height: 40,
+                      buttonColor: Theme.of(context).colorScheme.primary,
+                      buttonTextSize: 10,
+                      // textColor: follow == false ? Colors.white : mainText,
+                      onPressed: () async {
+                        var proposal = widget.notificationObject.metadata!;
+                        var userStore = getIt<UserStore>();
+                        var projectStore = getIt<ProjectStore>();
+                        if (userStore.user!.type == UserType.company &&
+                            projectStore.companyProjects.isEmpty) {
+                          await projectStore.getProjectByCompany(
+                              userStore.user!.companyProfile!.objectId!);
+                        }
+                        if (projectStore.companyProjects.isNotEmpty) {
+                          print("");
+                          var project =
+                              projectStore.companyProjects.firstWhereOrNull(
+                            (element) =>
+                                element.objectId ==
+                                proposal["projectId"].toString(),
+                          );
+                          if (project != null) {
+                            projectStore.currentProps = ProposalList(
+                                proposals: project.proposal);
+                            Navigator.of(NavigationService
+                                    .navigatorKey.currentContext!)
+                                .push(MaterialPageRoute2(
+                                    routeName:
+                                        "${Routes.projectDetails}/${proposal["projectId"]}",
+                                    arguments: {
+                                  "project": project,
+                                  "index": -1
+                                }));
+                          }
+                        }
+                      },
+                      buttonText: widget.notificationObject.type ==
+                              NotificationType.proposal
+                          ? "View"
+                          : "Join",
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               width: 15,
@@ -1212,28 +1281,20 @@ class _CustomOfferNotificationState extends State<CustomOfferNotification> {
                         overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodyText1!),
                   ),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  LimitedBox(
+                    maxHeight: 200,
+                    child: AutoSizeText(
+                        "Project id${widget.notificationObject.metadata!["projectId"]}",
+                        maxLines: 2,
+                        maxFontSize: 10,
+                        minFontSize: 9,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.bodyText1!),
+                  ),
                 ],
-              ),
-            ),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 0),
-                child: RoundedButtonWidget(
-                  height: 40,
-                  buttonColor: Theme.of(context).colorScheme.primary,
-                  buttonTextSize: 10,
-                  // textColor: follow == false ? Colors.white : mainText,
-                  onPressed: () {
-                    setState(() {
-                      follow = !follow;
-                    });
-                  },
-                  buttonText: widget.notificationObject.type ==
-                          NotificationType.viewOffer
-                      ? "View"
-                      : "Join",
-                ),
               ),
             ),
           ],
@@ -1245,9 +1306,13 @@ class _CustomOfferNotificationState extends State<CustomOfferNotification> {
 
 class CustomInterviewNotification extends StatefulWidget {
   const CustomInterviewNotification(
-      {super.key, required this.notificationObject, required this.showTime});
+      {super.key,
+      required this.notificationObject,
+      required this.showTime,
+      required this.enterInterview});
   final NotificationObject notificationObject;
   final bool showTime;
+  final Function enterInterview;
 
   @override
   State<CustomInterviewNotification> createState() =>
@@ -1314,7 +1379,8 @@ class _CustomInterviewNotificationState
                               // textColor: follow == false ? Colors.white : mainText,
                               onPressed: () {
                                 setState(() {
-                                  follow = !follow;
+                                  // follow = !follow;
+                                  widget.enterInterview();
                                 });
                               },
                               buttonText: widget.notificationObject.type ==
@@ -1525,17 +1591,18 @@ class _CustomInterviewNotificationWidgetState
   }
 }
 
-class CustomLikedNotifcation extends StatefulWidget {
-  const CustomLikedNotifcation(
+class CustomMessageNotifcation extends StatefulWidget {
+  const CustomMessageNotifcation(
       {super.key, required this.notificationObject, required this.showTime});
   final NotificationObject notificationObject;
   final bool showTime;
 
   @override
-  State<CustomLikedNotifcation> createState() => _CustomLikedNotifcationState();
+  State<CustomMessageNotifcation> createState() =>
+      _CustomMessageNotifcationState();
 }
 
-class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
+class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -1551,7 +1618,7 @@ class _CustomLikedNotifcationState extends State<CustomLikedNotifcation> {
                 Padding(
                   padding: const EdgeInsets.only(left: 10),
                   child: Icon(
-                    widget.notificationObject.type == NotificationType.text
+                    widget.notificationObject.type == NotificationType.proposal
                         ? Icons.text_snippet
                         : Icons.chat,
                     size: 45,
@@ -1673,9 +1740,12 @@ class AlertPage extends StatefulWidget {
 
 class _AlertPageState extends State<AlertPage> {
   var notiStore = getIt<NotificationStore>();
+  var currentNotiType = NotificationType.viewOffer;
+  var userStore = getIt<UserStore>();
+
   @override
   Widget build(BuildContext context) {
-    print("build Page");
+    // print("build Page");
     return widget.joinInterviews.isEmpty &&
             widget.viewOffers.isEmpty &&
             widget.texts.isEmpty &&
@@ -1691,6 +1761,12 @@ class _AlertPageState extends State<AlertPage> {
           )
         : Observer(builder: (context) {
             return GroupedScrollView<NotificationObject, NotificationType>.list(
+              onChipChanged: (p0) {
+                setState(() {
+                  currentNotiType = p0;
+                });
+              },
+              chipsValue: ChoiceSingle.value(currentNotiType),
               observerController:
                   SliverObserverController(controller: widget.listController),
               scrollController: widget.listController,
@@ -1718,19 +1794,29 @@ class _AlertPageState extends State<AlertPage> {
                       )),
               itemBuilder: (BuildContext context, NotificationObject item) {
                 return switch (item.type) {
-                  NotificationType.viewOffer => CustomOfferNotification(
+                  NotificationType.viewOffer => CustomMessageNotifcation(
                       notificationObject: item,
                       showTime: false,
                     ),
                   NotificationType.joinInterview => CustomInterviewNotification(
+                      enterInterview: () async {
+                        if (item.metadata != null) {
+                          CallManager.instance.startPreviewMeeting(
+                              NavigationService.navigatorKey.currentContext ??
+                                  context,
+                              CallType.VIDEO_CALL,
+                              {int.parse(item.sender.objectId!)},
+                              InterviewSchedule.fromJsonApi(item.metadata!));
+                        }
+                      },
                       notificationObject: item,
                       showTime: false,
                     ),
-                  NotificationType.text => CustomLikedNotifcation(
+                  NotificationType.proposal => CustomProposalNotification(
                       notificationObject: item,
                       showTime: false,
                     ),
-                  NotificationType.message => CustomLikedNotifcation(
+                  NotificationType.message => CustomMessageNotifcation(
                       notificationObject: item,
                       showTime: false,
                     ),
@@ -2122,6 +2208,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     required this.observerController,
+    required this.chipsValue,
+    required this.onChipChanged,
   });
 
   GroupedScrollView.grid({
@@ -2162,6 +2250,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     required this.observerController,
+    required this.chipsValue,
+    required this.onChipChanged,
   }) : separatorBuilder = null;
 
   GroupedScrollView.list({
@@ -2202,6 +2292,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     this.restorationId,
     this.clipBehavior = Clip.hardEdge,
     required this.observerController,
+    required this.chipsValue,
+    required this.onChipChanged,
   }) : gridDelegate = null;
   final SliverObserverController observerController;
 
@@ -2236,6 +2328,8 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     );
   }
 
+  final Function(H) onChipChanged;
+
   List<Widget> _buildNormalMode(BuildContext context) {
     if (itemsSorter != null) {
       data.sort(itemsSorter);
@@ -2258,15 +2352,24 @@ class GroupedScrollView<T, H> extends StatelessWidget {
   }
 
   List<BuildContext?>? realKeys = [];
+  final List<NotificationType> chipsValue;
+  var userStore = getIt<UserStore>();
 
   List<Widget> _buildGroupMode(BuildContext context) {
     final options = groupedOptions!;
     List<Widget> slivers = [];
     Map<H, List<T>> groupItems = groupBy(data, options.itemGrouper);
     groupItems.putIfAbsent(NotificationType.joinInterview as H, () => []);
-    groupItems.putIfAbsent(NotificationType.viewOffer as H, () => []);
-    groupItems.putIfAbsent(NotificationType.text as H, () => []);
+    if (userStore.user!.type == UserType.student) {
+      groupItems.putIfAbsent(NotificationType.viewOffer as H, () => []);
+    }
+    if (userStore.user!.type == UserType.company) {
+      groupItems.putIfAbsent(NotificationType.proposal as H, () => []);
+    }
     groupItems.putIfAbsent(NotificationType.message as H, () => []);
+    groupItems.removeWhere(
+      (key, value) => groupItems[key]!.isEmpty,
+    );
     List<H> keys = groupItems.keys.toList();
     if (options.stickyHeaderSorter != null) {
       keys.sort(options.stickyHeaderSorter);
@@ -2276,12 +2379,13 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
     print("build chips");
+    // TODO: chips are always built = not good
     slivers.add(SliverPinnedHeader(
       child: Container(
         color: Theme.of(context).colorScheme.background,
         child: Choice<NotificationType>.inline(
           clearable: false,
-          value: ChoiceSingle.value(NotificationType.viewOffer),
+          value: chipsValue,
           onChanged: ChoiceSingle.onChanged((t) {
             if (t != null) {
               print(t);
@@ -2289,7 +2393,12 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               //   realKeys![t.index].currentContext!,
               //   duration: const Duration(seconds: 1),
               // );
-              if (realKeys![t.index] == null) {
+              onChipChanged(t as H);
+              // chipsValue = ChoiceSingle.value(t);
+              print(realKeys);
+              var k = keys
+                  .indexWhere((e) => (e as NotificationType).title == t.title);
+              if (k == -1) {
                 scrollController?.animateTo(
                   0,
                   duration: const Duration(milliseconds: 300),
@@ -2297,7 +2406,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
                 );
               } else {
                 observerController.animateTo(
-                  sliverContext: realKeys![t.index],
+                  sliverContext: realKeys![k],
                   index: 0,
                   offset: (t) => 140,
                   duration: const Duration(milliseconds: 300),
@@ -2331,6 +2440,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
         ),
       ),
     ));
+
     for (var i = 0; i < groups; i++) {
       H header = keys[i];
       List<T> items = groupItems[header]!;
@@ -2348,6 +2458,14 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               delegate: _buildSliverChildDelegate(items, i),
               gridDelegate: gridDelegate!)
           : SliverList(delegate: _buildSliverChildDelegate(items, i)));
+      if (items.isEmpty) {
+        section.add(const SliverToBoxAdapter(
+          child: Padding(
+            padding: EdgeInsets.all(13),
+            child: Text("Nothing here <3"),
+          ),
+        ));
+      }
       if (options.sectionFooterBuilder != null) {
         section.add(options.sectionFooterBuilder!(context, header, i));
       }

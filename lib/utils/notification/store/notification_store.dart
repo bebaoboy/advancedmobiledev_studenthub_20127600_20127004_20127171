@@ -1,9 +1,16 @@
 // ignore_for_file: prefer_final_fields
 
+import 'dart:convert';
+
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:mobx/mobx.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'notification_store.g.dart';
 
@@ -37,7 +44,9 @@ abstract class _NotificationStore with Store {
 
   @action
   Future<List<NotificationObject>> getNoti(
-      {required String receiverId, required List activeDates}) async {
+      {required String receiverId,
+      required List activeDates,
+      bool force = false}) async {
     // if (receiverId.trim().isEmpty) {
     //   return Future.value([]);
     // }
@@ -62,7 +71,22 @@ abstract class _NotificationStore with Store {
             return Future.value([]);
           }
         },
-      );
+      ).onError(
+        (error, stackTrace) async {
+          var s = await SharedPreferences.getInstance();
+
+          var l = s.getStringList("noti");
+          if (l != null) {
+            List<NotificationObject> res = l
+                .map(
+                  (e) => NotificationObject.fromJson(json.decode(e)),
+                )
+                .toList();
+            return res;
+          }
+          return Future.value([]);
+        },
+      ) as List<NotificationObject>;
     } catch (e) {
       print("Cannot get notification for this receiverId");
     }
@@ -87,6 +111,8 @@ abstract class _NotificationStore with Store {
   int activeDates = 0;
 
   categorize(List activeDates) {
+    var userStore = getIt<UserStore>();
+
     this.activeDates = activeDates.length;
     viewOffers = List.generate(activeDates.length, (_) => ObservableList());
     joinInterviews = List.generate(activeDates.length, (_) => ObservableList());
@@ -108,11 +134,15 @@ abstract class _NotificationStore with Store {
 
           break;
         case NotificationType.viewOffer:
-          viewOffers![diff + (activeDates.length ~/ 2)].add(element);
+          if (userStore.user!.type == UserType.student) {
+            viewOffers![diff + (activeDates.length ~/ 2)].add(element);
+          }
 
           break;
-        case NotificationType.text:
-          texts![diff + (activeDates.length ~/ 2)].add(element);
+        case NotificationType.proposal:
+          if (userStore.user!.type == UserType.company) {
+            texts![diff + (activeDates.length ~/ 2)].add(element);
+          }
 
           break;
         case NotificationType.message:
@@ -142,6 +172,13 @@ abstract class _NotificationStore with Store {
   addNofitication(Map<String, dynamic> element) {
     var not = toNotificationObject(element["notification"]);
     _notiList.insert(0, not);
+    if (not.type == NotificationType.proposal) {
+      NotificationHelper.createTextNotification(
+          id: int.parse(not.id),
+          title: "You have new proposal!",
+          body:
+              "From ${not.sender.name} (Project ${not.metadata!["projectId"]})");
+    }
     int diff = daysBetween(DateTime.now(), not.createdAt!);
     switch (not.type) {
       case NotificationType.joinInterview:
@@ -152,7 +189,7 @@ abstract class _NotificationStore with Store {
         viewOffers![diff + (activeDates ~/ 2)].insert(0, not);
 
         break;
-      case NotificationType.text:
+      case NotificationType.proposal:
         texts![diff + (activeDates ~/ 2)].insert(0, not);
 
         break;
@@ -161,7 +198,17 @@ abstract class _NotificationStore with Store {
 
         break;
     }
-    NavbarNotifier2.updateBadge(3, const NavbarBadge(showBadge: true, badgeText: "1"));
+    NavbarNotifier2.updateBadge(
+        3, const NavbarBadge(showBadge: true, badgeText: "1"));
+
+    Future.delayed(Duration.zero, () async {
+      if (_notiList.isEmpty) return;
+      var s = await SharedPreferences.getInstance();
+      var l = s.getStringList("noti");
+      if (l != null) {
+        s.setStringList("noti", [_notiList.first.toJson(), ...l]);
+      }
+    });
   }
 
   NotificationObject toNotificationObject(element) {
@@ -170,7 +217,9 @@ abstract class _NotificationStore with Store {
       'id': element['id'].toString(),
       'title': element["title"].toString(),
       "content": element["content"].toString(),
-      'messageContent': element["message"]['content'].toString(),
+      'messageContent': element["message"] != null
+          ? element["message"]['content'].toString()
+          : element["content"].toString(),
       'type': element['typeNotifyFlag'],
       'createdAt': DateTime.parse(element['createdAt']).toLocal(),
       'receiver': {
@@ -181,12 +230,15 @@ abstract class _NotificationStore with Store {
         "id": element['sender']['id'].toString(),
         "fullname": element['sender']['fullname'].toString(),
       },
-      'metadata': element["interview"] != null
+      'metadata': (element["message"] != null &&
+              element["message"]["interview"] != null)
           ? <String, dynamic>{
-              ...element["interview"],
-              "meetingRoom": element["meetingRoom"]
+              ...element["message"]["interview"],
+              "meetingRoom": element["message"]["interview"]["meetingRoom"]
             }
-          : null
+          : element["proposal"] != null
+              ? <String, dynamic>{...element["proposal"]}
+              : null,
     };
     return NotificationObject.fromJson(e);
   }

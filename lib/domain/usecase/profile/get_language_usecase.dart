@@ -6,12 +6,12 @@ import 'package:boilerplate/domain/entity/project/language_list.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/profile/update_language.dart';
 
-class GetLanguageUseCase extends UseCase<LanguageList, String> {
+class GetLanguageUseCase extends UseCase<LanguageList?, String> {
   final UserRepository _userRepository;
   GetLanguageUseCase(this._userRepository);
 
   @override
-  Future<LanguageList> call({required String params}) async {
+  Future<LanguageList?> call({required String params}) async {
     if (params.isEmpty) return LanguageList();
     if (await _userRepository.isLoggedIn) {
       UpdateLanguageParams p =
@@ -22,7 +22,7 @@ class GetLanguageUseCase extends UseCase<LanguageList, String> {
           response.statusCode == HttpStatus.ok) {
         return LanguageList.fromJson(response.data["result"]);
       } else {
-        return LanguageList();
+        return null;
       }
     }
     return LanguageList();

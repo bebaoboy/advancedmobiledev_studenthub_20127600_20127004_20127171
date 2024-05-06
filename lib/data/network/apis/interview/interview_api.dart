@@ -79,7 +79,7 @@ class InterviewApi {
   }
 
   Future<Response> checkAvail(params) async {
-    return await _dioClient.dio.get(Endpoints.checkAvail, data: {
+    return await _dioClient.dio.get(Endpoints.checkAvail, queryParameters: {
       "meeting_room_code": params.meetingCode,
       "meeting_room_id": params.meetingId,
     }).onError(

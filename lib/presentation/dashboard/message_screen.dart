@@ -99,10 +99,10 @@ class _MessageScreenState extends State<MessageScreen> {
     assert(msgnf != null);
     messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
-    timer = Timer.periodic(const Duration(seconds: 10), (t) {
+    timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
       var num = r.nextInt(60);
-      print(num);
+      // print(num);
       if (num <= 7) {
         typings = [
           const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
@@ -145,6 +145,7 @@ class _MessageScreenState extends State<MessageScreen> {
         "receiverId": _user.id, // notification
         "messageFlag": 0
       });
+
       chatStore.insertMessage(widget.chatObject.chatUser,
           widget.chatObject.project!, textMessage, true,
           incoming: true);
@@ -639,15 +640,6 @@ class _MessageScreenState extends State<MessageScreen> {
         // TODO: check again: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
-        /// default for testing
-        // messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
-        //   "content": message.text.trim(),
-        //   "projectId": 150,
-        //   "senderId": userStore.user!.objectId,
-        //   "receiverId": 94, // notification
-        //   "messageFlag": 0 // default 0 for message, 1 for interview
-        // });
-
         messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
           "content": message.text.trim(),
           "projectId": widget.chatObject.project!.objectId!,
@@ -759,6 +751,21 @@ class _MessageScreenState extends State<MessageScreen> {
               .indexWhere((element) => element.id == id);
           if (i != -1) {
             setState(() {
+              var ms = {
+                "title": value.title.toTitleCase().trim(),
+                "content": "Interview created!",
+                "projectId": widget.chatObject.project!.objectId!,
+                "senderId": userStore.user!.objectId!,
+                "receiverId": _user.id, // notification
+                "startTime": value.startDate.toUtc().toIso8601String(),
+                "endTime": value.endDate.toUtc().toIso8601String(),
+                "meeting_room_code": value.meetingRoomCode,
+                "meeting_room_id": value.meetingRoomId,
+                "interviewId": value.objectId,
+                "updateAction": true,
+              };
+              print(ms);
+              messageNotifier.textSocketHandler.emit("UPDATE_INTERVIEW", ms);
               chatStore.currentProjectMessages[i] = ScheduleMessageType(
                   messageWidth:
                       (MediaQuery.of(context).size.width * 0.9).round(),
@@ -802,7 +809,7 @@ class _MessageScreenState extends State<MessageScreen> {
       context,
       ModalSheetRoute(
           builder: (context) => AllScheduleBottomSheet(
-                user: me,
+                user: widget.chatObject.chatUser,
                 scaffoldKey: _scaffoldKey,
                 filter: chatStore.currentProjectMessages
                     .where((element) =>

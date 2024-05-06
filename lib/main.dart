@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'dart:isolate';
 import 'dart:math';
+import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
@@ -130,15 +131,15 @@ Future<void> main() async {
 
     // request permissions for showing notification in iOS
     var messaging = FirebaseMessaging.instance;
+    NavigationService.firebaseInstance = messaging;
     messaging.requestPermission(alert: true, badge: true, sound: true);
 
-    if (kIsWeb) {
-      // use the returned token to send messages to users from your custom server
-      var token = await messaging.getToken(
-        vapidKey:
-            "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
-      );
-    }
+    // use the returned token to send messages to users from your custom server
+    NavigationService.firebaseToken = await messaging.getToken(
+      vapidKey:
+          "BNE-Aa_yPC_gN8WDHhRMH5L7f1o4SxfMi9OFX6uddzpl3qeeZ7nmGctHhOkrUwJf90fE3V9lQ8D9_fjKoh7UsBo",
+    );
+    log("firebase token: ${NavigationService.firebaseToken}");
 
     // add listener for foreground push notifications
     FirebaseMessaging.onMessage.listen((remoteMessage) {
@@ -185,6 +186,9 @@ Future<void> main() async {
     if (!kIsWeb) ConnectycubeFlutterCallKit.instance.init();
 
     await initConnectycube();
+    ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+      return ErrorPage(errorDetails: errorDetails);
+    };
 
     runApp(const MyApp());
   }, (error, stackTrace) {

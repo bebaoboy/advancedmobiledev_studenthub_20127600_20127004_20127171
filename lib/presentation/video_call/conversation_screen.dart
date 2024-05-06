@@ -3,7 +3,6 @@
 import 'dart:math';
 
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
-import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/core/widgets/floating/floating.dart';
 import 'package:flutter/foundation.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
@@ -23,14 +22,14 @@ class ConversationCallScreen extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return _ConversationCallScreenState(_callSession, _isIncoming);
+    return ConversationCallScreenState(_callSession, _isIncoming);
   }
 
   const ConversationCallScreen(this._callSession, this._isIncoming,
       {super.key});
 }
 
-class _ConversationCallScreenState extends State<ConversationCallScreen>
+class ConversationCallScreenState extends State<ConversationCallScreen>
     with WidgetsBindingObserver
     implements RTCSessionStateCallback<P2PSession> {
   static String TAG = "BEBAOBOY";
@@ -38,10 +37,10 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   final bool _isIncoming;
   final CubeStatsReportsManager _statsReportsManager =
       CubeStatsReportsManager();
-  bool _isCameraEnabled = true;
-  bool _isSpeakerEnabled = Platform.isIOS ? false : true;
-  bool _isMicMute = false;
-  bool _isFrontCameraUsed = true;
+  late bool _isCameraEnabled;
+  late bool _isSpeakerEnabled;
+  late bool _isMicMute;
+  late bool _isFrontCameraUsed;
   final int _currentUserId = CubeChatConnection.instance.currentUser!.id!;
 
   MapEntry<int, RTCVideoRenderer>? primaryRenderer;
@@ -51,17 +50,24 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
 
   bool _enableScreenSharing;
 
-  _ConversationCallScreenState(this._callSession, this._isIncoming)
+  ConversationCallScreenState(this._callSession, this._isIncoming)
       : _enableScreenSharing = !_callSession.startScreenSharing;
 
-  final floating = Floating();
+  late Floating? floating;
 
   @override
   void initState() {
     super.initState();
+    if (!kIsWeb) floating = Floating();
     WidgetsBinding.instance.addObserver(this);
 
     _initAlreadyReceivedStreams();
+
+    _isCameraEnabled = CallManager.instance.isCameraEnabled;
+    _isSpeakerEnabled = CallManager.instance.isSpeakerEnabled;
+    _isMicMute = CallManager.instance.isMicMute;
+    _isFrontCameraUsed = CallManager.instance.isFrontCameraUsed;
+    //  = !kIsWeb ? Platform.isIOS ? false : true : true;
 
     _callSession.onLocalStreamReceived = _addLocalMediaStream;
     _callSession.onRemoteStreamReceived = _addRemoteMediaStream;
@@ -93,10 +99,28 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     // );
   }
 
+  initConfig() async {
+    // try {
+    //   if (kIsWeb && CallManager.instance.cameraId != null) {
+    //     await _callSession.switchCamera(
+    //         deviceId: CallManager.instance.cameraId);
+    //   }
+    //   if (!kIsWeb && !CallManager.instance.isFrontCameraUsed) {
+    //     await _callSession.switchCamera();
+    //   }
+    //   _callSession.setMicrophoneMute(CallManager.instance.isMicMute);
+    //   _callSession.setVideoEnabled(CallManager.instance.isCameraEnabled);
+    //   _callSession.enableSpeakerphone(CallManager.instance.isSpeakerEnabled);
+    // } catch (e) {
+    //   log(e.toString());
+    // }
+  }
+
   @override
   void dispose() {
     super.dispose();
     WidgetsBinding.instance.removeObserver(this);
+    CallManager.instance.hasEnded = true;
     try {
       stopBackgroundExecution();
       primaryRenderer?.value.srcObject = null;
@@ -120,6 +144,7 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     log("_addLocalMediaStream, stream Id: ${stream.id}", TAG);
 
     _addMediaStream(_currentUserId, stream);
+    initConfig();
   }
 
   void _addRemoteMediaStream(session, int userId, MediaStream stream) {
@@ -192,8 +217,9 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
     //     builder: (context) => LoginScreen(),
     //   ),
     // );
-    if (NavigationService.navigatorKey.currentContext != null) {
-      // Navigator.pop(NavigationService.navigatorKey.currentContext!);
+    if (CallManager.instance.currentCallingKey.currentState != null) {
+      Navigator.pop(
+          CallManager.instance.currentCallingKey.currentState!.context);
     }
   }
 
@@ -328,11 +354,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState lifecycleState) async {
-    if (lifecycleState == AppLifecycleState.inactive &&
+    if (!kIsWeb &&
+        lifecycleState == AppLifecycleState.inactive &&
         !PictureInPicture.isActive) {
       try {
-        final canUsePiP = await floating.isPipAvailable;
-        if (!canUsePiP || enablePipStatus == PiPStatus.enabled) return;
+        final canUsePiP = await floating!.isPipAvailable;
+        if (!canUsePiP) return;
         final rational = !_enableScreenSharing
             ? const Rational.landscape()
             : const Rational.vertical();
@@ -341,14 +368,13 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
         final height = !_enableScreenSharing
             ? screenSize.width ~/ rational.aspectRatio
             : screenSize.height ~/ rational.aspectRatio;
-
-        enablePipStatus = await floating.enable(
+        enablePipStatus = await floating!.enable(
             aspectRatio: rational,
             sourceRectHint: Rectangle<int>(
               0,
-              (screenSize.height ~/ 2) - (height ~/ 2),
-              screenSize.width.toInt(),
-              height,
+              ((screenSize.height ~/ 2) - (height ~/ 2)).abs(),
+              screenSize.width.toInt().abs(),
+              height.abs(),
             ));
       } catch (e) {
         print(e.toString());
@@ -444,65 +470,98 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   Widget _buildThemCallLayout(Orientation orientation) {
-    if (minorRenderers.isNotEmpty) {
-      return Align(
-        alignment: Alignment.topRight,
-        child: buildItems(
-                minorRenderers,
-                orientation == Orientation.portrait
-                    ? MediaQuery.of(context).size.width / 3
-                    : MediaQuery.of(context).size.width / 4,
-                orientation == Orientation.portrait
-                    ? MediaQuery.of(context).size.height / 4
-                    : MediaQuery.of(context).size.height / 2.5)
-            .first,
-      );
-    } else {
-      return Stack(
-        children: [
-          RTCVideoView(
-            primaryRenderer!.value,
-            objectFit: primaryVideoFit,
-            mirror: primaryRenderer!.key == _currentUserId &&
-                _isFrontCameraUsed &&
-                _enableScreenSharing,
-          ),
-          if (primaryRenderer!.key != _currentUserId)
-            Align(
-              alignment: Alignment.topCenter,
-              child: Container(
-                margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).padding.top + 10),
-                child: ClipRRect(
-                  borderRadius: const BorderRadius.all(Radius.circular(12)),
-                  child: Container(
-                    padding: const EdgeInsets.all(6),
-                    color: Colors.black26,
-                    child: StreamBuilder<CubeVideoBitrateEvent>(
-                      stream: _statsReportsManager.videoBitrateStream.where(
-                          (event) => event.userId == primaryRenderer!.key),
-                      builder: (context, snapshot) {
-                        if (!snapshot.hasData) {
-                          return const Text(
-                            '0 kbits/sec',
-                            style: TextStyle(color: Colors.white),
-                          );
-                        } else {
-                          var videoBitrateForUser = snapshot.data!;
-                          return Text(
-                            '${videoBitrateForUser.bitRate} kbits/sec',
-                            style: const TextStyle(color: Colors.white),
-                          );
-                        }
-                      },
-                    ),
-                  ),
-                ),
-              ),
-            ),
-        ],
-      );
-    }
+    // if (minorRenderers.isNotEmpty) {
+    //   return Align(
+    //     alignment: Alignment.topRight,
+    //     child: buildItems(
+    //             {minorRenderers.entries.first.key : minorRenderers.entries.first.value},
+    //             orientation == Orientation.portrait
+    //                 ? MediaQuery.of(context).size.width / 3
+    //                 : MediaQuery.of(context).size.width / 4,
+    //             orientation == Orientation.portrait
+    //                 ? MediaQuery.of(context).size.height / 4
+    //                 : MediaQuery.of(context).size.height / 2.5)
+    //         .first,
+    //   );
+    // } else {
+    return Stack(
+      children: [
+        RTCVideoView(
+          primaryRenderer!.value,
+          objectFit: primaryVideoFit,
+          mirror: primaryRenderer!.key == _currentUserId &&
+              _isFrontCameraUsed &&
+              _enableScreenSharing,
+        )
+        // if (primaryRenderer!.key != _currentUserId)
+        //     Align(
+        //       alignment: Alignment.topCenter,
+        //       child: Container(
+        //         margin: EdgeInsets.only(
+        //             top: MediaQuery.of(context).padding.top + 10),
+        //         child: ClipRRect(
+        //           borderRadius: const BorderRadius.all(Radius.circular(12)),
+        //           child: Container(
+        //             padding: const EdgeInsets.all(6),
+        //             color: Colors.black26,
+        //             child: StreamBuilder<CubeVideoBitrateEvent>(
+        //               stream: _statsReportsManager.videoBitrateStream.where(
+        //                   (event) => event.userId == primaryRenderer!.key),
+        //               builder: (context, snapshot) {
+        //                 if (!snapshot.hasData) {
+        //                   return const Text(
+        //                     '0 kbits/sec',
+        //                     style: TextStyle(color: Colors.white),
+        //                   );
+        //                 } else {
+        //                   var videoBitrateForUser = snapshot.data!;
+        //                   return Text(
+        //                     '${videoBitrateForUser.bitRate} kbits/sec',
+        //                     style: const TextStyle(color: Colors.white),
+        //                   );
+        //                 }
+        //               },
+        //             ),
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        // if (primaryRenderer!.key != _currentUserId)
+        //   Align(
+        //     alignment: Alignment.topCenter,
+        //     child: Container(
+        //       margin:
+        //           EdgeInsets.only(top: MediaQuery.of(context).padding.top + 10),
+        //       child: ClipRRect(
+        //         borderRadius: const BorderRadius.all(Radius.circular(12)),
+        //         child: Container(
+        //           padding: const EdgeInsets.all(6),
+        //           color: Colors.black26,
+        //           child: StreamBuilder<CubeVideoBitrateEvent>(
+        //             stream: _statsReportsManager.videoBitrateStream
+        //                 .where((event) => event.userId == primaryRenderer!.key),
+        //             builder: (context, snapshot) {
+        //               if (!snapshot.hasData) {
+        //                 return const Text(
+        //                   '0 kbits/sec',
+        //                   style: TextStyle(color: Colors.white),
+        //                 );
+        //               } else {
+        //                 var videoBitrateForUser = snapshot.data!;
+        //                 return Text(
+        //                   '${videoBitrateForUser.bitRate} kbits/sec',
+        //                   style: const TextStyle(color: Colors.white),
+        //                 );
+        //               }
+        //             },
+        //           ),
+        //         ),
+        //       ),
+        //     ),
+        //   ),
+      ],
+    );
+    // }
   }
 
   Widget _buildGroupCallLayout(Orientation orientation) {
@@ -947,8 +1006,12 @@ class _ConversationCallScreenState extends State<ConversationCallScreen>
   }
 
   _endCall() {
-    floating.dispose();
-    PictureInPicture.stopPiP(false);
+    try {
+      floating?.dispose();
+      PictureInPicture.stopPiP(false);
+    } catch (e) {
+      log("error end call ${e.toString()}");
+    }
     CallManager.instance.hungUp();
     Navigator.of(context).pop();
   }

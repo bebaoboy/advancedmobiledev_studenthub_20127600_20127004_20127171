@@ -26,7 +26,7 @@ class RTCSignalingProcessor {
   void init() {
     _rtcSignalingManager = CubeChatConnection.instance.rtcSignalingManager;
 
-    _subscription = _rtcSignalingManager?.signalingMessagesStream
+    _subscription = _rtcSignalingManager!.signalingMessagesStream
         .listen(_processSignalingMessage);
     //print("");
   }
@@ -42,6 +42,7 @@ class RTCSignalingProcessor {
   }
 
   void _processSignalingMessage(MessageStanza signalingMessage) {
+    print("new stanza");
     XmppElement? stanzaExtraParams =
         signalingMessage.getChild(ExtraParamsElement.ELEMENT_NAME);
 
@@ -77,6 +78,7 @@ class RTCSignalingProcessor {
       case SignalCMD.CALL:
         String rawSdp = params[SignalField.SDP]!;
         RTCSessionDescription sdp = RTCSessionDescription(rawSdp, "offer");
+        log("incoming call stanza for user ${userFrom.id}");
 
         _notifyNewCallReceive(cubeSdp, userFrom, sdp);
 

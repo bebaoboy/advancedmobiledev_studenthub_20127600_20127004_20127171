@@ -35,7 +35,7 @@ class CallKitManager {
         onCallAccepted: _onCallAccepted,
         onCallRejected: _onCallRejected,
         onCallIncoming: (event) {
-          log("call incoming: ${event.callerId} ${event.callType}");
+          log("callllllllllllllllllllllllllllll incoming: ${event.callerId} ${event.callType} ${event.toString()}");
           return Future.value(true);
         },
         icon: Platform.isAndroid ? 'default_avatar' : 'CallkitIcon',
