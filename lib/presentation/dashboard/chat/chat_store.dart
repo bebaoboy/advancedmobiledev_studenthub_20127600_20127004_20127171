@@ -132,7 +132,7 @@ abstract class _ChatStore with Store {
               (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
                   .millisecondsSinceEpoch,
           "id": mess,
-          'type': message['messageFlag'] == 0 ? 'text' : 'interview',
+          'type': message['messageFlag'] == 0 ? 'text' : 'schedule',
           'text': message['content'],
           'status': 'seen',
           'interview': message['interview'] ?? {},
@@ -183,20 +183,23 @@ abstract class _ChatStore with Store {
         return m;
       } else {
         // TODO: làm bấm vô nó vào msg
-        NotificationHelper.createTextNotification(
-          id: mess.isNotEmpty
-              ? int.tryParse(mess) ?? rand.nextInt(100000)
-              : rand.nextInt(100000),
-          body: "New interview: ${msg["notification"]["interview"]['title']}",
-        );
 
         // interview msg
         // var id = message["interviewId"].toString();
         // var projectStore = getIt<ChatStore>();
         // var interview = await projectStore.getInterview(interviewId: id);
-        var interview = msg["notification"]["interview"];
-        var meeting = msg["notification"]["meetingRoom"];
+        var interview = msg["notification"]["message"]["interview"];
+        var meeting =
+            msg["notification"]["message"]["interview"]?["meetingRoom"];
         if (interview == null || meeting == null) return null;
+
+        NotificationHelper.createTextNotification(
+          id: mess.isNotEmpty
+              ? int.tryParse(mess) ?? rand.nextInt(100000)
+              : rand.nextInt(100000),
+          body:
+              "New interview: ${msg["notification"]["message"]["interview"]['title']}",
+        );
 
         var e = <String, dynamic>{
           ...message,
@@ -223,6 +226,8 @@ abstract class _ChatStore with Store {
             "content": message['content'] ?? "",
             "projectId": project.objectId ?? "-1",
             "senderId": user.id,
+            "startTime": interview?["startTime"],
+            "endTime": interview?["endTime"],
             "receiverId": userStore.user!.objectId!, // notification
             "createdAt": interview?["createdAt"],
             "updatedAt": interview?["updatedAt"],
@@ -298,6 +303,8 @@ abstract class _ChatStore with Store {
             "content": message['content'] ?? "",
             "projectId": project.objectId ?? "-1",
             "senderId": user.id,
+            "startTime": interview?["startTime"],
+            "endTime": interview?["endTime"],
             "receiverId": userStore.user!.objectId!, // notification
             "createdAt": interview?["createdAt"],
             "updatedAt": interview?["updatedAt"],
@@ -763,9 +770,15 @@ abstract class _ChatStore with Store {
   Future<bool> scheduleInterview(
       {required int projectId,
       required String title,
+      required String content,
+      required String senderId,
+      required String receiverId,
       required DateTime startTime,
       required DateTime endTime}) async {
     var params = InterviewParams("", "", "", "",
+        content: content,
+        senderId: senderId,
+        receiverId: receiverId,
         title: title,
         startDate: startTime.toIso8601String(),
         endDate: endTime.toIso8601String());
@@ -790,7 +803,7 @@ abstract class _ChatStore with Store {
     required String interviewId,
   }) async {
     var params = InterviewParams(interviewId, "", "", "",
-        title: "", endDate: "", startDate: "");
+        senderId: "", receiverId: "", title: "", endDate: "", startDate: "");
 
     return await _getInterviewUseCase.call(params: params).then((value) {
       if (value == null) {
@@ -813,7 +826,7 @@ abstract class _ChatStore with Store {
     required String interviewId,
   }) async {
     var params = InterviewParams(interviewId.toString(), "", "", "",
-        title: "", endDate: "", startDate: "");
+        senderId: "", receiverId: "", title: "", endDate: "", startDate: "");
 
     try {
       var response = await _disableInterviewUseCase.call(params: params);
@@ -840,6 +853,8 @@ abstract class _ChatStore with Store {
       required DateTime startTime,
       required DateTime endTime}) async {
     var params = InterviewParams(interview, "", "", "",
+        senderId: "",
+        receiverId: "",
         title: title,
         endDate: endTime.toUtc().toIso8601String(),
         startDate: startTime.toUtc().toIso8601String());
@@ -874,6 +889,8 @@ abstract class _ChatStore with Store {
       var params = InterviewParams(
           info.objectId, "", info.meetingRoomId, meetingCode,
           title: info.title,
+          senderId: "",
+          receiverId: "",
           startDate: info.startDate.toIso8601String(),
           endDate: info.endDate.toIso8601String());
 

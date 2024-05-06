@@ -226,7 +226,11 @@ class Singapore extends State<MessageTab> {
                                                 ]))
                                                 .then(
                                               (value) {
-                                                setState(() {});
+                                                setState(() {
+                                                  chatStore.messages[index]
+                                                          .lastSeenTime =
+                                                      DateTime.now();
+                                                });
                                               },
                                             );
                                             // You can replace the print statement with your function

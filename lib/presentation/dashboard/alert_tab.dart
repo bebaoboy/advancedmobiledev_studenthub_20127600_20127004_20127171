@@ -1431,7 +1431,7 @@ class _CustomInterviewNotificationState
                   ),
                   LimitedBox(
                     maxHeight: 200,
-                    child: AutoSizeText(widget.notificationObject.content,
+                    child: AutoSizeText(widget.notificationObject.metadata!["title"],
                         maxLines: 2,
                         maxFontSize: 10,
                         minFontSize: 9,
