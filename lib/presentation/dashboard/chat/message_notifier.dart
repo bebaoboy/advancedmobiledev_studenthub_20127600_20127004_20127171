@@ -19,9 +19,13 @@ class MessageNotifierProvider with ChangeNotifier {
   // final ChatUser user;
   final Project? project;
   final Function addInboxCb;
+  final Function updateInterviewCb;
   // final _sharePrefHelper = getIt<SharedPreferenceHelper>();
 
-  MessageNotifierProvider({required this.project, required this.addInboxCb})
+  MessageNotifierProvider(
+      {required this.project,
+      required this.addInboxCb,
+      required this.updateInterviewCb})
       : super() {
     initSocket(addInboxCb);
   }
@@ -70,28 +74,32 @@ class MessageNotifierProvider with ChangeNotifier {
     // ToDo: add to noti and also handle send on noti
     textSocketHandler.on('RECEIVE_MESSAGE', (data) {
       print("receive socket ${project?.objectId} $data");
-      if (data["notification"]["senderId"].toString() ==
-          userStore.user!.objectId) return;
+      // if (data["notification"]["senderId"].toString() ==
+      //     userStore.user!.objectId) return;
 
-      // print(data["notification"]['senderId'].toString());
-      var i = addInbox(data, inbox, false);
-      if (i != null) {
-        // inbox.insert(0, i);
-      }
-      notifyListeners();
+      // // print(data["notification"]['senderId'].toString());
+      // var i = addInbox(data, inbox, false);
+      // if (i != null) {
+      //   // inbox.insert(0, i);
+      // }
+      // notifyListeners();
     });
 
     textSocketHandler.on('RECEIVE_INTERVIEW', (data) {
       print("receive interview socket ${project?.objectId} $data");
+
       if (data["notification"]["senderId"].toString() ==
-          userStore.user!.objectId) return;
+          userStore.user!.objectId) {
+        updateInterviewCb(data, inbox, true);
+        notiStore.addNofitication(data);
+      }
 
       // print(data["notification"]['senderId'].toString());
-      var i = addInbox(data, inbox, true);
-      if (i != null) {
-        // inbox.insert(0, i);
-      }
-      notifyListeners();
+      // var i = addInbox(data, inbox, true);
+      // if (i != null) {
+      //   // inbox.insert(0, i);
+      // }
+      // notifyListeners();
     });
 
     textSocketHandler.on('SEND_MESSAGE', (data) => print("send $data"));
@@ -101,7 +109,18 @@ class MessageNotifierProvider with ChangeNotifier {
       initNotificationSocket = true;
       textSocketHandler.on('NOTI_${userStore.user!.objectId}', (data) {
         print("notification socket ${userStore.user!.objectId} $data");
-        if (data["notification"]["receiverId"].toString() != userStore.user!.objectId) return;
+        if (data["notification"]["receiverId"].toString() !=
+            userStore.user!.objectId) return;
+        if (data["notification"]["senderId"].toString() ==
+            userStore.user!.objectId) return;
+
+        // print(data["notification"]['senderId'].toString());
+        var i = addInbox(data, inbox,
+            data["notification"]?["message"]?["interview"] != null);
+        if (i != null) {
+          // inbox.insert(0, i);
+        }
+        notifyListeners();
         notiStore.addNofitication(data);
       });
     }

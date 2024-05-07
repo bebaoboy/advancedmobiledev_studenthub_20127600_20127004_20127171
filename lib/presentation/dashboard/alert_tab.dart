@@ -700,7 +700,7 @@ class _AlertTabState extends State<AlertTab> {
   var topRowController = ScrollController();
 
   Widget _buildTopRowList() {
-    if (hasOfferProposal) {
+    if (hasOfferProposal && userStore.user!.type == UserType.student) {
       return Tooltip(
         message: userStore.user!.type == UserType.student
             ? "${getOffer().length} offers"
@@ -864,17 +864,17 @@ class _AlertTabState extends State<AlertTab> {
       // );
     } else {
       return Container(
-        margin: const EdgeInsets.only(left: 15, right: 15),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: HeroFlutterLogo(
-            color: Colors.white,
-            tag: -1,
-            size: 125,
-            onTap: () {},
-          ),
-        ),
-      );
+          // margin: const EdgeInsets.only(left: 5, right: 15),
+          // child: ClipRRect(
+          //   borderRadius: BorderRadius.circular(12),
+          //   child: HeroFlutterLogo(
+          //     color: Colors.black,
+          //     tag: -1,
+          //     size: 145,
+          //     onTap: () {},
+          //   ),
+          // ),
+          );
     }
   }
 
@@ -1012,7 +1012,7 @@ class _AlertTabState extends State<AlertTab> {
           children: [
             Container(
                 height: 108,
-                width: 120,
+                width: userStore.user!.type == UserType.student ? 120 : 0,
                 margin: const EdgeInsets.only(
                   top: 2,
                 ),
@@ -1020,7 +1020,9 @@ class _AlertTabState extends State<AlertTab> {
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 0),
                 height: 110,
-                width: MediaQuery.of(context).size.width - 150,
+                width: userStore.user!.type == UserType.student
+                    ? MediaQuery.of(context).size.width - 150
+                    : MediaQuery.of(context).size.width - 20,
                 child: _datePickerSection()),
           ],
         ),
@@ -1212,8 +1214,8 @@ class _CustomProposalNotificationState
                                 proposal["projectId"].toString(),
                           );
                           if (project != null) {
-                            projectStore.currentProps = ProposalList(
-                                proposals: project.proposal);
+                            projectStore.currentProps =
+                                ProposalList(proposals: project.proposal);
                             Navigator.of(NavigationService
                                     .navigatorKey.currentContext!)
                                 .push(MaterialPageRoute2(
@@ -1431,7 +1433,9 @@ class _CustomInterviewNotificationState
                   ),
                   LimitedBox(
                     maxHeight: 200,
-                    child: AutoSizeText(widget.notificationObject.content,
+                    // ignore: prefer_interpolation_to_compose_strings
+                    child: AutoSizeText(
+                        "${widget.notificationObject.title}: ${widget.notificationObject.metadata!["title"]}",
                         maxLines: 2,
                         maxFontSize: 10,
                         minFontSize: 9,
@@ -1746,322 +1750,327 @@ class _AlertPageState extends State<AlertPage> {
   @override
   Widget build(BuildContext context) {
     // print("build Page");
-    return widget.joinInterviews.isEmpty &&
-            widget.viewOffers.isEmpty &&
-            widget.texts.isEmpty &&
-            widget.messages.isEmpty
-        ? Center(
-            child: Text(
-              Lang.get("nothing_here"),
-              style: Theme.of(context)
-                  .textTheme
-                  .headline1!
-                  .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-          )
-        : Observer(builder: (context) {
-            return GroupedScrollView<NotificationObject, NotificationType>.list(
-              onChipChanged: (p0) {
-                setState(() {
-                  currentNotiType = p0;
-                });
-              },
-              chipsValue: ChoiceSingle.value(currentNotiType),
-              observerController:
-                  SliverObserverController(controller: widget.listController),
-              scrollController: widget.listController,
-              itemAtIndex: (index, total, groupedIndex) {},
-              groupedOptions: GroupedScrollViewOptions(
-                  itemGrouper: (NotificationObject person) {
-                    return person.type;
-                  },
-                  stickyHeaderSorter: (a, b) {
-                    return a.index.compareTo(b.index);
-                  },
-                  stickyHeaderBuilder: (BuildContext context,
-                          NotificationType year, int groupedIndex) =>
-                      Container(
-                        color: Theme.of(context).colorScheme.background,
-                        padding: const EdgeInsets.all(8),
-                        child: Text(
-                          year.title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headline1!
-                              .copyWith(
-                                  fontSize: 25, fontWeight: FontWeight.bold),
-                        ),
-                      )),
-              itemBuilder: (BuildContext context, NotificationObject item) {
-                return switch (item.type) {
-                  NotificationType.viewOffer => CustomMessageNotifcation(
-                      notificationObject: item,
-                      showTime: false,
-                    ),
-                  NotificationType.joinInterview => CustomInterviewNotification(
-                      enterInterview: () async {
-                        if (item.metadata != null) {
-                          CallManager.instance.startPreviewMeeting(
-                              NavigationService.navigatorKey.currentContext ??
-                                  context,
-                              CallType.VIDEO_CALL,
-                              {int.parse(item.sender.objectId!)},
-                              InterviewSchedule.fromJsonApi(item.metadata!));
-                        }
-                      },
-                      notificationObject: item,
-                      showTime: false,
-                    ),
-                  NotificationType.proposal => CustomProposalNotification(
-                      notificationObject: item,
-                      showTime: false,
-                    ),
-                  NotificationType.message => CustomMessageNotifcation(
-                      notificationObject: item,
-                      showTime: false,
-                    ),
-                };
-              },
-              data: [
-                ...widget.joinInterviews,
-                ...widget.viewOffers,
-                ...widget.messages,
-                ...widget.texts
-              ],
-              // headerBuilder: (BuildContext context) => const Column(
-              //   children: [
-              //     Divider(
-              //       thickness: 5,
-              //     ),
-              //     Center(
-              //       child: Text(
-              //         'CustomHeader',
-              //         style: TextStyle(fontWeight: FontWeight.bold),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 30),
+      child: widget.joinInterviews.isEmpty &&
+              widget.viewOffers.isEmpty &&
+              widget.texts.isEmpty &&
+              widget.messages.isEmpty
+          ? Center(
+              child: Text(
+                Lang.get("nothing_here"),
+                style: Theme.of(context)
+                    .textTheme
+                    .headline1!
+                    .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            )
+          : Observer(builder: (context) {
+              return GroupedScrollView<NotificationObject,
+                  NotificationType>.list(
+                onChipChanged: (p0) {
+                  setState(() {
+                    currentNotiType = p0;
+                  });
+                },
+                chipsValue: ChoiceSingle.value(currentNotiType),
+                observerController:
+                    SliverObserverController(controller: widget.listController),
+                scrollController: widget.listController,
+                itemAtIndex: (index, total, groupedIndex) {},
+                groupedOptions: GroupedScrollViewOptions(
+                    itemGrouper: (NotificationObject person) {
+                      return person.type;
+                    },
+                    stickyHeaderSorter: (a, b) {
+                      return a.index.compareTo(b.index);
+                    },
+                    stickyHeaderBuilder: (BuildContext context,
+                            NotificationType year, int groupedIndex) =>
+                        Container(
+                          color: Theme.of(context).colorScheme.background,
+                          padding: const EdgeInsets.all(8),
+                          child: Text(
+                            year.title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .headline1!
+                                .copyWith(
+                                    fontSize: 25, fontWeight: FontWeight.bold),
+                          ),
+                        )),
+                itemBuilder: (BuildContext context, NotificationObject item) {
+                  return switch (item.type) {
+                    NotificationType.viewOffer => CustomMessageNotifcation(
+                        notificationObject: item,
+                        showTime: false,
+                      ),
+                    NotificationType.joinInterview =>
+                      CustomInterviewNotification(
+                        enterInterview: () async {
+                          if (item.metadata != null) {
+                            CallManager.instance.startPreviewMeeting(
+                                NavigationService.navigatorKey.currentContext ??
+                                    context,
+                                CallType.VIDEO_CALL,
+                                {int.parse(item.sender.objectId!)},
+                                InterviewSchedule.fromJsonApi(item.metadata!));
+                          }
+                        },
+                        notificationObject: item,
+                        showTime: false,
+                      ),
+                    NotificationType.proposal => CustomProposalNotification(
+                        notificationObject: item,
+                        showTime: false,
+                      ),
+                    NotificationType.message => CustomMessageNotifcation(
+                        notificationObject: item,
+                        showTime: false,
+                      ),
+                  };
+                },
+                data: [
+                  ...widget.joinInterviews,
+                  ...widget.viewOffers,
+                  ...widget.messages,
+                  ...widget.texts
+                ],
+                // headerBuilder: (BuildContext context) => const Column(
+                //   children: [
+                //     Divider(
+                //       thickness: 5,
+                //     ),
+                //     Center(
+                //       child: Text(
+                //         'CustomHeader',
+                //         style: TextStyle(fontWeight: FontWeight.bold),
+                //       ),
+                //     ),
+                //     Divider(
+                //       thickness: 5,
+                //     ),
+                //   ],
+                // ),
+                // footerBuilder: (BuildContext context) => const Column(
+                //   children: [
+                //     Divider(
+                //       thickness: 5,
+                //     ),
+                //     Center(
+                //       child: Text(
+                //         'CustomFooter',
+                //         style: TextStyle(fontWeight: FontWeight.bold),
+                //       ),
+                //     ),
+                //     Divider(
+                //       thickness: 5,
+                //     ),
+                //   ],
+                // ),
+              );
+
+              // return CustomScrollView(
+              //   slivers: [
+              //     SliverToBoxAdapter(
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              //         child: Text(
+              //           "Interview",
+              //           style: Theme.of(context)
+              //               .textTheme
+              //               .headline1!
+              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              //         ),
               //       ),
               //     ),
-              //     Divider(
-              //       thickness: 5,
+              //     SliverToBoxAdapter(
+              //       child: widget.joinInterviews.isEmpty
+              //           ? const Padding(
+              //               padding: EdgeInsets.only(left: 13),
+              //               child: Text("Nothing here <3"),
+              //             )
+              //           : ImplicitlyAnimatedList<NotificationObject>(
+              //               physics: const NeverScrollableScrollPhysics(),
+              //               shrinkWrap: true,
+              //               areItemsTheSame: (oldItem, newItem) =>
+              //                   oldItem.id == newItem.id,
+              //               items: widget.joinInterviews,
+              //               itemBuilder: (context, animation, item, i) =>
+              //                   SizeFadeTransition(
+              //                       sizeFraction: 0.7,
+              //                       curve: Curves.easeInOut,
+              //                       animation: animation,
+              //                       child: CustomInterviewNotification(
+              //                         notificationObject: widget.joinInterviews[i],
+              //                         showTime: false,
+              //                       ))),
               //     ),
-              //   ],
-              // ),
-              // footerBuilder: (BuildContext context) => const Column(
-              //   children: [
-              //     Divider(
-              //       thickness: 5,
-              //     ),
-              //     Center(
-              //       child: Text(
-              //         'CustomFooter',
-              //         style: TextStyle(fontWeight: FontWeight.bold),
+              //     SliverToBoxAdapter(
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              //         child: Text(
+              //           "Offer",
+              //           style: Theme.of(context)
+              //               .textTheme
+              //               .headline1!
+              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              //         ),
               //       ),
               //     ),
-              //     Divider(
-              //       thickness: 5,
+              //     SliverToBoxAdapter(
+              //       child: widget.viewOffers.isEmpty
+              //           ? const Padding(
+              //               padding: EdgeInsets.only(left: 13),
+              //               child: Text("Nothing here <3"),
+              //             )
+              //           : ImplicitlyAnimatedList<NotificationObject>(
+              //               physics: const NeverScrollableScrollPhysics(),
+              //               shrinkWrap: true,
+              //               areItemsTheSame: (oldItem, newItem) =>
+              //                   oldItem.id == newItem.id,
+              //               items: widget.viewOffers,
+              //               itemBuilder: (context, animation, item, i) =>
+              //                   SizeFadeTransition(
+              //                       sizeFraction: 0.7,
+              //                       curve: Curves.easeInOut,
+              //                       animation: animation,
+              //                       child: CustomInterviewNotification(
+              //                         notificationObject: widget.viewOffers[i],
+              //                         showTime: false,
+              //                       ))),
+              //     ),
+              //     SliverToBoxAdapter(
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              //         child: Text(
+              //           "Newest",
+              //           style: Theme.of(context)
+              //               .textTheme
+              //               .headline1!
+              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              //         ),
+              //       ),
+              //     ),
+              //     SliverToBoxAdapter(
+              //       child: widget.texts.isEmpty
+              //           ? const Padding(
+              //               padding: EdgeInsets.only(left: 13),
+              //               child: Text("Nothing here <3"),
+              //             )
+              //           : ImplicitlyAnimatedList<NotificationObject>(
+              //               physics: const NeverScrollableScrollPhysics(),
+              //               shrinkWrap: true,
+              //               areItemsTheSame: (oldItem, newItem) =>
+              //                   oldItem.id == newItem.id,
+              //               items: widget.texts,
+              //               itemBuilder: (context, animation, item, i) =>
+              //                   SizeFadeTransition(
+              //                       sizeFraction: 0.7,
+              //                       curve: Curves.easeInOut,
+              //                       animation: animation,
+              //                       child: CustomInterviewNotification(
+              //                         notificationObject: widget.texts[i],
+              //                         showTime: false,
+              //                       ))),
+              //     ),
+              //     SliverToBoxAdapter(
+              //       child: Padding(
+              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
+              //         child: Text(
+              //           "Message",
+              //           style: Theme.of(context)
+              //               .textTheme
+              //               .headline1!
+              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              //         ),
+              //       ),
+              //     ),
+              //     SliverToBoxAdapter(
+              //       child: widget.messages.isEmpty
+              //           ? const Padding(
+              //               padding: EdgeInsets.only(left: 13),
+              //               child: Text("Nothing here <3"),
+              //             )
+              //           // : SingleChildScrollView(
+              //           //     child: StackedNotificationCards(
+              //           //       boxShadow: [
+              //           //         BoxShadow(
+              //           //           color: Colors.black.withOpacity(0.25),
+              //           //           blurRadius: 2.0,
+              //           //         )
+              //           //       ],
+
+              //           //       notificationCards: widget.messages
+              //           //           .map((e) => NotificationCard(
+              //           //               date: e.createdAt!,
+              //           //               title: e.title,
+              //           //               subtitle: e.content,
+              //           //               leading: CustomInterviewNotificationWidget(
+              //           //                 notificationObject: e,
+              //           //                 showTime: false,
+              //           //               )))
+              //           //           .toList(),
+              //           //       cardColor: const Color(0xFFF1F1F1),
+              //           //       padding: 16,
+              //           //       actionTitle: Container(),
+              //           //       notificationCardTitle: 'Notification tile',
+              //           //       titleTextStyle: const TextStyle(
+              //           //         fontSize: 12,
+              //           //         fontWeight: FontWeight.bold,
+              //           //       ),
+              //           //       showLessAction: const Text(
+              //           //         'Show less',
+              //           //         style: TextStyle(
+              //           //           fontSize: 18,
+              //           //           fontWeight: FontWeight.bold,
+              //           //           color: Colors.deepPurple,
+              //           //         ),
+              //           //       ),
+              //           //       onTapClearAll: () {
+              //           //         // setState(() {
+              //           //         //   _listOfNotification.clear();
+              //           //         // });
+              //           //       },
+              //           //       subtitleTextStyle: TextStyle(fontSize: 8),
+              //           //       cardClearButton: const Text('Clear All'),
+              //           //       cardViewButton: const Text('View'),
+              //           //       clearAllNotificationsAction: const Icon(Icons.close),
+              //           //       clearAllStacked: const Text('Clear All'),
+              //           //       onTapClearCallback: (index) {
+              //           //         print(index);
+              //           //         // setState(() {
+              //           //         //   _listOfNotification.removeAt(index);
+              //           //         // });
+              //           //       },
+              //           //       onTapViewCallback: (index) {
+              //           //         print(index);
+              //           //       },
+              //           //     ),
+              //           //   ),
+
+              //           : ImplicitlyAnimatedList<NotificationObject>(
+              //               physics: const NeverScrollableScrollPhysics(),
+              //               shrinkWrap: true,
+              //               areItemsTheSame: (oldItem, newItem) =>
+              //                   oldItem.id == newItem.id,
+              //               items: widget.messages,
+              //               itemBuilder: (context, animation, item, i) =>
+              //                   SizeFadeTransition(
+              //                 sizeFraction: 0.7,
+              //                 curve: Curves.easeInOut,
+              //                 animation: animation,
+              //                 child: CustomInterviewNotification(
+              //                   notificationObject: widget.messages[i],
+              //                   showTime: false,
+              //                 ),
+              //               ),
+              //             ),
               //     ),
               //   ],
-              // ),
-            );
-
-            // return CustomScrollView(
-            //   slivers: [
-            //     SliverToBoxAdapter(
-            //       child: Padding(
-            //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-            //         child: Text(
-            //           "Interview",
-            //           style: Theme.of(context)
-            //               .textTheme
-            //               .headline1!
-            //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-            //         ),
-            //       ),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: widget.joinInterviews.isEmpty
-            //           ? const Padding(
-            //               padding: EdgeInsets.only(left: 13),
-            //               child: Text("Nothing here <3"),
-            //             )
-            //           : ImplicitlyAnimatedList<NotificationObject>(
-            //               physics: const NeverScrollableScrollPhysics(),
-            //               shrinkWrap: true,
-            //               areItemsTheSame: (oldItem, newItem) =>
-            //                   oldItem.id == newItem.id,
-            //               items: widget.joinInterviews,
-            //               itemBuilder: (context, animation, item, i) =>
-            //                   SizeFadeTransition(
-            //                       sizeFraction: 0.7,
-            //                       curve: Curves.easeInOut,
-            //                       animation: animation,
-            //                       child: CustomInterviewNotification(
-            //                         notificationObject: widget.joinInterviews[i],
-            //                         showTime: false,
-            //                       ))),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: Padding(
-            //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-            //         child: Text(
-            //           "Offer",
-            //           style: Theme.of(context)
-            //               .textTheme
-            //               .headline1!
-            //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-            //         ),
-            //       ),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: widget.viewOffers.isEmpty
-            //           ? const Padding(
-            //               padding: EdgeInsets.only(left: 13),
-            //               child: Text("Nothing here <3"),
-            //             )
-            //           : ImplicitlyAnimatedList<NotificationObject>(
-            //               physics: const NeverScrollableScrollPhysics(),
-            //               shrinkWrap: true,
-            //               areItemsTheSame: (oldItem, newItem) =>
-            //                   oldItem.id == newItem.id,
-            //               items: widget.viewOffers,
-            //               itemBuilder: (context, animation, item, i) =>
-            //                   SizeFadeTransition(
-            //                       sizeFraction: 0.7,
-            //                       curve: Curves.easeInOut,
-            //                       animation: animation,
-            //                       child: CustomInterviewNotification(
-            //                         notificationObject: widget.viewOffers[i],
-            //                         showTime: false,
-            //                       ))),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: Padding(
-            //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-            //         child: Text(
-            //           "Newest",
-            //           style: Theme.of(context)
-            //               .textTheme
-            //               .headline1!
-            //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-            //         ),
-            //       ),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: widget.texts.isEmpty
-            //           ? const Padding(
-            //               padding: EdgeInsets.only(left: 13),
-            //               child: Text("Nothing here <3"),
-            //             )
-            //           : ImplicitlyAnimatedList<NotificationObject>(
-            //               physics: const NeverScrollableScrollPhysics(),
-            //               shrinkWrap: true,
-            //               areItemsTheSame: (oldItem, newItem) =>
-            //                   oldItem.id == newItem.id,
-            //               items: widget.texts,
-            //               itemBuilder: (context, animation, item, i) =>
-            //                   SizeFadeTransition(
-            //                       sizeFraction: 0.7,
-            //                       curve: Curves.easeInOut,
-            //                       animation: animation,
-            //                       child: CustomInterviewNotification(
-            //                         notificationObject: widget.texts[i],
-            //                         showTime: false,
-            //                       ))),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: Padding(
-            //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-            //         child: Text(
-            //           "Message",
-            //           style: Theme.of(context)
-            //               .textTheme
-            //               .headline1!
-            //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-            //         ),
-            //       ),
-            //     ),
-            //     SliverToBoxAdapter(
-            //       child: widget.messages.isEmpty
-            //           ? const Padding(
-            //               padding: EdgeInsets.only(left: 13),
-            //               child: Text("Nothing here <3"),
-            //             )
-            //           // : SingleChildScrollView(
-            //           //     child: StackedNotificationCards(
-            //           //       boxShadow: [
-            //           //         BoxShadow(
-            //           //           color: Colors.black.withOpacity(0.25),
-            //           //           blurRadius: 2.0,
-            //           //         )
-            //           //       ],
-
-            //           //       notificationCards: widget.messages
-            //           //           .map((e) => NotificationCard(
-            //           //               date: e.createdAt!,
-            //           //               title: e.title,
-            //           //               subtitle: e.content,
-            //           //               leading: CustomInterviewNotificationWidget(
-            //           //                 notificationObject: e,
-            //           //                 showTime: false,
-            //           //               )))
-            //           //           .toList(),
-            //           //       cardColor: const Color(0xFFF1F1F1),
-            //           //       padding: 16,
-            //           //       actionTitle: Container(),
-            //           //       notificationCardTitle: 'Notification tile',
-            //           //       titleTextStyle: const TextStyle(
-            //           //         fontSize: 12,
-            //           //         fontWeight: FontWeight.bold,
-            //           //       ),
-            //           //       showLessAction: const Text(
-            //           //         'Show less',
-            //           //         style: TextStyle(
-            //           //           fontSize: 18,
-            //           //           fontWeight: FontWeight.bold,
-            //           //           color: Colors.deepPurple,
-            //           //         ),
-            //           //       ),
-            //           //       onTapClearAll: () {
-            //           //         // setState(() {
-            //           //         //   _listOfNotification.clear();
-            //           //         // });
-            //           //       },
-            //           //       subtitleTextStyle: TextStyle(fontSize: 8),
-            //           //       cardClearButton: const Text('Clear All'),
-            //           //       cardViewButton: const Text('View'),
-            //           //       clearAllNotificationsAction: const Icon(Icons.close),
-            //           //       clearAllStacked: const Text('Clear All'),
-            //           //       onTapClearCallback: (index) {
-            //           //         print(index);
-            //           //         // setState(() {
-            //           //         //   _listOfNotification.removeAt(index);
-            //           //         // });
-            //           //       },
-            //           //       onTapViewCallback: (index) {
-            //           //         print(index);
-            //           //       },
-            //           //     ),
-            //           //   ),
-
-            //           : ImplicitlyAnimatedList<NotificationObject>(
-            //               physics: const NeverScrollableScrollPhysics(),
-            //               shrinkWrap: true,
-            //               areItemsTheSame: (oldItem, newItem) =>
-            //                   oldItem.id == newItem.id,
-            //               items: widget.messages,
-            //               itemBuilder: (context, animation, item, i) =>
-            //                   SizeFadeTransition(
-            //                 sizeFraction: 0.7,
-            //                 curve: Curves.easeInOut,
-            //                 animation: animation,
-            //                 child: CustomInterviewNotification(
-            //                   notificationObject: widget.messages[i],
-            //                   showTime: false,
-            //                 ),
-            //               ),
-            //             ),
-            //     ),
-            //   ],
-            // );
-          });
+              // );
+            }),
+    );
   }
 }
 
@@ -2378,7 +2387,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     // print(keys);
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
-    print("build chips");
+    // print("build chips");
     // TODO: chips are always built = not good
     slivers.add(SliverPinnedHeader(
       child: Container(
@@ -2395,7 +2404,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               // );
               onChipChanged(t as H);
               // chipsValue = ChoiceSingle.value(t);
-              print(realKeys);
+              // print(realKeys);
               var k = keys
                   .indexWhere((e) => (e as NotificationType).title == t.title);
               if (k == -1) {

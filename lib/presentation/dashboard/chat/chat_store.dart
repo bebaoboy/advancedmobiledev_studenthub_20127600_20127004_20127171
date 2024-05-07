@@ -16,6 +16,7 @@ import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/domain/usecase/chat/post_message.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
@@ -41,7 +42,8 @@ abstract class _ChatStore with Store {
       this._checkAvailUseCase,
       this._disableInterviewUseCase,
       this._updateInterviewUseCase,
-      this._getInterviewUseCase);
+      this._getInterviewUseCase,
+      this._postMessagesUseCase);
 
   // student
   final GetMessageByProjectAndUsersUseCase _getMessageByProjectAndUsersUseCase;
@@ -51,6 +53,7 @@ abstract class _ChatStore with Store {
   final UpdateInterviewUseCase _updateInterviewUseCase;
   final GetInterviewUseCase _getInterviewUseCase;
   final CheckMeetingAvailabilityUseCase _checkAvailUseCase;
+  final PostMessagesUseCase _postMessagesUseCase;
 
   final ErrorStore errorStore = getIt<ErrorStore>();
   final userStore = getIt<UserStore>();
@@ -65,6 +68,30 @@ abstract class _ChatStore with Store {
       _messageNotifiers[chatObject.project!.objectId!] =
           MessageNotifierProvider(
               project: chatObject.project,
+              updateInterviewCb:
+                  (Map<String, dynamic> data, inbox, bool isInterview) async {
+                var whoIsReceiving = data["notification"]["sender"] != null
+                    ? data["notification"]["sender"]["id"].toString() ==
+                            userStore.user!.objectId
+                        ? "receiver"
+                        : "-1"
+                    : data["notification"]["receiver"] != null
+                        ? data["notification"]["receiver"]["id"].toString() ==
+                                userStore.user!.objectId
+                            ? "sender"
+                            : "-1"
+                        : "-1";
+                updateInterviewById(
+                    data,
+                    [],
+                    chatObject.project!,
+                    ChatUser(
+                        id: data["notification"][whoIsReceiving]["id"]
+                            .toString(),
+                        firstName: data["notification"][whoIsReceiving]
+                                ["fullname"]
+                            .toString()));
+              },
               addInboxCb:
                   (Map<String, dynamic> data, inbox, bool isInterview) async {
                 return await addInbox(
@@ -134,7 +161,7 @@ abstract class _ChatStore with Store {
               (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
                   .millisecondsSinceEpoch,
           "id": mess,
-          'type': message['messageFlag'] == 0 ? 'text' : 'interview',
+          'type': message['messageFlag'] == 0 ? 'text' : 'schedule',
           'text': message['content'],
           'status': 'seen',
           'interview': message['interview'] ?? {},
@@ -185,20 +212,24 @@ abstract class _ChatStore with Store {
         return m;
       } else {
         // TODO: làm bấm vô nó vào msg
-        NotificationHelper.createTextNotification(
-          id: mess.isNotEmpty
-              ? int.tryParse(mess) ?? rand.nextInt(100000)
-              : rand.nextInt(100000),
-          body: "New interview: ${msg["notification"]["interview"]['title']}",
-        );
 
         // interview msg
         // var id = message["interviewId"].toString();
         // var projectStore = getIt<ChatStore>();
         // var interview = await projectStore.getInterview(interviewId: id);
-        var interview = msg["notification"]["interview"];
-        var meeting = msg["notification"]["meetingRoom"];
+        var interview = msg["notification"]["message"]["interview"];
+        var meeting =
+            msg["notification"]["message"]["interview"]?["meetingRoom"];
         if (interview == null || meeting == null) return null;
+
+        NotificationHelper.createTextNotification(
+          id: mess.isNotEmpty
+              ? int.tryParse(mess) ?? rand.nextInt(100000)
+              : rand.nextInt(100000),
+          title:
+              "interview: ${msg["notification"]["message"]["interview"]['title']}",
+          body: "${msg["notification"]['content']}",
+        );
 
         var e = <String, dynamic>{
           ...message,
@@ -221,15 +252,20 @@ abstract class _ChatStore with Store {
             "id": message["senderId"].toString(),
           },
           "metadata": {
+            "id": interview?["id"],
             "title": "${interview?['title'] ?? "No title"}",
             "content": message['content'] ?? "",
             "projectId": project.objectId ?? "-1",
             "senderId": user.id,
+            "startTime": interview?["startTime"],
+            "endTime": interview?["endTime"],
             "receiverId": userStore.user!.objectId!, // notification
             "createdAt": interview?["createdAt"],
             "updatedAt": interview?["updatedAt"],
-            "meeting_room_code": meeting?["meeting_code_id"],
-            "meeting_room_id": meeting?["meeting_room_id"],
+            "meetingRoom": {
+              "meeting_room_code": meeting?["meeting_room_code"],
+              "meeting_room_id": meeting?["meeting_room_id"],
+            },
           }
         };
 
@@ -271,89 +307,129 @@ abstract class _ChatStore with Store {
     } else {
       print("trùng message id ${message["id"]}");
       if (isInterview) {
-        var interview = msg["notification"]["interview"];
-        var meeting = msg["notification"]["meetingRoom"];
-        if (interview == null || meeting == null) return null;
-
-        var e = <String, dynamic>{
-          ...message,
-          "id": mess,
-          'type': 'schedule',
-          'text':
-              "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
-          'status': 'seen',
-          'interview': interview,
-          "createdAt":
-              (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
-                  .millisecondsSinceEpoch,
-          "updatedAt":
-              (DateTime.tryParse(message['updatedAt'] ?? "") ?? DateTime.now())
-                  .millisecondsSinceEpoch,
-          'author': {
-            "firstName": message["senderId"].toString() == user.id
-                ? user.firstName
-                : userStore.user!.name,
-            "id": message["senderId"].toString(),
-          },
-          "metadata": {
-            "title": "${interview?['title'] ?? "No title"}",
-            "content": message['content'] ?? "",
-            "projectId": project.objectId ?? "-1",
-            "senderId": user.id,
-            "receiverId": userStore.user!.objectId!, // notification
-            "createdAt": interview?["createdAt"],
-            "updatedAt": interview?["updatedAt"],
-            "meeting_room_code": meeting?["meeting_code_id"],
-            "meeting_room_id": meeting?["meeting_room_id"],
-          }
-        };
-
-        var m = AbstractChatMessage.fromJson(e);
-        if (currentProjectMessageMap[project.objectId!]?[user.id] == null) {
-          // currentProjectMessageMap[project.objectId!]![user.id] = [];
-          await getMessageByProjectAndUsers(
-              chatObject: WrapMessageList(
-                  chatUser: user, project: project, messages: []),
-              quickUpdate: true);
-        }
-        var oml = currentProjectMessageMap[project.objectId!]?[user.id];
-
-        var o = oml?.firstWhereOrNull(
-          (element) => element.id == m.id,
-        );
-        if (o != null) o = m;
-        var pp = _messages.firstWhereOrNull(
-          (element) =>
-              element.project?.objectId == project.objectId &&
-              element.chatUser.id == user.id,
-        );
-
-        if (pp != null) {
-          // pp.messages ??= [];
-          print("add msg for ${project.objectId} user ${user.id}");
-          if (pp.messages?.firstOrNull != null) {
-            pp.messages?.first = MessageObject(
-                createdAt: DateTime.fromMillisecondsSinceEpoch(
-                    m.createdAt ?? DateTime.now().millisecondsSinceEpoch),
-                updatedAt: DateTime.fromMillisecondsSinceEpoch(
-                    m.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
-                project: project,
-                id: m.id,
-                content: m.type == AbstractMessageType.schedule
-                    ? ("${m.metadata?["content"] ?? (m).id}: ${(m as ScheduleMessageType).metadata?["title"] ?? (m).id}")
-                    : m.type == AbstractMessageType.text
-                        ? (message as AbstractTextMessage).text
-                        : "type not supported",
-                receiver: Profile(objectId: "-1", name: "null"),
-                interviewSchedule: m.type == AbstractMessageType.schedule
-                    ? InterviewSchedule.fromJsonApi(m.metadata!)
-                    : null,
-                sender:
-                    Profile(objectId: user.id, name: user.firstName ?? "null"));
-          }
-        }
+        updateInterviewById(msg, _, project, user);
       }
       return null;
+    }
+  }
+
+  Future updateInterviewById(Map<String, dynamic> msg,
+      List<AbstractChatMessage> _, Project project, ChatUser user) async {
+    print("updated interview message id $msg");
+
+    Map<String, dynamic> message = msg["notification"]["message"];
+    if (msg["notification"]["message"] == null) return null;
+    if (message["projectId"].toString() != project.objectId) {
+      return null;
+    }
+    String mess = message["id"].toString();
+    print("receive id dict: $mess");
+    var interview = msg["notification"]["message"]["interview"];
+    var meeting = msg["notification"]["message"]["interview"]?["meetingRoom"];
+    if (interview == null || meeting == null) return null;
+    print("updated interview message id ${message["id"]}");
+
+    NotificationHelper.createTextNotification(
+      id: mess.isNotEmpty
+          ? int.tryParse(mess) ?? rand.nextInt(100000)
+          : rand.nextInt(100000),
+      title:
+          "interview: ${msg["notification"]["message"]["interview"]['title']}",
+      body: "${msg["notification"]["content"]}",
+    );
+
+    var e = <String, dynamic>{
+      ...message,
+      "id": mess,
+      'type': 'schedule',
+      'text':
+          "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
+      'status': 'seen',
+      'interview': interview,
+      "createdAt": (DateTime.tryParse(
+                  interview?["updatedAt"] ?? message['updatedAt'] ?? "") ??
+              DateTime.now())
+          .millisecondsSinceEpoch,
+      "updatedAt": (DateTime.tryParse(
+                  interview?["updatedAt"] ?? message['updatedAt'] ?? "") ??
+              DateTime.now())
+          .millisecondsSinceEpoch,
+      'author': {
+        "firstName": message["senderId"].toString() == user.id
+            ? user.firstName
+            : userStore.user!.name,
+        "id": message["senderId"].toString(),
+      },
+      "metadata": {
+        "id": interview?["id"],
+        "title": "${interview?['title'] ?? "No title"}",
+        "content": message['content'] ?? "",
+        "projectId": project.objectId ?? "-1",
+        "senderId": user.id,
+        "startTime": interview?["startTime"],
+        "endTime": interview?["endTime"],
+        "receiverId": userStore.user!.objectId!, // notification
+        "createdAt": interview?["updatedAt"],
+        "updatedAt": interview?["updatedAt"],
+        "meetingRoom": {
+          "meeting_room_code": meeting?["meeting_room_code"],
+          "meeting_room_id": meeting?["meeting_room_id"],
+        }
+      }
+    };
+
+    var m = AbstractChatMessage.fromJson(e);
+    if (currentProjectMessageMap[project.objectId!]?[user.id] == null) {
+      // currentProjectMessageMap[project.objectId!]![user.id] = [];
+      await getMessageByProjectAndUsers(
+          chatObject:
+              WrapMessageList(chatUser: user, project: project, messages: []),
+          quickUpdate: true);
+    }
+    var oml = currentProjectMessageMap[project.objectId!]?[user.id];
+
+    var o = oml?.indexWhere(
+      (element) =>
+          element.metadata != null &&
+          element.metadata!["meetingRoom"]["meeting_room_code"] ==
+              m.metadata!["meetingRoom"]["meeting_room_code"],
+    );
+    if (o != -1) {
+      currentProjectMessageMap[project.objectId!]![user.id]![o!] = m;
+    }
+    _currentProjectMessages[project.objectId!]![user.id]?.sort(
+      (a, b) {
+        return b.updatedAt!.compareTo(a.updatedAt!);
+      },
+    );
+    var pp = _messages.firstWhereOrNull(
+      (element) =>
+          element.project?.objectId == project.objectId &&
+          element.chatUser.id == user.id,
+    );
+
+    if (pp != null) {
+      // pp.messages ??= [];
+      print("add msg for ${project.objectId} user ${user.id}");
+      if (pp.messages?.firstOrNull != null) {
+        pp.messages?.first = MessageObject(
+            createdAt: DateTime.fromMillisecondsSinceEpoch(
+                m.createdAt ?? DateTime.now().millisecondsSinceEpoch),
+            updatedAt: DateTime.fromMillisecondsSinceEpoch(
+                m.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+            project: project,
+            id: m.id,
+            content: m.type == AbstractMessageType.schedule
+                ? ("${m.metadata?["content"] ?? (m).id}: ${(m as ScheduleMessageType).metadata?["title"] ?? (m).id}")
+                : m.type == AbstractMessageType.text
+                    ? (message as AbstractTextMessage).text
+                    : "type not supported",
+            receiver: Profile(objectId: "-1", name: "null"),
+            interviewSchedule: m.type == AbstractMessageType.schedule
+                ? InterviewSchedule.fromJsonApi(m.metadata!)
+                : null,
+            sender: Profile(objectId: user.id, name: user.firstName ?? "null"));
+      }
     }
   }
 
@@ -554,8 +630,14 @@ abstract class _ChatStore with Store {
                   chatUser: user, project: project, messages: []),
               quickUpdate: true);
         }
-        currentProjectMessageMap[project.objectId!]?[user.id]
-            ?.insert(0, message);
+        var a = currentProjectMessageMap[project.objectId!]?[user.id]
+            ?.firstWhereOrNull(
+          (element) => element.id == message.id,
+        );
+        if (a == null) {
+          currentProjectMessageMap[project.objectId!]?[user.id]
+              ?.insert(0, message);
+        }
       }
       var pp = _messages.firstWhereOrNull(
         (element) =>
@@ -564,6 +646,10 @@ abstract class _ChatStore with Store {
       );
 
       if (pp != null) {
+        InterviewSchedule? intv;
+        if (message.type == AbstractMessageType.schedule) {
+          intv = InterviewSchedule.fromJsonApi(message.metadata!);
+        }
         pp.messages ??= [];
         if (pp.messages!.isEmpty) {
           print("add msg for ${project.objectId} user ${user.id}");
@@ -571,7 +657,9 @@ abstract class _ChatStore with Store {
               createdAt: DateTime.fromMillisecondsSinceEpoch(
                   message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
               updatedAt: DateTime.fromMillisecondsSinceEpoch(
-                  message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+                  intv?.updatedAt?.millisecondsSinceEpoch ??
+                      message.updatedAt ??
+                      DateTime.now().millisecondsSinceEpoch),
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
@@ -592,7 +680,9 @@ abstract class _ChatStore with Store {
               createdAt: DateTime.fromMillisecondsSinceEpoch(
                   message.createdAt ?? DateTime.now().millisecondsSinceEpoch),
               updatedAt: DateTime.fromMillisecondsSinceEpoch(
-                  message.updatedAt ?? DateTime.now().millisecondsSinceEpoch),
+                  intv?.updatedAt?.millisecondsSinceEpoch ??
+                      message.updatedAt ??
+                      DateTime.now().millisecondsSinceEpoch),
               project: project,
               id: message.id,
               content: message.type == AbstractMessageType.schedule
@@ -702,29 +792,66 @@ abstract class _ChatStore with Store {
                 _messages.insert(0, chatObject..messages = []);
                 _messages.first.lastSeenTime = DateTime(0);
               }
-              _currentProjectMessages[projectId]![userId] = value;
+            
 
-              // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
+            _currentProjectMessages[projectId]![userId] = value;
+            // if (_messages.firstWhereOrNull(
+            //       (element) =>
+            //           element.project?.objectId == projectId &&
+            //           element.chatUser.id == userId,
+            //     ) !=
+            //     null) {
+            //   var newP = value.first;
+            //   var rcv = Profile(
+            //       objectId: userStore.user!.objectId,
+            //       name: userStore.user!.name);
+            //   _messages
+            //       .firstWhereOrNull(
+            //         (element) =>
+            //             element.project?.objectId == projectId &&
+            //             element.chatUser.id == userId,
+            //       )!
+            //       .messages!
+            //       .first = MessageObject(
+            //     id: newP.id,
+            //     content: newP.,
+            //     receiver: rcv,
+            //     sender: Profile(
+            //       objectId: newP.author.id,
+            //       name: newP.author.firstName ?? "",
+            //     ),
+            //     updatedAt: DateTime.fromMillisecondsSinceEpoch(
+            //         newP.updatedAt ?? newP.createdAt!),
+            //     createdAt: DateTime.fromMillisecondsSinceEpoch(
+            //         newP.updatedAt ?? newP.createdAt!),
+            //   );
+            // }
+            // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
-              _currentProjectMessages[projectId]![userId]?.sort(
-                (a, b) {
-                  return b.updatedAt!.compareTo(a.updatedAt!);
-                },
-              );
+            _currentProjectMessages[projectId]![userId]?.sort(
+              (a, b) {
+                return b.updatedAt!.compareTo(a.updatedAt!);
+              },
+            );
 
-              if (setStateCallback != null) setStateCallback();
-              return _currentProjectMessages[projectId]![userId];
-            },
-          ).onError((error, stackTrace) async {
+            for (var element in _currentProjectMessages[projectId]![userId]!) {
+              msgIdDict.add(element.id.toString());
+            }
+
+            if (setStateCallback != null) setStateCallback();
+            return _currentProjectMessages[projectId]![userId];
+          },
+        ).onError((error, stackTrace) async {
             // return chatDataSource.getCurrentChatContent(
             //     int.parse(projectId), int.parse(userId));
             return Future.value(_currentProjectMessages[projectId]![userId]);
           });
-          if (!quickUpdate) {
-            fetchChatHistoryFuture = ObservableFuture(future);
-            await fetchChatHistoryFuture;
-          } else {
-            await future;
+        if (!quickUpdate) {
+          fetchChatHistoryFuture = ObservableFuture(future);
+          await fetchChatHistoryFuture;
+        } else {
+          await future;
+
           }
         } catch (e) {
           print("Cannot get chat history for this project");
@@ -744,20 +871,55 @@ abstract class _ChatStore with Store {
     // //print(value);
   }
 
+  Future postMessage({
+    required String projectId,
+    required String content,
+    required String receiverId,
+    required String senderId,
+  }) async {
+    var params = PostMessageParams(
+        content: content,
+        receiverId: receiverId,
+        senderId: senderId,
+        projectId: projectId);
+
+    return await _postMessagesUseCase.call(params: params).then((response) {
+      try {
+        if (response.statusCode == HttpStatus.accepted ||
+            response.statusCode == HttpStatus.ok ||
+            response.statusCode == HttpStatus.created) {
+        } else {
+          print(response.data);
+        }
+      } catch (e) {
+        print(e);
+      }
+    });
+  }
+
   @action
   Future<bool> scheduleInterview(
       {required int projectId,
       required String title,
+      required String meetingCode,
+      required String meetingId,
+      required String content,
+      required String senderId,
+      required String receiverId,
       required DateTime startTime,
       required DateTime endTime}) async {
-    var params = InterviewParams("", "", "", "",
+    var params = InterviewParams(
+        "", projectId.toString(), meetingId, meetingCode,
+        content: content,
+        senderId: senderId,
+        receiverId: receiverId,
         title: title,
         startDate: startTime.toIso8601String(),
         endDate: endTime.toIso8601String());
 
     return await _scheduleInterviewUseCase.call(params: params).then((value) {
       if (value == null) {
-        print('Schedule fail');
+        // print('Schedule fail');
         return false;
       } else {
         // Todo: schedule notification before interview 15min
@@ -775,7 +937,7 @@ abstract class _ChatStore with Store {
     required String interviewId,
   }) async {
     var params = InterviewParams(interviewId, "", "", "",
-        title: "", endDate: "", startDate: "");
+        senderId: "", receiverId: "", title: "", endDate: "", startDate: "");
 
     return await _getInterviewUseCase.call(params: params).then((value) {
       if (value == null) {
@@ -798,7 +960,7 @@ abstract class _ChatStore with Store {
     required String interviewId,
   }) async {
     var params = InterviewParams(interviewId.toString(), "", "", "",
-        title: "", endDate: "", startDate: "");
+        senderId: "", receiverId: "", title: "", endDate: "", startDate: "");
 
     try {
       var response = await _disableInterviewUseCase.call(params: params);
@@ -825,6 +987,8 @@ abstract class _ChatStore with Store {
       required DateTime startTime,
       required DateTime endTime}) async {
     var params = InterviewParams(interview, "", "", "",
+        senderId: "",
+        receiverId: "",
         title: title,
         endDate: endTime.toUtc().toIso8601String(),
         startDate: startTime.toUtc().toIso8601String());
@@ -859,6 +1023,8 @@ abstract class _ChatStore with Store {
       var params = InterviewParams(
           info.objectId, "", info.meetingRoomId, meetingCode,
           title: info.title,
+          senderId: "",
+          receiverId: "",
           startDate: info.startDate.toIso8601String(),
           endDate: info.endDate.toIso8601String());
 

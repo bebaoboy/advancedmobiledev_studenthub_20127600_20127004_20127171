@@ -10,6 +10,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -207,6 +208,17 @@ class Singapore extends State<MessageTab> {
                                                 .id; // id này chỉ để test socket
                                             chatStore.messages[index]
                                                 .lastSeenTime = DateTime.now();
+                                            var c = chatStore.messages.fold(
+                                                0,
+                                                (sum, item) =>
+                                                    sum + item.newMessageCount);
+                                            if (c > 0) {
+                                              NavbarNotifier2.updateBadge(
+                                                  2,
+                                                  NavbarBadge(
+                                                      showBadge: true,
+                                                      badgeText: "$c"));
+                                            }
                                             Navigator.of(NavigationService
                                                     .navigatorKey
                                                     .currentContext!)
@@ -228,7 +240,11 @@ class Singapore extends State<MessageTab> {
                                                 ]))
                                                 .then(
                                               (value) {
-                                                setState(() {});
+                                                setState(() {
+                                                  chatStore.messages[index]
+                                                          .lastSeenTime =
+                                                      DateTime.now();
+                                                });
                                               },
                                             );
                                             // You can replace the print statement with your function

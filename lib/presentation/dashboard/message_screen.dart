@@ -138,6 +138,12 @@ class _MessageScreenState extends State<MessageScreen> {
         text: text,
       );
 
+      chatStore.postMessage(
+          content: text,
+          projectId: widget.chatObject.project!.objectId!,
+          receiverId: _user.id,
+          senderId: userStore.user!.objectId!);
+
       messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
         "content": text,
         "projectId": widget.chatObject.project!.objectId!,
@@ -200,6 +206,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
   late ChatUser me;
   bool loading = true;
+  int page = 1;
+  int msgByPage = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -247,12 +255,24 @@ class _MessageScreenState extends State<MessageScreen> {
           },
           scrollPhysics: const ClampingScrollPhysics(),
           typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
-          messages: chatStore.currentProjectMessages,
+          messages: chatStore.currentProjectMessages.slice(
+              0,
+              (page * msgByPage)
+                  .clamp(0, chatStore.currentProjectMessages.length)),
           onAttachmentPressed: _handleAttachmentPressed,
           // onFirstIconPressed: () => showScheduleBottomSheet(context),
           onFirstIconPressed: () {
             showAllScheduleBottomSheet(context);
           },
+          onEndReached: () async {
+            await Future.delayed(const Duration(milliseconds: 500));
+            setState(() {
+              page = page + 1;
+            });
+          },
+
+          isLastPage:
+              page == chatStore.currentProjectMessages.length ~/ msgByPage,
           onMessageTap: _handleMessageTap,
           onPreviewDataFetched: _handlePreviewDataFetched,
           onSendPressed: _handleSendPressed,
@@ -637,9 +657,14 @@ class _MessageScreenState extends State<MessageScreen> {
               objectId: userStore.user!.objectId, name: userStore.user!.name));
       p?.lastSeenTime = DateTime.now();
       if (chatStore.isFetching) {
-        // TODO: check again: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
+        chatStore.postMessage(
+            content: message.text.trim(),
+            projectId: widget.chatObject.project!.objectId!,
+            receiverId: _user.id,
+            senderId: userStore.user!.objectId!);
+
         messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
           "content": message.text.trim(),
           "projectId": widget.chatObject.project!.objectId!,
@@ -703,11 +728,25 @@ class _MessageScreenState extends State<MessageScreen> {
             "receiverId": _user.id, // notification
             "startTime": value.startDate.toUtc().toIso8601String(),
             "endTime": value.endDate.toUtc().toIso8601String(),
-            "meeting_room_code": value.meetingRoomCode,
-            "meeting_room_id": value.meetingRoomId,
+            "meetingRoom": {
+              "meeting_room_code": value.meetingRoomCode,
+              "meeting_room_id": value.meetingRoomId,
+            }
           };
           // print(ms);
+
           messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", ms);
+          chatStore.scheduleInterview(
+            content: "Interview created",
+            title: value.title.toTitleCase().trim(),
+            projectId: int.parse(widget.chatObject.project!.objectId!),
+            senderId: userStore.user!.objectId!,
+            receiverId: _user.id,
+            startTime: value.startDate,
+            endTime: value.endDate,
+            meetingId: value.meetingRoomId,
+            meetingCode: value.meetingRoomCode,
+          );
 
           _addMessage(ScheduleMessageType(
               messageWidth: (MediaQuery.of(context).size.width * 0.9).round(),
@@ -715,6 +754,7 @@ class _MessageScreenState extends State<MessageScreen> {
               id: const Uuid().v4(),
               type: AbstractMessageType.schedule,
               createdAt: DateTime.now().millisecondsSinceEpoch,
+              updatedAt: DateTime.now().millisecondsSinceEpoch,
               status: Status.delivered,
               metadata: {
                 "title": value.title,
@@ -759,8 +799,10 @@ class _MessageScreenState extends State<MessageScreen> {
                 "receiverId": _user.id, // notification
                 "startTime": value.startDate.toUtc().toIso8601String(),
                 "endTime": value.endDate.toUtc().toIso8601String(),
-                "meeting_room_code": value.meetingRoomCode,
-                "meeting_room_id": value.meetingRoomId,
+                "meetingRoom": {
+                  "meeting_room_code": value.meetingRoomCode,
+                  "meeting_room_id": value.meetingRoomId,
+                },
                 "interviewId": value.objectId,
                 "updateAction": true,
               };
@@ -826,6 +868,14 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   _sendMeetingCode(InterviewSchedule interviewSchedule) {
+    chatStore.postMessage(
+        content: '''Meeting: ${interviewSchedule.title}
+Meeting: ${interviewSchedule.meetingRoomId}
+Meeting code: ${interviewSchedule.meetingRoomCode.trim()}
+          ''',
+        projectId: widget.chatObject.project!.objectId!,
+        receiverId: _user.id,
+        senderId: userStore.user!.objectId!);
     messageNotifier.textSocketHandler.emit("SEND_MESSAGE", {
       "content": '''Meeting: ${interviewSchedule.title}
 Meeting: ${interviewSchedule.meetingRoomId}

@@ -8,6 +8,7 @@ import 'package:boilerplate/domain/usecase/chat/check_avail.dart';
 import 'package:boilerplate/domain/usecase/chat/get_all_chat.dart';
 import 'package:boilerplate/domain/usecase/chat/get_interview.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/domain/usecase/chat/post_message.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
@@ -226,6 +227,7 @@ mixin StoreModule {
         getIt<DisableInterviewUseCase>(),
         getIt<UpdateInterviewUseCase>(),
         getIt<GetInterviewUseCase>(),
+        getIt<PostMessagesUseCase>(),
       ),
     );
   }

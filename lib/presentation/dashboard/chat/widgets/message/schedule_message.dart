@@ -311,11 +311,17 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                       LimitedBox(
                         maxWidth: MediaQuery.of(context).size.width * 0.5,
                         child: AutoSizeText(
-                          widget.scheduleFilter.title.toTitleCase(),
+                          "${widget.scheduleFilter.title.toTitleCase()} (${widget.scheduleFilter.objectId})",
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           minFontSize: 7,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: widget.scheduleFilter.isCancel ||
+                                      widget.scheduleFilter.endDate
+                                          .isBefore(DateTime.now())
+                                  ? Colors.grey
+                                  : null),
                         ),
                       ),
                       Flexible(
@@ -329,7 +335,12 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             maxFontSize: 12,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                color: Theme.of(context).colorScheme.primary),
+                              color: widget.scheduleFilter.isCancel ||
+                                      widget.scheduleFilter.endDate
+                                          .isBefore(DateTime.now())
+                                  ? Colors.grey
+                                  : Theme.of(context).colorScheme.primary,
+                            ),
                           ),
                         ),
                       ),
@@ -357,6 +368,12 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
+                style: TextStyle(
+                    color: widget.scheduleFilter.isCancel ||
+                            widget.scheduleFilter.endDate
+                                .isBefore(DateTime.now())
+                        ? Colors.grey
+                        : null),
                 // textWidthBasis: TextWidthBasis.longestLine,
               ),
               const SizedBox(
@@ -367,6 +384,12 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                 // style: const TextStyle(color: Colors.black),
                 maxLines: 1,
                 minFontSize: 5,
+                style: TextStyle(
+                    color: widget.scheduleFilter.isCancel ||
+                            widget.scheduleFilter.endDate
+                                .isBefore(DateTime.now())
+                        ? Colors.grey
+                        : null),
                 // textWidthBasis: TextWidthBasis.longestLine,
               ),
               // const SizedBox(
@@ -395,7 +418,6 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                         ? RoundedButtonWidget(
                             buttonText: !widget.scheduleFilter.startDate
                                     .isBefore(DateTime.now())
-
                                 ? "Join Early"
                                 : Lang.get("Join"),
                             buttonTextSize: 12,
@@ -417,7 +439,8 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
 
                               // ToDo: pass in right id for call
                               CallManager.instance.startPreviewMeeting(
-                                  NavigationService.navigatorKey.currentContext!,
+                                  NavigationService
+                                      .navigatorKey.currentContext!,
                                   CallType.VIDEO_CALL,
                                   {int.parse(widget.user.id)},
                                   widget.scheduleFilter);
@@ -431,17 +454,21 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                             flex: 2,
                             child: Align(
                               alignment: Alignment.centerRight,
-                              child: Text(widget.scheduleFilter.isCancel ? "Meeting Canceled" :
-                                widget.scheduleFilter.endDate
-                                        .isBefore(DateTime.now())
-
-                                    ? "Meeting ended"
-                                    : "Meeting Canceled!",
+                              child: Text(
+                                widget.scheduleFilter.isCancel
+                                    ? "Meeting Canceled"
+                                    : widget.scheduleFilter.endDate
+                                            .isBefore(DateTime.now())
+                                        ? "Meeting ended"
+                                        : "Meeting Canceled!",
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
-                                    color:
-                                        Theme.of(context).colorScheme.primary),
+                                    color: widget.scheduleFilter.isCancel
+                                        ? Colors.greenAccent
+                                        : Theme.of(context)
+                                            .colorScheme
+                                            .primary),
                               ),
                             ),
                           ),

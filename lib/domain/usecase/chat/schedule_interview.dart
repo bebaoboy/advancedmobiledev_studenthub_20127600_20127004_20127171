@@ -9,13 +9,22 @@ class InterviewParams {
   String? projectId = "";
   String? interviewId = "";
   String title;
+  String content;
   String startDate;
   String endDate;
   String meetingCode;
   String meetingId;
+  String senderId;
+  String receiverId;
 
-  InterviewParams(this.interviewId, this.projectId, this.meetingId, this.meetingCode,
-      {required this.title, required this.startDate, required this.endDate});
+  InterviewParams(
+      this.interviewId, this.projectId, this.meetingId, this.meetingCode,
+      {required this.title,
+      required this.startDate,
+      required this.endDate,
+      required this.senderId,
+      required this.receiverId,
+      this.content = ""});
 }
 
 class ScheduleInterviewUseCase

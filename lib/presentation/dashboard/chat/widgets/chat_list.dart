@@ -88,6 +88,7 @@ class _ChatListState extends State<ChatList>
   final GlobalKey<SliverAnimatedListState> _listKey =
       GlobalKey<SliverAnimatedListState>();
   late List<Object> _oldData = List.from(widget.items);
+  bool showArrow = false;
 
   @override
   void initState() {
@@ -237,12 +238,23 @@ class _ChatListState extends State<ChatList>
           }
 
           if (widget.onEndReached == null || widget.isLastPage == true) {
+            logg("return chat", "BEBAOBOY");
+
             return false;
+          }
+          // logg(notification.metrics.maxScrollExtent.toString());
+          // logg(notification.metrics.pixels.toString());
+          if (notification.metrics.pixels >= 100) {
+            setState(() {
+              showArrow = true;
+            });
           }
 
           if (notification.metrics.pixels >=
               (notification.metrics.maxScrollExtent *
-                  (widget.onEndReachedThreshold ?? 0.75))) {
+                  (widget.onEndReachedThreshold ?? 0.95))) {
+            logg("sloadnext", "BEBAOBOY");
+
             if (widget.items.isEmpty || _isNextPageLoading) return false;
 
             _controller.duration = Duration.zero;
@@ -269,100 +281,164 @@ class _ChatListState extends State<ChatList>
 
           return false;
         },
-        child: CustomScrollView(
-          controller: widget.scrollController,
-          keyboardDismissBehavior: widget.keyboardDismissBehavior,
-          physics: widget.scrollPhysics,
-          reverse: true,
-          slivers: [
-            if (widget.bottomWidget != null)
-              SliverToBoxAdapter(child: widget.bottomWidget),
-            SliverPadding(
-              padding: const EdgeInsets.only(bottom: 4),
-              sliver: SliverToBoxAdapter(
-                child: (widget.typingIndicatorOptions!.typingUsers.isNotEmpty &&
-                        !_indicatorOnScrollStatus)
-                    ? (widget.typingIndicatorOptions
-                                ?.customTypingIndicatorBuilder !=
-                            null
-                        ? widget.typingIndicatorOptions!
-                            .customTypingIndicatorBuilder!(
-                            context: context,
-                            bubbleAlignment: widget.bubbleRtlAlignment,
-                            options: widget.typingIndicatorOptions!,
-                            indicatorOnScrollStatus: _indicatorOnScrollStatus,
-                          )
-                        : widget.typingIndicatorOptions
-                                ?.customTypingIndicator ??
-                            TypingIndicator(
-                              bubbleAlignment: widget.bubbleRtlAlignment,
-                              options: widget.typingIndicatorOptions!,
-                              showIndicator: (widget.typingIndicatorOptions!
-                                      .typingUsers.isNotEmpty &&
-                                  !_indicatorOnScrollStatus),
-                            ))
-                    : const SizedBox.shrink(),
-              ),
-            ),
-            SliverPadding(
-              padding: const EdgeInsets.only(bottom: 4),
-              sliver: SuperSliverList(
-                layoutKeptAliveChildren: true,
-                delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                    return _newMessageBuilder(index);
-                  },
-                  findChildIndexCallback: (Key key) {
-                    if (key is ValueKey<Object>) {
-                      final newIndex = widget.items.indexWhere(
-                        (v) => _valueKeyForItem(v) == key,
-                      );
-                      // //print("new: ${widget.items.length}" + newIndex.toString());
-                      // //print(widget.items.length);
-                      if (newIndex != -1) {
-                        return newIndex;
-                      }
-                    }
-                    return null;
-                  },
-                  childCount: widget.items.length,
-                ),
-                // itemCount: widget.items.length,
-                key: _listKey,
-                // itemBuilder: (_, index) {
-                //   ////print("build item");
-
-                // }
-              ),
-            ),
-            SliverPadding(
-              padding: EdgeInsets.only(
-                top: 16 +
-                    (widget.useTopSafeAreaInset
-                        ? MediaQuery.of(context).padding.top
-                        : 0),
-              ),
-              sliver: SliverToBoxAdapter(
-                child: SizeTransition(
-                  axisAlignment: 1,
-                  sizeFactor: _animation,
-                  child: Center(
-                    child: Container(
-                      alignment: Alignment.center,
-                      height: 32,
-                      width: 32,
-                      child: SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: _isNextPageLoading
-                            ? CircularProgressIndicator(
-                                backgroundColor: Colors.transparent,
-                                strokeWidth: 1.5,
-                                valueColor: AlwaysStoppedAnimation<Color>(
-                                  Chat.theme.primaryColor,
-                                ),
+        child: Stack(
+          children: [
+            CustomScrollView(
+              controller: widget.scrollController,
+              keyboardDismissBehavior: widget.keyboardDismissBehavior,
+              physics: widget.scrollPhysics,
+              reverse: true,
+              slivers: [
+                if (widget.bottomWidget != null)
+                  SliverToBoxAdapter(child: widget.bottomWidget),
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  sliver: SliverToBoxAdapter(
+                    child: (widget.typingIndicatorOptions!.typingUsers
+                                .isNotEmpty &&
+                            !_indicatorOnScrollStatus)
+                        ? (widget.typingIndicatorOptions
+                                    ?.customTypingIndicatorBuilder !=
+                                null
+                            ? widget.typingIndicatorOptions!
+                                .customTypingIndicatorBuilder!(
+                                context: context,
+                                bubbleAlignment: widget.bubbleRtlAlignment,
+                                options: widget.typingIndicatorOptions!,
+                                indicatorOnScrollStatus:
+                                    _indicatorOnScrollStatus,
                               )
-                            : null,
+                            : widget.typingIndicatorOptions
+                                    ?.customTypingIndicator ??
+                                TypingIndicator(
+                                  bubbleAlignment: widget.bubbleRtlAlignment,
+                                  options: widget.typingIndicatorOptions!,
+                                  showIndicator: (widget.typingIndicatorOptions!
+                                          .typingUsers.isNotEmpty &&
+                                      !_indicatorOnScrollStatus),
+                                ))
+                        : const SizedBox.shrink(),
+                  ),
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.only(bottom: 4),
+                  sliver: SuperSliverList(
+                    layoutKeptAliveChildren: true,
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        return _newMessageBuilder(index);
+                      },
+                      findChildIndexCallback: (Key key) {
+                        if (key is ValueKey<Object>) {
+                          final newIndex = widget.items.indexWhere(
+                            (v) => _valueKeyForItem(v) == key,
+                          );
+                          // //print("new: ${widget.items.length}" + newIndex.toString());
+                          // //print(widget.items.length);
+                          if (newIndex != -1) {
+                            return newIndex;
+                          }
+                        }
+                        return null;
+                      },
+                      childCount: widget.items.length,
+                    ),
+                    // itemCount: widget.items.length,
+                    key: _listKey,
+                    // itemBuilder: (_, index) {
+                    //   ////print("build item");
+
+                    // }
+                  ),
+                ),
+                SliverPadding(
+                  padding: EdgeInsets.only(
+                    top: 16 +
+                        (widget.useTopSafeAreaInset
+                            ? MediaQuery.of(context).padding.top
+                            : 0),
+                  ),
+                  sliver: SliverToBoxAdapter(
+                    child: SizeTransition(
+                      axisAlignment: 1,
+                      sizeFactor: _animation,
+                      child: Center(
+                        child: Container(
+                          alignment: Alignment.center,
+                          height: 32,
+                          width: 32,
+                          child: SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: _isNextPageLoading
+                                ? CircularProgressIndicator(
+                                    backgroundColor: Colors.transparent,
+                                    strokeWidth: 1.5,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Chat.theme.primaryColor,
+                                    ),
+                                  )
+                                : null,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                padding: const EdgeInsets.all(0),
+                child: AnimatedOpacity(
+                  duration: const Duration(milliseconds: 500),
+                  // curve: widget.curve,
+                  opacity: showArrow == false ? 0 : 1,
+                  child: AnimatedContainer(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    duration: const Duration(milliseconds: 500),
+                    // curve: widget.curve,
+                    width: showArrow == false ? 0 : 30,
+                    height: showArrow == false ? 0 : 30,
+                    decoration: const BoxDecoration(
+                      color: Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                    padding: EdgeInsets.zero,
+                    child: ClipOval(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            widget.scrollController
+                                .animateTo(
+                              widget.scrollController.position.minScrollExtent,
+                              duration: const Duration(milliseconds: 500),
+                              curve: Curves.linear,
+                            )
+                                .then((value) {
+                              if (mounted) {
+                                setState(() {
+                                  showArrow = false;
+                                });
+                              }
+                            });
+                          },
+                          child: () {
+                            return Center(
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: null,
+                                icon: Icon(
+                                  Icons.arrow_downward_rounded,
+                                  color: Colors.white,
+                                  size: showArrow == false ? 0 : 30 / 2,
+                                ),
+                              ),
+                            );
+                          }(),
+                        ),
                       ),
                     ),
                   ),

@@ -392,7 +392,9 @@ class MessageObject extends NotificationObject {
             content: json2["content"] ?? "Null",
             createdAt: DateTime.tryParse(json2["createdAt"]) ?? DateTime.now(),
             updatedAt: DateTime.tryParse(
-                    json2["updatedAt"] ?? json2["createdAt"] ?? "") ??
+                    (json2['interview'] ?? json2)['updatedAt'] ??
+                        json2["createdAt"] ??
+                        "") ??
                 DateTime.now(),
             id: json2["id"].toString(),
             receiver: Profile.fromJson(
@@ -493,11 +495,13 @@ class InterviewSchedule extends MyObject {
         meetingRoomCode =
             (json["meetingRoom"]?["meeting_room_code"] ?? '-1').toString(),
         super(
-            objectId: json["id"].toString(),
-            createdAt:
-                DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
-            updatedAt:
-                DateTime.tryParse(json["updatedAt"] ?? "") ?? DateTime.now());
+          objectId: json["id"].toString(),
+          createdAt:
+              DateTime.tryParse(json["createdAt"] ?? "") ?? DateTime.now(),
+          updatedAt:
+              DateTime.tryParse(json["updatedAt"] ?? json["createdAt"] ?? "") ??
+                  DateTime.now(),
+        );
 
   Map<String, dynamic> toJson() => {
         "title": title,

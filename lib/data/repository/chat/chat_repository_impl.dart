@@ -11,8 +11,10 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/chat/chat_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/domain/usecase/chat/post_message.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:dio/dio.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
@@ -40,24 +42,24 @@ class ChatRepositoryImpl extends ChatRepository {
               j.add(MessageObject.fromJson(element));
               var p = Project.fromMap(element["project"]);
 
-              WrapMessageList ml = WrapMessageList(
-                  messages: j,
-                  project: p,
-                  chatUser: j.first.sender.objectId! != userStore.user!.objectId
-                      ? ChatUser(
-                          id: j.first.sender.objectId ?? "-1",
-                          firstName: j.first.sender.getName)
-                      : ChatUser(
-                          id: j.first.receiver.objectId ?? "-1",
-                          firstName: j.first.receiver.getName));
-              list.add(ml);
-            }
-            list.sort(
-              (a, b) => (a.messages != null && b.messages != null)
-                  ? b.messages!.first.createdAt!
-                      .compareTo(a.messages!.first.createdAt!)
-                  : 0,
-            );
+            WrapMessageList ml = WrapMessageList(
+                messages: j,
+                project: p,
+                chatUser: j.first.sender.objectId! != userStore.user!.objectId
+                    ? ChatUser(
+                        id: j.first.sender.objectId ?? "-1",
+                        firstName: j.first.sender.getName)
+                    : ChatUser(
+                        id: j.first.receiver.objectId ?? "-1",
+                        firstName: j.first.receiver.getName));
+            list.add(ml);
+          }
+          list.sort(
+            (a, b) => (a.messages != null && b.messages != null)
+                ? b.messages!.first.updatedAt!
+                    .compareTo(a.messages!.first.updatedAt!)
+                : 0,
+          );
 
             for (var element in list) {
               _datasource.insert(element, userStore.user!.objectId!);
@@ -94,22 +96,23 @@ class ChatRepositoryImpl extends ChatRepository {
               List<AbstractChatMessage> res = List.empty(growable: true);
               for (var element in data) {
                 var e = <String, dynamic>{
-                  ...element,
-                  'id': element['id'].toString(),
-                  'type': element['interview'] != null ? "schedule" : 'text',
-                  'text': element['content'],
-                  'status': 'seen',
-                  'interview': element['interview'] ?? {},
-                  'createdAt': DateTime.parse(
-                          (element['interview'] ?? element)['createdAt'])
-                      .millisecondsSinceEpoch,
-                  'updatedAt': DateTime.parse(
-                          (element['interview'] ?? element)['updatedAt'] ??
-                              element['createdAt'])
-                      .millisecondsSinceEpoch,
-                  'author': {
-                    "firstName": element['sender']['fullname'],
-                    "id": element['sender']['id'].toString(),
+                 ...element,
+                'id': element['id'].toString(),
+                'type': element['interview'] != null ? "schedule" : 'text',
+                'text': element['content'],
+                'status': 'seen',
+                'interview': element['interview'] ?? {},
+                'createdAt': DateTime.parse(
+                        (element['interview'] ?? element)['updatedAt'] ??
+                            element['createdAt'])
+                    .millisecondsSinceEpoch,
+                'updatedAt': DateTime.parse(
+                        (element['interview'] ?? element)['updatedAt'] ??
+                            element['createdAt'])
+                    .millisecondsSinceEpoch,
+                'author': {
+                  "firstName": element['sender']['fullname'],
+                  "id": element['sender']['id'].toString(),
                   }
                 };
                 if (element['interview'] != null) {
@@ -145,5 +148,11 @@ class ChatRepositoryImpl extends ChatRepository {
     } else {
       return [];
     }
+  }
+
+  @override
+  Future<Response> postMessage(PostMessageParams params) async {
+    var response = _chatApi.postMessage(params);
+    return response;
   }
 }
