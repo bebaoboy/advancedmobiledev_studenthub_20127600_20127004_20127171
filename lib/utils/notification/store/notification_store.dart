@@ -48,15 +48,16 @@ abstract class _NotificationStore with Store {
   Future<List<NotificationObject>> getNoti(
       {required String receiverId,
       required List activeDates,
-      bool force = false}) async {
+      bool force = false,
+      required Function setStateCb}) async {
     // if (receiverId.trim().isEmpty) {
     //   return Future.value([]);
     // }
     this.activeDates = activeDates.length;
     try {
-      return await _GetNotiUseCase.call(
-              params: GetNotiParams(receiverId: receiverId))
-          .then(
+      var future =
+          _GetNotiUseCase.call(params: GetNotiParams(receiverId: receiverId))
+              .then(
         (value) async {
           if (value.isNotEmpty) {
             // print(value);
@@ -65,6 +66,8 @@ abstract class _NotificationStore with Store {
               (a, b) => b.createdAt!.compareTo(a.createdAt!),
             );
             categorize(activeDates);
+            setStateCb();
+
             return _notiList;
           } else {
             print("Empty response");
@@ -84,9 +87,10 @@ abstract class _NotificationStore with Store {
                 (a, b) => b.createdAt!.compareTo(a.createdAt!),
               );
               categorize(activeDates);
-
+              setStateCb();
               return res;
             }
+            setStateCb();
 
             return Future.value([]);
           }
@@ -108,14 +112,26 @@ abstract class _NotificationStore with Store {
               (a, b) => b.createdAt!.compareTo(a.createdAt!),
             );
             categorize(activeDates);
+            setStateCb();
+
             return res;
           }
-          return Future.value([]);
+          setStateCb();
+
+          return Future.value(_notiList);
         },
-      ) as List<NotificationObject>;
+      );
+      getNotiFuture = ObservableFuture(future);
+
+      categorize(activeDates);
+
+      return _notiList;
     } catch (e) {
       print("Cannot get notification for this receiverId");
     }
+    setStateCb();
+    categorize(activeDates);
+
     return Future.value([]);
   }
 

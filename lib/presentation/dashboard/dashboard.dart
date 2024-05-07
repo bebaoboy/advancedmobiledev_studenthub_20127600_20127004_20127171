@@ -10,6 +10,7 @@ import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
 import 'package:boilerplate/presentation/dashboard/student_dashboard_tab.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
@@ -123,6 +124,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   final _pageController2 = IndexController();
   final _pageController = PageController(initialPage: 2);
   final LanguageStore _languageStore = getIt<LanguageStore>();
+  final _themeStore = getIt<ThemeStore>();
   // late int currentPage;
   // late TabController tabController;
 
@@ -186,7 +188,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
               duration: const Duration(milliseconds: 500),
               curve: Curves.easeIn,
             );
-            
             // element.jumpTo(element.position.minScrollExtent);
           } catch (e) {
             ///

@@ -1,11 +1,14 @@
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
+import 'package:boilerplate/data/local/datasources/chat/chat_datasource.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_string_pretty/to_string_pretty.dart';
@@ -29,21 +32,24 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
     dioList = prefs.getStringList("dio") ?? [];
     return prefs
         .getKeys()
-        .map<Widget>((key) => key == "dio" ? const SizedBox() : ListTile(
-              title: Text(
-                key,
-                style: const TextStyle(
-                  fontWeight: FontWeight.w900,
-                  fontSize: 18,
+        .sorted()
+        .map<Widget>((key) => key == "dio"
+            ? const SizedBox()
+            : ListTile(
+                title: Text(
+                  key,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                  ),
                 ),
-              ),
-              subtitle: LimitedBox(
-                maxHeight: 200,
-                child: SingleChildScrollView(
-                  child: Text(prefs.get(key).toString()),
+                subtitle: LimitedBox(
+                  maxHeight: 200,
+                  child: SingleChildScrollView(
+                    child: Text(prefs.get(key).toString()),
+                  ),
                 ),
-              ),
-            ))
+              ))
         .toList(growable: false);
   }
 
@@ -193,9 +199,11 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
   void initState() {
     super.initState();
     dbFuture = datasource.getProjectsFromDb();
+    chatFuture = getIt<ChatDataSource>().getListChatObjectFromDb();
   }
 
   late Future<ProjectList> dbFuture;
+  late Future<List<WrapMessageList>> chatFuture;
 
   Widget getAllProjectDatabase() {
     return Padding(
@@ -246,6 +254,52 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
     );
   }
 
+  Widget getAllChatDatabase() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+          alignment: Alignment.topLeft,
+          child: FutureBuilder<List<WrapMessageList>>(
+              future: chatFuture,
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  var projects = snapshot.data!;
+                  var r = projects;
+                  
+                  return Wrap(children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text("Result: ${projects.length}"),
+                    ),
+                    ListTile(
+                        title: const Text(
+                          "Chat projects",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 18,
+                          ),
+                        ),
+                        subtitle: LimitedBox(
+                            maxHeight: MediaQuery.of(context).size.height * 0.8,
+                            child: Scrollbar(
+                              child: SingleChildScrollView(
+                                child: Text(projects.isNotEmpty
+                                    ? r
+                                        .map(
+                                          (e) => toStringPretty(e.toJson()),
+                                        )
+                                        .join("\n")
+                                    : "No chat from database"),
+                              ),
+                            )))
+                  ]);
+                } else {
+                  return const Text("No chat from database");
+                }
+              })),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -273,6 +327,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                     getProject(),
                     getStudentProposal(),
                     getAllProjectDatabase(),
+                    getAllChatDatabase(),
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           vertical: 30, horizontal: 10),

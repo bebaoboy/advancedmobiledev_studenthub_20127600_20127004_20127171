@@ -589,7 +589,7 @@ class _AlertTabState extends State<AlertTab> {
 
   bool hasOfferProposal = false;
 
-  late Future<List<NotificationObject>> future;
+  late Future<List<NotificationObject>?> future;
 
   List<Proposal> getOffer() {
     if (hasOfferProposal) {
@@ -631,17 +631,21 @@ class _AlertTabState extends State<AlertTab> {
     future = notiStore
         .getNoti(
             receiverId: userStore.user!.objectId ?? "",
-            activeDates: activeDates)
+            activeDates: activeDates,
+            setStateCb: () {
+              setState(() {
+                print("move");
+                Future.delayed(const Duration(seconds: 1), () {
+                  setState(() {
+                    // alertPageController.move(activeDates.length ~/ 2,
+                    //     animation: false);
+                  });
+                });
+              });
+            })
         .whenComplete(
-      () {
-        print("move");
-        Future.delayed(const Duration(seconds: 1), () {
-          setState(() {
-            alertPageController.move(14, animation: false);
-          });
-        });
-      },
-    );
+          () {},
+        );
 
     showTime = List.filled(activeDates.length, true);
 
@@ -1032,79 +1036,81 @@ class _AlertTabState extends State<AlertTab> {
           future: future,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Container(
-                margin: const EdgeInsets.only(top: 10),
-                height: MediaQuery.of(context).size.height * 0.9,
-                child: TransformerPageView(
-                  itemCount: activeDates.length,
-                  index: 14, // middle page
-                  controller: alertPageController,
-                  transformer: DepthPageTransformer(),
-                  onPageChanged: (value) {
-                    dateController.animateToDate(activeDates[value ?? 0]);
-                    setState(() {
-                      selectedDate = activeDates[value ?? 0];
-                    });
+              return notiStore.isLoading && notiStore.notiList.isEmpty
+                  ? const LoadingScreenWidget()
+                  : Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      child: TransformerPageView(
+                        itemCount: activeDates.length,
+                        index: 14, // middle page
+                        controller: alertPageController,
+                        transformer: DepthPageTransformer(),
+                        onPageChanged: (value) {
+                          dateController.animateToDate(activeDates[value ?? 0]);
+                          setState(() {
+                            selectedDate = activeDates[value ?? 0];
+                          });
 
-                    print(selectedDate);
-                  },
-                  itemBuilder: (context, i) {
-                    cc = context;
-                    // print("build explorable pv");
-                    return KeepAlivePage(
-                      key: PageStorageKey("alert_$i"),
-                      AlertPage(
-                        listController: listController[i],
-                        joinInterviews: notiStore.joinInterviews![i],
-                        viewOffers: notiStore.viewOffers![i],
-                        messages: notiStore.messages![i],
-                        texts: notiStore.texts![i],
+                          print(selectedDate);
+                        },
+                        itemBuilder: (context, i) {
+                          cc = context;
+                          // print("build explorable pv");
+                          return KeepAlivePage(
+                            key: PageStorageKey("alert_$i"),
+                            AlertPage(
+                              listController: listController[i],
+                              joinInterviews: notiStore.joinInterviews![i],
+                              viewOffers: notiStore.viewOffers![i],
+                              messages: notiStore.messages![i],
+                              texts: notiStore.texts![i],
+                            ),
+                          );
+
+                          // ListView.separated(
+                          //     controller: listController[index],
+                          //     itemCount: alerts.length,
+                          //     separatorBuilder: (context, index) =>
+                          //         const Divider(color: Colors.black),
+                          //     itemBuilder: (context, index) {
+                          //       return GestureDetector(
+                          //         onTap: () {
+                          //           //print('Tile clicked');
+                          //           // You can replace the print statement with your function
+                          //         },
+                          //         child: ListTile(
+                          //           leading: Icon(alerts[index]['icon']),
+                          //           title: Text(alerts[index]['title']),
+                          //           subtitle: Text(alerts[index]['subtitle']),
+                          //           trailing: alerts[index]['action'] != null
+                          //               ? ElevatedButton(
+                          //                   onPressed: () {
+                          //                     //print('${alerts[index]['action']} button clicked');
+                          //                     if (alerts[index]['action'] != null) {
+                          //                       if (alerts[index]['action'] == "Join") {
+                          //                         Navigator.of(NavigationService
+                          //                                 .navigatorKey.currentContext!)
+                          //                             .push(MaterialPageRoute2(
+                          //                                 routeName: Routes.message,
+                          //                                 arguments: "Javis - AI Copilot"));
+                          //                       } else if (alerts[index]['action'] ==
+                          //                           "View offer") {
+                          //                         // showOfferDetailsDialog(context, 2);
+                          //                         // NavbarNotifier2.hideBottomNavBar = true;
+                          //                       }
+                          //                     }
+                          //                     // You can replace the print statement with your function
+                          //                   },
+                          //                   child: Text(Lang.get(alerts[index]['action'])),
+                          //                 )
+                          //               : null,
+                          //         ),
+                          //       );
+                          //     });
+                        },
                       ),
                     );
-
-                    // ListView.separated(
-                    //     controller: listController[index],
-                    //     itemCount: alerts.length,
-                    //     separatorBuilder: (context, index) =>
-                    //         const Divider(color: Colors.black),
-                    //     itemBuilder: (context, index) {
-                    //       return GestureDetector(
-                    //         onTap: () {
-                    //           //print('Tile clicked');
-                    //           // You can replace the print statement with your function
-                    //         },
-                    //         child: ListTile(
-                    //           leading: Icon(alerts[index]['icon']),
-                    //           title: Text(alerts[index]['title']),
-                    //           subtitle: Text(alerts[index]['subtitle']),
-                    //           trailing: alerts[index]['action'] != null
-                    //               ? ElevatedButton(
-                    //                   onPressed: () {
-                    //                     //print('${alerts[index]['action']} button clicked');
-                    //                     if (alerts[index]['action'] != null) {
-                    //                       if (alerts[index]['action'] == "Join") {
-                    //                         Navigator.of(NavigationService
-                    //                                 .navigatorKey.currentContext!)
-                    //                             .push(MaterialPageRoute2(
-                    //                                 routeName: Routes.message,
-                    //                                 arguments: "Javis - AI Copilot"));
-                    //                       } else if (alerts[index]['action'] ==
-                    //                           "View offer") {
-                    //                         // showOfferDetailsDialog(context, 2);
-                    //                         // NavbarNotifier2.hideBottomNavBar = true;
-                    //                       }
-                    //                     }
-                    //                     // You can replace the print statement with your function
-                    //                   },
-                    //                   child: Text(Lang.get(alerts[index]['action'])),
-                    //                 )
-                    //               : null,
-                    //         ),
-                    //       );
-                    //     });
-                  },
-                ),
-              );
             } else {
               return const LoadingScreenWidget();
             }
