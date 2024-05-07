@@ -71,7 +71,9 @@ class Singapore extends State<MessageTab> {
     // Future.delayed(const Duration(milliseconds: 500), () async {
     getAllChatFuture = Future.delayed(Duration.zero, () => chatStore.messages);
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
-      setState(() {});
+      if (mounted) {
+        setState(() {});
+      }
     });
     // chatStore.getMessageByProjectAndUsers(projectId: "1", userId: "9");
     // chatStore.getMessageByProjectAndUsers(projectId: "150", userId: "94");

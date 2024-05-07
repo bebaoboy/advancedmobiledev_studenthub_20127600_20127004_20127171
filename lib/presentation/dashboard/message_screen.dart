@@ -63,6 +63,7 @@ class _MessageScreenState extends State<MessageScreen> {
   late UserType _currentUserType;
 
   void _messageNotifierListener() {
+    // if (messageNotifier.inbox.isEmpty) return;
     // final newMessage = messageNotifier.inbox.last;
     // if (newMessage.author.id == _user.id) {
     //   // _addMessage(newMessage);
@@ -221,9 +222,11 @@ class _MessageScreenState extends State<MessageScreen> {
             if (loading) {
               loading = false;
 
-              Future.delayed(Duration.zero, () {
-                setState(() {});
-              });
+              if (mounted) {
+                Future.delayed(Duration.zero, () {
+                  setState(() {});
+                });
+              }
             }
           },
           user: me,
@@ -616,10 +619,12 @@ class _MessageScreenState extends State<MessageScreen> {
       previewData: previewData,
     );
     print("update");
-    setState(() {
-      logg("loaded preview");
-      chatStore.currentProjectMessages[index] = updatedMessage;
-    });
+    if (mounted) {
+      setState(() {
+        logg("loaded preview");
+        chatStore.currentProjectMessages[index] = updatedMessage;
+      });
+    }
   }
 
   void _handleSendPressed(PartialText message) {

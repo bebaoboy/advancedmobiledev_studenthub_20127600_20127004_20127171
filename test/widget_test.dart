@@ -8,6 +8,7 @@ import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/data/di/module/network_module.dart';
 import 'package:boilerplate/data/di/module/repository_module.dart';
+import 'package:boilerplate/data/local/datasources/chat/chat_datasource.dart';
 import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
@@ -40,6 +41,7 @@ initDb() async {
   getIt.registerSingleton(PostDataSource(sb));
 
   getIt.registerSingleton(ProjectDataSource(sb));
+  getIt.registerSingleton(ChatDataSource(sb));
   await NetworkModule.configureNetworkModuleInjection();
   await RepositoryModule.configureRepositoryModuleInjection();
 

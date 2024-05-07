@@ -624,7 +624,7 @@ class _AlertTabState extends State<AlertTab> {
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     selectedDate = today;
     activeDates
-        .addAll([for (int i = -7; i < 7; i++) today.add(Duration(days: i))]);
+        .addAll([for (int i = -14; i < 14; i++) today.add(Duration(days: i))]);
     print(activeDates);
     pages = List.filled(activeDates.length, null);
 
@@ -637,7 +637,7 @@ class _AlertTabState extends State<AlertTab> {
         print("move");
         Future.delayed(const Duration(seconds: 1), () {
           setState(() {
-            alertPageController.move(7, animation: false);
+            alertPageController.move(14, animation: false);
           });
         });
       },
@@ -1037,7 +1037,7 @@ class _AlertTabState extends State<AlertTab> {
                 height: MediaQuery.of(context).size.height * 0.9,
                 child: TransformerPageView(
                   itemCount: activeDates.length,
-                  index: 7, // middle page
+                  index: 14, // middle page
                   controller: alertPageController,
                   transformer: DepthPageTransformer(),
                   onPageChanged: (value) {

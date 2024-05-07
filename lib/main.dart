@@ -7,9 +7,9 @@ import 'package:boilerplate/core/widgets/error_page_widget.dart';
 import 'package:boilerplate/core/widgets/xmpp/logger/Log.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/firebase_options.dart';
@@ -29,27 +29,11 @@ import 'package:boilerplate/presentation/video_call/utils/configs.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
-// @pragma('vm:entry-point')
-// void backgroundFetchHeadlessTask(HeadlessTask task) async {
-//   String taskId = task.taskId;
-//   bool isTimeout = task.timeout;
-//   if (isTimeout) {
-//     // This task has exceeded its allowed running-time.
-//     // You must stop what you're doing and immediately .finish(taskId)
-//     print("[BackgroundFetch] Headless task timed-out: $taskId");
-//     BackgroundFetch.finish(taskId);
-//     return;
-//   }
-//   print('[BackgroundFetch] Headless event received.');
-//   // Do your work here...
-//   BackgroundFetch.finish(taskId);
-// }
 
 @pragma("vm:entry-point")
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     var currentTask = getWorkerTaskFromString(task);
-    var helper = WorkMangerHelper();
     var sharePref = await SharedPreferences.getInstance();
     var isLoggedIn = sharePref.getBool(Preferences.is_logged_in) ?? false;
     var rand = Random();
@@ -60,7 +44,7 @@ void callbackDispatcher() {
           {
             Log.d("main", "in a fetch profile");
             if (isLoggedIn) {
-              var result = await helper.fetchProfile();
+              var result = await WorkMangerHelper.fetchProfile();
               return result;
             } else {
               return Future.value(true);
@@ -70,7 +54,7 @@ void callbackDispatcher() {
           {
             Log.d("main", "fetching recent noti");
             if (isLoggedIn) {
-              var result = await helper.fetchRecentNotification();
+              var result = await WorkMangerHelper.fetchRecentNotification();
               for (var notiOb in result) {
                 var channel = getChannelByMessageType(notiOb.type);
                 if (channel == NotificationChannelEnum.messageChannel) {
@@ -232,10 +216,7 @@ initConnectycube() async {
   //   return;
   // }
   print("check cube connectivity");
-  final List<ConnectivityResult> connectivityResult =
-      await (Connectivity().checkConnectivity());
-
-  if (!connectivityResult.contains(ConnectivityResult.none)) {
+  if(await DeviceUtils.hasConnection()){
     await init(
       config.APP_ID,
       config.AUTH_KEY,

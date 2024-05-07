@@ -91,9 +91,11 @@ class _InputState extends State<Input> {
         if (widget.scrollController.position.userScrollDirection ==
             ScrollDirection.reverse) {
           if (visibility != 0) {
-            setState(() {
-              visibility = 0;
-            });
+            if (mounted) {
+              setState(() {
+                visibility = 0;
+              });
+            }
           }
         }
         if (widget.scrollController.position.userScrollDirection ==

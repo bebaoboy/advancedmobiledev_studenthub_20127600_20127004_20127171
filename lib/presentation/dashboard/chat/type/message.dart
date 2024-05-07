@@ -127,5 +127,17 @@ abstract class AbstractChatMessage extends Equatable {
   });
 
   /// Converts a particular message to the map representation, serializable to JSON.
-  Map<String, dynamic> toJson();
+  Map<String, dynamic> toJson() {
+    return {
+      "user": author.toJson(),
+      "createdAt": createdAt,
+      "metadata": metadata,
+      "remoteId": remoteId,
+      "repliedMessage": repliedMessage?.toJson(),
+      "roomId": roomId,
+      "showStatus": showStatus == true ? 1 : 0,
+      "updatedAt": updatedAt,
+      "status": status?.index ?? 0
+    };
+  }
 }
