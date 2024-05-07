@@ -24,7 +24,7 @@ class NotiRepositoryImpl extends NotiRepository {
         (value) async {
           if (value.statusCode == HttpStatus.accepted ||
               value.statusCode == HttpStatus.ok) {
-            int lastRead = await helper.lastRead;
+            // int lastRead = await helper.lastRead;
             List data = value.data["result"];
             List<NotificationObject> res = List.empty(growable: true);
             for (var element in data) {
@@ -68,9 +68,7 @@ class NotiRepositoryImpl extends NotiRepository {
         } */
               var acm = NotificationObject.fromJson(e);
 
-              if (acm.createdAt!.millisecondsSinceEpoch >= lastRead) {
-                res.add(acm);
-              }
+              res.add(acm);
             }
 
             helper.saveLastRead(DateTime.now());

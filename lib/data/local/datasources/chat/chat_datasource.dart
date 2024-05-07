@@ -8,7 +8,7 @@ import 'package:sembast/sembast.dart';
 
 class ChatDataSource {
   final _chatObjectStore =
-      intMapStoreFactory.store(DBConstants.CHAT_STORE_NAME);
+      stringMapStoreFactory.store(DBConstants.CHAT_STORE_NAME);
 
   final _chatDataStore =
       stringMapStoreFactory.store(DBConstants.CHAT_DATA_STORE_NAME);
@@ -24,7 +24,7 @@ class ChatDataSource {
     if (currentId == messageList.chatUser.id) return;
     if (int.tryParse(messageList.chatUser.id) != null) {
       return await _chatObjectStore
-          .record(int.parse(messageList.chatUser.id))
+          .record("${messageList.chatUser.id}${messageList.project!.objectId}")
           .put(_sembastClient.database, messageList.toJson(), merge: true);
     } else {
       return await _chatObjectStore.add(

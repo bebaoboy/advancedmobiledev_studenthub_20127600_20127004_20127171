@@ -437,6 +437,10 @@ abstract class _ChatStore with Store {
     var chatDataStore = getIt<ChatDataSource>();
     if (!(await DeviceUtils.hasConnection())) {
       _messages = await chatDataStore.getListChatObjectFromDb();
+      _messages.sort(
+        (a, b) => b.messages!.firstOrNull!.updatedAt!
+            .compareTo(a.messages!.firstOrNull!.updatedAt!),
+      );
       return _messages;
     } else {
       try {
@@ -669,6 +673,7 @@ abstract class _ChatStore with Store {
       _currentProject = projectId;
       _currentUser = userId;
     }
+    // ignore: unused_local_variable
     var chatDataSource = getIt<ChatDataSource>();
     getMessageNotifiers(chatObject);
 
@@ -734,8 +739,6 @@ abstract class _ChatStore with Store {
       //     int.parse(projectId), int.parse(userId));
       return [];
     }
-    // TODO: lưu vào sharedpref
-
     return Future.value([]);
 
     // //print(value);

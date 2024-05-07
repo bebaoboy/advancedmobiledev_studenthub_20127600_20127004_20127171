@@ -63,11 +63,11 @@ class _MessageScreenState extends State<MessageScreen> {
   late UserType _currentUserType;
 
   void _messageNotifierListener() {
-    if (messageNotifier.inbox.isEmpty) return;
-    final newMessage = messageNotifier.inbox.last;
-    if (newMessage.author.id == _user.id) {
-      // _addMessage(newMessage);
-    }
+    // if (messageNotifier.inbox.isEmpty) return;
+    // final newMessage = messageNotifier.inbox.last;
+    // if (newMessage.author.id == _user.id) {
+    //   // _addMessage(newMessage);
+    // }
   }
 
   @override
@@ -118,7 +118,7 @@ class _MessageScreenState extends State<MessageScreen> {
       } else {
         typings.clear();
       }
-      // setState(() {});
+      setState(() {});
     });
 
     initScreen();
@@ -195,7 +195,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
       msg.reactions!.total.removeWhere((key, value) => value == 0);
     }
-    // setState(() {});
+    setState(() {});
   }
 
   late ChatUser me;
