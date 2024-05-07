@@ -29,7 +29,6 @@ import 'package:boilerplate/presentation/video_call/utils/configs.dart'
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:workmanager/workmanager.dart';
 
-
 @pragma("vm:entry-point")
 void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
@@ -55,6 +54,12 @@ void callbackDispatcher() {
             Log.d("main", "fetching recent noti");
             if (isLoggedIn) {
               var result = await WorkMangerHelper.fetchRecentNotification();
+              if (result.isNotEmpty) {
+                NotificationHelper.createBigTextNotification(
+                  title: "New notification",
+                  body: "You have ${result.length} new notifications!",
+                );
+              }
               for (var notiOb in result) {
                 var channel = getChannelByMessageType(notiOb.type);
                 if (channel == NotificationChannelEnum.messageChannel) {
@@ -216,7 +221,7 @@ initConnectycube() async {
   //   return;
   // }
   print("check cube connectivity");
-  if(await DeviceUtils.hasConnection()){
+  if (await DeviceUtils.hasConnection()) {
     await init(
       config.APP_ID,
       config.AUTH_KEY,

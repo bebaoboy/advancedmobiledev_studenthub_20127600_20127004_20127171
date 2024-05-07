@@ -2,11 +2,13 @@
 
 import 'dart:convert';
 
+import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_core.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:mobx/mobx.dart';
@@ -193,9 +195,13 @@ abstract class _NotificationStore with Store {
     }
   }
 
-  addNofitication(Map<String, dynamic> element) {
+  addNofitication(Map<String, dynamic> element) async {
     var not = toNotificationObject(element["notification"]);
     _notiList.insert(0, not);
+    var sharePref = await SharedPreferences.getInstance();
+    log("last read saved ${DateTime.now().millisecondsSinceEpoch} ${DateTime.now()}");
+    await sharePref.setInt(
+        Preferences.lastRead, DateTime.now().millisecondsSinceEpoch);
     if (not.type == NotificationType.proposal) {
       NotificationHelper.createTextNotification(
           id: int.parse(not.id),

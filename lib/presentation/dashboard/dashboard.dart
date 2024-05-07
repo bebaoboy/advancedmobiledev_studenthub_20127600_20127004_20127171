@@ -32,7 +32,6 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen>
     with SingleTickerProviderStateMixin {
-
   final UserStore _userStore = getIt<UserStore>();
   final _chatStore = getIt<ChatStore>();
   late List<ScrollController> sc;
@@ -180,21 +179,19 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         decoration: NavbarDecoration(
             isExtended: MediaQuery.of(context).size.width > 800 ? true : false,
             navbarType: BottomNavigationBarType.shifting),
-        onCurrentTabClicked: () {
-          setState(() {
-            for (var element in sc) {
-              try {
-                element.animateTo(
-                  element.position.minScrollExtent,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeIn,
-                );
-                // element.jumpTo(element.position.minScrollExtent);
-              } catch (e) {
-                ///
-              }
-            }
-          });
+        onCurrentTabClicked: () async {
+          try {
+            sc[NavbarNotifier2.currentIndex].animateTo(
+              sc[NavbarNotifier2.currentIndex].position.minScrollExtent,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeIn,
+            );
+            
+            // element.jumpTo(element.position.minScrollExtent);
+          } catch (e) {
+            ///
+          }
+          setState(() {});
         },
         onChanged: (p0) {
           // setState(() {});

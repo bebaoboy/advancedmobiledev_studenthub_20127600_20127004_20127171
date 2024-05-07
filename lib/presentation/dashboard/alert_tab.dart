@@ -1171,22 +1171,30 @@ class _CustomProposalNotificationState
           children: [
             Column(
               children: [
-                const CircleAvatar(
-                  radius: 20, backgroundColor: Colors.blue,
-                  backgroundImage: CachedNetworkImageProvider(
-                    // errorBuilder: (context, error, stackTrace) => const Icon(
-                    //   Icons.error_outline,
-                    //   size: 45,
-                    // ),
-                    cacheKey: "flutter_interview",
+                widget.notificationObject.type == NotificationType.proposal
+                    ? const CircleAvatar(
+                        radius: 20, backgroundColor: Colors.blue,
+                        backgroundImage: CachedNetworkImageProvider(
+                          // errorBuilder: (context, error, stackTrace) => const Icon(
+                          //   Icons.error_outline,
+                          //   size: 45,
+                          // ),
+                          cacheKey: "flutter_interview",
 
-                    maxWidth: 50,
-                    maxHeight: 50,
-                    'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
-                    // fit: BoxFit.cover,
-                  ),
-                  // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
-                ),
+                          maxWidth: 50,
+                          maxHeight: 50,
+                          'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
+                          // fit: BoxFit.cover,
+                        ),
+                        // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Icon(
+                          Icons.mail_lock,
+                          size: 45,
+                        ),
+                      ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
@@ -1231,7 +1239,7 @@ class _CustomProposalNotificationState
                       buttonText: widget.notificationObject.type ==
                               NotificationType.proposal
                           ? "View"
-                          : "Join",
+                          : "Check",
                     ),
                   ),
                 ),
@@ -1801,7 +1809,7 @@ class _AlertPageState extends State<AlertPage> {
                         )),
                 itemBuilder: (BuildContext context, NotificationObject item) {
                   return switch (item.type) {
-                    NotificationType.viewOffer => CustomMessageNotifcation(
+                    NotificationType.viewOffer => CustomProposalNotification(
                         notificationObject: item,
                         showTime: false,
                       ),

@@ -7,7 +7,6 @@ import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:interpolator/interpolator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,7 +63,7 @@ class WorkMangerHelper {
       WorkerTask.fetchProfile.name,
       tag: WorkerTask.fetchProfile.identifier,
       existingWorkPolicy: ExistingWorkPolicy.replace,
-      initialDelay: NORMAL_FREQUENCY,
+      initialDelay: SHORT_DELAY,
       frequency: LOW_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(networkType: NetworkType.connected),
@@ -77,8 +76,8 @@ class WorkMangerHelper {
       WorkerTask.fetchNotification.identifier,
       WorkerTask.fetchNotification.name,
       tag: WorkerTask.fetchNotification.identifier,
-      existingWorkPolicy: ExistingWorkPolicy.update,
-      initialDelay: MEDIUM_DELAY,
+      existingWorkPolicy: ExistingWorkPolicy.replace,
+      initialDelay: NO_DELAY,
       frequency: NORMAL_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(
@@ -91,30 +90,31 @@ class WorkMangerHelper {
     try {
       var sharePref = await SharedPreferences.getInstance();
       var receiverId = sharePref.get(Preferences.current_user_id) ?? -1;
+      int? lastRead = sharePref.getInt(Preferences.lastRead);
+      if (lastRead == null) {
+        print("no last read ");
+        lastRead = DateTime.now().millisecondsSinceEpoch;
+      }
+      print("last read ${DateTime.fromMillisecondsSinceEpoch(lastRead)}");
       if (receiverId == -1) return [];
       var response = await WorkMangerHelper._dioClient.dio
-          .get(Interpolator(Endpoints.getNoti)({"receiverId": receiverId}))
-          .onError((exception, stackTrace) {
-        print("exception: $exception \n$stackTrace");
-        return Response(
-          requestOptions: RequestOptions(data: "$exception \n$stackTrace"),
-          statusCode: 400,
-        );
-      });
+          .get(Interpolator(Endpoints.getNoti)({"receiverId": receiverId}));
+
       if (response.statusCode == HttpStatus.accepted ||
           response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.created) {
         List data = response.data["result"];
         List<NotificationObject> res = List.empty(growable: true);
+
         for (var element in data) {
-          var lastRead = sharePref.getInt(Preferences.lastRead) ??
-              DateTime.now().millisecondsSinceEpoch;
           var e = <String, dynamic>{
             ...element,
             'id': element['id'].toString(),
             'title': element["title"].toString(),
             "content": element["content"].toString(),
-            'messageContent': element["message"]['content'].toString(),
+            'messageContent': element["message"] != null
+                ? element["message"]['content'].toString()
+                : element["content"].toString(),
             'type': element['typeNotifyFlag'],
             'createdAt': DateTime.parse(element['createdAt']).toLocal(),
             'receiver': {
@@ -125,40 +125,54 @@ class WorkMangerHelper {
               "id": element['sender']['id'].toString(),
               "fullname": element['sender']['fullname'].toString(),
             },
-            'metadata': element["interview"] != null
+            'metadata': (element["message"] != null &&
+                    element["message"]["interview"] != null)
                 ? <String, dynamic>{
-                    ...element["interview"],
-                    "meetingRoom": element["meetingRoom"]
+                    ...element["message"]["interview"],
+                    "meetingRoom": element["message"]["interview"]
+                        ["meetingRoom"]
                   }
-                : null
+                : element["proposal"] != null
+                    ? <String, dynamic>{...element["proposal"]}
+                    : null,
           };
+          print(e);
           var acm = NotificationObject.fromJson(e);
           // res.add(acm);
-          if (lastRead <= acm.createdAt!.millisecondsSinceEpoch) res.add(acm);
+          if (lastRead <= acm.createdAt!.toUtc().millisecondsSinceEpoch) {
+            res.add(acm);
+          }
         }
         await sharePref.setInt(
             Preferences.lastRead, DateTime.now().millisecondsSinceEpoch);
+        await sharePref.setStringList(
+            "noti",
+            res
+                .map(
+                  (e) => e.toJson(),
+                )
+                .toList());
         return res;
       } else {
         print("fetch error ${response.data.toString()}");
         return [];
       }
     } catch (e) {
-      print("fetch error $e");
+      print("fetch error catch $e");
       return [];
     }
-  // static registerProjectFetch() async {
-  //   Workmanager().registerPeriodicTask(
-  //     WorkerTask.fetchProject.identifier,
-  //     WorkerTask.fetchProject.name + const Uuid().v4(),
-  //     existingWorkPolicy: ExistingWorkPolicy.replace,
-  //     initialDelay: SHORT_DELAY,
-  //     // frequency: NORMAL_FREQUENCY,
-  //     backoffPolicy: BackoffPolicy.exponential,
-  //     constraints: Constraints(
-  //         requiresDeviceIdle: true, networkType: NetworkType.connected),
-  //   );
-  // }
+    // static registerProjectFetch() async {
+    //   Workmanager().registerPeriodicTask(
+    //     WorkerTask.fetchProject.identifier,
+    //     WorkerTask.fetchProject.name + const Uuid().v4(),
+    //     existingWorkPolicy: ExistingWorkPolicy.replace,
+    //     initialDelay: SHORT_DELAY,
+    //     // frequency: NORMAL_FREQUENCY,
+    //     backoffPolicy: BackoffPolicy.exponential,
+    //     constraints: Constraints(
+    //         requiresDeviceIdle: true, networkType: NetworkType.connected),
+    //   );
+    // }
 
 //   Future<List<NotificationObject>> fetchRecentNotification() async {
 //     return [
@@ -250,15 +264,8 @@ class WorkMangerHelper {
   static Future<bool> fetchProfile() async {
     try {
       var sharePref = await SharedPreferences.getInstance();
-      var response = await WorkMangerHelper._dioClient.dio
-          .get(Endpoints.getProfile)
-          .onError((exception, stackTrace) {
-        print("$exception \n$stackTrace");
-        return Response(
-          requestOptions: RequestOptions(data: "$exception \n$stackTrace"),
-          statusCode: 400,
-        );
-      });
+      var response =
+          await WorkMangerHelper._dioClient.dio.get(Endpoints.getProfile);
       if (response.statusCode == HttpStatus.accepted ||
           response.statusCode == HttpStatus.ok ||
           response.statusCode == HttpStatus.created) {

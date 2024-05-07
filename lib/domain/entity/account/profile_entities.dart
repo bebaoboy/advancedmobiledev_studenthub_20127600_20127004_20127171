@@ -111,7 +111,7 @@ class StudentProfile extends Profile {
       'yearOfExperience': yearOfExperience,
       'review': review,
       'techStack': techStack,
-      'skillSet': skillSet,
+      'skillSets': skillSet,
       'languages': languages,
       'educations': educations,
       'transcript': transcript,
