@@ -344,9 +344,10 @@ abstract class _ChatStore with Store {
           "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
       'status': 'seen',
       'interview': interview,
-      "createdAt":
-          (DateTime.tryParse(message['createdAt'] ?? "") ?? DateTime.now())
-              .millisecondsSinceEpoch,
+      "createdAt": (DateTime.tryParse(
+                  interview?["updatedAt"] ?? message['updatedAt'] ?? "") ??
+              DateTime.now())
+          .millisecondsSinceEpoch,
       "updatedAt": (DateTime.tryParse(
                   interview?["updatedAt"] ?? message['updatedAt'] ?? "") ??
               DateTime.now())
@@ -366,7 +367,7 @@ abstract class _ChatStore with Store {
         "startTime": interview?["startTime"],
         "endTime": interview?["endTime"],
         "receiverId": userStore.user!.objectId!, // notification
-        "createdAt": interview?["createdAt"],
+        "createdAt": interview?["updatedAt"],
         "updatedAt": interview?["updatedAt"],
         "meetingRoom": {
           "meeting_room_code": meeting?["meeting_room_code"],
@@ -394,6 +395,11 @@ abstract class _ChatStore with Store {
     if (o != -1) {
       currentProjectMessageMap[project.objectId!]![user.id]![o!] = m;
     }
+    _currentProjectMessages[project.objectId!]![user.id]?.sort(
+      (a, b) {
+        return b.updatedAt!.compareTo(a.updatedAt!);
+      },
+    );
     var pp = _messages.firstWhereOrNull(
       (element) =>
           element.project?.objectId == project.objectId &&

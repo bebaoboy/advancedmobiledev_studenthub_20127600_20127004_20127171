@@ -206,6 +206,8 @@ class _MessageScreenState extends State<MessageScreen> {
 
   late ChatUser me;
   bool loading = true;
+  int page = 1;
+  int msgByPage = 10;
 
   @override
   Widget build(BuildContext context) {
@@ -251,12 +253,24 @@ class _MessageScreenState extends State<MessageScreen> {
           },
           scrollPhysics: const ClampingScrollPhysics(),
           typingIndicatorOptions: TypingIndicatorOptions(typingUsers: typings),
-          messages: chatStore.currentProjectMessages,
+          messages: chatStore.currentProjectMessages.slice(
+              0,
+              (page * msgByPage)
+                  .clamp(0, chatStore.currentProjectMessages.length)),
           onAttachmentPressed: _handleAttachmentPressed,
           // onFirstIconPressed: () => showScheduleBottomSheet(context),
           onFirstIconPressed: () {
             showAllScheduleBottomSheet(context);
           },
+          onEndReached: () async {
+            await Future.delayed(const Duration(milliseconds: 500));
+            setState(() {
+              page = page + 1;
+            });
+          },
+
+          isLastPage:
+              page == chatStore.currentProjectMessages.length ~/ msgByPage,
           onMessageTap: _handleMessageTap,
           onPreviewDataFetched: _handlePreviewDataFetched,
           onSendPressed: _handleSendPressed,

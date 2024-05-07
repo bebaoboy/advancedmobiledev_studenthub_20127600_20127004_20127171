@@ -2387,7 +2387,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     // print(keys);
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
-    print("build chips");
+    // print("build chips");
     // TODO: chips are always built = not good
     slivers.add(SliverPinnedHeader(
       child: Container(
@@ -2404,7 +2404,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
               // );
               onChipChanged(t as H);
               // chipsValue = ChoiceSingle.value(t);
-              print(realKeys);
+              // print(realKeys);
               var k = keys
                   .indexWhere((e) => (e as NotificationType).title == t.title);
               if (k == -1) {
