@@ -66,13 +66,32 @@ abstract class _NotificationStore with Store {
             return _notiList;
           } else {
             print("Empty response");
-            categorize(activeDates);
+            var s = await SharedPreferences.getInstance();
+
+            var l = s.getStringList("noti");
+            if (l != null) {
+              print("get noti from sharedpref");
+
+              List<NotificationObject> res = l
+                  .map(
+                    (e) => NotificationObject.fromJson(json.decode(e)),
+                  )
+                  .toList();
+              _notiList = ObservableList.of(res);
+              _notiList.sort(
+                (a, b) => b.createdAt!.compareTo(a.createdAt!),
+              );
+              categorize(activeDates);
+
+              return res;
+            }
 
             return Future.value([]);
           }
         },
       ).onError(
         (error, stackTrace) async {
+          print("get noti from sharedpref");
           var s = await SharedPreferences.getInstance();
 
           var l = s.getStringList("noti");
@@ -82,6 +101,11 @@ abstract class _NotificationStore with Store {
                   (e) => NotificationObject.fromJson(json.decode(e)),
                 )
                 .toList();
+            _notiList = ObservableList.of(res);
+            _notiList.sort(
+              (a, b) => b.createdAt!.compareTo(a.createdAt!),
+            );
+            categorize(activeDates);
             return res;
           }
           return Future.value([]);
@@ -123,8 +147,8 @@ abstract class _NotificationStore with Store {
       var date = element.createdAt;
       if (date == null) continue;
       int diff = daysBetween(DateTime.now(), date);
-      if (diff > 6) continue;
-      if (diff < -7) continue;
+      if (diff > activeDates.length - 1) continue;
+      if (diff < -(activeDates.length)) continue;
       // print(DateTime(date.year, date.month, date.day));
       // print(diff + (activeDates.length ~/ 2));
 

@@ -39,7 +39,7 @@ class ProjectRepositoryImpl extends ProjectRepository {
         return ProjectList(projects: null, data: json);
       } else {
         // return ProjectList(projects: List.empty(growable: true));
-        return _datasource.getProjectsFromDb() as ProjectList;
+        return _datasource.getProjectsFromDb();
       }
       // ignore: invalid_return_type_for_catch_error
     } catch (e) {

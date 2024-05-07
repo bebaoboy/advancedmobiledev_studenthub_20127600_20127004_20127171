@@ -9,6 +9,7 @@ import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:interpolator/interpolator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 import 'package:workmanager/workmanager.dart';
@@ -26,22 +27,16 @@ class WorkMangerHelper {
     receiveTimeout: Endpoints.receiveTimeout,
   );
 
-  static late final SharedPreferences _sharedPreferences;
   static final DioClient _dioClient = _initializeDioClient();
-  // static final ProjectApi _projectApi = _initializeProjectApi();
 
-  WorkMangerHelper._internal() {
-    SharedPreferences.getInstance().then((prefs) {
-      _sharedPreferences = prefs;
-    });
-  }
+  WorkMangerHelper._internal();
 
   static DioClient _initializeDioClient() {
     getIt
         .registerFactory(() => DioClient(dioConfigs: WorkMangerHelper.dioConfig)
           ..addInterceptors([
             AuthInterceptor(accessToken: () async {
-              return WorkMangerHelper._sharedPreferences
+              return (await SharedPreferences.getInstance())
                   .getString(Preferences.auth_token);
             }),
             LoggingInterceptor(),
@@ -49,18 +44,16 @@ class WorkMangerHelper {
     return getIt<DioClient>();
   }
 
-  // static ProjectApi _initializeProjectApi() {
-  //   return ProjectApi(WorkMangerHelper._dioClient);
-  // }
-
   // frequency
   static const Duration LOW_FREQUENCY = Duration(minutes: 120);
   static const Duration MEDIUM_FREQUENCY = Duration(minutes: 30);
   static const Duration NORMAL_FREQUENCY = Duration(minutes: 15);
   static const Duration HIGH_FREQUENCY = Duration(minutes: 5);
+  static const Duration SUPER_HIGH_FREQUENCY = Duration(seconds: 10);
 
   // delay
   static const Duration SHORT_DELAY = Duration(seconds: 10);
+  static const Duration MEDIUM_DELAY = Duration(minutes: 3);
   static const Duration LONG_DELAY = Duration(minutes: 30);
   static const Duration NO_DELAY = Duration(seconds: 0);
 
@@ -85,16 +78,75 @@ class WorkMangerHelper {
       WorkerTask.fetchNotification.name,
       tag: WorkerTask.fetchNotification.identifier,
       existingWorkPolicy: ExistingWorkPolicy.update,
-      initialDelay: SHORT_DELAY,
+      initialDelay: MEDIUM_DELAY,
       frequency: NORMAL_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,
       constraints: Constraints(
         networkType: NetworkType.connected,
-        requiresBatteryNotLow: true,
       ),
     );
   }
 
+  static Future<List<NotificationObject>> fetchRecentNotification() async {
+    try {
+      var sharePref = await SharedPreferences.getInstance();
+      var receiverId = sharePref.get(Preferences.current_user_id) ?? -1;
+      if (receiverId == -1) return [];
+      var response = await WorkMangerHelper._dioClient.dio
+          .get(Interpolator(Endpoints.getNoti)({"receiverId": receiverId}))
+          .onError((exception, stackTrace) {
+        print("exception: $exception \n$stackTrace");
+        return Response(
+          requestOptions: RequestOptions(data: "$exception \n$stackTrace"),
+          statusCode: 400,
+        );
+      });
+      if (response.statusCode == HttpStatus.accepted ||
+          response.statusCode == HttpStatus.ok ||
+          response.statusCode == HttpStatus.created) {
+        List data = response.data["result"];
+        List<NotificationObject> res = List.empty(growable: true);
+        for (var element in data) {
+          var lastRead = sharePref.getInt(Preferences.lastRead) ??
+              DateTime.now().millisecondsSinceEpoch;
+          var e = <String, dynamic>{
+            ...element,
+            'id': element['id'].toString(),
+            'title': element["title"].toString(),
+            "content": element["content"].toString(),
+            'messageContent': element["message"]['content'].toString(),
+            'type': element['typeNotifyFlag'],
+            'createdAt': DateTime.parse(element['createdAt']).toLocal(),
+            'receiver': {
+              "id": element['receiver']['id'].toString(),
+              "fullname": element['receiver']['fullName'].toString(),
+            },
+            'sender': {
+              "id": element['sender']['id'].toString(),
+              "fullname": element['sender']['fullname'].toString(),
+            },
+            'metadata': element["interview"] != null
+                ? <String, dynamic>{
+                    ...element["interview"],
+                    "meetingRoom": element["meetingRoom"]
+                  }
+                : null
+          };
+          var acm = NotificationObject.fromJson(e);
+          // res.add(acm);
+          if (lastRead <= acm.createdAt!.millisecondsSinceEpoch) res.add(acm);
+        }
+        await sharePref.setInt(
+            Preferences.lastRead, DateTime.now().millisecondsSinceEpoch);
+        return res;
+      } else {
+        print("fetch error ${response.data.toString()}");
+        return [];
+      }
+    } catch (e) {
+      print("fetch error $e");
+      return [];
+    }
   // static registerProjectFetch() async {
   //   Workmanager().registerPeriodicTask(
   //     WorkerTask.fetchProject.identifier,
@@ -108,95 +160,96 @@ class WorkMangerHelper {
   //   );
   // }
 
-  Future<List<NotificationObject>> fetchRecentNotification() async {
-    return [
-      NotificationObject(
-          type: NotificationType.proposal,
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "company 1",
-          ),
-          content: 'You have submitted to join project "Javis - AI Copilot',
-          createdAt: DateTime.now()),
-      NotificationObject(
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "company 1",
-          ),
-          type: NotificationType.joinInterview,
-          content:
-              'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-          createdAt: DateTime.now().subtract(const Duration(days: 7))),
-      OfferNotification(
-          projectId: "",
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "company 1",
-          ),
-          content: 'You have submitted to join project "Javis - AI Copilot',
-          createdAt: DateTime.now()),
-      NotificationObject(
-          type: NotificationType.message,
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "Alex Jor",
-          ),
-          content:
-              'I have read your requirement but I dont seem to...?\n6/6/2024',
-          createdAt: DateTime.now()),
-      NotificationObject(
-          type: NotificationType.message,
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "Alex Jor",
-          ),
-          content: 'Finish your project?',
-          createdAt: DateTime.now()),
-      NotificationObject(
-          type: NotificationType.message,
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "Alex Jor",
-          ),
-          content: 'How are you doing?',
-          createdAt: DateTime.now()),
-      OfferNotification(
-          projectId: "",
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "company 1",
-          ),
-          content: 'You have an offer to join project "HCMUS - Administration"',
-          createdAt: DateTime.now()),
-      OfferNotification(
-          projectId: "",
-          id: "",
-          receiver: StudentProfile(objectId: "", fullName: "student 1"),
-          sender: CompanyProfile(
-            objectId: "",
-            companyName: "company 1",
-          ),
-          content: 'You have an offer to join project "Quantum Physics"',
-          createdAt: DateTime.now()),
-    ];
+//   Future<List<NotificationObject>> fetchRecentNotification() async {
+//     return [
+//       NotificationObject(
+//           type: NotificationType.proposal,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have submitted to join project "Javis - AI Copilot',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           type: NotificationType.joinInterview,
+//           content:
+//               'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
+//           createdAt: DateTime.now().subtract(const Duration(days: 7))),
+//       OfferNotification(
+//           projectId: "",
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have submitted to join project "Javis - AI Copilot',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           type: NotificationType.message,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "Alex Jor",
+//           ),
+//           content:
+//               'I have read your requirement but I dont seem to...?\n6/6/2024',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           type: NotificationType.message,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "Alex Jor",
+//           ),
+//           content: 'Finish your project?',
+//           createdAt: DateTime.now()),
+//       NotificationObject(
+//           type: NotificationType.message,
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "Alex Jor",
+//           ),
+//           content: 'How are you doing?',
+//           createdAt: DateTime.now()),
+//       OfferNotification(
+//           projectId: "",
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have an offer to join project "HCMUS - Administration"',
+//           createdAt: DateTime.now()),
+//       OfferNotification(
+//           projectId: "",
+//           id: "",
+//           receiver: StudentProfile(objectId: "", fullName: "student 1"),
+//           sender: CompanyProfile(
+//             objectId: "",
+//             companyName: "company 1",
+//           ),
+//           content: 'You have an offer to join project "Quantum Physics"',
+//           createdAt: DateTime.now()),
+//     ];
   }
 
-  Future<bool> fetchProfile() async {
+  static Future<bool> fetchProfile() async {
     try {
+      var sharePref = await SharedPreferences.getInstance();
       var response = await WorkMangerHelper._dioClient.dio
           .get(Endpoints.getProfile)
           .onError((exception, stackTrace) {
@@ -227,11 +280,11 @@ class WorkMangerHelper {
         }
 
         if (companyProfile != null) {
-          await _sharedPreferences.setString(
+          await sharePref.setString(
               Preferences.company_profile, companyProfile.toJson());
         }
         if (studentProfile != null) {
-          await _sharedPreferences.setString(
+          await sharePref.setString(
               Preferences.student_profile, studentProfile.toJson());
         }
 

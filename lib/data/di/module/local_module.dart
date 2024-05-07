@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
 import 'package:boilerplate/data/local/constants/db_constants.dart';
+import 'package:boilerplate/data/local/datasources/chat/chat_datasource.dart';
 import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
 import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
@@ -37,5 +38,8 @@ mixin LocalModule {
 
     getIt.registerSingleton(
         ProjectDataSource(await getIt.getAsync<SembastClient>()));
+
+    getIt.registerSingleton(
+        ChatDataSource(await getIt.getAsync<SembastClient>()));
   }
 }

@@ -292,7 +292,10 @@ class NotificationObject extends MyObject {
         title = json['title'] ?? '',
         _type = NotificationType.values[int.tryParse(json['type']) ?? 0],
         metadata = json['metadata'],
-        super(createdAt: json["createdAt"]);
+        super(
+            createdAt: json["createdAt"] is DateTime
+                ? json["createdAt"]
+                : DateTime.tryParse(json["createdAt"]) ?? DateTime.now());
 
   String toJson() {
     return json.encode({
@@ -300,7 +303,7 @@ class NotificationObject extends MyObject {
       'title': title,
       "content": content,
       'messageContent': messageContent,
-      'type': type.index,
+      'type': type.index.toString(),
       'createdAt': createdAt.toString(),
       'receiver': {"id": receiver.objectId, "fullname": receiver.name},
       'sender': {"id": sender.objectId, "fullname": sender.name},
