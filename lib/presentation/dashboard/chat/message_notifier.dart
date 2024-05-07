@@ -19,9 +19,13 @@ class MessageNotifierProvider with ChangeNotifier {
   // final ChatUser user;
   final Project? project;
   final Function addInboxCb;
+  final Function updateInterviewCb;
   // final _sharePrefHelper = getIt<SharedPreferenceHelper>();
 
-  MessageNotifierProvider({required this.project, required this.addInboxCb})
+  MessageNotifierProvider(
+      {required this.project,
+      required this.addInboxCb,
+      required this.updateInterviewCb})
       : super() {
     initSocket(addInboxCb);
   }
@@ -83,10 +87,14 @@ class MessageNotifierProvider with ChangeNotifier {
 
     textSocketHandler.on('RECEIVE_INTERVIEW', (data) {
       print("receive interview socket ${project?.objectId} $data");
-      // if (data["notification"]["senderId"].toString() ==
-      //     userStore.user!.objectId) return;
 
-      // // print(data["notification"]['senderId'].toString());
+      if (data["notification"]["senderId"].toString() ==
+          userStore.user!.objectId) {
+        updateInterviewCb(data, inbox, true);
+        notiStore.addNofitication(data);
+      }
+
+      // print(data["notification"]['senderId'].toString());
       // var i = addInbox(data, inbox, true);
       // if (i != null) {
       //   // inbox.insert(0, i);
@@ -107,7 +115,8 @@ class MessageNotifierProvider with ChangeNotifier {
             userStore.user!.objectId) return;
 
         // print(data["notification"]['senderId'].toString());
-        var i = addInbox(data, inbox, data["notification"]?["message"]?["interview"] != null);
+        var i = addInbox(data, inbox,
+            data["notification"]?["message"]?["interview"] != null);
         if (i != null) {
           // inbox.insert(0, i);
         }

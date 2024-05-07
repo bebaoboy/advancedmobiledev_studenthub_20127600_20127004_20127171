@@ -2,6 +2,7 @@ import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat_emoji.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_pushnotifications.dart' hide isMobile;
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -523,6 +524,7 @@ class _MessageWidgetState extends State<MessageWidget> {
                       widget.onMessageLongPress?.call(context, widget.message),
                   onTap: () {
                     widget.onMessageTap?.call(context, widget.message);
+                    log("tap ${widget.message.id} ${widget.message}");
                     setState(() {
                       dateVisibility = !dateVisibility;
                     });

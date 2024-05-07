@@ -247,7 +247,9 @@ class _DashBoardTabState extends State<DashBoardTab>
                                   .toList(),
                               valueListenable: valueListenable,
                               onChanged: (ProjectStatusUI? value) {
-                                valueListenable.value = value;
+                                setState(() {
+                                  valueListenable.value = value;
+                                });
                               },
                               buttonStyleData: const ButtonStyleData(
                                 padding: EdgeInsets.symmetric(horizontal: 16),
@@ -415,8 +417,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         ? [
                             ...projectStore.companyProjects
                                 .where(
-                                  (element) =>
-                                      element.countProposals > 10,
+                                  (element) => element.countProposals > 10,
                                 )
                                 .toList()
                               ..sort(

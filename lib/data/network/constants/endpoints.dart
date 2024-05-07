@@ -1,5 +1,4 @@
 class Endpoints {
-
   Endpoints._();
 
   // base url
@@ -23,6 +22,8 @@ class Endpoints {
 
   /// để hiện lên tab message?
   static const String getMessageByProject = "$baseUrl/api/message/{projectId}";
+
+  static const String postMessage = "$baseUrl/api/message/sendMessage";
 
   /// all message of a chat
   static const String getMessageByProjectAndUser =
@@ -246,7 +247,8 @@ class Endpoints {
 
   static const String deleteInterview = "$baseUrl/api/interview/{interviewId}";
   static const String updateInterview = "$baseUrl/api/interview/{interviewId}";
-  static const String disableInterview = "$baseUrl/api/interview/{interviewId}/disable";
+  static const String disableInterview =
+      "$baseUrl/api/interview/{interviewId}/disable";
   static const String postInterview = "$baseUrl/api/interview";
 
   static const String checkAvail = "$baseUrl/meeting-room/check-availability";

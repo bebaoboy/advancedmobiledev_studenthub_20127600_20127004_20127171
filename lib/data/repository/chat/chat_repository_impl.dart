@@ -11,8 +11,10 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/repository/chat/chat_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/get_message_by_project_and_user.dart';
+import 'package:boilerplate/domain/usecase/chat/post_message.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:dio/dio.dart';
 
 class ChatRepositoryImpl extends ChatRepository {
   final ChatApi _chatApi;
@@ -52,8 +54,8 @@ class ChatRepositoryImpl extends ChatRepository {
           }
           list.sort(
             (a, b) => (a.messages != null && b.messages != null)
-                ? b.messages!.first.createdAt!
-                    .compareTo(a.messages!.first.createdAt!)
+                ? b.messages!.first.updatedAt!
+                    .compareTo(a.messages!.first.updatedAt!)
                 : 0,
           );
 
@@ -89,11 +91,14 @@ class ChatRepositoryImpl extends ChatRepository {
                 'text': element['content'],
                 'status': 'seen',
                 'interview': element['interview'] ?? {},
-                'createdAt':
-                    DateTime.parse((element['interview'] ?? element)['createdAt']).millisecondsSinceEpoch,
-                'updatedAt':
-                    DateTime.parse((element['interview'] ?? element)['updatedAt'] ?? element['createdAt'])
-                        .millisecondsSinceEpoch,
+                'createdAt': DateTime.parse(
+                        (element['interview'] ?? element)['updatedAt'] ??
+                            element['createdAt'])
+                    .millisecondsSinceEpoch,
+                'updatedAt': DateTime.parse(
+                        (element['interview'] ?? element)['updatedAt'] ??
+                            element['createdAt'])
+                    .millisecondsSinceEpoch,
                 'author': {
                   "firstName": element['sender']['fullname'],
                   "id": element['sender']['id'].toString(),
@@ -124,5 +129,11 @@ class ChatRepositoryImpl extends ChatRepository {
       // return _datasource.getProjectsFromDb();
       return [];
     }
+  }
+
+  @override
+  Future<Response> postMessage(PostMessageParams params) async {
+    var response = _chatApi.postMessage(params);
+    return response;
   }
 }
