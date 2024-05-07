@@ -10,14 +10,14 @@ on:
       - phasing4
       - sprint8-chat
       - sprint8
-      - sprint9
+      - sprint10*
 
   push:
     branches:
       - test
       - sprintdev
       - sprint8-chat
-      - sprint9*
+      - sprint10*
 
 jobs:
   build:
