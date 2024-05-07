@@ -17,7 +17,9 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
@@ -122,7 +124,7 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
   Widget _buildAccountTree() {
     if (height == 0) calculate(accountList);
     return AnimatedContainer(
-      height: max(MediaQuery.of(context).size.height * 0.3,
+      height: max(MediaQuery.of(context).size.height * 0.15,
           min(height, MediaQuery.of(context).size.height * 0.5)),
       duration: const Duration(milliseconds: 550),
       curve: Curves.fastOutSlowIn,
@@ -416,130 +418,130 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Flexible(fit: FlexFit.loose, child: _buildAccountTree()),
-            const Divider(
-              height: 3,
-            ),
             const SizedBox(
               height: 20,
             ),
-            ListTile(
-                onTap: () async {
-                  //int n = Random().nextInt(3);
-                  // if (_userStore.user != null &&
-                  //     _userStore.user!.type != UserType.naught) {
-                  //   if (_userStore.user!.type == UserType.company) {
-                  //     if (_userStore.user!.companyProfile == null) {
-                  //       showAnimatedDialog(
-                  //         context: context,
-                  //         barrierDismissible: true,
-                  //         builder: (BuildContext context) {
-                  //           return ClassicGeneralDialogWidget(
-                  //             contentText:
-                  //                 'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                  //             negativeText: Lang.get('cancel'),
-                  //             positiveText: 'Yes',
-                  //             onPositiveClick: () {
-                  //               Navigator.of(context).pop();
+            Visibility(
+              visible: _userStore.isLoggedIn,
+              child: ListTile(
+                  onTap: () async {
+                    //int n = Random().nextInt(3);
+                    // if (_userStore.user != null &&
+                    //     _userStore.user!.type != UserType.naught) {
+                    //   if (_userStore.user!.type == UserType.company) {
+                    //     if (_userStore.user!.companyProfile == null) {
+                    //       showAnimatedDialog(
+                    //         context: context,
+                    //         barrierDismissible: true,
+                    //         builder: (BuildContext context) {
+                    //           return ClassicGeneralDialogWidget(
+                    //             contentText:
+                    //                 'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
+                    //             negativeText: Lang.get('cancel'),
+                    //             positiveText: 'Yes',
+                    //             onPositiveClick: () {
+                    //               Navigator.of(context).pop();
 
-                  //               Navigator.of(context).push(MaterialPageRoute2(
-                  //                   routeName: Routes.profile));
-                  //               return;
-                  //             },
-                  //             onNegativeClick: () {
-                  //               Navigator.of(context).pop();
-                  //             },
-                  //           );
-                  //         },
-                  //         animationType: DialogTransitionType.size,
-                  //         curve: Curves.fastOutSlowIn,
-                  //         duration: const Duration(seconds: 1),
-                  //       );
-                  //     } else {
-                  //       navigate(
-                  //           context,
-                  //           _userStore.user != null &&
-                  //                   _userStore.user!.type == UserType.company
-                  //               ? Routes.viewProfileCompany
-                  //               : Routes.viewProfileStudent);
-                  //     }
-                  //   } else {
-                  //     if (_userStore.user!.studentProfile == null) {
-                  //       showAnimatedDialog(
-                  //         context: context,
-                  //         barrierDismissible: true,
-                  //         builder: (BuildContext ctx) {
-                  //           return ClassicGeneralDialogWidget(
-                  //             contentText:
-                  //                 'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                  //             negativeText: Lang.get('cancel'),
-                  //             positiveText: 'Yes',
-                  //             onPositiveClick: () async {
-                  //               Navigator.of(ctx).pop();
-                  //               final ProfileStudentStore infoStore =
-                  //                   getIt<ProfileStudentStore>();
+                    //               Navigator.of(context).push(MaterialPageRoute2(
+                    //                   routeName: Routes.profile));
+                    //               return;
+                    //             },
+                    //             onNegativeClick: () {
+                    //               Navigator.of(context).pop();
+                    //             },
+                    //           );
+                    //         },
+                    //         animationType: DialogTransitionType.size,
+                    //         curve: Curves.fastOutSlowIn,
+                    //         duration: const Duration(seconds: 1),
+                    //       );
+                    //     } else {
+                    //       navigate(
+                    //           context,
+                    //           _userStore.user != null &&
+                    //                   _userStore.user!.type == UserType.company
+                    //               ? Routes.viewProfileCompany
+                    //               : Routes.viewProfileStudent);
+                    //     }
+                    //   } else {
+                    //     if (_userStore.user!.studentProfile == null) {
+                    //       showAnimatedDialog(
+                    //         context: context,
+                    //         barrierDismissible: true,
+                    //         builder: (BuildContext ctx) {
+                    //           return ClassicGeneralDialogWidget(
+                    //             contentText:
+                    //                 'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
+                    //             negativeText: Lang.get('cancel'),
+                    //             positiveText: 'Yes',
+                    //             onPositiveClick: () async {
+                    //               Navigator.of(ctx).pop();
+                    //               final ProfileStudentStore infoStore =
+                    //                   getIt<ProfileStudentStore>();
 
-                  //               await infoStore.getTechStack();
-                  //               await infoStore.getSkillset();
+                    //               await infoStore.getTechStack();
+                    //               await infoStore.getSkillset();
 
-                  //               Navigator.of(context).push(MaterialPageRoute2(
-                  //                   routeName: Routes.profileStudent));
-                  //               return;
-                  //             },
-                  //             onNegativeClick: () {
-                  //               Navigator.of(context).pop();
-                  //             },
-                  //           );
-                  //         },
-                  //         animationType: DialogTransitionType.size,
-                  //         curve: Curves.fastOutSlowIn,
-                  //         duration: const Duration(seconds: 1),
-                  //       );
-                  //     } else {
-                  //       try {
-                  //         setState(() {
-                  //           loading = true;
-                  //         });
-                  //       } catch (e) {
-                  //         loading = true;
-                  //       }
+                    //               Navigator.of(context).push(MaterialPageRoute2(
+                    //                   routeName: Routes.profileStudent));
+                    //               return;
+                    //             },
+                    //             onNegativeClick: () {
+                    //               Navigator.of(context).pop();
+                    //             },
+                    //           );
+                    //         },
+                    //         animationType: DialogTransitionType.size,
+                    //         curve: Curves.fastOutSlowIn,
+                    //         duration: const Duration(seconds: 1),
+                    //       );
+                    //     } else {
+                    //       try {
+                    //         setState(() {
+                    //           loading = true;
+                    //         });
+                    //       } catch (e) {
+                    //         loading = true;
+                    //       }
 
-                  //       if (_userStore.user != null &&
-                  //           _userStore.user!.studentProfile != null &&
-                  //           _userStore.user!.studentProfile!.objectId != null) {
-                  //         final ProfileStudentStore infoStore =
-                  //             getIt<ProfileStudentStore>();
+                    //       if (_userStore.user != null &&
+                    //           _userStore.user!.studentProfile != null &&
+                    //           _userStore.user!.studentProfile!.objectId != null) {
+                    //         final ProfileStudentStore infoStore =
+                    //             getIt<ProfileStudentStore>();
 
-                  //         infoStore.setStudentId(
-                  //             _userStore.user!.studentProfile!.objectId!);
-                  //         await infoStore.getInfo().then(
-                  //               (value) {},
-                  //             );
-                  //         final ProfileStudentFormStore formStore =
-                  //             getIt<ProfileStudentFormStore>();
-                  //         await formStore.getProfileStudent(
-                  //             _userStore.user!.studentProfile!.objectId!);
-                  //       }
-                  //       try {
-                  //         setState(() {
-                  //           loading = false;
-                  //         });
-                  //         navigate(
-                  //             context,
-                  //             _userStore.user != null &&
-                  //                     _userStore.user!.type == UserType.company
-                  //                 ? Routes.viewProfileCompany
-                  //                 : Routes.viewProfileStudent);
-                  //       } catch (e) {
-                  //         loading = false;
-                  //       }
-                  //     }
-                  //   }
-                  // }
-                },
-                leading: const Icon(Icons.person),
-                title: Text(
-                  Lang.get('profile_text'),
-                )),
+                    //         infoStore.setStudentId(
+                    //             _userStore.user!.studentProfile!.objectId!);
+                    //         await infoStore.getInfo().then(
+                    //               (value) {},
+                    //             );
+                    //         final ProfileStudentFormStore formStore =
+                    //             getIt<ProfileStudentFormStore>();
+                    //         await formStore.getProfileStudent(
+                    //             _userStore.user!.studentProfile!.objectId!);
+                    //       }
+                    //       try {
+                    //         setState(() {
+                    //           loading = false;
+                    //         });
+                    //         navigate(
+                    //             context,
+                    //             _userStore.user != null &&
+                    //                     _userStore.user!.type == UserType.company
+                    //                 ? Routes.viewProfileCompany
+                    //                 : Routes.viewProfileStudent);
+                    //       } catch (e) {
+                    //         loading = false;
+                    //       }
+                    //     }
+                    //   }
+                    // }
+                  },
+                  leading: const Icon(Icons.person),
+                  title: Text(
+                    Lang.get('profile_text'),
+                  )),
+            ),
             const Divider(
               height: 3,
             ),
@@ -579,36 +581,39 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                 title: Text(
                   Lang.get('about'),
                 )),
-            ListTile(
-                onTap: () {
-                  showAnimatedDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context) {
-                      return ClassicGeneralDialogWidget(
-                        contentText: Lang.get("logout_confirm"),
-                        negativeText: Lang.get('cancel'),
-                        positiveText: 'OK',
-                        onPositiveClick: () {
-                          _userStore.logout();
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute2(routeName: Routes.login),
-                              (Route<dynamic> route) => false);
-                        },
-                        onNegativeClick: () {
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    },
-                    animationType: DialogTransitionType.size,
-                    curve: Curves.fastOutSlowIn,
-                    duration: const Duration(seconds: 1),
-                  );
-                },
-                leading: const Icon(Icons.logout),
-                title: Text(
-                  Lang.get('logout'),
-                )),
+            Visibility(
+              visible: _userStore.isLoggedIn,
+              child: ListTile(
+                  onTap: () {
+                    showAnimatedDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return ClassicGeneralDialogWidget(
+                          contentText: Lang.get("logout_confirm"),
+                          negativeText: Lang.get('cancel'),
+                          positiveText: 'OK',
+                          onPositiveClick: () {
+                            _userStore.logout();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute2(routeName: Routes.login),
+                                (Route<dynamic> route) => false);
+                          },
+                          onNegativeClick: () {
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                      animationType: DialogTransitionType.size,
+                      curve: Curves.fastOutSlowIn,
+                      duration: const Duration(seconds: 1),
+                    );
+                  },
+                  leading: const Icon(Icons.logout),
+                  title: Text(
+                    Lang.get('logout'),
+                  )),
+            ),
           ],
         ),
       ),
@@ -617,8 +622,8 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
 
   Widget navigate(BuildContext context, String route) {
     Future.delayed(const Duration(milliseconds: 0), () {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute2(routeName: route));
+      Navigator.of(context)
+          .pushReplacement(MaterialPageRoute2(routeName: route));
     });
 
     return Container();

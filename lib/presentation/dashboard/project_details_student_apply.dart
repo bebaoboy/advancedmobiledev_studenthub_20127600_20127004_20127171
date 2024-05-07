@@ -52,7 +52,7 @@ class _ProjectDetailsStudentApplyScreenState
   Widget _buildFourContent() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(6.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,14 +205,14 @@ class _ProjectDetailsStudentApplyScreenState
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor:
-                          Theme.of(context).colorScheme.primaryContainer,
+                          Theme.of(context).colorScheme.onBackground,
                       surfaceTintColor: Colors.transparent,
                       minimumSize: Size(
                           MediaQuery.of(context).size.width / 2 - 48,
                           40), // NEW
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(3),
-                      ),
+                          borderRadius: BorderRadius.circular(3),
+                          side: const BorderSide(color: Colors.black)),
                     ),
                     onPressed: () {
                       Navigator.of(context).pushNamed(Routes.submitProposal,
@@ -222,7 +222,7 @@ class _ProjectDetailsStudentApplyScreenState
                       Lang.get('save'),
                       style: Theme.of(context).textTheme.bodyMedium!.merge(
                           TextStyle(
-                              color: Theme.of(context).colorScheme.secondary)),
+                              color: Theme.of(context).colorScheme.onSurface)),
                     ),
                   ),
                   if (!hasAlreadyApplied)

@@ -34,6 +34,8 @@ class ProjectDetailsPage extends StatefulWidget {
 }
 
 class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
+  late List<Proposal>? hiredList;
+  late List<Proposal>? messageList;
   @override
   void initState() {
     super.initState();
@@ -56,6 +58,16 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
             arguments: widget.project));
       });
     }
+
+    hiredList = widget.project.proposal
+        ?.where(
+          (element) => element.hiredStatus == HireStatus.hired,
+        )
+        .toList();
+    messageList = widget.project.proposal?.where((element) {
+      return element.hiredStatus == HireStatus.pending ||
+          element.hiredStatus == HireStatus.offer;
+    }).toList();
   }
 
   final _updateStore = getIt<UpdateProjectFormStore>();
@@ -93,7 +105,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   visible: widget.project.countNewProposals > 0,
                   child: GestureDetector(
                     onTap: () {
-                      
                       _projectStore.currentProps =
                           ProposalList(proposals: widget.project.proposal);
                       Navigator.of(context).push(MaterialPageRoute2(
@@ -143,16 +154,11 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                   // SegmentTab(label: 'Proposals'),
                   const SegmentTab(label: 'Detail'),
                   SegmentTab(
-                      label: 'Message (${widget.project.proposal?.where(
-                            (element) =>
-                                element.hiredStatus == HireStatus.pending ||
-                                element.hiredStatus == HireStatus.offer,
-                          ).length})'),
+                      label:
+                          'Message ${messageList == null || messageList!.isEmpty ? '' : '(${messageList!.length})'}'),
                   SegmentTab(
-                      label: 'Hired  (${widget.project.proposal?.where(
-                            (element) =>
-                                element.hiredStatus == HireStatus.hired,
-                          ).length})'),
+                      label:
+                          'Hired ${hiredList == null || hiredList!.isEmpty ? '' : '(${hiredList!.length})'}'),
                 ],
               ),
               Padding(
@@ -166,18 +172,10 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         project: widget.project,
                       ),
                       MessageTabLayout(
-                        messages: widget.project.proposal == null
-                            ? []
-                            : widget.project.proposal!
-                                .where(
-                                  (element) =>
-                                      element.hiredStatus ==
-                                          HireStatus.pending ||
-                                      element.hiredStatus == HireStatus.offer,
-                                )
-                                .toList()
-                          ..sort((a, b) => b.hiredStatus.index
-                              .compareTo(a.hiredStatus.index)),
+                        messages:
+                            widget.project.proposal == null ? [] : messageList!
+                              ..sort((a, b) => b.hiredStatus.index
+                                  .compareTo(a.hiredStatus.index)),
                         onHired: (Proposal p) {
                           p.hiredStatus = HireStatus.offer;
                           _projectStore
@@ -194,14 +192,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                         project: widget.project,
                       ),
                       HiredTabLayout(
-                        hired: widget.project.proposal == null
-                            ? []
-                            : widget.project.proposal!
-                                .where(
-                                  (element) =>
-                                      element.hiredStatus == HireStatus.hired,
-                                )
-                                .toList(),
+                        hired: widget.project.proposal == null ? [] : hiredList,
                         project: widget.project,
                       ),
                     ],
@@ -215,32 +206,6 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
     );
   }
 }
-
-// class ProposalTabLayout extends StatelessWidget {
-//   final List<Proposal>? proposals;
-//   final Project project;
-
-//   const ProposalTabLayout(
-//       {super.key, required this.proposals, required this.onHired});
-//   final Function? onHired;
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return (proposals?.length ?? 0) == 0
-//         ? Center(child: Text(Lang.get("nothing_here")))
-//         : ListView.builder(
-//             controller: ScrollController(),
-//             itemCount: proposals?.length ?? 0,
-//             itemBuilder: (context, index) {
-//               return ProposalItem(
-//                   project: project,
-//                   proposal: proposals![index],
-//                   // pending: false,
-//                   onHired: () => onHired!(index));
-//             },
-//           );
-//   }
-// }
 
 // ignore: must_be_immutable
 class DetailTabLayout extends StatefulWidget {

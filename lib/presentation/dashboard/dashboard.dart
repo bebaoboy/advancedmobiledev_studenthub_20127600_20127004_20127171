@@ -32,7 +32,6 @@ class DashBoardScreen extends StatefulWidget {
 
 class _DashBoardScreenState extends State<DashBoardScreen>
     with SingleTickerProviderStateMixin {
-
   final UserStore _userStore = getIt<UserStore>();
   final _chatStore = getIt<ChatStore>();
   late List<ScrollController> sc;
@@ -106,33 +105,19 @@ class _DashBoardScreenState extends State<DashBoardScreen>
     super.initState();
   }
 
-  // void changePage(int newPage) {
-  //   setState(() {
-  //     currentPage = newPage;
-  //   });
-  // }
-
-  // void _onItemTapped(int index) {
-  //   setState(() {
-  //     _selectedIndex = index;
-  //   });
-  // }
-
   List<NavbarItem> items = [];
   List<Map<String, Widget>> _routes = [];
   DateTime oldTime = DateTime.now();
   final _pageController2 = IndexController();
   final _pageController = PageController(initialPage: 2);
   final LanguageStore _languageStore = getIt<LanguageStore>();
-  // late int currentPage;
-  // late TabController tabController;
 
   initItems() {
     items = [
       NavbarItem(
         Icons.business,
         'Projects',
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       NavbarItem(
         Icons.dashboard,
@@ -142,12 +127,12 @@ class _DashBoardScreenState extends State<DashBoardScreen>
       NavbarItem(
         Icons.message,
         Lang.get('Dashboard_message'),
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       NavbarItem(
         Icons.notifications,
         Lang.get('Dashboard_alert'),
-        backgroundColor: Theme.of(context).colorScheme.onSecondary,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
     ];
   }
@@ -155,20 +140,14 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   @override
   Widget build(BuildContext context) {
     print('check ${_userStore.user!.email} ${_userStore.user!.type.name}');
-    // if (items.isEmpty || lastLocale != _languageStore.locale) {
     initItems();
-    // print("change locale" + lastLocale);
-    // lastLocale = _languageStore.locale;
-    // }
-// final Color unselectedColor = colors[currentPage].computeLuminance() < 0.5
-    //     ? Colors.black
-    //     : Colors.white;
+
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: _buildAppBar(),
       body: NavbarRouter2(
         pageController: _pageController2,
-        initialIndex: 3,
+        initialIndex: 1,
         backButtonBehavior: BackButtonBehavior.rememberHistory,
         errorBuilder: (context) {
           return Center(
@@ -178,6 +157,17 @@ class _DashBoardScreenState extends State<DashBoardScreen>
         },
         isDesktop: MediaQuery.of(context).size.width > 600 ? true : false,
         decoration: NavbarDecoration(
+            selectedIconColor: Theme.of(context).colorScheme.onSurface,
+            backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+            indicatorColor: Colors.blue,
+            margin: const EdgeInsets.all(8.0),
+            showUnselectedLabels: true,
+            indicatorShape: BeveledRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+                side: const BorderSide(
+                    color: Colors.transparent,
+                    style: BorderStyle.none,
+                    width: 1)),
             isExtended: MediaQuery.of(context).size.width > 800 ? true : false,
             navbarType: BottomNavigationBarType.shifting),
         onCurrentTabClicked: () {
@@ -197,7 +187,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           });
         },
         onChanged: (p0) {
-          // setState(() {});
           NavbarNotifier2.hideBottomNavBar = false;
         },
         onBackButtonPressed: (isExiting) {

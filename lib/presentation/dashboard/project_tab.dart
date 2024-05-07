@@ -447,7 +447,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                                       (Random().nextDouble() + 0.1)
                                           .clamp(0, 1)),
                                   curve: Curves.fastOutSlowIn))),
-                          // opacity: animation,
                           child: ProjectItem2(
                               keyword: widget.keyword,
                               loadingDelay: index,
@@ -457,14 +456,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                               project: item,
                               onFavoriteTap: (id) {
                                 widget.favoriteCallback(id);
-                                // var p = (widget.searchList).firstWhereOrNull(
-                                //   (element) => element.objectId == id,
-                                // );
-                                // setState(() {
-                                //   p?.isFavorite = p.isFavorite;
-                                // });
-                                // _projectStore.projects[i].isFavorite =
-                                //     !_projectStore.projects[i].isFavorite;
                               }));
                     },
 
@@ -484,25 +475,8 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
                               },
                               onFavoriteTap: (id) {
                                 widget.favoriteCallback(id);
-                                // var p = (widget.searchList).firstWhereOrNull(
-                                //   (element) => element.objectId == id,
-                                // );
-                                // setState(() {
-                                //   p?.isFavorite = !p.isFavorite;
-                                // });
-                                // // _projectStore.projects[i].isFavorite =
-                                //     !_projectStore.projects[i].isFavorite;
                               }));
                     })
-                // LazyLoadingAnimationProjectList(
-                //     scrollController: ScrollController(),
-                //     itemHeight: MediaQuery.of(context).size.height * 0.3,
-                //     list: widget.searchList,
-                //     skipItemLoading: true,
-                //     firstCallback: (id) {
-                //       widget.favoriteCallback(id);
-                //     },
-                //   )
                 : Center(child: Text(Lang.get("nothing_here"))),
           ),
         ),
@@ -576,16 +550,6 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Flexible(
-              //   fit: FlexFit.tight,
-              //   child: TextButton(
-              //     onPressed: () {
-              //       widget.onSheetDismissed();
-              //     },
-              //     child:  Text(Lang.get('Cancel'),
-              //   ),
-              // ),
-              //  SizedBox(width: 16),
               RoundedButtonWidget(
                 buttonColor: Theme.of(context).colorScheme.primary,
                 onPressed: () {
@@ -770,16 +734,7 @@ class _ProjectTabState extends State<ProjectTab> {
 
             return true;
           },
-          onFilterTap: () async {
-            // await showFilterBottomSheet(context).then((value) {
-            //   if (value != null) {
-            //     setState(() {
-            //       filter = value;
-            //     });
-            //     NavbarNotifier2.popRoute(Navigator.currentIndex);
-            //   }
-            // });
-          },
+          onFilterTap: () async {},
         ),
       ),
     ).then((value) {
@@ -843,8 +798,6 @@ class _ProjectTabState extends State<ProjectTab> {
                     setState(() {
                       keyword = project;
                       NavbarNotifier2.hideBottomNavBar = true;
-                      // yOffset =
-                      //     -(MediaQuery.of(context).size.height) * 0.05 + 45;
                     });
                     if (project.trim().isNotEmpty) {
                       searchHistory.add(project.trim());
@@ -852,23 +805,12 @@ class _ProjectTabState extends State<ProjectTab> {
                     saveSearchHistory(searchHistory);
                     await showSearchBottomSheet(context);
                   },
-                  // initialText:
-                  // readOnly:
                   searchTextEditingController: controller,
                   onSuggestionCallback: (pattern) {
                     if (pattern.isEmpty) return searchHistory.toList();
                     return Future<List<String>>.delayed(
                       const Duration(milliseconds: 300),
-                      () =>
-                          // _projectStore.projects.where((product) {
-                          //   final nameLower =
-                          //       product.title.toLowerCase().split(' ').join('');
-                          //   //print(nameLower);
-                          //   final patternLower =
-                          //       pattern.toLowerCase().split(' ').join('');
-                          //   return nameLower.contains(patternLower);
-                          // }).toList(),
-                          searchHistory.where(
+                      () => searchHistory.where(
                         (element) {
                           return element
                               .trim()
@@ -890,7 +832,6 @@ class _ProjectTabState extends State<ProjectTab> {
                         saveSearchHistory(searchHistory);
                       },
                     ),
-                    // subtitle: Text(project.description),
                   ),
                 ),
                 Positioned(
@@ -900,8 +841,6 @@ class _ProjectTabState extends State<ProjectTab> {
                       onPressed: () async {
                         setState(() {
                           NavbarNotifier2.hideBottomNavBar = true;
-                          // yOffset =
-                          // -(MediaQuery.of(context).size.height) * 0.05 + 45;
                         });
                         await showFilterBottomSheet(context).then((value) {
                           NavbarNotifier2.hideBottomNavBar = false;
@@ -941,15 +880,6 @@ class _ProjectTabState extends State<ProjectTab> {
                 ),
               ],
             )),
-        // Flexible(
-        //   child: ListView.builder(
-        //     itemCount: _projectStore.projects.length,
-        //     itemBuilder: (context, index) => ProjectItem(
-        //       project: _projectStore.projects[index],
-        //       isFavorite: index % 2 == 0 ? true : false,
-        //     ),
-        //   ),
-        // ),
         const SizedBox(
           height: 100,
         ),
@@ -995,43 +925,39 @@ class _ProjectTabState extends State<ProjectTab> {
             hintText: "Company id",
             items: _list,
             headerBuilder: (context, selectedItem) => Text(
-              
-                (_userStore.user != null &&
-                            _userStore.user!.companyProfile != null &&
-                            _userStore.user!.companyProfile!.objectId ==
-                                selectedItem
-                        ? "(You) "
-                        : selectedItem.isEmpty ? "(You)" : "") +
-                    selectedItem, textAlign: TextAlign.right,),
+              (_userStore.user != null &&
+                          _userStore.user!.companyProfile != null &&
+                          _userStore.user!.companyProfile!.objectId ==
+                              selectedItem
+                      ? "(You) "
+                      : selectedItem.isEmpty
+                          ? "(You)"
+                          : "") +
+                  selectedItem,
+              textAlign: TextAlign.right,
+            ),
             listItemBuilder: (context, item, isSelected, onItemSelect) {
               return SizedBox(
                 height: 30,
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Icon(item.icon),
-                    // const SizedBox(
-                    //   width: 20,
-                    // ),
                     Text(
-                      (_userStore.companyId == item || item.isEmpty ? "(You) " : "") + item,
+                      (_userStore.companyId == item || item.isEmpty
+                              ? "(You) "
+                              : "") +
+                          item,
                       style: isSelected
                           ? const TextStyle(fontWeight: FontWeight.bold)
                           : null,
                       textAlign: TextAlign.start,
                     ),
-                    // const Spacer(),
-                    // Checkbox(
-                    //   value: isSelected,
-                    //   onChanged: (value) => value = isSelected,
-                    // )
                   ],
                 ),
               );
             },
           ),
         ),
-
         Container(
             margin: const EdgeInsets.only(top: 100),
             child: FutureBuilder<ProjectList>(

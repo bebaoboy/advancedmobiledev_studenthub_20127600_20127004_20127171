@@ -344,9 +344,11 @@ class Singapore extends State<MessageTab> {
                 return const LoadingScreenWidget();
               }
             }),
+        // ToDo: implement search chat
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: TextField(
+            onSubmitted: (value) => print(value),
             decoration: InputDecoration(
               hintText:
                   "${Lang.get("search")} ${chatStore.messages.length} people",

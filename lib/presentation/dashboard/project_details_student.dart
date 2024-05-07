@@ -32,7 +32,6 @@ class _ProjectDetailsStudentScreenState
     super.initState();
     updatedText =
         "Updated at ${DateFormat("HH:mm dd-MM-yyyy").format((widget.project.updatedAt ?? widget.project.createdAt ?? DateTime.now()).toLocal())}";
-
   }
 
   @override
@@ -48,23 +47,6 @@ class _ProjectDetailsStudentScreenState
   }
 
   Widget _buildBody() {
-//     return Stack(
-//       // mainAxisSize: MainAxisSize.min,
-//       // crossAxisAlignment: CrossAxisAlignment.start,
-//       // mainAxisAlignment: MainAxisAlignment.center,
-//       children: <Widget>[
-//         Positioned.fill(
-//           child: Column(
-//             children: [
-//               SizedBox(
-//                 height: MediaQuery.of(context).size.height * 0.8,
-//                 child: SingleChildScrollView(
-//                   child: Column(
-//                     children: [
-//                       const SizedBox(
-//                         height: 20,
-// =======
-//   Widget _buildFourContent() {
     return SingleChildScrollView(
       controller: ScrollController(),
       child: Padding(

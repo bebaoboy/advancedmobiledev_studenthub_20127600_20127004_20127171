@@ -74,13 +74,7 @@ class _MessageScreenState extends State<MessageScreen> {
   void initState() {
     super.initState();
     print("init msg receive");
-    // print(widget.chatObject.messages);
-    // filter = InterviewSchedule(
-    // endDate: DateTime.now(), startDate: DateTime.now(), title: "");
-
     _user = widget.chatObject.chatUser;
-    // Chat.user = ChatUser(
-    //     id: userStore.user!.objectId!, firstName: userStore.user!.name);
 
     _currentUserType = userStore.getCurrentType();
     var p = chatStore.messages.firstWhereOrNull(
@@ -99,27 +93,27 @@ class _MessageScreenState extends State<MessageScreen> {
     assert(msgnf != null);
     messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
-    timer = Timer.periodic(const Duration(seconds: 3), (t) {
-      Random r = Random();
-      var num = r.nextInt(60);
-      // print(num);
-      if (num <= 7) {
-        typings = [
-          const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
-        ];
-      } else if (num > 7 && num < 15) {
-        typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
-      } else if (num > 15 && num <= 20) {
-        typings.add(
-            const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
-      } else if (num < 25) {
-        typings
-            .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
-      } else {
-        typings.clear();
-      }
-      setState(() {});
-    });
+    // timer = Timer.periodic(const Duration(seconds: 3), (t) {
+    //   Random r = Random();
+    //   var num = r.nextInt(60);
+    //   // print(num);
+    //   if (num <= 7) {
+    //     typings = [
+    //       const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
+    //     ];
+    //   } else if (num > 7 && num < 15) {
+    //     typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
+    //   } else if (num > 15 && num <= 20) {
+    //     typings.add(
+    //         const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
+    //   } else if (num < 25) {
+    //     typings
+    //         .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+    //   } else {
+    //     typings.clear();
+    //   }
+    //   setState(() {});
+    // });
 
     initScreen();
   }
@@ -155,8 +149,6 @@ class _MessageScreenState extends State<MessageScreen> {
       chatStore.insertMessage(widget.chatObject.chatUser,
           widget.chatObject.project!, textMessage, true,
           incoming: true);
-
-      //chatStore.getAllChat();
     }
   }
 
@@ -165,8 +157,6 @@ class _MessageScreenState extends State<MessageScreen> {
     super.dispose();
     timer?.cancel();
     messageNotifier.removeListener(_messageNotifierListener);
-    // messageNotifier.dispose();
-    // chatStore.currentProjectMessages.clear();
   }
 
   void updateMessageReactions(MessageReaction reaction, String id,
@@ -289,9 +279,7 @@ class _MessageScreenState extends State<MessageScreen> {
           },
           scheduleMessageBuilder: (p0, {required messageWidth}) {
             var t = InterviewSchedule.fromJsonApi(p0.metadata!);
-            // print(t);
-            // print(messageWidth);
-            // print(t.objectId);
+
             return ScheduleMessage(
                 user: widget.chatObject.chatUser,
                 onMenuCallback: (scheduleFilter) async {
@@ -708,14 +696,6 @@ class _MessageScreenState extends State<MessageScreen> {
     ).then((value) {
       if (flt == null) {
         if (value != null) {
-          // chatStore
-          //     .scheduleInterview(
-          //         startTime: value.startDate,
-          //         endTime: value.endDate,
-          //         title: value.title.trim().toTitleCase(),
-          //         projectId: int.parse(widget.chatObject.project!.objectId!))
-          //     .then((value1) {
-          //   if (value1) {
           value.meetingRoomCode =
               "code-${widget.chatObject.project!.objectId!}-${userStore.user!.objectId!}-${_user.id}-${const Uuid().v4()}";
           value.meetingRoomId =
@@ -733,7 +713,6 @@ class _MessageScreenState extends State<MessageScreen> {
               "meeting_room_id": value.meetingRoomId,
             }
           };
-          // print(ms);
 
           messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", ms);
           chatStore.scheduleInterview(
@@ -778,11 +757,8 @@ class _MessageScreenState extends State<MessageScreen> {
           Toastify.show(context, '', "Schedule interview fail",
               ToastificationType.error, () {});
         }
-        // });
 
-        // print(filter);
         return value;
-        // }
       } else {
         if (value != null) {
 //           value.meetingRoomCode = const Uuid().v1();

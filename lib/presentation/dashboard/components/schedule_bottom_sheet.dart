@@ -35,9 +35,11 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             title: "Null meeting");
     title.text = widget.filter?.title ?? '';
     startDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.startDate.toLocal())).toString();
+        (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.startDate.toLocal()))
+            .toString();
     endDate.text =
-        (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.endDate.toLocal())).toString();
+        (DateFormat("EEEE dd/MM/yyyy HH:mm").format(itv.endDate.toLocal()))
+            .toString();
   }
 
   Future<DateTime?> showDateTimePicker({
@@ -209,24 +211,9 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 textController: null,
                                 inputAction: TextInputAction.next,
                                 autoFocus: false,
-                                onChanged: (value) {
-                                  //_projects[index].proficiency = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
-                                },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
-                                errorText: null
-                                // _formStore
-                                //             .formErrorStore.userEmail ==
-                                //         null
-                                //     ? null
-                                //     : AppLocalizations.of(context).get(
-                                //         _formStore.formErrorStore.userEmail),
-                                ),
+                                onChanged: (value) {},
+                                onFieldSubmitted: (value) {},
+                                errorText: null),
                           ),
                         ],
                       ),
@@ -316,22 +303,13 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 inputAction: TextInputAction.next,
                                 autoFocus: false,
                                 onChanged: (value) {
-                                  //_projects[index].proficiency = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
+                                  
                                 },
                                 onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
+                                  
                                 },
                                 errorText: null
-                                // _formStore
-                                //             .formErrorStore.userEmail ==
-                                //         null
-                                //     ? null
-                                //     : AppLocalizations.of(context).get(
-                                //         _formStore.formErrorStore.userEmail),
+                              
                                 ),
                           ),
                         ],
@@ -372,7 +350,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                           RoundedButtonWidget(
                             buttonColor: Theme.of(context).colorScheme.primary,
                             onPressed: () {
-                              if (title.text.isEmpty) {
+                              if (title.text.isEmpty || itv.getNumDuration() > 180) {
                                 setState(() {
                                   _isAllCorrect = false;
                                 });

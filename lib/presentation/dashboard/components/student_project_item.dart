@@ -27,42 +27,9 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
     super.initState();
   }
 
-  // Widget _buildImage() {
-  //   return AspectRatio(
-  //     aspectRatio: 16 / 9,
-  //     child: Container(
-  //       width: double.infinity,
-  //       height: 100,
-  //       decoration: BoxDecoration(
-  //         color: Colors.black,
-  //         borderRadius: BorderRadius.circular(16),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
-    // if (widget.project.isLoading) {
-    //   return Padding(
-    //     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-    //     child: Column(
-    //       crossAxisAlignment: CrossAxisAlignment.start,
-    //       children: [
-    //         _buildImage(),
-    //       ],
-    //     ),
-    //   );
-    // } else {
     var submittedText = '';
-    // int differenceWithToday = widget.project.getModifiedSubmittedTime();
-    // if (differenceWithToday == 0) {
-    //   submittedText = Lang.get("created_now");
-    // } else if (differenceWithToday == 1) {
-    //   submittedText = 'Created 1 day ago';
-    // } else {
-    //   submittedText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-    // }
     submittedText = timeago
         .format(
             locale: _languageStore.locale,
@@ -82,7 +49,6 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
         ),
         child: InkWell(
           onTap: () {
-            //print('navigate to student project detail');
             if (widget.project.project != null) {
               Navigator.of(NavigationService.navigatorKey.currentContext!)
                   .pushNamed(Routes.projectDetailsStudent,
@@ -107,10 +73,13 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
                         Text(
                           (widget.project.project?.title ?? "Untitled") +
                               (" (id = ${widget.project.objectId})"),
-                          style: const TextStyle(fontWeight: FontWeight.w700),
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w700, color: Colors.black),
                         ),
-                        Text(submittedText),
-                        Text(widget.project.coverLetter),
+                        Text(submittedText,
+                            style: const TextStyle(color: Colors.black)),
+                        Text(widget.project.coverLetter,
+                            style: const TextStyle(color: Colors.black)),
                       ],
                     ),
                   ),

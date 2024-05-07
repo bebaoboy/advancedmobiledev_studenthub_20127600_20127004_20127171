@@ -26,11 +26,9 @@ class StudentDashBoardTab extends StatefulWidget {
 }
 
 class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
-  //  TabController tabController;
   @override
   void initState() {
     super.initState();
-    // tabController = TabController(length: 3, vsync: this);
     future = _projectStore.getStudentProposalProjects(
         _userStore.user!.studentProfile!.objectId!, setStateCallback: () {
       try {
@@ -38,7 +36,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
           loading = false;
         });
       } catch (e) {
-        ///
+        ///print(e)
       }
     });
   }
@@ -67,7 +65,9 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
                     alignment: Alignment.topLeft,
                     child: Text(Lang.get('dashboard_your_job')),
                   ),
-
+                  const SizedBox(
+                    height: 12,
+                  ),
                   // Conditional rendering based on whether (widget.projects ?? []) is empty or not
                   (_userStore.user?.studentProfile?.proposalProjects ?? [])
                           .isEmpty
@@ -126,7 +126,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      initialIndex: 1,
+      initialIndex: 0,
       length: 3,
       child: Stack(children: [
         Padding(
@@ -297,6 +297,7 @@ class _AllProjectsState extends State<AllProjects> {
           leftIcon: const Icon(Icons.insights_rounded, color: Colors.white),
           headerBackgroundColor: Colors.black38,
           headerBackgroundColorOpened: Colors.black54,
+          contentBackgroundColor: Theme.of(context).colorScheme.onBackground,
           header: Padding(
             padding: const EdgeInsets.only(top: 12, left: 10),
             child: Container(
@@ -313,7 +314,6 @@ class _AllProjectsState extends State<AllProjects> {
                 ..addListener(() => NavbarNotifier2.hideBottomNavBar = false),
               itemCount: activeProjects?.length ?? 0,
               itemBuilder: (context, index) {
-                // activeProjects![index].isLoading = false;
                 return StudentProjectItem(project: activeProjects![index]);
               },
             ),
@@ -335,6 +335,7 @@ class _AllProjectsState extends State<AllProjects> {
           headerBackgroundColor: Colors.black38,
           headerBackgroundColorOpened: Colors.black54,
           contentBorderColor: Colors.black54,
+          contentBackgroundColor: Theme.of(context).colorScheme.onBackground,
           content: LimitedBox(
               maxHeight: MediaQuery.of(context).size.height / 2,
               child: ListView.builder(
@@ -349,74 +350,5 @@ class _AllProjectsState extends State<AllProjects> {
         ),
       ],
     );
-    // Column(
-    //   mainAxisSize: MainAxisSize.min,
-    //   children: [
-    //     Expanded(
-    //       child: Container(
-    //         decoration: BoxDecoration(
-    //             border: Border.all(width: 1, color: Colors.black)),
-    //         child: Column(
-    //           children: [
-    //             Padding(
-    //               padding: const EdgeInsets.only(top: 12, left: 12),
-    //               child: Container(
-    //                   alignment: Alignment.topLeft,
-    //                   child: Text(
-    //                       '${Lang.get("active_proposal")}(${activeProjects?.length ?? 0})')),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //               child: ListView.builder(
-    //                 controller: ScrollController(),
-    //                 itemCount: activeProjects?.length ?? 0,
-    //                 itemBuilder: (context, index) {
-    //                   activeProjects![index].isLoading = false;
-    //                   return StudentProjectItem(
-    //                       project: activeProjects![index]);
-    //                 },
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //     const SizedBox(
-    //       height: 12,
-    //     ),
-    //     Expanded(
-    //       child: Container(
-    //         decoration: BoxDecoration(
-    //             border: Border.all(width: 1, color: Colors.black)),
-    //         child: Column(
-    //           children: [
-    //             Padding(
-    //               padding: const EdgeInsets.only(top: 12.0, left: 12.0),
-    //               child: Container(
-    //                   alignment: Alignment.topLeft,
-    //                   child: Text(
-    //                       '${Lang.get("submitted_proposal")}(${submittedProjects?.length ?? 0})')),
-    //             ),
-    //             Flexible(
-    //               fit: FlexFit.loose,
-    //               child: ListView.builder(
-    //                 controller: ScrollController(),
-    //                 itemCount: submittedProjects?.length ?? 0,
-    //                 itemBuilder: (context, index) {
-    //                   submittedProjects![index].isLoading = false;
-    //                   return StudentProjectItem(
-    //                       project: submittedProjects![index]);
-    //                 },
-    //               ),
-    //             ),
-    //           ],
-    //         ),
-    //       ),
-    //     ),
-    //     const SizedBox(
-    //       height: 16,
-    //     )
-    //   ],
-    // );
   }
 }
