@@ -791,7 +791,7 @@ abstract class _ChatStore with Store {
                 print("add msg because $userId not have");
                 _messages.insert(0, chatObject..messages = []);
                 _messages.first.lastSeenTime = DateTime(0);
-              }}
+              }
             
 
             _currentProjectMessages[projectId]![userId] = value;

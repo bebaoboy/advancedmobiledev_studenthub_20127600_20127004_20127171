@@ -137,7 +137,6 @@ class _MessageScreenState extends State<MessageScreen> {
         status: Status.delivered,
         text: text,
       );
-      // TODO: gọi api post message
 
       chatStore.postMessage(
           content: text,
@@ -658,10 +657,8 @@ class _MessageScreenState extends State<MessageScreen> {
               objectId: userStore.user!.objectId, name: userStore.user!.name));
       p?.lastSeenTime = DateTime.now();
       if (chatStore.isFetching) {
-        // TODO: check again: handle sending message if any in store after fetching
         chatStore.pendingMessage.putIfAbsent(_user, () => message.text);
       } else {
-        // TODO: gọi api post message
         chatStore.postMessage(
             content: message.text.trim(),
             projectId: widget.chatObject.project!.objectId!,
@@ -737,7 +734,6 @@ class _MessageScreenState extends State<MessageScreen> {
             }
           };
           // print(ms);
-          // TODO: gọi api post interview
 
           messageNotifier.textSocketHandler.emit("SCHEDULE_INTERVIEW", ms);
           chatStore.scheduleInterview(
@@ -872,7 +868,6 @@ class _MessageScreenState extends State<MessageScreen> {
   }
 
   _sendMeetingCode(InterviewSchedule interviewSchedule) {
-    // TODO: gọi api post message
     chatStore.postMessage(
         content: '''Meeting: ${interviewSchedule.title}
 Meeting: ${interviewSchedule.meetingRoomId}
