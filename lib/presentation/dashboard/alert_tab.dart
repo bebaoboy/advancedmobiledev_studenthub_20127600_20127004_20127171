@@ -635,10 +635,10 @@ class _AlertTabState extends State<AlertTab> {
             setStateCb: () {
               setState(() {
                 print("move");
-                Future.delayed(const Duration(seconds: 1), () {
+                Future.delayed(const Duration(milliseconds: 500), () {
                   setState(() {
-                    // alertPageController.move(activeDates.length ~/ 2,
-                    //     animation: false);
+                    alertPageController.move(activeDates.length ~/ 2,
+                        animation: false);
                   });
                 });
               });

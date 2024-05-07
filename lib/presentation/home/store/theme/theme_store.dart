@@ -54,6 +54,14 @@ abstract class _ThemeStore with Store {
     }
   }
 
+  @action
+  Future autoChangeBrightness(bool value) async {
+    if (value != _darkMode) {
+      _darkMode = value;
+      await _repository.changeBrightnessToDark(value);
+    }
+  }
+
   // general methods:-----------------------------------------------------------
   Future init() async {
     try {
