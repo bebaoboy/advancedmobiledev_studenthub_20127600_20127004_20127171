@@ -15,8 +15,8 @@ on:
   push:
     branches:
       - sprint10*
-    tags:
-      - v0.9.99.*
+
+      
 
 jobs:
   build:
@@ -26,7 +26,9 @@ jobs:
     steps:
         #1 Checkout repository
       - name: Checkout Repository
-        uses: actions/checkout@v3.5.3
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.ref }}
 
         #2 setup java
       - name: Set Up Java
