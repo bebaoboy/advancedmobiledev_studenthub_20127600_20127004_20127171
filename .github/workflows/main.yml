@@ -16,7 +16,7 @@ on:
     branches:
       - sprint10*
     tags:
-      - v0.9.99.${{ github.run_number }}
+      - v0.9.99.*
 
 jobs:
   build:
