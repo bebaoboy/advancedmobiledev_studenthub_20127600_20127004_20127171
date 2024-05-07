@@ -27,7 +27,7 @@ jobs:
     steps:
         #1 Checkout repository
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3.5.3
 
         #2 setup java
       - name: Set Up Java
