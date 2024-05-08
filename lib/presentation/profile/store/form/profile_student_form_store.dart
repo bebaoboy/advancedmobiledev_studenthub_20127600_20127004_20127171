@@ -653,6 +653,30 @@ abstract class _ProfileStudentFormStore with Store {
   }
 
   @action
+  Future<String> getStudentResume(String resume, String studentId) async {
+    try {
+      //print("resume $resume");
+      final loginParams =
+          UpdateResumeParams(path: resume, studentId: studentId);
+      final future = _getResumeUseCase.call(params: loginParams);
+
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          return value.data["result"];
+        } else {
+          success = false;
+          errorStore.errorMessage = value.data.toString();
+          return '';
+        }
+      });
+    } catch (e) {
+      return '';
+    }
+  }
+
+  @action
   Future<bool> _updateTranscript(String transcript, String studentId) async {
     try {
       final loginParams =
@@ -742,6 +766,31 @@ abstract class _ProfileStudentFormStore with Store {
       return success;
     } catch (e) {
       return false;
+    }
+  }
+
+  @action
+  Future<String> getStudentTranscript(
+      String transcript, String studentId, StudentProfile profile) async {
+    try {
+      final loginParams =
+          UpdateTranscriptParams(transcript: transcript, studentId: studentId);
+      final future = _getTranscriptUseCase.call(params: loginParams);
+
+      return await future.then((value) {
+        if (value.statusCode == HttpStatus.accepted ||
+            value.statusCode == HttpStatus.ok ||
+            value.statusCode == HttpStatus.created) {
+          return value.data["result"];
+        } else {
+          errorStore.errorMessage = value.data['errorDetails'] is List<String>
+              ? value.data['errorDetails'][0].toString()
+              : value.data['errorDetails'].toString();
+          return '';
+        }
+      });
+    } catch (e) {
+      return '';
     }
   }
 

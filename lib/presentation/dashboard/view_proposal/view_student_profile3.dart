@@ -1,30 +1,19 @@
-import 'dart:async';
+import "package:universal_html/html.dart" show AnchorElement;
 
-import 'package:another_flushbar/flushbar_helper.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
-// import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/file_previewer.dart';
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
-import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:boilerplate/presentation/home/loading_screen.dart';
-import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/account/profile_entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/link_previewer/widgets/link_preview.dart';
+import 'package:boilerplate/presentation/dashboard/chat/type/preview_data.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/custom_page_route.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
-import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:lottie/lottie.dart';
-import 'package:open_filex/open_filex.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-import '../../di/service_locator.dart';
 
 ValueNotifier<bool> isLinkCv = ValueNotifier<bool>(false);
 ValueNotifier<bool> isLinkTranscript = ValueNotifier<bool>(false);
@@ -38,23 +27,15 @@ changeValue(value, isCV) async {
   }
 }
 
-class ProfileStudentStep3Screen extends StatefulWidget {
-  const ProfileStudentStep3Screen({super.key});
+class ViewStudentProfile3 extends StatefulWidget {
+  final StudentProfile studentProfile;
+  const ViewStudentProfile3({super.key, required this.studentProfile});
 
   @override
-  _ProfileStudentStep3ScreenState createState() =>
-      _ProfileStudentStep3ScreenState();
+  State<ViewStudentProfile3> createState() => _ViewStudentProfile3State();
 }
 
-class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
-  //text controllers:-----------------------------------------------------------
-
-  //stores:---------------------------------------------------------------------
-
-  final UserStore _userStore = getIt<UserStore>();
-  final ProfileStudentFormStore _profileStudentFormStore =
-      getIt<ProfileStudentFormStore>();
-
+class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
   bool loading = false;
   Widget? _cvImage;
   Widget? _transcriptImage;
@@ -66,65 +47,69 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   @override
   void initState() {
     super.initState();
-    isLinkCv = ValueNotifier<bool>(false);
-    isLinkTranscript = ValueNotifier<bool>(false);
-  }
+    var profileStore = getIt<ProfileStudentFormStore>();
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: _buildBody(),
-    );
-  }
+    Future.delayed(Duration.zero, () async {
+      var transcript = await profileStore.getStudentTranscript(
+          widget.studentProfile.transcript ?? '',
+          widget.studentProfile.objectId!,
+          widget.studentProfile);
+      transcriptController.text = transcript;
 
-  // body methods:--------------------------------------------------------------
-  Widget _buildBody() {
-    return Material(
-      child: Stack(
-        children: <Widget>[
-          MediaQuery.of(context).orientation == Orientation.landscape
-              ? Row(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: _buildRightSide(),
-                    ),
-                  ],
-                )
-              : Container(child: _buildRightSide()),
-          Observer(
-            builder: (context) {
-              return _profileStudentFormStore.success
-                  ? navigate(context)
-                  : _showErrorMessage(
-                      _profileStudentFormStore.errorStore.errorMessage);
-            },
-          ),
-          Observer(
-            builder: (context) {
-              return Visibility(
-                visible: _profileStudentFormStore.isLoading,
-                // child: CustomProgressIndicatorWidget(),
-                child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        loading = false;
-                      });
-                    },
-                    child: const LoadingScreen()),
-              );
-            },
-          )
-        ],
-      ),
-    );
+      var cv = await profileStore.getStudentResume(
+        widget.studentProfile.resume ?? '',
+        widget.studentProfile.objectId!,
+      );
+
+      cvController.text = cv;
+    });
+
+    isLinkCv = ValueNotifier<bool>(true);
+    isLinkTranscript = ValueNotifier<bool>(true);
+    Future.delayed(Duration.zero, () async {
+      if (cvController.text.isNotEmpty) {
+        if (kIsWeb) {
+          AnchorElement anchorElement = AnchorElement(href: cvController.text);
+          anchorElement.download = "Your CV";
+          anchorElement.click();
+        } else {
+          _cvImage = await FilePreview.getThumbnail(cvController.text,
+              isCV: true,
+              changeValue: changeValue,
+              retrieveFilePathAfterDownload: (s) =>
+                  _cv = PlatformFile(path: s, name: s, size: 1));
+        }
+      }
+      if (transcriptController.text.isNotEmpty) {
+        if (kIsWeb) {
+          Future.delayed(const Duration(seconds: 1), () {
+            AnchorElement anchorElement =
+                AnchorElement(href: transcriptController.text);
+            anchorElement.download = "Your transcript";
+            anchorElement.click();
+          });
+        } else {
+          _transcriptImage = await FilePreview.getThumbnail(
+              transcriptController.text,
+              isCV: false,
+              changeValue: changeValue,
+              retrieveFilePathAfterDownload: (s) =>
+                  _transcript = PlatformFile(path: s, name: s, size: 1));
+        }
+      }
+      print(_cvImage.toString());
+      setState(() {
+        isLinkCv.value = false;
+        isLinkTranscript.value = false;
+      });
+    });
   }
 
   PlatformFile? _cv;
   PlatformFile? _transcript;
   Map<String, PreviewData?> pd = {};
 
-  Widget _buildRightSide() {
+  Widget _buildBody() {
     //print(isLinkCv.value);
     return SingleChildScrollView(
       controller: ScrollController(),
@@ -134,7 +119,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          const EmptyAppBar(),
           Flexible(
             fit: FlexFit.loose,
             child: Padding(
@@ -149,13 +133,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  AutoSizeText(
-                    Lang.get('profile_welcome_text2'),
-                    style: const TextStyle(fontSize: 13),
-                    minFontSize: 10,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+
                   const SizedBox(height: 34.0),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -175,7 +153,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         child: SizedBox(
                             height: 30,
                             child: TextFormField(
-                              enabled: cvEnable,
+                              enabled: false,
                               controller: cvController,
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -266,54 +244,13 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (_cv != null) {
-                        await OpenFilex.open(_cv!.path);
-                        return;
-                      } else if (_cvImage != null) {
+                      if (_cvImage != null) {
                         final uri = Uri.parse(cvController.text);
                         if (await canLaunchUrl(uri)) {
                           await launchUrl(uri,
                               mode: LaunchMode.externalApplication);
                         }
                         return;
-                      }
-
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: [
-                          'png',
-                          'jpg',
-                          'pdf',
-                          'doc',
-                          'docx',
-                          'gif',
-                          'xlsx',
-                          'xls',
-                          'txt'
-                        ],
-                      );
-
-                      if (result != null) {
-                        // File file = File(result.files.single.path!);
-                        _profileStudentFormStore
-                            .setResume(result.files.single.path!);
-                        setState(() {
-                          _cv = result.files.single;
-                        });
-                        setState(() {
-                          cvEnable = false;
-                        });
-                        final image = await FilePreview.getThumbnail(
-                          changeValue: changeValue,
-                          isCV: true,
-                          result.files.single.path!,
-                        );
-                        setState(() {
-                          _cvImage = image;
-                        });
-                      } else {
-                        // User canceled the picker
                       }
                     },
                     child: Container(
@@ -400,7 +337,7 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                         child: SizedBox(
                             height: 30,
                             child: TextFormField(
-                              enabled: transcriptEnable,
+                              enabled: false,
                               controller: transcriptController,
                               onTapOutside: (value) async {
                                 FocusManager.instance.primaryFocus?.unfocus();
@@ -427,34 +364,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                                       }
                                     },
                                   );
-                                }
-                              },
-                              onFieldSubmitted: (value) async {
-                                setState(() {
-                                  isLinkTranscript.value = false;
-                                });
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                if (transcriptController.text.isNotEmpty) {
-                                  var filePath = transcriptController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(
-                                          changeValue: changeValue,
-                                          isCV: false,
-                                          transcriptController.text)
-                                      .then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLinkTranscript.value = false;
-                                      });
-                                      _transcriptImage = value;
-                                    }
-                                  });
                                 }
                               },
                               decoration: InputDecoration(
@@ -490,54 +399,13 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                   ),
                   GestureDetector(
                     onTap: () async {
-                      if (_transcript != null) {
-                        await OpenFilex.open(_transcript!.path);
-                        return;
-                      } else if (_transcriptImage != null) {
+                      if (_transcriptImage != null) {
                         final uri = Uri.parse(transcriptController.text);
                         if (await canLaunchUrl(uri)) {
                           await launchUrl(uri,
                               mode: LaunchMode.externalApplication);
                         }
                         return;
-                      }
-
-                      FilePickerResult? result =
-                          await FilePicker.platform.pickFiles(
-                        type: FileType.custom,
-                        allowedExtensions: [
-                          'png',
-                          'jpg',
-                          'pdf',
-                          'doc',
-                          'docx',
-                          'gif',
-                          'xlsx',
-                          'xls',
-                          'txt'
-                        ],
-                      );
-
-                      if (result != null) {
-                        // File file = File(result.files.single.path!);
-                        _profileStudentFormStore
-                            .setTranscript(result.files.single.path!);
-                        setState(() {
-                          _transcript = result.files.single;
-                        });
-                        setState(() {
-                          transcriptEnable = false;
-                        });
-                        final image = await FilePreview.getThumbnail(
-                          changeValue: changeValue,
-                          isCV: false,
-                          result.files.single.path!,
-                        );
-                        setState(() {
-                          _transcriptImage = image;
-                        });
-                      } else {
-                        // User canceled the picker
                       }
                     },
                     child: Container(
@@ -602,7 +470,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     ),
                   ),
                   const SizedBox(height: 34.0),
-                  _buildSignInButton(),
                 ],
               ),
             ),
@@ -610,101 +477,35 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           const SizedBox(
             height: 14,
           ),
-          //_buildSignUpButton(),
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.only(
+                    top: 10, right: 30, bottom: 20, left: 30),
+                alignment: Alignment.bottomLeft,
+                child: MaterialButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(
+                          color: Theme.of(context).colorScheme.onSurface)),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Back"),
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSignInButton() {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: SizedBox(
-        width: 200,
-        child: RoundedButtonWidget(
-          buttonText: Lang.get('next'),
-          buttonColor: Theme.of(context).colorScheme.primary,
-          textColor: Colors.white,
-          onPressed: () async {
-            print(_profileStudentFormStore.techStack);
-            print(_profileStudentFormStore.skillSet);
-            print(_profileStudentFormStore.educations);
-            print(_profileStudentFormStore.languages);
-            print(_profileStudentFormStore.projectExperience);
-            print(_profileStudentFormStore.resume);
-            print(_profileStudentFormStore.transcript);
-            _profileStudentFormStore.addProfileStudent(
-                _profileStudentFormStore.techStack,
-                _profileStudentFormStore.skillSet,
-                _profileStudentFormStore.languages,
-                _profileStudentFormStore.educations,
-                _profileStudentFormStore.projectExperience,
-                _profileStudentFormStore.transcript,
-                _profileStudentFormStore.resume);
-          },
-        ),
-      ),
-    );
-  }
-
-  Widget navigate(BuildContext context) {
-    Future.delayed(const Duration(milliseconds: 100), () {
-      if (_profileStudentFormStore.success) {
-        _profileStudentFormStore.success = false;
-        showAnimatedDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext context) {
-            return ClassicGeneralDialogWidget(
-              contentText:
-                  '${_profileStudentFormStore.fullName} create profile successfully!',
-              positiveText: 'OK',
-              onPositiveClick: () {
-                Navigator.of(context).pop();
-                _userStore.user?.type = UserType.student;
-
-                Navigator.of(NavigationService.navigatorKey.currentContext ??
-                        context)
-                    .pushAndRemoveUntil(
-                        MaterialPageRoute2(
-                            routeName: Routes.welcome, arguments: true),
-                        (Route<dynamic> route) => false);
-                return;
-              },
-            );
-          },
-          animationType: DialogTransitionType.size,
-          curve: Curves.fastOutSlowIn,
-          duration: const Duration(seconds: 1),
-        );
-      }
-    });
-    return Container();
-  }
-
-  // General Methods:-----------------------------------------------------------
-  _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      Future.delayed(const Duration(milliseconds: 0), () {
-        if (message.isNotEmpty) {
-          FlushbarHelper.createError(
-            message: message,
-            title: Lang.get('error'),
-            duration: const Duration(seconds: 3),
-          ).show(context);
-        }
-      });
-    }
-
-    return const SizedBox.shrink();
-  }
-
-  // dispose:-------------------------------------------------------------------
   @override
-  void dispose() {
-    // Clean up the controller when the Widget is removed from the Widget tree
-    isLinkCv.dispose();
-    isLinkTranscript.dispose();
-    super.dispose();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: const EmptyAppBar(),
+      body: _buildBody(),
+    );
   }
 }

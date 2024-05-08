@@ -108,19 +108,6 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
                       color: Theme.of(context).colorScheme.onPrimary,
                     ),
                   ),
-                  // Text(
-                  //   widget.studentProfile.introduction,
-                  //   maxLines: 5,
-                  //   overflow: TextOverflow.ellipsis,
-                  //   style: const TextStyle(
-                  //     fontSize: 18,
-                  //     fontWeight: FontWeight.w500,
-                  //   ),
-                  //   textAlign: TextAlign.left,
-                  // ),
-                  // const SizedBox(
-                  //   height: 12,
-                  // ),
                   const Divider(
                     color: Colors.black38,
                   ),
@@ -142,6 +129,7 @@ class _ViewStudentProfileState extends State<ViewStudentProfile> {
               padding: const EdgeInsets.symmetric(vertical: 10),
               margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.onBackground,
                   border: Border.all(color: Colors.black),
                   borderRadius: const BorderRadius.all(Radius.circular(10))),
               height: 150,

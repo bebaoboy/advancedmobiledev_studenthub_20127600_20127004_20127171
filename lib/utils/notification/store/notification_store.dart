@@ -150,7 +150,7 @@ abstract class _NotificationStore with Store {
   @observable
   List<ObservableList<NotificationObject>>? joinInterviews;
 
-  int activeDates = 0;
+  int activeDates = 14;
 
   categorize(List activeDates) {
     var userStore = getIt<UserStore>();
@@ -212,6 +212,12 @@ abstract class _NotificationStore with Store {
   }
 
   addNofitication(Map<String, dynamic> element) async {
+    if (viewOffers == null ||
+        joinInterviews == null ||
+        texts == null ||
+        messages == null) {
+      categorize(List.filled(activeDates, 0));
+    }
     var not = toNotificationObject(element["notification"]);
     _notiList.insert(0, not);
     var sharePref = await SharedPreferences.getInstance();
