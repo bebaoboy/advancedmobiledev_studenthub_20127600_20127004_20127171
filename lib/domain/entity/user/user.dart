@@ -1,6 +1,7 @@
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mobx/mobx.dart';
 
 enum UserType { student, company, naught }
 
@@ -24,6 +25,7 @@ class User extends MyObject {
   bool isVerified;
   // all roles of user: student and company
   List<UserType>? roles = [UserType.company];
+  @observable
   StudentProfile? studentProfile;
   CompanyProfile? companyProfile;
 

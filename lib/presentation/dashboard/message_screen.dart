@@ -863,9 +863,13 @@ class _MessageScreenState extends State<MessageScreen> {
                       (e) => e as ScheduleMessageType,
                     )
                     .toList()
-                  ..sort((a, b) => (b.updatedAt == null || a.updatedAt == null)
-                      ? 0
-                      : b.updatedAt!.compareTo(a.updatedAt!)),
+                  ..sort((a, b) {
+                    var t1 = InterviewSchedule.fromJsonApi(a.metadata!);
+                    var t2 = InterviewSchedule.fromJsonApi(b.metadata!);
+                    return t1.isCancel || t2.isCancel || t1.endDate.isBefore(DateTime.now()) || t2.endDate.isBefore(DateTime.now()) || (b.updatedAt == null || a.updatedAt == null)
+                        ? -1
+                        : b.updatedAt!.compareTo(a.updatedAt!);
+                  }),
               )),
     );
   }

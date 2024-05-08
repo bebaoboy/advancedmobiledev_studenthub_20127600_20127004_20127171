@@ -6,6 +6,7 @@ import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:intl/intl.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:to_string_pretty/to_string_pretty.dart';
 import 'package:uuid/uuid.dart';
 
 class MyObject {
@@ -265,6 +266,11 @@ class NotificationObject extends MyObject {
   NotificationType get type => _type ?? NotificationType.proposal;
   NotificationType? _type;
   Map<String, dynamic>? metadata;
+
+  @override
+  String toString() {
+    return "sender: ${sender.toJson()} \ncontent: $content \ncreated: $createdAt \nid: $id \nmetadata: \n\t${toStringPretty(metadata??"")}\n\n";
+  }
 
   NotificationObject({
     required this.id,

@@ -7,6 +7,7 @@ import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
+import 'package:boilerplate/utils/notification/store/notification_store.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class SharedPreferenceView extends StatefulWidget {
 class _SharedPreferenceViewState extends State<SharedPreferenceView> {
   final UserStore _userStore = getIt<UserStore>();
   final ProjectStore _projectStore = getIt<ProjectStore>();
+  final NotificationStore _notiStore = getIt<NotificationStore>();
   final ProjectDataSource datasource = getIt<ProjectDataSource>();
 
   List<String> dioList = [];
@@ -108,6 +110,47 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                               : "No projects"),
                         ),
                       ))),
+            ],
+          )),
+    );
+  }
+
+  Widget getNoti() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Align(
+          alignment: Alignment.topLeft,
+          child: Wrap(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Result: ${_notiStore.notiList.length}"),
+              ),
+              ListTile(
+                title: const Text(
+                  "Notifications",
+                  style: TextStyle(
+                    fontWeight: FontWeight.w900,
+                    fontSize: 18,
+                  ),
+                ),
+                subtitle: LimitedBox(
+                    maxHeight: MediaQuery.of(context).size.height * 0.8,
+                    child: Scrollbar(
+                      child: SingleChildScrollView(
+                          child: Text(_notiStore.notiList.isNotEmpty
+                              ? _notiStore.notiList
+                                  .sortedBy(
+                                    (element) => element.createdAt!,
+                                  )
+                                  .reversed 
+                                  .map(
+                                    (e) => e.toString(),
+                                  )
+                                  .join("\n")
+                              : "No notification")),
+                    )),
+              ),
             ],
           )),
     );
@@ -265,7 +308,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                 if (snapshot.hasData) {
                   var projects = snapshot.data!;
                   var r = projects;
-                  
+
                   return Wrap(children: [
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -323,6 +366,7 @@ class _SharedPreferenceViewState extends State<SharedPreferenceView> {
                         children: data,
                       ),
                     ),
+                    getNoti(),
                     getAllProject(),
                     getProject(),
                     getStudentProposal(),

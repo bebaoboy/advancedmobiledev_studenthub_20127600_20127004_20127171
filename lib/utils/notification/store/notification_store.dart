@@ -225,6 +225,13 @@ abstract class _NotificationStore with Store {
           body:
               "From ${not.sender.name} (Project ${not.metadata!["projectId"]})");
     }
+    if (not.type == NotificationType.viewOffer) {
+      NotificationHelper.createTextNotification(
+          id: int.parse(not.id),
+          title: "You have been offered!",
+          body:
+              "From ${not.sender.name} (Project ${not.metadata!["projectId"]})");
+    }
     int diff = daysBetween(DateTime.now(), not.createdAt!);
     switch (not.type) {
       case NotificationType.joinInterview:

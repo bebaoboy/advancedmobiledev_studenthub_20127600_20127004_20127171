@@ -104,13 +104,13 @@ class IncomingCallScreenState extends State<IncomingCallScreen> {
   }
 
   void _acceptCall(BuildContext context, P2PSession callSession) {
-    if (mounted) Navigator.pop(context);
+    // if (mounted) Navigator.pop(context);
     CallManager.instance.acceptCall(callSession.sessionId, false);
   }
 
   void _rejectCall(BuildContext context, P2PSession callSession) {
     CallManager.instance.reject(callSession.sessionId, false);
-    if (mounted) Navigator.pop(context);
+    // if (mounted) Navigator.pop(context);
   }
 
   Future<bool> _onBackPressed(BuildContext context) {
