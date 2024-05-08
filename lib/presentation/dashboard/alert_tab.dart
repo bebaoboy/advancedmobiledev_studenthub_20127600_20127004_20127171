@@ -652,8 +652,6 @@ class _AlertTabState extends State<AlertTab> {
           ),
         );
       });
-        ),
-      );
     } else {
       return Container();
     }
