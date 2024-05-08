@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
@@ -708,6 +707,7 @@ class _MessageScreenState extends State<MessageScreen> {
             "receiverId": _user.id, // notification
             "startTime": value.startDate.toUtc().toIso8601String(),
             "endTime": value.endDate.toUtc().toIso8601String(),
+            // "disableFlag": value.isCancel ? 1 : 0,
             "meetingRoom": {
               "meeting_room_code": value.meetingRoomCode,
               "meeting_room_id": value.meetingRoomId,
@@ -742,6 +742,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 "receiverId": _user.id, // notification
                 "startTime": value.startDate,
                 "endTime": value.endDate,
+                // "disableFlag": value.isCancel ? 1 : 0,
                 "meetingRoom": {
                   "meeting_room_code": value.meetingRoomCode,
                   "meeting_room_id": value.meetingRoomId,
@@ -750,7 +751,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
           _sendMeetingCode(value);
 
-          Duration diff = value.endDate.difference(value.startDate);
+          Duration diff = DateTime.now().difference(value.startDate);
           NotificationHelper.scheduleNewNotification(
               diff.inMinutes, diff.inHours, diff.inDays);
         } else {
@@ -775,6 +776,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 "receiverId": _user.id, // notification
                 "startTime": value.startDate.toUtc().toIso8601String(),
                 "endTime": value.endDate.toUtc().toIso8601String(),
+                "disableFlag": 0,
                 "meetingRoom": {
                   "meeting_room_code": value.meetingRoomCode,
                   "meeting_room_id": value.meetingRoomId,
@@ -836,9 +838,13 @@ class _MessageScreenState extends State<MessageScreen> {
                       (e) => e as ScheduleMessageType,
                     )
                     .toList()
-                  ..sort((a, b) => (b.updatedAt == null || a.updatedAt == null)
-                      ? 0
-                      : b.updatedAt!.compareTo(a.updatedAt!)),
+                  ..sort((a, b) {
+                    var t1 = InterviewSchedule.fromJsonApi(a.metadata!);
+                    var t2 = InterviewSchedule.fromJsonApi(b.metadata!);
+                    return t1.isCancel || t2.isCancel || t1.endDate.isBefore(DateTime.now()) || t2.endDate.isBefore(DateTime.now()) || (b.updatedAt == null || a.updatedAt == null)
+                        ? -1
+                        : b.updatedAt!.compareTo(a.updatedAt!);
+                  }),
               )),
     );
   }

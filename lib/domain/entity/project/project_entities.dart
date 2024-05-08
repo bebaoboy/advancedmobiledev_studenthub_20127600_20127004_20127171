@@ -325,10 +325,12 @@ class Proposal extends MyObject {
   // Project project;
   StudentProfile student;
   String coverLetter;
+  @observable
   HireStatus hiredStatus;
   bool get isHired => hiredStatus == HireStatus.hired;
   String projectId;
   bool enabled;
+  @observable
   StudentProject? project;
 
   Proposal.fromJson(Map<String, dynamic> json2)

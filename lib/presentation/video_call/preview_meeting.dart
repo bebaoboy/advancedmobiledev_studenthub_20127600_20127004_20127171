@@ -545,11 +545,13 @@ class _BodyLayoutState extends State<BodyLayout> {
       'audio': true,
       'video': {
         'mandatory': {
-          'minWidth':
-              '300', // Provide your own width, height and frame rate here
+          'minWidth': kIsWeb
+              ? '${MediaQuery.of(context).size.width / 2}'
+              : '300', // Provide your own width, height and frame rate here
           //     'maxWidth': '1080',
           // 'maxHeight': '600',
-          'minHeight': '400',
+          'minHeight': kIsWeb
+              ? '${MediaQuery.of(context).size.height * 0.65}' : '400',
           'minFrameRate': '24',
         },
         'facingMode': 'user',
@@ -620,11 +622,15 @@ class _BodyLayoutState extends State<BodyLayout> {
                   child: Column(
                     children: [
                       SizedBox(
-                        width: 400,
-                        height: MediaQuery.of(context).orientation ==
-                                Orientation.portrait
-                            ? MediaQuery.of(context).size.height * 0.6
-                            : MediaQuery.of(context).size.height * 0.53,
+                        width: kIsWeb
+                            ? (MediaQuery.of(context).size.width / 2)
+                            : 400,
+                        height: kIsWeb
+                            ? MediaQuery.of(context).size.height * 0.75
+                            : MediaQuery.of(context).orientation ==
+                                    Orientation.portrait
+                                ? MediaQuery.of(context).size.height * 0.6
+                                : MediaQuery.of(context).size.height * 0.53,
                         child: Stack(
                           children: [
                             RTCVideoView(primaryRenderer!.value,

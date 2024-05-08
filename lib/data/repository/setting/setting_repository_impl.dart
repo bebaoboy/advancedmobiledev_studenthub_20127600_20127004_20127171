@@ -16,7 +16,7 @@ class SettingRepositoryImpl extends SettingRepository {
       _sharedPrefsHelper.changeBrightnessToDark(value);
 
   @override
-  bool get isDarkMode => _sharedPrefsHelper.isDarkMode;
+  bool? get isDarkMode => _sharedPrefsHelper.isDarkMode;
 
   // Language: -----------------------------------------------------------------
   @override

@@ -299,9 +299,12 @@ class NavbarNotifier2 extends ChangeNotifier {
     _length = x;
   }
 
+  static Function? setStateCb;
+
   static int get length => _length!;
 
-  static ValueNotifier<bool> bottomNavbarVisibilityListener = ValueNotifier(false);
+  static ValueNotifier<bool> bottomNavbarVisibilityListener =
+      ValueNotifier(false);
 
   static List<int> _navbarStackHistory = [];
 
@@ -481,6 +484,11 @@ class NavbarNotifier2 extends ChangeNotifier {
     for (Function(int) listener in _indexChangeListeners) {
       listener(index);
     }
+  }
+
+  static void refresh() {
+    _singleton.notify();
+    if (setStateCb != null) setStateCb!();
   }
 
   void notify() {

@@ -65,12 +65,16 @@ class SharedPreferenceHelper {
   }
 
   // Theme:------------------------------------------------------
-  bool get isDarkMode {
-    return _sharedPreference.getBool(Preferences.is_dark_mode) ?? false;
+  bool? get isDarkMode {
+    return _sharedPreference.getBool(Preferences.is_dark_mode);
   }
 
-  Future<void> changeBrightnessToDark(bool value) {
-    return _sharedPreference.setBool(Preferences.is_dark_mode, value);
+  Future<void> changeBrightnessToDark(bool? value) {
+    if (value == null) {
+      return _sharedPreference.remove(Preferences.is_dark_mode);
+    } else {
+      return _sharedPreference.setBool(Preferences.is_dark_mode, value);
+    }
   }
 
   // Language:---------------------------------------------------

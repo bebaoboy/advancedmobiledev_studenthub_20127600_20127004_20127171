@@ -46,7 +46,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
   MapEntry<int, RTCVideoRenderer>? primaryRenderer;
   Map<int, RTCVideoRenderer> minorRenderers = {};
   RTCVideoViewObjectFit primaryVideoFit =
-      RTCVideoViewObjectFit.RTCVideoViewObjectFitCover;
+      RTCVideoViewObjectFit.RTCVideoViewObjectFitContain;
 
   bool _enableScreenSharing;
 
@@ -229,7 +229,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
         children: [
           RTCVideoView(
             renderer,
-            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
             mirror: false,
           ),
           Align(
@@ -300,7 +300,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
       streamsExpanded.add(Expanded(
           child: RTCVideoView(
         primaryRenderer!.value,
-        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
         mirror: true,
       )));
     }
@@ -687,7 +687,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
                       child: RTCVideoView(
                         entry.value,
                         objectFit:
-                            RTCVideoViewObjectFit.RTCVideoViewObjectFitCover,
+                            RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
                         mirror: entry.key == _currentUserId &&
                             _isFrontCameraUsed &&
                             _enableScreenSharing,
@@ -813,7 +813,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
               backgroundColor: Colors.black38,
               child: Icon(
                 primaryVideoFit ==
-                        RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
+                        RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
                     ? Icons.zoom_in_map
                     : Icons.zoom_out_map,
                 color: Colors.white,
@@ -861,9 +861,9 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
   _switchPrimaryVideoFit() async {
     setState(() {
       primaryVideoFit =
-          primaryVideoFit == RTCVideoViewObjectFit.RTCVideoViewObjectFitCover
+          primaryVideoFit == RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
               ? RTCVideoViewObjectFit.RTCVideoViewObjectFitContain
-              : RTCVideoViewObjectFit.RTCVideoViewObjectFitCover;
+              : RTCVideoViewObjectFit.RTCVideoViewObjectFitContain;
     });
   }
 
@@ -1013,7 +1013,11 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
       log("error end call ${e.toString()}");
     }
     CallManager.instance.hungUp();
-    Navigator.of(context).pop();
+    if (PictureInPicture.isActive) {
+      PictureInPicture.stopPiP(false);
+    } else {
+      // Navigator.of(context).pop();
+    }
   }
 
   PiPStatus enablePipStatus = PiPStatus.disabled;

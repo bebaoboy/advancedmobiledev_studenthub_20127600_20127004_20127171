@@ -17,11 +17,10 @@ import 'package:boilerplate/presentation/setting/widgets/student_account_widget.
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
+import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
@@ -621,6 +620,18 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 }
 
+class AppTheme {
+  bool? mode;
+  String title;
+  IconData icon;
+
+  AppTheme({
+    required this.mode,
+    required this.title,
+    required this.icon,
+  });
+}
+
 class RealSettingPage extends StatefulWidget {
   const RealSettingPage({super.key});
 
@@ -684,6 +695,10 @@ class _RealSettingPageState extends State<RealSettingPage> {
                     Navigator.of(context).pop();
                     // change user language based on selected locale
                     _languageStore.changeLanguage(object.locale);
+                    NavbarNotifier2.refresh();
+                    Future.delayed(const Duration(seconds: 1), () {
+                      NavbarNotifier2.refresh();
+                    });
                   },
                 ),
               )
@@ -708,16 +723,95 @@ class _RealSettingPageState extends State<RealSettingPage> {
       return Observer(
         builder: (context) {
           return ListTile(
-            leading: Icon(
-              _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
-            ),
+            // leading: Icon(
+            //   _themeStore.darkMode ? Icons.brightness_5 : Icons.brightness_3,
+            // ),
             title: Text(Lang.get("home_tv_choose_theme")),
             onTap: () {
-              _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
+              // _themeStore.changeBrightnessToDark(!_themeStore.darkMode);
             },
           );
         },
       );
+    }
+
+    List<AppTheme> appThemes = [
+      AppTheme(
+        mode: null,
+        title: 'Auto',
+        icon: Icons.brightness_4_rounded,
+      ),
+      AppTheme(
+        mode: true,
+        title: 'Dark',
+        icon: Icons.brightness_2_rounded,
+      ),
+      AppTheme(
+        mode: false,
+        title: 'Light',
+        icon: Icons.brightness_5_rounded,
+      ),
+    ];
+
+    Widget buildThemeGrid() {
+      return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          height: (MediaQuery.of(context).size.width) / 3,
+          child: GridView.count(
+              physics: const NeverScrollableScrollPhysics(),
+              crossAxisSpacing: 10,
+              crossAxisCount: appThemes.length,
+              children: List.generate(appThemes.length, (i) {
+                bool isSelectedTheme = (_themeStore.systemTheme
+                        ? 0
+                        : _themeStore.darkMode
+                            ? 1
+                            : 2) ==
+                    i;
+                return GestureDetector(
+                    onTap: () {
+                      if (!isSelectedTheme) {
+                        _themeStore.changeBrightnessToDark(appThemes[i].mode);
+                        // NavbarNotifier2.refresh();
+                        // Future.delayed(const Duration(seconds: 1), () {
+                        //   NavbarNotifier2.refresh();
+                        // });
+                      }
+                    },
+                    child: AnimatedContainer(
+                      height: 100,
+                      duration: const Duration(milliseconds: 200),
+                      decoration: BoxDecoration(
+                        color: isSelectedTheme
+                            ? Theme.of(context).primaryColor
+                            : Colors.transparent,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                            width: 2, color: Theme.of(context).primaryColor),
+                      ),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 0, vertical: 7),
+                          margin: const EdgeInsets.symmetric(horizontal: 15),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).cardColor.withOpacity(0.5),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Icon(appThemes[i].icon),
+                              Text(
+                                appThemes[i].title,
+                                style: const TextStyle(fontSize: 10),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ));
+              })));
     }
 
     return Observer(builder: (context) {
@@ -731,6 +825,7 @@ class _RealSettingPageState extends State<RealSettingPage> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             buildThemeButton(),
+            buildThemeGrid(),
             buildLanguageButton(),
           ],
         ),

@@ -32,16 +32,22 @@ messaging.onMessage((payload) => {
       }
     })
     .then(() => {
-      const title = "New notification";
-      var click_action = payload.data.ui_route; //ui route is ur route
-
-      const options = {
-        body: payload.data,
-        data: {
-          click_action,
-        },
+      const notificationTitle = "New notification";
+      const notificationOptions = {
+        body: payload.data != null ? payload.data.message : payload.data,
       };
-      return registration.showNotification(title, options);
+    
+      self.registration.showNotification(notificationTitle, notificationOptions);
+      // const title = "New notification";
+      // var click_action = payload.data.ui_route; //ui route is ur route
+
+      // const options = {
+      //   body: payload.data,
+      //   data: {
+      //     click_action,
+      //   },
+      // };
+      // return registration.showNotification(title, options);
     });
   return promiseChain;
 });
@@ -49,7 +55,7 @@ messaging.onMessage((payload) => {
 messaging.onBackgroundMessage((payload) => {
   console.log("web Received background onMessage ", payload);
 
-  const notificationTitle = "New notification";
+  const notificationTitle = "New bg notification";
   const notificationOptions = {
     body: payload.data != null ? payload.data.message : payload.data,
   };

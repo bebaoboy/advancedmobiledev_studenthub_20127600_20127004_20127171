@@ -10,6 +10,7 @@ import 'package:boilerplate/presentation/dashboard/message_tab.dart';
 import 'package:boilerplate/presentation/dashboard/project_tab.dart';
 import 'package:boilerplate/presentation/dashboard/student_dashboard_tab.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
@@ -111,6 +112,8 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   final _pageController2 = IndexController();
   final _pageController = PageController(initialPage: 2);
   final LanguageStore _languageStore = getIt<LanguageStore>();
+  final _themeStore = getIt<ThemeStore>();
+
 
   initItems() {
     items = [
@@ -170,21 +173,18 @@ class _DashBoardScreenState extends State<DashBoardScreen>
                     width: 1)),
             isExtended: MediaQuery.of(context).size.width > 800 ? true : false,
             navbarType: BottomNavigationBarType.shifting),
-        onCurrentTabClicked: () {
-          setState(() {
-            for (var element in sc) {
-              try {
-                element.animateTo(
-                  element.position.minScrollExtent,
-                  duration: const Duration(milliseconds: 500),
-                  curve: Curves.easeIn,
-                );
-                // element.jumpTo(element.position.minScrollExtent);
-              } catch (e) {
-                ///
-              }
-            }
-          });
+        onCurrentTabClicked: () async {
+          try {
+            sc[NavbarNotifier2.currentIndex].animateTo(
+              sc[NavbarNotifier2.currentIndex].position.minScrollExtent,
+              duration: const Duration(milliseconds: 500),
+              curve: Curves.easeIn,
+            );
+            // element.jumpTo(element.position.minScrollExtent);
+          } catch (e) {
+            ///
+          }
+          setState(() {});
         },
         onChanged: (p0) {
           NavbarNotifier2.hideBottomNavBar = false;

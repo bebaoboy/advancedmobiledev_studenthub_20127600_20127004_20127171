@@ -314,7 +314,7 @@ class CallManager {
           : CubeEnvironment.DEVELOPMENT;
       params.usersIds = [
         ...opponents,
-        CubeSessionManager.instance.activeSession!.user!.id
+        // CubeSessionManager.instance.activeSession!.user!.id
       ];
       log("done incoming call event $opponents");
 
@@ -581,6 +581,7 @@ class CallManager {
   }
 
   void _initCallKit() {
+    if (kIsWeb) return;
     CallKitManager.instance.init(
       onCallAccepted: (uuid) {
         acceptCall(uuid, true);

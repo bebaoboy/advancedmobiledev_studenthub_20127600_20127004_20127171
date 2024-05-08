@@ -444,7 +444,7 @@ class _AlertTabState extends State<AlertTab> {
 
   bool hasOfferProposal = false;
 
-  late Future<List<NotificationObject>> future;
+  late Future<List<NotificationObject>?> future;
 
   List<Proposal> getOffer() {
     if (hasOfferProposal) {
@@ -486,17 +486,21 @@ class _AlertTabState extends State<AlertTab> {
     future = notiStore
         .getNoti(
             receiverId: userStore.user!.objectId ?? "",
-            activeDates: activeDates)
+            activeDates: activeDates,
+            setStateCb: () {
+              setState(() {
+                print("move");
+                Future.delayed(const Duration(milliseconds: 500), () {
+                  setState(() {
+                    alertPageController.move(activeDates.length ~/ 2,
+                        animation: false);
+                  });
+                });
+              });
+            })
         .whenComplete(
-      () {
-        print("move");
-        Future.delayed(const Duration(seconds: 1), () {
-          setState(() {
-            alertPageController.move(14, animation: false);
-          });
-        });
-      },
-    );
+          () {},
+        );
 
     showTime = List.filled(activeDates.length, true);
 
@@ -554,105 +558,100 @@ class _AlertTabState extends State<AlertTab> {
   var projectStore = getIt<ProjectStore>();
   var topRowController = ScrollController();
 
+  openOfferPage(index) {
+    if (userStore.user != null && userStore.user!.type != UserType.student) {
+      return;
+    }
+    print(index);
+    NavbarNotifier2.hideBottomNavBar = true;
+
+    Navigator.of(NavigationService.navigatorKey.currentContext ?? context)
+        .push(
+      ModalExprollableRouteBuilder(
+          pageBuilder: (_, __, ___) => OfferDetailsDialog(
+                index: index,
+                proposal: getOffer(),
+                onAcceptCallback: (proposal) {
+                  var userStore = getIt<UserStore>();
+                  var id = userStore.user?.studentProfile?.objectId;
+                  if (id != null && proposal != null) {
+                    projectStore.updateProposal(proposal, id).then(
+                      (value) {
+                        Toastify.show(
+                            context,
+                            "",
+                            "Succeed!",
+                            aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                            ToastificationType.success,
+                            () {});
+                        setState(() {});
+                      },
+                    );
+                  }
+                },
+              ),
+          // Increase the transition durations and take a closer look at what's going on!
+          transitionDuration: const Duration(milliseconds: 500),
+          reverseTransitionDuration: const Duration(milliseconds: 300),
+          // The next two lines are not required, but are recommended for better performance.
+          dismissThresholdInset:
+              const DismissThresholdInset(dragMargin: 10000)),
+    )
+        .then(
+      (value) {
+        NavbarNotifier2.hideBottomNavBar = false;
+      },
+    );
+  }
+
   Widget _buildTopRowList() {
     if (hasOfferProposal && userStore.user!.type == UserType.student) {
-      return Tooltip(
-        message: userStore.user!.type == UserType.student
-            ? "${getOffer().length} offers"
-            : "",
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        verticalOffset: 60,
-        child: InkWell(
-          child: badges.Badge(
-            badgeContent: Text(
-              getOffer().length.toString(),
-              style: TextStyle(color: Theme.of(context).colorScheme.secondary),
-            ),
-            showBadge: getOffer().isNotEmpty &&
-                userStore.user!.type == UserType.student,
-            position: badges.BadgePosition.topStart(start: 10, top: -10),
-            badgeStyle: badges.BadgeStyle(
-                badgeColor: Theme.of(context).colorScheme.primary),
-            child: Stack(
-              children: [
-                for (int index = getOffer().length - 1; index >= 0; index--)
-                  Center(
-                    child: Container(
-                      margin: EdgeInsets.only(
-                          left: index == 1 ? 10 : 15,
-                          right: index == 2 ? 7 : 15),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: HeroFlutterLogo(
-                          color: index == 2 ? Colors.white : colors[index],
-                          tag: index,
-                          size: 145,
-                          onTap: () {
-                            if (userStore.user != null &&
-                                userStore.user!.type != UserType.student) {
-                              return;
-                            }
-                            print(index);
-                            NavbarNotifier2.hideBottomNavBar = true;
-
-                            Navigator.of(NavigationService
-                                        .navigatorKey.currentContext ??
-                                    context)
-                                .push(
-                              ModalExprollableRouteBuilder(
-                                  pageBuilder: (_, __, ___) =>
-                                      OfferDetailsDialog(
-                                        index: index,
-                                        proposal: getOffer(),
-                                        onAcceptCallback: (proposal) {
-                                          var userStore = getIt<UserStore>();
-                                          var id = userStore
-                                              .user?.studentProfile?.objectId;
-                                          if (id != null && proposal != null) {
-                                            projectStore
-                                                .updateProposal(proposal, id)
-                                                .then(
-                                              (value) {
-                                                Toastify.show(
-                                                    context,
-                                                    "",
-                                                    "Succeed!",
-                                                    aboveNavbar:
-                                                        !NavbarNotifier2
-                                                            .isNavbarHidden,
-                                                    ToastificationType.success,
-                                                    () {});
-                                                if(mounted) setState(() {});
-                                              },
-                                            );
-                                          }
-                                        },
-                                      ),
-                                  // Increase the transition durations and take a closer look at what's going on!
-                                  transitionDuration:
-                                      const Duration(milliseconds: 500),
-                                  reverseTransitionDuration:
-                                      const Duration(milliseconds: 300),
-                                  // The next two lines are not required, but are recommended for better performance.
-                                  dismissThresholdInset:
-                                      const DismissThresholdInset(
-                                          dragMargin: 10000)),
-                            )
-                                .then(
-                              (value) {
-                                NavbarNotifier2.hideBottomNavBar = false;
-                              },
-                            );
-                          },
+      return Observer(builder: (context) {
+        return Tooltip(
+          message: userStore.user!.type == UserType.student
+              ? "${getOffer().length} offers"
+              : "",
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          verticalOffset: 60,
+          child: InkWell(
+            child: badges.Badge(
+              badgeContent: Text(
+                getOffer().length.toString(),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.secondary),
+              ),
+              showBadge: getOffer().isNotEmpty &&
+                  userStore.user!.type == UserType.student,
+              position: badges.BadgePosition.topStart(start: 10, top: -10),
+              badgeStyle: badges.BadgeStyle(
+                  badgeColor: Theme.of(context).colorScheme.primary),
+              child: Stack(
+                children: [
+                  for (int index = getOffer().length - 1; index >= 0; index--)
+                    Center(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: index == 1 ? 10 : 15,
+                            right: index == 2 ? 7 : 15),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: HeroFlutterLogo(
+                            color: index == 2 ? Colors.white : colors[index],
+                            tag: index,
+                            size: 145,
+                            onTap: () {
+                              openOfferPage(index);
+                            },
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-      );
+        );
+      });
     } else {
       return Container();
     }
@@ -787,37 +786,46 @@ class _AlertTabState extends State<AlertTab> {
           future: future,
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Container(
-                margin: const EdgeInsets.only(top: 10),
-                height: MediaQuery.of(context).size.height * 0.9,
-                child: TransformerPageView(
-                  itemCount: activeDates.length,
-                  index: 14, // middle page
-                  controller: alertPageController,
-                  transformer: DepthPageTransformer(),
-                  onPageChanged: (value) {
-                    dateController.animateToDate(activeDates[value ?? 0]);
-                    setState(() {
-                      selectedDate = activeDates[value ?? 0];
-                    });
+              return notiStore.isLoading && notiStore.notiList.isEmpty
+                  ? const LoadingScreenWidget()
+                  : Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      height: MediaQuery.of(context).size.height * 0.9,
+                      child: TransformerPageView(
+                        itemCount: activeDates.length,
+                        index: 14, // middle page
+                        controller: alertPageController,
+                        transformer: DepthPageTransformer(),
+                        onPageChanged: (value) {
+                          dateController.animateToDate(activeDates[value ?? 0]);
+                          setState(() {
+                            selectedDate = activeDates[value ?? 0];
+                          });
 
-                    print(selectedDate);
-                  },
-                  itemBuilder: (context, i) {
-                    cc = context;
-                    return KeepAlivePage(
-                      key: PageStorageKey("alert_$i"),
-                      AlertPage(
-                        listController: listController[i],
-                        joinInterviews: notiStore.joinInterviews![i],
-                        viewOffers: notiStore.viewOffers![i],
-                        messages: notiStore.messages![i],
-                        texts: notiStore.texts![i],
+                          print(selectedDate);
+                        },
+                        itemBuilder: (context, i) {
+                          cc = context;
+                          // print("build explorable pv");
+                          return KeepAlivePage(
+                            key: PageStorageKey("alert_$i"),
+                            AlertPage(
+                              openOfferPage: () {
+                                openOfferPage(0);
+                              },
+                              listController: listController[i],
+                              joinInterviews: notiStore.joinInterviews![i],
+                              viewOffers: notiStore.viewOffers![i],
+                              messages: notiStore.messages![i],
+                              texts: notiStore.texts![i],
+                            ),
+                          );
+
+                          
+                        },
                       ),
                     );
-                  },
-                ),
-              );
+
             } else {
               return const LoadingScreenWidget();
             }
@@ -862,9 +870,13 @@ class HeroFlutterLogo extends StatelessWidget {
 
 class CustomProposalNotification extends StatefulWidget {
   const CustomProposalNotification(
-      {super.key, required this.notificationObject, required this.showTime});
+      {super.key,
+      required this.notificationObject,
+      required this.showTime,
+      required this.openOfferPage});
   final NotificationObject notificationObject;
   final bool showTime;
+  final Function openOfferPage;
 
   @override
   State<CustomProposalNotification> createState() =>
@@ -884,22 +896,30 @@ class _CustomProposalNotificationState
           children: [
             Column(
               children: [
-                const CircleAvatar(
-                  radius: 20, backgroundColor: Colors.blue,
-                  backgroundImage: CachedNetworkImageProvider(
-                    // errorBuilder: (context, error, stackTrace) => const Icon(
-                    //   Icons.error_outline,
-                    //   size: 45,
-                    // ),
-                    cacheKey: "flutter_interview",
+                widget.notificationObject.type == NotificationType.proposal
+                    ? const CircleAvatar(
+                        radius: 20, backgroundColor: Colors.blue,
+                        backgroundImage: CachedNetworkImageProvider(
+                          // errorBuilder: (context, error, stackTrace) => const Icon(
+                          //   Icons.error_outline,
+                          //   size: 45,
+                          // ),
+                          cacheKey: "flutter_interview",
 
-                    maxWidth: 50,
-                    maxHeight: 50,
-                    'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
-                    // fit: BoxFit.cover,
-                  ),
-                  // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
-                ),
+                          maxWidth: 50,
+                          maxHeight: 50,
+                          'https://m.media-amazon.com/images/I/41VnEemazTL.jpg',
+                          // fit: BoxFit.cover,
+                        ),
+                        // backgroundImage: const AssetImage("assets/imges/Avatar.png"),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(left: 10),
+                        child: Icon(
+                          Icons.mail_lock,
+                          size: 45,
+                        ),
+                      ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: Padding(
@@ -910,40 +930,80 @@ class _CustomProposalNotificationState
                       buttonTextSize: 10,
                       // textColor: follow == false ? Colors.white : mainText,
                       onPressed: () async {
-                        var proposal = widget.notificationObject.metadata!;
                         var userStore = getIt<UserStore>();
-                        var projectStore = getIt<ProjectStore>();
-                        if (userStore.user!.type == UserType.company &&
-                            projectStore.companyProjects.isEmpty) {
-                          await projectStore.getProjectByCompany(
-                              userStore.user!.companyProfile!.objectId!);
-                        }
-                        if (projectStore.companyProjects.isNotEmpty) {
-                          var project =
-                              projectStore.companyProjects.firstWhereOrNull(
-                            (element) =>
-                                element.objectId ==
-                                proposal["projectId"].toString(),
-                          );
-                          if (project != null) {
-                            projectStore.currentProps =
-                                ProposalList(proposals: project.proposal);
-                            Navigator.of(NavigationService
-                                    .navigatorKey.currentContext!)
-                                .push(MaterialPageRoute2(
-                                    routeName:
-                                        "${Routes.projectDetails}/${proposal["projectId"]}",
-                                    arguments: {
-                                  "project": project,
-                                  "index": -1
-                                }));
+                        if (widget.notificationObject.type ==
+                            NotificationType.proposal) {
+                              // cty nhận thbao student đã nộp proposal
+                          var proposal = widget.notificationObject.metadata!;
+                          var projectStore = getIt<ProjectStore>();
+                          if (userStore.user!.type == UserType.company &&
+                              projectStore.companyProjects.isEmpty) {
+                            await projectStore.getProjectByCompany(
+                                userStore.user!.companyProfile!.objectId!);
+                          }
+                          if (projectStore.companyProjects.isNotEmpty) {
+                            print("");
+                            var project =
+                                projectStore.companyProjects.firstWhereOrNull(
+                              (element) =>
+                                  element.objectId ==
+                                  proposal["projectId"].toString(),
+                            );
+                            if (project != null) {
+                              projectStore.currentProps =
+                                  ProposalList(proposals: project.proposal);
+                              Navigator.of(NavigationService
+                                      .navigatorKey.currentContext!)
+                                  .push(MaterialPageRoute2(
+                                      routeName:
+                                          "${Routes.projectDetails}/${proposal["projectId"]}",
+                                      arguments: {
+                                    "project": project,
+                                    "index": -1
+                                  }));
+                            }
+                          }
+                        } else {
+                          if (userStore.user!.type == UserType.student) {
+                            // student xem offer
+                            widget.openOfferPage();
+                          } else {
+                            // cty nhận dc thbao offer đã dc accept
+                            var proposal = widget.notificationObject.metadata!;
+                            var projectStore = getIt<ProjectStore>();
+
+                            await projectStore.getProjectByCompany(
+                                userStore.user!.companyProfile!.objectId!);
+                            if (projectStore.companyProjects.isNotEmpty) {
+                              print("");
+                              var project =
+                                  projectStore.companyProjects.firstWhereOrNull(
+                                (element) =>
+                                    element.objectId ==
+                                    proposal["projectId"].toString(),
+                              );
+                              if (project != null) {
+                                projectStore.currentProps =
+                                    ProposalList(proposals: project.proposal);
+                                Navigator.of(NavigationService
+                                        .navigatorKey.currentContext!)
+                                    .push(MaterialPageRoute2(
+                                        routeName:
+                                            "${Routes.projectDetails}/${proposal["projectId"]}",
+                                        arguments: {
+                                      "project": project,
+                                      "index": 3
+                                    }));
+                              }
+                            }
+
                           }
                         }
                       },
                       buttonText: widget.notificationObject.type ==
                               NotificationType.proposal
                           ? "View"
-                          : "Join",
+                          : "Check",
                     ),
                   ),
                 ),
@@ -1077,29 +1137,37 @@ class _CustomInterviewNotificationState
                               fontWeight: FontWeight.bold,
                               color: Theme.of(context).colorScheme.primary),
                         )
-                      : Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 0),
-                            child: RoundedButtonWidget(
-                              height: 40,
-                              buttonColor:
-                                  Theme.of(context).colorScheme.primary,
-                              buttonTextSize: 10,
-                              // textColor: follow == false ? Colors.white : mainText,
-                              onPressed: () {
-                                setState(() {
-                                  // follow = !follow;
-                                  widget.enterInterview();
-                                });
-                              },
-                              buttonText: widget.notificationObject.type ==
-                                      NotificationType.viewOffer
-                                  ? "View"
-                                  : "Join",
+                      : interview!.isCancel
+                          ? Text(
+                              "Canceled",
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(context).colorScheme.primary),
+                            )
+                          : Align(
+                              alignment: Alignment.centerRight,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 0),
+                                child: RoundedButtonWidget(
+                                  height: 40,
+                                  buttonColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  buttonTextSize: 10,
+                                  // textColor: follow == false ? Colors.white : mainText,
+                                  onPressed: () {
+                                    setState(() {
+                                      // follow = !follow;
+                                      widget.enterInterview();
+                                    });
+                                  },
+                                  buttonText: widget.notificationObject.type ==
+                                          NotificationType.viewOffer
+                                      ? "View"
+                                      : "Join",
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
               ],
             ),
             const SizedBox(
@@ -1425,6 +1493,7 @@ class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
 class AlertPage extends StatefulWidget {
   final ScrollController listController;
   final List<NotificationObject> viewOffers, texts, messages, joinInterviews;
+  final Function openOfferPage;
 
   const AlertPage(
       {super.key,
@@ -1432,7 +1501,8 @@ class AlertPage extends StatefulWidget {
       required this.viewOffers,
       required this.joinInterviews,
       required this.messages,
-      required this.texts});
+      required this.texts,
+      required this.openOfferPage});
 
   @override
   State<AlertPage> createState() => _AlertPageState();
@@ -1496,7 +1566,8 @@ class _AlertPageState extends State<AlertPage> {
                         )),
                 itemBuilder: (BuildContext context, NotificationObject item) {
                   return switch (item.type) {
-                    NotificationType.viewOffer => CustomMessageNotifcation(
+                    NotificationType.viewOffer => CustomProposalNotification(
+                        openOfferPage: widget.openOfferPage,
                         notificationObject: item,
                         showTime: false,
                       ),
@@ -1516,6 +1587,7 @@ class _AlertPageState extends State<AlertPage> {
                         showTime: false,
                       ),
                     NotificationType.proposal => CustomProposalNotification(
+                        openOfferPage: () => widget.openOfferPage(),
                         notificationObject: item,
                         showTime: false,
                       ),

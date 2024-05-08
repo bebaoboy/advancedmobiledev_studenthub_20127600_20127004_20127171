@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:isolate';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
@@ -10,6 +11,7 @@ import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_calls.dart';
+import 'package:boilerplate/presentation/video_call/utils/consts.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -31,26 +33,43 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         "bebaoboy");
     log('[onMessage] background message meow: ${message.toMap().toString()}',
         "bebaoboy");
+    if (message.data.isEmpty) return;
 
     String type = message.data["type"] ?? "";
     String title = message.data["title"] ?? "";
     // ignore: unused_local_variable
     String body = message.data["message"] ?? "";
+    // ignore: unused_local_variable
     String sessionId = message.data["session_id"] ?? "";
-    int session = int.tryParse(sessionId) ?? 101;
+    // int session = int.tryParse(sessionId) ?? 101;
     if (type == "interview") {
       log("onMessage interview ${json.decode(json.decode(message.data["extra_body"])["body"])}");
+      var intv = InterviewSchedule.fromJsonApi(
+          json.decode(json.decode(message.data["extra_body"])["body"]));
       NotificationHelper.createInterviewPreflightNotification(
-          id: session, title: title, body: message.data.toString());
+          id: Random().nextInt(10000),
+          title: "$title - Project ${intv.title}",
+          body: "Code: ${intv.meetingRoomCode}\nId: ${intv.meetingRoomId}");
       await SharedPreferences.getInstance().then((value) {
         value.setString(
             "interview", json.decode(message.data["extra_body"])["body"]);
       });
-      log("onMessage interview created: ${InterviewSchedule.fromJsonApi(json.decode(message.data["extra_body"])["body"])}");
+      log("onMessage interview created: $intv");
     } else {
       print("meow");
-      NotificationHelper.createTextNotification(
-          id: 44, body: message.data.toString());
+      if (message.data["signal_type"] != null) {
+        if (message.data["signal_type"] == SIGNAL_TYPE_START_CALL) {
+          NotificationHelper.createBigTextNotification(
+              title: "New interview call",
+              body: "From ${message.data["caller_name"]}");
+        } else {
+          NotificationHelper.createBigTextNotification(
+              title: "Interview call ended",
+              body: "From ${message.data["caller_name"]}");
+        }
+      }
+      NotificationHelper.createBigTextNotification(
+          title: "Notification", body: message.data.toString());
     }
     ////print("Handling a background message: ${message.messageId}");
   } catch (e) {
@@ -149,6 +168,8 @@ class NotificationHelper {
   static Future<void> _create(
       {required NotificationContent content,
       List<NotificationActionButton>? actionButtons}) async {
+    if (content.body == null) return;
+    if (content.body!.isEmpty) return;
     if (kIsWeb) {
       try {
         await sendPushMessageFirebase(
@@ -203,12 +224,12 @@ class NotificationHelper {
           'This is a big text notification This is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notificationThis is a big text notification'}) async {
     await _create(
       content: NotificationContent(
-        id: 13,
+        id: Random().nextInt(10000),
         channelKey: NotificationChannelEnum.basicChannel.key,
-        // title: title,
-        body: title,
+        title: title,
+        body: body,
         notificationLayout: NotificationLayout.BigText,
-        fullScreenIntent: true,
+        fullScreenIntent: false,
         wakeUpScreen: true,
       ),
     );
@@ -268,7 +289,7 @@ class NotificationHelper {
         body: body,
         notificationLayout: NotificationLayout.BigPicture,
         bigPicture: image,
-        fullScreenIntent: true,
+        fullScreenIntent: false,
         wakeUpScreen: true,
       ),
     );

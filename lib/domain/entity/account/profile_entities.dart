@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:mobx/mobx.dart';
 
 // ------------------- PROFILE ACCOUNT ------------------------------
 
@@ -41,6 +42,7 @@ class StudentProfile extends Profile {
   List<Skill>? skillSet;
   List<Language>? languages;
   List<Education>? educations;
+  @observable
   List<Proposal>? proposalProjects;
 
   List<ProjectExperience>? projectExperience;
@@ -111,7 +113,7 @@ class StudentProfile extends Profile {
       'yearOfExperience': yearOfExperience,
       'review': review,
       'techStack': techStack,
-      'skillSet': skillSet,
+      'skillSets': skillSet,
       'languages': languages,
       'educations': educations,
       'transcript': transcript,
