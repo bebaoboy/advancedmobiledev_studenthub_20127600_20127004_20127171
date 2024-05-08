@@ -33,7 +33,7 @@ void main() {
   );
 
   Future<void> disableOverflowErrors(tester) async {
-    tester.view.physicalSize = const Size(2000, 4000);
+    tester.view.physicalSize = const Size(10000, 10000);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);

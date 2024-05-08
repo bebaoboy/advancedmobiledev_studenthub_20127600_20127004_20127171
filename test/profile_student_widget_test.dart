@@ -4,10 +4,13 @@
 // utility that Flutter provides. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
+import 'package:boilerplate/core/widgets/chip_input_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
-import 'package:boilerplate/presentation/signup/signup.dart';
+import 'package:boilerplate/presentation/profile/profile_student.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -32,13 +35,13 @@ void main() {
   );
 
   Future<void> disableOverflowErrors(tester) async {
-    tester.view.physicalSize = const Size(10000, 10000);
+    tester.view.physicalSize = const Size(100000, 100000);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
   }
 
-  testWidgets("Signup Widget Test", (WidgetTester tester) async {
+  testWidgets("Add student profile Widget Test", (WidgetTester tester) async {
     // WidgetsFlutterBinding.ensureInitialized();
     TestWidgetsFlutterBinding.ensureInitialized();
     disableOverflowErrors(tester);
@@ -63,20 +66,57 @@ void main() {
             textDirection: TextDirection.ltr,
             child: MediaQuery(
                 data: MediaQueryData(size: Size(10000.0, 10000.0)),
-                child: SignUpScreen()))));
+                child: ProfileStudentScreen()))));
 
     await tester.pump();
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    expect(find.text(Lang.get("signup_main_text")), findsOne);
+    // for (int i = 1; i <= CompanyScope.values.length; i++) {
+    //   expect(find.text(Lang.get("profile_question_1_choice_$i")), findsOne);
+    // }
+    // expect(find.byType(Radio<CompanyScope>),
+    //     findsExactly(CompanyScope.values.length));
+    expect(find.text(Lang.get("profile_skillset")), findsOne);
+    expect(find.text(Lang.get("profile_techstack")), findsOne);
+    expect(find.text(Lang.get("profile_welcome_text")), findsOne);
+    expect(find.text(Lang.get("profile_welcome_text2")), findsOne);
+
     expect(
         find.byWidgetPredicate((widget) =>
             widget is RoundedButtonWidget &&
-            widget.buttonText == Lang.get("signup_btn_sign_up")),
+            widget.buttonText == Lang.get('next')),
         findsAny);
-    expect(find.byType(RadioItem), findsExactly(2));
-    expect(find.text(Lang.get("signup_student_role_text")), findsOne);
-    expect(find.text(Lang.get("signup_company_role_text")), findsOne);
+    expect(find.byType(TextFieldWidget), findsAtLeast(4));
+    expect(find.byType(ChipsInput<Skill>), findsOne);
+    expect(find.byType(SearchDropdown), findsOne);
+    expect(find.byIcon(Icons.add_circle_outline), findsAny);
+
+    await tester.tap(
+      find.byWidgetPredicate((widget) =>
+          widget is RoundedButtonWidget &&
+          widget.buttonText == Lang.get('next')),
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 10));
+
+    expect(find.text(Lang.get('profile_experiences')), findsOne);
+    expect(find.text(Lang.get('profile_welcome_text3')), findsOne);
+
+    await tester.tap(
+      find.byWidgetPredicate((widget) =>
+          widget is RoundedButtonWidget &&
+          widget.buttonText == Lang.get('next')),
+    );
+    await tester.pumpAndSettle(const Duration(seconds: 10));
+
+    expect(find.text(Lang.get('profile_welcome_cv')), findsOne);
+    expect(find.text(Lang.get("profile_welcome_text2")), findsOne);
+    expect(find.byIcon(Icons.add_a_photo), findsExactly(2));
+    expect(find.byType(TextFormField), findsExactly(2));
+    expect(
+        find.byWidgetPredicate((widget) =>
+            widget is RoundedButtonWidget &&
+            widget.buttonText == Lang.get('next')),
+        findsAny);
     tester.view.resetPhysicalSize();
   });
-
 }

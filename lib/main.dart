@@ -194,6 +194,7 @@ Future<void> main() async {
     ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
       return ErrorPage(errorDetails: errorDetails);
     };
+    WorkMangerHelper.registerNotificationFetch();
 
     runApp(const MyApp());
   }, (error, stackTrace) {

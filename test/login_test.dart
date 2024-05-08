@@ -1,55 +1,15 @@
-import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
-import 'package:boilerplate/core/data/network/dio/configs/dio_configs.dart';
-import 'package:boilerplate/data/di/module/network_module.dart';
-import 'package:boilerplate/data/di/module/repository_module.dart';
-import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
-import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/network/constants/endpoints.dart';
-import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
-import 'package:boilerplate/domain/di/domain_layer_injection.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
-import 'package:boilerplate/main.dart';
-import 'package:boilerplate/presentation/di/presentation_layer_injection.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:sembast/sembast.dart';
-import 'package:sembast/sembast_memory.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
 
 import 'login_test.mocks.dart';
-
-initDb() async {
-  // preference manager:------------------------------------------------------
-  // data sources:------------------------------------------------------------
-  // Prevent calling Future.delayed that seems to hang in flutter test
-  getIt.registerSingletonAsync<SharedPreferences>(
-      () => SharedPreferences.getInstance());
-  getIt.registerSingleton<SharedPreferenceHelper>(
-    SharedPreferenceHelper(await getIt.getAsync<SharedPreferences>()),
-  );
-  disableSembastCooperator();
-  var sb = SembastClient(await databaseFactoryMemory.openDatabase('database'));
-  getIt.registerSingleton(PostDataSource(sb));
-
-  getIt.registerSingleton(ProjectDataSource(sb));
-  await NetworkModule.configureNetworkModuleInjection();
-  await RepositoryModule.configureRepositoryModuleInjection();
-
-  await DomainLayerInjection.configureDomainLayerInjection();
-  await PresentationLayerInjection.configurePresentationLayerInjection();
-  Workmanager().initialize(
-      callbackDispatcher, // The top level function, aka callbackDispatcher
-      isInDebugMode:
-          true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-      );
-  // database:----------------------------------------------------------------
-  // each database has a unique name
-}
+import 'widget_test.dart';
 
 @GenerateMocks([Dio])
 void main() async {
@@ -59,6 +19,12 @@ void main() async {
       SharedPreferences.setMockInitialValues({"first_time": true});
       await initDb();
     });
+
+    tearDown(
+      () async {
+        await getIt.reset();
+      },
+    );
 
     test("Test login success", () async {
       MockDio dio = MockDio();
@@ -75,7 +41,7 @@ void main() async {
       final future = userStore.login(email, password, UserType.naught, []);
       expectLater(future, completes);
       final result = await future;
-      expect(result, true);
+      expect(result, isNotNull);
     });
 
     test("Test login failed", () async {

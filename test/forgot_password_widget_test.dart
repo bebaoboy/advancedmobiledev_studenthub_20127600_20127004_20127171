@@ -5,9 +5,10 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
+import 'package:boilerplate/core/widgets/textfield_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
-import 'package:boilerplate/presentation/signup/signup.dart';
+import 'package:boilerplate/presentation/login/forget_password.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,7 +39,7 @@ void main() {
     ]);
   }
 
-  testWidgets("Signup Widget Test", (WidgetTester tester) async {
+  testWidgets("Forget password Widget Test", (WidgetTester tester) async {
     // WidgetsFlutterBinding.ensureInitialized();
     TestWidgetsFlutterBinding.ensureInitialized();
     disableOverflowErrors(tester);
@@ -63,19 +64,26 @@ void main() {
             textDirection: TextDirection.ltr,
             child: MediaQuery(
                 data: MediaQueryData(size: Size(10000.0, 10000.0)),
-                child: SignUpScreen()))));
+                child: ForgetPasswordScreen()))));
 
     await tester.pump();
 
-    expect(find.text(Lang.get("signup_main_text")), findsOne);
+    expect(find.text(Lang.get("forget_password_main_text")), findsOne);
+
+    expect(find.text(Lang.get("forget_password_main_text2")), findsOne);
+
     expect(
         find.byWidgetPredicate((widget) =>
             widget is RoundedButtonWidget &&
-            widget.buttonText == Lang.get("signup_btn_sign_up")),
+            widget.buttonText == Lang.get("forget_password_send")),
         findsAny);
-    expect(find.byType(RadioItem), findsExactly(2));
-    expect(find.text(Lang.get("signup_student_role_text")), findsOne);
-    expect(find.text(Lang.get("signup_company_role_text")), findsOne);
+
+    // expect(find.text(Lang.get("signup_sign_up_prompt"), findRichText: true), findsOne);
+
+    // expect(find.text(Lang.get("signup_sign_up_prompt_action"), findRichText: true), findsOne);
+
+    expect(find.byType(TextFieldWidget), findsOne);
+
     tester.view.resetPhysicalSize();
   });
 

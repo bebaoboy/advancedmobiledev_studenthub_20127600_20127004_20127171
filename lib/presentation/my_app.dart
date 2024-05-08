@@ -11,7 +11,6 @@ import 'package:boilerplate/presentation/video_call/utils/platform_utils.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
@@ -74,8 +73,6 @@ class _MyAppState extends State<MyApp> {
     };
 
     if (!kIsWeb) requestNotificationsPermission();
-    WorkMangerHelper.registerNotificationFetch();
-
     // initPlatformState();
     super.initState();
   }

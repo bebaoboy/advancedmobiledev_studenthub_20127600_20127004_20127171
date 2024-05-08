@@ -4,10 +4,9 @@
 // utility that Flutter provides. For example, you can send tap and scroll
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
-import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
-import 'package:boilerplate/presentation/signup/signup.dart';
+import 'package:boilerplate/presentation/setting/setting.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -38,7 +37,7 @@ void main() {
     ]);
   }
 
-  testWidgets("Signup Widget Test", (WidgetTester tester) async {
+  testWidgets("Setting Widget Test", (WidgetTester tester) async {
     // WidgetsFlutterBinding.ensureInitialized();
     TestWidgetsFlutterBinding.ensureInitialized();
     disableOverflowErrors(tester);
@@ -63,20 +62,52 @@ void main() {
             textDirection: TextDirection.ltr,
             child: MediaQuery(
                 data: MediaQueryData(size: Size(10000.0, 10000.0)),
-                child: SignUpScreen()))));
+                child: SettingScreen()))));
 
     await tester.pump();
+    await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    expect(find.text(Lang.get("signup_main_text")), findsOne);
-    expect(
-        find.byWidgetPredicate((widget) =>
-            widget is RoundedButtonWidget &&
-            widget.buttonText == Lang.get("signup_btn_sign_up")),
-        findsAny);
-    expect(find.byType(RadioItem), findsExactly(2));
-    expect(find.text(Lang.get("signup_student_role_text")), findsOne);
-    expect(find.text(Lang.get("signup_company_role_text")), findsOne);
+    expect(find.byType(ListTile), findsExactly(2));
+
+    await tester.tap(find.text(Lang.get('setting_text')));
+    await tester.pumpAndSettle(const Duration(seconds: 10));
+
+    expect(find.byType(ListTile), findsExactly(2));
+
+    expect(find.byType(Icon), findsExactly(5));
+
+    expect(find.byIcon(Icons.brightness_2_rounded), findsOne);
+
+    expect(find.byIcon(Icons.brightness_4_rounded), findsOne);
+
+    expect(find.byIcon(Icons.brightness_5_rounded), findsOne);
+
+    expect(find.byIcon(Icons.language), findsOne);
+
+    expect(find.byType(AnimatedContainer), findsExactly(3));
+
+    expect(find.text(Lang.get("home_tv_choose_language")), findsOne);
+
+    expect(find.text(Lang.get("home_tv_choose_theme")), findsOne);
+
+    expect(find.text("Auto"), findsOne);
+
+    expect(find.text("Light"), findsOne);
+
+    expect(find.text("Dark"), findsOne);
+
+    expect(find.byType(ListTile), findsExactly(2));
+    expect(find.byType(Icon), findsExactly(5));
+    expect(find.byIcon(Icons.brightness_2_rounded), findsOne);
+    expect(find.byIcon(Icons.brightness_4_rounded), findsOne);
+    expect(find.byIcon(Icons.brightness_5_rounded), findsOne);
+    expect(find.byIcon(Icons.language), findsOne);
+    expect(find.byType(AnimatedContainer), findsExactly(3));
+    expect(find.text(Lang.get("home_tv_choose_language")), findsOne);
+    expect(find.text(Lang.get("home_tv_choose_theme")), findsOne);
+    expect(find.text("Auto"), findsOne);
+    expect(find.text("Light"), findsOne);
+    expect(find.text("Dark"), findsOne);
     tester.view.resetPhysicalSize();
   });
-
 }

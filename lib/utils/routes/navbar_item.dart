@@ -30,7 +30,6 @@ class NavbarItem {
 
   @override
   bool operator ==(Object other) {
-    print("hi");
     bool result = other is NavbarItem &&
         runtimeType == other.runtimeType &&
         iconData == other.iconData &&
