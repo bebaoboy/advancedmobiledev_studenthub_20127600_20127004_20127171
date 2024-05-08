@@ -1,8 +1,8 @@
 name: "Release Test"
 
 on:
-  # pull_request:
-  #   branches:
+  pull_request:
+    branches:
   #     - main
   #     - phasing1
   #     - phasing2
@@ -10,7 +10,7 @@ on:
   #     - phasing4
   #     - sprint8-chat
   #     - sprint8
-  #     - sprint10*
+      - sprint10*
 
   push:
     branches:
