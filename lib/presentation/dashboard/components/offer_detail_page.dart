@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/alert_tab.dart';
@@ -159,7 +158,7 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                 backgroundColor:
                                                     Theme.of(context)
                                                         .colorScheme
-                                                        .primaryContainer,
+                                                        .onSurface,
                                                 surfaceTintColor:
                                                     Colors.transparent,
                                                 minimumSize: Size(
@@ -174,11 +173,7 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                       BorderRadius.circular(12),
                                                 ),
                                               ),
-                                              onPressed: () {
-                                                // Navigator.of(context).pushNamed(
-                                                //     Routes.submitProposal,
-                                                //     arguments: widget.project);
-                                              },
+                                              onPressed: () {},
                                               child: Text(
                                                 Lang.get('save'),
                                                 style: Theme.of(context)
@@ -215,9 +210,6 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                   ),
                                                 ),
                                                 onPressed: () async {
-                                                  // Navigator.of(context).pushNamed(
-                                                  //     Routes.submitProposal,
-                                                  //     arguments: widget.project);
                                                   AnimatedDialog
                                                       .showAnimatedDialog(
                                                     context,

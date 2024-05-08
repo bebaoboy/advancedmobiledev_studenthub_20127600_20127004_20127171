@@ -20,7 +20,9 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:material_dialog/material_dialog.dart';
@@ -403,132 +405,127 @@ class _SettingScreenState extends State<SettingScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            Flexible(fit: FlexFit.loose, child: _buildAccountTree()),
+            if (_userStore.savedUsers.isNotEmpty)
+              Flexible(fit: FlexFit.loose, child: _buildAccountTree()),
             const Divider(
               height: 3,
             ),
             const SizedBox(
               height: 20,
             ),
-            ListTile(
-                onTap: () async {
-                  //int n = Random().nextInt(3);
-                  if (_userStore.user != null &&
-                      _userStore.user!.type != UserType.naught) {
-                    if (_userStore.user!.type == UserType.company) {
-                      if (_userStore.user!.companyProfile == null) {
-                        showAnimatedDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext context) {
-                            return ClassicGeneralDialogWidget(
-                              contentText:
-                                  'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                              negativeText: Lang.get('cancel'),
-                              positiveText: 'Yes',
-                              onPositiveClick: () {
-                                Navigator.of(context).pop();
-
-                                Navigator.of(context).push(MaterialPageRoute2(
-                                    routeName: Routes.profile));
-                                return;
-                              },
-                              onNegativeClick: () {
-                                Navigator.of(context).pop();
-                              },
-                            );
-                          },
-                          animationType: DialogTransitionType.size,
-                          curve: Curves.fastOutSlowIn,
-                          duration: const Duration(seconds: 1),
-                        );
-                      } else {
-                        navigate(
-                            context,
-                            _userStore.user != null &&
-                                    _userStore.user!.type == UserType.company
-                                ? Routes.viewProfileCompany
-                                : Routes.viewProfileStudent);
-                      }
-                    } else {
-                      if (_userStore.user!.studentProfile == null) {
-                        showAnimatedDialog(
-                          context: context,
-                          barrierDismissible: true,
-                          builder: (BuildContext ctx) {
-                            return ClassicGeneralDialogWidget(
-                              contentText:
-                                  'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                              negativeText: Lang.get('cancel'),
-                              positiveText: 'Yes',
-                              onPositiveClick: () async {
-                                Navigator.of(ctx).pop();
-                                final ProfileStudentStore infoStore =
-                                    getIt<ProfileStudentStore>();
-
-                                await infoStore.getTechStack();
-                                await infoStore.getSkillset();
-
-                                Navigator.of(context).push(MaterialPageRoute2(
-                                    routeName: Routes.profileStudent));
-                                return;
-                              },
-                              onNegativeClick: () {
-                                Navigator.of(context).pop();
-                              },
-                            );
-                          },
-                          animationType: DialogTransitionType.size,
-                          curve: Curves.fastOutSlowIn,
-                          duration: const Duration(seconds: 1),
-                        );
-                      } else {
-                        try {
-                          setState(() {
-                            loading = true;
-                          });
-                        } catch (e) {
-                          loading = true;
-                        }
-                        try {
-                          if (_userStore.studentId != null) {
-                            // final ProfileStudentStore infoStore =
-                            //     getIt<ProfileStudentStore>();
-
-                            // infoStore.setStudentId(
-                            //     _userStore.user!.studentProfile!.objectId!);
-                            // await infoStore.getInfo().then(
-                            //       (value) {},
-                            //     );
-                            final ProfileStudentFormStore formStore =
-                                getIt<ProfileStudentFormStore>();
-                            await formStore.getProfileStudent(
-                                _userStore.user!.studentProfile!.objectId!);
-                          }
-                        } catch (e) {
-                          ///
-                        }
-                        try {
-                          setState(() {
-                            loading = false;
-                          });
+            Visibility(
+              visible: _userStore.isLoggedIn,
+              child: ListTile(
+                  onTap: () async {
+                    if (_userStore.user != null &&
+                        _userStore.user!.type != UserType.naught) {
+                      if (_userStore.user!.type == UserType.company) {
+                        if (_userStore.user!.companyProfile == null) {
+                          showAnimatedDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              return ClassicGeneralDialogWidget(
+                                contentText:
+                                    'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
+                                negativeText: Lang.get('cancel'),
+                                positiveText: 'Yes',
+                                onPositiveClick: () {
+                                  Navigator.of(context).pop();
+              
+                                  Navigator.of(context).push(MaterialPageRoute2(
+                                      routeName: Routes.profile));
+                                  return;
+                                },
+                                onNegativeClick: () {
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                            animationType: DialogTransitionType.size,
+                            curve: Curves.fastOutSlowIn,
+                            duration: const Duration(seconds: 1),
+                          );
+                        } else {
                           navigate(
                               context,
                               _userStore.user != null &&
                                       _userStore.user!.type == UserType.company
                                   ? Routes.viewProfileCompany
                                   : Routes.viewProfileStudent);
-                        } catch (e) {
-                          loading = false;
+                        }
+                      } else {
+                        if (_userStore.user!.studentProfile == null) {
+                          showAnimatedDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext ctx) {
+                              return ClassicGeneralDialogWidget(
+                                contentText:
+                                    'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
+                                negativeText: Lang.get('cancel'),
+                                positiveText: 'Yes',
+                                onPositiveClick: () async {
+                                  Navigator.of(ctx).pop();
+                                  final ProfileStudentStore infoStore =
+                                      getIt<ProfileStudentStore>();
+              
+                                  await infoStore.getTechStack();
+                                  await infoStore.getSkillset();
+              
+                                  Navigator.of(context).push(MaterialPageRoute2(
+                                      routeName: Routes.profileStudent));
+                                  return;
+                                },
+                                onNegativeClick: () {
+                                  Navigator.of(context).pop();
+                                },
+                              );
+                            },
+                            animationType: DialogTransitionType.size,
+                            curve: Curves.fastOutSlowIn,
+                            duration: const Duration(seconds: 1),
+                          );
+                        } else {
+                          try {
+                            setState(() {
+                              loading = true;
+                            });
+                          } catch (e) {
+                            loading = true;
+                          }
+                          try {
+                            if (_userStore.studentId != null) {
+                              final ProfileStudentFormStore formStore =
+                                  getIt<ProfileStudentFormStore>();
+                              await formStore.getProfileStudent(
+                                  _userStore.user!.studentProfile!.objectId!);
+                            }
+                          } catch (e) {
+                            ///
+                          }
+                          try {
+                            setState(() {
+                              loading = false;
+                            });
+                            navigate(
+                                context,
+                                _userStore.user != null &&
+                                        _userStore.user!.type == UserType.company
+                                    ? Routes.viewProfileCompany
+                                    : Routes.viewProfileStudent);
+                          } catch (e) {
+                            loading = false;
+                          }
                         }
                       }
                     }
-                  }
-                },
-                leading: const Icon(Icons.person),
-                title: Text(
-                  Lang.get('profile_text'),
-                )),
+                  },
+                  leading: const Icon(Icons.person),
+                  title: Text(
+                    Lang.get('profile_text'),
+                  )),
+            ),
             const Divider(
               height: 3,
             ),
@@ -568,36 +565,39 @@ class _SettingScreenState extends State<SettingScreen> {
                 title: Text(
                   Lang.get('about'),
                 )),
-            ListTile(
-                onTap: () {
-                  showAnimatedDialog(
-                    context: context,
-                    barrierDismissible: true,
-                    builder: (BuildContext context) {
-                      return ClassicGeneralDialogWidget(
-                        contentText: Lang.get("logout_confirm"),
-                        negativeText: Lang.get('cancel'),
-                        positiveText: 'OK',
-                        onPositiveClick: () {
-                          _userStore.logout();
-                          Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute2(routeName: Routes.login),
-                              (Route<dynamic> route) => false);
-                        },
-                        onNegativeClick: () {
-                          Navigator.of(context).pop();
-                        },
-                      );
-                    },
-                    animationType: DialogTransitionType.size,
-                    curve: Curves.fastOutSlowIn,
-                    duration: const Duration(seconds: 1),
-                  );
-                },
-                leading: const Icon(Icons.logout),
-                title: Text(
-                  Lang.get('logout'),
-                )),
+            Visibility(
+              visible: _userStore.isLoggedIn,
+              child: ListTile(
+                  onTap: () {
+                    showAnimatedDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return ClassicGeneralDialogWidget(
+                          contentText: Lang.get("logout_confirm"),
+                          negativeText: Lang.get('cancel'),
+                          positiveText: 'OK',
+                          onPositiveClick: () {
+                            _userStore.logout();
+                            Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute2(routeName: Routes.login),
+                                (Route<dynamic> route) => false);
+                          },
+                          onNegativeClick: () {
+                            Navigator.of(context).pop();
+                          },
+                        );
+                      },
+                      animationType: DialogTransitionType.size,
+                      curve: Curves.fastOutSlowIn,
+                      duration: const Duration(seconds: 1),
+                    );
+                  },
+                  leading: const Icon(Icons.logout),
+                  title: Text(
+                    Lang.get('logout'),
+                  )),
+            ),
           ],
         ),
       ),

@@ -1,4 +1,6 @@
 import 'package:boilerplate/core/widgets/shared_preference_view.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
@@ -12,6 +14,7 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userStore = getIt<UserStore>();
     return kIsWeb
         ? AppBar(
             leadingWidth: 30,
@@ -34,15 +37,16 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
             actions: [
               // LanguageButton(),
               // ThemeButton(),
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute2(routeName: Routes.setting));
-                },
-                icon: const Icon(
-                  Icons.account_circle,
+              if (userStore.savedUsers.isNotEmpty)
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute2(routeName: Routes.setting));
+                  },
+                  icon: const Icon(
+                    Icons.account_circle,
+                  ),
                 ),
-              ),
             ],
           )
         : MorphingAppBar(
@@ -66,15 +70,16 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
             actions: [
               // LanguageButton(),
               // ThemeButton(),
-              IconButton(
-                onPressed: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute2(routeName: Routes.setting));
-                },
-                icon: const Icon(
-                  Icons.account_circle,
+              if (userStore.savedUsers.isNotEmpty)
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute2(routeName: Routes.setting));
+                  },
+                  icon: const Icon(
+                    Icons.account_circle,
+                  ),
                 ),
-              ),
             ],
           );
   }
@@ -88,4 +93,5 @@ class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Orientation.landscape
               ? 30
               : 60
-          : 60);}
+          : 60);
+}

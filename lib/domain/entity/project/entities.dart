@@ -461,6 +461,10 @@ class InterviewSchedule extends MyObject {
     return "${endDate.difference(startDate).inMinutes} minutes";
   }
 
+  getNumDuration() {
+    return endDate.difference(startDate).inMinutes;
+  }
+
   @override
   String toString() {
     return ("\n${title.toString()}") +

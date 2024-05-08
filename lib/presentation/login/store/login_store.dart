@@ -72,12 +72,12 @@ abstract class _UserStore with Store {
     //     name: "Hai Pham",
     //     roles: [UserType.company, UserType.student],
     //     isVerified: true));
-    savedUsers.add(User(
-        email: "user2@gmail.com",
-        name: "Hai Pham 2",
-        roles: [],
-        isVerified: true,
-        objectId: "hai"));
+    // savedUsers.add(User(
+    //     email: "user2@gmail.com",
+    //     name: "Hai Pham 2",
+    //     roles: [],
+    //     isVerified: true,
+    //     objectId: "hai"));
 
     // savedUsers.add(User(
     //     email: "user3@gmail.com", name: "Hai Pham 3", roles: [], isVerified: true));

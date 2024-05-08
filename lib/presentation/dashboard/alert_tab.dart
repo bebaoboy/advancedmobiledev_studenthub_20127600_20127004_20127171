@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
 
 import 'dart:math';
 
@@ -438,151 +438,6 @@ class AlertTab extends StatefulWidget {
   State<AlertTab> createState() => _AlertTabState();
 }
 
-// final List<NotificationObject> alerts = [
-//   NotificationObject(
-//       type: NotificationType.text,
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "company 1",
-//       ),
-//       content: 'You have submitted to join project "Javis - AI Copilot',
-//       createdAt: DateTime.now()),
-//   NotificationObject(
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "company 1",
-//       ),
-//       type: NotificationType.joinInterview,
-//       content:
-//           'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-//       createdAt: DateTime.now().subtract(const Duration(days: 7))),
-//   OfferNotification(
-//       projectId: "",
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "company 1",
-//       ),
-//       content: 'You have submitted to join project "Javis - AI Copilot',
-//       createdAt: DateTime.now()),
-//   NotificationObject(
-//       type: NotificationType.message,
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "Alex Jor",
-//       ),
-//       content: 'I have read your requirement but I dont seem to...?\n6/6/2024',
-//       createdAt: DateTime.now()),
-//   NotificationObject(
-//       type: NotificationType.message,
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "Alex Jor",
-//       ),
-//       content: 'Finish your project?',
-//       createdAt: DateTime.now()),
-//   NotificationObject(
-//       type: NotificationType.message,
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "Alex Jor",
-//       ),
-//       content: 'How are you doing?',
-//       createdAt: DateTime.now()),
-//   OfferNotification(
-//       projectId: "",
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "company 1",
-//       ),
-//       content: 'You have an offer to join project "HCMUS - Administration"',
-//       createdAt: DateTime.now()),
-//   OfferNotification(
-//       projectId: "",
-//       id: "",
-//       receiver: StudentProfile(objectId: "", fullName: "student 1"),
-//       sender: CompanyProfile(
-//         objectId: "",
-//         companyName: "company 1",
-//       ),
-//       content: 'You have an offer to join project "Quantum Physics"',
-//       createdAt: DateTime.now()),
-// ];
-
-// final List<Map<String, dynamic>> alerts = [
-//   // OfferNotification(
-//   //     projectId: "",
-//   //     id: "",
-//   //     receiver: Profile(objectId: ""),
-//   //     sender: Profile(objectId: ""),
-//   //     content: 'You have submitted to join project "Javis - AI Copilot'),
-
-//   {
-//     'icon': Icons.star,
-//     'title': 'You have submitted to join project "Javis - AI Copilot"',
-//     'subtitle': '6/6/2024',
-//     'action': null,
-//   },
-//   {
-//     'icon': Icons.star,
-//     'title':
-//         'You have invited to interview for project "Javis - AI Copilot" at 14:00 March 20, Thursday',
-//     'subtitle': '6/6/2024',
-//     'action': 'Join',
-//   },
-//   {
-//     'icon': Icons.star,
-//     'title': 'You have offer to join project "Javis - AI Copilot"',
-//     'subtitle': '6/6/2024',
-//     'action': 'View offer',
-//   },
-//   {
-//     'icon': Icons.star,
-//     'title': 'Alex Jor',
-//     'subtitle': 'I have read your requirement but I dont seem to...?\n6/6/2024',
-//     'action': null,
-//   },
-//   {
-//     'icon': Icons.star,
-//     'title': 'Alex Jor',
-//     'subtitle': 'Finish your project?\n6/6/2024',
-//     'action': null,
-//   },
-//   {
-//     'icon': Icons.star,
-//     'title': 'Alex Jor',
-//     'subtitle': 'How are you doing?\n6/6/2024',
-//     'action': null,
-//   },
-
-//   {
-//     'icon': Icons.star,
-//     'title': 'You have an offer to join project "Quantum Physics"',
-//     'subtitle': '6/6/2024',
-//     'action': 'View offer',
-//   },
-//   {
-//     'icon': Icons.star,
-//     'title': 'You have an offer to join project "HCMUS - Administration"',
-//     'subtitle': '6/6/2024',
-//     'action': 'View offer',
-//   },
-//   // Add more alerts here
-// ];
-
 class _AlertTabState extends State<AlertTab> {
   var userStore = getIt<UserStore>();
   var notiStore = getIt<NotificationStore>();
@@ -797,83 +652,10 @@ class _AlertTabState extends State<AlertTab> {
           ),
         );
       });
-
-      // Scrollbar(
-      //   controller: topRowController,
-      //   child: ListView.builder(
-      //     controller: topRowController,
-      //     shrinkWrap: true,
-      //     reverse: true,
-      //     itemCount: getOffer().length,
-      //     itemBuilder: (context, index) {
-      //       return Container(
-      //         margin: const EdgeInsets.only(right: 15, left: 5, top: 15),
-      //         child: ClipRRect(
-      //           borderRadius: BorderRadius.circular(12),
-      //           child: HeroFlutterLogo(
-      //             color: colors[index],
-      //             tag: index,
-      //             size: 125,
-      //             onTap: () {
-      //               print(index);
-      //               NavbarNotifier2.hideBottomNavBar = true;
-
-      //               Navigator.of(
-      //                       NavigationService.navigatorKey.currentContext ??
-      //                           context)
-      //                   .push(
-      //                 ModalExprollableRouteBuilder(
-      //                     pageBuilder: (_, __, ___) => OfferDetailsDialog(
-      //                           index: index,
-      //                           proposal: getOffer(),
-      //                           onAcceptCallback: (proposal) {
-      //                             var userStore = getIt<UserStore>();
-      //                             var id =
-      //                                 userStore.user?.studentProfile?.objectId;
-      //                             if (id != null && proposal != null) {
-      //                               projectStore
-      //                                   .updateProposal(proposal, id)
-      //                                   .then(
-      //                                 (value) {
-      //                                   setState(() {});
-      //                                 },
-      //                               );
-      //                             }
-      //                           },
-      //                         ),
-      //                     // Increase the transition durations and take a closer look at what's going on!
-      //                     transitionDuration: const Duration(milliseconds: 500),
-      //                     reverseTransitionDuration:
-      //                         const Duration(milliseconds: 300),
-      //                     // The next two lines are not required, but are recommended for better performance.
-      //                     dismissThresholdInset:
-      //                         const DismissThresholdInset(dragMargin: 10000)),
-      //               )
-      //                   .then(
-      //                 (value) {
-      //                   NavbarNotifier2.hideBottomNavBar = false;
-      //                 },
-      //               );
-      //             },
-      //           ),
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // );
+        ),
+      );
     } else {
-      return Container(
-          // margin: const EdgeInsets.only(left: 5, right: 15),
-          // child: ClipRRect(
-          //   borderRadius: BorderRadius.circular(12),
-          //   child: HeroFlutterLogo(
-          //     color: Colors.black,
-          //     tag: -1,
-          //     size: 145,
-          //     onTap: () {},
-          //   ),
-          // ),
-          );
+      return Container();
     }
   }
 
@@ -923,11 +705,6 @@ class _AlertTabState extends State<AlertTab> {
   _datePickerSection() {
     print("build date");
     return Container(
-        // decoration: BoxDecoration(
-        //     border: Border.all(
-        //       color: Theme.of(context).colorScheme.primary,
-        //     ),
-        //     borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.only(),
         child: EasyInfiniteDateTimeLine(
           selectionMode: const SelectionMode.alwaysFirst(),
@@ -953,6 +730,15 @@ class _AlertTabState extends State<AlertTab> {
           },
           dayProps: EasyDayProps(
             height: 60,
+            todayNumStyle:
+                TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            inactiveDayNumStyle:
+                TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            inactiveDayStyle: DayStyle(
+              decoration: BoxDecoration(
+                  borderRadius: const BorderRadius.all(Radius.circular(12)),
+                  color: Theme.of(context).colorScheme.onBackground),
+            ),
             activeDayStyle: DayStyle(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(12)),
@@ -968,35 +754,6 @@ class _AlertTabState extends State<AlertTab> {
             ),
           ),
         ));
-    //   DatePicker(
-    //     controller: dateController,
-    //     activeDates[0],
-    //     height: 130,
-    //     width: 80,
-    //     daysCount: activeDates.length, // fortnight
-    //     locale: getIt<LanguageStore>().locale,
-    //     initialSelectedDate: selectedDate,
-    //     selectionColor: const Color.fromARGB(255, 255, 48, 48),
-    //     selectedTextColor: Colors.white,
-    //     dateTextStyle: datePickerStyle,
-    //     monthTextStyle: monthPickerStyle,
-    //     onDateChange: (date) {
-    //       setState(() {
-    //         selectedDate = date;
-    //         print(date);
-    //       });
-    //       var i = activeDates.indexWhere(
-    //         (element) =>
-    //             element.millisecondsSinceEpoch == date.millisecondsSinceEpoch,
-    //       );
-    //       if (i != -1) {
-    //         alertPageController.move(i, animation: (oldIndex - i).abs() == 1);
-    //         oldIndex = i;
-    //         print(i);
-    //       }
-    //     },
-    //   ),
-    // );
   }
 
   late List<Widget?> pages;
@@ -1066,49 +823,11 @@ class _AlertTabState extends State<AlertTab> {
                             ),
                           );
 
-                          // ListView.separated(
-                          //     controller: listController[index],
-                          //     itemCount: alerts.length,
-                          //     separatorBuilder: (context, index) =>
-                          //         const Divider(color: Colors.black),
-                          //     itemBuilder: (context, index) {
-                          //       return GestureDetector(
-                          //         onTap: () {
-                          //           //print('Tile clicked');
-                          //           // You can replace the print statement with your function
-                          //         },
-                          //         child: ListTile(
-                          //           leading: Icon(alerts[index]['icon']),
-                          //           title: Text(alerts[index]['title']),
-                          //           subtitle: Text(alerts[index]['subtitle']),
-                          //           trailing: alerts[index]['action'] != null
-                          //               ? ElevatedButton(
-                          //                   onPressed: () {
-                          //                     //print('${alerts[index]['action']} button clicked');
-                          //                     if (alerts[index]['action'] != null) {
-                          //                       if (alerts[index]['action'] == "Join") {
-                          //                         Navigator.of(NavigationService
-                          //                                 .navigatorKey.currentContext!)
-                          //                             .push(MaterialPageRoute2(
-                          //                                 routeName: Routes.message,
-                          //                                 arguments: "Javis - AI Copilot"));
-                          //                       } else if (alerts[index]['action'] ==
-                          //                           "View offer") {
-                          //                         // showOfferDetailsDialog(context, 2);
-                          //                         // NavbarNotifier2.hideBottomNavBar = true;
-                          //                       }
-                          //                     }
-                          //                     // You can replace the print statement with your function
-                          //                   },
-                          //                   child: Text(Lang.get(alerts[index]['action'])),
-                          //                 )
-                          //               : null,
-                          //         ),
-                          //       );
-                          //     });
+                          
                         },
                       ),
                     );
+
             } else {
               return const LoadingScreenWidget();
             }
@@ -1279,6 +998,7 @@ class _CustomProposalNotificationState
                                     }));
                               }
                             }
+
                           }
                         }
                       },
@@ -1401,10 +1121,6 @@ class _CustomInterviewNotificationState
                 const CircleAvatar(
                   radius: 20, backgroundColor: Colors.blue,
                   backgroundImage: CachedNetworkImageProvider(
-                    // errorBuilder: (context, error, stackTrace) => const Icon(
-                    //   Icons.error_outline,
-                    //   size: 45,
-                    // ),
                     cacheKey: "flutter_interview",
 
                     maxWidth: 50,
@@ -1769,18 +1485,6 @@ class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
                 ],
               ),
             ),
-            // CachedNetworkImage(
-            //   errorWidget: (context, error, stackTrace) => const Icon(
-            //     Icons.error_outline,
-            //     size: 45,
-            //   ),
-            //   cacheKey: "flutter",
-            //   width: 50,
-            //   height: 50,
-            //   imageUrl:
-            //       'https://docs.flutter.dev/assets/images/404/dash_nest.png',
-            //   fit: BoxFit.cover,
-            // ),
           ],
         ),
       ),
@@ -1813,7 +1517,6 @@ class _AlertPageState extends State<AlertPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print("build Page");
     return Padding(
       padding: const EdgeInsets.only(bottom: 30),
       child: widget.joinInterviews.isEmpty &&
@@ -1902,239 +1605,7 @@ class _AlertPageState extends State<AlertPage> {
                   ...widget.messages,
                   ...widget.texts
                 ],
-                // headerBuilder: (BuildContext context) => const Column(
-                //   children: [
-                //     Divider(
-                //       thickness: 5,
-                //     ),
-                //     Center(
-                //       child: Text(
-                //         'CustomHeader',
-                //         style: TextStyle(fontWeight: FontWeight.bold),
-                //       ),
-                //     ),
-                //     Divider(
-                //       thickness: 5,
-                //     ),
-                //   ],
-                // ),
-                // footerBuilder: (BuildContext context) => const Column(
-                //   children: [
-                //     Divider(
-                //       thickness: 5,
-                //     ),
-                //     Center(
-                //       child: Text(
-                //         'CustomFooter',
-                //         style: TextStyle(fontWeight: FontWeight.bold),
-                //       ),
-                //     ),
-                //     Divider(
-                //       thickness: 5,
-                //     ),
-                //   ],
-                // ),
               );
-
-              // return CustomScrollView(
-              //   slivers: [
-              //     SliverToBoxAdapter(
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-              //         child: Text(
-              //           "Interview",
-              //           style: Theme.of(context)
-              //               .textTheme
-              //               .headline1!
-              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-              //         ),
-              //       ),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: widget.joinInterviews.isEmpty
-              //           ? const Padding(
-              //               padding: EdgeInsets.only(left: 13),
-              //               child: Text("Nothing here <3"),
-              //             )
-              //           : ImplicitlyAnimatedList<NotificationObject>(
-              //               physics: const NeverScrollableScrollPhysics(),
-              //               shrinkWrap: true,
-              //               areItemsTheSame: (oldItem, newItem) =>
-              //                   oldItem.id == newItem.id,
-              //               items: widget.joinInterviews,
-              //               itemBuilder: (context, animation, item, i) =>
-              //                   SizeFadeTransition(
-              //                       sizeFraction: 0.7,
-              //                       curve: Curves.easeInOut,
-              //                       animation: animation,
-              //                       child: CustomInterviewNotification(
-              //                         notificationObject: widget.joinInterviews[i],
-              //                         showTime: false,
-              //                       ))),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-              //         child: Text(
-              //           "Offer",
-              //           style: Theme.of(context)
-              //               .textTheme
-              //               .headline1!
-              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-              //         ),
-              //       ),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: widget.viewOffers.isEmpty
-              //           ? const Padding(
-              //               padding: EdgeInsets.only(left: 13),
-              //               child: Text("Nothing here <3"),
-              //             )
-              //           : ImplicitlyAnimatedList<NotificationObject>(
-              //               physics: const NeverScrollableScrollPhysics(),
-              //               shrinkWrap: true,
-              //               areItemsTheSame: (oldItem, newItem) =>
-              //                   oldItem.id == newItem.id,
-              //               items: widget.viewOffers,
-              //               itemBuilder: (context, animation, item, i) =>
-              //                   SizeFadeTransition(
-              //                       sizeFraction: 0.7,
-              //                       curve: Curves.easeInOut,
-              //                       animation: animation,
-              //                       child: CustomInterviewNotification(
-              //                         notificationObject: widget.viewOffers[i],
-              //                         showTime: false,
-              //                       ))),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-              //         child: Text(
-              //           "Newest",
-              //           style: Theme.of(context)
-              //               .textTheme
-              //               .headline1!
-              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-              //         ),
-              //       ),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: widget.texts.isEmpty
-              //           ? const Padding(
-              //               padding: EdgeInsets.only(left: 13),
-              //               child: Text("Nothing here <3"),
-              //             )
-              //           : ImplicitlyAnimatedList<NotificationObject>(
-              //               physics: const NeverScrollableScrollPhysics(),
-              //               shrinkWrap: true,
-              //               areItemsTheSame: (oldItem, newItem) =>
-              //                   oldItem.id == newItem.id,
-              //               items: widget.texts,
-              //               itemBuilder: (context, animation, item, i) =>
-              //                   SizeFadeTransition(
-              //                       sizeFraction: 0.7,
-              //                       curve: Curves.easeInOut,
-              //                       animation: animation,
-              //                       child: CustomInterviewNotification(
-              //                         notificationObject: widget.texts[i],
-              //                         showTime: false,
-              //                       ))),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 13),
-              //         child: Text(
-              //           "Message",
-              //           style: Theme.of(context)
-              //               .textTheme
-              //               .headline1!
-              //               .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-              //         ),
-              //       ),
-              //     ),
-              //     SliverToBoxAdapter(
-              //       child: widget.messages.isEmpty
-              //           ? const Padding(
-              //               padding: EdgeInsets.only(left: 13),
-              //               child: Text("Nothing here <3"),
-              //             )
-              //           // : SingleChildScrollView(
-              //           //     child: StackedNotificationCards(
-              //           //       boxShadow: [
-              //           //         BoxShadow(
-              //           //           color: Colors.black.withOpacity(0.25),
-              //           //           blurRadius: 2.0,
-              //           //         )
-              //           //       ],
-
-              //           //       notificationCards: widget.messages
-              //           //           .map((e) => NotificationCard(
-              //           //               date: e.createdAt!,
-              //           //               title: e.title,
-              //           //               subtitle: e.content,
-              //           //               leading: CustomInterviewNotificationWidget(
-              //           //                 notificationObject: e,
-              //           //                 showTime: false,
-              //           //               )))
-              //           //           .toList(),
-              //           //       cardColor: const Color(0xFFF1F1F1),
-              //           //       padding: 16,
-              //           //       actionTitle: Container(),
-              //           //       notificationCardTitle: 'Notification tile',
-              //           //       titleTextStyle: const TextStyle(
-              //           //         fontSize: 12,
-              //           //         fontWeight: FontWeight.bold,
-              //           //       ),
-              //           //       showLessAction: const Text(
-              //           //         'Show less',
-              //           //         style: TextStyle(
-              //           //           fontSize: 18,
-              //           //           fontWeight: FontWeight.bold,
-              //           //           color: Colors.deepPurple,
-              //           //         ),
-              //           //       ),
-              //           //       onTapClearAll: () {
-              //           //         // setState(() {
-              //           //         //   _listOfNotification.clear();
-              //           //         // });
-              //           //       },
-              //           //       subtitleTextStyle: TextStyle(fontSize: 8),
-              //           //       cardClearButton: const Text('Clear All'),
-              //           //       cardViewButton: const Text('View'),
-              //           //       clearAllNotificationsAction: const Icon(Icons.close),
-              //           //       clearAllStacked: const Text('Clear All'),
-              //           //       onTapClearCallback: (index) {
-              //           //         print(index);
-              //           //         // setState(() {
-              //           //         //   _listOfNotification.removeAt(index);
-              //           //         // });
-              //           //       },
-              //           //       onTapViewCallback: (index) {
-              //           //         print(index);
-              //           //       },
-              //           //     ),
-              //           //   ),
-
-              //           : ImplicitlyAnimatedList<NotificationObject>(
-              //               physics: const NeverScrollableScrollPhysics(),
-              //               shrinkWrap: true,
-              //               areItemsTheSame: (oldItem, newItem) =>
-              //                   oldItem.id == newItem.id,
-              //               items: widget.messages,
-              //               itemBuilder: (context, animation, item, i) =>
-              //                   SizeFadeTransition(
-              //                 sizeFraction: 0.7,
-              //                 curve: Curves.easeInOut,
-              //                 animation: animation,
-              //                 child: CustomInterviewNotification(
-              //                   notificationObject: widget.messages[i],
-              //                   showTime: false,
-              //                 ),
-              //               ),
-              //             ),
-              //     ),
-              //   ],
-              // );
             }),
     );
   }
@@ -2449,8 +1920,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     if (options.stickyHeaderSorter != null) {
       keys.sort(options.stickyHeaderSorter);
     }
-    // print(groupItems);
-    // print(keys);
+ 
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
     // print("build chips");

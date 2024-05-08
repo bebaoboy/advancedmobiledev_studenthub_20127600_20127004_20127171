@@ -118,6 +118,10 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
             theme.bottomNavigationBarTheme.selectedLabelStyle,
         enableFeedback: true,
         isExtended: true,
+        indicatorShape: BeveledRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+            side: const BorderSide(
+                color: Colors.transparent, style: BorderStyle.none, width: 1)),
         navbarType: BottomNavigationBarType.fixed,
         showSelectedLabels: true,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

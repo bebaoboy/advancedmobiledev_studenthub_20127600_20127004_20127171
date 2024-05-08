@@ -122,7 +122,6 @@ class _OpenContainerWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return OpenContainer(
       useRootNavigator: true,
       transitionDuration: const Duration(milliseconds: 500),
@@ -145,7 +144,7 @@ class _OpenContainerWrapper extends StatelessWidget {
           name:
               "${_userStore.getCurrentType() == UserType.company ? Routes.projectDetails : Routes.projectDetailsStudent}/${project.objectId}",
           arguments: {"project": project}),
-      openColor: theme.cardColor,
+      openColor: Theme.of(context).colorScheme.onBackground,
       openShape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(25)),
       ),
@@ -153,7 +152,7 @@ class _OpenContainerWrapper extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(0)),
       ),
       closedElevation: 0,
-      closedColor: theme.cardColor,
+      closedColor: Theme.of(context).colorScheme.onBackground,
       closedBuilder: (context, openContainer) {
         return Container(
             decoration: const BoxDecoration(
@@ -165,13 +164,6 @@ class _OpenContainerWrapper extends StatelessWidget {
             ),
             child: InkWell(
               onTap: () {
-                // Provider.of<EmailStore>(
-                //   context,
-                //   listen: false,
-                // ).currentlySelectedEmailId = id;
-
-                // ToDo: uncomment first line and comment second
-                // this is for testing
                 if (project.isLoading) return;
                 openContainer();
               },
@@ -181,214 +173,6 @@ class _OpenContainerWrapper extends StatelessWidget {
     );
   }
 }
-
-// class ProjectItem extends StatefulWidget {
-//   final Project project;
-
-//   final Function onFavoriteTap;
-//   const ProjectItem(
-//       {super.key, required this.project, required this.onFavoriteTap});
-
-//   @override
-//   _ProjectItemState createState() => _ProjectItemState();
-// }
-
-// class _ProjectItemState extends State<ProjectItem> {
-//   final _languageStore = getIt<LanguageStore>();
-//   var createdText = '';
-//   var proposalText = 'Proposals: ';
-//   var updatedText = "";
-//   @override
-//   void initState() {
-//     super.initState();
-//     // int differenceWithToday = widget.project.getModifiedTimeCreated();
-//     // if (differenceWithToday == 0) {
-//     //   createdText = Lang.get("created_now");
-//     // } else if (differenceWithToday == 1) {
-//     //   createdText = 'Created 1 day ago';
-//     // } else {
-//     //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-//     // }
-//     createdText = timeago
-//         .format(locale: _languageStore.locale, widget.project.timeCreated)
-//         .inCaps;
-
-//     if (widget.project.countProposals < 1) {
-//       proposalText += 'None';
-//     } else {
-//       proposalText += widget.project.proposal!.length.toString();
-//     }
-//     if (widget.project.updatedAt != null &&
-//         widget.project.updatedAt! != widget.project.timeCreated &&
-//         widget.project.updatedAt!.day == DateTime.now().day) {
-//       updatedText =
-//           "Updated ${timeago.format(locale: _languageStore.locale, widget.project.updatedAt!.toLocal())}";
-//     } else {
-//       updatedText = createdText;
-//     }
-//   }
-
-//   Widget _buildImage() {
-//     return AspectRatio(
-//       aspectRatio: 16 / 9,
-//       child: Container(
-//         width: double.infinity,
-//         height: 100,
-//         decoration: BoxDecoration(
-//           color: Colors.black,
-//           borderRadius: BorderRadius.circular(16),
-//         ),
-//       ),
-//     );
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     if (widget.project.isLoading) {
-//       return Padding(
-//         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             _buildImage(),
-//           ],
-//         ),
-//       );
-//     } else {
-//       var icon = widget.project.isFavorite
-//           ? const Icon(Icons.favorite)
-//           : const Icon(Icons.favorite_border);
-
-//       return _OpenContainerWrapper(
-//         project: widget.project,
-//         closedChild: LayoutBuilder(builder: (context, c) {
-//           return Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Row(
-//               children: [
-//                 Expanded(
-//                   flex: 9,
-//                   child: Column(
-//                     crossAxisAlignment: CrossAxisAlignment.start,
-//                     children: [
-//                       Text(updatedText,
-//                           style: Theme.of(context)
-//                               .textTheme
-//                               .bodyText1!
-//                               .copyWith(fontSize: 12)),
-//                       Text(
-//                         maxLines: 1,
-//                         overflow: TextOverflow.ellipsis,
-//                         widget.project.title == ''
-//                             ? 'No title'
-//                             : widget.project.title,
-//                         style: Theme.of(context)
-//                             .textTheme
-//                             .bodyText2!
-//                             .copyWith(color: Colors.green.shade400),
-//                       ),
-//                       Text(
-//                         '${Lang.get('project_item_scope')} ${widget.project.scope.title}',
-//                         //'Time: ${widget.project.scope.title}',
-//                         style: Theme.of(context).textTheme.subtitle2,
-//                       ),
-//                       Text(
-//                         '${Lang.get('project_item_students')} ${widget.project.numberOfStudents}',
-//                         style: Theme.of(context).textTheme.subtitle2,
-//                       ),
-//                       const SizedBox(
-//                         height: 10,
-//                       ),
-//                       Text(
-//                         Lang.get('project_item_description_header'),
-//                         style: Theme.of(context).textTheme.bodyText1,
-//                       ),
-//                       SizedBox(
-//                         height: c.maxHeight / 5,
-//                         child: AutoSizeText(
-//                           widget.project.description == ''
-//                               ? Lang.get("project_item_blank")
-//                               : widget.project.description,
-//                           style: const TextStyle(),
-//                           maxLines: 5,
-//                           overflow: TextOverflow.ellipsis,
-//                           textAlign: TextAlign.justify,
-//                         ),
-//                       ),
-//                       const SizedBox(
-//                         height: 10,
-//                       ),
-//                       Text(
-//                         proposalText,
-//                         style: Theme.of(context)
-//                             .textTheme
-//                             .bodyText1!
-//                             .copyWith(fontSize: 14.0),
-//                       ),
-//                     ],
-//                   ),
-//                 ),
-//                 IconButton(
-//                   color: Theme.of(context).colorScheme.primary,
-//                   onPressed: () {
-//                     setState(() {
-//                       widget.onFavoriteTap();
-//                     });
-//                   },
-//                   icon: icon,
-//                 ),
-//               ],
-//             ),
-//           );
-//         }),
-
-//         //  Card(
-//         //   child: InkWell(
-//         //     onTap: () {
-//         //       //NavbarNotifier2.pushNamed(Routes.projectDetails, 1, widget.project);
-//         //       Navigator.of(NavigationService.navigatorKey.currentContext!)
-//         //           .pushNamed(Routes.projectDetailsStudent,
-//         //               arguments: widget.project);
-//         //     },
-//         //     child: Padding(
-//         //       padding: const EdgeInsets.all(8.0),
-//         //       child: Row(
-//         //         children: [
-//         //           Expanded(
-//         //             flex: 9,
-//         //             child: SingleChildScrollView(
-//         //               child: Column(
-//         //                 crossAxisAlignment: CrossAxisAlignment.start,
-//         //                 children: [
-//         //                   Text(createdText),
-//         //                   Text(widget.project.title),
-//         //                   Text(
-//         //                     'Time: ${widget.project.scope.title}, ${widget.project.numberOfStudents} students needed',
-//         //                   ),
-//         //                   Text(widget.project.description),
-//         //                   Text(proposalText),
-//         //                 ],
-//         //               ),
-//         //             ),
-//         //           ),
-//         //           IconButton(
-//         //             color: Theme.of(context).colorScheme.primary,
-//         //             onPressed: () {
-//         //               setState(() {
-//         //                 widget.onFavoriteTap();
-//         //               });
-//         //             },
-//         //             icon: icon,
-//         //           ),
-//         //         ],
-//         //       ),
-//         //     ),
-//         //   ),
-//         // ),
-//       );
-//     }
-//   }
-// }
 
 class ProjectItem2 extends StatefulWidget {
   final Project project;
@@ -418,14 +202,6 @@ class _ProjectItem2State extends State<ProjectItem2> {
   @override
   void initState() {
     super.initState();
-    // int differenceWithToday = widget.project.getModifiedTimeCreated();
-    // if (differenceWithToday == 0) {
-    //   createdText = Lang.get("created_now");
-    // } else if (differenceWithToday == 1) {
-    //   createdText = 'Created 1 day ago';
-    // } else {
-    //   createdText = 'Created $differenceWithToday${Lang.get('day_ago')}';
-    // }
     createdText = timeago
         .format(locale: _languageStore.locale, widget.project.timeCreated)
         .inCaps;
@@ -447,15 +223,6 @@ class _ProjectItem2State extends State<ProjectItem2> {
     } else {
       updatedText = createdText;
     }
-
-    // Future.delayed(Duration(milliseconds: 500 + widget.loadingDelay * 100), () {
-    //   widget.stopLoading(widget.project.objectId!);
-    //   if (mounted) {
-    //     setState(() {
-    //       widget.project.isLoading = false;
-    //     });
-    //   }
-    // });
   }
 
   @override
@@ -484,7 +251,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
                               .bodyText1!
                               .copyWith(fontSize: 12)),
                       AutoSizeText(
-                        maxFontSize: 13,
+                        maxFontSize: 14,
                         words: widget.keyword != null
                             ? {
                                 widget.keyword!: HighlightedWord(
@@ -505,7 +272,8 @@ class _ProjectItem2State extends State<ProjectItem2> {
                             : widget.project.title,
                         style: TextStyle(
                             color: Colors.green.shade400,
-                            fontWeight: FontWeight.bold),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16),
                       ),
                       const SizedBox(
                         height: 10,
