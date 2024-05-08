@@ -227,7 +227,7 @@ class NotificationHelper {
         id: Random().nextInt(10000),
         channelKey: NotificationChannelEnum.basicChannel.key,
         title: title,
-        body: title,
+        body: body,
         notificationLayout: NotificationLayout.BigText,
         fullScreenIntent: false,
         wakeUpScreen: true,
