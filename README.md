@@ -1,7 +1,9 @@
 ## ANNOUNCEMENT🎉 
 <br>
-StudentHub 0.6 is OUT!!
+StudentHub 0.9.99 is OUT!!
 <br> 
+
+### Link: [Releases](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/releases) 
 
 <img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
 <br>
