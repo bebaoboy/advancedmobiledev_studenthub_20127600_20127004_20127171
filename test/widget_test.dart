@@ -16,16 +16,17 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/di/domain_layer_injection.dart';
 import 'package:boilerplate/main.dart';
 import 'package:boilerplate/presentation/di/presentation_layer_injection.dart';
-import 'package:boilerplate/presentation/my_app.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
+import 'package:boilerplate/presentation/login/login.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_whiteboard.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_memory.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:workmanager/workmanager.dart';
 
 initDb() async {
   // preference manager:------------------------------------------------------
@@ -48,27 +49,37 @@ initDb() async {
   await DomainLayerInjection.configureDomainLayerInjection();
   await PresentationLayerInjection.configurePresentationLayerInjection();
   log("done init db testing");
-  Workmanager().initialize(
-      callbackDispatcher, // The top level function, aka callbackDispatcher
-      isInDebugMode:
-          true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
-      );
+  // Workmanager().initialize(
+  //     callbackDispatcher, // The top level function, aka callbackDispatcher
+  //     isInDebugMode:
+  //         true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+  //     );
   // database:----------------------------------------------------------------
   // each database has a unique name
 }
 
 void main() {
+  setUp(
+    () async {
+      SharedPreferences.setMockInitialValues({"first_time": true});
+      await initDb();
+    },
+  );
+
+  tearDown(
+    () async {
+      await getIt.reset();
+    },
+  );
+
   Future<void> disableOverflowErrors(tester) async {
-    tester.view.physicalSize = const Size(10000, 10000);
+    tester.view.physicalSize = const Size(2000, 4000);
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.portraitUp,
     ]);
-    SharedPreferences.setMockInitialValues({"first_time": true});
-    await initDb();
   }
 
-  testWidgets('Click on splash screen go to login screen test',
-      (WidgetTester tester) async {
+  testWidgets('Initial test', (WidgetTester tester) async {
     setPreferredOrientations();
     // await ServiceLocator.configureDependencies();
     // Build our app and trigger a frame.
@@ -80,9 +91,30 @@ void main() {
 
   testWidgets("Login Widget Test", (WidgetTester tester) async {
     // WidgetsFlutterBinding.ensureInitialized();
-    TestWidgetsFlutterBinding.ensureInitialized();
     disableOverflowErrors(tester);
-    await tester.pumpWidget(const MyApp());
+    final LanguageStore languageStore = getIt<LanguageStore>();
+
+    await tester.pumpWidget(MaterialApp(
+        locale: Locale(languageStore.locale),
+        supportedLocales: languageStore.supportedLanguages
+            .map((language) => Locale(language.locale, language.code))
+            .toList(),
+        localizationsDelegates: const [
+          // A class which loads the translations from JSON files
+          Lang.delegate,
+          // Built-in localization of basic text for Material widgets
+          GlobalMaterialLocalizations.delegate,
+          // Built-in localization for text direction LTR/RTL
+          GlobalWidgetsLocalizations.delegate,
+          // Built-in localization of basic text for Cupertino widgets
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: MediaQuery(
+                data: MediaQueryData(size: Size(10000.0, 10000.0)),
+                child: LoginScreen()))));
+
     await tester.pumpAndSettle(const Duration(seconds: 10));
     expect(find.text(Lang.get("login_main_text")), findsOne);
     expect(find.byType(RoundedButtonWidget), findsAny);
