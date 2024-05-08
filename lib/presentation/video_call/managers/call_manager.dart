@@ -581,6 +581,7 @@ class CallManager {
   }
 
   void _initCallKit() {
+    if (kIsWeb) return;
     CallKitManager.instance.init(
       onCallAccepted: (uuid) {
         acceptCall(uuid, true);

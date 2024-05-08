@@ -728,6 +728,7 @@ class _MessageScreenState extends State<MessageScreen> {
             "receiverId": _user.id, // notification
             "startTime": value.startDate.toUtc().toIso8601String(),
             "endTime": value.endDate.toUtc().toIso8601String(),
+            // "disableFlag": value.isCancel ? 1 : 0,
             "meetingRoom": {
               "meeting_room_code": value.meetingRoomCode,
               "meeting_room_id": value.meetingRoomId,
@@ -763,6 +764,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 "receiverId": _user.id, // notification
                 "startTime": value.startDate,
                 "endTime": value.endDate,
+                // "disableFlag": value.isCancel ? 1 : 0,
                 "meetingRoom": {
                   "meeting_room_code": value.meetingRoomCode,
                   "meeting_room_id": value.meetingRoomId,
@@ -771,7 +773,7 @@ class _MessageScreenState extends State<MessageScreen> {
 
           _sendMeetingCode(value);
 
-          Duration diff = value.endDate.difference(value.startDate);
+          Duration diff = DateTime.now().difference(value.startDate);
           NotificationHelper.scheduleNewNotification(
               diff.inMinutes, diff.inHours, diff.inDays);
         } else {
@@ -799,6 +801,7 @@ class _MessageScreenState extends State<MessageScreen> {
                 "receiverId": _user.id, // notification
                 "startTime": value.startDate.toUtc().toIso8601String(),
                 "endTime": value.endDate.toUtc().toIso8601String(),
+                "disableFlag": 0,
                 "meetingRoom": {
                   "meeting_room_code": value.meetingRoomCode,
                   "meeting_room_id": value.meetingRoomId,

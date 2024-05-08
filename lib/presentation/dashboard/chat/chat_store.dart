@@ -70,17 +70,19 @@ abstract class _ChatStore with Store {
               project: chatObject.project,
               updateInterviewCb:
                   (Map<String, dynamic> data, inbox, bool isInterview) async {
-                var whoIsReceiving = data["notification"]["sender"] != null
-                    ? data["notification"]["sender"]["id"].toString() ==
-                            userStore.user!.objectId
-                        ? "receiver"
-                        : "-1"
-                    : data["notification"]["receiver"] != null
-                        ? data["notification"]["receiver"]["id"].toString() ==
-                                userStore.user!.objectId
-                            ? "sender"
-                            : "-1"
-                        : "-1";
+                var whoIsReceiving = "receiver"
+                    // data["notification"]["sender"] != null
+                    //     ? data["notification"]["sender"]["id"].toString() ==
+                    //             userStore.user!.objectId
+                    //         ? "receiver"
+                    //         : "-1"
+                    //     : data["notification"]["receiver"] != null
+                    //         ? data["notification"]["receiver"]["id"].toString() ==
+                    //                 userStore.user!.objectId
+                    //             ? "sender"
+                    //             : "-1"
+                    //         : "-1"
+                    ;
                 updateInterviewById(
                     data,
                     [],
@@ -236,7 +238,7 @@ abstract class _ChatStore with Store {
           "id": mess,
           'type': 'schedule',
           'text':
-              "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
+              "${interview?['title'] ?? "No title"}: ${message['content'] ?? ""}",
           'status': 'seen',
           'interview': interview,
           "createdAt":
@@ -262,6 +264,7 @@ abstract class _ChatStore with Store {
             "receiverId": userStore.user!.objectId!, // notification
             "createdAt": interview?["createdAt"],
             "updatedAt": interview?["updatedAt"],
+            "disableFlag": interview?["disableFlag"],
             "meetingRoom": {
               "meeting_room_code": meeting?["meeting_room_code"],
               "meeting_room_id": meeting?["meeting_room_id"],
@@ -343,7 +346,7 @@ abstract class _ChatStore with Store {
       "id": mess,
       'type': 'schedule',
       'text':
-          "${interview?['title'] ?? "No title"}: ${interview?['content'] ?? ""}",
+          "${interview?['title'] ?? "No title"}: ${message['content'] ?? ""}",
       'status': 'seen',
       'interview': interview,
       "createdAt": (DateTime.tryParse(
@@ -371,6 +374,7 @@ abstract class _ChatStore with Store {
         "receiverId": userStore.user!.objectId!, // notification
         "createdAt": interview?["updatedAt"],
         "updatedAt": interview?["updatedAt"],
+        "disableFlag": interview?["disableFlag"],
         "meetingRoom": {
           "meeting_room_code": meeting?["meeting_room_code"],
           "meeting_room_id": meeting?["meeting_room_id"],
@@ -792,66 +796,65 @@ abstract class _ChatStore with Store {
                 _messages.insert(0, chatObject..messages = []);
                 _messages.first.lastSeenTime = DateTime(0);
               }
-            
 
-            _currentProjectMessages[projectId]![userId] = value;
-            // if (_messages.firstWhereOrNull(
-            //       (element) =>
-            //           element.project?.objectId == projectId &&
-            //           element.chatUser.id == userId,
-            //     ) !=
-            //     null) {
-            //   var newP = value.first;
-            //   var rcv = Profile(
-            //       objectId: userStore.user!.objectId,
-            //       name: userStore.user!.name);
-            //   _messages
-            //       .firstWhereOrNull(
-            //         (element) =>
-            //             element.project?.objectId == projectId &&
-            //             element.chatUser.id == userId,
-            //       )!
-            //       .messages!
-            //       .first = MessageObject(
-            //     id: newP.id,
-            //     content: newP.,
-            //     receiver: rcv,
-            //     sender: Profile(
-            //       objectId: newP.author.id,
-            //       name: newP.author.firstName ?? "",
-            //     ),
-            //     updatedAt: DateTime.fromMillisecondsSinceEpoch(
-            //         newP.updatedAt ?? newP.createdAt!),
-            //     createdAt: DateTime.fromMillisecondsSinceEpoch(
-            //         newP.updatedAt ?? newP.createdAt!),
-            //   );
-            // }
-            // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
+              _currentProjectMessages[projectId]![userId] = value;
+              // if (_messages.firstWhereOrNull(
+              //       (element) =>
+              //           element.project?.objectId == projectId &&
+              //           element.chatUser.id == userId,
+              //     ) !=
+              //     null) {
+              //   var newP = value.first;
+              //   var rcv = Profile(
+              //       objectId: userStore.user!.objectId,
+              //       name: userStore.user!.name);
+              //   _messages
+              //       .firstWhereOrNull(
+              //         (element) =>
+              //             element.project?.objectId == projectId &&
+              //             element.chatUser.id == userId,
+              //       )!
+              //       .messages!
+              //       .first = MessageObject(
+              //     id: newP.id,
+              //     content: newP.,
+              //     receiver: rcv,
+              //     sender: Profile(
+              //       objectId: newP.author.id,
+              //       name: newP.author.firstName ?? "",
+              //     ),
+              //     updatedAt: DateTime.fromMillisecondsSinceEpoch(
+              //         newP.updatedAt ?? newP.createdAt!),
+              //     createdAt: DateTime.fromMillisecondsSinceEpoch(
+              //         newP.updatedAt ?? newP.createdAt!),
+              //   );
+              // }
+              // sharedPrefsHelper.saveCompanyMessages(_companyMessages);
 
-            _currentProjectMessages[projectId]![userId]?.sort(
-              (a, b) {
-                return b.updatedAt!.compareTo(a.updatedAt!);
-              },
-            );
+              _currentProjectMessages[projectId]![userId]?.sort(
+                (a, b) {
+                  return b.updatedAt!.compareTo(a.updatedAt!);
+                },
+              );
 
-            for (var element in _currentProjectMessages[projectId]![userId]!) {
-              msgIdDict.add(element.id.toString());
-            }
+              for (var element
+                  in _currentProjectMessages[projectId]![userId]!) {
+                msgIdDict.add(element.id.toString());
+              }
 
-            if (setStateCallback != null) setStateCallback();
-            return _currentProjectMessages[projectId]![userId];
-          },
-        ).onError((error, stackTrace) async {
+              if (setStateCallback != null) setStateCallback();
+              return _currentProjectMessages[projectId]![userId];
+            },
+          ).onError((error, stackTrace) async {
             // return chatDataSource.getCurrentChatContent(
             //     int.parse(projectId), int.parse(userId));
             return Future.value(_currentProjectMessages[projectId]![userId]);
           });
-        if (!quickUpdate) {
-          fetchChatHistoryFuture = ObservableFuture(future);
-          await fetchChatHistoryFuture;
-        } else {
-          await future;
-
+          if (!quickUpdate) {
+            fetchChatHistoryFuture = ObservableFuture(future);
+            await fetchChatHistoryFuture;
+          } else {
+            await future;
           }
         } catch (e) {
           print("Cannot get chat history for this project");

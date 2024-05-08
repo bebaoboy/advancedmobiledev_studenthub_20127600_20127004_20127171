@@ -149,6 +149,8 @@ class NotificationHelper {
   static Future<void> _create(
       {required NotificationContent content,
       List<NotificationActionButton>? actionButtons}) async {
+    if (content.body == null) return;
+    if (content.body!.isEmpty) return;
     if (kIsWeb) {
       try {
         await sendPushMessageFirebase(
