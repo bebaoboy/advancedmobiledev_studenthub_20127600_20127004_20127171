@@ -2,6 +2,9 @@ import 'dart:async';
 
 import 'package:animated_list_plus/animated_list_plus.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
+import 'package:boilerplate/core/widgets/floating_search_bar/src/floating_search_bar.dart';
+import 'package:boilerplate/core/widgets/floating_search_bar/src/floating_search_bar_actions.dart';
+import 'package:boilerplate/core/widgets/floating_search_bar/src/floating_search_bar_transition.dart';
 import 'package:boilerplate/core/widgets/refresh_indicator/indicators/plane_indicator.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/chat/chat_list.dart';
@@ -18,7 +21,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_initicon/flutter_initicon.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
-import 'package:material_floating_search_bar_2/material_floating_search_bar_2.dart';
 
 class MessageTab extends StatefulWidget {
   const MessageTab({super.key, required this.scrollController});
@@ -388,6 +390,7 @@ class Singapore extends State<MessageTab> {
       onFocusChanged: (isFocused) {
         if (!isFocused) controller.close();
       },
+      showCursor: true,
       clearQueryOnClose: false,
       controller: controller,
       backdropColor: Theme.of(context).colorScheme.background,

@@ -136,7 +136,7 @@ class WorkMangerHelper {
                     ? <String, dynamic>{...element["proposal"]}
                     : null,
           };
-          print(e);
+          // print(e);
           var acm = NotificationObject.fromJson(e);
           // res.add(acm);
           if (lastRead <= acm.createdAt!.toUtc().millisecondsSinceEpoch) {

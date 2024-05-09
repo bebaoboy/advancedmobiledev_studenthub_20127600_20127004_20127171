@@ -2,8 +2,13 @@ import 'dart:async';
 
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/textfield_widget.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:duration/duration.dart';
+import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
@@ -79,6 +84,8 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
             selectedTime.minute,
           );
   }
+
+  var languageStore = getIt<LanguageStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -302,21 +309,22 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                                 textController: null,
                                 inputAction: TextInputAction.next,
                                 autoFocus: false,
-                                onChanged: (value) {
-                                  
-                                },
-                                onFieldSubmitted: (value) {
-                                  
-                                },
-                                errorText: null
-                              
-                                ),
+                                onChanged: (value) {},
+                                onFieldSubmitted: (value) {},
+                                errorText: null),
                           ),
                         ],
                       ),
                     ),
                     const Divider(height: 32),
-                    Text(itv.getDuration().toString()),
+                    Text(prettyDuration(
+                      itv.getDuration(),
+                      locale: languageStore.locale == 'vi'
+                          ? const VietnameseDurationLocale()
+                          : const EnglishDurationLocale(),
+                      delimiter: ", ",
+                      abbreviated: true,
+                    )),
                   ],
                 ),
               ),
@@ -350,13 +358,14 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                           RoundedButtonWidget(
                             buttonColor: Theme.of(context).colorScheme.primary,
                             onPressed: () {
-                              if (title.text.isEmpty || itv.getNumDuration() > 180) {
+                              if (title.text.isEmpty ||
+                                  itv.getNumDuration() < 0) {
                                 setState(() {
                                   _isAllCorrect = false;
                                 });
                               } else {
                                 setState(() {
-                                  _isAllCorrect = false;
+                                  _isAllCorrect = true;
                                 });
                                 Navigator.pop(context, itv);
                               }

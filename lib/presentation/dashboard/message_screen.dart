@@ -87,34 +87,35 @@ class _MessageScreenState extends State<MessageScreen> {
       p.lastSeenTime = DateTime.now();
     }
 
-    typings = [const ChatUser(id: "123", firstName: "Lam", lastName: "Quan")];
+    typings = [_user];
     me = ChatUser(
         id: userStore.user!.objectId!, firstName: userStore.user!.name);
     var msgnf = chatStore.getMessageNotifiers(widget.chatObject);
     assert(msgnf != null);
     messageNotifier = msgnf!;
     messageNotifier.addListener(_messageNotifierListener);
-    // timer = Timer.periodic(const Duration(seconds: 3), (t) {
-    //   Random r = Random();
-    //   var num = r.nextInt(60);
-    //   // print(num);
-    //   if (num <= 7) {
-    //     typings = [
-    //       const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
-    //     ];
-    //   } else if (num > 7 && num < 15) {
-    //     typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
-    //   } else if (num > 15 && num <= 20) {
-    //     typings.add(
-    //         const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
-    //   } else if (num < 25) {
-    //     typings
-    //         .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
-    //   } else {
-    //     typings.clear();
-    //   }
-    //   setState(() {});
-    // });
+    timer = Timer.periodic(const Duration(seconds: 3), (t) {
+      Random r = Random();
+      var num = r.nextInt(60);
+      print(num);
+        if (num <= 30) {
+          typings = [_user];
+      //     typings = [
+      //       const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
+      //     ];
+      //   } else if (num > 7 && num < 15) {
+      //     typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
+      //   } else if (num > 15 && num <= 20) {
+      //     typings.add(
+      //         const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
+      //   } else if (num < 25) {
+      //     typings
+      //         .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+        } else {
+          typings.clear();
+        }
+      setState(() {});
+    });
 
     initScreen();
   }
@@ -204,7 +205,6 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     // print("build chat");
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Observer(builder: (context) {
@@ -416,13 +416,16 @@ class _MessageScreenState extends State<MessageScreen> {
     );
   }
 
-  void _addMessage(AbstractChatMessage message) {
+  void _addMessage(AbstractChatMessage message) async {
     // chatStore.currentProjectMessages.insert(0, message);
-    chatStore.insertMessage(
+    await chatStore.insertMessage(
         widget.chatObject.chatUser, widget.chatObject.project!, message, true,
         incoming: true);
     // chatStore.currentProjectMessages.insert(0, message);
     _sortMessages();
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _sortMessages() {
@@ -861,7 +864,8 @@ class _MessageScreenState extends State<MessageScreen> {
         );
     var l = chatStore.currentProjectMessages
         .where((element) =>
-            element.type == AbstractMessageType.schedule && element.metadata!["disableFlag"] == 0 &&
+            element.type == AbstractMessageType.schedule &&
+            element.metadata!["disableFlag"] == 0 &&
             (DateTime.tryParse(element.metadata!["endTime"] ?? "") ??
                     DateTime.now())
                 .isAfter(DateTime.now()))

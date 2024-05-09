@@ -1,4 +1,5 @@
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
+import 'package:boilerplate/presentation/dashboard/chat/models/util.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -190,7 +191,11 @@ class _InputState extends State<Input> {
                   ),
                 Expanded(
                   child: Padding(
-                    padding: textPadding,
+                    padding: isMobile &&
+                            MediaQuery.of(context).orientation ==
+                                Orientation.landscape
+                        ? EdgeInsets.zero
+                        : textPadding,
                     child: TextField(
                       enabled: widget.options.enabled,
                       autocorrect: widget.options.autocorrect,
@@ -206,7 +211,11 @@ class _InputState extends State<Input> {
                       ),
                       focusNode: _inputFocusNode,
                       keyboardType: widget.options.keyboardType,
-                      maxLines: 5,
+                      maxLines: isMobile &&
+                              MediaQuery.of(context).orientation ==
+                                  Orientation.landscape
+                          ? 1
+                          : 5,
                       minLines: 1,
                       onChanged: widget.options.onTextChanged,
                       onTap: widget.options.onTextFieldTap,

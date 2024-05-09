@@ -10,6 +10,7 @@ import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:collection/collection.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:flutter/services.dart';
@@ -721,14 +722,14 @@ class ChatState extends State<Chat> {
         transitionDuration: const Duration(milliseconds: 300),
         transitionCurve: Curves.easeInOut,
         physics: const BouncingScrollPhysics(),
-        axisAlignment: isPortrait ? 0.0 : -1.0,
+        axisAlignment: isPortrait ? 0.0 : 0.0,
         openAxisAlignment: 0.0,
         // height:showSearch ? isPortrait
         //     ? MediaQuery.of(context).size.height * 0.4
         //     : MediaQuery.of(context).size.height * 0.2 : 0,
         openWidth: isPortrait
             ? MediaQuery.of(context).size.width
-            : MediaQuery.of(context).size.width * 0.7,
+            : MediaQuery.of(context).size.width * 0.9,
         width: isPortrait
             ? MediaQuery.of(context).size.width * 0.7
             : MediaQuery.of(context).size.width * 0.7,
@@ -1196,10 +1197,17 @@ class ChatState extends State<Chat> {
                   );
                 }
               }),
-              if (!chatStore.isFetching)
+              if (!chatStore.isFetching &&
+                  ((!kIsWeb &&
+                          !showSearch &&
+                          MediaQuery.of(context).orientation ==
+                              Orientation.landscape) ||
+                      MediaQuery.of(context).orientation ==
+                          Orientation.portrait ||
+                      kIsWeb))
                 widget.customBottomWidget ??
                     Input(
-                      safeAreaInsets: !showSearch && isMobile
+                      safeAreaInsets: isMobile
                           ? EdgeInsets.fromLTRB(
                               MediaQuery.of(context).padding.left,
                               0,
