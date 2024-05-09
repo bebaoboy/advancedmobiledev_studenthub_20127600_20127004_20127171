@@ -179,9 +179,9 @@ class Project extends ProjectBase {
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
             : null,
         companyId: json["companyId"] ?? "",
-        countProposals: json["countProposals"],
-        countMessages: json["countMessages"],
-        countHired: json["countHired"],
+        countProposals: json["countProposals"] != null ? json["countProposals"] is int ? json["countProposals"] : int.tryParse(json["countProposals"]) : null,
+        countMessages: json["countMessages"] != null ? json["countMessages"] is int ? json["countMessages"] : int.tryParse(json["countMessages"]) : null,
+        countHired: json["countHired"] != null ? json["countHired"] is int ? json["countHired"] : int.tryParse(json["countHired"]) : null,
         enabled: Status.values[json["typeFlag"] ?? 0],
         isFavorite: fav);
   }

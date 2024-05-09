@@ -254,6 +254,7 @@
   "latest": "Latest Update",
 
   "accept_offer": "Accept Offer",
-  "new_offer": "You have a new offer"
+  "new_offer": "You have a new offer",
+  "search_message": "Search message"
 
 }

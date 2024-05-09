@@ -7,11 +7,14 @@ import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
+import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:duration/duration.dart';
+import 'package:duration/locale.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:intl/intl.dart';
@@ -214,6 +217,7 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
   }
 
   var userStore = getIt<UserStore>();
+  var languageStore = getIt<LanguageStore>();
 
   @override
   Widget build(BuildContext context) {
@@ -329,7 +333,14 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
                         child: Align(
                           alignment: Alignment.centerRight,
                           child: AutoSizeText(
-                            widget.scheduleFilter.getDuration(),
+                            prettyDuration(
+                              widget.scheduleFilter.getDuration(),
+                              locale: languageStore.locale == 'vi'
+                                  ? const VietnameseDurationLocale()
+                                  : const EnglishDurationLocale(),
+                              delimiter: ", ",
+                              abbreviated: true,
+                            ),
                             minFontSize: 5,
                             maxLines: 1,
                             maxFontSize: 12,
@@ -479,6 +490,91 @@ class _ScheduleMessageState extends State<ScheduleMessage> {
           ),
         ),
       );
+    }
+  }
+}
+
+class VietnameseDurationLocale extends DurationLocale {
+  const VietnameseDurationLocale();
+
+  @override
+  String year(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'y';
+    } else {
+      return 'năm';
+    }
+  }
+
+  @override
+  String month(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'mon';
+    } else {
+      return 'tháng';
+    }
+  }
+
+  @override
+  String week(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'w';
+    } else {
+      return 'tuần';
+    }
+  }
+
+  @override
+  String day(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'ng';
+    } else {
+      return 'ngày';
+    }
+  }
+
+  @override
+  String hour(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'h';
+    } else {
+      return 'tiếng';
+    }
+  }
+
+  @override
+  String minute(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'p';
+    } else {
+      return 'phút';
+    }
+  }
+
+  @override
+  String second(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 's';
+    } else {
+      return 'giây';
+    }
+  }
+
+  @override
+  String millisecond(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'ms';
+    } else {
+      return 'miligiay';
+    }
+  }
+
+  @override
+  String microseconds(int amount, [bool abbreviated = true]) {
+    if (abbreviated) {
+      return 'us';
+    } else {
+      return 'microgiay';
     }
   }
 }

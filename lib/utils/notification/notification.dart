@@ -103,6 +103,7 @@ NotificationChannelEnum getChannelByMessageType(NotificationType type) {
         return NotificationChannelEnum.messageChannel;
       }
     case NotificationType.viewOffer:
+    case NotificationType.hired:
       {
         return NotificationChannelEnum.proposalChannel;
       }

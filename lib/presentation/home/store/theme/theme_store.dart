@@ -81,7 +81,7 @@ abstract class _ThemeStore with Store {
     }
   }
 
-  bool isPlatformDark(BuildContext context) =>
+  bool isPlatformDark(BuildContext context) => systemTheme &&
       MediaQuery.platformBrightnessOf(context) == Brightness.dark;
 
   // dispose:-------------------------------------------------------------------

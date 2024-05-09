@@ -515,7 +515,7 @@ class _MessageWidgetState extends State<MessageWidget> {
               maxWidth: widget.messageWidth.toDouble() + 30.0,
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 GestureDetector(
                   onDoubleTap: () =>

@@ -1,13 +1,18 @@
 import 'dart:math';
 
+import 'package:animated_list_plus/animated_list_plus.dart';
+import 'package:boilerplate/core/widgets/floating_search_bar/material_floating_search_bar_2.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/dashboard/chat/models/chat_enum.dart';
 import 'package:boilerplate/presentation/dashboard/chat/widgets/message/schedule_message.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
+import 'package:boilerplate/utils/locale/app_localization.dart';
+import 'package:collection/collection.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view.dart' show PhotoViewComputedScale;
@@ -67,6 +72,7 @@ class Chat extends StatefulWidget {
       maxScale: PhotoViewComputedScale.covered,
       minScale: PhotoViewComputedScale.contained,
     ),
+    required this.allMsg,
     this.imageHeaders,
     this.imageMessageBuilder,
     this.imageProviderBuilder,
@@ -81,7 +87,7 @@ class Chat extends StatefulWidget {
     this.onFirstIconPressed,
     this.onAvatarTap,
     this.onBackgroundTap,
-    this.onEndReached,
+    required this.onEndReached,
     this.onEndReachedThreshold,
     this.onMessageDoubleTap,
     this.onMessageLongPress,
@@ -110,9 +116,12 @@ class Chat extends StatefulWidget {
     this.messageWidthRatio = 0.72,
     this.scheduleMessageBuilder,
     required this.doneLoadingCb,
+    required this.getSearchResult,
   });
 
   final Function doneLoadingCb;
+  final List<AbstractChatMessage> Function(String) getSearchResult;
+  final List<AbstractChatMessage> allMsg;
 
   /// See [MessageWidget.audioMessageBuilder].
   final Widget Function(AbstractAudioMessage, {required int messageWidth})?
@@ -379,6 +388,9 @@ class ChatState extends State<Chat> {
 
     _scrollController = widget.scrollController ?? AutoScrollController();
     Chat.theme = _themeStore.darkMode ? Chat.darkTheme : Chat.lightTheme;
+    widget.allMsg.forEachIndexed(
+      (i, element) => chatMessageAutoScrollIndexById[element.id] = i,
+    );
     didUpdateWidget(widget);
   }
 
@@ -395,19 +407,19 @@ class ChatState extends State<Chat> {
 
   /// Scroll to the message with the specified [id].
   void scrollToMessage(
-    String id, {
+    int id, {
     Duration? scrollDuration,
     bool withHighlight = false,
     Duration? highlightDuration,
   }) async {
     await _scrollController.scrollToIndex(
-      chatMessageAutoScrollIndexById[id]!,
+      id,
       duration: scrollDuration ?? scrollAnimationDuration,
       preferPosition: AutoScrollPosition.middle,
     );
     if (withHighlight) {
       await _scrollController.highlight(
-        chatMessageAutoScrollIndexById[id]!,
+        id,
         highlightDuration: highlightDuration ?? const Duration(seconds: 3),
       );
     }
@@ -559,7 +571,7 @@ class ChatState extends State<Chat> {
         controller: _scrollController,
         index: index ?? -1,
         key: Key('scroll-${message.id}'),
-        highlightColor: Chat.theme.highlightMessageColor,
+        highlightColor: Colors.redAccent.shade100,
         child: messageWidget,
       );
     }
@@ -592,7 +604,7 @@ class ChatState extends State<Chat> {
 
   /// Updates the [chatMessageAutoScrollIndexById] mapping with the latest messages.
   void _refreshAutoScrollMapping() {
-    chatMessageAutoScrollIndexById.clear();
+    // chatMessageAutoScrollIndexById.clear();
     var i = 0;
     for (final object in _chatMessages) {
       if (object is UnreadHeaderData) {
@@ -639,9 +651,475 @@ class ChatState extends State<Chat> {
     super.dispose();
   }
 
+  scrollToMessageCb(int increment) async {
+    if (searchIndex == -1 || searchMessages.isEmpty) {
+      return;
+    }
+    var i = searchIndex + increment;
+    if (i < 0) i = searchMessages.length - 1;
+    if (i >= searchMessages.length) {
+      i = 0;
+    }
+    if (widget.messages.length != chatStore.currentProjectMessages.length &&
+        widget.messages.firstWhereOrNull(
+                (element) => element.id == searchMessages[i].id) ==
+            null) {
+      print("scrollmore now $i");
+      await _scrollController.animateTo(
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.linear,
+          _scrollController.position.maxScrollExtent);
+      setState(() {
+        controller.query = "$searchIndex/${searchMessages.length} results";
+      });
+
+      return;
+    }
+    searchIndex = i;
+    var index = _chatMessages.indexWhere(
+      (element) => element is Map
+          ? element["message"].id == searchMessages[i].id
+          : false,
+    );
+
+    scrollToMessage(
+      index,
+      withHighlight: true,
+    );
+    setState(() {
+      controller.query = "${searchIndex + 1}/${searchMessages.length} results";
+    });
+  }
+
+  final FloatingSearchBarController controller = FloatingSearchBarController();
+  bool showSearch = false;
+  bool hideSearch = false;
+  String searchKeyword = "";
+  int searchIndex = -1;
+  List<AbstractChatMessage> searchMessages = [];
+
+  Widget buildFloatingSearchBar() {
+    final bool isPortrait =
+        MediaQuery.of(context).orientation == Orientation.portrait;
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.only(),
+      child: FloatingSearchBar(
+        onFocusChanged: (isFocused) {
+          if (!isFocused) {
+            controller.close();
+          }
+        },
+        clearQueryOnClose: false,
+        controller: controller,
+        backdropColor: Colors.transparent,
+        borderRadius: const BorderRadius.all(Radius.circular(25.0)),
+        border: const BorderSide(),
+        hint: Lang.get("search_message"),
+        // title: Text("${Lang.get("search")} ${chatStore.messages.length} people"),
+        scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+        transitionDuration: const Duration(milliseconds: 300),
+        transitionCurve: Curves.easeInOut,
+        physics: const BouncingScrollPhysics(),
+        axisAlignment: isPortrait ? 0.0 : -1.0,
+        openAxisAlignment: 0.0,
+        // height:showSearch ? isPortrait
+        //     ? MediaQuery.of(context).size.height * 0.4
+        //     : MediaQuery.of(context).size.height * 0.2 : 0,
+        openWidth: isPortrait
+            ? MediaQuery.of(context).size.width
+            : MediaQuery.of(context).size.width * 0.7,
+        width: isPortrait
+            ? MediaQuery.of(context).size.width * 0.7
+            : MediaQuery.of(context).size.width * 0.7,
+        onKeyEvent: (KeyEvent keyEvent) {
+          if (keyEvent.logicalKey == LogicalKeyboardKey.escape) {
+            controller.query = '';
+            controller.close();
+          }
+        },
+        readOnly: searchKeyword.isNotEmpty,
+        debounceDelay: const Duration(milliseconds: 500),
+        onQueryChanged: (String query) {
+          // Call your model, bloc, controller here.
+          // setState(() {
+          //   controller.query = query;
+          // });
+          // print(controller.query);
+        },
+        onSubmitted: (query) {
+          setState(() {
+            searchKeyword = query;
+          });
+          controller.close();
+          searchMessages = widget.getSearchResult(searchKeyword);
+          searchIndex = searchMessages.isEmpty ? -1 : 0;
+          print("lentghhhhhhhhhhhhhhhh");
+          print(searchMessages.length);
+          if (searchMessages.isEmpty) {
+            controller.query = "None";
+            searchKeyword = "";
+            return;
+          }
+          scrollToMessageCb(0);
+        },
+        automaticallyImplyBackButton: false,
+        // Specify a custom transition to be used for
+        // animating between opened and closed stated.
+        transition: CircularFloatingSearchBarTransition(),
+        actions: <Widget>[
+          // FloatingSearchBarAction(
+          //   showIfClosed: false,
+          //   child: CircularButton(
+          //     icon: const Icon(Icons.search),
+          //     onPressed: () {
+          //       if (controller.isOpen) {
+          //         controller.close();
+          //       }
+          //     },
+          //   ),
+          // ),
+          // FloatingSearchBarAction.searchToClear(
+          //   showIfClosed: false,
+          // ),
+          FloatingSearchBarAction.icon(
+            showIfOpened: true,
+            icon: Icons.close,
+            onTap: () {
+              setState(() {
+                hideSearch = true;
+                showSearch = false;
+              });
+              controller.clear();
+              searchKeyword = "";
+              searchIndex = -1;
+              searchMessages.clear();
+            },
+          ),
+          if (searchKeyword.isNotEmpty && searchMessages.isNotEmpty)
+            IconButton(
+              padding: const EdgeInsets.only(top: 0),
+              iconSize: 20,
+              icon: Tooltip(
+                  message: "Next",
+                  preferBelow: true,
+                  child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          borderRadius: BorderRadius.circular(100),
+                          border:
+                              Border.all(width: 1, color: Colors.transparent)),
+                      child: const Icon(
+                        Icons.arrow_upward,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 2.0,
+                          ),
+                        ],
+                      ))),
+              onPressed: () {
+                scrollToMessageCb(1);
+                // setState(() {
+                //   hideSearch = true;
+                //   showSearch = false;
+                // });
+              },
+            ),
+          if (searchKeyword.isNotEmpty && searchMessages.isNotEmpty)
+            IconButton(
+              padding: const EdgeInsets.only(top: 0),
+              iconSize: 20,
+              icon: Tooltip(
+                  message: "Prev",
+                  preferBelow: true,
+                  child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          borderRadius: BorderRadius.circular(100),
+                          border:
+                              Border.all(width: 1, color: Colors.transparent)),
+                      child: const Icon(
+                        Icons.arrow_downward,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 2.0,
+                          ),
+                        ],
+                      ))),
+              onPressed: () {
+                scrollToMessageCb(-1);
+                // setState(() {
+                //   hideSearch = true;
+                //   showSearch = false;
+                // });
+              },
+            ),
+        ],
+        builder: (BuildContext context, Animation<double> transition) {
+          return ImplicitlyAnimatedList<AbstractChatMessage>(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            insertDuration: const Duration(milliseconds: 300),
+            items: searchMessages,
+            itemBuilder: (BuildContext context, Animation<double> animation,
+                AbstractChatMessage element, index) {
+              // try {
+              //   // //print(index);
+              //   return FadeTransition(
+              //     opacity: animation,
+              //     child: Padding(
+              //       padding: const EdgeInsets.symmetric(vertical: 20.0),
+              //       child: InkWell(
+              //         child: AutoSizeText(
+              //           element.type == AbstractMessageType.text
+              //               ? (element as AbstractTextMessage).text
+              //               : element.type == AbstractMessageType.schedule
+              //                   ? (element as ScheduleMessageType)
+              //                       .metadata!["title"]
+              //                   : "null",
+              //           words: searchKeyword.isNotEmpty
+              //               ? {
+              //                   searchKeyword: HighlightedWord(
+              //                     onTap: () {
+              //                       print("match");
+              //                     },
+              //                   ),
+              //                 }
+              //               : null,
+              //           matchDecoration: BoxDecoration(
+              //             color: Colors.amber,
+              //             borderRadius: BorderRadius.circular(50),
+              //           ),
+              //           style: const TextStyle(
+              //               fontWeight: FontWeight.w600, fontSize: 14),
+              //         ),
+              //       ),
+              //     ),
+              //   );
+              // } catch (e) {
+              //   print(e);
+              //   return const SizedBox();
+              // }
+              return const SizedBox.shrink();
+            },
+            areItemsTheSame: (a, b) => a.hashCode == b.hashCode,
+          );
+          // ClipRRect(
+          //   borderRadius: BorderRadius.circular(8),
+          //   child: Material(
+          //     color: Colors.white,
+          //     elevation: 4.0,
+          //     child: Column(
+          //       mainAxisSize: MainAxisSize.min,
+          //       children: Colors.accents.map((MaterialAccentColor color) {
+          //         return Container(height: 112, color: color);
+          //       }).toList(),
+          //     ),
+          //   ),
+          // );
+        },
+      ),
+      // TextField(
+      //   onTap: () {},
+      //   decoration: InputDecoration(
+      //     hintText: Lang.get("search_message"),
+      //     floatingLabelBehavior: FloatingLabelBehavior.never,
+      //     suffixIcon: IconButton(
+      //       padding: EdgeInsets.zero,
+      //       iconSize: 20,
+      //       icon: const Tooltip(
+      //           message: "Hide",
+      //           preferBelow: true,
+      //           child: Icon(Icons.close)),
+      //       onPressed: () {
+      //         setState(() {
+      //           hideSearch = true;
+      //           showSearch = false;
+      //         });
+      //       },
+      //     ),
+      //     enabledBorder: const OutlineInputBorder(
+      //       borderRadius: BorderRadius.all(Radius.circular(25.0)),
+      //     ),
+      //     filled: true,
+      //     fillColor: Theme.of(context).colorScheme.background,
+      //     contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+      //     border: const OutlineInputBorder(
+      //       borderRadius: BorderRadius.all(Radius.circular(25.0)),
+      //     ),
+      //     focusedBorder: const OutlineInputBorder(
+      //       borderRadius: BorderRadius.all(Radius.circular(25.0)),
+      //     ),
+      //   ),
+      // ),
+    );
+    // return FloatingSearchBar(
+    //   onFocusChanged: (isFocused) {
+    //     if (!isFocused) {
+    //       controller.close();
+    //     }
+    //   },
+    //   clearQueryOnClose: true,
+    //   controller: controller,
+    //   backdropColor: Theme.of(context).colorScheme.background,
+    //   borderRadius: const BorderRadius.all(Radius.circular(25.0)),
+    //   border: const BorderSide(),
+    //   hint: Lang.get("search_message"),
+    //   // title: Text("${Lang.get("search")} ${chatStore.messages.length} people"),
+    //   scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
+    //   transitionDuration: const Duration(milliseconds: 300),
+    //   transitionCurve: Curves.easeInOut,
+    //   physics: const BouncingScrollPhysics(),
+    //   axisAlignment: isPortrait ? 0.0 : -1.0,
+    //   openAxisAlignment: 0.0,
+    //   // height:showSearch ? isPortrait
+    //   //     ? MediaQuery.of(context).size.height * 0.4
+    //   //     : MediaQuery.of(context).size.height * 0.2 : 0,
+    //   width: isPortrait
+    //       ? MediaQuery.of(context).size.width
+    //       : MediaQuery.of(context).size.width * 0.7,
+    //   onKeyEvent: (KeyEvent keyEvent) {
+    //     if (keyEvent.logicalKey == LogicalKeyboardKey.escape) {
+    //       controller.query = '';
+    //       controller.close();
+    //     }
+    //   },
+    //   debounceDelay: const Duration(milliseconds: 500),
+    //   onQueryChanged: (String query) {
+    //     // Call your model, bloc, controller here.
+    //     // setState(() {
+    //     //   controller.query = query;
+    //     // });
+    //     // print(controller.query);
+    //   },
+    //   onSubmitted: (query) {
+    //     setState(() {
+    //       searchKeyword = query;
+    //     });
+    //   },
+    //   automaticallyImplyBackButton: false,
+    //   // Specify a custom transition to be used for
+    //   // animating between opened and closed stated.
+    //   transition: CircularFloatingSearchBarTransition(),
+    //   actions: <Widget>[
+    //     // FloatingSearchBarAction(
+    //     //   showIfClosed: false,
+    //     //   child: CircularButton(
+    //     //     icon: const Icon(Icons.search),
+    //     //     onPressed: () {
+    //     //       if (controller.isOpen) {
+    //     //         controller.close();
+    //     //       }
+    //     //     },
+    //     //   ),
+    //     // ),
+    //     FloatingSearchBarAction.searchToClear(
+    //       showIfClosed: false,
+    //     ),
+    //     FloatingSearchBarAction.icon(
+    //       icon: Icons.close,
+    //       onTap: () {
+    //         setState(() {
+    //           hideSearch = true;
+    //           showSearch = false;
+    //         });
+    //       },
+    //     )
+    //   ],
+    //   builder: (BuildContext context, Animation<double> transition) {
+    //     return Material(
+    //       color: Colors.white,
+    //       borderRadius: BorderRadius.circular(8),
+    //       clipBehavior: Clip.antiAlias,
+    //       child: Container(
+    //         height: isPortrait ? MediaQuery.of(context).size.height * 0.5 : MediaQuery.of(context).size.height * 0.2,
+    //         padding: const EdgeInsets.symmetric(vertical: 10),
+    //         child: ImplicitlyAnimatedList<AbstractChatMessage>(
+    //           shrinkWrap: true,
+    //           physics: const NeverScrollableScrollPhysics(),
+    //           insertDuration: const Duration(milliseconds: 300),
+    //           items: searchKeyword.isEmpty
+    //               ? []
+    //               : chatStore.currentProjectMessages
+    //                   .where((element) =>
+    //                       element.type == AbstractMessageType.text
+    //                           ? (element as AbstractTextMessage)
+    //                               .text
+    //                               .toLowerCase()
+    //                               .contains(searchKeyword.toLowerCase())
+    //                           : element.type == AbstractMessageType.schedule
+    //                               ? (element as ScheduleMessageType)
+    //                                   .metadata!["title"]
+    //                                   .toLowerCase()
+    //                                   .contains(searchKeyword.toLowerCase())
+    //                               : false)
+    //                   .toList(),
+    //           itemBuilder: (BuildContext context, Animation<double> animation,
+    //               AbstractChatMessage element, index) {
+    //             try {
+    //               // //print(index);
+    //               return FadeTransition(
+    //                 opacity: animation,
+    //                 child: Padding(
+    //                   padding: const EdgeInsets.symmetric(vertical: 20.0),
+    //                   child: AutoSizeText(
+    //                     element.type == AbstractMessageType.text
+    //                         ? (element as AbstractTextMessage).text
+    //                         : element.type == AbstractMessageType.schedule
+    //                             ? (element as ScheduleMessageType)
+    //                                 .metadata!["title"]
+    //                             : "null",
+    //                     words: searchKeyword.isNotEmpty
+    //                         ? {
+    //                             searchKeyword: HighlightedWord(
+    //                               onTap: () {
+    //                                 print("match");
+    //                               },
+    //                             ),
+    //                           }
+    //                         : null,
+    //                     matchDecoration: BoxDecoration(
+    //                       color: Colors.amber,
+    //                       borderRadius: BorderRadius.circular(50),
+    //                     ),
+    //                     style: const TextStyle(
+    //                         fontWeight: FontWeight.w600, fontSize: 14),
+    //                   ),
+    //                 ),
+    //               );
+    //             } catch (e) {
+    //               print(e);
+    //               return const SizedBox();
+    //             }
+    //           },
+    //           areItemsTheSame: (a, b) => a.hashCode == b.hashCode,
+    //         ),
+    //       ),
+    //     );
+    //     // ClipRRect(
+    //     //   borderRadius: BorderRadius.circular(8),
+    //     //   child: Material(
+    //     //     color: Colors.white,
+    //     //     elevation: 4.0,
+    //     //     child: Column(
+    //     //       mainAxisSize: MainAxisSize.min,
+    //     //       children: Colors.accents.map((MaterialAccentColor color) {
+    //     //         return Container(height: 112, color: color);
+    //     //       }).toList(),
+    //     //     ),
+    //     //   ),
+    //     // );
+    //   },
+    // );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // logg("build chat", "BEBAOBOY");
+    logg("build chat", "BEBAOBOY");
     return Stack(
       children: [
         Container(
@@ -676,6 +1154,20 @@ class ChatState extends State<Chat> {
                             ) {
                               //print("rebuild");
                               return ChatList(
+                                hideSearch: hideSearch,
+                                setHideSearch: (p0) {
+                                  if (searchKeyword.isNotEmpty) return;
+                                  setState(() {
+                                    hideSearch = p0;
+                                  });
+                                },
+                                showSearch: (p0) {
+                                  if (searchKeyword.isNotEmpty) return;
+
+                                  setState(() {
+                                    showSearch = p0;
+                                  });
+                                },
                                 user: widget.user,
                                 bottomWidget: widget.listBottomWidget,
                                 bubbleRtlAlignment: widget.bubbleRtlAlignment!,
@@ -707,6 +1199,15 @@ class ChatState extends State<Chat> {
               if (!chatStore.isFetching)
                 widget.customBottomWidget ??
                     Input(
+                      safeAreaInsets: !showSearch && isMobile
+                          ? EdgeInsets.fromLTRB(
+                              MediaQuery.of(context).padding.left,
+                              0,
+                              MediaQuery.of(context).padding.right,
+                              MediaQuery.of(context).viewInsets.bottom +
+                                  MediaQuery.of(context).padding.bottom,
+                            )
+                          : EdgeInsets.zero,
                       isAttachmentUploading: widget.isAttachmentUploading,
                       onAttachmentPressed: widget.onAttachmentPressed,
                       onFirstIconPressed: widget.onFirstIconPressed,
@@ -726,6 +1227,15 @@ class ChatState extends State<Chat> {
             onClosePressed: _onCloseGalleryPressed,
             options: widget.imageGalleryOptions,
           ),
+        Align(
+          alignment: Alignment.topCenter,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.fastOutSlowIn,
+            opacity: showSearch ? 1 : 0,
+            child: showSearch ? buildFloatingSearchBar() : Container(),
+          ),
+        ),
       ],
     );
   }

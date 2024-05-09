@@ -6,7 +6,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:scroll_to_index/scroll_to_index.dart';
-import '../../models/util.dart';
 import 'package:boilerplate/presentation/dashboard/chat/flutter_link_previewer.dart'
     show regexEmail, regexLink;
 import 'package:flutter_parsed_text/flutter_parsed_text.dart';
@@ -24,7 +23,10 @@ class Input extends StatefulWidget {
     required this.onSendPressed,
     this.options = const InputOptions(),
     required this.scrollController,
+    required this.safeAreaInsets,
   });
+
+  final EdgeInsets safeAreaInsets;
 
   final AutoScrollController scrollController;
 
@@ -86,25 +88,25 @@ class _InputState extends State<Input> {
         widget.options.textEditingController ?? InputTextFieldController();
     widget.scrollController.addListener(
       () {
-        final buttonPadding =
-            Chat.theme.inputPadding.copyWith(left: 16, right: 16);
+        // final buttonPadding =
+        //     Chat.theme.inputPadding.copyWith(left: 16, right: 16);
         if (widget.scrollController.position.userScrollDirection ==
             ScrollDirection.reverse) {
           if (visibility != 0) {
-            if (mounted) {
-              setState(() {
-                visibility = 0;
-              });
-            }
+            // if (mounted) {
+            //   setState(() {
+            //     visibility = 0;
+            //   });
+            // }
           }
         }
         if (widget.scrollController.position.userScrollDirection ==
             ScrollDirection.forward) {
-          if (visibility == 0) {
-            setState(() {
-              visibility = buttonPadding.bottom + buttonPadding.top + 24;
-            });
-          }
+          // if (visibility == 0) {
+          //   setState(() {
+          //     visibility = buttonPadding.bottom + buttonPadding.top + 24;
+          //   });
+          // }
         }
       },
     );
@@ -149,16 +151,9 @@ class _InputState extends State<Input> {
   }
 
   Widget _inputBuilder() {
-    final query = MediaQuery.of(context);
     final buttonPadding = Chat.theme.inputPadding.copyWith(left: 16, right: 16);
-    final safeAreaInsets = isMobile
-        ? EdgeInsets.fromLTRB(
-            query.padding.left,
-            0,
-            query.padding.right,
-            query.viewInsets.bottom + query.padding.bottom,
-          )
-        : EdgeInsets.zero;
+    print(buttonPadding);
+
     final textPadding = Chat.theme.inputPadding.copyWith(left: 0, right: 0).add(
           EdgeInsets.fromLTRB(
             widget.onAttachmentPressed != null ? 0 : 24,
@@ -179,7 +174,7 @@ class _InputState extends State<Input> {
           elevation: Chat.theme.inputElevation,
           child: Container(
             decoration: Chat.theme.inputContainerDecoration,
-            padding: safeAreaInsets,
+            padding: widget.safeAreaInsets,
             child: Row(
               textDirection: TextDirection.ltr,
               children: [
