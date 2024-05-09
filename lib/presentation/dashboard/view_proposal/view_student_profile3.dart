@@ -55,6 +55,25 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
           widget.studentProfile.objectId!,
           widget.studentProfile);
       transcriptController.text = transcript;
+      if (mounted) {
+        setState(() {
+          isLinkTranscript.value = true;
+        });
+      }
+      await FilePreview.getThumbnail(
+              changeValue: changeValue, isCV: false, transcriptController.text)
+          .then(
+        (value) {
+          if (value != null) {
+            if (mounted) {
+              setState(() {
+                isLinkTranscript.value = false;
+              });
+            }
+            _transcriptImage = value;
+          }
+        },
+      );
 
       var cv = await profileStore.getStudentResume(
         widget.studentProfile.resume ?? '',
@@ -62,6 +81,26 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
       );
 
       cvController.text = cv;
+      if (mounted) {
+        setState(() {
+          isLinkCv.value = true;
+        });
+      }
+
+      await FilePreview.getThumbnail(
+              changeValue: changeValue, isCV: true, cvController.text)
+          .then(
+        (value) {
+          if (value != null) {
+            if (mounted) {
+              setState(() {
+                isLinkCv.value = false;
+              });
+            }
+            _cvImage = value;
+          }
+        },
+      );
     });
 
     isLinkCv = ValueNotifier<bool>(true);
@@ -98,10 +137,12 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
         }
       }
       print(_cvImage.toString());
-      setState(() {
-        isLinkCv.value = false;
-        isLinkTranscript.value = false;
-      });
+      if (mounted) {
+        setState(() {
+          isLinkCv.value = false;
+          isLinkTranscript.value = false;
+        });
+      }
     });
   }
 
@@ -153,64 +194,10 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                         child: SizedBox(
                             height: 30,
                             child: TextFormField(
-                              enabled: false,
+                              readOnly: true,
                               controller: cvController,
-                              onTapOutside: (value) async {
-                                FocusManager.instance.primaryFocus?.unfocus();
-
-                                if (cvController.text.isNotEmpty) {
-                                  var filePath = cvController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  cvController.text = filePath;
-                                  await FilePreview.getThumbnail(
-                                          changeValue: changeValue,
-                                          isCV: true,
-                                          cvController.text)
-                                      .then(
-                                    (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          isLinkCv.value = false;
-                                        });
-                                        _cvImage = value;
-                                      }
-                                    },
-                                  );
-                                }
-                              },
-                              onFieldSubmitted: (value) async {
-                                setState(() {
-                                  isLinkCv.value = false;
-                                });
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                if (cvController.text.isNotEmpty) {
-                                  var filePath = cvController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  cvController.text = filePath;
-                                  await FilePreview.getThumbnail(
-                                          changeValue: changeValue,
-                                          isCV: true,
-                                          cvController.text)
-                                      .then((value) {
-                                    if (value != null) {
-                                      setState(() {
-                                        isLinkCv.value = false;
-                                      });
-                                      _cvImage = value;
-                                    }
-                                  });
-                                }
-                              },
+                              onTapOutside: (value) async {},
+                              onFieldSubmitted: (value) async {},
                               decoration: InputDecoration(
                                 contentPadding:
                                     const EdgeInsets.only(bottom: 10),
@@ -219,24 +206,6 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                               style: const TextStyle(fontSize: 13),
                             )),
                       ),
-                      if (_cv != null || _cvImage != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            color: Theme.of(context).colorScheme.primary,
-                            iconSize: 20,
-                            onPressed: () {
-                              setState(() {
-                                _cv = null;
-                                cvEnable = true;
-                                cvController.clear();
-                                _cvImage = null;
-                              });
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                          ),
-                        ),
                     ],
                   ),
                   const SizedBox(
@@ -254,13 +223,12 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                       }
                     },
                     child: Container(
-                        constraints: const BoxConstraints(minHeight: 200),
-                        // height: _cvImage != null ? null : 200,
-                        decoration: const BoxDecoration(
-                            color: Colors.white70,
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(13))),
-                        child: ValueListenableBuilder(
+                      constraints: const BoxConstraints(minHeight: 200),
+                      // height: _cvImage != null ? null : 200,
+                      decoration: const BoxDecoration(
+                          color: Colors.white70,
+                          borderRadius: BorderRadius.all(Radius.circular(13))),
+                      child: ValueListenableBuilder(
                           valueListenable: isLinkCv,
                           builder: (context, value, child) => isLinkCv.value ==
                                       true &&
@@ -279,7 +247,7 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                                   enableAnimation: true,
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
-                                    // print("fetch");
+                                    print("fetch");
                                     setState(() {
                                       if (p0.link != null) {
                                         pd[p0.link!] = p0;
@@ -303,16 +271,18 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                                           Container(
                                               margin: const EdgeInsets.only(
                                                   bottom: 5),
-                                              child: const Icon(
-                                                Icons.add_a_photo,
+                                              child: Lottie.asset(
+                                                'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                                                fit: BoxFit.cover,
+                                                width:
+                                                    80, // Adjust the width and height as needed
+                                                height: 80,
+                                                repeat:
+                                                    true, // Set to true if you want the animation to loop
                                               )),
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(Lang.get('profile_cv_add'))
                                         ]),
-                                  ),
-                        )),
+                                  )),
+                    ),
                   ),
                   const SizedBox(height: 34.0),
 
@@ -337,35 +307,9 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                         child: SizedBox(
                             height: 30,
                             child: TextFormField(
-                              enabled: false,
+                              readOnly: true,
                               controller: transcriptController,
-                              onTapOutside: (value) async {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                if (transcriptController.text.isNotEmpty) {
-                                  var filePath = transcriptController.text;
-                                  var split = filePath.split('://');
-                                  if (split.length > 1) {
-                                    // if (!['http', 'https', 'ftp'].contains(filePath)) {}
-                                  } else {
-                                    filePath = "https://$filePath";
-                                  }
-                                  transcriptController.text = filePath;
-                                  await FilePreview.getThumbnail(
-                                          changeValue: changeValue,
-                                          isCV: false,
-                                          transcriptController.text)
-                                      .then(
-                                    (value) {
-                                      if (value != null) {
-                                        setState(() {
-                                          isLinkTranscript.value = false;
-                                        });
-                                        _transcriptImage = value;
-                                      }
-                                    },
-                                  );
-                                }
-                              },
+                              onTapOutside: (value) async {},
                               decoration: InputDecoration(
                                 contentPadding:
                                     const EdgeInsets.only(bottom: 10),
@@ -374,24 +318,6 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                               style: const TextStyle(fontSize: 13),
                             )),
                       ),
-                      if (_transcript != null || _transcriptImage != null)
-                        SizedBox(
-                          width: 40,
-                          child: IconButton(
-                            icon: const Icon(Icons.close),
-                            color: Theme.of(context).colorScheme.primary,
-                            iconSize: 20,
-                            onPressed: () {
-                              setState(() {
-                                _transcript = null;
-                                transcriptEnable = true;
-                                transcriptController.clear();
-                                _transcriptImage = null;
-                              });
-                              FocusManager.instance.primaryFocus?.unfocus();
-                            },
-                          ),
-                        ),
                     ],
                   ),
                   const SizedBox(
@@ -435,6 +361,7 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                                   textWidget: const SizedBox(),
                                   onPreviewDataFetched: (p0) async {
                                     setState(() {
+                                      print("fetch");
                                       if (p0.link != null) {
                                         pd[p0.link!] = p0;
                                         isLinkTranscript.value = true;
@@ -457,14 +384,15 @@ class _ViewStudentProfile3State extends State<ViewStudentProfile3> {
                                           Container(
                                               margin: const EdgeInsets.only(
                                                   bottom: 5),
-                                              child: const Icon(
-                                                Icons.add_a_photo,
+                                              child: Lottie.asset(
+                                                'assets/animations/loading_animation.json', // Replace with the path to your Lottie JSON file
+                                                fit: BoxFit.cover,
+                                                width:
+                                                    80, // Adjust the width and height as needed
+                                                height: 80,
+                                                repeat:
+                                                    true, // Set to true if you want the animation to loop
                                               )),
-                                          const SizedBox(
-                                            width: 20,
-                                          ),
-                                          Text(Lang.get(
-                                              'profile_transcript_add'))
                                         ]),
                                   )),
                     ),
