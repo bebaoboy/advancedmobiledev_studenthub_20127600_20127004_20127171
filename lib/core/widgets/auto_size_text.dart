@@ -329,8 +329,8 @@ class _AutoSizeTextState extends State<AutoSizeText> {
             boundWords = allOccurance(words, widget.data!, widget.matchCase);
         }
         return Text.rich(
-          _buildSpan(
-              sortedWords.map((entry) => entry.value).toList(), boundWords),
+          _buildSpan(sortedWords.map((entry) => entry.value).toList(),
+              boundWords, fontSize, style),
           locale: widget.locale,
           style: style.copyWith(fontSize: fontSize),
           maxLines: maxLines,
@@ -529,10 +529,8 @@ class _AutoSizeTextState extends State<AutoSizeText> {
     }
   }
 
-  TextSpan _buildSpan(
-    List<HighlightedWord> highlightedWords,
-    List<TextElement> boundWords,
-  ) {
+  TextSpan _buildSpan(List<HighlightedWord> highlightedWords,
+      List<TextElement> boundWords, double fontSize, TextStyle style) {
     return TextSpan(
       children: boundWords
           .map<List<InlineSpan>>((element) {
@@ -557,7 +555,7 @@ class _AutoSizeTextState extends State<AutoSizeText> {
                     );
                   }
                   return WidgetSpan(
-                    alignment: widget.spanAlignment,
+                    alignment: PlaceholderAlignment.middle,
                     child: InkWell(
                       onTap: highlightedWord.onTap,
                       child: Container(
@@ -567,8 +565,11 @@ class _AutoSizeTextState extends State<AutoSizeText> {
                         child: AutoSizeText(
                           w,
                           style: highlightedWord.textStyle ??
-                              widget.matchTextStyle ?? widget.style,
-                          textScaleFactor: 1.0,
+                              widget.matchTextStyle ??
+                              widget.style,
+                              minFontSize: widget.minFontSize,
+                              maxFontSize: widget.minFontSize,
+                          // textScaleFactor: fontSize / style.fontSize!,
                         ),
                       ),
                     ),

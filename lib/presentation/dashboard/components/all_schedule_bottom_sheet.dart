@@ -97,7 +97,7 @@ class _AllScheduleBottomSheetState extends State<AllScheduleBottomSheet> {
         clipBehavior: Clip.antiAlias,
         child: SheetContentScaffold(
           appBar: AppBar(
-            title: const Text("All interviews"),
+            title: Text("All interviews (${widget.filter.length})"),
           ),
           body: ListView.builder(
               itemCount: widget.filter.length,

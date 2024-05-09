@@ -269,7 +269,7 @@ class NotificationObject extends MyObject {
 
   @override
   String toString() {
-    return "sender: ${sender.toJson()} \ncontent: $content \ncreated: $createdAt \nid: $id \nmetadata: \n\t${toStringPretty(metadata??"")}\n\n";
+    return "sender: ${sender.toJson()} \ncontent: $content \ncreated: $createdAt \nid: $id \nmetadata: \n\t${toStringPretty(metadata ?? "")}\n\n";
   }
 
   NotificationObject({
@@ -323,6 +323,7 @@ enum NotificationType {
   joinInterview,
   proposal, // submitted
   message,
+  hired,
 }
 
 extension NotificationTypeTitle on NotificationType {
@@ -458,7 +459,7 @@ class InterviewSchedule extends MyObject {
   }
 
   getDuration() {
-    return "${endDate.difference(startDate).inMinutes} minutes";
+    return endDate.difference(startDate);
   }
 
   getNumDuration() {

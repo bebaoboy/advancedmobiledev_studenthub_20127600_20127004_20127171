@@ -820,12 +820,9 @@ class _AlertTabState extends State<AlertTab> {
                               texts: notiStore.texts![i],
                             ),
                           );
-
-                          
                         },
                       ),
                     );
-
             } else {
               return const LoadingScreenWidget();
             }
@@ -933,7 +930,7 @@ class _CustomProposalNotificationState
                         var userStore = getIt<UserStore>();
                         if (widget.notificationObject.type ==
                             NotificationType.proposal) {
-                              // cty nhận thbao student đã nộp proposal
+                          // cty nhận thbao student đã nộp proposal
                           var proposal = widget.notificationObject.metadata!;
                           var projectStore = getIt<ProjectStore>();
                           if (userStore.user!.type == UserType.company &&
@@ -996,7 +993,6 @@ class _CustomProposalNotificationState
                                     }));
                               }
                             }
-
                           }
                         }
                       },
@@ -1571,6 +1567,11 @@ class _AlertPageState extends State<AlertPage> {
                         notificationObject: item,
                         showTime: false,
                       ),
+                    NotificationType.hired => CustomProposalNotification(
+                        openOfferPage: widget.openOfferPage,
+                        notificationObject: item,
+                        showTime: false,
+                      ),
                     NotificationType.joinInterview =>
                       CustomInterviewNotification(
                         enterInterview: () async {
@@ -1918,7 +1919,7 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     if (options.stickyHeaderSorter != null) {
       keys.sort(options.stickyHeaderSorter);
     }
- 
+
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
     // print("build chips");

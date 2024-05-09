@@ -118,5 +118,6 @@ void main() {
     await tester.pumpAndSettle(const Duration(seconds: 10));
     expect(find.text(Lang.get("login_main_text")), findsOne);
     expect(find.byType(RoundedButtonWidget), findsAny);
+    expect(find.byType(Image), findsAny);
   });
 }

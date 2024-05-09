@@ -150,7 +150,7 @@ abstract class _NotificationStore with Store {
   @observable
   List<ObservableList<NotificationObject>>? joinInterviews;
 
-  int activeDates = 0;
+  int activeDates = 14;
 
   categorize(List activeDates) {
     var userStore = getIt<UserStore>();
@@ -176,6 +176,7 @@ abstract class _NotificationStore with Store {
 
           break;
         case NotificationType.viewOffer:
+        case NotificationType.hired:
           if (userStore.user!.type == UserType.student) {
             viewOffers![diff + (activeDates.length ~/ 2)].add(element);
           }
@@ -212,6 +213,12 @@ abstract class _NotificationStore with Store {
   }
 
   addNofitication(Map<String, dynamic> element) async {
+    if (viewOffers == null ||
+        joinInterviews == null ||
+        texts == null ||
+        messages == null) {
+      categorize(List.filled(activeDates, 0));
+    }
     var not = toNotificationObject(element["notification"]);
     _notiList.insert(0, not);
     var sharePref = await SharedPreferences.getInstance();
@@ -232,6 +239,13 @@ abstract class _NotificationStore with Store {
           body:
               "From ${not.sender.name} (Project ${not.metadata!["projectId"]})");
     }
+    if (not.type == NotificationType.hired) {
+      NotificationHelper.createTextNotification(
+          id: int.parse(not.id),
+          title: "You have been hired!",
+          body:
+              "From ${not.sender.name} (Project ${not.metadata!["projectId"]})");
+    }
     int diff = daysBetween(DateTime.now(), not.createdAt!);
     switch (not.type) {
       case NotificationType.joinInterview:
@@ -239,6 +253,7 @@ abstract class _NotificationStore with Store {
 
         break;
       case NotificationType.viewOffer:
+      case NotificationType.hired:
         viewOffers![diff + (activeDates ~/ 2)].insert(0, not);
 
         break;

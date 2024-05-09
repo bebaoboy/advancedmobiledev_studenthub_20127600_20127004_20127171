@@ -76,7 +76,7 @@ class WorkMangerHelper {
       WorkerTask.fetchNotification.identifier,
       WorkerTask.fetchNotification.name,
       tag: WorkerTask.fetchNotification.identifier,
-      existingWorkPolicy: ExistingWorkPolicy.replace,
+      existingWorkPolicy: ExistingWorkPolicy.update,
       initialDelay: NO_DELAY,
       frequency: NORMAL_FREQUENCY,
       backoffPolicy: BackoffPolicy.exponential,

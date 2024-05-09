@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/chat_app_bar_widget.dart';
@@ -32,6 +33,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 import 'package:toastification/toastification.dart';
 import 'package:uuid/uuid.dart';
@@ -202,10 +204,26 @@ class _MessageScreenState extends State<MessageScreen> {
   Widget build(BuildContext context) {
     // print("build chat");
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       key: _scaffoldKey,
       appBar: _buildAppBar(context),
       body: Observer(builder: (context) {
         return Chat(
+          getSearchResult: (searchKeyword) {
+            return chatStore.currentProjectMessages
+                .where((element) => element.type == AbstractMessageType.text
+                    ? (element as AbstractTextMessage)
+                        .text
+                        .toLowerCase()
+                        .contains(searchKeyword.toLowerCase())
+                    : element.type == AbstractMessageType.schedule
+                        ? (element as ScheduleMessageType)
+                            .metadata!["title"]
+                            .toLowerCase()
+                            .contains(searchKeyword.toLowerCase())
+                        : false)
+                .toList();
+          },
           doneLoadingCb: () {
             if (loading) {
               loading = false;
@@ -253,8 +271,11 @@ class _MessageScreenState extends State<MessageScreen> {
           onFirstIconPressed: () {
             showAllScheduleBottomSheet(context);
           },
+          allMsg: chatStore.currentProjectMessages,
+          scrollController: AutoScrollController(),
           onEndReached: () async {
-            await Future.delayed(const Duration(milliseconds: 500));
+            await Future.delayed(
+                Duration(milliseconds: Random().nextInt(200) + 200));
             setState(() {
               page = page + 1;
             });
@@ -825,27 +846,49 @@ class _MessageScreenState extends State<MessageScreen> {
 
   Future<InterviewSchedule?> showAllScheduleBottomSheet(BuildContext context,
       {InterviewSchedule? flt, String? id}) async {
+    var l2 = chatStore.currentProjectMessages
+        .where((element) =>
+            element.type == AbstractMessageType.schedule &&
+            element.metadata!["disableFlag"] == 0 &&
+            (DateTime.tryParse(element.metadata!["endTime"] ?? "") ??
+                    DateTime.now())
+                .isBefore(DateTime.now()))
+        .map(
+          (e) => e as ScheduleMessageType,
+        )
+        .sorted(
+          (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+        );
+    var l = chatStore.currentProjectMessages
+        .where((element) =>
+            element.type == AbstractMessageType.schedule && element.metadata!["disableFlag"] == 0 &&
+            (DateTime.tryParse(element.metadata!["endTime"] ?? "") ??
+                    DateTime.now())
+                .isAfter(DateTime.now()))
+        .map(
+          (e) => e as ScheduleMessageType,
+        )
+        .sorted(
+          (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+        );
+    var l3 = chatStore.currentProjectMessages
+        .where((element) =>
+            element.type == AbstractMessageType.schedule &&
+            element.metadata!["disableFlag"] == 1)
+        .map(
+          (e) => e as ScheduleMessageType,
+        )
+        .sorted(
+          (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+        );
+
     return await Navigator.push<InterviewSchedule>(
       context,
       ModalSheetRoute(
           builder: (context) => AllScheduleBottomSheet(
-                user: widget.chatObject.chatUser,
-                scaffoldKey: _scaffoldKey,
-                filter: chatStore.currentProjectMessages
-                    .where((element) =>
-                        element.type == AbstractMessageType.schedule)
-                    .map(
-                      (e) => e as ScheduleMessageType,
-                    )
-                    .toList()
-                  ..sort((a, b) {
-                    var t1 = InterviewSchedule.fromJsonApi(a.metadata!);
-                    var t2 = InterviewSchedule.fromJsonApi(b.metadata!);
-                    return t1.isCancel || t2.isCancel || t1.endDate.isBefore(DateTime.now()) || t2.endDate.isBefore(DateTime.now()) || (b.updatedAt == null || a.updatedAt == null)
-                        ? -1
-                        : b.updatedAt!.compareTo(a.updatedAt!);
-                  }),
-              )),
+              user: widget.chatObject.chatUser,
+              scaffoldKey: _scaffoldKey,
+              filter: [...l, ...l2, ...l3])),
     );
   }
 
