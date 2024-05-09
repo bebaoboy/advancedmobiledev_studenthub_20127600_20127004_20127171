@@ -156,10 +156,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  // Image.asset(
-                  //   'assets/images/img_login.png',
-                  //   scale: 1.2,
-                  // ),
                   const SizedBox(height: 34.0),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -611,7 +607,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
               ),
             ),
           ),
-          //_buildFooterText(),
           const SizedBox(
             height: 14,
           ),
@@ -631,10 +626,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            // _profileStudentFormStore
-            //     .setResume(_cv != null ? _cv!.path ?? "" : '');
-            // _profileStudentFormStore.setTranscript(
-            //     _transcript != null ? _transcript!.path ?? "" : '');
             print(_profileStudentFormStore.techStack);
             print(_profileStudentFormStore.skillSet);
             print(_profileStudentFormStore.educations);
@@ -650,18 +641,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
                 _profileStudentFormStore.projectExperience,
                 _profileStudentFormStore.transcript,
                 _profileStudentFormStore.resume);
-
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     MaterialPageRoute2(routeName: Routes.home),
-            //     (Route<dynamic> route) => false);
-            // if (_formStore.canProfileStudent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
           },
         ),
       ),
@@ -669,10 +648,6 @@ class _ProfileStudentStep3ScreenState extends State<ProfileStudentStep3Screen> {
   }
 
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
-
     Future.delayed(const Duration(milliseconds: 100), () {
       if (_profileStudentFormStore.success) {
         _profileStudentFormStore.success = false;
