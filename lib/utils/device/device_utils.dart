@@ -1,10 +1,10 @@
 //
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 
 /// Helper class for device related operations.
 ///
 class DeviceUtils {
-
   ///
   /// hides the keyboard if its already open
   ///
@@ -18,9 +18,9 @@ class DeviceUtils {
   ///
   static double getScaledSize(BuildContext context, double scale) =>
       scale *
-          (MediaQuery.of(context).orientation == Orientation.portrait
-              ? MediaQuery.of(context).size.width
-              : MediaQuery.of(context).size.height);
+      (MediaQuery.of(context).orientation == Orientation.portrait
+          ? MediaQuery.of(context).size.width
+          : MediaQuery.of(context).size.height);
 
   ///
   /// accepts a double [scale] and returns scaled sized based on the screen
@@ -35,4 +35,15 @@ class DeviceUtils {
   ///
   static double getScaledHeight(BuildContext context, double scale) =>
       scale * MediaQuery.of(context).size.height;
+
+  static Future<bool> hasConnection() async {
+    final List<ConnectivityResult> connectivityResult =
+        await (Connectivity().checkConnectivity());
+
+    if (!connectivityResult.contains(ConnectivityResult.none)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

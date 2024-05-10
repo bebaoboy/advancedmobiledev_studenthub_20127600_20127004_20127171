@@ -1,16 +1,21 @@
+
 name: "Build & Release"
 
 on:
   pull_request:
     branches:
       - main
-      - sprint1
-      - sprint2
-      - sprint3
-      - sprint4
+      - phasing1
+      - phasing2
+      - phasing3
+      - phasing4
+  #     - sprint8-chat
+  #     - sprint8
+      - sprint10*
+
   push:
     branches:
-      - test
+      - sprint10*
 
 jobs:
   build:
@@ -33,14 +38,14 @@ jobs:
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.3'
+          flutter-version: '3.19.6'
           channel: 'stable'
 
         #4 install dependencies
       - name: Install Dependencies
         run: flutter pub get
 
-      - name: Generate files
+      - name: Generate Packages
         run: flutter packages pub run build_runner build --delete-conflicting-outputs
 
         #5 run test
@@ -49,20 +54,22 @@ jobs:
 
         #6 build apk
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --split-per-abi 
 
         #7 build aab
       - name: Build appBundle
         run: flutter build appbundle
 
         #8 build ipa
-      - name: Build IPA
-        run:
-          flutter build ipa --no-codesign
-      - name: Compress Archives and IPAs
-        run: |
-          cd build
-          tar -czf ios_build.tar.gz ios
+      #- name: Build IPA
+    #    run:
+        #  flutter build ipa --no-codesign
+     # - name: Compress Archives and IPAs
+      #  run: |
+    #      cd build
+      #    tar -czf ios_build.tar.gz ios
+
+      # remember to add these back to path 
 
         #9 get those build to be available to download
       - name: Upload Artifacts
@@ -70,14 +77,21 @@ jobs:
         with:
           name: Releases
           path: |
-            build/app/outputs/flutter-apk/app-release.apk
+            build/app/outputs/flutter-apk/app-x86_64-release.apk
+            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
             build/app/outputs/bundle/release/app-release.aab
-            build/ios_build.tar.gz
+          # build/ios_build.tar.gz
+            
+
+      # remember to add these back to artifacts 
 
         #10 create release with those builds 
       - name: Create Release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz"
-          tag: v1.0.${{ github.run_number }}
-          token: ${{ secrets.TOKEN }}
+          artifacts: "build/app/outputs/flutter-apk/app-x86_64-release.apk,build/app/outputs/flutter-apk/app-arm64-v8a-release.apk,build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk,build/app/outputs/bundle/release/app-release.aab,build/"
+          # tag: v0.9.99.${{ github.run_number }}
+          # artifacts: "build/app/outputs/flutter-apk/app-release.apk,build/app/outputs/bundle/release/app-release.aab,build/ios_build.tar.gz"
+          tag: v1.0.1.${{ github.run_number }}
+          token: ${{ secrets.GITHUB_TOKEN }}

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_typing_uninitialized_variables
+
 import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
 import 'package:boilerplate/data/local/constants/db_constants.dart';
 import 'package:boilerplate/domain/entity/post/post.dart';
@@ -49,8 +51,7 @@ class PostDataSource {
   }
 
   Future<PostList> getPostsFromDb() async {
-
-    print('Loading from database');
+    //print('Loading from database');
 
     // post list
     var postsList;
@@ -61,14 +62,14 @@ class PostDataSource {
     );
 
     // Making a List<Post> out of List<RecordSnapshot>
-    if(recordSnapshots.length > 0) {
+    if (recordSnapshots.isNotEmpty) {
       postsList = PostList(
           posts: recordSnapshots.map((snapshot) {
-            final post = Post.fromMap(snapshot.value);
-            // An ID is a key of a record from the database.
-            post.id = snapshot.key;
-            return post;
-          }).toList());
+        final post = Post.fromMap(snapshot.value);
+        // An ID is a key of a record from the database.
+        post.id = snapshot.key;
+        return post;
+      }).toList());
     }
 
     return postsList;
@@ -98,5 +99,4 @@ class PostDataSource {
       _sembastClient.database,
     );
   }
-
 }

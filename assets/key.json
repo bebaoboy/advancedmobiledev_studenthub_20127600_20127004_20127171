@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "advmobiledev-studenthub-clc20",
+  "private_key_id": "6386b01cdc7dd81dc36d565e4401fb94fee89f2c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQC0NVWyyHrtIGZT\n/IKHmewA76qSIr/5n8SsCTPGtnR7kBy+lOUu1RdyoDVa25AZ7mpu1YRQf6dNGFkb\njfri2qpDyv6kMcgeHX+AeEE96qj8vBJtANMWo95oYxwyHOv2CildPCX5qSNP0N93\nFEOs9n0olpvn64i9ul8cRXR31OxYPXYQTkGQGDgMZku8zhT84PeZWihLVj/9x29j\nc9RzdoH6yStAM3VIiNtd4Gq5vTuDgJjxiB2kN758ZDAQS/WvKONYmIpkRoxCLWYp\n8irAbYkN56w8tJvlZkN2AfhPvc87Bv3qaGc3mlBeLnUMo2k49OOyIMS65CxHtC9g\n79CeZJnVAgMBAAECggEAFFtMAtCmdjU+lJvbIOHwfiCUsO0E/k1KebE7weWSyJx8\nasObagwUmdRi1+XNOZNW6Y3sDu3Z98RZgy/ULfPL37GazJslAyXg5SHFzkPnnU50\nzw8UnqOZ4vUt1l6xrE70jOgtAAQCYv3yKFudKM4v+uRHLfkg2WcoCaOyPDvMtkuL\n30F4+mEZHlMqMcA8a52WKjqINopmaufzHAFFrQOFnCc0kMZgER2145pCOV8UewzO\nrhOjxBxEsjS4z2p5nqfo+JrD1kXBysKyR75Wx/gw6llZhCbyw3Num4YxRU4QLCjo\nvu9DCav5JjvTNG/IGmyQddKecrX5iA7WaCARJ8PyNwKBgQDbxMpXgvPrasotxAtp\n3gp9a6GBrlOf+TDpNcnZMNfvLgNyNsRQMcDEEbgGBn9JHtSDtQxjNieTbcS5N0O5\nKi+k3BoqW5u7fx1FqP8Anm35JPu8NfFaKlygs3nKSbUPgkZ1UjK8/jwZXpOugSni\nOahUm2MRflYUmyJJnZt9zE/TuwKBgQDR6uwIHin4cw49w9ak1QJ7XFbuKv2xcPoo\n1mlnOct0J/ivlHhUzzWJL88Lj3tRz8vUrgbL3GxjPpIU0KdsWyX3+kOEPk2TGBPs\nbzNWi6/HbSPM12ayANAawNgudLZqSlSIWKy8VDOZ9uWqf1CLCq/zd2OJFXoOf2+w\nEsn1xa5HrwKBgQDTuxDGpx+hW81Vsl7crFOm6h879VwT79yzkmLZoTko8kfXrfQM\n3yI8xGVrSK8xH0bXbYJ1wyL14vd5CklxB7fHOVbsID41sg3doyeqzPhe5MazWbUh\njVaYbNGVltWeD4EaXwsLElWMi5X0tfRIRAxtFxenLvR3/c5W5kV8OW9fKQKBgQCi\nTR+neyL6PIMjUDqyARvFI3T2+nhh7DcOwhCGxlG/AnSt1H5hHECJTFSp3Ir9i0tO\nqisJDekjpqotu9Hm3mZx36a6Ja228CPfZ27rGF+VMpY+d8CoGibMuJOs/4JWlhfb\nv6v2hKfM/+88rukoR+AYvxNPVzKi6PcCzNQn2WrRcwKBgQDCtFOD5p4iLSpSrb+r\n6jCEOU+GzeqRgfmZRKZCZZh2Sv65haS7crbbFeQ2f+z0iYQi2r/l1Lybm+KR6ccM\n8Tzew91zF2u0UvhJmfH0k9kEhEiL8reND+CnRs1rbSxjz320YFAYGyNt5EBxdE15\n5uInKHLEeBewL0iqeNq9YpG4Hg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-n0k6u@advmobiledev-studenthub-clc20.iam.gserviceaccount.com",
+  "client_id": "105749614456434175186",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-n0k6u%40advmobiledev-studenthub-clc20.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

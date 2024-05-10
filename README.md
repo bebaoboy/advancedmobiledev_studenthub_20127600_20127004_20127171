@@ -1,40 +1,48 @@
-
-## Thông tin nhóm (link video bên dưới)
-
-Lưu Tuấn Quân - 20127600
-<br>
-Huỳnh Minh Bảo- 20127004
-<br>
-Vũ Huy Hoàng - 20127171
-<br><br>
-
-
 ## ANNOUNCEMENT🎉 
+<br>
+StudentHub 1.0.1 is OUT!!
+<br> 
 
-StudentHub 0.7 is OUT!!
-
-### [Link release](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/releases)
+## Link: [Releases](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/releases) 
 
 <img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
 <br>
 
+## Release web: 
+[StudentHub Firebase](https://advmobiledev-studenthub-clc20.web.app)
+
+<br>
+
 ## Link Youtube Demo (All Sprints + Extra):
 
-### [Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
+[Youtube](https://youtube.com/playlist?list=PLQxe9UB_v3wVgsqL00ZR3DvW-VCet6KrQ&si=QIuGCVPX9DI5Nanj)
+<br>
+
+## Link File report:
+
+[GoogleDocs Report](https://docs.google.com/document/d/1odEhTvSLmnqxdLe2sgNaulKYb0NNhCt-GOD284eSaTM/edit?usp=sharing)
+<br>
 
 ## Link File làm việc và đánh giá:
 
-### [GoogleDocs](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
+[GoogleDocs Workflow](https://docs.google.com/document/d/1xUXeWt9_sLJkO0BoJFrCJhWz4dbY7DQKdo4AycGw9jg/edit?usp=sharing)
+<br>
 
-## Deploy web (release): 
+## Thông tin nhóm:
 
-### [StudentHub Firebase](https://advmobiledev-studenthub-clc20.web.app)
+<br>
+1. Lưu Tuấn Quân - 20127600 (main support)
+<br>
+2. Huỳnh Minh Bảo- 20127004 (main contrubutor)
+<br>
+3. Vũ Huy Hoàng - 20127171
+<br><br>
+
+
 
 <br>
 
-<br>
-
-### Sprint 3: Update account for demo video call (in chat section)
+### (Outdated) Sprint 3: Update account for demo video call (in chat section)
 
 **Username:**
 - user1@gmail.com
@@ -66,35 +74,38 @@ In Visual Studio Code, navigate to Preferences -> Settings and search for Files:
 **/*.inject.dart
 **/*.g.dart
 ```
+## App techniques:
+* Splashscreen
+* Custom package name
+* Frontend: 
+  * Customize UI Video Call with ConnectyCube
+  * Chỉnh giao diện cho web 
+  * Theme Switch Circular Animation, 
+  * Shimmer Loading Listview, 
+  * Custom Navbar Route (press to refresh, pop all sub-routes, route history), 
+  * Swipable Route (swipe on corner to go back to previous page)
+  * Dismissable Container
+  * Open Container Animated
+  * Lazy Loading Listview with animation.
+  * Custom Loading animation
+  * Search chat in chat UI (jump to result) ✅
+  * Trang Alert Tab: Show notification thời gian thực + badge
+  * Dynamic Layout (Portrait+ Landscape mode + web)
+* Backend: 
+  * Lưu data offline
+  * Thông báo firebase trên web
+  * MobX (Observer)
+  * Fetch Profile + Notification trên nền (Background Worker)
+  * Localization (2 languages)
 
-### End of readme.
-
-##################################################################################################
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
-<br>
 
 ## Boilerplate Features:
-
-* Splash
 * Login
 * Home
 * Routing
 * Theme
-* Dio
-* Database
+* Dio support
+* Database Sembast Client
 * MobX (to connect the reactive data of your application with the UI)
 * Provider (State Management)
 * Encryption
@@ -102,15 +113,10 @@ In Visual Studio Code, navigate to Preferences -> Settings and search for Files:
 * Code Generation
 * User Notifications
 * Logging
+* Testing support
 * Dependency Injection
 * Dark Theme Support (new)
 * Multilingual Support (new)
-* Provider example (new)
-
-### Up-Coming Features:
-
-* Connectivity Support
-* Background Fetch Support
 
 ### Libraries & Tools Used
 
@@ -252,9 +258,66 @@ widgets/
 
 This file contains all the routes for your application.
 
+```dart
+import 'package:flutter/material.dart';
+
+import 'ui/post/post_list.dart';
+import 'ui/login/login.dart';
+import 'ui/splash/splash.dart';
+
+class Routes {
+  Routes._();
+
+  //static variables
+  static const String splash = '/splash';
+  static const String login = '/login';
+
+  static final routes = <String, WidgetBuilder>{
+    splash: (BuildContext context) => SplashScreen(),
+    login: (BuildContext context) => LoginScreen(),
+    home: (BuildContext context) => HomeScreen(),
+  };
+}
+```
+
 ### Main
 
 This is the starting point of the application. All the application level configurations are defined in this file i.e, theme, routes, title, orientation etc.
+
+```dart
+import 'package:boilerplate/routes.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'constants/app_theme.dart';
+import 'constants/strings.dart';
+import 'ui/splash/splash.dart';
+
+void main() {
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.landscapeRight,
+    DeviceOrientation.landscapeLeft,
+  ]).then((_) {
+    runApp(MyApp());
+  });
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: Strings.appName,
+      theme: themeData,
+      routes: Routes.routes,
+      home: SplashScreen(),
+    );
+  }
+}
+```
 
 ## Wiki
 
@@ -262,7 +325,6 @@ Checkout [wiki](https://github.com/zubairehman/flutter-boilerplate-project/wiki)
 
 ## Conclusion
 
-I will be happy to answer any questions that you may have on this approach, and if you want to lend a hand with the boilerplate then please feel free to submit an issue and/or pull request 🙂
-
+Feel free to submit an issue and/or pull request 🙂 <br>
 Again to note, this is example can appear as over-architectured for what it is - but it is an example only. If you liked my work, don’t forget to ⭐ star the repo to show your support.
 

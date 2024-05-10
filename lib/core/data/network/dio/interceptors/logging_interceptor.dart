@@ -1,8 +1,16 @@
+// ignore_for_file: deprecated_member_use
+
 library dio_logging_interceptor;
 
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:boilerplate/core/data/network/dio/dio_client.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:to_string_pretty/to_string_pretty.dart';
 
 /// Log Level
 enum Level {
@@ -66,10 +74,10 @@ class LoggingInterceptor extends Interceptor {
   /// Log Level
   final Level level;
 
-  /// Log printer; defaults logPrint log to console.
+  /// Log printer; defaults logPrint! log to console.
   /// In flutter, you'd better use debugPrint.
   /// you can also write log in a file.
-  void Function(Object object) logPrint;
+  void Function(String)? logPrint;
 
   /// Print compact json response
   final bool compact;
@@ -80,8 +88,31 @@ class LoggingInterceptor extends Interceptor {
   LoggingInterceptor({
     this.level = Level.body,
     this.compact = false,
-    this.logPrint = print,
-  });
+  }) {
+    initSp();
+    logPrint = (o) {
+      debugPrint(o);
+    };
+  }
+
+  initSp() async {
+    sharedPref = await SharedPreferences.getInstance();
+    sharedPref!.setStringList("dio", []);
+  }
+
+  SharedPreferences? sharedPref;
+  sp(String o) async {
+    try {
+      List<String> s = sharedPref!.getStringList("dio") ?? [];
+      sharedPref!.setStringList("dio", ["${DateTime.now()}\n$o", ...s]);
+    } catch (e) {
+      ///
+    }
+  }
+
+  spPrint(String s) {
+    sp(toStringPretty(s));
+  }
 
   @override
   void onRequest(
@@ -92,39 +123,56 @@ class LoggingInterceptor extends Interceptor {
       return handler.next(options);
     }
 
-    logPrint('--> ${options.method} ${options.uri}');
+    Future.delayed(Duration.zero, () {
+      String s = "";
 
-    if (level == Level.basic) {
-      return handler.next(options);
-    }
+      logPrint!('--> ${options.method} ${options.uri}');
+      s += '--> ${options.method} ${options.uri}';
 
-    logPrint('[DIO][HEADERS]');
-    options.headers.forEach((key, value) {
-      logPrint('$key:$value');
-    });
-
-    if (level == Level.headers) {
-      logPrint('[DIO][HEADERS]--> END ${options.method}');
-      return handler.next(options);
-    }
-
-    final data = options.data;
-    if (data != null) {
-      // logPrint('[DIO]dataType:${data.runtimeType}');
-      if (data is Map) {
-        if (compact) {
-          logPrint('$data');
-        } else {
-          _prettyPrintJson(data);
-        }
-      } else if (data is FormData) {
-        // NOT IMPLEMENT
-      } else {
-        logPrint(data.toString());
+      if (level == Level.basic) {
+        return;
       }
-    }
 
-    logPrint('[DIO]--> END ${options.method}');
+      logPrint!('[DIO][HEADERS]');
+      s += '[DIO][HEADERS]';
+      options.headers.forEach((key, value) {
+        logPrint!('$key:$value');
+        s += '$key:$value';
+      });
+
+      if (level == Level.headers) {
+        logPrint!('[DIO][HEADERS]--> END ${options.method}');
+        s += '[DIO][HEADERS]--> END ${options.method}';
+        return;
+      }
+      s += "\n";
+
+      final data = options.data;
+      if (data != null) {
+        // logPrint!('[DIO]dataType:${data.runtimeType}'); s += '[DIO]dataType:${data.runtimeType}';
+        if (data is Map) {
+          if (compact) {
+            logPrint!('$data');
+          } else {
+            _prettyPrintJson(data);
+          }
+          s += '<-- Response payload' '\n${toStringPretty(data)}';
+        } else if (data is FormData) {
+          // NOT IMPLEMENT
+        } else {
+          logPrint!(data.toString());
+          s += data.toString();
+        }
+      }
+
+      s += "\n";
+
+      logPrint!('[DIO]--> END ${options.method}');
+      s += '[DIO]--> END ${options.method}';
+      Future.delayed(Duration.zero, () {
+        spPrint(s);
+      });
+    });
 
     return handler.next(options);
   }
@@ -137,39 +185,57 @@ class LoggingInterceptor extends Interceptor {
     if (level == Level.none) {
       return handler.next(response);
     }
+    String s = "";
 
-    logPrint(
+    logPrint!(
         '<-- ${response.statusCode} ${(response.statusMessage?.isNotEmpty ?? false) ? response.statusMessage : '' '${response.requestOptions.uri}'}');
 
     if (level == Level.basic) {
       return handler.next(response);
     }
 
-    logPrint('[DIO][HEADER]');
-    response.headers.forEach((key, value) {
-      logPrint('$key:$value');
-    });
-    logPrint('[DIO][HEADERS]<-- END ${response.requestOptions.method}');
-    if (level == Level.headers) {
-      return handler.next(response);
-    }
-    final data = response.data;
-    if (data != null) {
-      // logPrint('[DIO]dataType:${data.runtimeType}');
-      if (data is Map) {
-        if (compact) {
-          logPrint('$data');
-        } else {
-          _prettyPrintJson(data);
-        }
-      } else if (data is List) {
-        // NOT IMPLEMENT
-      } else {
-        logPrint(data.toString());
+    Future.delayed(Duration.zero, () {
+      logPrint!('[DIO][HEADER]');
+      s += '[DIO][HEADER]';
+      response.headers.forEach((key, value) {
+        logPrint!('$key:$value');
+        s += '$key:$value';
+      });
+      logPrint!('[DIO][HEADERS]<-- END ${response.requestOptions.method}');
+      s += '[DIO][HEADERS]<-- END ${response.requestOptions.method}';
+      if (level == Level.headers) {
+        return;
       }
-    }
+      s += "\n";
 
-    logPrint('[DIO]<-- END HTTP');
+      final data = response.data;
+      if (data != null) {
+        // logPrint!('[DIO]dataType:${data.runtimeType}'); s += '[DIO]dataType:${data.runtimeType}';
+        if (data is Map) {
+          if (compact) {
+            logPrint!('$data');
+          } else {
+            _prettyPrintJson(data);
+          }
+          s += '<-- Response payload' '\n${toStringPretty(data)}';
+        } else if (data is List) {
+          // NOT IMPLEMENT
+        } else {
+          logPrint!(data.toString());
+          s += data.toString();
+        }
+      }
+
+      s += "\n";
+
+      logPrint!('[DIO]<-- END HTTP');
+      s += '[DIO]<-- END HTTP';
+      Future.delayed(Duration.zero, () {
+        spPrint(s);
+      });
+    });
+    var dioClient = getIt<DioClient>();
+    dioClient.clearDio();
     return handler.next(response);
   }
 
@@ -178,18 +244,33 @@ class LoggingInterceptor extends Interceptor {
     DioError err,
     ErrorInterceptorHandler handler,
   ) {
+    String s = "";
+
+    logPrint!('[DIO]<-- HTTP FAILED: $err');
+    s += '[DIO]<-- HTTP FAILED: ';
+    Future.delayed(Duration.zero, () {
+      spPrint("$s\n${toStringPretty(err)}");
+    });
+
     if (level == Level.none) {
       return handler.next(err);
     }
-
-    logPrint('[DIO]<-- HTTP FAILED: $err');
-
+    var dioClient = getIt<DioClient>();
+    dioClient.clearDio();
     return handler.next(err);
   }
 
   void _prettyPrintJson(Object input) {
-    final prettyString = encoder.convert(input);
-    logPrint('<-- Response payload');
-    prettyString.split('\n').forEach((element) => logPrint(element));
+    String prettyString = encoder.convert(input);
+    logPrint!('<-- Response result: ${prettyString.split('\n').length} item');
+    if (prettyString.length > 1000) {
+      logPrint!(
+          input.toString().substring(0, min(1000, input.toString().length)));
+      return;
+    }
+    // prettyString = prettyString.substring(0, min(prettyString.length, 500));
+    prettyString.split('\n').forEach((element) {
+      logPrint!(element);
+    });
   }
 }

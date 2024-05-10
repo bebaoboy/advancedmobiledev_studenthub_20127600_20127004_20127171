@@ -1,15 +1,17 @@
+// ignore_for_file: deprecated_member_use
+
 import 'dart:async';
 
+import 'package:boilerplate/core/data/network/dio/dio_client.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:dio/dio.dart';
 
 /// An interceptor that will try to send failed request again
 class RetryInterceptor extends Interceptor {
-  final Dio dio;
   final RetryOptions options;
   final bool shouldLog;
 
   RetryInterceptor({
-    required this.dio,
     RetryOptions? options,
     this.shouldLog = true,
   }) : options = options ?? const RetryOptions();
@@ -37,18 +39,27 @@ class RetryInterceptor extends Interceptor {
           '[${err.requestOptions.uri}] An error occurred during request, trying a again (remaining tries: ${extra.retries}, error: ${err.error})');
     }
     // We retry with the updated options
-    await dio
+    final DioClient dio = getIt<DioClient>();
+
+    await dio.dio
         .request(
-          err.requestOptions.path,
-          cancelToken: err.requestOptions.cancelToken,
-          data: err.requestOptions.data,
-          onReceiveProgress: err.requestOptions.onReceiveProgress,
-          onSendProgress: err.requestOptions.onSendProgress,
-          queryParameters: err.requestOptions.queryParameters,
-          options: err.requestOptions.toOptions(),
-        )
-        .then((value) => handler.resolve(value),
-            onError: (error) => handler.reject(error));
+      err.requestOptions.path,
+      cancelToken: err.requestOptions.cancelToken,
+      data: err.requestOptions.data,
+      onReceiveProgress: err.requestOptions.onReceiveProgress,
+      onSendProgress: err.requestOptions.onSendProgress,
+      queryParameters: err.requestOptions.queryParameters,
+      options: err.requestOptions.toOptions(),
+    )
+        .then((value) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      handler.resolve(value);
+    }).onError((error, stacktrace) {
+      var dioClient = getIt<DioClient>();
+      dioClient.clearDio();
+      handler.next(err);
+    });
   }
 }
 
@@ -89,8 +100,7 @@ class RetryOptions {
   /// with concurrency though).
   ///
   /// Defaults to [defaultRetryEvaluator].
-  RetryEvaluator get retryEvaluator =>
-      _retryEvaluator ?? defaultRetryEvaluator;
+  RetryEvaluator get retryEvaluator => _retryEvaluator ?? defaultRetryEvaluator;
 
   final RetryEvaluator? _retryEvaluator;
 

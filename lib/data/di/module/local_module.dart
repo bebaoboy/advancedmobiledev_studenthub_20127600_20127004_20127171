@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:boilerplate/core/data/local/sembast/sembast_client.dart';
 import 'package:boilerplate/data/local/constants/db_constants.dart';
+import 'package:boilerplate/data/local/datasources/chat/chat_datasource.dart';
 import 'package:boilerplate/data/local/datasources/post/post_datasource.dart';
+import 'package:boilerplate/data/local/datasources/project/project_datasource.dart';
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,7 +22,7 @@ mixin LocalModule {
     );
 
     // database:----------------------------------------------------------------
-
+    // each database has a unique name
     getIt.registerSingletonAsync<SembastClient>(
       () async => SembastClient.provideDatabase(
         databaseName: DBConstants.DB_NAME,
@@ -33,5 +35,11 @@ mixin LocalModule {
     // data sources:------------------------------------------------------------
     getIt.registerSingleton(
         PostDataSource(await getIt.getAsync<SembastClient>()));
+
+    getIt.registerSingleton(
+        ProjectDataSource(await getIt.getAsync<SembastClient>()));
+
+    getIt.registerSingleton(
+        ChatDataSource(await getIt.getAsync<SembastClient>()));
   }
 }
