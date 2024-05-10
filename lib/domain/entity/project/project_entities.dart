@@ -34,6 +34,8 @@ abstract class ShimmerLoadable {
   bool doneLoading = false;
 }
 
+enum ProjectStatusFlag { working, success, fail }
+
 ///
 /// Project class for creating profile.
 /// For student, please refer to [StudentProject]
@@ -45,8 +47,9 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
   String description;
   Scope scope;
   Status enabled;
+  ProjectStatusFlag closeStatus;
   bool isFavorite;
-  bool get isWorking => enabled == Status.active;
+  bool get isWorking => enabled != Status.inactive;
   bool get isArchive => enabled == Status.inactive;
 
   ProjectBase(
@@ -59,7 +62,8 @@ class ProjectBase extends MyObject implements ShimmerLoadable {
       this.enabled = Status.active,
       this.isFavorite = false,
       super.createdAt,
-      super.updatedAt})
+      super.updatedAt,
+      this.closeStatus = ProjectStatusFlag.working})
       : super(objectId: id);
 
   @override
@@ -132,6 +136,7 @@ class Project extends ProjectBase {
     countProposals,
     countMessages,
     countHired,
+    super.closeStatus,
   }) {
     if (countProposals != null) {
       _countProposals = countProposals;
@@ -179,11 +184,24 @@ class Project extends ProjectBase {
                 .map((e) => Proposal.fromJson(e as Map<String, dynamic>)))
             : null,
         companyId: json["companyId"] ?? "",
-        countProposals: json["countProposals"] != null ? json["countProposals"] is int ? json["countProposals"] : int.tryParse(json["countProposals"]) : null,
-        countMessages: json["countMessages"] != null ? json["countMessages"] is int ? json["countMessages"] : int.tryParse(json["countMessages"]) : null,
-        countHired: json["countHired"] != null ? json["countHired"] is int ? json["countHired"] : int.tryParse(json["countHired"]) : null,
+        countProposals: json["countProposals"] != null
+            ? json["countProposals"] is int
+                ? json["countProposals"]
+                : int.tryParse(json["countProposals"])
+            : null,
+        countMessages: json["countMessages"] != null
+            ? json["countMessages"] is int
+                ? json["countMessages"]
+                : int.tryParse(json["countMessages"])
+            : null,
+        countHired: json["countHired"] != null
+            ? json["countHired"] is int
+                ? json["countHired"]
+                : int.tryParse(json["countHired"])
+            : null,
         enabled: Status.values[json["typeFlag"] ?? 0],
-        isFavorite: fav);
+        isFavorite: fav,
+        closeStatus: ProjectStatusFlag.values[json["status"] ?? 0]);
   }
 
   Map<String, dynamic> toJson() {
@@ -205,12 +223,13 @@ class Project extends ProjectBase {
       "proposals": proposal,
       "updatedAt": updatedAt.toString(),
       "isFavorite": isFavorite,
+      "status": closeStatus.index
     };
   }
 
   @override
   String toString() {
-    return "\ncompanyId: $companyId\nid: $objectId\ntitle: $title \ndescription: $description \nenabled: $enabled";
+    return "\ncompanyId: $companyId\nid: $objectId\ntitle: $title \ndescription: $description \nenabled: $enabled \nclose: $closeStatus";
   }
 }
 
@@ -247,27 +266,28 @@ class StudentProject extends Project {
     super.updatedAt,
     this.projectId = "",
     super.companyId = "",
+    super.closeStatus,
   });
 
   factory StudentProject.fromMap(Map<String, dynamic> json) {
     return StudentProject(
-      companyId: (json["companyId"] ?? "").toString(),
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      timeCreated: json['createdAt'] != null
-          ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-          : DateTime.now(),
-      updatedAt: json['updatedAt'] != null
-          ? DateTime.tryParse(json['updatedAt'])
-          : json['createdAt'] != null
-              ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
-              : DateTime.now(),
-      scope: Scope.values[json['projectScopeFlag'] ?? 0],
-      numberOfStudents: json['numberOfStudents'] ?? 0,
-      id: (json["id"] ?? "").toString(),
-      projectId: (json["projectId"] ?? "").toString(),
-      enabled: Status.values[json["typeFlag"] ?? 0],
-    );
+        companyId: (json["companyId"] ?? "").toString(),
+        title: json['title'] ?? '',
+        description: json['description'] ?? '',
+        timeCreated: json['createdAt'] != null
+            ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+            : DateTime.now(),
+        updatedAt: json['updatedAt'] != null
+            ? DateTime.tryParse(json['updatedAt'])
+            : json['createdAt'] != null
+                ? DateTime.tryParse(json['createdAt']) ?? DateTime.now()
+                : DateTime.now(),
+        scope: Scope.values[json['projectScopeFlag'] ?? 0],
+        numberOfStudents: json['numberOfStudents'] ?? 0,
+        id: (json["id"] ?? "").toString(),
+        projectId: (json["projectId"] ?? "").toString(),
+        enabled: Status.values[json["typeFlag"] ?? 0],
+        closeStatus: ProjectStatusFlag.values[json["status"] ?? 0]);
   }
 
   @override

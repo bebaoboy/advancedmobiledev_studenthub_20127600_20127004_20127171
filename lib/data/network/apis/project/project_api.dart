@@ -134,6 +134,9 @@ class ProjectApi {
     if (params.statusFlag != null) {
       p.putIfAbsent("typeFlag", () => params.statusFlag!);
     }
+    if (params.closeStatus != null) {
+      p.putIfAbsent("status", () => params.closeStatus!);
+    }
     return await _dioClient.dio
         .patch(
             Interpolator(Endpoints.updateProject)(

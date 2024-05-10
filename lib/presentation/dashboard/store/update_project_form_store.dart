@@ -120,10 +120,10 @@ abstract class _UpdateProjectFormStore with Store {
 
   Future updateProject(
       int id, String title, String description, int number, Scope scope,
-      {int? statusFlag}) async {
+      {int? statusFlag, int? closeStatus}) async {
     var params = UpdateProjectParams(
         id, title, description, number, scope.index,
-        statusFlag: statusFlag);
+        statusFlag: statusFlag, closeStatus: closeStatus);
     try {
       var response = await _updateProjectUseCase.call(params: params);
       if (response.statusCode == HttpStatus.accepted ||
@@ -152,6 +152,11 @@ abstract class _UpdateProjectFormStore with Store {
             projectStore.companyProjects
                 .firstWhere((e) => e.objectId == id.toString())
                 .enabled = Status.values[statusFlag];
+          }
+          if (closeStatus != null) {
+            projectStore.companyProjects
+                .firstWhere((e) => e.objectId == id.toString())
+                .closeStatus = ProjectStatusFlag.values[closeStatus];
           }
           var i = projectStore.companyProjects
               .indexWhere((e) => e.objectId == id.toString());

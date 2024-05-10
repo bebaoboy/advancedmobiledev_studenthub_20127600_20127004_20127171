@@ -5,6 +5,7 @@ import 'package:animated_list_plus/transitions.dart';
 import 'package:animated_segmented_tab_control/animated_segmented_tab_control.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:boilerplate/constants/dimens.dart';
+import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
@@ -27,11 +28,13 @@ import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:collection/collection.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:lottie/lottie.dart';
 import 'package:toastification/toastification.dart';
 
 // ignore: must_be_immutable
@@ -417,7 +420,9 @@ class _ProjectTabsState extends State<ProjectTabs> {
                         ? [
                             ...projectStore.companyProjects
                                 .where(
-                                  (element) => element.countProposals > 10,
+                                  (element) =>
+                                      !element.isArchive &&
+                                      element.countProposals > 10,
                                 )
                                 .toList()
                               ..sort(
@@ -430,6 +435,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
                                 ...projectStore.companyProjects
                                     .where(
                                       (element) =>
+                                          !element.isArchive &&
                                           element.proposal != null &&
                                           element.proposal!.isNotEmpty,
                                     )
@@ -655,28 +661,111 @@ class _ProjectTabsState extends State<ProjectTabs> {
               );
 
               if (p != null) {
-                Toastify.show(
-                    context,
-                    "",
-                    p.isWorking
-                        ? Lang.get("archive_successfully")
-                        : Lang.get("unarchive_successfully"),
-                    aboveNavbar: !NavbarNotifier2.isNavbarHidden,
-                    ToastificationType.success,
-                    () {});
-                updateProjectStore.updateProject(
-                    int.tryParse(p.objectId!) ?? -1,
-                    p.title,
-                    p.description,
-                    p.numberOfStudents,
-                    p.scope,
-                    statusFlag: p.isWorking
-                        ? Status.inactive.index
-                        : Status.active.index);
+                if (p.isArchive) {
+                  Toastify.show(
+                      context,
+                      "",
+                      p.isWorking
+                          ? Lang.get("archive_successfully")
+                          : Lang.get("unarchive_successfully"),
+                      aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                      ToastificationType.success,
+                      () {});
+                  updateProjectStore.updateProject(
+                      int.tryParse(p.objectId!) ?? -1,
+                      p.title,
+                      p.description,
+                      p.numberOfStudents,
+                      p.scope,
+                      statusFlag: p.isWorking
+                          ? Status.inactive.index
+                          : Status.active.index);
+                } else {
+                  Future.delayed(Duration.zero, () {
+                    AnimatedDialog.showAnimatedDialog(
+                      NavigationService.navigatorKey.currentContext!,
+                      contentTextAlign: TextAlign.center,
+                      contentText: 'Choose close status',
+                      title: "Is this project a success or failure?",
+                      color: Colors.white,
+                      dialogWidth: kIsWeb ? 0.3 : null,
+                      lottieBuilder: Lottie.asset(
+                        'assets/animations/loading_animation.json',
+                        fit: BoxFit.contain,
+                      ),
+                      positiveText: "Success",
+                      positiveIcon: Icons.done_all,
+                      onPositiveClick: (context) {
+                        // Toastify.show(
+                        //     context,
+                        //     "",
+                        //     p.isWorking
+                        //         ? Lang.get("archive_successfully")
+                        //         : Lang.get("unarchive_successfully"),
+                        //     aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                        //     ToastificationType.success,
+                        //     () {});
+                        updateProjectStore.updateProject(
+                            int.tryParse(p.objectId!) ?? -1,
+                            p.title,
+                            p.description,
+                            p.numberOfStudents,
+                            p.scope,
+                            statusFlag: Status.inactive.index,
+                            closeStatus: ProjectStatusFlag.success.index);
+                        Navigator.of(context).pop(true);
+                      },
+                      negativeText: "Fail",
+                      negativeIcon: Icons.close_sharp,
+                      onNegativeClick: (context) {
+                        // Toastify.show(
+                        //     context,
+                        //     "",
+                        //     p.isWorking
+                        //         ? Lang.get("archive_successfully")
+                        //         : Lang.get("unarchive_successfully"),
+                        //     aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                        //     ToastificationType.success,
+                        //     () {});
+                        updateProjectStore.updateProject(
+                            int.tryParse(p.objectId!) ?? -1,
+                            p.title,
+                            p.description,
+                            p.numberOfStudents,
+                            p.scope,
+                            statusFlag: Status.inactive.index,
+                            closeStatus: ProjectStatusFlag.fail.index);
+                        Navigator.of(context).pop(false);
+                      },
+                      onClose: (p0) {
+                        Toastify.show(
+                            context,
+                            "",
+                            p.isWorking
+                                ? Lang.get("archive_successfully")
+                                : Lang.get("unarchive_successfully"),
+                            aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                            ToastificationType.success,
+                            () {});
+                        setState(() {
+                          if (p0 is bool) {
+                            p.enabled = Status.inactive;
+
+                            p.closeStatus = p0
+                                ? ProjectStatusFlag.success
+                                : ProjectStatusFlag.fail;
+                          }
+                        });
+                      },
+                    );
+                  });
+                }
               }
-              setState(() {
-                p?.enabled = p.isWorking ? Status.inactive : Status.active;
-              });
+              if (p != null && p.isArchive) {
+                setState(() {
+                  p.enabled = p.isWorking ? Status.inactive : Status.active;
+                });
+              }
             }),
       ],
     );
@@ -691,22 +780,75 @@ class _ProjectTabsState extends State<ProjectTabs> {
           );
           if (project.isWorking) {
             if (p != null) {
-              Toastify.show(
-                  context,
-                  "",
-                  p.isWorking
-                      ? Lang.get("archive_successfully")
-                      : Lang.get("unarchive_successfully"),
-                  aboveNavbar: !NavbarNotifier2.isNavbarHidden,
-                  ToastificationType.success,
-                  () {});
-              updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
-                  p.title, p.description, p.numberOfStudents, p.scope,
-                  statusFlag: Status.inactive.index);
+              AnimatedDialog.showAnimatedDialog(
+                context,
+                contentTextAlign: TextAlign.center,
+                contentText: 'Choose close status',
+                title: "Is this project a success or failure?",
+                color: Colors.white,
+                dialogWidth: kIsWeb ? 0.3 : null,
+                lottieBuilder: Lottie.asset(
+                  'assets/animations/loading_animation.json',
+                  fit: BoxFit.contain,
+                ),
+                positiveText: "Success",
+                positiveIcon: Icons.done_all,
+                onPositiveClick: (context) {
+                  Toastify.show(
+                      context,
+                      "",
+                      p.isWorking
+                          ? Lang.get("archive_successfully")
+                          : Lang.get("unarchive_successfully"),
+                      aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                      ToastificationType.success,
+                      () {});
+                  updateProjectStore.updateProject(
+                      int.tryParse(p.objectId!) ?? -1,
+                      p.title,
+                      p.description,
+                      p.numberOfStudents,
+                      p.scope,
+                      statusFlag: Status.inactive.index,
+                      closeStatus: ProjectStatusFlag.success.index);
+                  Navigator.of(context).pop(true);
+                },
+                negativeText: "Fail",
+                negativeIcon: Icons.close_sharp,
+                onNegativeClick: (context) {
+                  Toastify.show(
+                      context,
+                      "",
+                      p.isWorking
+                          ? Lang.get("archive_successfully")
+                          : Lang.get("unarchive_successfully"),
+                      aboveNavbar: !NavbarNotifier2.isNavbarHidden,
+                      ToastificationType.success,
+                      () {});
+                  updateProjectStore.updateProject(
+                      int.tryParse(p.objectId!) ?? -1,
+                      p.title,
+                      p.description,
+                      p.numberOfStudents,
+                      p.scope,
+                      statusFlag: Status.inactive.index,
+                      closeStatus: ProjectStatusFlag.fail.index);
+                  Navigator.of(context).pop(false);
+                },
+                onClose: (p0) {
+                  setState(() {
+                    if (p0 is bool) {
+                      p.enabled = Status.inactive;
+
+                      p.closeStatus = p0
+                          ? ProjectStatusFlag.success
+                          : ProjectStatusFlag.fail;
+                    }
+                  });
+                },
+              );
             }
-            setState(() {
-              p?.enabled = Status.inactive;
-            });
+
             return true;
           }
           return false;
@@ -729,10 +871,12 @@ class _ProjectTabsState extends State<ProjectTabs> {
                   () {});
               updateProjectStore.updateProject(int.tryParse(p.objectId!) ?? -1,
                   p.title, p.description, p.numberOfStudents, p.scope,
-                  statusFlag: Status.active.index);
+                  statusFlag: Status.active.index,
+                  closeStatus: ProjectStatusFlag.working.index);
             }
             setState(() {
               p?.enabled = Status.active;
+              p?.closeStatus = ProjectStatusFlag.working;
             });
             return true;
           }

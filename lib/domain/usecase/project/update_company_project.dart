@@ -11,10 +11,11 @@ class UpdateProjectParams {
   int numberOfStudent;
   int projectScope;
   int? statusFlag;
+  int? closeStatus;
 
   UpdateProjectParams(this.projectId, this.title, this.description,
       this.numberOfStudent, this.projectScope,
-      {this.statusFlag});
+      {this.statusFlag, this.closeStatus});
 }
 
 class UpdateCompanyProject extends UseCase<Response, UpdateProjectParams> {

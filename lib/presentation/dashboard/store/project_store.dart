@@ -260,7 +260,8 @@ abstract class _ProjectStore with Store {
     //     proposal.enabled ? 0 : 1,
     //     proposal.coverLetter,
     //     int.parse(proposal.objectId!));
-    await updateProposal(proposal..hiredStatus = status, "");
+    proposal.hiredStatus = status;
+    await updateProposal(proposal, "");
   }
 
   /// descending created date order
@@ -551,14 +552,14 @@ abstract class _ProjectStore with Store {
             print(value);
 
             var result = ProjectList.fromJson(value.data["result"]);
-            result.projects?.forEach(
-              (element) => element.proposal?.forEach((e) => e.project = StudentProject(
-                  title: element.title,
-                  description: element.description,
-                  timeCreated: element.timeCreated,
-                  id: element.objectId!,
-                  projectId:  element.objectId!),
-            ));
+            result.projects?.forEach((element) => element.proposal?.forEach(
+                  (e) => e.project = StudentProject(
+                      title: element.title,
+                      description: element.description,
+                      timeCreated: element.timeCreated,
+                      id: element.objectId!,
+                      projectId: element.objectId!),
+                ));
             _companyProjects = result;
 
             sharedPrefsHelper.saveCompanyProjects(_companyProjects);

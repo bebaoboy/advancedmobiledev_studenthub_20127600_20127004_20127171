@@ -3,11 +3,11 @@ name: "Release Test"
 on:
   pull_request:
     branches:
-  #     - main
-  #     - phasing1
-  #     - phasing2
-  #     - phasing3
-  #     - phasing4
+      - main
+      - phasing1
+      - phasing2
+      - phasing3
+      - phasing4
   #     - sprint8-chat
   #     - sprint8
       - sprint10*
