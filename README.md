@@ -91,7 +91,6 @@ In Visual Studio Code, navigate to Preferences -> Settings and search for Files:
   * Search chat in chat UI (jump to result) ✅
   * Trang Alert Tab: Show notification thời gian thực + badge
   * Dynamic Layout (Portrait+ Landscape mode + web)
-<br>
 * Backend: 
   * Lưu data offline
   * Thông báo firebase trên web
