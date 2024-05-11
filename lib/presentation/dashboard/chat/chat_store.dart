@@ -338,7 +338,7 @@ abstract class _ChatStore with Store {
           ? int.tryParse(mess) ?? rand.nextInt(100000)
           : rand.nextInt(100000),
       title:
-          "interview: ${msg["notification"]["message"]["interview"]['title']}",
+          "interview: (${msg["notification"]["message"]["interview"]['id']}) ${msg["notification"]["message"]["interview"]['title']}",
       body: "${msg["notification"]["content"]}",
     );
 

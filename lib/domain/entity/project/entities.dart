@@ -338,7 +338,7 @@ extension NotificationTypeTitle on NotificationType {
       case NotificationType.message:
         return 'Messages';
       default:
-        return 'More than 1000 employees';
+        return 'Hired';
     }
   }
 }
