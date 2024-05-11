@@ -29,7 +29,7 @@ class SelectedFullDateWidget extends StatelessWidget {
       //   locale,
       // ),
       ,
-      style: EasyTextStyles.selectedDateStyle,
+      style: EasyTextStyles.selectedDateStyle.copyWith(color: Theme.of(context).colorScheme.onPrimary),
     );
   }
 }

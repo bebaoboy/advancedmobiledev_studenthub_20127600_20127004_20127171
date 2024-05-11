@@ -43,6 +43,7 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
       child: Container(
         constraints: const BoxConstraints(maxHeight: 230),
         decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.onPrimary,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
               color: Colors.black54, width: 0.4, style: BorderStyle.solid),
