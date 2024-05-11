@@ -131,12 +131,7 @@ abstract class _ProfileStudentStore with Store {
           (error, stackTrace) =>
               _languages = LanguageList(languages: sp?.languages),
         );
-        // if (userStore.user != null && userStore.user!.studentProfile != null) {
-        //   userStore.user!.studentProfile!.educations = currentEducation;
-        //   userStore.user!.studentProfile!.languages = currentLanguage;
-        //   userStore.user!.studentProfile!.projectExperience =
-        //       currentProjectExperience;
-        // }
+        
       } catch (e) {
         print(e.toString());
       }

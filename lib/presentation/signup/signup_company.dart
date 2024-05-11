@@ -201,7 +201,8 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
                                 ..onTap = () {
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute2(
-                                          routeName: Routes.signUpStudent), (_) => false);
+                                          routeName: Routes.signUpStudent),
+                                      (_) => false);
                                 }),
                         ],
                       ),
@@ -317,25 +318,11 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
         } else {
           _showErrorMessage(Lang.get('login_error_missing_fields'));
         }
-        // if (_formStore.canSignUpCompany) {
-        //   DeviceUtils.hideKeyboard(context);
-        //   _userStore.login(
-        //       _userEmailController.text, _passwordController.text);
-        // } else {
-        //   _showErrorMessage(AppLocalizations.of(context)
-        //       .translate('login_error_missing_fields'));
-        // }
-
-        // Navigator.of(context)
-        //     .push(MaterialPageRoute2(routeName: Routes.profile));
       },
     );
   }
 
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
     loading = false;
 
     Future.delayed(const Duration(seconds: 2)).then(
@@ -346,16 +333,10 @@ class _SignUpCompanyScreenState extends State<SignUpCompanyScreen> {
           builder: (BuildContext c) {
             return ClassicGeneralDialogWidget(
               contentText: Lang.get('signup_email_sent'),
-              // negativeText: ':Debug:',
               positiveText: 'OK',
               onPositiveClick: () {
                 Navigator.of(c).pop();
               },
-              // onNegativeClick: () {
-              //   Navigator.of(c).pop();
-              //   Navigator.of(context)
-              //       .push(MaterialPageRoute2(routeName: Routes.profile));
-              // },
             );
           },
           animationType: DialogTransitionType.size,

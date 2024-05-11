@@ -138,13 +138,6 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
             ListTile(
               enabled: enabled,
               contentPadding: EdgeInsets.zero,
-              // onTap: i > CompanyScope.values.length + 1
-              //     ? null
-              //     : () {
-              //         setState(() {
-              //           _companySize = CompanyScope.values[i - 1];
-              //         });
-              //       },
               title: Text(Lang.get('profile_question_1_choice_$i'),
                   style: Theme.of(context).textTheme.bodyLarge),
               leading: Radio<CompanyScope>(
@@ -259,20 +252,6 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
           maxLines: 5,
           // maxLength: 500,
         ),
-        // TextField(
-        //   readOnly: !enabled,
-        //   decoration: const InputDecoration(
-        //       border: OutlineInputBorder(
-        //           borderSide: BorderSide(color: Colors.black))),
-        //   onChanged: (value) {
-        //     _formStore.setDescription(_descriptionController.text);
-        //   },
-        //   controller: _descriptionController,
-        //   onSubmitted: (value) =>
-        //       {FocusScope.of(context).requestFocus(_companyFocusNode)},
-        //   minLines: 3,
-        //   maxLines: 5,
-        // ),
       ],
     );
   }
@@ -353,14 +332,6 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                   const SizedBox(
                     width: 15,
                   ),
-                  // MaterialButton(
-                  //   onPressed: () => navigate(context),
-                  //   // color: Colors.orange,
-                  //   child: Text(
-                  //     Lang.get('cancel'),
-                  //     style: Theme.of(context).textTheme.bodyLarge,
-                  //   ),
-                  // ),
                 ],
               ),
             ),

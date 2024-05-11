@@ -27,8 +27,7 @@ class _StudentAccountWidgetState extends State<StudentAccountWidget> {
             ? Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: Theme.of(context).colorScheme.primary.withOpacity(0.5))
             : Theme.of(context).textTheme.bodySmall);
-    // Widget subtitleWidget = Text(widget.name.user.email,
-    //     style: Theme.of(context).textTheme.bodyLarge);
+
     var icon = widget.isLoggedIn ? Icons.person : Icons.no_cell;
     if (widget.name.user.studentProfile == null) icon = Icons.person_off;
     Icon profileIcon = Icon(
@@ -46,8 +45,6 @@ class _StudentAccountWidgetState extends State<StudentAccountWidget> {
           .withOpacity(widget.isLoggedIn ? 0.5 : 0),
       leading: profileIcon,
       title: titleWidget,
-      // subtitle:
-      //     widget.name.user.type != UserType.naught ? subtitleWidget : null,
     );
   }
 }

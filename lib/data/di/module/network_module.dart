@@ -6,7 +6,6 @@ import 'package:boilerplate/core/data/network/dio/interceptors/retry_interceptor
 import 'package:boilerplate/data/network/apis/chat/chat_api.dart';
 import 'package:boilerplate/data/network/apis/interview/interview_api.dart';
 import 'package:boilerplate/data/network/apis/noti/noti_api.dart';
-import 'package:boilerplate/data/network/apis/posts/post_api.dart';
 import 'package:boilerplate/data/network/apis/profile/profile_api.dart';
 import 'package:boilerplate/data/network/apis/project/project_api.dart';
 import 'package:boilerplate/data/network/apis/user/user_api.dart';
@@ -58,7 +57,6 @@ mixin NetworkModule {
     );
 
     // api's:-------------------------------------------------------------------
-    getIt.registerSingleton(PostApi(getIt<DioClient>(), getIt<RestClient>()));
     getIt.registerSingleton(UserApi(getIt<DioClient>()));
     getIt.registerSingleton(NotiApi(getIt<DioClient>()));
     getIt

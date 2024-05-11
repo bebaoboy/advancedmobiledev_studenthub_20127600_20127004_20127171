@@ -9,13 +9,14 @@ class CompanyAccountWidget extends StatefulWidget {
   final bool isLoggedIn;
   final bool isLoggedInProfile;
 
-  const CompanyAccountWidget(
-      {super.key,
-      required this.name,
-      this.onPressedNext,
-      this.onTap,
-      this.isLoggedIn = false,
-      this.isLoggedInProfile = false,});
+  const CompanyAccountWidget({
+    super.key,
+    required this.name,
+    this.onPressedNext,
+    this.onTap,
+    this.isLoggedIn = false,
+    this.isLoggedInProfile = false,
+  });
 
   @override
   State<CompanyAccountWidget> createState() => _CompanyAccountWidgetState();
@@ -41,11 +42,6 @@ class _CompanyAccountWidgetState extends State<CompanyAccountWidget> {
           : null,
     );
 
-    // IconButton expandButton = IconButton(
-    //   icon: const Icon(Icons.navigate_next),
-    //   onPressed: onPressedNext,
-    // );
-
     return Column(
       children: [
         ListTile(
@@ -58,7 +54,6 @@ class _CompanyAccountWidgetState extends State<CompanyAccountWidget> {
           title: titleWidget,
           subtitle:
               widget.name.type == UserType.company ? subtitleWidget : null,
-          // trailing: expandButton,
         ),
         const Divider(
           height: 3,

@@ -1,4 +1,3 @@
-
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/constants/assets.dart';
 import 'package:boilerplate/core/widgets/empty_app_bar_widget.dart';
@@ -65,11 +64,7 @@ class _RadioItemState extends State<RadioItem> {
                 // fillColor: MaterialStateProperty.resolveWith(getColor),
                 value: widget._item.isSelected,
                 shape: const CircleBorder(),
-                onChanged: (bool? value) {
-                  // setState(() {
-                  //   _item.isSelected = value!;
-                  // });
-                },
+                onChanged: (bool? value) {},
               ),
             ],
           ),
@@ -327,16 +322,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
-
-    // Future.delayed(const Duration(milliseconds: 0), () {
-    //   Navigator.of(context).pushAndRemoveUntil(
-    //       MaterialPageRoute2(routeName: Routes.home),
-    //       (Route<dynamic> route) => false);
-    // });
-
     return Container();
   }
 
