@@ -70,31 +70,14 @@ class _TechStackDropdownState extends State<TechStackDropdown> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Icon(item.icon),
-              // const SizedBox(
-              //   width: 20,
-              // ),
               Text(
                 item.name,
                 textAlign: TextAlign.start,
               ),
-              // const Spacer(),
-              // Checkbox(
-              //   value: isSelected,
-              //   onChanged: (value) => value = isSelected,
-              // )
             ],
           ),
         );
       },
-      // onListChanged: (value) {
-      //   //print('changing value to: $value');
-      //   onListChangedCallback(value);
-      // },
-      // validateOnChange: true,
-      // validator: (p0) {
-      //   return p0.isEmpty ? "Must not be null" : null;
-      // },
     );
   }
 }
@@ -306,9 +289,7 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                       _profileStudentFormStore.setTechStack(p0);
                     },
                   ),
-                  // _buildUserIdField(),
-                  // _buildPasswordField(),
-                  // _buildForgotPasswordButton(),
+
                   const SizedBox(
                     height: 24,
                   ),
@@ -355,11 +336,6 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                     decoration: InputDecoration(
                         contentPadding: const EdgeInsets.only(left: 13),
                         prefixIconConstraints: const BoxConstraints(),
-                        // prefixIcon: Container(
-                        //     margin: EdgeInsets.only(top: 13),
-                        //     child: Icon(
-                        //       Icons.search,
-                        //     )),
                         hintText: Lang.get('profile_choose_skillset'),
                         hintStyle: const TextStyle(
                           color: Colors.grey,
@@ -389,9 +365,6 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                         ChipsInputState<Skill> state, Skill profile) {
                       return ListTile(
                         key: ObjectKey(profile),
-                        // leading: CircleAvatar(
-                        //   backgroundImage: NetworkImage(profile.imageUrl),
-                        // ),
                         leading: const Icon(Icons.developer_mode),
                         title: Text(profile.name),
                         subtitle: Text(
@@ -491,11 +464,9 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
               ),
             ),
           ),
-          //_buildFooterText(),
           const SizedBox(
             height: 14,
           ),
-          //_buildSignUpButton(),
         ],
       ),
     );
@@ -585,14 +556,8 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                               autoFocus: false,
                               onChanged: (value) {
                                 _languages[index].languageName = value;
-
-                                // _formStore
-                                //     .setUserId(_userEmailController.text);
                               },
-                              onFieldSubmitted: (value) {
-                                // FocusScope.of(context)
-                                //     .requestFocus(_passwordFocusNode);
-                              },
+                              onFieldSubmitted: (value) {},
                               errorText: null,
                             ),
                           ),
@@ -645,22 +610,9 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                 autoFocus: false,
                                 onChanged: (value) {
                                   _languages[index].level = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
                                 },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
-                                errorText: null
-                                // _formStore
-                                //             .formErrorStore.userEmail ==
-                                //         null
-                                //     ? null
-                                //     : AppLocalizations.of(context).get(
-                                //         _formStore.formErrorStore.userEmail),
-                                ),
+                                onFieldSubmitted: (value) {},
+                                errorText: null),
                           ),
                         ),
                       ],
@@ -804,14 +756,8 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                               autoFocus: false,
                               onChanged: (value) {
                                 _educations[index].schoolName = value;
-
-                                // _formStore
-                                //     .setUserId(_userEmailController.text);
                               },
-                              onFieldSubmitted: (value) {
-                                // FocusScope.of(context)
-                                //     .requestFocus(_passwordFocusNode);
-                              },
+                              onFieldSubmitted: (value) {},
                               errorText: null,
                             ),
                           ),
@@ -849,15 +795,8 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                                   textController: null,
                                   inputAction: TextInputAction.next,
                                   autoFocus: false,
-                                  onChanged: (value) {
-                                    // _educations[index].year() = value;
-                                    // _formStore
-                                    //     .setUserId(_userEmailController.text);
-                                  },
-                                  onFieldSubmitted: (value) {
-                                    // FocusScope.of(context)
-                                    //     .requestFocus(_passwordFocusNode);
-                                  },
+                                  onChanged: (value) {},
+                                  onFieldSubmitted: (value) {},
                                   errorText: null,
                                 )
                               : Row(
@@ -1080,58 +1019,12 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
     );
   }
 
-  // Widget _buildSignInButton() {
-  //   return Align(
-  //     alignment: Alignment.centerRight,
-  //     child: SizedBox(
-  //       width: 200,
-  //       child: RoundedButtonWidget(
-  //         buttonText: Lang.get('next'),
-  //         buttonColor: Theme.of(context).colorScheme.primary,
-  //         textColor: Colors.white,
-  //         onPressed: () async {
-  //           setLanguage();
-  //           setEducation();
-  //           _profileStudentFormStore.setFullName(widget.fullName);
-  //           if (_profileStudentFormStore.techStack == null ||
-  //               (_profileStudentFormStore.techStack != null &&
-  //                   _profileStudentFormStore.techStack!.isEmpty)) {
-  //             _profileStudentFormStore.setTechStack([_list[0]]);
-  //           }
-  //           Navigator.of(context).push(
-  //               MaterialPageRoute2(routeName: Routes.profileStudentStep2));
-  //           // if (_formStore.canProfileStudent) {
-  //           //   DeviceUtils.hideKeyboard(context);
-  //           //   _userStore.login(
-  //           //       _userEmailController.text, _passwordController.text);
-  //           // } else {
-  //           //   _showErrorMessage(AppLocalizations.of(context)
-  //           //       .get('login_error_missing_fields'));
-  //           // }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget navigate(BuildContext context) {
     return Container();
   }
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    // if (message.isNotEmpty) {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     if (message.isNotEmpty) {
-    //       FlushbarHelper.createError(
-    //         message: message,
-    //         title: Lang.get('error'),
-    //         duration: const Duration(seconds: 3),
-    //       ).show(context);
-    //     }
-    //   });
-    // }
-
     return const SizedBox.shrink();
   }
 

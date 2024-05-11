@@ -237,6 +237,8 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                       widget.onAcceptCallback(
                                                           widget
                                                               .proposal[page]);
+                                                      Navigator.of(context)
+                                                          .pop();
                                                     },
                                                     negativeText: "Cancel",
                                                     negativeIcon:

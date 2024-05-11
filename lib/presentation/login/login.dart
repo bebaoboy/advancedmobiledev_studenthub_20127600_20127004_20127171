@@ -401,7 +401,7 @@ class _LoginScreenState extends State<LoginScreen> {
         !initializing &&
         !_userStore.isFetchingProfile) {
       initializing = true;
-      _userStore.indicatorText = '';
+      _userStore.indicatorText = null;
       print("LOADING = ${_userStore.isLoading}");
       log("login", "BEBAOBOY");
       Future.delayed(const Duration(milliseconds: 1000), () async {

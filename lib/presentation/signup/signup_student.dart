@@ -313,33 +313,6 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           } else {
             _showErrorMessage(Lang.get('login_error_missing_fields'));
           }
-
-          // Observer(builder: (context) {
-          //   return _formStore.success
-          //       ? showAnimatedDialog(
-          //           context: context,
-          //           barrierDismissible: true,
-          //           builder: (BuildContext c) {
-          //             return ClassicGeneralDialogWidget(
-          //               contentText: Lang.get('signup_email_sent'),
-          //               negativeText: ':Debug:',
-          //               positiveText: 'OK',
-          //               onPositiveClick: () {
-          //                 Navigator.of(c).pop();
-          //               },
-          //               onNegativeClick: () {
-          //                 Navigator.of(c).pop();
-          //                 Navigator.of(context).push(MaterialPageRoute2(
-          //                     routeName: Routes.profileStudent));
-          //               },
-          //             );
-          //           },
-          //           animationType: DialogTransitionType.size,
-          //           curve: Curves.fastOutSlowIn,
-          //           duration: const Duration(seconds: 1),
-          //         )
-          //       : _showErrorMessage('Sign up failed');
-          // });
         });
   }
 
@@ -353,17 +326,11 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           builder: (BuildContext c) {
             return ClassicGeneralDialogWidget(
               contentText: Lang.get('signup_email_sent'),
-              // negativeText: ':Debug:',
               positiveText: 'OK',
               onPositiveClick: () {
                 Navigator.of(c).pop();
                 _formStore.success = false;
               },
-              // onNegativeClick: () {
-              //   Navigator.of(c).pop();
-              //   Navigator.of(context)
-              //       .push(MaterialPageRoute2(routeName: Routes.profileStudent));
-              // },
             );
           },
           animationType: DialogTransitionType.size,
@@ -372,12 +339,6 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
         ).then((v) => Navigator.of(context).pop());
       }
     });
-    // Future.delayed(const Duration(milliseconds: 0), () {
-    //   print("LOADING = $loading");
-    //   Navigator.of(context).pushAndRemoveUntil(
-    //       MaterialPageRoute2(child: const HomeScreen()),
-    //       (Route<dynamic> route) => false);
-    // });
 
     return const SizedBox();
   }

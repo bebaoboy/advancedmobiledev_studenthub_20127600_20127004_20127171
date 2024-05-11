@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:boilerplate/domain/repository/chat/chat_repository.dart';
 import 'package:boilerplate/domain/repository/interview/interview_repository.dart';
 import 'package:boilerplate/domain/repository/noti/noti_repository.dart';
-import 'package:boilerplate/domain/repository/post/post_repository.dart';
 import 'package:boilerplate/domain/repository/project/project_repository.dart';
 import 'package:boilerplate/domain/repository/user/user_repository.dart';
 import 'package:boilerplate/domain/usecase/chat/delete_interview.dart';
@@ -16,11 +15,6 @@ import 'package:boilerplate/domain/usecase/chat/post_message.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
-import 'package:boilerplate/domain/usecase/post/delete_post_usecase.dart';
-import 'package:boilerplate/domain/usecase/post/find_post_by_id_usecase.dart';
-import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
-import 'package:boilerplate/domain/usecase/post/insert_post_usecase.dart';
-import 'package:boilerplate/domain/usecase/post/udpate_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/get_company_usecase.dart';
@@ -289,22 +283,6 @@ mixin UseCaseModule {
       CheckMeetingAvailabilityUseCase(getIt<InterviewRepository>()),
     );
 
-    // post:--------------------------------------------------------------------
-    getIt.registerSingleton<GetPostUseCase>(
-      GetPostUseCase(getIt<PostRepository>()),
-    );
-    getIt.registerSingleton<FindPostByIdUseCase>(
-      FindPostByIdUseCase(getIt<PostRepository>()),
-    );
-    getIt.registerSingleton<InsertPostUseCase>(
-      InsertPostUseCase(getIt<PostRepository>()),
-    );
-    getIt.registerSingleton<UpdatePostUseCase>(
-      UpdatePostUseCase(getIt<PostRepository>()),
-    );
-    getIt.registerSingleton<DeletePostUseCase>(
-      DeletePostUseCase(getIt<PostRepository>()),
-    );
     // noti:--------------------------------------------------------------------
     getIt.registerSingleton<GetNotiUseCase>(
       GetNotiUseCase(getIt<NotiRepository>()),

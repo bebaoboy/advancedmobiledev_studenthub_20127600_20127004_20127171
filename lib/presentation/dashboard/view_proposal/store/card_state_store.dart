@@ -43,6 +43,6 @@ abstract class _CardStateStore with Store {
     opacity = 0;
     actionName = '';
     color = null;
-    index = 0;
+    // index = 0;
   }
 }

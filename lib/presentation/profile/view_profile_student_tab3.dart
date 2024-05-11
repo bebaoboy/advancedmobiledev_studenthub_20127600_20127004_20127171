@@ -193,10 +193,6 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  // Image.asset(
-                  //   'assets/images/img_login.png',
-                  //   scale: 1.2,
-                  // ),
                   const SizedBox(height: 34.0),
                   Align(
                     alignment: Alignment.centerLeft,
@@ -663,58 +659,7 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
     );
   }
 
-  // Widget _buildSignInButton() {
-  //   return Align(
-  //     alignment: Alignment.centerRight,
-  //     child: SizedBox(
-  //       width: 200,
-  //       child: RoundedButtonWidget(
-  //         buttonText: Lang.get('next'),
-  //         buttonColor: Theme.of(context).colorScheme.primary,
-  //         textColor: Colors.white,
-  //         onPressed: () async {
-  //           _profileStudentFormStore
-  //               .setResume(_cv != null ? _cv!.path ?? "" : '');
-  //           _profileStudentFormStore.setTranscript(
-  //               _transcript != null ? _transcript!.path ?? "" : '');
-  //           print(_profileStudentFormStore.techStack);
-  //           print(_profileStudentFormStore.skillSet);
-  //           print(_profileStudentFormStore.educations);
-  //           print(_profileStudentFormStore.languages);
-  //           print(_profileStudentFormStore.projectExperience);
-  //           print(_profileStudentFormStore.resume);
-  //           print(_profileStudentFormStore.transcript);
-  //           _profileStudentFormStore.addProfileStudent(
-  //               _profileStudentFormStore.techStack,
-  //               _profileStudentFormStore.skillSet,
-  //               _profileStudentFormStore.languages,
-  //               _profileStudentFormStore.educations,
-  //               _profileStudentFormStore.projectExperience,
-  //               _profileStudentFormStore.transcript,
-  //               _profileStudentFormStore.resume);
-
-  //           // Navigator.of(context).pushAndRemoveUntil(
-  //           //     MaterialPageRoute2(routeName: Routes.home),
-  //           //     (Route<dynamic> route) => false);
-  //           // if (_formStore.canProfileStudent) {
-  //           //   DeviceUtils.hideKeyboard(context);
-  //           //   _userStore.login(
-  //           //       _userEmailController.text, _passwordController.text);
-  //           // } else {
-  //           //   _showErrorMessage(AppLocalizations.of(context)
-  //           //       .get('login_error_missing_fields'));
-  //           // }
-  //         },
-  //       ),
-  //     ),
-  //   );
-  // }
-
   Widget navigate(BuildContext context) {
-    // SharedPreferences.getInstance().then((prefs) {
-    //   prefs.setBool(Preferences.is_logged_in, true);
-    // });
-
     Future.delayed(const Duration(milliseconds: 0), () {
       if (_formStore.success) {
         _formStore.success = false;
@@ -748,18 +693,6 @@ class _ViewProfileStudentTab3State extends State<ViewProfileStudentTab3> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    // if (message.isNotEmpty) {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     if (message.isNotEmpty) {
-    //       FlushbarHelper.createError(
-    //         message: message,
-    //         title: Lang.get('error'),
-    //         duration: const Duration(seconds: 3),
-    //       ).show(context);
-    //     }
-    //   });
-    // }
-
     return const SizedBox.shrink();
   }
 

@@ -38,7 +38,6 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   //stores:---------------------------------------------------------------------
-  // final ThemeStore _themeStore = getIt<ThemeStore>();
   final UserStore _userStore = getIt<UserStore>();
 
   List<Account> accountList = [];
@@ -283,28 +282,9 @@ class _SettingScreenState extends State<SettingScreen> {
               controller.expandAllChildren(sampleTree);
             },
             builder: (context, node) => _getComponent(account: node.data!)),
-        //     TreeView(
-        //   startExpanded: true,
-        //   children: _getChildAccount(accountList),
-        // )
       ),
     );
   }
-
-  // List<Widget> _getChildAccount(List<Account> accounts) {
-  //   return accounts.map((a) {
-  //     if (a.type == UserType.company) {
-  //       return TreeViewChild(
-  //         parent: _getComponent(account: a),
-  //         children: _getChildAccount(a.children),
-  //       );
-  //     }
-  //     return Container(
-  //       margin: const EdgeInsets.only(left: 10.0),
-  //       child: _getComponent(account: a),
-  //     );
-  //   }).toList();
-  // }
 
   /// switch from student to company
   switchAccount(Account account) async {
@@ -324,9 +304,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
       DeviceUtils.hideKeyboard(context);
       Future.delayed(const Duration(seconds: 1), () {
-        // _userStore.login(
-        //     account.user.email, "", account.type, account.user.roles!,
-        //     fastSwitch: true);
         _userStore.success = true;
         Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute2(
@@ -355,14 +332,6 @@ class _SettingScreenState extends State<SettingScreen> {
             _userStore.user != null &&
             account.type == _userStore.user!.type,
         name: account,
-        // onTap: () {
-        //   //print(account.name);
-
-        //   // setState(() {
-        //   //   account.isExpanded = !account.isExpanded;
-        //   //   calculate(accountList);
-        //   // });
-        // },
       );
     }
   }
@@ -430,7 +399,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                 positiveText: 'Yes',
                                 onPositiveClick: () {
                                   Navigator.of(context).pop();
-              
+
                                   Navigator.of(context).push(MaterialPageRoute2(
                                       routeName: Routes.profile));
                                   return;
@@ -467,10 +436,10 @@ class _SettingScreenState extends State<SettingScreen> {
                                   Navigator.of(ctx).pop();
                                   final ProfileStudentStore infoStore =
                                       getIt<ProfileStudentStore>();
-              
+
                                   await infoStore.getTechStack();
                                   await infoStore.getSkillset();
-              
+
                                   Navigator.of(context).push(MaterialPageRoute2(
                                       routeName: Routes.profileStudent));
                                   return;
@@ -509,7 +478,8 @@ class _SettingScreenState extends State<SettingScreen> {
                             navigate(
                                 context,
                                 _userStore.user != null &&
-                                        _userStore.user!.type == UserType.company
+                                        _userStore.user!.type ==
+                                            UserType.company
                                     ? Routes.viewProfileCompany
                                     : Routes.viewProfileStudent);
                           } catch (e) {
@@ -755,63 +725,61 @@ class _RealSettingPageState extends State<RealSettingPage> {
 
     Widget buildThemeGrid() {
       return Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          height: (MediaQuery.of(context).size.width) / 3,
-          child: GridView.count(
-              physics: const NeverScrollableScrollPhysics(),
-              crossAxisSpacing: 10,
-              crossAxisCount: appThemes.length,
-              children: List.generate(appThemes.length, (i) {
-                bool isSelectedTheme = (_themeStore.systemTheme
-                        ? 0
-                        : _themeStore.darkMode
-                            ? 1
-                            : 2) ==
-                    i;
-                return GestureDetector(
-                    onTap: () {
-                      if (!isSelectedTheme) {
-                        _themeStore.changeBrightnessToDark(appThemes[i].mode);
-                        // NavbarNotifier2.refresh();
-                        // Future.delayed(const Duration(seconds: 1), () {
-                        //   NavbarNotifier2.refresh();
-                        // });
-                      }
-                    },
-                    child: AnimatedContainer(
-                      height: 100,
-                      duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.symmetric(horizontal: 20),
+        height: (MediaQuery.of(context).size.width) / 3,
+        child: GridView.count(
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 10,
+          crossAxisCount: appThemes.length,
+          children: List.generate(appThemes.length, (i) {
+            bool isSelectedTheme = (_themeStore.systemTheme
+                    ? 0
+                    : _themeStore.darkMode
+                        ? 1
+                        : 2) ==
+                i;
+            return GestureDetector(
+                onTap: () {
+                  if (!isSelectedTheme) {
+                    _themeStore.changeBrightnessToDark(appThemes[i].mode);
+                  }
+                },
+                child: AnimatedContainer(
+                  height: 100,
+                  duration: const Duration(milliseconds: 200),
+                  decoration: BoxDecoration(
+                    color: isSelectedTheme
+                        ? Theme.of(context).primaryColor
+                        : Colors.transparent,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                        width: 2, color: Theme.of(context).primaryColor),
+                  ),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 0, vertical: 7),
+                      margin: const EdgeInsets.symmetric(horizontal: 15),
                       decoration: BoxDecoration(
-                        color: isSelectedTheme
-                            ? Theme.of(context).primaryColor
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                            width: 2, color: Theme.of(context).primaryColor),
+                        borderRadius: BorderRadius.circular(8),
+                        color: Theme.of(context).cardColor.withOpacity(0.5),
                       ),
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 0, vertical: 7),
-                          margin: const EdgeInsets.symmetric(horizontal: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            color: Theme.of(context).cardColor.withOpacity(0.5),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Icon(appThemes[i].icon),
+                          Text(
+                            appThemes[i].title,
+                            style: const TextStyle(fontSize: 10),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Icon(appThemes[i].icon),
-                              Text(
-                                appThemes[i].title,
-                                style: const TextStyle(fontSize: 10),
-                              ),
-                            ],
-                          ),
-                        ),
+                        ],
                       ),
-                    ));
-              })));
+                    ),
+                  ),
+                ));
+          }),
+        ),
+      );
     }
 
     return Observer(builder: (context) {

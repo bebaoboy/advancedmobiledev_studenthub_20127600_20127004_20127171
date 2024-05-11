@@ -234,14 +234,6 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
                                     });
 
                                     if (_userStore.studentId != null) {
-                                      // final ProfileStudentStore infoStore =
-                                      //     getIt<ProfileStudentStore>();
-
-                                      // infoStore.setStudentId(_userStore
-                                      //     .user!.studentProfile!.objectId!);
-                                      // await infoStore.getInfo().then(
-                                      //       (value) {},
-                                      //     );
                                       final ProfileStudentFormStore formStore =
                                           getIt<ProfileStudentFormStore>();
                                       await formStore.getProfileStudent(
@@ -289,34 +281,14 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
               controller.expandAllChildren(sampleTree);
             },
             builder: (context, node) => _getComponent(account: node.data!)),
-        //     TreeView(
-        //   startExpanded: true,
-        //   children: _getChildAccount(accountList),
-        // )
       ),
     );
   }
-
-  // List<Widget> _getChildAccount(List<Account> accounts) {
-  //   return accounts.map((a) {
-  //     if (a.type == UserType.company) {
-  //       return TreeViewChild(
-  //         parent: _getComponent(account: a),
-  //         children: _getChildAccount(a.children),
-  //       );
-  //     }
-  //     return Container(
-  //       margin: const EdgeInsets.only(left: 10.0),
-  //       child: _getComponent(account: a),
-  //     );
-  //   }).toList();
-  // }
 
   /// switch from student to company
   switchAccount(Account account) async {
     print("switch account");
     account.isLoggedIn = true;
-    // await _userStore.logout();
     if (_userStore.user != null) {
       _userStore.user!.type = account.type;
       if (_userStore.user != null) {
@@ -359,14 +331,6 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
             _userStore.user != null &&
             account.type == _userStore.user!.type,
         name: account,
-        // onTap: () {
-        //   //print(account.name);
-
-        //   // setState(() {
-        //   //   account.isExpanded = !account.isExpanded;
-        //   //   calculate(accountList);
-        //   // });
-        // },
       );
     }
   }
@@ -422,119 +386,7 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
             Visibility(
               visible: _userStore.isLoggedIn,
               child: ListTile(
-                  onTap: () async {
-                    //int n = Random().nextInt(3);
-                    // if (_userStore.user != null &&
-                    //     _userStore.user!.type != UserType.naught) {
-                    //   if (_userStore.user!.type == UserType.company) {
-                    //     if (_userStore.user!.companyProfile == null) {
-                    //       showAnimatedDialog(
-                    //         context: context,
-                    //         barrierDismissible: true,
-                    //         builder: (BuildContext context) {
-                    //           return ClassicGeneralDialogWidget(
-                    //             contentText:
-                    //                 'User ${_userStore.user!.email} chưa có profile Company. Tạo ngay?',
-                    //             negativeText: Lang.get('cancel'),
-                    //             positiveText: 'Yes',
-                    //             onPositiveClick: () {
-                    //               Navigator.of(context).pop();
-
-                    //               Navigator.of(context).push(MaterialPageRoute2(
-                    //                   routeName: Routes.profile));
-                    //               return;
-                    //             },
-                    //             onNegativeClick: () {
-                    //               Navigator.of(context).pop();
-                    //             },
-                    //           );
-                    //         },
-                    //         animationType: DialogTransitionType.size,
-                    //         curve: Curves.fastOutSlowIn,
-                    //         duration: const Duration(seconds: 1),
-                    //       );
-                    //     } else {
-                    //       navigate(
-                    //           context,
-                    //           _userStore.user != null &&
-                    //                   _userStore.user!.type == UserType.company
-                    //               ? Routes.viewProfileCompany
-                    //               : Routes.viewProfileStudent);
-                    //     }
-                    //   } else {
-                    //     if (_userStore.user!.studentProfile == null) {
-                    //       showAnimatedDialog(
-                    //         context: context,
-                    //         barrierDismissible: true,
-                    //         builder: (BuildContext ctx) {
-                    //           return ClassicGeneralDialogWidget(
-                    //             contentText:
-                    //                 'User ${_userStore.user!.email} chưa có profile Student. Tạo ngay?',
-                    //             negativeText: Lang.get('cancel'),
-                    //             positiveText: 'Yes',
-                    //             onPositiveClick: () async {
-                    //               Navigator.of(ctx).pop();
-                    //               final ProfileStudentStore infoStore =
-                    //                   getIt<ProfileStudentStore>();
-
-                    //               await infoStore.getTechStack();
-                    //               await infoStore.getSkillset();
-
-                    //               Navigator.of(context).push(MaterialPageRoute2(
-                    //                   routeName: Routes.profileStudent));
-                    //               return;
-                    //             },
-                    //             onNegativeClick: () {
-                    //               Navigator.of(context).pop();
-                    //             },
-                    //           );
-                    //         },
-                    //         animationType: DialogTransitionType.size,
-                    //         curve: Curves.fastOutSlowIn,
-                    //         duration: const Duration(seconds: 1),
-                    //       );
-                    //     } else {
-                    //       try {
-                    //         setState(() {
-                    //           loading = true;
-                    //         });
-                    //       } catch (e) {
-                    //         loading = true;
-                    //       }
-
-                    //       if (_userStore.user != null &&
-                    //           _userStore.user!.studentProfile != null &&
-                    //           _userStore.user!.studentProfile!.objectId != null) {
-                    //         final ProfileStudentStore infoStore =
-                    //             getIt<ProfileStudentStore>();
-
-                    //         infoStore.setStudentId(
-                    //             _userStore.user!.studentProfile!.objectId!);
-                    //         await infoStore.getInfo().then(
-                    //               (value) {},
-                    //             );
-                    //         final ProfileStudentFormStore formStore =
-                    //             getIt<ProfileStudentFormStore>();
-                    //         await formStore.getProfileStudent(
-                    //             _userStore.user!.studentProfile!.objectId!);
-                    //       }
-                    //       try {
-                    //         setState(() {
-                    //           loading = false;
-                    //         });
-                    //         navigate(
-                    //             context,
-                    //             _userStore.user != null &&
-                    //                     _userStore.user!.type == UserType.company
-                    //                 ? Routes.viewProfileCompany
-                    //                 : Routes.viewProfileStudent);
-                    //       } catch (e) {
-                    //         loading = false;
-                    //       }
-                    //     }
-                    //   }
-                    // }
-                  },
+                  onTap: () async {},
                   leading: const Icon(Icons.person),
                   title: Text(
                     Lang.get('profile_text'),
@@ -631,7 +483,6 @@ class _SettingScreenDrawerState extends State<SettingScreenDrawer> {
 
   @override
   void dispose() {
-    // ToDO: implement dispose
     super.dispose();
   }
 }

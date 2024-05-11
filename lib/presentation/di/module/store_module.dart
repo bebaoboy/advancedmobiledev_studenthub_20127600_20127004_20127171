@@ -12,7 +12,6 @@ import 'package:boilerplate/domain/usecase/chat/post_message.dart';
 import 'package:boilerplate/domain/usecase/chat/schedule_interview.dart';
 import 'package:boilerplate/domain/usecase/noti/get_noti_usecase.dart';
 import 'package:boilerplate/domain/usecase/chat/update_interview.dart';
-import 'package:boilerplate/domain/usecase/post/get_post_usecase.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_resume.dart';
 import 'package:boilerplate/domain/usecase/profile/delete_transcript.dart';
 import 'package:boilerplate/domain/usecase/profile/get_company_usecase.dart';
@@ -71,7 +70,6 @@ import 'package:boilerplate/presentation/home/store/language/language_store.dart
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/presentation/login/store/forget_password_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
-import 'package:boilerplate/presentation/post/store/post_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_form_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_info_store.dart';
 import 'package:boilerplate/presentation/profile/store/form/profile_student_form_store.dart';
@@ -171,13 +169,6 @@ mixin StoreModule {
       getIt<GetTechStackUseCase>(),
       getIt<GetSkillsetUseCase>(),
     ));
-
-    getIt.registerSingleton<PostStore>(
-      PostStore(
-        getIt<GetPostUseCase>(),
-        getIt<ErrorStore>(),
-      ),
-    );
 
     getIt.registerSingleton<UpdateProjectFormStore>(
       UpdateProjectFormStore(getIt<ErrorStore>(),

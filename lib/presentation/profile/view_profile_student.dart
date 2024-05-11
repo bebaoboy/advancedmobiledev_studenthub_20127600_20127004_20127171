@@ -124,57 +124,6 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
   // OPTIONAL: can be set directly.
   int dotCount = 3;
 
-  /// Generates jump steps for dotCount number of steps, and returns them in a row.
-  // Row steps() {
-  //   return Row(
-  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //     children: List.generate(dotCount, (index) {
-  //       return Expanded(
-  //         child: ElevatedButton(
-  //           child: Text('${index + 1}'),
-  //           onPressed: () {
-  //             setState(() {
-  //               activeStep = index;
-  //             });
-  //           },
-  //         ),
-  //       );
-  //     }),
-  //   );
-  // }
-
-  /// Returns the next button widget.
-  // Widget nextButton() {
-  //   return ElevatedButton(
-  //     child: const Text('Next'),
-  //     onPressed: () {
-  //       /// ACTIVE STEP MUST BE CHECKED FOR (dotCount - 1) AND NOT FOR dotCount To PREVENT Overflow ERROR.
-  //       if (activeStep < dotCount - 1) {
-  //         setState(() {
-  //           activeStep++;
-  //         });
-  //         pageController.move(activeStep);
-  //       }
-  //     },
-  //   );
-  // }
-
-  // /// Returns the previous button widget.
-  // Widget previousButton() {
-  //   return ElevatedButton(
-  //     child: const Text('Prev'),
-  //     onPressed: () {
-  //       // activeStep MUST BE GREATER THAN 0 TO PREVENT OVERFLOW.
-  //       if (activeStep > 0) {
-  //         setState(() {
-  //           activeStep--;
-  //         });
-  //         pageController.move(activeStep);
-  //       }
-  //     },
-  //   );
-  // }
-
   IndexController pageController = IndexController();
   List<Widget> children = [];
 
@@ -188,18 +137,6 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            // const SizedBox(
-            //   height: 20,
-            // ),
-            // Center(
-            //   child: Text(
-            //     "${Lang.get('profile_welcome_title')}, STUDENT",
-            //     style: Theme.of(context)
-            //         .textTheme
-            //         .bodyLarge
-            //         ?.copyWith(fontWeight: FontWeight.w600),
-            //   ),
-            // ),
             LimitedBox(
               maxHeight: MediaQuery.of(context).size.height * 0.8,
               child: TransformerPageView(
@@ -234,39 +171,16 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
                   pageController.move(activeStep);
                 },
                 page: activeStep, // Specify the current step or page.
-                // positiveCheck:
-                //     yourCustomCheckmarkWidget, // Optionally, use a custom checkmark widget.
-                // positiveColor:
-                //     yourColor, // Customize the color of positive (active) steps.
-                // negativeColor:
-                //     yourColor, // Customize the color of negative (disabled) steps.
-                // progressColor:
-                //     yourColor, // Customize the color of the progress indicator.
-                // durationScroller:
-                //     yourDuration, // Set the duration for scrolling animations.
-                // durationCheckBulb:
-                //     yourDuration, // Set the duration for checkmark bulb animations.
-                // division:
-                //     yourDivision, // Specify the number of divisions for rendering steps.
               ),
             ),
-
-            /// Jump buttons.
-            // Padding(padding: const EdgeInsets.all(18.0), child: steps()),
-
-            // Next and Previous buttons.
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [previousButton(), nextButton()],
-            // ),
-            _buildSignInButton(),
+            _buildButton(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSignInButton() {
+  Widget _buildButton() {
     return Align(
       alignment: Alignment.centerRight,
       child: SizedBox(
@@ -275,17 +189,13 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
           buttonColor: Theme.of(context).colorScheme.primary,
           textColor: Colors.white,
           onPressed: () async {
-            // _formStore
-            //     .setResume(_cv != null ? _cv!.path ?? "" : '');
-            // _formStore.setTranscript(
-            //     _transcript != null ? _transcript!.path ?? "" : '');
-            print(_formStore.techStack);
-            print(_formStore.skillSet);
-            print(_formStore.educations);
-            print(_formStore.languages);
-            print(_formStore.projectExperience);
-            print(_formStore.resume);
-            print(_formStore.transcript);
+            // print(_formStore.techStack);
+            // print(_formStore.skillSet);
+            // print(_formStore.educations);
+            // print(_formStore.languages);
+            // print(_formStore.projectExperience);
+            // print(_formStore.resume);
+            // print(_formStore.transcript);
             var userStore = getIt<UserStore>();
             if (userStore.user != null &&
                 userStore.user!.studentProfile != null) {
@@ -300,18 +210,6 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
                 userStore.user!.studentProfile!.objectId ?? "-1",
               );
             }
-
-            // Navigator.of(context).pushAndRemoveUntil(
-            //     MaterialPageRoute2(routeName: Routes.home),
-            //     (Route<dynamic> route) => false);
-            // if (_formStore.canProfileStudent) {
-            //   DeviceUtils.hideKeyboard(context);
-            //   _userStore.login(
-            //       _userEmailController.text, _passwordController.text);
-            // } else {
-            //   _showErrorMessage(AppLocalizations.of(context)
-            //       .get('login_error_missing_fields'));
-            // }
           },
         ),
       ),
@@ -352,17 +250,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    if (message.isNotEmpty) {
-      // Future.delayed(const Duration(milliseconds: 0), () {
-      //   if (message.isNotEmpty) {
-      //     FlushbarHelper.createError(
-      //       message: message,
-      //       title: Lang.get('profile_change_error'),
-      //       duration: const Duration(seconds: 3),
-      //     ).show(context);
-      //   }
-      // });
-    }
+    if (message.isNotEmpty) {}
 
     return const SizedBox.shrink();
   }

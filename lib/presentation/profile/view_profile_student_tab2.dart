@@ -81,35 +81,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
     if (_infoStore.skillSet.isNotEmpty) mockSkillsets = _infoStore.skillSet;
 
     setPE();
-    // _projects.add(ProjectExperience("Intelligent Taxi Dispatching System",
-    //     description:
-    //         "It is the developer of a super-app for ride-hailing, food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
-    //     startDate: DateTime(2020, 9),
-    //     endDate: DateTime(2020, 12),
-    //     skills: [
-    //       Skill("React", "", "", id: "10"),
-    //       Skill("Android", "", "", id: "2")
-    //     ]));
-    // _projects.add(ProjectExperience("Community partners project",
-    //     description:
-    //         "This is a web usability class. Student teams apply their newly acquired web usability analysis skills to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
-    //     startDate: DateTime(2019, 12),
-    //     endDate: DateTime(2024, 2),
-    //     skills: [
-    //       Skill("iOS", "", "", id: "5"),
-    //       Skill("Web", "", "", id: "4"),
-    //       Skill("Artificial Intelligent", "", "", id: "3")
-    //     ]));
-    // _projects.add(ProjectExperience("bebaoboy Project Bunny",
-    //     description:
-    //         "food delivery, and digital payment services on mobile devices, operated in Singapore, Malaysia,...",
-    //     startDate: DateTime(2021, 9),
-    //     endDate: DateTime(2021, 12)));
-    // _projects.add(ProjectExperience("Coca Cola Advertisement",
-    //     description:
-    //         "Klls to a community organization with a website in need of [more content to come]. In this semester long project, student teams choose from several instructor-selected community organization projects and do usability testing on their website and make recommendations to the organization in a final presentation to the entire class. This project is worth [More content to come] of their final grade. (Lee-Ann Breuch, CLA, UMTC)",
-    //     startDate: DateTime(2023, 1),
-    //     endDate: DateTime(2024, 2)));
   }
 
   @override
@@ -170,23 +141,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
     setPE();
   }
 
-  // void onChanged(List<Skill> data, {int? index}) {
-  //   //print('onChanged $data');
-  //   if (index != null) {
-  //     try {
-  //       setState(() {
-  //         _projects[index!].skills =
-  //             data.map((e) => e.name).toList(growable: true);
-  //         //print("data: " + data.toString());
-  //       });
-  //     } catch (e) {}
-  //   }
-  // }
-
-  // void _onChanged(List<Skill> data) {
-  //   //print('onChanged $data');
-  // }
-
   Future<List<Skill>> _findSuggestions(String query) async {
     if (query.isNotEmpty) {
       return mockSkillsets.where((profile) {
@@ -228,17 +182,9 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  // Image.asset(
-                  //   'assets/images/img_login.png',
-                  //   scale: 1.2,
-                  // ),
-                  // _buildUserIdField(),
-                  // _buildPasswordField(),
-                  // _buildForgotPasswordButton(),
                   const SizedBox(
                     height: 24,
                   ),
-
                   SizedBox(
                     height: 40,
                     child: Row(
@@ -272,12 +218,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                           },
                           icon: const Icon(Icons.add_circle_outline),
                         ),
-                        // Container(
-                        //     padding: EdgeInsets.zero,
-                        //     child: IconButton(
-                        //       onPressed: () => {},
-                        //       icon: Icon(Icons.mode_edit_outline),
-                        //     )),
                       ],
                     ),
                   ),
@@ -287,17 +227,14 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                         borderRadius: BorderRadius.all(Radius.circular(13))),
                     child: _buildLanguageField(),
                   ),
-
                   const SizedBox(height: 34.0),
                 ],
               ),
             ),
           ),
-          //_buildFooterText(),
           const SizedBox(
             height: 14,
           ),
-          //_buildSignUpButton(),
         ],
       ),
     );
@@ -434,14 +371,8 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                 autoFocus: false,
                                 onChanged: (value) {
                                   _projects[index].name = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
                                 },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
+                                onFieldSubmitted: (value) {},
                                 errorText: null,
                               ),
                             ),
@@ -501,24 +432,9 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                           textController: null,
                                           inputAction: TextInputAction.next,
                                           autoFocus: false,
-                                          onChanged: (value) {
-                                            //_projects[index].proficiency = value;
-
-                                            // _formStore
-                                            //     .setUserId(_userEmailController.text);
-                                          },
-                                          onFieldSubmitted: (value) {
-                                            // FocusScope.of(context)
-                                            //     .requestFocus(_passwordFocusNode);
-                                          },
-                                          errorText: null
-                                          // _formStore
-                                          //             .formErrorStore.userEmail ==
-                                          //         null
-                                          //     ? null
-                                          //     : AppLocalizations.of(context).get(
-                                          //         _formStore.formErrorStore.userEmail),
-                                          ),
+                                          onChanged: (value) {},
+                                          onFieldSubmitted: (value) {},
+                                          errorText: null),
                                     ),
                                   )
                                 : Row(
@@ -542,13 +458,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                                       lastDate: DateTime(2100));
 
                                               if (pickedDate != null) {
-                                                //print(
-                                                // pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
-                                                // String formattedDate =
-                                                //     DateFormat('yyyy-MM-dd')
-                                                //         .format(pickedDate);
-                                                // //print(
-                                                //     formattedDate); //formatted date output using intl package =>  2021-03-16
                                                 setState(() {
                                                   _projects[index].startDate =
                                                       pickedDate; //set output date to TextField value.
@@ -645,11 +554,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                 width: w,
                                 height: _projects[index].readOnly ? 20 : null,
                                 child: GestureDetector(
-                                    // onTap: () {
-                                    //   if (_projects[index].readOnly) {
-                                    //     openHintBar();
-                                    //   }
-                                    // },
                                     onDoubleTap: () {
                                       if (_projects[index].readOnly &&
                                           _projects[index].enabled) {
@@ -712,21 +616,12 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                 autoFocus: false,
                                 onChanged: (value) {
                                   _projects[index].link = value;
-
-                                  // _formStore
-                                  //     .setUserId(_userEmailController.text);
                                 },
-                                onFieldSubmitted: (value) {
-                                  // FocusScope.of(context)
-                                  //     .requestFocus(_passwordFocusNode);
-                                },
+                                onFieldSubmitted: (value) {},
                                 errorText: null,
                               ),
                             ),
                           SizedBox(
-                            // transform: _projects[index].readOnly
-                            //     ? Matrix4.translationValues(0.0, -25.0, 0.0)
-                            //     : null,
                             width: w,
                             child: GestureDetector(
                               onTap: () {
@@ -798,14 +693,8 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                       autoFocus: false,
                                       onChanged: (value) {
                                         _projects[index].description = value;
-
-                                        // _formStore
-                                        //     .setUserId(_userEmailController.text);
                                       },
-                                      onFieldSubmitted: (value) {
-                                        // FocusScope.of(context)
-                                        //     .requestFocus(_passwordFocusNode);
-                                      },
+                                      onFieldSubmitted: (value) {},
                                       errorText: null,
                                     ),
                             ),
@@ -822,9 +711,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                             child: SizedBox(
                               height: 30,
                               width: w,
-                              // transform: _projects[index].readOnly
-                              //     ? Matrix4.translationValues(0.0, -30.0, 0.0)
-                              //     : null,
                               child: Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
@@ -868,10 +754,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                             child: _projects[index].readOnly
                                 ? SizedBox(
                                     width: w * 0.8,
-                                    // transform: _projects[index].readOnly
-                                    //     ? Matrix4.translationValues(
-                                    //         0.0, -50.0, 0.0)
-                                    //     : null,
                                     child: Text(
                                       _projects[index].skills == null
                                           ? Lang.get("nothing_here")
@@ -906,11 +788,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                       decoration: InputDecoration(
                                           prefixIconConstraints:
                                               const BoxConstraints(),
-                                          // prefixIcon: Container(
-                                          //     margin: EdgeInsets.only(top: 13),
-                                          //     child: Icon(
-                                          //       Icons.search,
-                                          //     )),
                                           hintText: Lang.get(
                                               'profile_choose_skillset'),
                                           hintStyle: const TextStyle(
@@ -954,9 +831,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                                           Skill profile) {
                                         return ListTile(
                                           key: ObjectKey(profile),
-                                          // leading: CircleAvatar(
-                                          //   backgroundImage: NetworkImage(profile.imageUrl),
-                                          // ),
                                           leading:
                                               const Icon(Icons.developer_mode),
                                           title: Text(profile.name),
@@ -987,18 +861,6 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   // General Methods:-----------------------------------------------------------
   _showErrorMessage(String message) {
-    // if (message.isNotEmpty) {
-    //   Future.delayed(const Duration(milliseconds: 0), () {
-    //     if (message.isNotEmpty) {
-    //       FlushbarHelper.createError(
-    //         message: message,
-    //         title: Lang.get('error'),
-    //         duration: const Duration(seconds: 3),
-    //       ).show(context);
-    //     }
-    //   });
-    // }
-
     return const SizedBox.shrink();
   }
 

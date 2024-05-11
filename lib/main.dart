@@ -10,6 +10,7 @@ import 'package:boilerplate/domain/entity/project/entities.dart';
 import 'package:boilerplate/utils/device/device_utils.dart';
 import 'package:boilerplate/utils/notification/notification.dart';
 import 'package:boilerplate/utils/workmanager/work_manager_helper.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/firebase_options.dart';
@@ -121,7 +122,7 @@ Future<void> main() async {
         Workmanager().initialize(
             callbackDispatcher, // The top level function, aka callbackDispatcher
             isInDebugMode:
-                true // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
+                !kReleaseMode, // If enabled it will post a notification whenever the task is running. Handy for debugging tasks
             );
       }
     });
@@ -130,7 +131,7 @@ Future<void> main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
 
-    // FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+    FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
     // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 

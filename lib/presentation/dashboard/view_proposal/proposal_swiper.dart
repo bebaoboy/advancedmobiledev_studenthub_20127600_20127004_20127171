@@ -56,9 +56,15 @@ class _ProposalSwiperState extends State<ProposalSwiper>
     //       filter: (element) => element.hiredStatus == HireStatus.notHired);
     // } else {
     future = Future.value(ProposalList(
-        proposals: widget.project.proposal!
-            .where((element) => element.hiredStatus == HireStatus.notHired)
-            .toList()));
+            proposals: widget.project.proposal!
+                .where((element) => element.hiredStatus == HireStatus.notHired)
+                .toList()))
+        .then((value) {
+      current = value.proposals!.first;
+      print(
+          "current future ${current.toJson()} student ${current.student.toJson()}");
+      return value;
+    });
     // }
 
     // _shakeCard();
@@ -72,6 +78,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
         (element) => element.objectId == current.objectId,
       );
       p?.hiredStatus = HireStatus.pending;
+      current.hiredStatus = HireStatus.pending;
       if (p != null) current = p;
     }
     // ToDo
@@ -104,7 +111,6 @@ class _ProposalSwiperState extends State<ProposalSwiper>
       initialIndex = newIndex;
       controller.setCardIndex(newIndex);
     });
-    current = widget.project.proposal![_cardStateStore.index];
     print(current.hiredStatus);
     print(initialIndex);
   }
@@ -147,8 +153,6 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                     child: const Text('There is no cards to display'),
                   );
                 } else {
-                  current = snapshot.data!.proposals![0];
-                  print(current.toJson());
                   snapshot.data!.proposals?.forEach(
                     (element) => print(element.hiredStatus),
                   );
@@ -203,7 +207,26 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                 //     '${position.offset}, '
                                 //     '${position.angle}');
                               },
-                              onSwipeEnd: _swipeEnd,
+                              onSwipeEnd:
+                                  (previousIndex, targetIndex, activity) {
+                                _swipeEnd(previousIndex, targetIndex, activity);
+                                var nnnindex =
+                                    current.hiredStatus == HireStatus.offer ||
+                                            current.hiredStatus ==
+                                                HireStatus.notHired
+                                        ? targetIndex
+                                        : previousIndex;
+                                print("nmindex $nnnindex");
+                                current = snapshot.data!.proposals![nnnindex %
+                                    snapshot.data!.proposals!.length];
+                                _cardStateStore.reset();
+                                _cardStateStore.index = nnnindex;
+                                print(
+                                    "current future ${current.toJson()} student ${current.student.toJson()}");
+                                controller.setCardIndex(nnnindex);
+
+                                setState(() {});
+                              },
                               onEnd: _onEnd,
                               cardCount: snapshot.data!.proposals?.length ?? 0,
                               cardBuilder: (BuildContext context, int index) {
@@ -332,7 +355,11 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                         snapshot.data!.proposals!.length;
                                     _cardStateStore.index = newIndex;
                                     setInitialIndex(newIndex);
+                                    current =
+                                        snapshot.data!.proposals![newIndex];
                                   });
+                                  print(
+                                      "current ${current.toJson()} student ${current.student.toJson()}");
                                 },
                                 textColor: Colors.black,
                                 color: Colors.grey.shade300,
@@ -350,7 +377,11 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                                         snapshot.data!.proposals!.length;
                                     _cardStateStore.index = newIndex;
                                     setInitialIndex(newIndex);
+                                    current =
+                                        snapshot.data!.proposals![newIndex];
                                   });
+                                  print(
+                                      "current ${current.toJson()} student ${current.student.toJson()}");
                                 },
                                 textColor: Colors.black,
                                 color: Colors.grey.shade300,
@@ -381,10 +412,15 @@ class _ProposalSwiperState extends State<ProposalSwiper>
       int previousIndex, int targetIndex, SwiperActivity activity) async {
     switch (activity) {
       case Swipe():
-        if (_projectStore.currentProps.proposals![previousIndex].hiredStatus !=
+        print(
+            "prev = $previousIndex cur=$targetIndex card=${_cardStateStore.index} ${current.student.toJson()}");
+        var p = widget.project.proposal!.indexWhere(
+          (element) => element.objectId == current.objectId,
+        );
+        if (_projectStore.currentProps.proposals![p].hiredStatus !=
             HireStatus.notHired) {
-          _cardStateStore.reset();
-          _cardStateStore.index = previousIndex;
+          // _cardStateStore.reset();
+          // _cardStateStore.index = previousIndex;
           break;
         }
         setState(() {
@@ -392,36 +428,43 @@ class _ProposalSwiperState extends State<ProposalSwiper>
         });
         log('The card was swiped to the : ${activity.direction}');
 
-        // print(_cardStateStore.index);
+        log("card: ${_cardStateStore.index}");
         if (_projectStore.currentProps.proposals == null ||
             _projectStore.currentProps.proposals!.isEmpty) return;
 
         if (activity.direction == AxisDirection.right) {
           // ToDo: update proposal status value = 2
-          _projectStore.currentProps.proposals![previousIndex].hiredStatus =
-              HireStatus.offer;
-          widget.project.proposal![previousIndex].hiredStatus =
-              HireStatus.offer;
-          await _projectStore.updateProposal(
-              _projectStore.currentProps.proposals![previousIndex],
-              _userStore.user!.studentProfile!.objectId!);
-          Toastify.show(context, "", "Sent hired successfully",
-              ToastificationType.success, () {});
+
+          if (p != -1) {
+            _projectStore.currentProps.proposals![p].hiredStatus =
+                HireStatus.offer;
+            widget.project.proposal![p].hiredStatus = HireStatus.offer;
+            current.hiredStatus = HireStatus.offer;
+             await _projectStore.updateProposal(
+                 _projectStore.currentProps.proposals![p],
+                 _userStore.user!.studentProfile!.objectId!);
+            Toastify.show(context, "", "Sent hired successfully",
+                ToastificationType.success, () {});
+          }
         } else {
           // Reject proposal
-          _projectStore.currentProps.proposals![previousIndex].enabled = false;
-          _projectStore.currentProps.proposals![previousIndex].hiredStatus =
-              HireStatus.notHired;
-          widget.project.proposal![previousIndex].hiredStatus =
-              HireStatus.notHired;
-          await _projectStore.updateProposal(
-              _projectStore.currentProps.proposals![previousIndex],
-              _userStore.user!.studentProfile!.objectId!);
+          var p = widget.project.proposal!.indexWhere(
+            (element) => element.objectId == current.objectId,
+          );
+          if (p != -1) {
+            _projectStore.currentProps.proposals![p].enabled = false;
+            _projectStore.currentProps.proposals![p].hiredStatus =
+                HireStatus.notHired;
+            widget.project.proposal![p].hiredStatus = HireStatus.notHired;
+            current.hiredStatus = HireStatus.notHired;
 
-          Toastify.show(context, "", "Reject successfully",
-              ToastificationType.success, () {});
-          _cardStateStore.reset();
-          _cardStateStore.index = targetIndex;
+             await _projectStore.updateProposal(
+                 _projectStore.currentProps.proposals![p],
+                 _userStore.user!.studentProfile!.objectId!);
+
+            Toastify.show(context, "", "Reject successfully",
+                ToastificationType.success, () {});
+          }
         }
         // int newIndex = (targetIndex + 1) % widget.project.proposal!.length;
         // _cardStateStore.index = newIndex;
@@ -450,6 +493,7 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   void _onEnd() {
     log('end reached!');
     _cardStateStore.reset();
+    controller.setCardIndex(0);
     // Navigator.pop(context);
   }
 

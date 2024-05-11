@@ -323,7 +323,6 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                           ? const VietnameseDurationLocale()
                           : const EnglishDurationLocale(),
                       delimiter: ", ",
-                      abbreviated: true,
                     )),
                   ],
                 ),

@@ -112,19 +112,7 @@ class Routes {
     previewMeeting: const Placeholder(),
   };
 
-  static final routes = <String, WidgetBuilder>{
-    // for (var entry in _route.entries)
-    //   entry.key: (_) {
-    //     if (entry.key == projectDetails) {
-    //       // If route is projectDetails, return ProjectDetailsPage with arguments
-    //       final Project project =
-    //           ModalRoute.of(_)?.settings.arguments as Project;
-    //       return ProjectDetailsPage(project: project);
-    //     } else {
-    //       return entry.value;
-    //     }
-    //   }
-  };
+  static final routes = <String, WidgetBuilder>{};
 }
 
 getRoute(String name, context, {arguments}) {
@@ -206,7 +194,7 @@ getRoute(String name, context, {arguments}) {
       }
     }
 
-     if (name == Routes.companyViewStudentProfile3) {
+    if (name == Routes.companyViewStudentProfile3) {
       if (arguments != null) {
         var b = arguments as StudentProfile;
         return ViewStudentProfile3(studentProfile: b);
@@ -216,7 +204,8 @@ getRoute(String name, context, {arguments}) {
     if (name.startsWith(Routes.previewMeeting)) {
       if (arguments != null) {
         var users = arguments[0] as List<CubeUser>;
-        var interviewSchedule = arguments[1] != null ? arguments[1] as InterviewSchedule : null;
+        var interviewSchedule =
+            arguments[1] != null ? arguments[1] as InterviewSchedule : null;
         var callSession = arguments[2] as P2PSession;
         return PreviewMeetingScreen(
             CubeSessionManager.instance.activeSession!.user!, callSession,

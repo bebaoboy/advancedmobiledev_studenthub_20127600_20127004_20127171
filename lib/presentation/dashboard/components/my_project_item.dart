@@ -49,7 +49,7 @@ class _OpenContainerWrapper extends StatelessWidget {
             //   context,
             //   listen: false,
             // ).currentlySelectedEmailId = id;
-            if (project.isArchive) return;
+            // if (project.isArchive) return;
             openContainer();
           },
           child: closedChild,
@@ -297,9 +297,18 @@ class _MyProjectItemState extends State<MyProjectItem> {
                       Text(
                         maxLines: 3,
                         overflow: TextOverflow.ellipsis,
-                        widget.project.title.trim().toTitleCase(),
+                        widget.project.title.trim().toTitleCase() +
+                            (widget.project.isArchive
+                                ? widget.project.closeStatus ==
+                                        ProjectStatusFlag.fail
+                                    ? "(❌)"
+                                    : "(✅)"
+                                : ""),
                         style: TextStyle(
-                            color: Colors.green.shade400,
+                            color: widget.project.closeStatus ==
+                                    ProjectStatusFlag.fail
+                                ? Colors.red
+                                : Colors.green.shade400,
                             fontWeight: widget.project.isWorking
                                 ? FontWeight.bold
                                 : null),
