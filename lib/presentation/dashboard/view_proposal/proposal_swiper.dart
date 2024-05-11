@@ -440,9 +440,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                 HireStatus.offer;
             widget.project.proposal![p].hiredStatus = HireStatus.offer;
             current.hiredStatus = HireStatus.offer;
-            // await _projectStore.updateProposal(
-            //     _projectStore.currentProps.proposals![p],
-            //     _userStore.user!.studentProfile!.objectId!);
+             await _projectStore.updateProposal(
+                 _projectStore.currentProps.proposals![p],
+                 _userStore.user!.studentProfile!.objectId!);
             Toastify.show(context, "", "Sent hired successfully",
                 ToastificationType.success, () {});
           }
@@ -458,9 +458,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
             widget.project.proposal![p].hiredStatus = HireStatus.notHired;
             current.hiredStatus = HireStatus.notHired;
 
-            // await _projectStore.updateProposal(
-            //     _projectStore.currentProps.proposals![p],
-            //     _userStore.user!.studentProfile!.objectId!);
+             await _projectStore.updateProposal(
+                 _projectStore.currentProps.proposals![p],
+                 _userStore.user!.studentProfile!.objectId!);
 
             Toastify.show(context, "", "Reject successfully",
                 ToastificationType.success, () {});
