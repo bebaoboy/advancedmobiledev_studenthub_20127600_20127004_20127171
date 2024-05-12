@@ -266,6 +266,7 @@ class NotificationObject extends MyObject {
   NotificationType get type => _type ?? NotificationType.proposal;
   NotificationType? _type;
   Map<String, dynamic>? metadata;
+  String projectId;
 
   @override
   String toString() {
@@ -273,6 +274,7 @@ class NotificationObject extends MyObject {
   }
 
   NotificationObject({
+    this.projectId = "-1",
     required this.id,
     required this.receiver,
     required this.sender,
@@ -298,6 +300,8 @@ class NotificationObject extends MyObject {
         title = json['title'] ?? '',
         _type = NotificationType.values[int.tryParse(json['type']) ?? 0],
         metadata = json['metadata'],
+        projectId =
+            json['projectId'] != null ? json['projectId'].toString() : "-1",
         super(
             createdAt: json["createdAt"] is DateTime
                 ? json["createdAt"]
@@ -345,10 +349,8 @@ extension NotificationTypeTitle on NotificationType {
 
 @JsonSerializable()
 class OfferNotification extends NotificationObject {
-  String projectId;
-
   OfferNotification({
-    required this.projectId,
+    required super.projectId,
     required super.id,
     required super.receiver,
     required super.sender,
