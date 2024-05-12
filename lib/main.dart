@@ -82,7 +82,7 @@ void callbackDispatcher() {
                           receiver: notiOb.receiver,
                           sender: notiOb.sender,
                         ),
-                        projectId: "-1",
+                        projectId: notiOb.projectId,
                         id: rand.nextInt(100000));
                   }
                 } else {
