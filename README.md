@@ -3,6 +3,14 @@
 StudentHub 1.0.1 is OUT!!
 <br> 
 
+## Link Google Play: [Student Hub](https://play.google.com/store/apps/details?id=com.bebaoboyjonnathan.studenthub)
+
+![image](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/assets/74720131/a9899d67-58bc-4458-92e2-13d5a68f94c7)
+
+![image](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/assets/74720131/2cc7b545-9dc7-43a8-92b2-cde981fcd828)
+
+
+
 ## Link: [Releases](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/releases) 
 
 <img alt="Student Hub Icon" src="https://drive.google.com/uc?id=1yjKif17zFHMHr-8uVTiixmKhvSOWm-AO"  height="400" />
@@ -261,7 +269,6 @@ This file contains all the routes for your application.
 ```dart
 import 'package:flutter/material.dart';
 
-import 'ui/post/post_list.dart';
 import 'ui/login/login.dart';
 import 'ui/splash/splash.dart';
 
