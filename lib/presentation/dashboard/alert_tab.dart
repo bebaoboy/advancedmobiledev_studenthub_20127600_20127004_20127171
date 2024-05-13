@@ -795,9 +795,9 @@ class _AlertTabState extends State<AlertTab> {
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 0),
                 height: 110,
-                width: userStore.user!.type == UserType.student
+                width: (userStore.user!.type == UserType.student
                     ? MediaQuery.of(context).size.width - 150
-                    : MediaQuery.of(context).size.width - 20,
+                    : MediaQuery.of(context).size.width - 20) - (MediaQuery.of(context).size.width > 600 ? 135 : 0),
                 child: _datePickerSection()),
           ],
         ),

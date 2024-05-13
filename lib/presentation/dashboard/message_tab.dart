@@ -446,7 +446,6 @@ class Singapore extends State<MessageTab> {
       ],
       builder: (BuildContext context, Animation<double> transition) {
         return Material(
-          color: Colors.white,
           borderRadius: BorderRadius.circular(8),
           clipBehavior: Clip.antiAlias,
           child: Container(

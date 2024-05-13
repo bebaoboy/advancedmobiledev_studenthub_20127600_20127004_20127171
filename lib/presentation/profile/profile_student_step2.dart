@@ -354,7 +354,6 @@ class _ProfileStudentStep2ScreenState extends State<ProfileStudentStep2Screen> {
                   ),
                   Container(
                     decoration: const BoxDecoration(
-                        color: Colors.white70,
                         borderRadius: BorderRadius.all(Radius.circular(13))),
                     child: _buildLanguageField(),
                   ),

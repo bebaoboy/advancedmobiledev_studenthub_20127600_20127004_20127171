@@ -87,7 +87,7 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
           Observer(
             builder: (context) {
               return Visibility(
-                visible: _formStore.isLoading || loading,
+                visible: _formStore.isLoading,
                 // child: CustomProgressIndicatorWidget(),
                 child: const LoadingScreen(),
               );

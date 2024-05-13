@@ -955,7 +955,7 @@ class _ArchivedProjectsState extends State<ArchivedProjects> {
           )
         : Container(
             alignment: Alignment.center,
-            child: const Text("You have no working projects"));
+            child: const Text("You have no archived projects"));
   }
 }
 

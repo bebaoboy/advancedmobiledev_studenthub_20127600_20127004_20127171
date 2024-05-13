@@ -381,7 +381,9 @@ class _SplashScreenState extends State<SplashScreen>
                             )
                           : null,
                     ),
-                    MediaQuery.of(context).orientation != Orientation.landscape
+                    MediaQuery.of(context).orientation !=
+                                Orientation.landscape ||
+                            kIsWeb
                         ? Center(
                             child: Text(
                               "StudentHub",
@@ -396,7 +398,9 @@ class _SplashScreenState extends State<SplashScreen>
                         : const SizedBox(
                             width: 0,
                           ),
-                    MediaQuery.of(context).orientation != Orientation.landscape
+                    MediaQuery.of(context).orientation !=
+                                Orientation.landscape ||
+                            kIsWeb
                         ? Center(
                             child: TextField(
                               // "20127600 - 20127004 - 20127171",

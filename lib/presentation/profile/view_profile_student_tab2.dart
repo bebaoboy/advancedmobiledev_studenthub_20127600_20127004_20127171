@@ -223,11 +223,9 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
                   ),
                   Container(
                     decoration: const BoxDecoration(
-                        color: Colors.white70,
                         borderRadius: BorderRadius.all(Radius.circular(13))),
                     child: _buildLanguageField(),
                   ),
-                  const SizedBox(height: 34.0),
                 ],
               ),
             ),
@@ -256,7 +254,7 @@ class _ViewProfileStudentTab2State extends State<ViewProfileStudentTab2> {
 
   Widget _buildLanguageField() {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.8,
+      height: MediaQuery.of(context).size.height * 0.6,
       child: ListView.builder(
         controller: ScrollController(),
         physics: const BouncingScrollPhysics(),

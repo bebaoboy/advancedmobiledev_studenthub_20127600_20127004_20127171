@@ -119,7 +119,7 @@ class WorkMangerHelper {
             'createdAt': DateTime.parse(element['createdAt']).toLocal(),
             'receiver': {
               "id": element['receiver']['id'].toString(),
-              "fullname": element['receiver']['fullName'].toString(),
+              "fullname": element['receiver']['fullname'].toString(),
             },
             'sender': {
               "id": element['sender']['id'].toString(),

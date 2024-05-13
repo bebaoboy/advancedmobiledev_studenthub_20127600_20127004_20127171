@@ -132,13 +132,12 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
           theme.colorScheme.surface,
       elevation: theme.navigationRailTheme.elevation,
       showUnselectedLabels: true,
-      selectedIconTheme: theme.navigationRailTheme.selectedIconTheme,
+      selectedIconTheme: const IconThemeData(color: Colors.white),
       enableFeedback: true,
       isExtended: true,
-      unselectedIconTheme: theme.navigationRailTheme.unselectedIconTheme,
-      selectedLabelTextStyle: theme.navigationRailTheme.selectedLabelTextStyle,
-      unselectedLabelTextStyle:
-          theme.navigationRailTheme.unselectedLabelTextStyle,
+      unselectedIconTheme: const IconThemeData(color: Colors.white),
+      selectedLabelTextStyle: const TextStyle(color: Colors.white),
+      unselectedLabelTextStyle: const TextStyle(color: Colors.white),
       indicatorShape: theme.navigationRailTheme.indicatorShape,
       indicatorColor: theme.navigationRailTheme.indicatorColor,
       navbarType: BottomNavigationBarType.fixed,
@@ -192,9 +191,7 @@ class _AnimatedNavBarState extends State<AnimatedNavBar>
           labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
           indicatorShape: widget.decoration!.indicatorShape,
           selectedLabelTextStyle: widget.decoration!.selectedLabelTextStyle ??
-              theme.textTheme.bodySmall!.copyWith(
-                color: theme.colorScheme.onSurface,
-              ),
+              navigationRailDefaultDecoration.selectedLabelTextStyle,
         );
       }
 

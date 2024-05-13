@@ -202,14 +202,19 @@ class WorkingProjects extends StatefulWidget {
 class _WorkingProjectsState extends State<WorkingProjects> {
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      controller: widget.scrollController,
-      itemCount: widget.projects?.length ?? 0,
-      itemBuilder: (context, index) {
-        // widget.projects![index].isLoading = false;
-        return StudentProjectItem(project: widget.projects![index]);
-      },
-    );
+    return widget.projects == null ||
+            (widget.projects != null && widget.projects!.isEmpty)
+        ? Container(
+            alignment: Alignment.center,
+            child: const Text("You have no working projects"))
+        : ListView.builder(
+            controller: widget.scrollController,
+            itemCount: widget.projects?.length ?? 0,
+            itemBuilder: (context, index) {
+              // widget.projects![index].isLoading = false;
+              return StudentProjectItem(project: widget.projects![index]);
+            },
+          );
   }
 }
 
@@ -243,15 +248,20 @@ class _ArchiveProjectsState extends State<ArchiveProjects> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      controller: widget.scrollController,
-      itemCount: widget.projects?.length ?? 0,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemBuilder: (context, index) {
-        // widget.projects![index].isLoading = false;
-        return StudentProjectItem(project: widget.projects![index]);
-      },
-    );
+    return widget.projects == null ||
+            (widget.projects != null && widget.projects!.isEmpty)
+        ? Container(
+            alignment: Alignment.center,
+            child: const Text("You have no archived projects"))
+        : ListView.builder(
+            controller: widget.scrollController,
+            itemCount: widget.projects?.length ?? 0,
+            physics: const AlwaysScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              // widget.projects![index].isLoading = false;
+              return StudentProjectItem(project: widget.projects![index]);
+            },
+          );
   }
 }
 
