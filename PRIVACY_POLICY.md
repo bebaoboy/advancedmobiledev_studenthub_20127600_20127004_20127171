@@ -37,7 +37,7 @@ The Service Provider may disclose User Provided and Automatically Collected Info
 
 The list of permissions required by the app can be found in the `AndroidManifest.xml` file:
 
-[Android Manifest file](https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/blob/main/android/app/src/main/AndroidManifest.xml#L7-L23)
+https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/blob/main/android/app/src/main/AndroidManifest.xml#L7-L23
 <br/>
 
 
