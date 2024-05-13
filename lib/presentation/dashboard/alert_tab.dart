@@ -653,7 +653,28 @@ class _AlertTabState extends State<AlertTab> {
         );
       });
     } else {
-      return Container();
+      return InkWell(
+        child: Stack(
+          children: [
+            Center(
+              child: Container(
+                margin: const EdgeInsets.only(left: 15, right: 15),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: HeroFlutterLogo(
+                    color: Colors.white,
+                    tag: -1,
+                    size: 145,
+                    onTap: () {
+                      // openOfferPage(index);
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
     }
   }
 
@@ -774,9 +795,9 @@ class _AlertTabState extends State<AlertTab> {
             Container(
                 margin: const EdgeInsets.only(top: 10, left: 0),
                 height: 110,
-                width: userStore.user!.type == UserType.student
+                width: (userStore.user!.type == UserType.student
                     ? MediaQuery.of(context).size.width - 150
-                    : MediaQuery.of(context).size.width - 20,
+                    : MediaQuery.of(context).size.width - 20) - (MediaQuery.of(context).size.width > 600 ? 135 : 0),
                 child: _datePickerSection()),
           ],
         ),

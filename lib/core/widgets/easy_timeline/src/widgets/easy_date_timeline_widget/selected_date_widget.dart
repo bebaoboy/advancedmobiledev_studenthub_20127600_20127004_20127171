@@ -32,7 +32,7 @@ class SelectedDateWidget extends StatelessWidget {
       child: Text(
         _getDateFormat(),
         style:
-            headerProps?.selectedDateStyle ?? EasyTextStyles.selectedDateStyle,
+            (headerProps?.selectedDateStyle ?? EasyTextStyles.selectedDateStyle).copyWith(color: Theme.of(context).colorScheme.onPrimary),
       ),
     );
   }

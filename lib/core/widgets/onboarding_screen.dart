@@ -63,8 +63,8 @@ class OnBoarding extends StatelessWidget {
         },
         controllerColor: Theme.of(context).colorScheme.primary,
         totalPage: 3,
-        headerBackgroundColor: Colors.white,
-        pageBackgroundColor: Colors.white,
+        headerBackgroundColor:Theme.of(context).colorScheme.background,
+        pageBackgroundColor: Theme.of(context).colorScheme.background,
         background: [
           Image.asset(
             'assets/images/slide_1.png',
@@ -89,9 +89,7 @@ class OnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(
-                  height: 480,
-                ),
+                
                 Text(
                   Lang.get("appbar_title"),
                   textAlign: TextAlign.center,
@@ -105,10 +103,10 @@ class OnBoarding extends StatelessWidget {
                   height: 20,
                 ),
                 Text(
-                  Lang.get('home_title'),
+                  "${Lang.get('home_title')}\n\n20127600 - 20127004 - 20127171",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.black,
+                    
                     fontSize: 13.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -124,9 +122,7 @@ class OnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(
-                  height: 480,
-                ),
+                
                 Text(
                   Lang.get("appbar_title"),
                   textAlign: TextAlign.center,
@@ -143,7 +139,7 @@ class OnBoarding extends StatelessWidget {
                   Lang.get('home_intro'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.black,
+                    
                     fontSize: 13.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -159,9 +155,7 @@ class OnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                const SizedBox(
-                  height: 480,
-                ),
+                
                 Text(
                   'Start now!',
                   textAlign: TextAlign.center,
@@ -178,7 +172,7 @@ class OnBoarding extends StatelessWidget {
                   Lang.get('home_description'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    color: Colors.black,
+                    
                     fontSize: 13.0,
                     fontWeight: FontWeight.w300,
                   ),

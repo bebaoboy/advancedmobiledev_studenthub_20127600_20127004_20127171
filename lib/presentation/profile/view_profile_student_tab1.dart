@@ -60,6 +60,10 @@ class _TechStackDropdownState extends State<TechStackDropdown> {
       onChanged: (p0) {
         widget.onListChangedCallback(p0);
       },
+      headerBuilder: (context, selectedItem) => Text(
+        selectedItem.name,
+        style: const TextStyle(color: Colors.grey),
+      ),
       noResultFoundText: Lang.get("nothing_here"),
       maxlines: 3,
       hintText: Lang.get('profile_choose_techstack'),
@@ -73,6 +77,7 @@ class _TechStackDropdownState extends State<TechStackDropdown> {
               Text(
                 item.name,
                 textAlign: TextAlign.start,
+                style: const TextStyle(color: Colors.grey),
               ),
             ],
           ),
@@ -365,11 +370,16 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                         ChipsInputState<Skill> state, Skill profile) {
                       return ListTile(
                         key: ObjectKey(profile),
-                        leading: const Icon(Icons.developer_mode),
-                        title: Text(profile.name),
+                        leading: const Icon(Icons.developer_mode,
+                            color: Colors.black),
+                        title: Text(
+                          profile.name,
+                          style: const TextStyle(color: Colors.black),
+                        ),
                         subtitle: Text(
                           "id: ${profile.description}",
-                          style: const TextStyle(fontSize: 11),
+                          style: const TextStyle(
+                              fontSize: 11, color: Colors.black),
                         ),
                         onTap: () => state.selectSuggestion(profile),
                       );
@@ -411,7 +421,6 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                   ),
                   Container(
                     decoration: const BoxDecoration(
-                        color: Colors.white70,
                         borderRadius: BorderRadius.all(Radius.circular(13))),
                     child: _buildLanguageField(),
                   ),
@@ -454,7 +463,6 @@ class _ProfileStudentScreenState extends State<ViewProfileStudentTab1> {
                   ),
                   Container(
                     decoration: const BoxDecoration(
-                        color: Colors.white70,
                         borderRadius: BorderRadius.all(Radius.circular(13))),
                     child: _buildEducationField(),
                   ),

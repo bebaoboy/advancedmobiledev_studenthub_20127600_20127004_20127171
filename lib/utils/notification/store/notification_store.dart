@@ -97,6 +97,9 @@ abstract class _NotificationStore with Store {
         },
       ).onError(
         (error, stackTrace) async {
+          log(error.toString());
+          log(stackTrace.toString());
+
           print("get noti from sharedpref");
           var s = await SharedPreferences.getInstance();
 
@@ -127,6 +130,7 @@ abstract class _NotificationStore with Store {
 
       return _notiList;
     } catch (e) {
+      log(e.toString());
       print("Cannot get notification for this receiverId");
     }
     setStateCb();
@@ -165,8 +169,8 @@ abstract class _NotificationStore with Store {
       var date = element.createdAt;
       if (date == null) continue;
       int diff = daysBetween(DateTime.now(), date);
-      if (diff > activeDates.length - 1) continue;
-      if (diff < -(activeDates.length)) continue;
+      if (diff > activeDates.length/2 - 1) continue;
+      if (diff < -(activeDates.length/2 - 1)) continue;
       // print(DateTime(date.year, date.month, date.day));
       // print(diff + (activeDates.length ~/ 2));
 
@@ -292,7 +296,7 @@ abstract class _NotificationStore with Store {
       'createdAt': DateTime.parse(element['createdAt']).toLocal(),
       'receiver': {
         "id": element['receiver']['id'].toString(),
-        "fullname": element['receiver']['fullName'].toString(),
+        "fullname": element['receiver']['fullname'].toString(),
       },
       'sender': {
         "id": element['sender']['id'].toString(),
