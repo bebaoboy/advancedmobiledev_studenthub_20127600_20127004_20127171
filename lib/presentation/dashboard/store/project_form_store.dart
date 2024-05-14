@@ -60,7 +60,7 @@ abstract class _ProjectFormStore with Store {
   String description = '';
 
   @observable
-  int numberOfStudents = 0;
+  int numberOfStudents = 1;
 
   @observable
   int projectScopeFlag = Scope.tight.index;
@@ -178,15 +178,17 @@ abstract class _ProjectFormStore with Store {
               companyId: companyId,
               enabled: Status.none,
               id: id));
-          // projectStore.updateCompanyProject(Project(
-          //     title: title,
-          //     description: description,
-          //     scope: Scope.values[projectScopeFlag],
-          //     timeCreated: DateTime.now(),
-          //     numberOfStudents: numberOfStudents,
-          //     companyId: companyId,
-          //     enabled: typeFlag ? Status.active : Status.inactive,
-          //     id: id));
+          projectStore.updateCompanyProject(Project(
+              title: title,
+              description: description,
+              scope: Scope.values[projectScopeFlag],
+              timeCreated: DateTime.now(),
+              numberOfStudents: numberOfStudents,
+              companyId: companyId,
+              enabled: Status.none,
+              id: id));
+          notification = "Post successfully";
+
           var updateStore = getIt<UpdateProjectFormStore>();
           // ignore: invalid_use_of_protected_member, invalid_use_of_visible_for_testing_member
           updateStore.updateResult.notifyListeners();
@@ -197,6 +199,7 @@ abstract class _ProjectFormStore with Store {
         var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       } else {
         success = false;
+        
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();
@@ -267,6 +270,7 @@ abstract class _ProjectFormStore with Store {
 
   @action
   void reset() {
+    print("reset store");
     success = false;
     title = '';
     description = '';

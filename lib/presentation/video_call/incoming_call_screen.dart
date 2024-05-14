@@ -113,7 +113,8 @@ class IncomingCallScreenState extends State<IncomingCallScreen> {
     // if (mounted) Navigator.pop(context);
   }
 
+
   Future<bool> _onBackPressed(BuildContext context) {
-    return Future.value(false);
+    return Future.value(true);
   }
 }

@@ -8,6 +8,7 @@ import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:toastification/toastification.dart';
 
@@ -55,13 +56,44 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
     return val;
   }
 
+  bool enabled = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _buildAppBar(context),
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
-        child: _buildBody(),
+        // ignore: deprecated_member_use
+        child: WillPopScope(
+            onWillPop: () async {
+              bool b = !enabled;
+              if (enabled) {
+                await showAnimatedDialog<bool>(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (BuildContext context) {
+                    return ClassicGeneralDialogWidget(
+                      contentText: Lang.get("discard_edit"),
+                      negativeText: Lang.get('cancel'),
+                      positiveText: 'OK',
+                      onPositiveClick: () {
+                        b = true;
+                        Navigator.of(context).pop();
+                      },
+                      onNegativeClick: () {
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                  animationType: DialogTransitionType.size,
+                  curve: Curves.fastOutSlowIn,
+                  duration: const Duration(seconds: 1),
+                );
+              }
+              return b;
+            },
+            child: _buildBody()),
       ),
     );
   }
@@ -372,7 +404,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                   border: OutlineInputBorder(
                       borderSide: BorderSide(color: Colors.black)),
                 ),
-                inputType: TextInputType.text,
+                inputType: TextInputType.multiline,
                 textController: controller3,
                 focusNode: descriptionFocusNode,
                 isIcon: false,
@@ -469,10 +501,12 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
             Align(
               alignment: Alignment.topLeft,
               child: Container(
-                constraints: const BoxConstraints(maxHeight: 400),
+                constraints: const BoxConstraints(maxHeight: 350),
                 child: SingleChildScrollView(
                   controller: ScrollController(),
-                  child: AutoSizeText(_projectFormStore.description),
+                  child: Text(
+                    _projectFormStore.description,
+                  ),
                 ),
               ),
             ),
@@ -530,25 +564,18 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                                 int.parse(controller2.text),
                                 _projectScope.index,
                                 true)
-                            .then((value) {
+                            .then((value) async {
                           if (_projectFormStore.success) {
+                            setState(() {
+                              enabled = false;
+                            });
+                            _projectFormStore.reset();
                             Toastify.show(
                                 context,
-                                "Update",
+                                Lang.get("result"),
                                 _projectFormStore.notification,
                                 ToastificationType.info, () {
                               _projectFormStore.reset();
-                            });
-                            _projectFormStore.reset();
-                            Future.delayed(const Duration(seconds: 1), () {
-                              Navigator.of(context).pop<Project>(Project(
-                                title: _projectFormStore.title,
-                                description: _projectFormStore.description,
-                                scope: _projectScope,
-                                numberOfStudents:
-                                    _projectFormStore.numberOfStudents,
-                                timeCreated: DateTime.now(),
-                              ));
                             });
                           } else {
                             Toastify.show(
@@ -558,6 +585,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                                 ToastificationType.error,
                                 () {});
                           }
+                          Navigator.of(context).pop();
                         });
                       }
                     },

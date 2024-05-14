@@ -227,9 +227,9 @@ class _OfferDetailsDialogState extends State<OfferDetailsDialog> {
                                                       'assets/animations/loading_animation.json',
                                                       fit: BoxFit.contain,
                                                     ),
-                                                    positiveText: "Delete",
+                                                    positiveText: "OK",
                                                     positiveIcon:
-                                                        Icons.delete_forever,
+                                                        Icons.done_all,
                                                     onPositiveClick: (context) {
                                                       widget.proposal[page]
                                                               .hiredStatus =

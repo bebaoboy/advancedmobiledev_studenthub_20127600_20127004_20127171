@@ -12,7 +12,6 @@ import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/entities.dart';
-import 'package:boilerplate/domain/entity/project/mockData.dart';
 import 'package:boilerplate/domain/entity/project/myMockData.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_list.dart';
@@ -283,7 +282,7 @@ class _DashBoardTabState extends State<DashBoardTab>
                                 .then((value) {
                               setState(() {
                                 if (value != null) {
-                                  allProjects.insert(0, value as Project);
+                                  // allProjects.insert(0, value as Project);
                                   //projectStore.companyProjects.insert(0, value);
                                   //_projectStore.addProject(value);
                                 }
