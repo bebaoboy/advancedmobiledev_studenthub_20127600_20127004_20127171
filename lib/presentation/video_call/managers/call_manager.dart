@@ -252,7 +252,6 @@ class CallManager {
     }
 
     log("device info enableCam=$isCameraEnabled, muteMic=$isMicMute, frontCam=$isFrontCameraUsed, speaker=$isSpeakerEnabled");
-    currentCallingKey = GlobalKey<ConversationCallScreenState>();
     if (incoming) {
       if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
         currentCall?.acceptCall();
@@ -514,9 +513,9 @@ class CallManager {
     if (currentIncomingKey.currentState != null) {
       Navigator.pop(currentIncomingKey.currentState!.context);
     }
-    if (currentCallingKey.currentState != null) {
-      Navigator.pop(currentCallingKey.currentState!.context);
-    }
+    // if (currentCallingKey.currentState != null) {
+    //   Navigator.pop(currentCallingKey.currentState!.context);
+    // }
     if (currentCall != null) {
       CallKitManager.instance.processCallFinished(currentCall!.sessionId);
       currentCall!.hungUp();

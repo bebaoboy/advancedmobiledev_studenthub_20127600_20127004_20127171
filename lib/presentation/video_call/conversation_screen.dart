@@ -75,6 +75,9 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
     _statsReportsManager.init(_callSession);
     _callSession.setSessionCallbacksListener(this);
 
+    CallManager.instance.currentCallingKey =
+        GlobalKey<ConversationCallScreenState>();
+
     if (_isIncoming) {
       if (_callSession.state == RTCSessionState.RTC_SESSION_NEW) {
         _callSession.acceptCall();
