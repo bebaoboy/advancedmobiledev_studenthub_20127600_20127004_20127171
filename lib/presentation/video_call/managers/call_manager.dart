@@ -438,6 +438,9 @@ class CallManager {
           //     child: ConversationCallScreen(_currentCall!, true),
           //   ),
           // );
+          if (currentIncomingKey.currentState != null) {
+            Navigator.pop(currentIncomingKey.currentState!.context);
+          }
           var context = NavigationService.navigatorKey.currentContext!;
           if (kIsWeb) {
             inAppPip = true;
@@ -505,6 +508,9 @@ class CallManager {
       currentCall!.reject();
       _sendEndCallSignalForOffliners(currentCall);
     } else {
+      if (currentIncomingKey.currentState != null) {
+        Navigator.pop(currentIncomingKey.currentState!.context);
+      }
       // Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }
@@ -514,9 +520,9 @@ class CallManager {
     if (currentIncomingKey.currentState != null) {
       Navigator.pop(currentIncomingKey.currentState!.context);
     }
-    if (currentCallingKey.currentState != null) {
-      Navigator.pop(currentCallingKey.currentState!.context);
-    }
+    // if (currentCallingKey.currentState != null) {
+    //   Navigator.pop(currentCallingKey.currentState!.context);
+    // }
     if (currentCall != null) {
       CallKitManager.instance.processCallFinished(currentCall!.sessionId);
       currentCall!.hungUp();

@@ -31,61 +31,61 @@ class IncomingCallScreenState extends State<IncomingCallScreen> {
         onWillPop: () => _onBackPressed(context),
         child: Scaffold(
             body: Container(
-              color: Colors.redAccent.shade100,
-              child: Center(
-                child: Column(
+          color: Colors.redAccent.shade100,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(36),
+                  child: Text(_getCallTitle(),
+                      style: const TextStyle(fontSize: 28)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 36, bottom: 8),
+                  child: Text(Lang.get('from'),
+                      style: const TextStyle(fontSize: 20)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 86),
+                  child: Text(widget.callerName,
+                      style: const TextStyle(fontSize: 18)),
+                ),
+                Row(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.all(36),
-                      child: Text(_getCallTitle(),
-                          style: const TextStyle(fontSize: 28)),
+                      padding: const EdgeInsets.only(right: 36),
+                      child: FloatingActionButton(
+                        heroTag: "RejectCall",
+                        backgroundColor: Colors.red,
+                        onPressed: () =>
+                            _rejectCall(context, widget._callSession),
+                        child: const Icon(
+                          Icons.call_end,
+                          color: Colors.amber,
+                        ),
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 36, bottom: 8),
-                      child: Text(Lang.get('from'),
-                          style: const TextStyle(fontSize: 20)),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 86),
-                      child: Text(widget.callerName,
-                          style: const TextStyle(fontSize: 18)),
-                    ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 36),
-                          child: FloatingActionButton(
-                            heroTag: "RejectCall",
-                            backgroundColor: Colors.red,
-                            onPressed: () =>
-                                _rejectCall(context, widget._callSession),
-                            child: const Icon(
-                              Icons.call_end,
-                              color: Colors.amber,
-                            ),
-                          ),
+                      padding: const EdgeInsets.only(left: 36),
+                      child: FloatingActionButton(
+                        heroTag: "AcceptCall",
+                        backgroundColor: Colors.green,
+                        onPressed: () =>
+                            _acceptCall(context, widget._callSession),
+                        child: const Icon(
+                          Icons.call,
+                          color: Colors.white,
                         ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 36),
-                          child: FloatingActionButton(
-                            heroTag: "AcceptCall",
-                            backgroundColor: Colors.green,
-                            onPressed: () =>
-                                _acceptCall(context, widget._callSession),
-                            child: const Icon(
-                              Icons.call,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            )));
+              ],
+            ),
+          ),
+        )));
   }
 
   _getCallTitle() {
@@ -104,16 +104,20 @@ class IncomingCallScreenState extends State<IncomingCallScreen> {
   }
 
   void _acceptCall(BuildContext context, P2PSession callSession) {
-    // if (mounted) Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(CallManager.instance.currentIncomingKey.currentContext!);
+    }
     CallManager.instance.acceptCall(callSession.sessionId, false);
   }
 
   void _rejectCall(BuildContext context, P2PSession callSession) {
     CallManager.instance.reject(callSession.sessionId, false);
-    // if (mounted) Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(CallManager.instance.currentIncomingKey.currentContext!);
+    }
   }
 
   Future<bool> _onBackPressed(BuildContext context) {
-    return Future.value(false);
+    return Future.value(true);
   }
 }

@@ -7,6 +7,7 @@ import 'package:boilerplate/presentation/login/store/login_store.dart';
 
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
 import 'package:boilerplate/utils/notification/store/notification_store.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 
 import 'package:flutter/foundation.dart' show ChangeNotifier, kIsWeb;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
@@ -94,6 +95,29 @@ class MessageNotifierProvider with ChangeNotifier {
         notiStore.addNofitication(data);
       }
 
+      Future.delayed(Duration.zero, () async {
+        try {
+          await FirebaseAnalytics.instance.logEvent(
+            name: "socket_notification_interview",
+            parameters: {
+              "user": "${userStore.user?.objectId} ${userStore.user?.name}",
+              "notification":
+                  "${data["notification"]["title"]} \nsend:${data["notification"]["senderId"]} \nrecv:${data["notification"]["receiverId"]}",
+            },
+          );
+        } catch (e) {
+          await FirebaseAnalytics.instance.logEvent(
+            name: "socket_notification_error",
+            parameters: {
+              "user": "${userStore.user?.objectId} ${userStore.user?.name}",
+              "notification":
+                  "${data["notification"]["title"]} \nsend:${data["notification"]["senderId"]} \nrecv:${data["notification"]["receiverId"]}",
+              "error": e.toString(),
+            },
+          );
+        }
+      });
+
       // print(data["notification"]['senderId'].toString());
       // var i = addInbox(data, inbox, true);
       // if (i != null) {
@@ -122,6 +146,28 @@ class MessageNotifierProvider with ChangeNotifier {
         }
         notifyListeners();
         notiStore.addNofitication(data);
+        Future.delayed(Duration.zero, () async {
+          try {
+            await FirebaseAnalytics.instance.logEvent(
+              name: "socket_notification",
+              parameters: {
+                "user": "${userStore.user?.objectId} ${userStore.user?.name}",
+                "notification":
+                    "${data["notification"]["title"]} \nsend:${data["notification"]["senderId"]} \nrecv:${data["notification"]["receiverId"]}",
+              },
+            );
+          } catch (e) {
+            await FirebaseAnalytics.instance.logEvent(
+              name: "socket_notification_error",
+              parameters: {
+                "user": "${userStore.user?.objectId} ${userStore.user?.name}",
+                "notification":
+                    "${data["notification"]["title"]} \nsend:${data["notification"]["senderId"]} \nrecv:${data["notification"]["receiverId"]}",
+                "error": e.toString(),
+              },
+            );
+          }
+        });
       });
     }
 

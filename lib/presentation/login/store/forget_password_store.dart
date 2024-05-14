@@ -84,6 +84,8 @@ abstract class _ForgetPasswordStore with Store {
         response.statusCode == HttpStatus.ok ||
         response.statusCode == HttpStatus.created) {
       mailSentSuccess = true;
+      changePassSuccess = false;
+      await saveShouldChangePass();
     } else {
       mailSentSuccess = false;
     }

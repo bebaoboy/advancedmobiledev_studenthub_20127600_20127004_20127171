@@ -103,11 +103,11 @@ abstract class _ProfileStudentFormStore with Store {
 
   @observable
   String? transcript;
-  String oldTranscript = "";
+  String? oldTranscript;
 
   @observable
   String? resume;
-  String oldResume = "";
+  String? oldResume;
 
   @observable
   bool success = false;
@@ -225,8 +225,8 @@ abstract class _ProfileStudentFormStore with Store {
 
     var userStore = getIt<UserStore>();
     if (userStore.user != null) {
-      oldResume = resumes ?? "";
-      oldTranscript = transcripts ?? "";
+      oldResume = resumes;
+      oldTranscript = transcripts;
       userStore.user!.studentProfile = StudentProfile(
           fullName: userStore.user!.name,
           skillSet: skillset,
@@ -437,16 +437,25 @@ abstract class _ProfileStudentFormStore with Store {
       });
       await _getResume("", id).then(
         (value) {
-          //print(value);
+          print(value);
+          if (value) {
+            resume = userStore.user!.studentProfile!.resume;
+            oldResume = resume;
+          }
         },
       );
 
       await _getTranscript("", id).then(
         (value) {
-          //print(value);
+          print(value);
+          if (value) {
+            transcript = userStore.user!.studentProfile!.transcript;
+            oldTranscript = transcript;
+          }
         },
       );
     } catch (e) {
+      print(e.toString());
       var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       var sp = await sharedPrefsHelper.studentProfile;
       if (sp != null) {
@@ -630,7 +639,7 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          //print("resume: ${value.data}");
+          print("resume: ${value.data}");
           try {
             var userStore = getIt<UserStore>();
             if (userStore.user != null &&
@@ -745,7 +754,7 @@ abstract class _ProfileStudentFormStore with Store {
             value.statusCode == HttpStatus.ok ||
             value.statusCode == HttpStatus.created) {
           success = true;
-          //print("transcript: ${value.data}");
+          print("transcript: ${value.data}");
           try {
             var userStore = getIt<UserStore>();
             if (userStore.user != null &&

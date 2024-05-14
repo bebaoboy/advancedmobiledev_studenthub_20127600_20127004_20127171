@@ -153,7 +153,7 @@ class _InputState extends State<Input> {
 
   Widget _inputBuilder() {
     final buttonPadding = Chat.theme.inputPadding.copyWith(left: 16, right: 16);
-    print(buttonPadding);
+    // print(buttonPadding);
 
     final textPadding = Chat.theme.inputPadding.copyWith(left: 0, right: 0).add(
           EdgeInsets.fromLTRB(

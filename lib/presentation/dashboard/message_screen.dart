@@ -97,7 +97,7 @@ class _MessageScreenState extends State<MessageScreen> {
     timer = Timer.periodic(const Duration(seconds: 3), (t) {
       Random r = Random();
       var num = r.nextInt(60);
-      print(num);
+      // print(num);
         if (num <= 30) {
           typings = [_user];
       //     typings = [

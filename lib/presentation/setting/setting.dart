@@ -4,6 +4,7 @@ import 'package:animated_tree_view/animated_tree_view.dart';
 import 'package:boilerplate/core/widgets/onboarding_screen.dart';
 import 'package:boilerplate/data/sharedpref/constants/preferences.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
+import 'package:boilerplate/presentation/dashboard/chat/widgets/chat.dart';
 import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
@@ -532,6 +533,15 @@ class _SettingScreenState extends State<SettingScreen> {
                 leading: const Icon(Icons.help_outline),
                 title: Text(
                   Lang.get('about'),
+                )),
+            ListTile(
+                leading: const Icon(Icons.privacy_tip),
+                onTap: () {
+                  logg(
+                      "https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/blob/change-app-name/PRIVACY_POLICY.md");
+                },
+                title: const Text(
+                  "Privacy Policy",
                 )),
             Visibility(
               visible: _userStore.isLoggedIn,
