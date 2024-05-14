@@ -252,6 +252,7 @@ class CallManager {
     }
 
     log("device info enableCam=$isCameraEnabled, muteMic=$isMicMute, frontCam=$isFrontCameraUsed, speaker=$isSpeakerEnabled");
+    currentCallingKey = GlobalKey<ConversationCallScreenState>();
     if (incoming) {
       if (AppLifecycleState.resumed != WidgetsBinding.instance.lifecycleState) {
         currentCall?.acceptCall();
@@ -437,6 +438,9 @@ class CallManager {
           //     child: ConversationCallScreen(_currentCall!, true),
           //   ),
           // );
+          if (currentIncomingKey.currentState != null) {
+            Navigator.pop(currentIncomingKey.currentState!.context);
+          }
           var context = NavigationService.navigatorKey.currentContext!;
           if (kIsWeb) {
             inAppPip = true;
@@ -504,6 +508,9 @@ class CallManager {
       currentCall!.reject();
       _sendEndCallSignalForOffliners(currentCall);
     } else {
+      if (currentIncomingKey.currentState != null) {
+        Navigator.pop(currentIncomingKey.currentState!.context);
+      }
       // Navigator.of(NavigationService.navigatorKey.currentContext!).pop();
     }
   }

@@ -37,10 +37,10 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
   final bool _isIncoming;
   final CubeStatsReportsManager _statsReportsManager =
       CubeStatsReportsManager();
-  late bool _isCameraEnabled;
-  late bool _isSpeakerEnabled;
-  late bool _isMicMute;
-  late bool _isFrontCameraUsed;
+  bool _isCameraEnabled = true;
+  bool _isSpeakerEnabled = true;
+  bool _isMicMute = false;
+  bool _isFrontCameraUsed = true;
   final int _currentUserId = CubeChatConnection.instance.currentUser!.id!;
 
   MapEntry<int, RTCVideoRenderer>? primaryRenderer;
@@ -53,7 +53,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
   ConversationCallScreenState(this._callSession, this._isIncoming)
       : _enableScreenSharing = !_callSession.startScreenSharing;
 
-  late Floating? floating;
+  Floating? floating;
 
   @override
   void initState() {
@@ -74,9 +74,6 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
     _callSession.onSessionClosed = _onSessionClosed;
     _statsReportsManager.init(_callSession);
     _callSession.setSessionCallbacksListener(this);
-
-    CallManager.instance.currentCallingKey =
-        GlobalKey<ConversationCallScreenState>();
 
     if (_isIncoming) {
       if (_callSession.state == RTCSessionState.RTC_SESSION_NEW) {

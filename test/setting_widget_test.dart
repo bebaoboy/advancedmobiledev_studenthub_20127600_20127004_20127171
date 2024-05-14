@@ -67,7 +67,7 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle(const Duration(seconds: 10));
 
-    expect(find.byType(ListTile), findsExactly(2));
+    expect(find.byType(ListTile), findsExactly(3));
 
     await tester.tap(find.text(Lang.get('setting_text')));
     await tester.pumpAndSettle(const Duration(seconds: 10));
