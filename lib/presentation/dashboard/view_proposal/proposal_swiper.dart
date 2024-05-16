@@ -116,11 +116,16 @@ class _ProposalSwiperState extends State<ProposalSwiper>
   }
 
   Future changeStatus(HireStatus status) async {
-    _projectStore.changeToStatus(
-        status, widget.project.proposal![_cardStateStore.index]);
-    widget.project.proposal![_cardStateStore.index].hiredStatus = status;
-    _projectStore.currentProps.proposals![_cardStateStore.index].hiredStatus =
-        status;
+    var p = widget.project.proposal!.indexWhere(
+      (element) => element.objectId == current.objectId,
+    );
+    if (p != -1) {
+      _projectStore.changeToStatus(
+          status, widget.project.proposal![p]);
+      widget.project.proposal![p].hiredStatus = status;
+      _projectStore.currentProps.proposals![p].hiredStatus =
+          status;
+    }
     setState(() {});
   }
 
@@ -440,9 +445,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
                 HireStatus.offer;
             widget.project.proposal![p].hiredStatus = HireStatus.offer;
             current.hiredStatus = HireStatus.offer;
-             await _projectStore.updateProposal(
-                 _projectStore.currentProps.proposals![p],
-                 _userStore.user!.studentProfile!.objectId!);
+            await _projectStore.updateProposal(
+                _projectStore.currentProps.proposals![p],
+                _userStore.user!.studentProfile!.objectId!);
             Toastify.show(context, "", "Sent hired successfully",
                 ToastificationType.success, () {});
           }
@@ -458,9 +463,9 @@ class _ProposalSwiperState extends State<ProposalSwiper>
             widget.project.proposal![p].hiredStatus = HireStatus.notHired;
             current.hiredStatus = HireStatus.notHired;
 
-             await _projectStore.updateProposal(
-                 _projectStore.currentProps.proposals![p],
-                 _userStore.user!.studentProfile!.objectId!);
+            await _projectStore.updateProposal(
+                _projectStore.currentProps.proposals![p],
+                _userStore.user!.studentProfile!.objectId!);
 
             Toastify.show(context, "", "Reject successfully",
                 ToastificationType.success, () {});

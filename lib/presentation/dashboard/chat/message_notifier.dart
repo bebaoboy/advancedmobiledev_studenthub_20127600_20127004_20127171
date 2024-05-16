@@ -2,7 +2,9 @@
 
 import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
 import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/domain/entity/chat/chat_list.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/chat/chat_store.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 
 import 'package:boilerplate/presentation/dashboard/chat/flutter_chat_types.dart';
@@ -137,6 +139,19 @@ class MessageNotifierProvider with ChangeNotifier {
             userStore.user!.objectId) return;
         if (data["notification"]["senderId"].toString() ==
             userStore.user!.objectId) return;
+
+        var message = data["message"];
+        if (message != null) {
+          var chatStore = getIt<ChatStore>();
+          chatStore.getMessageNotifiers(WrapMessageList(
+              project: Project(
+                  description: "",
+                  timeCreated: DateTime.now(),
+                  title: message["project"]?["title"] ?? "",
+                  id: message["projectId"].toString()),
+              chatUser: const ChatUser(id: "-1"),
+              messages: []));
+        }
 
         // print(data["notification"]['senderId'].toString());
         var i = addInbox(data, inbox,

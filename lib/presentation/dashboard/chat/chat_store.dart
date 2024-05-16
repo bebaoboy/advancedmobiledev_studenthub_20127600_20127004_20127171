@@ -62,6 +62,7 @@ abstract class _ChatStore with Store {
   Map<String, MessageNotifierProvider> _messageNotifiers = {};
   MessageNotifierProvider? getMessageNotifiers(WrapMessageList chatObject) {
     var p = _messageNotifiers[chatObject.project!.objectId];
+    print(chatObject.project!.objectId);
     if (p != null) {
       return p;
     } else {
@@ -121,7 +122,7 @@ abstract class _ChatStore with Store {
   Future<AbstractChatMessage?> addInbox(
       Map<String, dynamic> msg,
       List<AbstractChatMessage> _,
-      Project project,
+      Project pro,
       ChatUser user,
       bool isInterview) async {
     if (msg["notification"]["message"] == null) return null;
@@ -130,7 +131,26 @@ abstract class _ChatStore with Store {
     if (message["receiverId"].toString() != userStore.user!.objectId) {
       return null;
     }
+    var project = Project(
+        timeCreated: DateTime.now(),
+        title: message["project"]?["title"] ?? "",
+        description: "",
+        id: message["projectId"].toString());
     if (message["projectId"].toString() != project.objectId) {
+      // NotificationHelper.createMessageNotification(
+      //     id: rand.nextInt(100000),
+      //     projectId: project.objectId ?? "-1",
+      //     msg: MessageObject(
+      //         project: Project(
+      //             id: message["projectId"].toString(),
+      //             timeCreated: DateTime.now(),
+      //             title: "",
+      //             description: ""),
+      //         id: message["id"].toString(),
+      //         content: message["content"] ?? message["title"],
+      //         receiver: Profile(objectId: "-1", name: "Quan"),
+      //         sender:
+      //             Profile(objectId: user.id, name: user.firstName ?? "null")));
       return null;
     }
     String mess = message["id"].toString();
