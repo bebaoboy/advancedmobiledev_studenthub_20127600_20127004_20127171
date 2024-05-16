@@ -199,6 +199,7 @@ class Singapore extends State<MessageTab> {
                                   Positioned.fill(
                                     top: 30,
                                     child: ListView.separated(
+                                      physics: const AlwaysScrollableScrollPhysics(),
                                       controller: widget.scrollController,
                                       itemCount: chatStore.messages.length + 1,
                                       separatorBuilder: (context, index) =>

@@ -630,7 +630,7 @@ class _ProjectTabState extends State<ProjectTab> {
       }
     });
     Toastify.show(
-        context, "", "Loading project...", ToastificationType.info, () {});
+        context, "", Lang.get("loading"), ToastificationType.info, () {});
   }
 
   // ignore: prefer_final_fields
@@ -904,7 +904,7 @@ class _ProjectTabState extends State<ProjectTab> {
                 (a, b) => a.compareTo(b),
               );
               _list = l;
-              return Future.value(_list);
+              return Future.value(_list.where((element) => element.contains(p0),).toList());
             },
             hideSelectedFieldWhenExpanded: false,
             closedHeaderPadding: const EdgeInsets.only(left: 40),
