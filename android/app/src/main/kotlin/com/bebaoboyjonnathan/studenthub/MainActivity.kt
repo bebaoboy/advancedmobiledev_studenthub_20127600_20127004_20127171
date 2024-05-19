@@ -1,4 +1,4 @@
-package com.iotecksolutions.flutter_boilerplate_project
+package com.bebaoboyjonnathan.studenthub
 
 import io.flutter.embedding.android.FlutterActivity
 
