@@ -35,6 +35,12 @@ class AppThemeData {
 
   static ThemeData themeData(ColorScheme colorScheme) {
     return ThemeData(
+      // pageTransitionsTheme: const PageTransitionsTheme(
+      //   builders: <TargetPlatform, PageTransitionsBuilder>{
+      //     TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+      //   },
+      // ),
+
       colorScheme: colorScheme,
       textTheme: _textTheme,
       // Matches manifest.json colors and background color.

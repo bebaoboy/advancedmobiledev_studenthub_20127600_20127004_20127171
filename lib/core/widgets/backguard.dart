@@ -23,15 +23,23 @@ class _BackGuardState extends State<BackGuard> {
   DateTime oldTime = DateTime.now();
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (bool didPop) async {
+        if (didPop) {
+          return;
+        }
+        final NavigatorState navigator = Navigator.of(context);
+
         var newTime = DateTime.now();
         int difference = newTime.difference(oldTime).inMilliseconds;
         oldTime = newTime;
-        if (difference < widget.duration.inMilliseconds) {
+        final bool shouldPop = difference < widget.duration.inMilliseconds;
+
+        if (shouldPop) {
           print("exit diff $difference");
           ScaffoldMessenger.of(context).clearSnackBars();
-          return true;
+          navigator.pop();
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             dismissDirection: DismissDirection.none,
@@ -49,7 +57,6 @@ class _BackGuardState extends State<BackGuard> {
             showCloseIcon: true,
           ));
           oldTime = DateTime.now();
-          return false;
         }
       },
       child: widget.child,

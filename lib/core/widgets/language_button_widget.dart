@@ -1,9 +1,9 @@
+import 'package:boilerplate/core/widgets/material_dialog/dialog.dart' hide showDialog;
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/home/store/theme/theme_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:material_dialog/material_dialog.dart';
 
 class LanguageButton extends StatefulWidget {
   const LanguageButton({super.key});

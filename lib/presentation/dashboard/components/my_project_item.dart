@@ -1,7 +1,7 @@
-import 'package:animations/animations.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
+import 'package:boilerplate/core/widgets/open_container.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/presentation/dashboard/project_details.dart';

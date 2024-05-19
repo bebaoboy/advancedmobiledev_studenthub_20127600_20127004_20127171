@@ -267,7 +267,6 @@ class CallManager {
     } else {
       // this is CRUCIAL dont delete it //
       //
-      // TODO: lưu camera nào, speaker hay k bật, bật mic hay k
 
       P2PSession callSession =
           _callClient!.createCallSession(callType, opponents);

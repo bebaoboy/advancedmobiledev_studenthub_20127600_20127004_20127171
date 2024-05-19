@@ -8,7 +8,7 @@ import 'package:boilerplate/presentation/dashboard/store/project_form_store.dart
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:boilerplate/core/widgets/flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:toastification/toastification.dart';
 

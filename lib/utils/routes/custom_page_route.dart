@@ -1,5 +1,5 @@
+import 'package:boilerplate/core/widgets/swipable_page_route/src/page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
-import 'package:boilerplate/utils/routes/swipe_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

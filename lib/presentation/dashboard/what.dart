@@ -1,4 +1,5 @@
 // ignore_for_file: unused_field, must_be_immutable, prefer_final_fields, prefer_const_declarations, prefer_const_literals_to_create_immutables, sort_child_properties_last
+import 'package:boilerplate/core/widgets/flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/core/widgets/pip/pip_params.dart';
 import 'package:boilerplate/core/widgets/pip/pip_view_corner.dart';
@@ -21,7 +22,6 @@ import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
 import 'package:boilerplate/utils/routes/navbar_router.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
 import 'package:rxdart/rxdart.dart';
 

@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 import 'dart:ui' show lerpDouble;
 
-// ignore: depend_on_referenced_packages
 import 'package:black_hole_flutter/black_hole_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -375,7 +374,7 @@ extension BuildContextSwipeablePageRoute on BuildContext {
 // Mostly copies and modified variations of the private widgets related to
 // [CupertinoPageRoute].
 
-const double _kMinFlingVelocity = 0.01; // Screen widths per second.
+const double _kMinFlingVelocity = 1; // Screen widths per second.
 
 // An eyeballed value for the maximum time it takes for a page to animate
 // forward if the user releases a page mid swipe.
@@ -519,7 +518,7 @@ class _CupertinoBackGestureController<T> {
   /// The drag gesture has changed by [delta]. The total range of the
   /// drag should be 0.0 to 1.0.
   void dragUpdate(double delta) {
-    controller.value -= delta / 2;
+    controller.value -= delta;
   }
 
   /// The drag gesture has ended with a horizontal motion of [velocity] as a
@@ -537,11 +536,10 @@ class _CupertinoBackGestureController<T> {
     // If the user releases the page before mid screen with sufficient velocity,
     // or after mid screen, we should animate the page out. Otherwise, the page
     // should be animated back in.
-    print(controller.value);
     if (velocity.abs() >= _kMinFlingVelocity) {
       animateForward = velocity <= 0;
     } else {
-      animateForward = controller.value > 0.75;
+      animateForward = controller.value > 0.5;
     }
 
     if (animateForward) {

@@ -391,7 +391,7 @@ class _ProjectTabsState extends State<ProjectTabs> {
             backgroundColor: Colors.grey.shade300,
             selectedTabTextColor: Colors.white,
             textStyle:
-                Theme.of(context).textTheme.bodyText1!.copyWith(fontSize: 14),
+                Theme.of(context).textTheme.bodyLarge!.copyWith(fontSize: 14),
             tabs: const [
               SegmentTab(
                 label: 'All projects',

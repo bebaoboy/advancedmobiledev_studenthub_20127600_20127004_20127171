@@ -201,8 +201,6 @@ abstract class _ProjectStore with Store {
                 // }
               }
 
-              // TODO: remove if reject (disableFlag)
-
               sharedPrefsHelper.saveStudentProjects(ProposalList(
                   proposals: userStore.user!.studentProfile!.proposalProjects));
 

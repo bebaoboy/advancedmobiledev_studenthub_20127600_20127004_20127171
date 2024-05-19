@@ -11,7 +11,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:boilerplate/core/widgets/flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,16 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
     Future.delayed(const Duration(milliseconds: 500), () {
       try {
         if (_userStore.shouldChangePass) {
-          Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute2(
-              routeName: Routes.forgetPasswordChangePassword), (_) => false);
+          Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute2(
+                  routeName: Routes.forgetPasswordChangePassword),
+              (_) => false);
         } else if (_userStore.user != null &&
             _userStore.user!.type != UserType.naught &&
             _userStore.user!.email.isNotEmpty) {
           print("switch account navigate home");
           Future.delayed(const Duration(seconds: 1), () {
             Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute2(routeName: Routes.dashboard), (_) => false
-            );
+                MaterialPageRoute2(routeName: Routes.dashboard), (_) => false);
           });
         } else {
           if (mounted) {
@@ -120,9 +121,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   }
                                   Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute2(
-                                        routeName: Routes.dashboard), (_) => false
-                                  );
+                                      MaterialPageRoute2(
+                                          routeName: Routes.dashboard),
+                                      (_) => false);
                                 } else {
                                   showAnimatedDialog(
                                     context: context,
@@ -185,9 +186,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     );
                                   }
                                   Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute2(
-                                        routeName: Routes.dashboard), (_) => false
-                                  );
+                                      MaterialPageRoute2(
+                                          routeName: Routes.dashboard),
+                                      (_) => false);
                                 } else {
                                   showAnimatedDialog(
                                     context: context,
