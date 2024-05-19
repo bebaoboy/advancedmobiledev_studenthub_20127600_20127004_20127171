@@ -147,7 +147,7 @@ class _ProjectDetailsPageState extends State<ProjectDetailsPage> {
                 backgroundColor: Colors.grey.shade300,
                 textStyle: Theme.of(context)
                     .textTheme
-                    .bodyText1
+                    .bodyLarge
                     ?.copyWith(fontSize: 12),
                 //.copyWith(fontSize: 11.7),
                 tabs: [

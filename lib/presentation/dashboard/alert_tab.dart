@@ -1048,7 +1048,7 @@ class _CustomProposalNotificationState
                       Text(widget.notificationObject.sender.getName,
                           style: Theme.of(context)
                               .textTheme
-                              .headline3!
+                              .displaySmall!
                               .copyWith(fontSize: 13)),
                       const Spacer(),
                       Container(
@@ -1063,7 +1063,7 @@ class _CustomProposalNotificationState
                                 .toString(),
                             style: Theme.of(context)
                                 .textTheme
-                                .headline3!
+                                .displaySmall!
                                 .copyWith(
                                     fontSize: 9, fontWeight: FontWeight.w300)),
                       )
@@ -1079,7 +1079,7 @@ class _CustomProposalNotificationState
                         maxFontSize: 10,
                         minFontSize: 9,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyText1!),
+                        style: Theme.of(context).textTheme.bodyLarge!),
                   ),
                   const SizedBox(
                     height: 5,
@@ -1092,7 +1092,7 @@ class _CustomProposalNotificationState
                         maxFontSize: 10,
                         minFontSize: 9,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyText1!),
+                        style: Theme.of(context).textTheme.bodyLarge!),
                   ),
                 ],
               ),
@@ -1209,7 +1209,7 @@ class _CustomInterviewNotificationState
                       Text(widget.notificationObject.sender.getName,
                           style: Theme.of(context)
                               .textTheme
-                              .headline3!
+                              .displaySmall!
                               .copyWith(fontSize: 13)),
                       const Spacer(),
                       Container(
@@ -1224,7 +1224,7 @@ class _CustomInterviewNotificationState
                                 .toString(),
                             style: Theme.of(context)
                                 .textTheme
-                                .headline3!
+                                .displaySmall!
                                 .copyWith(
                                     fontSize: 9, fontWeight: FontWeight.w300)),
                       )
@@ -1242,7 +1242,7 @@ class _CustomInterviewNotificationState
                         maxFontSize: 10,
                         minFontSize: 9,
                         overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodyText1!),
+                        style: Theme.of(context).textTheme.bodyLarge!),
                   ),
                   if (interview != null) ...[
                     const SizedBox(
@@ -1255,7 +1255,7 @@ class _CustomInterviewNotificationState
                           maxFontSize: 10,
                           minFontSize: 9,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyText1!),
+                          style: Theme.of(context).textTheme.bodyLarge!),
                     ),
                     const SizedBox(
                       height: 5,
@@ -1267,7 +1267,7 @@ class _CustomInterviewNotificationState
                           maxFontSize: 10,
                           minFontSize: 9,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyText1!),
+                          style: Theme.of(context).textTheme.bodyLarge!),
                     ),
                     const SizedBox(
                       height: 5,
@@ -1281,7 +1281,7 @@ class _CustomInterviewNotificationState
                           maxFontSize: 10,
                           minFontSize: 9,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyText1!),
+                          style: Theme.of(context).textTheme.bodyLarge!),
                     ),
                     const SizedBox(
                       height: 5,
@@ -1295,7 +1295,7 @@ class _CustomInterviewNotificationState
                           maxFontSize: 10,
                           minFontSize: 9,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyText1!),
+                          style: Theme.of(context).textTheme.bodyLarge!),
                     ),
                   ]
                 ],
@@ -1466,14 +1466,14 @@ class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
                             text: widget.notificationObject.sender.getName,
                             style: Theme.of(context)
                                 .textTheme
-                                .headline3!
+                                .displaySmall!
                                 .copyWith(fontSize: 13),
                             children: [
                               TextSpan(
                                 text: " and ",
                                 style: Theme.of(context)
                                     .textTheme
-                                    .bodyText1!
+                                    .bodyLarge!
                                     .copyWith(fontSize: 9),
                               ),
                               const TextSpan(text: "you")
@@ -1492,7 +1492,7 @@ class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
                                 .toString(),
                             style: Theme.of(context)
                                 .textTheme
-                                .headline3!
+                                .displaySmall!
                                 .copyWith(
                                     fontSize: 9, fontWeight: FontWeight.w300)),
                       ),
@@ -1504,7 +1504,7 @@ class _CustomMessageNotifcationState extends State<CustomMessageNotifcation> {
                   Text(widget.notificationObject.content,
                       style: Theme.of(context)
                           .textTheme
-                          .bodyText1!
+                          .bodyLarge!
                           .copyWith(fontSize: 10))
                 ],
               ),
@@ -1552,7 +1552,7 @@ class _AlertPageState extends State<AlertPage> {
                 Lang.get("nothing_here"),
                 style: Theme.of(context)
                     .textTheme
-                    .headline1!
+                    .displayLarge!
                     .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
               ),
             )
@@ -1585,7 +1585,7 @@ class _AlertPageState extends State<AlertPage> {
                             year.title,
                             style: Theme.of(context)
                                 .textTheme
-                                .headline1!
+                                .displayLarge!
                                 .copyWith(
                                     fontSize: 25, fontWeight: FontWeight.bold),
                           ),
@@ -1953,7 +1953,6 @@ class GroupedScrollView<T, H> extends StatelessWidget {
     realKeys = List.generate(keys.length, (i) => null);
     final groups = keys.length;
     // print("build chips");
-    // TODO: chips are always built = not good
     slivers.add(SliverPinnedHeader(
       child: Container(
         color: Theme.of(context).colorScheme.background,

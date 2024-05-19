@@ -234,8 +234,6 @@ abstract class _ChatStore with Store {
         );
         return m;
       } else {
-        // TODO: làm bấm vô nó vào msg
-
         // interview msg
         // var id = message["interviewId"].toString();
         // var projectStore = getIt<ChatStore>();
@@ -331,6 +329,7 @@ abstract class _ChatStore with Store {
     } else {
       print("trùng message id ${message["id"]}");
       if (isInterview) {
+        // ignore: no_wildcard_variable_uses
         updateInterviewById(msg, _, project, user);
       }
       return null;

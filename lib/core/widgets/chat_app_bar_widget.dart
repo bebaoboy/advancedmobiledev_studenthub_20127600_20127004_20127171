@@ -1,9 +1,9 @@
 import 'package:boilerplate/core/widgets/menu_bottom_sheet.dart';
+import 'package:boilerplate/core/widgets/swipable_page_route/swipeable_page_route.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
   const ChatAppBar(

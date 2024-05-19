@@ -1,8 +1,8 @@
 // ignore_for_file: deprecated_member_use
 
-import 'package:animations/animations.dart';
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
+import 'package:boilerplate/core/widgets/open_container.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/user/user.dart';
@@ -248,7 +248,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       Text(updatedText,
                           style: Theme.of(context)
                               .textTheme
-                              .bodyText1!
+                              .bodyLarge!
                               .copyWith(fontSize: 12)),
                       AutoSizeText(
                         maxFontSize: 14,
@@ -323,7 +323,7 @@ class _ProjectItem2State extends State<ProjectItem2> {
                         proposalText,
                         style: Theme.of(context)
                             .textTheme
-                            .bodyText1!
+                            .bodyLarge!
                             .copyWith(fontSize: 14.0),
                       ),
                     ],

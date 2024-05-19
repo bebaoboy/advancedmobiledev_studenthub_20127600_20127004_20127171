@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:badges/badges.dart';
+import 'package:boilerplate/core/widgets/swipable_page_route/swipeable_page_route.dart';
 
 import 'package:boilerplate/core/widgets/material_dialog/dialog_buttons.dart';
 import 'package:boilerplate/core/widgets/material_dialog/dialog_widget.dart';
@@ -18,7 +19,6 @@ import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 class MainAppBar extends StatefulWidget implements PreferredSizeWidget {
   const MainAppBar(
@@ -52,6 +52,8 @@ class _MainAppBarState extends State<MainAppBar> {
       onPressed: () {
         Navigator.of(context)
             .push(MaterialPageRoute2(routeName: Routes.setting));
+        // Navigator.of(context)
+        //     .push(MaterialPageRoute(builder: (context) => SettingScreen()));
       },
       icon: const Icon(Icons.account_circle, size: 25),
     );

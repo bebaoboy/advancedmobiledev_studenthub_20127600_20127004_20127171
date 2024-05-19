@@ -349,10 +349,9 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
-      child: Scaffold(
+    return Scaffold(
         backgroundColor: _themeStore.darkMode ? Colors.black : Colors.white,
-        body: FancyBackgroundApp(
+        body: BackGuard( child: FancyBackgroundApp(
           child: GestureDetector(
             onTap: () {},
             child: Center(

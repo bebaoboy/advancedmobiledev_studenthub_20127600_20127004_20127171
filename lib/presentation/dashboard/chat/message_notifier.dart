@@ -64,6 +64,7 @@ class MessageNotifierProvider with ChangeNotifier {
 
     // textSocketHandler.connect();
 
+    // ignore: no_wildcard_variable_uses
     textSocketHandler.onerror((_) => print("error $_"));
     textSocketHandler.onConnect((_) {
       print('connect socket ${project?.objectId}');

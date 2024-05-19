@@ -2,10 +2,10 @@ import 'package:boilerplate/core/extensions/cap_extension.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
+import 'package:boilerplate/presentation/dashboard/project_details_student.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/presentation/my_app.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:toastification/toastification.dart';
@@ -52,8 +52,10 @@ class _StudentProjectItemState extends State<StudentProjectItem> {
           onTap: () {
             if (widget.project.project != null) {
               Navigator.of(NavigationService.navigatorKey.currentContext!)
-                  .pushNamed(Routes.projectDetailsStudent,
-                      arguments: {"project": widget.project.project!});
+                  .push(MaterialPageRoute(
+                      builder: (context) => ProjectDetailsStudentScreen(
+                            project: widget.project.project!,
+                          )));
             } else {
               Toastify.show(context, Lang.get("error"), "Project is null",
                   ToastificationType.error, () {},

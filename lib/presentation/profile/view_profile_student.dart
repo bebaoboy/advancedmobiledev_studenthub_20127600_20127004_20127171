@@ -15,7 +15,7 @@ import 'package:boilerplate/presentation/profile/view_profile_student_tab3.dart'
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/page_transformer.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:boilerplate/core/widgets/flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../di/service_locator.dart';

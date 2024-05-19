@@ -77,3 +77,6 @@ build/
 .flutter-plugins-dependencies
 ios/Flutter/flutter_export_environment.sh
 android/gradle/wrapper/gradle-wrapper.properties
+
+# FVM Version Cache
+.fvm/

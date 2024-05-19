@@ -9,7 +9,7 @@ import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:boilerplate/core/widgets/flutter_animated_dialog/flutter_animated_dialog.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key, this.newRole = false});
@@ -49,10 +49,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: Padding(
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: BackGuard(
+        child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Align(
             alignment: Alignment.topCenter,

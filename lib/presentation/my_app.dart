@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:navigation_history_observer/navigation_history_observer.dart';
 import 'package:toastification/toastification.dart';
 
 import '../di/service_locator.dart';
@@ -51,7 +52,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     onGenerateRoute = (settings) {
-      print((settings.name ?? "") + settings.arguments.toString());
+      print("current route: ${(settings.name ?? "")} ${settings.arguments}");
       return MaterialPageRoute2(
           routeName: settings.name ?? Routes.splash,
           arguments:
@@ -74,6 +75,16 @@ class _MyAppState extends State<MyApp> {
 
     if (!kIsWeb) requestNotificationsPermission();
     // initPlatformState();
+    NavigationHistoryObserver().historyChangeStream.listen((change) {
+      print("\n");
+      var h = (change as HistoryChange);
+      print(
+          "route action: ${h.action}, old: ${h.oldRoute?.settings}, new: ${h.newRoute?.settings}");
+      print("route history: ${NavigationHistoryObserver().history.map(
+            (p0) => p0.settings,
+          )}");
+      print("\n");
+    });
     super.initState();
   }
 
@@ -94,6 +105,7 @@ class _MyAppState extends State<MyApp> {
             PointerDeviceKind.touch,
             PointerDeviceKind.trackpad
           }, physics: kIsWeb ? const BouncingScrollPhysics() : null),
+          navigatorObservers: [NavigationHistoryObserver()],
           themeAnimationDuration: const Duration(milliseconds: 500),
           animationType: AnimationType.CIRCULAR_ANIMATED_THEME,
           animationDuration: const Duration(milliseconds: 500),

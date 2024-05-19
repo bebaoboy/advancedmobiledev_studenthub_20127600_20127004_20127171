@@ -13,7 +13,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animated_dialog/flutter_animated_dialog.dart';
+import 'package:boilerplate/core/widgets/flutter_animated_dialog/flutter_animated_dialog.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../di/service_locator.dart';
@@ -200,7 +200,8 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
                                 ..onTap = () {
                                   Navigator.of(context).pushAndRemoveUntil(
                                       MaterialPageRoute2(
-                                          routeName: Routes.signUpCompany), (_) => false);
+                                          routeName: Routes.signUpCompany),
+                                      (_) => false);
                                 }),
                         ],
                       ),

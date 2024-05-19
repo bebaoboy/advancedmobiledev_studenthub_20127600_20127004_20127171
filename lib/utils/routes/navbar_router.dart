@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
 
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_item.dart';
@@ -84,6 +84,7 @@ enum BackButtonBehavior {
   rememberHistory
 }
 
+@Deprecated("Use NavbarRouter2 instead")
 class NavbarRouter extends StatefulWidget {
   /// The destination to show when the user taps the [NavbarItem]
   /// destination also defines the list of Nested destination sand the navbarItem associated with it

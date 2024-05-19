@@ -7,7 +7,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
+import 'package:boilerplate/core/widgets/swipable_page_route/swipeable_page_route.dart';
 
 class EmptyAppBar extends StatelessWidget implements PreferredSizeWidget {
   const EmptyAppBar({super.key});
