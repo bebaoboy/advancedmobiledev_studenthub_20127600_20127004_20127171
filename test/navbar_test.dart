@@ -155,39 +155,41 @@ void main() async {
           textDirection: TextDirection.ltr,
           child: MediaQuery(
               data: MediaQueryData(size: size),
-              child: NavbarRouter2(
-                errorBuilder: (context) {
-                  return const Center(child: Text('Error 404'));
-                },
-                onChanged: onChanged,
-                onCurrentTabClicked: onCurrentTabClicked,
-                onBackButtonPressed: (isExiting) {
-                  return isExiting;
-                },
-                initialIndex: index,
-                type: type,
-                backButtonBehavior: behavior,
-                isDesktop: isDesktop,
-                destinationAnimationCurve: Curves.fastOutSlowIn,
-                destinationAnimationDuration: 200,
-                decoration: decoration ??
-                    NavbarDecoration(
-                        navbarType: BottomNavigationBarType.shifting),
-                destinations: [
-                  for (int i = 0; i < navBarItems.length; i++)
-                    DestinationRouter(
-                      navbarItem: navBarItems[i],
-                      destinations: [
-                        for (int j = 0; j < routes[i].keys.length; j++)
-                          Destination(
-                            route: routes[i].keys.elementAt(j),
-                            widget: routes[i].values.elementAt(j),
-                          ),
-                      ],
-                      initialRoute: routes[i].keys.first,
-                    ),
-                ],
-                pageController: pageController2,
+              child: Scaffold(
+                bottomNavigationBar: NavbarRouter2(
+                  errorBuilder: (context) {
+                    return const Center(child: Text('Error 404'));
+                  },
+                  onChanged: onChanged,
+                  onCurrentTabClicked: onCurrentTabClicked,
+                  onBackButtonPressed: (isExiting) {
+                    return isExiting;
+                  },
+                  initialIndex: index,
+                  type: type,
+                  backButtonBehavior: behavior,
+                  isDesktop: isDesktop,
+                  destinationAnimationCurve: Curves.fastOutSlowIn,
+                  destinationAnimationDuration: 200,
+                  decoration: decoration ??
+                      NavbarDecoration(
+                          navbarType: BottomNavigationBarType.shifting),
+                  destinations: [
+                    for (int i = 0; i < navBarItems.length; i++)
+                      DestinationRouter(
+                        navbarItem: navBarItems[i],
+                        destinations: [
+                          for (int j = 0; j < routes[i].keys.length; j++)
+                            Destination(
+                              route: routes[i].keys.elementAt(j),
+                              widget: routes[i].values.elementAt(j),
+                            ),
+                        ],
+                        initialRoute: routes[i].keys.first,
+                      ),
+                  ],
+                  pageController: pageController2,
+                ),
               ))),
     );
   }
