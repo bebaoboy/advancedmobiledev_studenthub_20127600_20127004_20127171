@@ -48,6 +48,7 @@
         android:exported="true" 
         android:hardwareAccelerated="true"              
         android:supportsPictureInPicture="true"
+        android:enableOnBackInvokedCallback="true"
         android:launchMode="singleTop" 
         android:theme="@style/LaunchTheme" android:windowSoftInputMode="adjustResize">
             <!-- This keeps the window background of the activity showing

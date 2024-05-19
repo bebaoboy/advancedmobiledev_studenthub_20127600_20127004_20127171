@@ -82,14 +82,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
-      child: Scaffold(
-        appBar: const EmptyAppBar(),
-        body: _buildBody(),
-        endDrawer: const SettingScreenDrawer(),
-        // drawer: const SettingScreenDrawer(),
-        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
-      ),
+    return Scaffold(
+      appBar: const EmptyAppBar(),
+      body: BackGuard(child: _buildBody()),
+      endDrawer: const SettingScreenDrawer(),
+      // drawer: const SettingScreenDrawer(),
+      drawerEdgeDragWidth: MediaQuery.of(context).size.width,
     );
   }
 

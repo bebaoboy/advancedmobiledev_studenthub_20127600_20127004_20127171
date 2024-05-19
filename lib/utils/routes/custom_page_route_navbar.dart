@@ -1,6 +1,7 @@
-// ignore_for_file: overridden_fields, must_be_immutable
+// ignore_for_file: overridden_fields, must_be_immutable, deprecated_member_use_from_same_package
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/presentation/dashboard/favorite_project.dart';
 import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -693,9 +694,9 @@ class _NavbarRouterState extends State<NavbarRouter2>
 
   @override
   Widget build(BuildContext context) {
-    // print("build nav");
+    print("build nav");
     // ignore: deprecated_member_use
-    return WillPopScope(
+    return BackGuard(
         onWillPop: () async {
           final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
               behavior: widget.backButtonBehavior);
@@ -705,6 +706,7 @@ class _NavbarRouterState extends State<NavbarRouter2>
               //return false;
             }
           }
+          print(isExitingApp);
           final bool value = widget.onBackButtonPressed!(isExitingApp);
           setState(() {
             // NavbarNotifier2.index = NavbarNotifier2.currentIndex;

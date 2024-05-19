@@ -720,8 +720,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     Navigator.of(subtreeContext!).pop(returnValue);
   }
 
-  Widget _defaultTransition(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget _defaultTransition(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     return Align(
       alignment: Alignment.topLeft,
       child: AnimatedBuilder(
@@ -846,17 +845,16 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
 
   // TODO(justinmc): Make it transition from the pback transition into the opencontainer transition.
   @override
-  Widget buildTransitions(BuildContext context, Animation<double> animation,
-      Animation<double> secondaryAnimation, Widget child) {
+  Widget buildTransitions(BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation, Widget child) {
     // TODO(justinmc): This does the normal open container transition.
-
-    // return _defaultTransition(
-    //   context,
-    //   animation,
-    //   secondaryAnimation,
-    //   child,
-    // );
-
+    
+    return _defaultTransition(
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+    
     return _PredictiveBackGestureDetector(
       route: this,
       builder: (BuildContext context) {
@@ -868,10 +866,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           child,
         );
 
-        print(
-            'justin buildTransitions popInProgress? $popGestureInProgress. isAnimating? ${animation.status} ${secondaryAnimation.status}');
-        if (popGestureInProgress &&
-            animation.status == AnimationStatus.forward) {
+        print('justin buildTransitions popInProgress? $popGestureInProgress. isAnimating? ${animation.status} ${secondaryAnimation.status}');
+        if (popGestureInProgress && animation.status == AnimationStatus.forward) {
           return _PredictiveBackOpenContainerPageTransition(
             animation: animation,
             secondaryAnimation: secondaryAnimation,
@@ -1071,13 +1067,14 @@ class _PredictiveBackGestureDetector extends StatefulWidget {
       _PredictiveBackGestureDetectorState();
 }
 
-class _PredictiveBackGestureDetectorState
-    extends State<_PredictiveBackGestureDetector> with WidgetsBindingObserver {
+class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDetector>
+    with WidgetsBindingObserver {
   bool _gestureInProgress = false;
 
   /// True when the predictive back gesture is enabled.
   bool get _isEnabled {
-    return widget.route.isCurrent && widget.route.popGestureEnabled;
+    return widget.route.isCurrent
+        && widget.route.popGestureEnabled;
   }
 
   /// The back event when the gesture first started.
@@ -1122,8 +1119,7 @@ class _PredictiveBackGestureDetectorState
       return false;
     }
 
-    widget.route
-        .handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
+    widget.route.handleUpdateBackGestureProgress(progress: 1 - backEvent.progress);
     currentBackEvent = backEvent;
     return true;
   }
@@ -1190,8 +1186,7 @@ class _PredictiveBackOpenContainerPageTransition extends StatelessWidget {
     final double screenWidth = size.width;
     final double xShift = (screenWidth / 20) - 8;
 
-    final Animatable<double> xShiftTween =
-        Tween<double>(begin: xShift, end: 0.0);
+    final Animatable<double> xShiftTween = Tween<double>(begin: xShift, end: 0.0);
     final Animatable<double> scaleTween = Tween<double>(begin: 0.95, end: 1.0);
 
     return Transform.translate(

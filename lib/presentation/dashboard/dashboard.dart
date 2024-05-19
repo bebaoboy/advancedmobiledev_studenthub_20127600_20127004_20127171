@@ -114,7 +114,6 @@ class _DashBoardScreenState extends State<DashBoardScreen>
   final LanguageStore _languageStore = getIt<LanguageStore>();
   final _themeStore = getIt<ThemeStore>();
 
-
   initItems() {
     items = [
       NavbarItem(
@@ -190,27 +189,7 @@ class _DashBoardScreenState extends State<DashBoardScreen>
           NavbarNotifier2.hideBottomNavBar = false;
         },
         onBackButtonPressed: (isExiting) {
-          if (isExiting) {
-            var newTime = DateTime.now();
-            int difference = newTime.difference(oldTime).inMilliseconds;
-            oldTime = newTime;
-            if (difference < 1000) {
-              NavbarNotifier2.hideSnackBar(context);
-              return true;
-            } else {
-              NavbarNotifier2.showSnackBar(
-                context,
-                Lang.get("exit_confirm"),
-
-                /// offset from bottom of the screen
-                ///
-              );
-              oldTime = DateTime.now();
-              return false;
-            }
-          } else {
-            return isExiting;
-          }
+          return isExiting;
         },
         destinationAnimationCurve: Curves.fastOutSlowIn,
         destinationAnimationDuration: 200,

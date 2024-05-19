@@ -119,8 +119,10 @@ dependencies:
   meta:  
   mockito: 
   material_floating_search_bar_2:
+  move_to_background:
   # N
   # navbar_router:
+  navigation_history_observer:
   # O
   open_filex: ^4.4.0
   objectid:

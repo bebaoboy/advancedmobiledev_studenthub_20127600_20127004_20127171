@@ -64,10 +64,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
-      child: Scaffold(
+    return Scaffold(
         appBar: _buildAppBar(),
-        body: !enabled
+        body: BackGuard( child: !enabled
             ? const Center(
                 child: LoadingScreenWidget(
                   size: 80,

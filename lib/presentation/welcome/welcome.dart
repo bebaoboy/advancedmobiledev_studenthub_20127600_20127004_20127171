@@ -49,10 +49,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
-      child: Scaffold(
-        appBar: _buildAppBar(),
-        body: Padding(
+    return Scaffold(
+      appBar: _buildAppBar(),
+      body: BackGuard(
+        child: Padding(
           padding: const EdgeInsets.all(30.0),
           child: Align(
             alignment: Alignment.topCenter,
