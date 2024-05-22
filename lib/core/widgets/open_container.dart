@@ -855,30 +855,30 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
       child,
     );
     
-    return _PredictiveBackGestureDetector(
-      route: this,
-      builder: (BuildContext context) {
-        // TODO(justinmc): Name? And should be in buildPage or no?
-        final Widget backlessChild = _defaultTransition(
-          context,
-          animation,
-          secondaryAnimation,
-          child,
-        );
+    // return _PredictiveBackGestureDetector(
+    //   route: this,
+    //   builder: (BuildContext context) {
+    //     // TODO(justinmc): Name? And should be in buildPage or no?
+    //     final Widget backlessChild = _defaultTransition(
+    //       context,
+    //       animation,
+    //       secondaryAnimation,
+    //       child,
+    //     );
 
-        print('justin buildTransitions popInProgress? $popGestureInProgress. isAnimating? ${animation.status} ${secondaryAnimation.status}');
-        if (popGestureInProgress && animation.status == AnimationStatus.forward) {
-          return _PredictiveBackOpenContainerPageTransition(
-            animation: animation,
-            secondaryAnimation: secondaryAnimation,
-            getIsCurrent: () => isCurrent,
-            child: child,
-          );
-        }
+    //     print('justin buildTransitions popInProgress? $popGestureInProgress. isAnimating? ${animation.status} ${secondaryAnimation.status}');
+    //     if (popGestureInProgress && animation.status == AnimationStatus.forward) {
+    //       return _PredictiveBackOpenContainerPageTransition(
+    //         animation: animation,
+    //         secondaryAnimation: secondaryAnimation,
+    //         getIsCurrent: () => isCurrent,
+    //         child: child,
+    //       );
+    //     }
 
-        return backlessChild;
-      },
-    );
+    //     return backlessChild;
+    //   },
+    // );
   }
 
   @override
@@ -1168,6 +1168,7 @@ class _PredictiveBackGestureDetectorState extends State<_PredictiveBackGestureDe
   }
 }
 
+// ignore: unused_element
 class _PredictiveBackOpenContainerPageTransition extends StatelessWidget {
   const _PredictiveBackOpenContainerPageTransition({
     required this.animation,
