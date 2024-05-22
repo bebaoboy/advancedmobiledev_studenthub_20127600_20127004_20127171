@@ -1,4 +1,4 @@
-package com.bebaoboyjonnathan.studenthub;
+package com.iotecksolutions.todoapp;
 
 import io.flutter.embedding.android.FlutterActivity;
 
