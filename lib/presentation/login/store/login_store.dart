@@ -181,7 +181,9 @@ abstract class _UserStore with Store {
   Future<bool> login(
       String email, String password, UserType type, List<UserType> roles,
       {fastSwitch = false}) async {
+    if (email.isEmpty || password.isEmpty) return false;
     _isLoading = true;
+    email = email.trim().toLowerCase();
 
     // //print(UserType.company.name);
     final LoginParams loginParams =

@@ -1,9 +1,12 @@
 import 'package:boilerplate/core/widgets/easy_timeline/src/properties/day_style.dart';
 import 'package:boilerplate/core/widgets/easy_timeline/src/properties/easy_day_props.dart';
+import 'package:boilerplate/di/service_locator.dart';
+import 'package:boilerplate/utils/notification/store/notification_store.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/utils.dart';
 import 'day_info_text.dart';
+import 'package:badges/badges.dart' as badges;
 
 /// A widget that displays a single day in the timeline.
 class EasyDayWidget extends StatelessWidget {
@@ -18,7 +21,10 @@ class EasyDayWidget extends StatelessWidget {
     required this.activeTextColor,
     required this.activeDayColor,
     this.margin,
+    this.newNotiIndex,
   });
+
+  final int? newNotiIndex;
 
   /// Contains properties for configuring the appearance and behavior of the day widget.
   final EasyDayProps easyDayProps;
@@ -60,6 +66,8 @@ class EasyDayWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final notiStore = getIt<NotificationStore>();
+
     final isLandScapeMode = easyDayProps.landScapeMode;
     final width = isLandScapeMode ? easyDayProps.height : easyDayProps.width;
     final height = isLandScapeMode ? easyDayProps.width : easyDayProps.height;
@@ -84,16 +92,22 @@ class EasyDayWidget extends StatelessWidget {
       onTap: isDisabled ? null : onDayPressed,
       //borderRadius: _dayBorderRadius(isToday),
       borderRadius: _daySplashBorderRadius(isToday),
-      child: AnimatedContainer(
-        duration: EasyConstants.animationDuration,
-        width: width,
-        height: height,
-        margin: margin,
-        decoration: dayDecoration,
-        child: _buildDayStructure(
-          structure: easyDayProps.dayStructure,
-          isLandScape: isLandScapeMode,
-          isToday: isToday,
+      child: badges.Badge(
+        position: badges.BadgePosition.topStart(top: 2, start: -15),
+        showBadge: newNotiIndex == null
+            ? false
+            : notiStore.hasNotiOnIndex(newNotiIndex! - 1),
+        child: AnimatedContainer(
+          duration: EasyConstants.animationDuration,
+          width: width,
+          height: height,
+          margin: margin,
+          decoration: dayDecoration,
+          child: _buildDayStructure(
+            structure: easyDayProps.dayStructure,
+            isLandScape: isLandScapeMode,
+            isToday: isToday,
+          ),
         ),
       ),
     );

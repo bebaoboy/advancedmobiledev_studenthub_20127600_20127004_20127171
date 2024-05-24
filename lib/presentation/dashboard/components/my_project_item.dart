@@ -167,7 +167,8 @@ class _MyProjectItemState extends State<MyProjectItem> {
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.onBackground,
                     )),
-                backgroundColor: Colors.green,
+                backgroundColor:
+                    widget.project.isWorking ? Colors.red : Colors.green,
                 iconColor: Colors.amber,
                 alignment: Alignment.centerLeft,
                 padding: const EdgeInsetsDirectional.only(start: 20),
@@ -197,7 +198,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
                           style: TextStyle(
                             color: Theme.of(context).colorScheme.onBackground,
                           )),
-                      backgroundColor: Colors.green,
+                      backgroundColor: Colors.red,
                       iconColor: Colors.amber,
                       alignment: Alignment.centerRight,
                       padding: const EdgeInsetsDirectional.only(end: 20),
@@ -211,149 +212,312 @@ class _MyProjectItemState extends State<MyProjectItem> {
   final _languageStore = getIt<LanguageStore>();
 
   buildItem(width) {
-    return Card(
-      elevation: 10,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(6),
-      ),
-      clipBehavior: Clip.antiAliasWithSaveLayer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Image.asset(
-            'assets/images/project_item.png',
-            height: 250,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-          Container(
-            padding: const EdgeInsets.all(15),
-            child: Stack(
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      children: [
-                        Text(updatedText,
-                            style: Theme.of(context)
-                                .textTheme
-                                .labelSmall!
-                                .copyWith(
-                                    fontWeight: FontWeight.w200,
-                                    color: Colors.grey)),
-                      ],
-                    ),
-                    Container(height: 5),
-                    Text(
-                      maxLines: 3,
-                      overflow: TextOverflow.ellipsis,
-                      widget.project.title.trim().toTitleCase() +
-                          (widget.project.isArchive
-                              ? widget.project.closeStatus ==
-                                      ProjectStatusFlag.fail
-                                  ? "(❌)"
-                                  : "(✅)"
-                              : ""),
-                      style: TextStyle(
-                          color: widget.project.closeStatus ==
-                                  ProjectStatusFlag.fail
-                              ? Colors.red
-                              : Colors.green.shade400,
-                          fontWeight: widget.project.isWorking
-                              ? FontWeight.bold
-                              : null),
-                    ),
-                    Container(height: 15),
-                    SizedBox(
-                      height: !widget.project.isArchive ? null : 20,
-                      width: width * 8,
-                      child: AutoSizeText(widget.project.description,
-                          maxLines: !widget.project.isArchive ? 5 : 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.bodyLarge),
-                    ),
-                    Container(height: 10),
-                    // Row(
-                    //   children: [
-                    //     ElevatedButton(
-                    //       onPressed: () {},
-                    //       child: Text('VIEW ENTRY',
-                    //           style: MyTextSample.button(
-                    //               context)!), //.copyWith(color: Colors.white)
-                    //     ),
-                    //     Container(width: 10),
-                    //     TextButton(
-                    //       onPressed: () {},
-                    //       child: Text('LEARN MORE',
-                    //           style: MyTextSample.button(context)!
-                    //               .copyWith(color: MyColorsSample.primary)),
-                    //     ),
-                    //   ],
-                    // )
-                    ButtonBar(
-                      buttonPadding: const EdgeInsets.symmetric(horizontal: 12),
-                      alignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        badges.Badge(
-                          badgeContent: Text(
-                            widget.project.countProposals.toString(),
-                            textScaleFactor: 0.8,
-                            style: const TextStyle(color: Colors.white),
+    return widget.project.enabled == Status.inactive
+        ? Container(
+            color: Theme.of(context).colorScheme.background,
+            padding: const EdgeInsets.symmetric(vertical: 5),
+            child: ClipRect(
+                child: Container(
+              foregroundDecoration: null,
+              child: Container(
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: widget.project.isArchive
+                        ? Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.1)
+                        : Theme.of(context).brightness == Brightness.dark
+                            ? Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.2)
+                            : null,
+                    border: Border.all(
+                        color: Colors.black54,
+                        width: 0.3,
+                        style: BorderStyle.solid)),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: Dimens.horizontal_padding,
+                      vertical: Dimens.vertical_padding),
+                  child: Stack(
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            widget.project.title.trim().toTitleCase() +
+                                (widget.project.isArchive
+                                    ? widget.project.closeStatus ==
+                                            ProjectStatusFlag.fail
+                                        ? "(❌)"
+                                        : "(✅)"
+                                    : ""),
+                            style: TextStyle(
+                                color: widget.project.closeStatus ==
+                                        ProjectStatusFlag.fail
+                                    ? Colors.red
+                                    : Colors.green.shade400,
+                                fontWeight: widget.project.isWorking
+                                    ? FontWeight.bold
+                                    : null),
                           ),
-                          child: IconButton(
-                            iconSize: 30,
-                            icon: const Icon(Icons.all_inbox_outlined),
-                            onPressed: () {
-                              // Perform some action
-                            },
+                          Text(updatedText,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .labelSmall!
+                                  .copyWith(fontWeight: FontWeight.w200)),
+                          SizedBox(
+                            height: !widget.project.isArchive ? null : 20,
+                            width: width * 8,
+                            child: AutoSizeText(widget.project.description,
+                                maxLines: !widget.project.isArchive ? 5 : 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.bodyLarge),
                           ),
-                        ),
-                        badges.Badge(
-                          badgeContent: Text(
-                            widget.project.countMessages.toString(),
-                            textScaleFactor: 0.8,
-                            style: const TextStyle(color: Colors.white),
+                          const SizedBox(
+                            height: 8,
                           ),
-                          child: IconButton(
-                            iconSize: 30,
-                            icon: const Icon(Icons.message_outlined),
-                            onPressed: () {
-                              // Perform some action
-                            },
-                          ),
-                        ),
-                        badges.Badge(
-                          badgeContent: Text(
-                            widget.project.countHired.toString(),
-                            textScaleFactor: 0.8,
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                          child: IconButton(
-                            iconSize: 30,
-                            icon: const Icon(Icons.done_all_outlined),
-                            onPressed: () {
-                              // Perform some action
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                        ],
+                      ),
+                      Container(
+                          foregroundDecoration: widget.project.isArchive
+                              ? RotatedCornerDecoration.withColor(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primaryContainer,
+                                  spanBaselineShift: 4,
+                                  badgeSize: const Size(84, 84),
+                                  badgeCornerRadius: const Radius.circular(8),
+                                  badgePosition: BadgePosition.topEnd,
+                                  textSpan: TextSpan(
+                                      text: Lang.get("closed"),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        letterSpacing: 1,
+                                        fontWeight: FontWeight.bold,
+                                        shadows: [
+                                          BoxShadow(
+                                              color: Colors.yellowAccent,
+                                              blurRadius: 8),
+                                        ],
+                                      )))
+                              : widget.project.countProposals > 10
+                                  ? const RotatedCornerDecoration.withColor(
+                                      color: Colors.orangeAccent,
+                                      spanBaselineShift: 4,
+                                      badgeSize: Size(84, 84),
+                                      badgeCornerRadius: Radius.circular(8),
+                                      badgePosition: BadgePosition.topEnd,
+                                      textSpan: TextSpan(
+                                          text: "HOT!",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            letterSpacing: 1,
+                                            fontWeight: FontWeight.bold,
+                                            shadows: [
+                                              BoxShadow(
+                                                  color: Colors.orangeAccent,
+                                                  blurRadius: 8),
+                                            ],
+                                          )))
+                                  : widget.project.isWorking
+                                      ? const RotatedCornerDecoration.withColor(
+                                          color: Colors.green,
+                                          spanBaselineShift: 4,
+                                          badgeSize: Size(84, 84),
+                                          badgeCornerRadius: Radius.circular(8),
+                                          badgePosition: BadgePosition.topEnd,
+                                          textSpan: TextSpan(
+                                              text: "Working",
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                letterSpacing: 1,
+                                                fontWeight: FontWeight.bold,
+                                                shadows: [
+                                                  BoxShadow(
+                                                      color:
+                                                          Colors.yellowAccent,
+                                                      blurRadius: 8),
+                                                ],
+                                              )))
+                                      : null),
+
+                      // ToDo: implement show bottom sheet
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                            onPressed: () =>
+                                widget.onShowBottomSheet!(widget.project),
+                            icon: const Icon(Icons.more_horiz_outlined)),
+                      ),
+                      // if (widget.project.isArchive)
+                      //   Positioned.fill(
+                      //     child: ClipRect(
+                      //         child: CornerBanner(
+                      //             bannerText: Lang.get("closed"),
+                      //             bannerPosition: BannerPosition.topLeft,
+                      //             bannerSize: 80,
+                      //             bannerColor:
+                      //                 Theme.of(context).colorScheme.primaryContainer,
+                      //             child: Container())),
+                      //   ),
+                    ],
+                  ),
                 ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                      onPressed: () =>
-                          widget.onShowBottomSheet!(widget.project),
-                      icon: const Icon(Icons.more_horiz_outlined)),
+              ),
+            )))
+        : Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(6),
+            ),
+            clipBehavior: Clip.antiAliasWithSaveLayer,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Image.asset(
+                  'assets/images/project_item.png',
+                  height: 250,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+                Container(
+                  padding: const EdgeInsets.all(15),
+                  child: Stack(
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            children: [
+                              Text(updatedText,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .labelSmall!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w200,
+                                          color: Colors.grey)),
+                            ],
+                          ),
+                          Container(height: 5),
+                          Text(
+                            maxLines: 3,
+                            overflow: TextOverflow.ellipsis,
+                            widget.project.title.trim().toTitleCase() +
+                                (widget.project.isArchive
+                                    ? widget.project.closeStatus ==
+                                            ProjectStatusFlag.fail
+                                        ? "(❌)"
+                                        : "(✅)"
+                                    : ""),
+                            style: TextStyle(
+                                color: widget.project.closeStatus ==
+                                        ProjectStatusFlag.fail
+                                    ? Colors.red
+                                    : Colors.green.shade400,
+                                fontWeight: widget.project.isWorking
+                                    ? FontWeight.bold
+                                    : null),
+                          ),
+                          Container(height: 15),
+                          SizedBox(
+                            height: !widget.project.isArchive ? null : 20,
+                            width: width * 8,
+                            child: AutoSizeText(widget.project.description,
+                                maxLines: !widget.project.isArchive ? 5 : 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.bodyLarge),
+                          ),
+                          Container(height: 10),
+                          // Row(
+                          //   children: [
+                          //     ElevatedButton(
+                          //       onPressed: () {},
+                          //       child: Text('VIEW ENTRY',
+                          //           style: MyTextSample.button(
+                          //               context)!), //.copyWith(color: Colors.white)
+                          //     ),
+                          //     Container(width: 10),
+                          //     TextButton(
+                          //       onPressed: () {},
+                          //       child: Text('LEARN MORE',
+                          //           style: MyTextSample.button(context)!
+                          //               .copyWith(color: MyColorsSample.primary)),
+                          //     ),
+                          //   ],
+                          // )
+                          ButtonBar(
+                            buttonPadding:
+                                const EdgeInsets.symmetric(horizontal: 12),
+                            alignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              badges.Badge(
+                                badgeContent: Text(
+                                  widget.project.countProposals.toString(),
+                                  textScaleFactor: 0.8,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                child: IconButton(
+                                  tooltip: "All proposals",
+                                  iconSize: 30,
+                                  icon: const Icon(Icons.all_inbox_outlined),
+                                  onPressed: () {
+                                    // Perform some action
+                                  },
+                                ),
+                              ),
+                              badges.Badge(
+                                badgeContent: Text(
+                                  widget.project.countMessages.toString(),
+                                  textScaleFactor: 0.8,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                child: IconButton(
+                                  tooltip: "Messsage",
+                                  iconSize: 30,
+                                  icon: const Icon(Icons.message_outlined),
+                                  onPressed: () {
+                                    // Perform some action
+                                  },
+                                ),
+                              ),
+                              badges.Badge(
+                                badgeContent: Text(
+                                  widget.project.countHired.toString(),
+                                  textScaleFactor: 0.8,
+                                  style: const TextStyle(color: Colors.white),
+                                ),
+                                child: IconButton(
+                                  tooltip: "Hired",
+                                  iconSize: 30,
+                                  icon: const Icon(Icons.done_all_outlined),
+                                  onPressed: () {
+                                    // Perform some action
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: IconButton(
+                            onPressed: () =>
+                                widget.onShowBottomSheet!(widget.project),
+                            icon: const Icon(Icons.more_horiz_outlined)),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-    );
+          );
 
     // Container(
     //     color: Theme.of(context).colorScheme.background,
@@ -547,6 +711,5 @@ class _MyProjectItemState extends State<MyProjectItem> {
     //         ),
     //       ),
     //     )));
-  
   }
 }

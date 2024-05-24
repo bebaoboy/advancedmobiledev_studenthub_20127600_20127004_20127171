@@ -162,6 +162,7 @@ class _TimeLineWidgetState extends State<TimeLineWidget> {
                       currentDate,
                     )
                   : EasyDayWidget(
+                      newNotiIndex: index,
                       easyDayProps: _dayProps,
                       date: currentDate,
                       locale: widget.locale,
