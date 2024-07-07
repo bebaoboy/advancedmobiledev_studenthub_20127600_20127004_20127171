@@ -8,7 +8,6 @@ import 'dart:math';
 import 'package:boilerplate/core/data/network/dio/dio_client.dart';
 import 'package:boilerplate/di/service_locator.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:to_string_pretty/to_string_pretty.dart';
 
@@ -91,7 +90,7 @@ class LoggingInterceptor extends Interceptor {
   }) {
     initSp();
     logPrint = (o) {
-      debugPrint(o);
+      // debugPrint(o);
     };
   }
 

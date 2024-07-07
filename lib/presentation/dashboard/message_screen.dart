@@ -98,22 +98,22 @@ class _MessageScreenState extends State<MessageScreen> {
       Random r = Random();
       var num = r.nextInt(60);
       // print(num);
-        if (num <= 30) {
-          typings = [_user];
-      //     typings = [
-      //       const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
-      //     ];
-      //   } else if (num > 7 && num < 15) {
-      //     typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
-      //   } else if (num > 15 && num <= 20) {
-      //     typings.add(
-      //         const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
-      //   } else if (num < 25) {
-      //     typings
-      //         .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
-        } else {
-          typings.clear();
-        }
+      if (num <= 30) {
+        typings = [_user];
+        //     typings = [
+        //       const ChatUser(id: "1", firstName: "Nam Hà", lastName: "Hồng")
+        //     ];
+        //   } else if (num > 7 && num < 15) {
+        //     typings = [const ChatUser(id: "3", firstName: "Bảo", lastName: "Minh")];
+        //   } else if (num > 15 && num <= 20) {
+        //     typings.add(
+        //         const ChatUser(id: "2", firstName: "Jonathan", lastName: "Nguyên"));
+        //   } else if (num < 25) {
+        //     typings
+        //         .add(const ChatUser(id: "2", firstName: "Ngọc", lastName: "Thuỷ"));
+      } else {
+        typings.clear();
+      }
       setState(() {});
     });
 
@@ -713,6 +713,7 @@ class _MessageScreenState extends State<MessageScreen> {
     return await Navigator.push<InterviewSchedule>(
       context,
       ModalSheetRoute(
+          swipeDismissible: true,
           builder: (context) => ScheduleBottomSheet(
                 filter: flt,
               )),
@@ -889,6 +890,7 @@ class _MessageScreenState extends State<MessageScreen> {
     return await Navigator.push<InterviewSchedule>(
       context,
       ModalSheetRoute(
+          swipeDismissible: true,
           builder: (context) => AllScheduleBottomSheet(
               user: widget.chatObject.chatUser,
               scaffoldKey: _scaffoldKey,

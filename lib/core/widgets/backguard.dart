@@ -88,7 +88,7 @@ class BackGuardState extends State<BackGuard> {
     }
   }
 
-  /// Handles [WillPopScope.onWillPop].
+  /// Handles [BackGuard.onWillPop].
   Future<bool> _handleWillPop() async {
     if (_isSnackBarVisible || _willHandlePopInternally) {
       return true;

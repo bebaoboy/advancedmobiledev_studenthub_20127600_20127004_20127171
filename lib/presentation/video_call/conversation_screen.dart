@@ -2,6 +2,7 @@
 
 import 'dart:math';
 
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/pip/picture_in_picture.dart';
 import 'package:boilerplate/core/widgets/floating/floating.dart';
 import 'package:flutter/foundation.dart';
@@ -419,7 +420,7 @@ class ConversationCallScreenState extends State<ConversationCallScreen>
               enablePipStatus != PiPStatus.enabled ? _getActionsPanel() : null,
         ),
       ]),
-      childWhenDisabled: WillPopScope(
+      childWhenDisabled: BackGuard(
         onWillPop: () => _onBackPressed(context),
         child: Scaffold(
           resizeToAvoidBottomInset: false,
