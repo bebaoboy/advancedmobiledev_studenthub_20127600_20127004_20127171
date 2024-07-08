@@ -58,9 +58,11 @@ class _TechStackDropdownState extends State<TechStackDropdown> {
       },
       futureRequestDelay: const Duration(seconds: 1),
       onChanged: (p0) {
-        widget.onListChangedCallback(p0);
+        if (p0 != null) {
+          widget.onListChangedCallback(p0);
+        }
       },
-      headerBuilder: (context, selectedItem) => Text(
+      headerBuilder: (context, selectedItem, b) => Text(
         selectedItem.name,
         style: const TextStyle(color: Colors.grey),
       ),

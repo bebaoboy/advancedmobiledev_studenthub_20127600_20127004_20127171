@@ -9,6 +9,7 @@ import 'package:boilerplate/utils/routes/custom_page_route.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
 import 'package:choice/choice.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
@@ -321,7 +322,12 @@ class _BottomBarState extends State<BottomBar>
                 opacity: isOnTop == true ? 0 : 1,
                 child: AnimatedContainer(
                   margin: EdgeInsets.only(
-                      bottom: NavbarNotifier2.isNavbarHidden ? 0 : 60),
+                      bottom: NavbarNotifier2.isNavbarHidden ||
+                              MediaQuery.of(context).orientation ==
+                                  Orientation.landscape ||
+                              kIsWeb
+                          ? 0
+                          : 60),
                   duration: widget.duration,
                   curve: widget.curve,
                   width: isOnTop == true ? 0 : widget.iconWidth,
@@ -478,8 +484,8 @@ class _AlertTabState extends State<AlertTab> {
     var today =
         DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
     selectedDate = today;
-    activeDates
-        .addAll([for (int i = -14; i < 14; i++) today.add(Duration(days: i))]);
+    activeDates.addAll(
+        [for (int i = -180; i < 180; i++) today.add(Duration(days: i))]);
     print(activeDates);
     pages = List.filled(activeDates.length, null);
 
@@ -805,7 +811,7 @@ class _AlertTabState extends State<AlertTab> {
                 height: 110,
                 width: (userStore.user!.type == UserType.student
                         ? MediaQuery.of(context).size.width - 150
-                        : MediaQuery.of(context).size.width - 20) -
+                        : MediaQuery.of(context).size.width - 30) -
                     (MediaQuery.of(context).size.width > 600 ? 135 : 0),
                 child: _datePickerSection()),
           ],
@@ -823,7 +829,7 @@ class _AlertTabState extends State<AlertTab> {
                       height: MediaQuery.of(context).size.height * 0.9,
                       child: TransformerPageView(
                         itemCount: activeDates.length,
-                        index: 14, // middle page
+                        index: activeDates.length ~/ 2, // middle page
                         controller: alertPageController,
                         transformer: DepthPageTransformer(),
                         onPageChanged: (value) {

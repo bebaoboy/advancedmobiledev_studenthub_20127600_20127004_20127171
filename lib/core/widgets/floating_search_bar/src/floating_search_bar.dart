@@ -3,6 +3,7 @@
 import 'dart:math';
 import 'dart:ui';
 
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:flutter/material.dart'
     hide ImplicitlyAnimatedWidget, ImplicitlyAnimatedWidgetState;
 import 'package:flutter/services.dart';
@@ -614,7 +615,7 @@ class FloatingSearchBarState extends ImplicitlyAnimatedWidgetState<
     final SizedBox searchBar = SizedBox.expand(
       child: isAvailableSwipeBack
           ? _getSearchBarWidget()
-          : WillPopScope(
+          : BackGuard(
               onWillPop: _onPop,
               child: _getSearchBarWidget(),
             ),

@@ -71,237 +71,233 @@ class _FilterBottomSheetState extends State<_FilterBottomSheet> {
 
   @override
   Widget build(BuildContext context) {
-    return SheetDismissible(
-      child: ScrollableSheet(
-          keyboardDismissBehavior:
-              const SheetKeyboardDismissBehavior.onDragDown(
-            isContentScrollAware: true,
+    return ScrollableSheet(
+      keyboardDismissBehavior: const SheetKeyboardDismissBehavior.onDragDown(
+        isContentScrollAware: true,
+      ),
+      child: Container(
+        decoration: const ShapeDecoration(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(16)),
           ),
-          child: Container(
-            decoration: const ShapeDecoration(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(16)),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: SheetContentScaffold(
+            appBar: AppBar(
+              title: Text(
+                Lang.get("filter_title"),
+                style:
+                    TextStyle(color: Theme.of(context).colorScheme.onSecondary),
               ),
             ),
-            clipBehavior: Clip.antiAlias,
-            child: SheetContentScaffold(
-                appBar: AppBar(
-                  title: Text(
-                    Lang.get("filter_title"),
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary),
-                  ),
-                ),
-                body: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32),
-                  child: SingleChildScrollView(
-                    controller: ScrollController(),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        // Padding(
-                        //   padding:  EdgeInsets.only(right: 32),
-                        //   child: Text(
-                        //     'Confirm your choices',
-                        //   ),
-                        // ),
-                        //  SizedBox(height: 24),
-                        ListTile(
-                          title: Text(Lang.get('project_length')),
-                        ),
-                        // Padding(
-                        //   padding:  EdgeInsets.only(right: 32),
-                        //   child: Wrap(
-                        //     spacing: 10,
-                        //     children: [
-                        //       for (final genre in _genres.take(5))
-                        //         FilterChip(
-                        //           selected: true,
-                        //           label: Text(genre),
-                        //           onSelected: () {},
-                        //         ),
-                        //     ],
-                        //   ),
-                        // ),
-                        //  Divider(height: 32),
-                        // ListTile(
-                        //   title:  Text(Lang.get('Mood'),
-                        //   // trailing: IconButton(
-                        //   //   onPressed: () => context.go('/intro/genre/mood'),
-                        //   //   icon:  Icon(Icons.edit_outlined),
-                        //   // ),
-                        // ),
-                        RadioListTile<Scope?>(
-                          title: const Text("Any scope"),
-                          // secondary: Text(
-                          //   _moods.first.emoji,
-                          //   style:  TextStyle(fontSize: 24),
-                          // ),
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          value: null,
-                          groupValue: groupValue,
-                          onChanged: (s) {
-                            setState(() {
-                              widget.filter.scope = s;
-                              groupValue = s;
-                            });
-                          },
-                        ),
-                        RadioListTile<Scope>(
-                          title: Text(Lang.get("0-1")),
-                          // secondary: Text(
-                          //   _moods.first.emoji,
-                          //   style:  TextStyle(fontSize: 24),
-                          // ),
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          value: Scope.tight,
-                          groupValue: groupValue,
-                          onChanged: (s) {
-                            setState(() {
-                              widget.filter.scope = s;
-                              groupValue = s;
-                            });
-                          },
-                        ),
-                        RadioListTile<Scope>(
-                          title: Text(Lang.get("1-3")),
-                          // secondary: Text(
-                          //   _moods.first.emoji,
-                          //   style:  TextStyle(fontSize: 24),
-                          // ),
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          value: Scope.short,
-                          groupValue: groupValue,
-                          onChanged: (s) {
-                            setState(() {
-                              widget.filter.scope = s;
-                              groupValue = s;
-                            });
-                          },
-                        ),
-                        RadioListTile<Scope>(
-                          title: Text(Lang.get('3-6')),
-                          // secondary: Text(
-                          //   _moods.first.emoji,
-                          //   style:  TextStyle(fontSize: 24),
-                          // ),
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          value: Scope.long,
-                          groupValue: groupValue,
-                          onChanged: (s) {
-                            setState(() {
-                              widget.filter.scope = s;
-                              groupValue = s;
-                            });
-                          },
-                        ),
-                        RadioListTile<Scope>(
-                          title: Text(Lang.get('6-')),
-                          // secondary: Text(
-                          //   _moods.first.emoji,
-                          //   style:  TextStyle(fontSize: 24),
-                          // ),
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          value: Scope.extended,
-                          groupValue: groupValue,
-                          onChanged: (s) {
-                            setState(() {
-                              widget.filter.scope = s;
-                              groupValue = s;
-                            });
-                          },
-                        ),
-                        const Divider(height: 32),
-                        // ListTile(
-                        //   title:  Text(Lang.get('Seed tracks'),
-                        //   trailing: IconButton(
-                        //     onPressed: () =>
-                        //         context.go('/intro/genre/mood/seed-track'),
-                        //     icon:  Icon(Icons.edit_outlined),
-                        //   ),
-                        // ),
-                        TextField(
-                          controller: studentNeededController,
-                          keyboardType: TextInputType.number,
-                          decoration: InputDecoration(
-                            hintText: Lang.get("nothing_here"),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            border: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2)),
-                            enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2)),
-                            labelText: Lang.get("student_needed"),
-                          ),
-                          onChanged: (value) {
-                            widget.filter.studentNeeded =
-                                int.tryParse(value) ?? 2;
-                          },
-                        ),
-                        const Divider(height: 32),
-                        TextField(
-                          controller: proposalLessThanController,
-                          decoration: InputDecoration(
-                            hintText: Lang.get("nothing_here"),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            border: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2)),
-                            enabledBorder: const OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 2)),
-                            labelText: Lang.get("proposal_less_than"),
-                          ),
-                          onChanged: (value) {
-                            widget.filter.proposalLessThan =
-                                int.tryParse(value) ?? 0;
-                          },
-                        ),
-                      ],
+            body: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: SingleChildScrollView(
+                controller: ScrollController(),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Padding(
+                    //   padding:  EdgeInsets.only(right: 32),
+                    //   child: Text(
+                    //     'Confirm your choices',
+                    //   ),
+                    // ),
+                    //  SizedBox(height: 24),
+                    ListTile(
+                      title: Text(Lang.get('project_length')),
                     ),
-                  ),
-                ),
-                bottomBar: StickyBottomBarVisibility(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Flexible(
-                      //   fit: FlexFit.tight,
-                      //   child: TextButton(
-                      //     onPressed: () {
-                      //       widget.onSheetDismissed();
-                      //     },
-                      //     child:  Text(Lang.get('Cancel'),
-                      //   ),
+                    // Padding(
+                    //   padding:  EdgeInsets.only(right: 32),
+                    //   child: Wrap(
+                    //     spacing: 10,
+                    //     children: [
+                    //       for (final genre in _genres.take(5))
+                    //         FilterChip(
+                    //           selected: true,
+                    //           label: Text(genre),
+                    //           onSelected: () {},
+                    //         ),
+                    //     ],
+                    //   ),
+                    // ),
+                    //  Divider(height: 32),
+                    // ListTile(
+                    //   title:  Text(Lang.get('Mood'),
+                    //   // trailing: IconButton(
+                    //   //   onPressed: () => context.go('/intro/genre/mood'),
+                    //   //   icon:  Icon(Icons.edit_outlined),
+                    //   // ),
+                    // ),
+                    RadioListTile<Scope?>(
+                      title: const Text("Any scope"),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style:  TextStyle(fontSize: 24),
                       // ),
-                      //  SizedBox(width: 16),
-                      RoundedButtonWidget(
-                        buttonColor: Theme.of(context).colorScheme.primary,
-                        onPressed: () {
-                          setState(() {
-                            widget.filter.clear();
-                            groupValue = null;
-                            studentNeededController.clear();
-                            proposalLessThanController.clear();
-                          });
-                        },
-                        buttonText: Lang.get("clear_filter"),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: null,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
+                    ),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get("0-1")),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style:  TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: Scope.tight,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
+                    ),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get("1-3")),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style:  TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: Scope.short,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
+                    ),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get('3-6')),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style:  TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: Scope.long,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
+                    ),
+                    RadioListTile<Scope>(
+                      title: Text(Lang.get('6-')),
+                      // secondary: Text(
+                      //   _moods.first.emoji,
+                      //   style:  TextStyle(fontSize: 24),
+                      // ),
+                      controlAffinity: ListTileControlAffinity.trailing,
+                      value: Scope.extended,
+                      groupValue: groupValue,
+                      onChanged: (s) {
+                        setState(() {
+                          widget.filter.scope = s;
+                          groupValue = s;
+                        });
+                      },
+                    ),
+                    const Divider(height: 32),
+                    // ListTile(
+                    //   title:  Text(Lang.get('Seed tracks'),
+                    //   trailing: IconButton(
+                    //     onPressed: () =>
+                    //         context.go('/intro/genre/mood/seed-track'),
+                    //     icon:  Icon(Icons.edit_outlined),
+                    //   ),
+                    // ),
+                    TextField(
+                      controller: studentNeededController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        hintText: Lang.get("nothing_here"),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: Lang.get("student_needed"),
                       ),
-                      const SizedBox(width: 12),
-                      RoundedButtonWidget(
-                        buttonColor: Theme.of(context).colorScheme.primary,
-                        onPressed: () {
-                          NavbarNotifier2.popRoute(
-                              NavbarNotifier2.currentIndex);
-                        },
-                        buttonText: Lang.get("apply"),
+                      onChanged: (value) {
+                        widget.filter.studentNeeded = int.tryParse(value) ?? 2;
+                      },
+                    ),
+                    const Divider(height: 32),
+                    TextField(
+                      controller: proposalLessThanController,
+                      decoration: InputDecoration(
+                        hintText: Lang.get("nothing_here"),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        border: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        enabledBorder: const OutlineInputBorder(
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2)),
+                        labelText: Lang.get("proposal_less_than"),
                       ),
-                    ],
+                      onChanged: (value) {
+                        widget.filter.proposalLessThan =
+                            int.tryParse(value) ?? 0;
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            bottomBar: StickyBottomBarVisibility(
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Flexible(
+                  //   fit: FlexFit.tight,
+                  //   child: TextButton(
+                  //     onPressed: () {
+                  //       widget.onSheetDismissed();
+                  //     },
+                  //     child:  Text(Lang.get('Cancel'),
+                  //   ),
+                  // ),
+                  //  SizedBox(width: 16),
+                  RoundedButtonWidget(
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      setState(() {
+                        widget.filter.clear();
+                        groupValue = null;
+                        studentNeededController.clear();
+                        proposalLessThanController.clear();
+                      });
+                    },
+                    buttonText: Lang.get("clear_filter"),
                   ),
-                )),
-          )),
+                  const SizedBox(width: 12),
+                  RoundedButtonWidget(
+                    buttonColor: Theme.of(context).colorScheme.primary,
+                    onPressed: () {
+                      NavbarNotifier2.popRoute(NavbarNotifier2.currentIndex);
+                    },
+                    buttonText: Lang.get("apply"),
+                  ),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }
@@ -485,7 +481,7 @@ class _SearchBottomSheetState extends State<SearchBottomSheet> {
       ),
     );
 
-    final physics = StretchingSheetPhysics(
+    final physics = BouncingSheetPhysics(
       parent: SnappingSheetPhysics(
         snappingBehavior: SnapToNearest(
           snapTo: [
@@ -650,6 +646,7 @@ class _ProjectTabState extends State<ProjectTab> {
       NavbarNotifier2.currentIndex,
       context,
       ModalSheetRoute(
+        swipeDismissible: true,
         builder: (context) => _FilterBottomSheet(
           filter: filter,
         ),
@@ -696,6 +693,7 @@ class _ProjectTabState extends State<ProjectTab> {
       NavbarNotifier2.currentIndex,
       context,
       ModalSheetRoute(
+        swipeDismissible: true,
         builder: (context) => SearchBottomSheet(
           stopLoadingCallback: (id) {
             stopLoading(id!);
@@ -904,7 +902,11 @@ class _ProjectTabState extends State<ProjectTab> {
                 (a, b) => a.compareTo(b),
               );
               _list = l;
-              return Future.value(_list.where((element) => element.contains(p0),).toList());
+              return Future.value(_list
+                  .where(
+                    (element) => element.contains(p0),
+                  )
+                  .toList());
             },
             hideSelectedFieldWhenExpanded: false,
             closedHeaderPadding: const EdgeInsets.only(left: 40),
@@ -913,7 +915,7 @@ class _ProjectTabState extends State<ProjectTab> {
             initialItem: _list[0],
             onChanged: (p0) {
               setState(() {
-                keywordId = p0;
+                keywordId = p0 ?? "";
               });
               if (refazynistKey.currentState != null) {
                 refazynistKey.currentState!.refresh();
@@ -924,7 +926,7 @@ class _ProjectTabState extends State<ProjectTab> {
             maxlines: 3,
             hintText: "Company id",
             items: _list,
-            headerBuilder: (context, selectedItem) => Text(
+            headerBuilder: (context, selectedItem, b) => Text(
               (_userStore.user != null &&
                           _userStore.user!.companyProfile != null &&
                           _userStore.user!.companyProfile!.objectId ==

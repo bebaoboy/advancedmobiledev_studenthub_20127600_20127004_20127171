@@ -1,5 +1,6 @@
 // ignore_for_file: deprecated_member_use
 
+import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:universal_io/io.dart';
@@ -261,7 +262,7 @@ Future<T?> _showMaterialBottomSheet<T>(
     builder: (BuildContext coxt) {
       final double screenHeight = MediaQuery.of(context).size.height;
       return SafeArea(
-        child: WillPopScope(
+        child: BackGuard(
           onWillPop: () async => isDismissible,
           child: ConstrainedBox(
             constraints: BoxConstraints(
