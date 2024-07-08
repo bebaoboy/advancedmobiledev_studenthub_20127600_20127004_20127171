@@ -85,15 +85,13 @@ class _SearchDropdownState extends State<SearchDropdown> {
           },
         );
       },
-      headerBuilder: (context, selectedItem, b) => Text(
+      headerBuilder: (context, selectedItem) => Text(
         selectedItem.name,
         style: const TextStyle(color: Colors.grey),
       ),
       futureRequestDelay: const Duration(seconds: 1),
       onChanged: (p0) {
-        if (p0 != null) {
-          widget.onListChangedCallback(p0);
-        }
+        widget.onListChangedCallback(p0);
       },
       noResultFoundText: Lang.get("nothing_here"),
       maxlines: 3,

@@ -63,7 +63,7 @@ class OnBoarding extends StatelessWidget {
         },
         controllerColor: Theme.of(context).colorScheme.primary,
         totalPage: 3,
-        headerBackgroundColor: Theme.of(context).colorScheme.background,
+        headerBackgroundColor:Theme.of(context).colorScheme.background,
         pageBackgroundColor: Theme.of(context).colorScheme.background,
         background: [
           Image.asset(
@@ -89,6 +89,7 @@ class OnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                
                 Text(
                   Lang.get("appbar_title"),
                   textAlign: TextAlign.center,
@@ -105,6 +106,7 @@ class OnBoarding extends StatelessWidget {
                   "${Lang.get('home_title')}\n\n20127600 - 20127004 - 20127171",
                   textAlign: TextAlign.center,
                   style: const TextStyle(
+                    
                     fontSize: 13.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -120,6 +122,7 @@ class OnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                
                 Text(
                   Lang.get("appbar_title"),
                   textAlign: TextAlign.center,
@@ -136,6 +139,7 @@ class OnBoarding extends StatelessWidget {
                   Lang.get('home_intro'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
+                    
                     fontSize: 13.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -151,6 +155,7 @@ class OnBoarding extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                
                 Text(
                   'Start now!',
                   textAlign: TextAlign.center,
@@ -167,6 +172,7 @@ class OnBoarding extends StatelessWidget {
                   Lang.get('home_description'),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
+                    
                     fontSize: 13.0,
                     fontWeight: FontWeight.w300,
                   ),
@@ -235,7 +241,7 @@ class _OnboardingSheetState extends State<OnboardingSheet> {
       ),
     );
 
-    final physics = BouncingSheetPhysics(
+    final physics = StretchingSheetPhysics(
       parent: SnappingSheetPhysics(
         snappingBehavior: SnapToNearest(
           snapTo: [
@@ -245,9 +251,10 @@ class _OnboardingSheetState extends State<OnboardingSheet> {
       ),
     );
 
-    return PopScope(
-      onPopInvoked: (didPop) {
+    return SheetDismissible(
+      onDismiss: () {
         widget.onSheetDismissed();
+        return true;
       },
       child: DraggableSheet(
         physics: physics,

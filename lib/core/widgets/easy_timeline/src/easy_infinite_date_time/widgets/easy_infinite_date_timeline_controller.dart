@@ -251,7 +251,6 @@ class _InfiniteTimeLineWidgetState extends State<InfiniteTimeLineWidget> {
                             locale: widget.locale,
                             isSelected: isSelected,
                             isDisabled: isDisabledDay,
-                            newNotiIndex: index,
                             onDayPressed: () =>
                                 _onDayChanged(isSelected, currentDate),
                             activeTextColor: widget.activeDayTextColor,
