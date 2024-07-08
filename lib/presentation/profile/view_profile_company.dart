@@ -1,4 +1,3 @@
-import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/progress_indicator_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
@@ -77,7 +76,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
     // ignore: deprecated_member_use
-    return BackGuard(
+    return WillPopScope(
       onWillPop: () async {
         bool b = !enabled;
         if (enabled) {

@@ -3,7 +3,6 @@
 import 'dart:async';
 
 import 'package:boilerplate/utils/locale/app_localization.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:move_to_background/move_to_background.dart';
 
@@ -61,17 +60,12 @@ class BackGuardState extends State<BackGuard> {
       return PopScope(
         canPop: false,
         onPopInvoked: (bool didPop) async {
-          if (kIsWeb && mounted) {
-            Navigator.of(context).pop();
-          }
           if (didPop) {
             return;
           }
-          if (widget.onWillPop != null) {
-            var p = await widget.onWillPop!();
-            print(p);
-            if (widget.onWillPop != null && !p) return;
-          }
+          var p = await widget.onWillPop!();
+          print(p);
+          if (widget.onWillPop != null && !p) return;
           if (await _handleWillPop()) {
             if (!mounted) return;
             if (!Navigator.of(context).canPop()) {
@@ -88,7 +82,7 @@ class BackGuardState extends State<BackGuard> {
     }
   }
 
-  /// Handles [BackGuard.onWillPop].
+  /// Handles [WillPopScope.onWillPop].
   Future<bool> _handleWillPop() async {
     if (_isSnackBarVisible || _willHandlePopInternally) {
       return true;

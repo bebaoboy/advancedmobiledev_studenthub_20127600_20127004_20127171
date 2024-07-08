@@ -1,5 +1,4 @@
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
-import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
@@ -66,7 +65,7 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
       body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20),
         // ignore: deprecated_member_use
-        child: BackGuard(
+        child: WillPopScope(
             onWillPop: () async {
               bool b = !enabled;
               if (enabled) {

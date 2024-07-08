@@ -1,7 +1,6 @@
 // ignore_for_file: unused_element
 
 import 'package:another_transformer_page_view/another_transformer_page_view.dart';
-import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/rounded_button_widget.dart';
 import 'package:boilerplate/core/widgets/stepper.dart';
@@ -70,7 +69,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
   // body methods:--------------------------------------------------------------
   Widget _buildBody() {
     // ignore: deprecated_member_use
-    return BackGuard(
+    return WillPopScope(
       onWillPop: () async {
         bool b = false;
         await showAnimatedDialog<bool>(

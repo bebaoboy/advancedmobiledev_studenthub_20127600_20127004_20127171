@@ -521,7 +521,6 @@ class _SettingScreenState extends State<SettingScreen> {
                   await Navigator.push(
                     context,
                     ModalSheetRoute(
-                      swipeDismissible: true,
                       builder: (context) => OnboardingSheet(
                         height: MediaQuery.of(context).size.height,
                         onSheetDismissed: () async {

@@ -147,7 +147,6 @@ class _AllScheduleBottomSheetState extends State<AllScheduleBottomSheet> {
                                     await Navigator.push<InterviewSchedule>(
                                       widget.scaffoldKey.currentContext!,
                                       ModalSheetRoute(
-                                          swipeDismissible: true,
                                           builder: (context) =>
                                               ScheduleBottomSheet(
                                                 filter: scheduleFilter,

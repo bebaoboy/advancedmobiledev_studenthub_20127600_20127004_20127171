@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/core/widgets/main_app_bar_widget.dart';
 import 'package:boilerplate/core/widgets/toastify.dart';
 import 'package:boilerplate/core/widgets/under_text_field_widget.dart';
@@ -551,8 +550,8 @@ class _BodyLayoutState extends State<BodyLayout> {
               : '300', // Provide your own width, height and frame rate here
           //     'maxWidth': '1080',
           // 'maxHeight': '600',
-          'minHeight':
-              kIsWeb ? '${MediaQuery.of(context).size.height * 0.65}' : '400',
+          'minHeight': kIsWeb
+              ? '${MediaQuery.of(context).size.height * 0.65}' : '400',
           'minFrameRate': '24',
         },
         'facingMode': 'user',
@@ -591,7 +590,7 @@ class _BodyLayoutState extends State<BodyLayout> {
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
+    return WillPopScope(
       onWillPop: () {
         try {
           primaryRenderer?.value.srcObject = null;

@@ -1,6 +1,5 @@
 // ignore_for_file: deprecated_member_use, deprecated_member_use_from_same_package
 
-import 'package:boilerplate/core/widgets/backguard.dart';
 import 'package:boilerplate/utils/routes/custom_page_route_navbar.dart';
 import 'package:boilerplate/utils/routes/navbar_item.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -21,8 +20,7 @@ class Destination {
     if (identical(this, other)) return true;
 
     return other is Destination &&
-        other.route == route &&
-        widget.key == other.widget.key;
+        other.route == route && widget.key == other.widget.key;
   }
 
   @override
@@ -317,7 +315,7 @@ class _NavbarRouterState extends State<NavbarRouter>
 
   @override
   Widget build(BuildContext context) {
-    return BackGuard(
+    return WillPopScope(
         onWillPop: () async {
           final bool isExitingApp = await NavbarNotifier2.onBackButtonPressed(
               behavior: widget.backButtonBehavior);
