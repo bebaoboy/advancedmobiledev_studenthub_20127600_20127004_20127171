@@ -1,5 +1,7 @@
 // ignore_for_file: unused_import
 
+import 'dart:math';
+
 import 'package:boilerplate/core/widgets/auto_size_text.dart';
 import 'package:boilerplate/constants/dimens.dart';
 import 'package:boilerplate/core/extensions/cap_extension.dart';
@@ -10,6 +12,7 @@ import 'package:boilerplate/presentation/dashboard/project_details.dart';
 import 'package:boilerplate/presentation/home/store/language/language_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/routes.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:rotated_corner_decoration/rotated_corner_decoration.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -210,6 +213,26 @@ class _MyProjectItemState extends State<MyProjectItem> {
   }
 
   final _languageStore = getIt<LanguageStore>();
+  final imageList = [
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/img_no_jobs.png',
+    'assets/images/slide_1.png',
+    'assets/images/slide_2.png',
+    'assets/images/slide_3.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+    'assets/images/project_item.png',
+  ];
+  final rand = Random(DateTime.now().millisecondsSinceEpoch);
 
   buildItem(width) {
     return widget.project.enabled == Status.inactive
@@ -381,7 +404,7 @@ class _MyProjectItemState extends State<MyProjectItem> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Image.asset(
-                  'assets/images/project_item.png',
+                  imageList[rand.nextInt(imageList.length - 1)],
                   height: 250,
                   width: double.infinity,
                   fit: BoxFit.cover,
