@@ -508,7 +508,7 @@ class FloatingSearchAppBarState extends ImplicitlyAnimatedWidgetState<
     );
     return isAvailableSwipeBack
         ? _getBarWidget(bar)
-        : WillPopScope(
+        : BackGuard(
             onWillPop: () async {
               if (isOpen && !widget.alwaysOpened) {
                 isOpen = false;

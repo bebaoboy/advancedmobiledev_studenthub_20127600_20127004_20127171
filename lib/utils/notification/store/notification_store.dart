@@ -154,7 +154,15 @@ abstract class _NotificationStore with Store {
   @observable
   List<ObservableList<NotificationObject>>? joinInterviews;
 
-  int activeDates = 14;
+  int activeDates = 180;
+
+  hasNotiOnIndex(index) {
+    if (index < 0 || index >= activeDates) return false;
+    return (joinInterviews?.elementAtOrNull(index)?.isNotEmpty ?? false) ||
+        (viewOffers?.elementAtOrNull(index)?.isNotEmpty ?? false) ||
+        (texts?.elementAtOrNull(index)?.isNotEmpty ?? false) ||
+        (messages?.elementAtOrNull(index)?.isNotEmpty ?? false);
+  }
 
   categorize(List activeDates) {
     var userStore = getIt<UserStore>();
@@ -169,8 +177,8 @@ abstract class _NotificationStore with Store {
       var date = element.createdAt;
       if (date == null) continue;
       int diff = daysBetween(DateTime.now(), date);
-      if (diff > activeDates.length/2 - 1) continue;
-      if (diff < -(activeDates.length/2 - 1)) continue;
+      if (diff > activeDates.length / 2 - 1) continue;
+      if (diff < -(activeDates.length / 2 - 1)) continue;
       // print(DateTime(date.year, date.month, date.day));
       // print(diff + (activeDates.length ~/ 2));
 

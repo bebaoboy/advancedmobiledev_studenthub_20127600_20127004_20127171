@@ -95,6 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
     return await Navigator.push(
       context,
       ModalSheetRoute(
+        swipeDismissible: true,
         transitionDuration: const Duration(seconds: 1),
         builder: (context) => OnboardingSheet(
           height: MediaQuery.of(context).size.height,
