@@ -49,11 +49,10 @@ https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127
 | `android.permission.POST_NOTIFICATIONS` | Required by the app to post notifications. Has to be granted by the user manually; can be revoked by the system or the user at any time. It is highly recommended that you allow this permission so that the app can show the real-time notification and calling notifications when the call arrives. |
 | `android.permission.VIBRATE, android.permission.BLUETOOTH, android.permission.BLUETOOTH_ADMIN` | Required to vibrate the device when alarm is ringing. Permission automatically granted by the system; can't be revoked by user. |
 | `android.permission.MODIFY_AUDIO_SETTINGS` | To change the notification sound for our app.|
-| `android.permission.WAKE_LOCK` and `android.permission.USE_FULL_SCREEN_INTENT` | Required to the show calling screen when a call is ringing. Automatically granted by the system; cannot be revoked by user. |
+| `android.permission.WAKE_LOCK` | Required to the show calling screen when a call is ringing. Automatically granted by the system; cannot be revoked by user. |
 | `android.permission.FOREGROUND_SERVICE` | Enables the app to create foreground services that will ring the alarm and keep it snoozed. Permission automatically granted by the system; can't be revoked by user. |
 | `android.permission.FOREGROUND_SERVICE_SPECIAL_USE` | Conveys to the system the type of foreground Service that the app uses. Cannot be revoked by the user. |
 | `android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS` | Ensure the foreground service and calling background service to receive calls and notificaiton when app is terminated |
-| `android.permission.USE_EXACT_ALARM` | Introduced in Android 13 (API level 33), this permission allows the app to set an exact interview alarm with the Android system, ensuring that the system will wake up from doze mode when the alarm rings. Granted by the system by default and cannot be revoked by the user. Requested in Android 13 and above. |
 
 
  <hr style="border:1px solid gray">
