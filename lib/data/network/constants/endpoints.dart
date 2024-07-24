@@ -6,10 +6,10 @@ class Endpoints {
   static const String baseUrl = "https://api.studenthub.dev";
 
   // receiveTimeout
-  static const int receiveTimeout = 30000;
+  static const int receiveTimeout = 1000;
 
   // connectTimeout
-  static const int connectionTimeout = 30000;
+  static const int connectionTimeout = 1000;
 
   // unused
   static const String getPosts = "/api/posts";

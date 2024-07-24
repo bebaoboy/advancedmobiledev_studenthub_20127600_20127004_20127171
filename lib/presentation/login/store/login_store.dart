@@ -1,9 +1,11 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, unused_field
 
-import 'dart:io';
+// import 'dart:io';
 
 import 'package:boilerplate/core/stores/error/error_store.dart';
 import 'package:boilerplate/core/stores/form/form_store.dart';
+import 'package:boilerplate/data/sharedpref/shared_preference_helper.dart';
+import 'package:boilerplate/di/service_locator.dart';
 import 'package:boilerplate/domain/entity/account/profile_entities.dart';
 import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/usecase/profile/add_profile_company_usecase.dart';
@@ -102,7 +104,6 @@ abstract class _UserStore with Store {
   final SetUserProfileUseCase _setUserProfileUseCase;
   final LogoutUseCase _logoutUseCase;
   final GetMustChangePassUseCase _getMustChangePassUseCase;
-  // ignore: unused_field
   final GetStudentFavoriteProjectUseCase _getStudentFavoriteProjectUseCase;
   final GetCompanyUseCase _getCompanyUseCase;
 
@@ -180,7 +181,7 @@ abstract class _UserStore with Store {
   @action
   Future<bool> login(
       String email, String password, UserType type, List<UserType> roles,
-      {fastSwitch = false}) async {
+      {fastSwitch = true}) async {
     if (email.isEmpty || password.isEmpty) return false;
     _isLoading = true;
     email = email.trim().toLowerCase();
@@ -200,108 +201,164 @@ abstract class _UserStore with Store {
       await _saveUserDataUseCase.call(params: value);
     }
     _isLoading = true;
-    return await future.then((value) async {
-      if (value.statusCode == HttpStatus.accepted ||
-          value.statusCode == HttpStatus.created ||
-          value.statusCode == HttpStatus.ok) {
-        if (value.data['result'] is! String &&
-            value.data['result']['token'] != null) {
-          await _saveTokenUseCase.call(params: value.data['result']['token']);
-          await _saveLoginStatusUseCase.call(params: true);
-          isFetchingProfile = true;
-          _isLoading = false;
 
-          var userValue = User(
-              // type: getUserType(type.name ?? UserType.naught.name),
-              type: getUserType(type.name),
-              email: email,
-              roles: [],
-              isVerified: true);
+    await _saveTokenUseCase.call(params: baominkhuynh);
+    await _saveLoginStatusUseCase.call(params: true);
+    isFetchingProfile = true;
+    _isLoading = false;
 
-          indicatorText = "fetching_profile";
-          isLoggedIn = true;
+    // var userValue = User(
+    //     // type: getUserType(type.name ?? UserType.naught.name),
+    //     type: getUserType(type.name),
+    //     email: email,
+    //     roles: [],
+    //     isVerified: true);
 
-          final profileResult = _getProfileUseCase(params: true);
-          fetchFuture = ObservableFuture(profileResult);
+    indicatorText = "fetching_profile";
+    isLoggedIn = true;
 
-          await profileResult.then((value) {
-            if (value.status) {
-              userValue.companyProfile = value.result[1] != null
-                  ? value.result[1] as CompanyProfile
-                  : null;
-              userValue.studentProfile = value.result[0] != null
-                  ? value.result[0] as StudentProfile
-                  : null;
-              userValue.roles = value.roles;
-              userValue.isVerified = value.isVerified;
-              userValue.name = value.name;
-              userValue.objectId = value.id;
-              indicatorText = null;
-            }
-            isFetchingProfile = false;
-            success = true;
-          });
+    final profileResult = _getProfileUseCase(params: true);
+    fetchFuture = ObservableFuture(profileResult);
 
-          // print(profileResult);
+    isFetchingProfile = false;
+    success = true;
 
-          _user = userValue;
-          await _saveUserDataUseCase(
-            params: _user,
-          );
+    // print(profileResult);
 
-          savedUsers.add(_user!);
-          _getMustChangePassUseCase.call(params: null).then((value) {
-            shouldChangePass = value.res;
-          });
+    _user = User(
+        isVerified: true,
+        name: "hi",
+        email: email,
+        objectId: "12",
+        roles: [UserType.company, UserType.student],
+        companyProfile: CompanyProfile(companyName: "Chau", objectId: "12"),
+        studentProfile: StudentProfile(objectId: "12"));
+    await _saveUserDataUseCase(
+      params: _user,
+    );
 
-          if (NavigationService.navigatorKey.currentContext != null) {
-            initCube(NavigationService.navigatorKey.currentContext);
-          }
-          return Future.value(true);
-
-          // _getStudentFavoriteProjectUseCase.call(params: null);
-        } else {
-          notification = value.data['result'];
-          indicatorText = null;
-          isFetchingProfile = false;
-          _isLoading = false;
-          return Future.value(false);
-        }
-      } else {
-        success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
-        indicatorText = null;
-        isFetchingProfile = false;
-        _isLoading = false;
-        return Future.value(false);
-      }
-    }).catchError((e) {
-      print(e);
-      isLoggedIn = false;
-      success = false;
-      indicatorText = null;
-      isFetchingProfile = false;
-      _isLoading = false;
-      return Future.value(false);
+    savedUsers.add(_user!);
+    _getMustChangePassUseCase.call(params: null).then((value) {
+      shouldChangePass = value.res;
     });
+
+    final sharedPrefsHelper = getIt<SharedPreferenceHelper>();
+
+    sharedPrefsHelper.saveId(12);
+    sharedPrefsHelper.saveName(_user!.name);
+    sharedPrefsHelper.saveRolesList(_user!.roles!);
+    sharedPrefsHelper.saveCompanyProfile(_user!.companyProfile);
+    // var sp = await sharedPrefsHelper.studentProfile;
+
+    sharedPrefsHelper.saveStudentProfile(_user!.studentProfile);
+
+    if (NavigationService.navigatorKey.currentContext != null) {
+      initCube(NavigationService.navigatorKey.currentContext);
+    }
+    return Future.value(true);
+
+    // return await future.then((value) async {
+    //   if (value.statusCode == HttpStatus.accepted ||
+    //       value.statusCode == HttpStatus.created ||
+    //       value.statusCode == HttpStatus.ok) {
+    //     if (value.data['result'] is! String &&
+    //         value.data['result']['token'] != null) {
+    //       await _saveTokenUseCase.call(params: value.data['result']['token']);
+    //       await _saveLoginStatusUseCase.call(params: true);
+    //       isFetchingProfile = true;
+    //       _isLoading = false;
+
+    //       var userValue = User(
+    //           // type: getUserType(type.name ?? UserType.naught.name),
+    //           type: getUserType(type.name),
+    //           email: email,
+    //           roles: [],
+    //           isVerified: true);
+
+    //       indicatorText = "fetching_profile";
+    //       isLoggedIn = true;
+
+    //       final profileResult = _getProfileUseCase(params: true);
+    //       fetchFuture = ObservableFuture(profileResult);
+
+    //       await profileResult.then((value) {
+    //         if (value.status) {
+    //           userValue.companyProfile = value.result[1] != null
+    //               ? value.result[1] as CompanyProfile
+    //               : null;
+    //           userValue.studentProfile = value.result[0] != null
+    //               ? value.result[0] as StudentProfile
+    //               : null;
+    //           userValue.roles = value.roles;
+    //           userValue.isVerified = value.isVerified;
+    //           userValue.name = value.name;
+    //           userValue.objectId = value.id;
+    //           indicatorText = null;
+    //         }
+    //         isFetchingProfile = false;
+    //         success = true;
+    //       });
+
+    //       // print(profileResult);
+
+    //       _user = userValue;
+    //       await _saveUserDataUseCase(
+    //         params: _user,
+    //       );
+
+    //       savedUsers.add(_user!);
+    //       _getMustChangePassUseCase.call(params: null).then((value) {
+    //         shouldChangePass = value.res;
+    //       });
+
+    //       if (NavigationService.navigatorKey.currentContext != null) {
+    //         initCube(NavigationService.navigatorKey.currentContext);
+    //       }
+    //       return Future.value(true);
+
+    //       // _getStudentFavoriteProjectUseCase.call(params: null);
+    //     } else {
+    //       notification = value.data['result'];
+    //       indicatorText = null;
+    //       isFetchingProfile = false;
+    //       _isLoading = false;
+    //       return Future.value(false);
+    //     }
+    //   } else {
+    //     success = false;
+    //     errorStore.errorMessage = value.data['errorDetails'] is List
+    //         ? value.data['errorDetails'][0].toString()
+    //         : value.data['errorDetails'].toString();
+    //     indicatorText = null;
+    //     isFetchingProfile = false;
+    //     _isLoading = false;
+    //     return Future.value(false);
+    //   }
+    // }).catchError((e) {
+    //   print(e);
+    //   isLoggedIn = false;
+    //   success = false;
+    //   indicatorText = null;
+    //   isFetchingProfile = false;
+    //   _isLoading = false;
+    //   return Future.value(false);
+    // });
   }
 
   Future<bool> fetchUserProfileIfLoggedIn() async {
     print('in background fetch');
-    _setUserProfileUseCase.call(params: null).then((value) async {
-      if (value != null) {
-        if (_user != null) {
-          _user?.companyProfile =
-              value[1] != null ? value[1] as CompanyProfile : null;
-          _user?.studentProfile =
-              value[0] != null ? value[0] as StudentProfile : null;
-          return Future.value(true);
-        }
-      }
-      return Future.value(false);
-    }).onError((error, stackTrace) => Future.value(false));
+    // _setUserProfileUseCase.call(params: null).then((value) async {
+    //   if (value != null) {
+    //     if (_user != null) {
+    //       _user?.companyProfile =
+    //           value[1] != null ? value[1] as CompanyProfile : null;
+    //       _user?.studentProfile =
+    //           value[0] != null ? value[0] as StudentProfile : null;
+    //       return Future.value(true);
+    //     }
+    //   }
+    //   return Future.value(false);
+    // }).onError((error, stackTrace) => Future.value(false));
     return Future.value(true);
   }
 
@@ -326,7 +383,7 @@ abstract class _UserStore with Store {
       );
     } catch (e) {
       print("error company id $id");
-      return null;
+      return user?.companyProfile;
     }
   }
 

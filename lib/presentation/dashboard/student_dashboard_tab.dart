@@ -7,7 +7,7 @@ import 'package:boilerplate/domain/entity/project/project_entities.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/dashboard/components/student_project_item.dart';
 import 'package:boilerplate/presentation/dashboard/store/project_store.dart';
-import 'package:boilerplate/presentation/home/loading_screen.dart';
+// import 'package:boilerplate/presentation/home/loading_screen.dart';
 import 'package:boilerplate/presentation/login/store/login_store.dart';
 import 'package:boilerplate/utils/locale/app_localization.dart';
 import 'package:boilerplate/utils/routes/navbar_notifier2.dart';
@@ -100,9 +100,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
         } else {
           print("loading");
           children = const Center(
-            child: LoadingScreenWidget(
-              size: 80,
-            ),
+            child: Text("No proposal"),
           );
         }
         return children;

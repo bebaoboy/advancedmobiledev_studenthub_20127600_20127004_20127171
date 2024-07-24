@@ -66,8 +66,65 @@ abstract class _ProjectStore with Store {
   List<Project> get projects => _projects.projects ?? [];
 
   @observable
-  ProjectList _companyProjects =
-      ProjectList(projects: List.empty(growable: true));
+  ProjectList _companyProjects = ProjectList(projects: [
+    Project(
+        title: "Hello",
+        description: """
+await _saveTokenUseCase.call(params: value.data['result']['token']);
+          await _saveLoginStatusUseCase.call(params: true);
+          isFetchingProfile = true;
+          _isLoading = false;
+
+          var userValue = User(
+              // type: getUserType(type.name ?? UserType.naught.name),
+              type: getUserType(type.name),
+              email: email,
+              roles: [],
+              isVerified: true);
+
+          indicatorText = "fetching_profile";
+          isLoggedIn = true;
+
+          final profileResult = _getProfileUseCase(params: true);
+          fetchFuture = ObservableFuture(profileResult);
+
+          await profileResult.then((value) {
+            if (value.status) {
+              userValue.companyProfile = value.result[1] != null
+                  ? value.result[1] as CompanyProfile
+                  : null;
+              userValue.studentProfile = value.result[0] != null
+                  ? value.result[0] as StudentProfile
+                  : null;
+              userValue.roles = value.roles;
+              userValue.isVerified = value.isVerified;
+              userValue.name = value.name;
+              userValue.objectId = value.id;
+              indicatorText = null;
+            }
+            isFetchingProfile = false;
+            success = true;
+          });
+
+          // print(profileResult);
+
+          _user = userValue;
+          await _saveUserDataUseCase(
+            params: _user,
+          );
+
+          savedUsers.add(_user!);
+          _getMustChangePassUseCase.call(params: null).then((value) {
+            shouldChangePass = value.res;
+          });
+
+          if (NavigationService.navigatorKey.currentContext != null) {
+            initCube(NavigationService.navigatorKey.currentContext);
+          }
+          return Future.value(true);
+""",
+        timeCreated: DateTime.now())..isLoading = false
+  ]);
 
   List<Project> get companyProjects => _companyProjects.projects ?? [];
 
@@ -287,6 +344,7 @@ abstract class _ProjectStore with Store {
   //     return _projects;
   //   });
   // }
+
   Future<ProjectList> getAllProject(GlobalKey<RefazynistState> refazynistKey,
       {int count = 5, Function? setStateCallback}) async {
     _getProjectsUseCase.call(params: GetProjectParams()).then((value) {
@@ -364,9 +422,12 @@ abstract class _ProjectStore with Store {
               );
               if (_projects.projects != null) {
                 refazynistKey.currentState?.refresh(
-                    readyMade: _projects.projects!
-                        .sublist(0, count.clamp(0, _projects.projects!.length))
-                        .toList());
+                    readyMade: _projects.projects!.isEmpty
+                        ? _companyProjects.projects
+                        : _projects.projects!
+                            .sublist(
+                                0, count.clamp(0, _projects.projects!.length))
+                            .toList());
               }
               Future.delayed(Duration.zero, () async {
                 var list = await datasource.getProjectsFromDb();
@@ -400,10 +461,12 @@ abstract class _ProjectStore with Store {
                   if (setStateCallback != null) setStateCallback();
                   if (_projects.projects != null) {
                     refazynistKey.currentState?.refresh(
-                        readyMade: _projects.projects!
-                            .sublist(
-                                0, count.clamp(0, _projects.projects!.length))
-                            .toList());
+                        readyMade: _projects.projects!.isEmpty
+                            ? _companyProjects.projects
+                            : _projects.projects!
+                                .sublist(0,
+                                    count.clamp(0, _projects.projects!.length))
+                                .toList());
                   }
                 },
               );
@@ -439,9 +502,11 @@ abstract class _ProjectStore with Store {
 
           if (_projects.projects != null) {
             refazynistKey.currentState?.refresh(
-                readyMade: _projects.projects!
-                    .sublist(0, count.clamp(0, _projects.projects!.length))
-                    .toList());
+                readyMade: _projects.projects!.isEmpty
+                    ? _companyProjects.projects
+                    : _projects.projects!
+                        .sublist(0, count.clamp(0, _projects.projects!.length))
+                        .toList());
           }
         }
       });
@@ -475,9 +540,12 @@ abstract class _ProjectStore with Store {
             element.isFavorite = true;
           });
           refazynistKey?.currentState?.refresh(
-              readyMade: _favoriteProjects.projects!
-                  .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
-                  .toList());
+              readyMade: _projects.projects!.isEmpty
+                  ? _companyProjects.projects
+                  : _favoriteProjects.projects!
+                      .sublist(
+                          0, 5.clamp(0, _favoriteProjects.projects!.length))
+                      .toList());
 
           return ProjectList(projects: []);
         });
@@ -489,9 +557,12 @@ abstract class _ProjectStore with Store {
           );
           if (_favoriteProjects.projects != null) {
             refazynistKey?.currentState?.refresh(
-                readyMade: _favoriteProjects.projects!
-                    .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
-                    .toList());
+                readyMade: _projects.projects!.isEmpty
+                    ? _companyProjects.projects
+                    : _favoriteProjects.projects!
+                        .sublist(
+                            0, 5.clamp(0, _favoriteProjects.projects!.length))
+                        .toList());
           }
           return Future.value(ProjectList(projects: []));
         } else {
@@ -506,10 +577,12 @@ abstract class _ProjectStore with Store {
             });
             if (_favoriteProjects.projects != null) {
               refazynistKey?.currentState?.refresh(
-                  readyMade: _favoriteProjects.projects!
-                      .sublist(
-                          0, 5.clamp(0, _favoriteProjects.projects!.length))
-                      .toList());
+                  readyMade: _projects.projects!.isEmpty
+                      ? _companyProjects.projects
+                      : _favoriteProjects.projects!
+                          .sublist(
+                              0, 5.clamp(0, _favoriteProjects.projects!.length))
+                          .toList());
             }
             return ProjectList(projects: []);
           });
@@ -520,9 +593,11 @@ abstract class _ProjectStore with Store {
       print("errror favorite");
       if (_favoriteProjects.projects != null) {
         refazynistKey?.currentState?.refresh(
-            readyMade: _favoriteProjects.projects!
-                .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
-                .toList());
+            readyMade: _projects.projects!.isEmpty
+                ? _companyProjects.projects
+                : _favoriteProjects.projects!
+                    .sublist(0, 5.clamp(0, _favoriteProjects.projects!.length))
+                    .toList());
       }
       return Future.value(ProjectList(projects: []));
     }
@@ -542,7 +617,7 @@ abstract class _ProjectStore with Store {
     final GetProjectByCompanyParams loginParams =
         GetProjectByCompanyParams(companyId: id, typeFlag: typeFlag?.index);
     try {
-      return _getProjectByCompanyUseCase.call(params: loginParams).then(
+      _getProjectByCompanyUseCase.call(params: loginParams).then(
         (value) async {
           if (value.statusCode == HttpStatus.accepted ||
               value.statusCode == HttpStatus.ok ||
@@ -597,8 +672,12 @@ abstract class _ProjectStore with Store {
             return _companyProjects;
           }
         }
-        return Future.value(ProjectList(projects: []));
+        if (setStateCallback != null) setStateCallback();
+
+        return Future.value(_companyProjects);
       });
+      if (setStateCallback != null) setStateCallback();
+      return Future.value(_companyProjects);
     } catch (e) {
       // errorStore.errorMessage = "cannot save student profile";
       print("cannot get profile company");
@@ -613,7 +692,8 @@ abstract class _ProjectStore with Store {
           if (setStateCallback != null) setStateCallback();
         }
       }
-      return _companyProjects;
+      if (setStateCallback != null) setStateCallback();
+      return Future.value(_companyProjects);
     }
     // //print(value);
   }
