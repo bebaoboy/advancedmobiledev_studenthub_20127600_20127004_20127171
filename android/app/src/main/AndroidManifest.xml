@@ -42,7 +42,7 @@
         </intent>
     </queries>
     <application tools:replace="android:label" 
-    android:icon="@mipmap/ic_launcher" 
+    android:icon="@mipmap/launcher_icon" 
     android:label="StudentHub" 
     android:name="${applicationName}" 
     android:usesCleartextTraffic="true">
