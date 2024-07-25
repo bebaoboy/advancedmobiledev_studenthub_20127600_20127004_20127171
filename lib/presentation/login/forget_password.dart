@@ -198,13 +198,18 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
         buttonColor: Theme.of(context).colorScheme.primary,
         textColor: Colors.white,
         onPressed: () async {
-          if (_formStore.canSendEmail) {
-            DeviceUtils.hideKeyboard(context);
-            _formStore.sendMail();
-            setState(() {
-              loading = true;
-            });
-          }
+          // if (_formStore.canSendEmail) {
+          DeviceUtils.hideKeyboard(context);
+          // _formStore.sendMail();
+          setState(() {
+            loading = true;
+          });
+          Future.delayed(const Duration(seconds: 2), () {
+            loading = false;
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute2(routeName: Routes.forgetPasswordSent));
+          });
+          // }
         },
       ),
     );

@@ -309,8 +309,25 @@ class _SignUpStudentScreenState extends State<SignUpStudentScreen> {
         onPressed: () async {
           if (_formStore.canRegister) {
             DeviceUtils.hideKeyboard(context);
-            _formStore.signUp(_userFullnameController.text,
-                _userEmailController.text, _passwordController.text);
+            // _formStore.signUp(_userFullnameController.text,
+            //     _userEmailController.text, _passwordController.text);
+            showAnimatedDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext c) {
+                return ClassicGeneralDialogWidget(
+                  contentText: Lang.get('signup_email_sent'),
+                  positiveText: 'OK',
+                  onPositiveClick: () {
+                    Navigator.of(c).pop();
+                    _formStore.success = false;
+                  },
+                );
+              },
+              animationType: DialogTransitionType.size,
+              curve: Curves.fastOutSlowIn,
+              duration: const Duration(seconds: 1),
+            ).then((v) => Navigator.of(context).pop());
           } else {
             _showErrorMessage(Lang.get('login_error_missing_fields'));
           }

@@ -56,7 +56,7 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
       future: future,
       builder: (BuildContext context, AsyncSnapshot<ProposalList> snapshot) {
         Widget children;
-        if (snapshot.hasData && !loading) {
+        if (true) {
           children = Padding(
               padding: const EdgeInsets.symmetric(horizontal: 0),
               child: Column(
@@ -93,16 +93,17 @@ class _StudentDashBoardTabState extends State<StudentDashBoardTab> {
                         ),
                 ],
               ));
-        } else if (snapshot.hasError) {
-          children = Center(
-            child: Text(Lang.get("error")),
-          );
-        } else {
-          print("loading");
-          children = const Center(
-            child: Text("No proposal"),
-          );
-        }
+        } 
+        // else if (snapshot.hasError) {
+        //   children = Center(
+        //     child: Text(Lang.get("error")),
+        //   );
+        // } else {
+        //   print("loading");
+        //   children = const Center(
+        //     child: Text("No proposal"),
+        //   );
+        // }
         return children;
       },
     );

@@ -289,9 +289,9 @@ abstract class _ProfileStudentFormStore with Store {
         // }
       } else {
         success = false;
-        errorStore.errorMessage = value.data['errorDetails'] is List<String>
-            ? value.data['errorDetails'][0].toString()
-            : value.data['errorDetails'].toString();
+        // errorStore.errorMessage = value.data['errorDetails'] is List<String>
+        //     ? value.data['errorDetails'][0].toString()
+        //     : value.data['errorDetails'].toString();
         print("failed");
       }
       //print(value);

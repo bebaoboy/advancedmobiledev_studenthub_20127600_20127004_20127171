@@ -151,6 +151,8 @@ class _ProjectUpdateScreenState extends State<ProjectUpdateScreen> {
             child: MaterialButton(
               onPressed: () {
                 try {
+                  Navigator.of(context).pop();
+
                   if (_formStore.canUpdate && somethingChanged()) {
                     _formStore
                         .updateProject(

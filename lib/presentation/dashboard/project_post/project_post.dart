@@ -586,8 +586,8 @@ class _ProjectPostScreenState extends State<ProjectPostScreen> {
                                 ToastificationType.error,
                                 () {});
                           }
-                          Navigator.of(context).pop();
                         });
+                        Navigator.of(context).pop();
                       }
                     },
                     child: Text(

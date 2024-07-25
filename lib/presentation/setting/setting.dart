@@ -28,6 +28,7 @@ import 'package:boilerplate/core/widgets/material_dialog/dialog.dart'
     hide showDialog;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../di/service_locator.dart';
 import '../../domain/entity/account/account.dart';
 
@@ -341,15 +342,15 @@ class _SettingScreenState extends State<SettingScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       title: Text(Lang.get("profile_text")),
-      actions: _buildActions(context),
+      // actions: _buildActions(context),
     );
   }
 
-  List<Widget> _buildActions(BuildContext context) {
-    return <Widget>[
-      IconButton(onPressed: () => {}, icon: const Icon(Icons.search))
-    ];
-  }
+  // List<Widget> _buildActions(BuildContext context) {
+  //   return <Widget>[
+  //     IconButton(onPressed: () => {}, icon: const Icon(Icons.search))
+  //   ];
+  // }
 
   bool loading = false;
 
@@ -538,7 +539,11 @@ class _SettingScreenState extends State<SettingScreen> {
                 )),
             ListTile(
                 leading: const Icon(Icons.privacy_tip),
-                onTap: () {
+                onTap: () async {
+                  if (!await launchUrl(Uri.parse(
+                      "https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/blob/change-app-name/PRIVACY_POLICY.md"))) {
+                    Navigator.of(context).pop();
+                  }
                   logg(
                       "https://github.com/bebaoboy/advancedmobiledev_studenthub_20127600_20127004_20127171/blob/change-app-name/PRIVACY_POLICY.md");
                 },

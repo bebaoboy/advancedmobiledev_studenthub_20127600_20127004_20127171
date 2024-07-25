@@ -304,9 +304,9 @@ await _saveTokenUseCase.call(params: value.data['result']['token']);
     } else {
       _companyProjects.projects = [value];
     }
-    _companyProjects.projects?.sort(
-      (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
-    );
+    // _companyProjects.projects?.sort(
+    //   (a, b) => b.updatedAt!.compareTo(a.updatedAt!),
+    // );
   }
 
   Future changeToStatus(HireStatus status, Proposal proposal) async {

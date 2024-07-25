@@ -84,6 +84,7 @@ class _SubmitProjectProposalState extends State<SubmitProjectProposal> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   onPressed: () {
+                    Navigator.of(context).pop();
                     if (coverLetterController.text.isEmpty) {
                       Toastify.show(context, '', "Description can't be empty",
                           ToastificationType.error, () {});

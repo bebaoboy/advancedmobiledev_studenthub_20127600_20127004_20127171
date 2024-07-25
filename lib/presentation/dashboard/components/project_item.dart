@@ -227,9 +227,9 @@ class _ProjectItem2State extends State<ProjectItem2> {
 
   @override
   Widget build(BuildContext context) {
-    var icon = widget.project.isFavorite
-        ? const Icon(Icons.bookmark)
-        : const Icon(Icons.bookmark_add_outlined);
+    // var icon = widget.project.isFavorite
+    //     ? const Icon(Icons.bookmark)
+    //     : const Icon(Icons.bookmark_add_outlined);
 
     return _OpenContainerWrapper(
       project: widget.project,
@@ -328,19 +328,20 @@ class _ProjectItem2State extends State<ProjectItem2> {
                       ),
                     ],
                   ),
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: IconButton(
-                      color: Theme.of(context).colorScheme.primary,
-                      onPressed: () {
-                        setState(() {
-                          widget.onFavoriteTap(widget.project.objectId);
-                        });
-                      },
-                      icon: icon,
-                    ),
-                  )
+                  // Positioned(
+                  //   right: 0,
+                  //   top: 0,
+                  //   child: IconButton(
+                      
+                  //     color: Theme.of(context).colorScheme.primary,
+                  //     onPressed: () {
+                  //       setState(() {
+                  //         widget.onFavoriteTap(widget.project.objectId);
+                  //       });
+                  //     },
+                  //     icon: icon,
+                  //   ),
+                  // )
                 ],
               ),
             ));

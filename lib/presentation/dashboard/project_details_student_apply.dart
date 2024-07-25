@@ -202,29 +202,29 @@ class _ProjectDetailsStudentApplyScreenState
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Theme.of(context).colorScheme.onBackground,
-                      surfaceTintColor: Colors.transparent,
-                      minimumSize: Size(
-                          MediaQuery.of(context).size.width / 2 - 48,
-                          40), // NEW
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(3),
-                          side: const BorderSide(color: Colors.black)),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).pushNamed(Routes.submitProposal,
-                          arguments: widget.project);
-                    },
-                    child: Text(
-                      Lang.get('save'),
-                      style: Theme.of(context).textTheme.bodyMedium!.merge(
-                          TextStyle(
-                              color: Theme.of(context).colorScheme.onSurface)),
-                    ),
-                  ),
+                  // ElevatedButton(
+                  //   style: ElevatedButton.styleFrom(
+                  //     backgroundColor:
+                  //         Theme.of(context).colorScheme.onBackground,
+                  //     surfaceTintColor: Colors.transparent,
+                  //     minimumSize: Size(
+                  //         MediaQuery.of(context).size.width / 2 - 48,
+                  //         40), // NEW
+                  //     shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(3),
+                  //         side: const BorderSide(color: Colors.black)),
+                  //   ),
+                  //   onPressed: () {
+                  //     Navigator.of(context).pushNamed(Routes.submitProposal,
+                  //         arguments: widget.project);
+                  //   },
+                  //   child: Text(
+                  //     Lang.get('save'),
+                  //     style: Theme.of(context).textTheme.bodyMedium!.merge(
+                  //         TextStyle(
+                  //             color: Theme.of(context).colorScheme.onSurface)),
+                  //   ),
+                  // ),
                   if (!hasAlreadyApplied)
                     ElevatedButton(
                       style: ElevatedButton.styleFrom(

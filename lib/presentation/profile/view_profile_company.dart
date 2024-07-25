@@ -327,6 +327,7 @@ class _ViewProfileCompanyState extends State<ViewProfileCompany> {
                       setState(() {
                         enabled = !enabled;
                       });
+                      Navigator.of(context).pop();
                     },
                     // color: Colors.orange,
                   ),

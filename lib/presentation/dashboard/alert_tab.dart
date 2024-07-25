@@ -2,6 +2,8 @@
 
 import 'dart:math';
 
+import 'package:another_flushbar/flushbar.dart';
+import 'package:another_flushbar/flushbar_route.dart';
 import 'package:boilerplate/domain/entity/project/proposal_list.dart';
 import 'package:boilerplate/presentation/video_call/connectycube_sdk/lib/connectycube_sdk.dart';
 import 'package:boilerplate/presentation/video_call/managers/call_manager.dart';
@@ -622,6 +624,13 @@ class _AlertTabState extends State<AlertTab> {
           padding: const EdgeInsets.symmetric(horizontal: 10),
           verticalOffset: 60,
           child: InkWell(
+            onTap: () {
+              showFlushbar(
+                  context: context,
+                  flushbar: Flushbar(
+                    title: "You have ${getOffer().length} offers",
+                  ));
+            },
             child: badges.Badge(
               badgeContent: Text(
                 getOffer().length.toString(),

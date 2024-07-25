@@ -159,6 +159,24 @@ abstract class _ProjectFormStore with Store {
         typeFlag: typeFlag);
     final future = _createProjectUseCase.call(params: projectParams);
     createProjectFuture = ObservableFuture(future);
+    projectStore.addProject(Project(
+        title: title,
+        description: description,
+        scope: Scope.values[projectScopeFlag],
+        timeCreated: DateTime.now(),
+        numberOfStudents: numberOfStudents,
+        companyId: companyId,
+        enabled: Status.none,
+        id: "99")..isLoading = false);
+    projectStore.updateCompanyProject(Project(
+        title: title,
+        description: description,
+        scope: Scope.values[projectScopeFlag],
+        timeCreated: DateTime.now(),
+        numberOfStudents: numberOfStudents,
+        companyId: companyId,
+        enabled: Status.none,
+        id: "99")..isLoading = false);
 
     await future.then((value) {
       if (value.statusCode == HttpStatus.accepted ||
@@ -199,7 +217,7 @@ abstract class _ProjectFormStore with Store {
         var sharedPrefsHelper = getIt<SharedPreferenceHelper>();
       } else {
         success = false;
-        
+
         errorStore.errorMessage = value.data['errorDetails'] is List<String>
             ? value.data['errorDetails'][0].toString()
             : value.data['errorDetails'].toString();

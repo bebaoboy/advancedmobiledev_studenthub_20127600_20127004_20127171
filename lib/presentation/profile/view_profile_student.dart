@@ -211,6 +211,7 @@ class _ViewProfileStudentState extends State<ViewProfileStudent> {
                 userStore.user!.studentProfile!.objectId ?? "-1",
               );
             }
+            Navigator.of(context).pop();
           },
         ),
       ),
